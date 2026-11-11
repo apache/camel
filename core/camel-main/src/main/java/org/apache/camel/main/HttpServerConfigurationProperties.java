@@ -576,7 +576,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Comma-separated OAuth scopes required to access the MCP HTTP endpoint.
+     * Comma-separated OAuth scopes required to access the MCP HTTP endpoint. Requires
+     * {@code camel.server.mcp-oauth-profile} to be configured.
      */
     public void setMcpRequiredScopes(String mcpRequiredScopes) {
         this.mcpRequiredScopes = mcpRequiredScopes;
@@ -587,8 +588,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Canonical public HTTPS resource identifier for the MCP endpoint, used by RFC 9728 metadata. Required when an
-     * OAuth profile is configured. It is never inferred from HTTP request headers.
+     * Canonical public HTTPS resource identifier for the MCP endpoint, used by RFC 9728 metadata. Requires
+     * {@code camel.server.mcp-oauth-profile} to be configured. It is never inferred from HTTP request headers.
      */
     public void setMcpResourceUri(String mcpResourceUri) {
         this.mcpResourceUri = mcpResourceUri;
@@ -925,6 +926,15 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpRequiredScopes(String mcpRequiredScopes) {
         this.mcpRequiredScopes = mcpRequiredScopes;
+        return this;
+    }
+
+    /**
+     * Canonical public HTTPS resource identifier for the MCP endpoint, used by RFC 9728 metadata. Required when an
+     * OAuth profile is configured. Never inferred from HTTP request headers.
+     */
+    public HttpServerConfigurationProperties withMcpResourceUri(String mcpResourceUri) {
+        this.mcpResourceUri = mcpResourceUri;
         return this;
     }
 

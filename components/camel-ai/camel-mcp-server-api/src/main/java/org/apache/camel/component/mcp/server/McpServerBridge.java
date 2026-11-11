@@ -142,6 +142,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         }
 
         engine = resolveEngine();
+        validateOAuthConfiguration(engine);
         CamelContextAware.trySetCamelContext(engine, camelContext);
 
         String serverName = configuration.getServerName() != null ? configuration.getServerName() : camelContext.getName();
@@ -178,6 +179,34 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         }
 
         ServiceHelper.initService(engine);
+    }
+
+    private void validateOAuthConfiguration(McpServerEngine targetEngine) {
+        String profile = configuration.getOauthProfile();
+        String requiredScopes = configuration.getRequiredScopes();
+        String resourceUri = configuration.getResourceUri();
+        boolean hasProfile = profile != null && !profile.isBlank();
+        boolean hasRequiredScopes = requiredScopes != null && !requiredScopes.isBlank();
+        boolean hasResourceUri = resourceUri != null && !resourceUri.isBlank();
+
+        if (hasRequiredScopes && !hasProfile) {
+            throw new IllegalArgumentException(
+                    "MCP requiredScopes requires an oauthProfile to be configured");
+        }
+        if (hasResourceUri && !hasProfile) {
+            throw new IllegalArgumentException(
+                    "MCP resourceUri requires an oauthProfile to be configured");
+        }
+        if (hasProfile && !hasResourceUri) {
+            throw new IllegalArgumentException(
+                    "MCP oauthProfile requires a public HTTPS resourceUri for RFC 9728 metadata");
+        }
+        if ((hasProfile || hasRequiredScopes || hasResourceUri) && !targetEngine.supportsOAuthConfiguration()) {
+            throw new IllegalArgumentException(
+                    "MCP OAuth configuration is not supported by engine "
+                                               + targetEngine.getClass().getSimpleName()
+                                               + "; configure OAuth on the runtime's native MCP server instead");
+        }
     }
 
     @Override
@@ -748,6 +777,10 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         Map<String, Object> oauthClaims = context.oauthClaims();
         if (oauthClaims != null && !oauthClaims.isEmpty()) {
             exchange.setProperty(McpToolCallContext.OAUTH_CLAIMS_PROPERTY, oauthClaims);
+        }
+        if (context.oauthTokenValidationResult() != null) {
+            exchange.setProperty(McpToolCallContext.OAUTH_TOKEN_VALIDATION_RESULT_PROPERTY,
+                    context.oauthTokenValidationResult());
         }
     }
 

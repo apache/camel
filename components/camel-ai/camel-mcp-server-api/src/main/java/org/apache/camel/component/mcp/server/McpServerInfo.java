@@ -21,8 +21,9 @@ import java.util.List;
 /**
  * Identity and serving hints passed to an {@link McpServerEngine} before it is started.
  * <p>
- * Engines backed by a native runtime MCP server (Quarkus, Spring Boot) MAY ignore the serving hints ({@code path}) —
- * their own runtime configuration decides how the server is exposed.
+ * Engines backed by a native runtime MCP server (Quarkus, Spring Boot) MAY ignore serving hints such as {@code path};
+ * their own runtime configuration decides how the server is exposed. OAuth options are accepted only by engines that
+ * explicitly support OAuth configuration.
  *
  * @param serverName                 the MCP server name advertised to clients (defaults to the CamelContext name)
  * @param version                    the MCP server version advertised to clients
@@ -39,6 +40,10 @@ import java.util.List;
  * @param allowedOrigins             origins allowed to call the MCP endpoint (exact, or {@code scheme://host:*} for any
  *                                   port); {@code null} allows loopback origins only. A request without an
  *                                   {@code Origin} header is not affected. Since 4.24.
+ * @param oauthProfile               the camel-oauth profile used for bearer-token validation, or {@code null} when
+ *                                   disabled
+ * @param requiredScopes             comma-separated OAuth scopes required by the MCP HTTP endpoint
+ * @param resourceUri                explicit public HTTPS URI of the protected MCP resource for RFC 9728 metadata
  *
  * @since                            4.22
  */
@@ -101,16 +106,6 @@ public record McpServerInfo(
                          List<McpServerIcon> icons, List<String> allowedOrigins) {
         this(serverName, version, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs,
              title, description, websiteUrl, instructions, icons, allowedOrigins, null, null, null);
-    }
-
-    /** Compatibility constructor preserving the OAuth-aware signature from before resource URI metadata. */
-    public McpServerInfo(String serverName, String version, String path,
-                         long sessionKeepAliveIntervalMs, long sessionIdleTtlMs,
-                         String title, String description, String websiteUrl, String instructions,
-                         List<McpServerIcon> icons, List<String> allowedOrigins,
-                         String oauthProfile, String requiredScopes) {
-        this(serverName, version, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs,
-             title, description, websiteUrl, instructions, icons, allowedOrigins, oauthProfile, requiredScopes, null);
     }
 
     public McpServerInfo {

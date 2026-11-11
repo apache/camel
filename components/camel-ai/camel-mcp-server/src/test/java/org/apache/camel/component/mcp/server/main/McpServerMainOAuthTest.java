@@ -22,6 +22,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +82,11 @@ class McpServerMainOAuthTest {
                                                                            + exchange.getProperty(
                                                                                    McpToolCallContext.OAUTH_CLAIMS_PROPERTY)
                                                                            + ";roles=" + exchange.getProperty(
-                                                                                   McpToolCallContext.SECURITY_PRINCIPAL_ROLES_PROPERTY)));
+                                                                                   McpToolCallContext.SECURITY_PRINCIPAL_ROLES_PROPERTY)
+                                                                           + ";standardValidationResult="
+                                                                           + (exchange.getProperty(
+                                                                                   McpToolCallContext.OAUTH_TOKEN_VALIDATION_RESULT_PROPERTY)
+                                                                              != null)));
             }
         });
 
@@ -183,7 +188,46 @@ class McpServerMainOAuthTest {
         assertThat(response.headers().firstValue("WWW-Authenticate"))
                 .hasValueSatisfying(value -> assertThat(value)
                         .contains("error=\"insufficient_scope\"")
+                        .contains("resource_metadata=\"" + RESOURCE_METADATA_URI + "\"")
                         .contains("scope=\"mcp:read mcp:write\""));
+    }
+
+    @Test
+    void sessionIsBoundToTheOAuthSubjectAndRequiresASubjectClaim() throws Exception {
+        // A valid access token without a subject cannot establish a user-bound stateful session.
+        assertThat(post("no-sub").statusCode()).isEqualTo(403);
+
+        HttpResponse<String> initialized = post("valid");
+        assertThat(initialized.statusCode()).isEqualTo(200);
+        String sessionId = initialized.headers().firstValue("Mcp-Session-Id").orElseThrow();
+
+        // A different subject cannot use the session for POST, GET, or DELETE. Use a syntactically
+        // valid notification for POST; the ownership check must reject it before session dispatch.
+        HttpResponse<String> postAsBob = HTTP.send(
+                mcpRequest("bob")
+                        .header("Mcp-Session-Id", sessionId)
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(
+                                "{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}"))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString());
+        assertThat(postAsBob.statusCode()).isEqualTo(404);
+
+        HttpResponse<String> getAsBob = HTTP.send(
+                mcpRequest("bob").header("Mcp-Session-Id", sessionId).GET().build(),
+                HttpResponse.BodyHandlers.ofString());
+        assertThat(getAsBob.statusCode()).isEqualTo(404);
+
+        HttpResponse<String> deleteAsBob = HTTP.send(
+                mcpRequest("bob").header("Mcp-Session-Id", sessionId).DELETE().build(),
+                HttpResponse.BodyHandlers.ofString());
+        assertThat(deleteAsBob.statusCode()).isEqualTo(404);
+
+        // The original subject still owns the session and can terminate it.
+        HttpResponse<String> deleteAsAlice = HTTP.send(
+                mcpRequest("valid").header("Mcp-Session-Id", sessionId).DELETE().build(),
+                HttpResponse.BodyHandlers.ofString());
+        assertThat(deleteAsAlice.statusCode()).isEqualTo(200);
     }
 
     @Test
@@ -214,7 +258,8 @@ class McpServerMainOAuthTest {
                     .contains("subject=alice")
                     .contains("scopes=[mcp:read, mcp:write]")
                     .contains("tenant=engineering")
-                    .contains("roles=[admin, analyst]");
+                    .contains("roles=[admin, analyst]")
+                    .contains("standardValidationResult=true");
         } finally {
             client.closeGracefully();
         }
@@ -261,12 +306,22 @@ class McpServerMainOAuthTest {
             List<String> scopes = "insufficient".equals(token)
                     ? List.of("mcp:read")
                     : List.of("mcp:read", "mcp:write");
-            Map<String, Object> claims = Map.of(
-                    "sub", "alice",
-                    "tenant", "engineering",
-                    "roles", List.of("admin", "analyst"));
+            String subject;
+            if ("bob".equals(token)) {
+                subject = "bob";
+            } else if ("no-sub".equals(token)) {
+                subject = null;
+            } else {
+                subject = "alice";
+            }
+            Map<String, Object> claims = new LinkedHashMap<>();
+            if (subject != null) {
+                claims.put("sub", subject);
+            }
+            claims.put("tenant", "engineering");
+            claims.put("roles", List.of("admin", "analyst"));
             return OAuthTokenValidationResult.valid(
-                    "alice",
+                    subject,
                     "https://id.example.test/realms/camel",
                     List.of("mcp-server"),
                     scopes,

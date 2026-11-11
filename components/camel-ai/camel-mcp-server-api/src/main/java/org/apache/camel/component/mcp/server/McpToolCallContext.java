@@ -22,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.spi.OAuthTokenValidationResult;
+
 /**
  * Transport-supplied context for a single MCP tool call, carrying the caller's authenticated security principal when
  * the transport can determine one, together with a runtime-neutral view of it. An engine builds it from its transport
@@ -36,13 +38,18 @@ import java.util.Map;
  * runtime-neutral view the engine derives from that principal, so a route or the shipped identity policies can
  * authorize on a stable name and roles regardless of the MCP server runtime.
  *
- * @param securityPrincipal the authenticated caller principal, or {@code null} when the transport has none
- * @param principalName     the runtime-neutral caller name derived from the principal, or {@code null} when there is no
- *                          principal or the transport cannot determine a name
- * @param principalRoles    the runtime-neutral caller role names derived from the principal, or {@code null} when there
- *                          is no principal or the transport cannot determine any roles; when present it is an immutable
- *                          copy and never contains {@code null}
- * @since                   4.23
+ * @param securityPrincipal          the authenticated caller principal, or {@code null} when the transport has none
+ * @param principalName              the runtime-neutral caller name derived from the principal, or {@code null} when
+ *                                   there is no principal or the transport cannot determine a name
+ * @param principalRoles             the runtime-neutral caller role names derived from the principal, or {@code null}
+ *                                   when there is no principal or the transport cannot determine any roles; when
+ *                                   present it is an immutable copy and never contains {@code null}
+ * @param oauthSubject               the subject from the validated bearer token, or {@code null} when OAuth is not used
+ * @param oauthScopes                the scopes from the validated bearer token, or {@code null} when OAuth is not used
+ * @param oauthClaims                the claims from the validated bearer token, or {@code null} when OAuth is not used
+ * @param oauthTokenValidationResult the full validated token result for compatibility with Camel HTTP OAuth routes, or
+ *                                   {@code null} when no bearer-token validation was performed
+ * @since                            4.23
  */
 public record McpToolCallContext(
         Object securityPrincipal,
@@ -50,12 +57,13 @@ public record McpToolCallContext(
         Collection<String> principalRoles,
         String oauthSubject,
         Collection<String> oauthScopes,
-        Map<String, Object> oauthClaims) {
+        Map<String, Object> oauthClaims,
+        OAuthTokenValidationResult oauthTokenValidationResult) {
 
     /**
      * An empty context: no transport-supplied caller principal.
      */
-    public static final McpToolCallContext EMPTY = new McpToolCallContext(null, null, null);
+    public static final McpToolCallContext EMPTY = new McpToolCallContext(null, null, null, null, null, null, null);
 
     /**
      * Exchange property under which the bridge stamps {@link #securityPrincipal()} on the tool exchange, so a tool
@@ -94,6 +102,9 @@ public record McpToolCallContext(
     /** Exchange property containing the validated OAuth claims. */
     public static final String OAUTH_CLAIMS_PROPERTY = "CamelMcpOAuthClaims";
 
+    /** Exchange property containing the full validated OAuth result, shared with HTTP OAuth consumers. */
+    public static final String OAUTH_TOKEN_VALIDATION_RESULT_PROPERTY = "CamelOAuthTokenValidationResult";
+
     /**
      * Canonical constructor; defensively copies the roles into an immutable collection so the stamped exchange property
      * cannot be mutated through the caller's reference.
@@ -115,7 +126,7 @@ public record McpToolCallContext(
      */
     public McpToolCallContext(
                               Object securityPrincipal, String principalName, Collection<String> principalRoles) {
-        this(securityPrincipal, principalName, principalRoles, null, null, null);
+        this(securityPrincipal, principalName, principalRoles, null, null, null, null);
     }
 
     /**

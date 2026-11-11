@@ -107,7 +107,7 @@ final class McpOAuthProtectedResourceMetadata {
             if (!(https || permittedHttp) || uri.getHost() == null
                     || uri.getRawAuthority() == null || uri.getRawUserInfo() != null
                     || uri.getRawQuery() != null || uri.getRawFragment() != null
-                    || uri.getPort() > 65535) {
+                    || uri.getPort() == 0 || uri.getPort() > 65535) {
                 String requiredScheme = allowInsecureHttp ? "HTTP or HTTPS" : "HTTPS";
                 throw new IllegalArgumentException(
                         label + " must be an absolute " + requiredScheme

@@ -26,11 +26,7 @@ import org.apache.camel.component.mcp.server.stdio.StdioMcpServerEngine;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.MainConstants;
 import org.apache.camel.main.McpServerFactory;
-import org.apache.camel.spi.OAuthTokenValidationConfig;
-import org.apache.camel.spi.OAuthTokenValidationConfigResolver;
-import org.apache.camel.spi.OAuthTokenValidationFactory;
 import org.apache.camel.spi.annotations.JdkService;
-import org.apache.camel.support.OAuthHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +41,7 @@ public class DefaultMcpServerFactory implements McpServerFactory {
 
     @Override
     public Service newMcpServer(CamelContext camelContext, HttpServerConfigurationProperties configuration) {
-        validateOAuthConfiguration(camelContext, configuration);
+        validateOAuthConfiguration(configuration);
         if (isStdioTransport(configuration.getMcpTransport())
                 && camelContext.getRegistry().findSingleByType(McpServerEngine.class) == null) {
             camelContext.getRegistry().bind("mcpServerEngine", new StdioMcpServerEngine());
@@ -65,19 +61,22 @@ public class DefaultMcpServerFactory implements McpServerFactory {
         mcpConfiguration.setSessionKeepAliveInterval(configuration.getMcpSessionKeepAliveInterval());
         mcpConfiguration.setSessionIdleTtl(configuration.getMcpSessionIdleTtl());
         mcpConfiguration.setAllowedOrigins(configuration.getMcpAllowedOrigins());
-        mcpConfiguration.setOauthProfile(configuration.getMcpOauthProfile());
-        mcpConfiguration.setRequiredScopes(configuration.getMcpRequiredScopes());
-        mcpConfiguration.setResourceUri(configuration.getMcpResourceUri());
+        // OAuth options have no meaning on stdio. Keep the historical warn-and-ignore behavior here,
+        // while programmatic bridge configurations fail closed on engines that do not support OAuth.
+        if (!isStdioTransport(configuration.getMcpTransport())) {
+            mcpConfiguration.setOauthProfile(configuration.getMcpOauthProfile());
+            mcpConfiguration.setRequiredScopes(configuration.getMcpRequiredScopes());
+            mcpConfiguration.setResourceUri(configuration.getMcpResourceUri());
+        }
         return new McpServerBridge(mcpConfiguration);
     }
 
     /**
-     * Validates the named OAuth profile before the MCP bridge is created. This uses Camel's existing OAuth validation
-     * SPI, so camel-mcp-server-api does not need a dependency on the HTTP security implementation or camel-oauth. In
-     * stdio mode OAuth settings have no HTTP meaning and are intentionally ignored with a warning.
+     * Validates the relationships between Main MCP OAuth options. The HTTP engine validates the named OAuth profile
+     * once when it creates its OAuth security support. In stdio mode OAuth settings have no HTTP meaning and are
+     * intentionally ignored with a warning.
      */
-    private static void validateOAuthConfiguration(
-            CamelContext camelContext, HttpServerConfigurationProperties configuration) {
+    private static void validateOAuthConfiguration(HttpServerConfigurationProperties configuration) {
         String profile = configuration.getMcpOauthProfile();
         String requiredScopes = configuration.getMcpRequiredScopes();
         String resourceUri = configuration.getMcpResourceUri();
@@ -108,18 +107,15 @@ public class DefaultMcpServerFactory implements McpServerFactory {
                         "camel.server.mcp-oauth-profile requires camel.server.mcp-resource-uri to be configured "
                                                    + "with the public HTTPS MCP endpoint URI");
             }
-            String profileName = profile.trim();
-            OAuthTokenValidationFactory validationFactory
-                    = OAuthHelper.resolveOAuthTokenValidationFactory(camelContext, profileName);
-            OAuthTokenValidationConfig validationConfig
-                    = OAuthTokenValidationConfigResolver.resolveProfileConfig(camelContext, profileName);
-            validationFactory.validateConfiguration(validationConfig);
-            String issuer = validationConfig.getExpectedIssuer();
-            if (issuer == null || issuer.isBlank()) {
+            // The embedded server mounts MCP routes below camel.server.path. The RFC 9728 well-known
+            // route is currently registered at the router root, so a non-root context path cannot
+            // produce a discoverable resource URL. Reject it rather than advertise a broken URL.
+            if (!"/".equals(configuration.getPath())) {
                 throw new IllegalArgumentException(
-                        "MCP OAuth profile must configure an expected issuer using base-uri or expected-issuer");
+                        "OAuth-protected MCP requires camel.server.path='/' because RFC 9728 metadata is "
+                                                   + "currently registered at the HTTP root; configure the public path with "
+                                                   + "camel.server.mcp-path instead");
             }
-            LOG.info("Validated OAuth profile '{}' and protected resource URI for the MCP HTTP server", profileName);
         }
     }
 

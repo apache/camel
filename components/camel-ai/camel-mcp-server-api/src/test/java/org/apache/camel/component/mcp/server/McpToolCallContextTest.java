@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,13 +36,16 @@ class McpToolCallContextTest {
         claims.put("sub", "alice");
         claims.put("roles", List.of("operator"));
 
+        OAuthTokenValidationResult validationResult = OAuthTokenValidationResult.valid(
+                "alice", "https://id.example.test", List.of("mcp-server"), List.of("mcp:read"), claims, 123L);
         McpToolCallContext context = new McpToolCallContext(
-                null, "alice", List.of("operator"), "alice", scopes, claims);
+                null, "alice", List.of("operator"), "alice", scopes, claims, validationResult);
 
         scopes.add("admin");
         claims.put("admin", true);
 
         assertThat(context.oauthSubject()).isEqualTo("alice");
+        assertThat(context.oauthTokenValidationResult()).isSameAs(validationResult);
         assertThat(context.oauthScopes()).containsExactly("mcp:read", "mcp:write");
         assertThat(context.oauthClaims())
                 .containsEntry("sub", "alice")

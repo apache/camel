@@ -71,5 +71,10 @@ class McpOAuthProtectedResourceMetadataTest {
                 "https://mcp.example.test/other", "/mcp", "https://id.example.test/issuer", java.util.List.of()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("path must match");
+
+        assertThatThrownBy(() -> McpOAuthProtectedResourceMetadata.create(
+                "https://mcp.example.test:0/mcp", "/mcp", "https://id.example.test/issuer", java.util.List.of()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("absolute HTTPS URI");
     }
 }

@@ -264,6 +264,53 @@ class McpServerBridgeTest extends CamelTestSupport {
     }
 
     @Test
+    void testProgrammaticOAuthConfigurationFailsWhenTheEngineDoesNotSupportIt() throws Exception {
+        try (DefaultCamelContext oauthContext = new DefaultCamelContext()) {
+            oauthContext.getRegistry().bind("mcpServerEngine", new RecordingMcpServerEngine());
+            McpServerConfiguration configuration = new McpServerConfiguration();
+            configuration.setTags("crm");
+            configuration.setOauthProfile("keycloak");
+            configuration.setRequiredScopes("mcp:read");
+            configuration.setResourceUri("https://mcp.example.test/mcp");
+            McpServerBridge oauthBridge = new McpServerBridge(configuration);
+
+            assertThatThrownBy(() -> oauthContext.addService(oauthBridge))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("MCP OAuth configuration is not supported by engine");
+        }
+    }
+
+    @Test
+    void testProgrammaticRequiredScopesNeedAnOAuthProfile() throws Exception {
+        try (DefaultCamelContext oauthContext = new DefaultCamelContext()) {
+            oauthContext.getRegistry().bind("mcpServerEngine", new RecordingMcpServerEngine());
+            McpServerConfiguration configuration = new McpServerConfiguration();
+            configuration.setTags("crm");
+            configuration.setRequiredScopes("mcp:read");
+            McpServerBridge oauthBridge = new McpServerBridge(configuration);
+
+            assertThatThrownBy(() -> oauthContext.addService(oauthBridge))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("requiredScopes requires an oauthProfile");
+        }
+    }
+
+    @Test
+    void testProgrammaticResourceUriNeedsAnOAuthProfile() throws Exception {
+        try (DefaultCamelContext oauthContext = new DefaultCamelContext()) {
+            oauthContext.getRegistry().bind("mcpServerEngine", new RecordingMcpServerEngine());
+            McpServerConfiguration configuration = new McpServerConfiguration();
+            configuration.setTags("crm");
+            configuration.setResourceUri("https://mcp.example.test/mcp");
+            McpServerBridge oauthBridge = new McpServerBridge(configuration);
+
+            assertThatThrownBy(() -> oauthContext.addService(oauthBridge))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("resourceUri requires an oauthProfile");
+        }
+    }
+
+    @Test
     void testNameCollisionIsRefused() throws Exception {
         McpServerTool published = engine.tools().get("query_db");
 

@@ -135,4 +135,15 @@ public interface McpServerEngine extends Service, CamelContextAware {
     default boolean consumesServingConfiguration() {
         return false;
     }
+
+    /**
+     * Whether this engine enforces the MCP OAuth bearer-token configuration and serves RFC 9728 protected-resource
+     * metadata. The default is false so an engine that does not implement OAuth cannot silently expose an unprotected
+     * endpoint when OAuth settings are supplied.
+     *
+     * @since 4.24
+     */
+    default boolean supportsOAuthConfiguration() {
+        return false;
+    }
 }

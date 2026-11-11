@@ -223,9 +223,9 @@ The camel.server supports 40 options, which are listed below.
 | `camel.server.mcpOauthProfile` | Name of the camel-oauth profile used to authenticate OAuth bearer tokens on the MCP HTTP endpoint. |  | String
 | `camel.server.mcpPath` | HTTP path where the MCP endpoint is served. | /mcp | String
 | `camel.server.mcpPromptTimeout` | Per-request MCP prompt execution timeout in milliseconds. A request exceeding the timeout returns an error to the MCP client; the underlying route may continue running until it completes. | 20000 | long
-| `camel.server.mcpRequiredScopes` | Comma-separated OAuth scopes required to access the MCP HTTP endpoint. |  | String
+| `camel.server.mcpRequiredScopes` | Comma-separated OAuth scopes required to access the MCP HTTP endpoint. Requires camel.server.mcp-oauth-profile to be configured. |  | String
 | `camel.server.mcpResourceTimeout` | Per-read MCP resource execution timeout in milliseconds. A read exceeding the timeout returns an error to the MCP client; the underlying route keeps running until it completes on its own. | 20000 | long
-| `camel.server.mcpResourceUri` | Canonical public HTTPS resource identifier for the MCP endpoint, used by RFC 9728 metadata. Required when an OAuth profile is configured. It is never inferred from HTTP request headers. |  | String
+| `camel.server.mcpResourceUri` | Canonical public HTTPS resource identifier for the MCP endpoint, used by RFC 9728 metadata. Requires camel.server.mcp-oauth-profile to be configured. It is never inferred from HTTP request headers. |  | String
 | `camel.server.mcpServerDescription` | MCP server description advertised to clients in serverInfo.description . |  | String
 | `camel.server.mcpServerIcons` | JSON array of MCP server icons advertised to clients in serverInfo.icons . Each entry must include a src URL and may include mimeType , sizes and theme . |  | String
 | `camel.server.mcpServerName` | MCP server name advertised to clients. Defaults to the CamelContext name. |  | String

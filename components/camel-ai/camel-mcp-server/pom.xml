@@ -37,8 +37,6 @@
         <title>MCP Server</title>
         <supportLevel>Preview</supportLevel>
         <failsafe.rerunFailingTestsCount>3</failsafe.rerunFailingTestsCount>
-        <!-- The bundled Keycloak test image is not available for s390x. -->
-        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>

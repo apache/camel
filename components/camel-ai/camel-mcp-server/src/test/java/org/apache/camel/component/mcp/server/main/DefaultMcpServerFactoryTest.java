@@ -16,16 +16,11 @@
  */
 package org.apache.camel.component.mcp.server.main;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.camel.component.mcp.server.McpServerBridge;
 import org.apache.camel.component.mcp.server.McpServerEngine;
 import org.apache.camel.component.mcp.server.stdio.StdioMcpServerEngine;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.MainConfigurationProperties;
-import org.apache.camel.spi.OAuthTokenValidationConfig;
-import org.apache.camel.spi.OAuthTokenValidationFactory;
-import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -61,41 +56,19 @@ class DefaultMcpServerFactoryTest extends CamelTestSupport {
     }
 
     @Test
-    void validatesOAuthProfileBeforeCreatingBridge() {
+    void passesOAuthConfigurationToBridgeForTheVertxEngine() {
         DefaultMcpServerFactory factory = new DefaultMcpServerFactory();
         HttpServerConfigurationProperties server = new MainConfigurationProperties().httpServer();
         server.setMcpEnabled(true);
         server.setMcpOauthProfile("keycloak");
         server.setMcpRequiredScopes("mcp:read,mcp:write");
-        server.setMcpResourceUri("https://mcp.example.test/mcp");
-
-        context.getPropertiesComponent().addInitialProperty(
-                "camel.oauth.keycloak.base-uri", "https://id.example.test/realms/camel");
-        context.getPropertiesComponent().addInitialProperty(
-                "camel.oauth.keycloak.expected-audience", "camel-mcp-server");
-
-        AtomicReference<OAuthTokenValidationConfig> validatedConfig = new AtomicReference<>();
-        OAuthTokenValidationFactory validationFactory = new OAuthTokenValidationFactory() {
-            @Override
-            public OAuthTokenValidationResult validateToken(OAuthTokenValidationConfig config, String token) {
-                return OAuthTokenValidationResult.invalid("not used by this test");
-            }
-
-            @Override
-            public void validateConfiguration(OAuthTokenValidationConfig config) {
-                validatedConfig.set(config);
-            }
-        };
-        context.getRegistry().bind(OAuthTokenValidationFactory.FACTORY, validationFactory);
+        server.withMcpResourceUri("https://mcp.example.test/mcp");
 
         McpServerBridge bridge = (McpServerBridge) factory.newMcpServer(context, server);
 
         assertThat(bridge.getConfiguration().getOauthProfile()).isEqualTo("keycloak");
         assertThat(bridge.getConfiguration().getRequiredScopes()).isEqualTo("mcp:read,mcp:write");
         assertThat(bridge.getConfiguration().getResourceUri()).isEqualTo("https://mcp.example.test/mcp");
-        assertThat(validatedConfig.get()).isNotNull();
-        assertThat(validatedConfig.get().getExpectedIssuer()).isEqualTo("https://id.example.test/realms/camel");
-        assertThat(validatedConfig.get().getExpectedAudiences()).contains("camel-mcp-server");
     }
 
     @Test
@@ -108,6 +81,21 @@ class DefaultMcpServerFactoryTest extends CamelTestSupport {
         assertThatThrownBy(() -> factory.newMcpServer(context, server))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("camel.server.mcp-resource-uri");
+    }
+
+    @Test
+    void rejectsNonRootHttpContextPathWhenOAuthIsConfigured() {
+        DefaultMcpServerFactory factory = new DefaultMcpServerFactory();
+        HttpServerConfigurationProperties server = new MainConfigurationProperties().httpServer();
+        server.setMcpEnabled(true);
+        server.setPath("/api");
+        server.setMcpOauthProfile("keycloak");
+        server.setMcpResourceUri("https://mcp.example.test/mcp");
+
+        assertThatThrownBy(() -> factory.newMcpServer(context, server))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("camel.server.path='/'")
+                .hasMessageContaining("camel.server.mcp-path");
     }
 
     @Test
@@ -130,24 +118,13 @@ class DefaultMcpServerFactoryTest extends CamelTestSupport {
         server.setMcpTransport("stdio");
         server.setMcpOauthProfile("keycloak");
         server.setMcpRequiredScopes("mcp:read");
+        server.setMcpResourceUri("https://mcp.example.test/mcp");
 
-        AtomicReference<OAuthTokenValidationConfig> validatedConfig = new AtomicReference<>();
-        OAuthTokenValidationFactory validationFactory = new OAuthTokenValidationFactory() {
-            @Override
-            public OAuthTokenValidationResult validateToken(OAuthTokenValidationConfig config, String token) {
-                return OAuthTokenValidationResult.invalid("not used by this test");
-            }
+        McpServerBridge bridge = (McpServerBridge) factory.newMcpServer(context, server);
 
-            @Override
-            public void validateConfiguration(OAuthTokenValidationConfig config) {
-                validatedConfig.set(config);
-            }
-        };
-        context.getRegistry().bind(OAuthTokenValidationFactory.FACTORY, validationFactory);
-
-        factory.newMcpServer(context, server);
-
-        assertThat(validatedConfig.get()).isNull();
+        assertThat(bridge.getConfiguration().getOauthProfile()).isNull();
+        assertThat(bridge.getConfiguration().getRequiredScopes()).isNull();
+        assertThat(bridge.getConfiguration().getResourceUri()).isNull();
         assertThat(context.getRegistry().findSingleByType(McpServerEngine.class))
                 .isInstanceOf(StdioMcpServerEngine.class);
     }

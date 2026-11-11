@@ -24,7 +24,8 @@ import java.util.List;
  * Bridge-owned options ({@code tags}, {@code toolTimeout}) are honored on every runtime. Engine-owned options
  * ({@code path}, {@code serverName}, {@code serverTitle}, {@code serverDescription}, {@code serverWebsiteUrl},
  * {@code instructions}, {@code serverIcons}) are consumed only by engines that serve through Camel — native engines
- * (Quarkus, Spring Boot) use their own runtime configuration instead.
+ * (Quarkus, Spring Boot) use their own runtime configuration instead. OAuth options are accepted only by engines that
+ * explicitly support OAuth; configuring them for an unsupported engine fails during bridge initialization.
  *
  * @since 4.22
  */
@@ -223,8 +224,8 @@ public class McpServerConfiguration {
     }
 
     /**
-     * Name of the camel-oauth profile used to authenticate OAuth bearer tokens. Engine-owned: used by the Camel Main
-     * HTTP MCP engine; ignored by stdio and native Spring Boot / Quarkus engines.
+     * Name of the camel-oauth profile used to authenticate OAuth bearer tokens. Supported by the Camel Main HTTP MCP
+     * engine; other engines reject this option unless they explicitly implement OAuth support.
      */
     public String getOauthProfile() {
         return oauthProfile;
@@ -235,8 +236,8 @@ public class McpServerConfiguration {
     }
 
     /**
-     * Comma-separated OAuth scopes required to access the MCP HTTP endpoint. Engine-owned: used by the Camel Main HTTP
-     * MCP engine; ignored by stdio and native Spring Boot / Quarkus engines.
+     * Comma-separated OAuth scopes required to access the MCP HTTP endpoint. Requires an oauthProfile and an engine
+     * that explicitly supports OAuth configuration.
      */
     public String getRequiredScopes() {
         return requiredScopes;
@@ -247,7 +248,8 @@ public class McpServerConfiguration {
     }
 
     /**
-     * Canonical public HTTPS resource identifier used for RFC 9728 metadata by the Camel Main HTTP engine.
+     * Canonical public HTTPS resource identifier used for RFC 9728 metadata. Requires an oauthProfile and an engine
+     * that explicitly supports OAuth configuration.
      */
     public String getResourceUri() {
         return resourceUri;

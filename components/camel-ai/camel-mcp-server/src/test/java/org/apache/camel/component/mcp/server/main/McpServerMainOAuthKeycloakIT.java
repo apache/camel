@@ -45,6 +45,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.ClientResource;
@@ -65,8 +66,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * Real Keycloak integration tests for CAMEL-26356. The test uses Camel's existing Test Infra Keycloak service and
  * Camel's production OAuth token validator; no test validation factory is bound.
  * <p>
- * Run with {@code mvn verify -Pit}. Testcontainers disables this class automatically when Docker is unavailable.
+ * Run with {@code mvn -pl components/camel-ai/camel-mcp-server -Dit.test=McpServerMainOAuthKeycloakIT verify}.
+ * Testcontainers disables this class automatically when Docker is unavailable.
  */
+@DisabledOnOs(architectures = "s390x")
 class McpServerMainOAuthKeycloakIT {
 
     @RegisterExtension
@@ -130,7 +133,11 @@ class McpServerMainOAuthKeycloakIT {
                                                           + ";claims=" + claims
                                                           + ";roles="
                                                           + exchange.getProperty(
-                                                                  McpToolCallContext.SECURITY_PRINCIPAL_ROLES_PROPERTY));
+                                                                  McpToolCallContext.SECURITY_PRINCIPAL_ROLES_PROPERTY)
+                                                          + ";standardValidationResult="
+                                                          + (exchange.getProperty(
+                                                                  McpToolCallContext.OAUTH_TOKEN_VALIDATION_RESULT_PROPERTY)
+                                                             != null));
                         });
             }
         });
@@ -249,7 +256,8 @@ class McpServerMainOAuthKeycloakIT {
                     .contains("mcp:write")
                     .contains("preferred_username=" + USERNAME)
                     .contains("realm_access")
-                    .contains(REALM_ROLE);
+                    .contains(REALM_ROLE)
+                    .contains("standardValidationResult=true");
         } finally {
             client.closeGracefully();
         }
@@ -282,6 +290,7 @@ class McpServerMainOAuthKeycloakIT {
         assertThat(response.statusCode()).isEqualTo(403);
         assertThat(response.headers().firstValue("WWW-Authenticate")).hasValueSatisfying(value -> assertThat(value)
                 .contains("error=\"insufficient_scope\"")
+                .contains("resource_metadata=\"" + METADATA_URI + "\"")
                 .contains("scope=\"mcp:read mcp:write\""));
     }
 

@@ -138,39 +138,8 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     public VertxMcpStreamableServerTransportProvider(
                                                      McpJsonMapper jsonMapper, String path, long sessionKeepAliveIntervalMs,
                                                      long sessionIdleTtlMs, List<String> allowedOrigins) {
-        this(jsonMapper, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs, allowedOrigins, null, null, null);
-    }
-
-    /**
-     * Creates the streamable HTTP transport with optional OAuth authentication and required scopes.
-     */
-    public VertxMcpStreamableServerTransportProvider(
-                                                     McpJsonMapper jsonMapper,
-                                                     String path,
-                                                     long sessionKeepAliveIntervalMs,
-                                                     long sessionIdleTtlMs,
-                                                     List<String> allowedOrigins,
-                                                     CamelContext camelContext,
-                                                     OAuthHttpSecuritySupport oauthSecurity,
-                                                     String requiredScopes) {
         this(jsonMapper, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs, allowedOrigins,
-             camelContext, oauthSecurity, requiredScopes, null, null);
-    }
-
-    /** Creates the transport with RFC 9728 metadata for an OAuth-protected MCP resource. */
-    public VertxMcpStreamableServerTransportProvider(
-                                                     McpJsonMapper jsonMapper,
-                                                     String path,
-                                                     long sessionKeepAliveIntervalMs,
-                                                     long sessionIdleTtlMs,
-                                                     List<String> allowedOrigins,
-                                                     CamelContext camelContext,
-                                                     OAuthHttpSecuritySupport oauthSecurity,
-                                                     String requiredScopes,
-                                                     String resourceUri,
-                                                     String authorizationServerIssuer) {
-        this(jsonMapper, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs, allowedOrigins,
-             camelContext, oauthSecurity, requiredScopes, resourceUri, authorizationServerIssuer, false);
+             null, null, null, null, null, false);
     }
 
     /**
@@ -352,8 +321,12 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                             .toList();
 
                     if (!missingScopes.isEmpty()) {
-                        String challenge = "Bearer error=\"insufficient_scope\", scope=\""
-                                           + String.join(" ", requiredScopes) + "\"";
+                        String challenge = "Bearer error=\"insufficient_scope\"";
+                        if (protectedResourceMetadata != null) {
+                            challenge = protectedResourceMetadata.addToWwwAuthenticate(challenge);
+                        } else {
+                            challenge += ", scope=\"" + String.join(" ", requiredScopes) + "\"";
+                        }
                         ctx.response()
                                 .setStatusCode(403)
                                 .putHeader("Content-Type", "text/plain")
@@ -488,7 +461,8 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             return;
         }
         ManagedSession managed = sessions.get(sessionId);
-        if (managed == null) {
+        if (managed == null || !isOwnedByAuthenticatedSubject(ctx, managed)) {
+            // Do not disclose whether a session exists to a different authenticated subject.
             respondError(connection, ctx, 404, McpSchema.ErrorCodes.INVALID_REQUEST, "Session not found");
             return;
         }
@@ -539,11 +513,20 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
     private void handleInitialize(RoutingContext ctx, Context connection, McpSchema.JSONRPCRequest request)
             throws Exception {
+        OAuthTokenValidationResult oauthResult = ctx.get(VertxMcpServerEngine.TRANSPORT_OAUTH_RESULT_KEY);
+        String subject = oauthResult != null ? oauthResult.getSubject() : null;
+        if (oauthSecurity != null && (subject == null || subject.isBlank())) {
+            // A valid access token without a stable subject cannot safely own a stateful MCP session.
+            respondError(connection, ctx, 403, McpSchema.ErrorCodes.INVALID_REQUEST,
+                    "OAuth token subject is required for MCP sessions");
+            return;
+        }
+
         McpSchema.InitializeRequest initializeRequest
                 = jsonMapper.convertValue(request.params(), new TypeRef<McpSchema.InitializeRequest>() {
                 });
         McpStreamableServerSession.McpStreamableServerSessionInit init = sessionFactory.startSession(initializeRequest);
-        sessions.put(init.session().getId(), new ManagedSession(init.session()));
+        sessions.put(init.session().getId(), new ManagedSession(init.session(), subject));
         McpSchema.InitializeResult initResult = init.initResult().block(INITIALIZATION_TIMEOUT);
         String json = jsonMapper.writeValueAsString(McpSchema.JSONRPCResponse.result(request.id(), initResult));
         connection.runOnContext(v -> ctx.response()
@@ -551,6 +534,15 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                 .putHeader("Content-Type", APPLICATION_JSON)
                 .putHeader(HttpHeaders.MCP_SESSION_ID, init.session().getId())
                 .end(json));
+    }
+
+    private boolean isOwnedByAuthenticatedSubject(RoutingContext ctx, ManagedSession managed) {
+        if (oauthSecurity == null) {
+            return true;
+        }
+        OAuthTokenValidationResult oauthResult = ctx.get(VertxMcpServerEngine.TRANSPORT_OAUTH_RESULT_KEY);
+        String subject = oauthResult != null ? oauthResult.getSubject() : null;
+        return subject != null && subject.equals(managed.subject);
     }
 
     private void handleGet(RoutingContext ctx, Context connection) {
@@ -571,7 +563,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             return;
         }
         ManagedSession managed = sessions.get(sessionId);
-        if (managed == null) {
+        if (managed == null || !isOwnedByAuthenticatedSubject(ctx, managed)) {
             endWithStatus(connection, ctx, 404);
             return;
         }
@@ -605,7 +597,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             return;
         }
         ManagedSession managed = sessions.get(sessionId);
-        if (managed == null) {
+        if (managed == null || !isOwnedByAuthenticatedSubject(ctx, managed)) {
             endWithStatus(connection, ctx, 404);
             return;
         }
@@ -811,11 +803,13 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     private static final class ManagedSession {
 
         private final McpStreamableServerSession session;
+        private final String subject;
         private volatile long lastActivityNanos;
         private final AtomicInteger consecutivePingFailures = new AtomicInteger();
 
-        private ManagedSession(McpStreamableServerSession session) {
+        private ManagedSession(McpStreamableServerSession session, String subject) {
             this.session = session;
+            this.subject = subject;
             touch();
         }
 

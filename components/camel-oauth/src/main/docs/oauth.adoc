@@ -158,6 +158,12 @@ JWT tokens are validated locally with JWKS. The validator verifies the JWS signa
 and `nbf`, and validates `iss` and `aud`. Opaque tokens are validated with RFC 7662 introspection
 using a strict bounded HTTP/JSON implementation.
 
+Scope extraction recognizes both the standard `scope` claim and the `scp` claim used by some
+identity providers. For JWT validation and token introspection, either claim may be a
+space-delimited string or an array of strings. When both claims are present their values are
+combined and duplicates are removed; `OAuthTokenValidationResult.getScopes()` and `hasScope()`
+therefore consider scopes from both claims.
+
 HTTP consumer integrations share the same request contract. The inbound header must use
 `Authorization: Bearer <token>`. The token part must use the RFC 6750 `b64token` character set
 (`A-Z`, `a-z`, `0-9`, `-`, `.`, `_`, `~`, `+`, `/`) with optional trailing `=` padding, and is

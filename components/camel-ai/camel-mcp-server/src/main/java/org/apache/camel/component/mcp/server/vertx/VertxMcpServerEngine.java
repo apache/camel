@@ -128,6 +128,11 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     }
 
     @Override
+    public boolean supportsOAuthConfiguration() {
+        return true;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         VertxPlatformHttpRouter router = lookupRouter();
         jsonMapper = McpJsonDefaults.getMapper();
@@ -234,7 +239,8 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                     roles,
                     oauthSubject,
                     oauthScopes,
-                    oauthClaims);
+                    oauthClaims,
+                    oauthResult);
         }
 
         if (principal != null || oauthResult != null) {
@@ -244,7 +250,8 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                     oauthResult != null ? oauthRoles(oauthResult) : null,
                     oauthSubject,
                     oauthScopes,
-                    oauthClaims);
+                    oauthClaims,
+                    oauthResult);
         }
 
         return McpToolCallContext.EMPTY;
