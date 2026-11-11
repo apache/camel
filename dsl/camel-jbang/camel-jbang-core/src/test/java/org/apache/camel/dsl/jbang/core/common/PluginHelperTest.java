@@ -415,7 +415,7 @@ public class PluginHelperTest {
     @Test
     public void testDefaultPluginConfigPath() {
         Path expected = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
-        assertEquals(expected, PluginHelper.getCustomPluginConfigPath());
+        assertEquals(expected, PluginHelper.resolvePluginConfigPath(null, null));
     }
 
     @Test
@@ -542,6 +542,28 @@ public class PluginHelperTest {
     public void testInvalidEnvVarPathThrowsIllegalState() {
         assertThrows(IllegalStateException.class,
                 () -> PluginHelper.resolvePluginConfigPath(null, "\u0000invalid"));
+    }
+
+    @Test
+    public void testExistingNonJsonFileUsedAsConfig() throws Exception {
+        Path configFile = tempDir.resolve("plugins.conf");
+        Files.writeString(configFile, "{}", StandardOpenOption.CREATE);
+        Path result = PluginHelper.resolvePluginConfigPath(configFile, null);
+        assertEquals(configFile, result);
+    }
+
+    @Test
+    public void testUpperCaseJsonSuffixTreatedAsFile() {
+        Path configFile = tempDir.resolve("PLUGINS.JSON");
+        Path result = PluginHelper.resolvePluginConfigPath(configFile, null);
+        assertEquals(configFile, result);
+    }
+
+    @Test
+    public void testNonExistingNonJsonPathTreatedAsDirectory() {
+        Path dirPath = tempDir.resolve("custom-config-dir");
+        Path result = PluginHelper.resolvePluginConfigPath(dirPath, null);
+        assertEquals(dirPath.resolve(PluginHelper.PLUGIN_CONFIG), result);
     }
 
     private void writeConfig(JsonObject pluginEntry) throws Exception {

@@ -17,6 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -46,7 +47,7 @@ abstract class PluginBaseCommand extends CamelCommand {
         if (pluginConfig != null) {
             try {
                 return Path.of(pluginConfig);
-            } catch (java.nio.file.InvalidPathException e) {
+            } catch (InvalidPathException e) {
                 throw new IllegalStateException(
                         "Invalid path in --plugin-config option: " + pluginConfig, e);
             }

@@ -285,7 +285,8 @@ camel plugin get --plugin-config /path/to/my-plugins.json
 camel plugin add kubernetes --plugin-config /path/to/my-plugins.json
 ----
 
-The path can point to a JSON file or to a directory (in which case the default filename `.camel-jbang-plugins.json` is resolved inside it).
+The path can point to a JSON file, an existing file with any name, or a directory (in which case the default filename `.camel-jbang-plugins.json` is resolved inside it).
+A path that does not exist and does not end with `.json` is treated as a directory and created on first save.
 
 Alternatively, set the `CAMEL_CLI_PLUGIN_CONFIG` environment variable:
 
@@ -297,7 +298,7 @@ camel plugin get
 
 The resolution order is: `--plugin-config` option > `CAMEL_CLI_PLUGIN_CONFIG` environment variable > default `~/.camel-jbang-plugins.json`.
 
-NOTE: The `--plugin-config` option only applies to the `plugin` subcommands (`add`, `get`, `delete`).
+NOTE: The `--plugin-config` option only applies to the `plugin` subcommands (`add`, `get`, `delete`, `list`).
 Running a plugin's own command (e.g. `camel kubernetes ...`) discovers plugins only through the environment variable or the default file.
 So a plugin added with `camel plugin add --plugin-config X` is not seen unless `CAMEL_CLI_PLUGIN_CONFIG` is also set.
 
