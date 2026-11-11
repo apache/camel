@@ -32,7 +32,10 @@ import picocli.CommandLine;
 abstract class PluginBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--plugin-config" },
-                        description = "Path to a custom plugin configuration file or directory")
+                        description = "Path to a custom plugin configuration file or directory. "
+                                      + "Only applies to the plugin subcommands; "
+                                      + "for plugin commands themselves (e.g. 'camel kubernetes'), "
+                                      + "set CAMEL_CLI_PLUGIN_CONFIG instead.")
     String pluginConfig;
 
     protected PluginBaseCommand(CamelJBangMain main) {
@@ -40,7 +43,15 @@ abstract class PluginBaseCommand extends CamelCommand {
     }
 
     private Path pluginConfigPath() {
-        return pluginConfig != null ? Path.of(pluginConfig) : null;
+        if (pluginConfig != null) {
+            try {
+                return Path.of(pluginConfig);
+            } catch (java.nio.file.InvalidPathException e) {
+                throw new IllegalStateException(
+                        "Invalid path in --plugin-config option: " + pluginConfig, e);
+            }
+        }
+        return null;
     }
 
     JsonObject loadConfig() {

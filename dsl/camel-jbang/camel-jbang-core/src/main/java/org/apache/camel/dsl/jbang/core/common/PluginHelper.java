@@ -66,7 +66,7 @@ import picocli.CommandLine;
  */
 public final class PluginHelper {
 
-    public static final String PLUGIN_CONFIG_FILE = ".camel-jbang-plugins.json";
+    public static final String PLUGIN_CONFIG = ".camel-jbang-plugins.json";
     public static final String PLUGIN_CONFIG_ENV = "CAMEL_CLI_PLUGIN_CONFIG";
 
     public static final String PLUGIN_SERVICE_DIR = "META-INF/services/org/apache/camel/camel-jbang-plugin/";
@@ -97,26 +97,38 @@ public final class PluginHelper {
      * <ol>
      * <li>A path set programmatically via method argument</li>
      * <li>The {@value #PLUGIN_CONFIG_ENV} environment variable</li>
-     * <li>The default {@value #PLUGIN_CONFIG_FILE} in the user home directory</li>
+     * <li>The default {@value #PLUGIN_CONFIG} in the user home directory</li>
      * </ol>
      */
     public static Path getCustomPluginConfigPath(Path configPath) {
+        return resolvePluginConfigPath(configPath, System.getenv(PLUGIN_CONFIG_ENV));
+    }
+
+    static Path resolvePluginConfigPath(Path configPath, String envValue) {
         Path pluginConfigPath;
         if (configPath != null) {
             pluginConfigPath = configPath;
         } else {
-            String env = System.getenv(PLUGIN_CONFIG_ENV);
-            if (env != null && !env.isBlank()) {
-                pluginConfigPath = Path.of(env);
+            if (envValue != null && !envValue.isBlank()) {
+                try {
+                    pluginConfigPath = Path.of(envValue);
+                } catch (java.nio.file.InvalidPathException e) {
+                    throw new IllegalStateException(
+                            "Invalid path in " + PLUGIN_CONFIG_ENV + " environment variable: " + envValue, e);
+                }
             } else {
-                return CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG_FILE);
+                return CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG);
             }
         }
 
-        if (pluginConfigPath.getFileName().toString().endsWith(".json")) {
+        if (Files.isDirectory(pluginConfigPath)) {
+            return pluginConfigPath.resolve(PLUGIN_CONFIG);
+        }
+        Path fileName = pluginConfigPath.getFileName();
+        if (fileName != null && fileName.toString().toLowerCase().endsWith(".json")) {
             return pluginConfigPath;
         }
-        return pluginConfigPath.resolve(PLUGIN_CONFIG_FILE);
+        return pluginConfigPath.resolve(PLUGIN_CONFIG);
     }
 
     /**
