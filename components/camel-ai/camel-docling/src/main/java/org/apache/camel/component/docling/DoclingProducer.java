@@ -196,13 +196,19 @@ public class DoclingProducer extends DefaultProducer {
                     .asyncPollInterval(Duration.ofMillis(configuration.getAsyncPollInterval()))
                     .asyncTimeout(Duration.ofMillis(configuration.getAsyncTimeout()));
 
-            // Apply API key authentication if configured
+            // Apply the authentication configured on the endpoint
             if (configuration.getAuthenticationScheme() == AuthenticationScheme.API_KEY
                     && configuration.getAuthenticationToken() != null) {
                 builder.apiKey(configuration.getAuthenticationToken());
             }
 
-            doclingServeApi = builder.build();
+            if (configuration.getAuthenticationScheme() == AuthenticationScheme.BEARER
+                    && configuration.getAuthenticationToken() != null) {
+                // the client has no bearer token option, so the Authorization header is added by this subclass
+                doclingServeApi = new BearerTokenDoclingServeClient(builder, configuration.getAuthenticationToken());
+            } else {
+                doclingServeApi = builder.build();
+            }
 
             LOG.info("DoclingProducer configured to use docling-serve API at: {} with authentication: {} (async mode: {})",
                     configuration.getDoclingServeUrl(),
@@ -220,6 +226,10 @@ public class DoclingProducer extends DefaultProducer {
             doclingServeApi = null;
             LOG.info("DoclingServeApi reference cleared");
         }
+    }
+
+    DoclingServeApi getDoclingServeApi() {
+        return doclingServeApi;
     }
 
     private void resolveOAuthToken() throws Exception {
