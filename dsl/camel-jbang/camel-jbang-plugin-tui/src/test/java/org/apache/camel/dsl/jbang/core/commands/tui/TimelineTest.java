@@ -117,6 +117,17 @@ class TimelineTest {
     }
 
     @Test
+    void theSecretsOfTheEndpointsAnExchangeCalledAreMasked() {
+        timeline.merge("1234", new TimelineJson(S0, 1)
+                .exchange("A", "orders", 0, 20, "completed", null, null,
+                        "ftp://localhost:2121/courier?password=RAW(admin)@5")
+                .json(), false);
+
+        Timeline.Kept a = timeline.exchanges("1234", S0, S0).get(0);
+        assertThat(a.calls()).containsExactly(new Timeline.Call("ftp://localhost:2121/courier?password=xxxxxx", 5));
+    }
+
+    @Test
     void theIntegrationRecordsTheFaultsOfTheChaosRulesAndTheRoutesTheyHadDown() throws Exception {
         JsonObject json = new TimelineJson(S0 + 2, 3).route("orders", "completed", 0, 1)
                 .route("orders", "down", 1, 1).route("orders", "down", 2, 1).json();

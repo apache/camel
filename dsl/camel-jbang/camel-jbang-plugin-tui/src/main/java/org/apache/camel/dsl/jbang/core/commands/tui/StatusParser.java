@@ -34,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -271,7 +272,7 @@ final class StatusParser {
                 ri.description = rj.getString("description");
                 ri.source = rj.getString("source");
                 ri.group = rj.getString("group");
-                ri.from = rj.getString("from");
+                ri.from = masked(rj, "from");
                 ri.state = rj.getString("state");
                 ri.supportsSuspension = rj.getBooleanOrDefault("supportsSuspension", false);
                 ri.uptime = rj.getString("uptime");
@@ -328,7 +329,7 @@ final class StatusParser {
                         pi.processor = pj.getString("processor");
                         pi.source = pj.getString("source");
                         pi.level = pj.getIntegerOrDefault("level", 0);
-                        pi.uri = pj.getString("uri");
+                        pi.uri = masked(pj, "uri");
                         // the body types the step has been reached with, and their kinds (CAMEL-25750)
                         pi.bodyTypes = stringList(pj.get("bodyTypes"));
                         pi.bodyKinds = stringList(pj.get("bodyKinds"));
@@ -466,7 +467,7 @@ final class StatusParser {
                     JsonObject cj = (JsonObject) c;
                     ConsumerInfo ci = new ConsumerInfo();
                     ci.id = cj.getString("id");
-                    ci.uri = cj.getString("uri");
+                    ci.uri = masked(cj, "uri");
                     ci.state = cj.getString("state");
                     // the consumers console says clazz (class in older versions)
                     ci.className = cj.getStringOrDefault("clazz", cj.getString("class"));
@@ -543,7 +544,7 @@ final class StatusParser {
                 for (Object p : producerList) {
                     JsonObject pj = (JsonObject) p;
                     ProducerInfo pi = new ProducerInfo();
-                    pi.uri = pj.getString("uri");
+                    pi.uri = masked(pj, "uri");
                     pi.state = pj.getString("state");
                     pi.className = pj.getStringOrDefault("clazz", pj.getString("class"));
                     pi.routeId = pj.getString("routeId");
@@ -585,7 +586,7 @@ final class StatusParser {
                     RouteControllerInfo rc = new RouteControllerInfo();
                     rc.routeId = rj.getString("routeId");
                     rc.status = rj.getString("status");
-                    rc.uri = rj.getString("uri");
+                    rc.uri = masked(rj, "uri");
                     rc.supervising = rj.getString("supervising");
                     rc.attempts = rj.getLongOrDefault("attempts", 0);
                     rc.lastAttempt = rj.getLongOrDefault("lastAttempt", 0);
@@ -609,7 +610,7 @@ final class StatusParser {
                 for (Object e : endpointList) {
                     JsonObject ej = (JsonObject) e;
                     EndpointInfo ep = new EndpointInfo();
-                    ep.uri = ej.getString("uri");
+                    ep.uri = masked(ej, "uri");
                     ep.direction = ej.getString("direction");
                     ep.routeId = ej.getString("routeId");
                     ep.hits = TuiHelper.objToLong(ej.get("hits"));
@@ -648,8 +649,8 @@ final class StatusParser {
                     si.direction = sj.getString("direction");
                     si.hosted = Boolean.TRUE.equals(sj.get("hosted"));
                     si.protocol = sj.getString("protocol");
-                    si.serviceUrl = sj.getString("serviceUrl");
-                    si.endpointUri = sj.getString("endpointUri");
+                    si.serviceUrl = masked(sj, "serviceUrl");
+                    si.endpointUri = masked(sj, "endpointUri");
                     si.routeId = sj.getString("routeId");
                     si.hits = TuiHelper.objToLong(sj.get("hits"));
                     info.services.add(si);
@@ -797,7 +798,7 @@ final class StatusParser {
                     JsonObject rj = (JsonObject) r;
                     HttpEndpointInfo ep = new HttpEndpointInfo();
                     ep.fromRest = true;
-                    ep.url = rj.getString("url");
+                    ep.url = masked(rj, "url");
                     ep.method = rj.getString("method");
                     if (ep.method != null) {
                         ep.method = ep.method.toUpperCase(Locale.ENGLISH);
@@ -836,6 +837,16 @@ final class StatusParser {
         }
 
         fixRestUrlPorts(info);
+    }
+
+    /**
+     * An endpoint URI or URL of the status, with its secrets masked as Camel masks them in its own logs
+     * (password=xxxxxx): the integration gives some as configured (the endpoints and services it has, with
+     * password=RAW(admin)), and the screens are not only for the developer of the integration.
+     */
+    static String masked(JsonObject json, String key) {
+        String value = json.getString(key);
+        return value != null ? URISupport.sanitizeUri(value) : null;
     }
 
     /**
@@ -1030,7 +1041,7 @@ final class StatusParser {
             } else {
                 entry.direction = entry.remoteEndpoint ? "*-->" : "*-> ";
             }
-            String uri = json.getString("endpointUri");
+            String uri = masked(json, "endpointUri");
             if (uri != null) {
                 entry.processor = indent + "from[" + uri + "]";
             } else {
@@ -1138,7 +1149,7 @@ final class StatusParser {
         }
         String indent = "  ".repeat(entry.nodeLevel);
         if (entry.first) {
-            String uri = json.getString("endpointUri");
+            String uri = masked(json, "endpointUri");
             if (uri != null) {
                 entry.processor = indent + "from[" + uri + "]";
             } else {
@@ -1318,7 +1329,7 @@ final class StatusParser {
             ep.fromRest = false;
             ep.management = management;
             ep.server = phpObj.getString("server");
-            ep.url = ej.getString("url");
+            ep.url = masked(ej, "url");
             ep.path = ej.getString("path");
             ep.method = ej.getString("verbs");
             ep.consumes = ej.getString("consumes");
@@ -1423,7 +1434,7 @@ final class StatusParser {
         for (Object c : consumers) {
             JsonObject cj = (JsonObject) c;
             String routeId = cj.getString("routeId");
-            String uri = cj.getString("uri");
+            String uri = masked(cj, "uri");
             JsonArray workers = (JsonArray) cj.get("workers");
             if (workers != null) {
                 for (Object w : workers) {
@@ -1538,8 +1549,8 @@ final class StatusParser {
             if (elapsed != null) {
                 ei.elapsed = elapsed;
             }
-            ei.endpointUri = ej.getString("endpointUri");
-            ei.fromEndpointUri = ej.getString("fromEndpointUri");
+            ei.endpointUri = masked(ej, "endpointUri");
+            ei.fromEndpointUri = masked(ej, "fromEndpointUri");
             JsonObject ex = (JsonObject) ej.get("exception");
             if (ex != null) {
                 ei.exceptionType = ex.getString("type");
