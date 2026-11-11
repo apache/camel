@@ -92,8 +92,9 @@ jobs:
           # in-repo dependencies) from the Apache Snapshots repo instead of building them here (see
           # the "Build launcher with native camel.exe" step below). That assumption breaks when a PR
           # changes camel-jbang-core or camel-jbang-run (which camel-jbang-core depends on)
-          # itself, since the new code isn't on the snapshot repo yet.
-          if echo "$CHANGED" | grep -qE '^dsl/camel-jbang/camel-jbang-(core|run)/'; then
+          # itself, since the new code isn't on the snapshot repo yet. The plugins embedded in the
+          # launcher are compiled against camel-jbang-core, so they are rebuilt with it.
+          if echo "$CHANGED" | grep -qE '^dsl/camel-jbang/camel-jbang-(core|run|plugin-(generate|test|kubernetes|mcp|tui|validate))/'; then
             camel_launcher_upstream=true
           fi
 
@@ -187,11 +188,13 @@ jobs:
             exit 1
           fi
           echo "Launcher upstream snapshots for ${VERSION} are available."
-      - name: Install camel-jbang-run and camel-jbang-core from source
-        # camel-jbang-core and camel-jbang-run are in-repo dependencies of the launcher but
-        # aren't in the -pl list below, so they normally resolve as the current version's
-        # snapshot from Apache Snapshots. When this PR changes one of them, that snapshot doesn't
-        # have the new code yet, so build and install just these two modules from source instead.
+      - name: Install camel-jbang-run, camel-jbang-core and the embedded plugins from source
+        # camel-jbang-core, camel-jbang-run and the plugins embedded in the launcher are in-repo
+        # dependencies of the launcher but aren't in the -pl list below, so they normally resolve as
+        # the current version's snapshot from Apache Snapshots. When this PR changes one of them,
+        # that snapshot doesn't have the new code yet, so build and install these modules from
+        # source instead. The plugins are compiled against camel-jbang-core, so a change of its
+        # Plugin API needs them rebuilt too (an old plugin snapshot fails with AbstractMethodError).
         #
         # No -am: camel-jbang-core depends on camel-catalog, which aggregates all ~460
         # components (camel-allcomponents) so the catalog can enumerate them. -am here would
@@ -205,7 +208,8 @@ jobs:
           MAVEN_ARGS: -Dcamel.skipDocSamples=true
         run: |
           mvn -B -P apache-snapshots -ntp \
-            -pl dsl/camel-jbang/camel-jbang-run,dsl/camel-jbang/camel-jbang-core install -DskipTests
+            -pl dsl/camel-jbang/camel-jbang-run,dsl/camel-jbang/camel-jbang-core,dsl/camel-jbang/camel-jbang-plugin-generate,dsl/camel-jbang/camel-jbang-plugin-test,dsl/camel-jbang/camel-jbang-plugin-kubernetes,dsl/camel-jbang/camel-jbang-plugin-mcp,dsl/camel-jbang/camel-jbang-plugin-tui,dsl/camel-jbang/camel-jbang-plugin-validate \
+            install -DskipTests
       - uses: ./.github/actions/setup-llvm-mingw
       - name: Install the launcher's in-repo build plugins
         # camel-repackager-maven-plugin builds the launcher's self-executing JAR. It is not in the
