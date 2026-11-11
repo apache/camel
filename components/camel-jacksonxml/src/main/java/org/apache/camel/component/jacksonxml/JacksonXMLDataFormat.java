@@ -145,7 +145,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
     }
 
     /**
-     * Use a custom Jackson mapper and and unmarshal type
+     * Use a custom Jackson mapper and unmarshal type
      *
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type

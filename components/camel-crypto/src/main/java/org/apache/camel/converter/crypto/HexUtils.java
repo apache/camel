@@ -61,7 +61,7 @@ public final class HexUtils {
 
     /**
      * Convert a hex string into an array of bytes. The string is expected to consist entirely of valid Hex characters
-     * i.e. 0123456789abcdefABCDEF. The array is calculated by traversing the string from from left to right, ignoring
+     * i.e. 0123456789abcdefABCDEF. The array is calculated by traversing the string from left to right, ignoring
      * whitespace. Every 2 valid hex chars will constitute a new byte for the array. If the string is uneven then it the
      * last byte will be padded with a '0'.
      *

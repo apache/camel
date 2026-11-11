@@ -42,7 +42,7 @@ class HttpMethodHelper {
             }
         }
 
-        // try to get the httpMethod parameter from the the query string in the uri
+        // try to get the httpMethod parameter from the query string in the uri
         int queryIndex = endpoint.getEndpointUri().indexOf('?');
         if (queryIndex != -1) {
             String queryString = endpoint.getEndpointUri().substring(queryIndex + 1);
