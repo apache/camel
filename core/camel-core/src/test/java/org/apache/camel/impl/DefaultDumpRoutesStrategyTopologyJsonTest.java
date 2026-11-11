@@ -80,6 +80,8 @@ public class DefaultDumpRoutesStrategyTopologyJsonTest extends ContextTestSuppor
         assertThat(edge.getString("toRouteId")).isEqualTo("consumer");
         assertThat(edge.getString("endpoint")).isEqualTo("direct:linked");
         assertThat(edge.getString("connectionType")).isEqualTo("internal");
+        // CAMEL-26823: the producer waits for the consumer, as direct runs it before the producer goes on
+        assertThat(edge.get("reply")).isEqualTo(Boolean.TRUE);
     }
 
     @Test

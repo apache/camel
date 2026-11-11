@@ -91,26 +91,19 @@ public final class SensitiveUtils {
                     "knownhostsfile",
                     "knownhostsuri",
                     "mongodbpassword",
-                    "oauthclientid",
                     "oauthclientsecret",
                     "oauthtoken",
-                    "oauthtokenurl",
                     "p12filename",
                     "passphrase",
                     "passphrasebyte",
                     "password",
-                    "personalaccesstoken",
                     "postmanapikey",
                     "privatekey",
-                    "privatekeyfile",
                     "privatekeyname",
-                    "privatekeypassword",
                     "proxyauthpassword",
                     "proxyauthusername",
                     "proxypassword",
-                    "proxyuser",
                     "proxyusername",
-                    "publickeyid",
                     "publishkey",
                     "queueownerawsaccountid",
                     "realm",
@@ -143,7 +136,6 @@ public final class SensitiveUtils {
                     "user",
                     "userauthenticationcredentials",
                     "username",
-                    "userpassword",
                     "verificationcode",
                     "webhookverifytoken",
                     "zookeeperpassword"
@@ -206,26 +198,19 @@ public final class SensitiveUtils {
                                                     + "|\\Qknownhostsfile\\E"
                                                     + "|\\Qknownhostsuri\\E"
                                                     + "|\\Qmongodbpassword\\E"
-                                                    + "|\\Qoauthclientid\\E"
                                                     + "|\\Qoauthclientsecret\\E"
                                                     + "|\\Qoauthtoken\\E"
-                                                    + "|\\Qoauthtokenurl\\E"
                                                     + "|\\Qp12filename\\E"
                                                     + "|\\Qpassphrase\\E"
                                                     + "|\\Qpassphrasebyte\\E"
                                                     + "|\\Qpassword\\E"
-                                                    + "|\\Qpersonalaccesstoken\\E"
                                                     + "|\\Qpostmanapikey\\E"
                                                     + "|\\Qprivatekey\\E"
-                                                    + "|\\Qprivatekeyfile\\E"
                                                     + "|\\Qprivatekeyname\\E"
-                                                    + "|\\Qprivatekeypassword\\E"
                                                     + "|\\Qproxyauthpassword\\E"
                                                     + "|\\Qproxyauthusername\\E"
                                                     + "|\\Qproxypassword\\E"
-                                                    + "|\\Qproxyuser\\E"
                                                     + "|\\Qproxyusername\\E"
-                                                    + "|\\Qpublickeyid\\E"
                                                     + "|\\Qpublishkey\\E"
                                                     + "|\\Qqueueownerawsaccountid\\E"
                                                     + "|\\Qrealm\\E"
@@ -258,11 +243,10 @@ public final class SensitiveUtils {
                                                     + "|\\Quser\\E"
                                                     + "|\\Quserauthenticationcredentials\\E"
                                                     + "|\\Qusername\\E"
-                                                    + "|\\Quserpassword\\E"
                                                     + "|\\Qverificationcode\\E"
                                                     + "|\\Qwebhookverifytoken\\E"
                                                     + "|\\Qzookeeperpassword\\E"
-    // SENSITIVE-PATTERN: END
+                                                    // SENSITIVE-PATTERN: END
     ;
 
     private SensitiveUtils() {

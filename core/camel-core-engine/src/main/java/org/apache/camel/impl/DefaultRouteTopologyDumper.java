@@ -28,6 +28,8 @@ import java.util.TreeMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Route;
 import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.Model;
@@ -35,12 +37,16 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
+import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.URISupport;
 
 @JdkService(RouteTopologyDumper.FACTORY)
@@ -48,6 +54,8 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
 
     private static final Set<String> TRIGGER_SCHEMES = Set.of("timer", "quartz", "cron", "scheduler");
     private static final Set<String> INTERNAL_SCHEMES = Set.of("direct", "seda", "vertx", "disruptor", "disruptor-vm");
+    // the schemes whose target runs before the route goes on, whatever the exchange pattern
+    private static final Set<String> WAITING_SCHEMES = Set.of("direct", "kamelet");
 
     @Override
     public TopologyResult dumpTopology(CamelContext context) {
@@ -88,14 +96,23 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
                 Collection<EndpointRequiredDefinition> sends
                         = ProcessorDefinitionHelper.filterTypeInOutputs(List.of(output), EndpointRequiredDefinition.class);
                 for (EndpointRequiredDefinition erd : sends) {
+                    // an error path ends there: what it sends to is no answer the route waits for
+                    boolean reply = !onException && waitsForAnswer(context, rd, (ProcessorDefinition<?>) erd,
+                            erd.getEndpointUri());
                     addEdges(context, edges, inputUriToRouteIds, rd.getRouteId(), erd.getEndpointUri(), kind, via,
-                            handling);
+                            handling, reply);
+                }
+                // a toD or a wire tap to an endpoint the route names, not one it computes
+                for (ToDynamicDefinition td : staticDynamicSends(output)) {
+                    boolean reply = !onException && waitsForAnswer(context, rd, td, td.getUri());
+                    addEdges(context, edges, inputUriToRouteIds, rd.getRouteId(), td.getUri(), kind, via, handling,
+                            reply);
                 }
             }
             if (handlesFailures && eh instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
                 // a dead letter channel handles the failure: the message ends at the dead letter uri
                 addEdges(context, edges, inputUriToRouteIds, rd.getRouteId(), dlc.getDeadLetterUri(), EDGE_ERROR,
-                        VIA_ERROR_HANDLER, HANDLING_HANDLED);
+                        VIA_ERROR_HANDLER, HANDLING_HANDLED, false);
             }
         }
 
@@ -107,16 +124,67 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
 
     private static void addEdges(
             CamelContext context, List<TopologyEdge> edges, Map<String, List<String>> inputUriToRouteIds,
-            String fromRouteId, String uri, String kind, String via, String handling) {
+            String fromRouteId, String uri, String kind, String via, String handling, boolean reply) {
         String outputUri = normalizeUri(context, uri);
         List<String> targetRouteIds = inputUriToRouteIds.get(outputUri);
         if (targetRouteIds != null) {
             String scheme = extractScheme(outputUri);
             String connType = INTERNAL_SCHEMES.contains(scheme) ? "internal" : "external";
             for (String targetId : targetRouteIds) {
-                edges.add(new TopologyEdge(fromRouteId, targetId, outputUri, connType, kind, via, handling));
+                edges.add(new TopologyEdge(fromRouteId, targetId, outputUri, connType, kind, via, handling, reply));
             }
         }
+    }
+
+    /**
+     * Whether the route waits for the answer of what it sends to, as the send processor decides the exchange pattern:
+     * the exchangePattern of the endpoint uri, else the pattern of the send (to with pattern InOut, a wire tap is
+     * InOnly), else the pattern of the message the route consumed (InOut from platform-http, InOnly from a timer).
+     * Direct always runs the target before the route goes on.
+     */
+    static boolean waitsForAnswer(CamelContext context, RouteDefinition route, ProcessorDefinition<?> send, String uri) {
+        if (uri == null || send instanceof WireTapDefinition) {
+            // a wire tap sends a copy on another thread: the route goes on without its answer
+            return false;
+        }
+        if (WAITING_SCHEMES.contains(extractScheme(uri))) {
+            return true;
+        }
+        ExchangePattern pattern = null;
+        try {
+            pattern = EndpointHelper.resolveExchangePatternFromUrl(context.resolvePropertyPlaceholders(uri));
+        } catch (Exception e) {
+            // a uri that cannot be resolved says nothing
+        }
+        if (pattern == null) {
+            String sendPattern = send instanceof SendDefinition<?> sd ? sd.getPattern()
+                    : send instanceof ToDynamicDefinition td ? td.getPattern() : null;
+            if (sendPattern != null) {
+                pattern = context.getTypeConverter().tryConvertTo(ExchangePattern.class,
+                        context.resolvePropertyPlaceholders(sendPattern));
+            }
+        }
+        if (pattern == null) {
+            Route running = route.getRouteId() != null ? context.getRoute(route.getRouteId()) : null;
+            pattern = running != null && running.getEndpoint() != null ? running.getEndpoint().getExchangePattern() : null;
+        }
+        return pattern == ExchangePattern.InOut;
+    }
+
+    /**
+     * The toD and wire tap sends below a processor whose uri has no expression: the route names the endpoint (a wire
+     * tap to seda:audit), as a to does.
+     */
+    private static List<ToDynamicDefinition> staticDynamicSends(ProcessorDefinition<?> output) {
+        List<ToDynamicDefinition> answer = new ArrayList<>();
+        for (ToDynamicDefinition td : ProcessorDefinitionHelper.filterTypeInOutputs(List.of(output),
+                ToDynamicDefinition.class)) {
+            String uri = td.getUri();
+            if (uri != null && !uri.contains("${") && !uri.contains("$simple{")) {
+                answer.add(td);
+            }
+        }
+        return answer;
     }
 
     /**
@@ -172,6 +240,9 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
             for (EndpointRequiredDefinition erd : outputs) {
                 allOutputUris.add(URISupport.stripQuery(erd.getEndpointUri()));
             }
+            for (ProcessorDefinition<?> output : rd.getOutputs()) {
+                staticDynamicSends(output).forEach(td -> allOutputUris.add(URISupport.stripQuery(td.getUri())));
+            }
         }
 
         List<TopologyExternalEndpoint> externalEndpoints = new ArrayList<>();
@@ -193,9 +264,14 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
                     = ProcessorDefinitionHelper.filterTypeInOutputs(
                             rd.getOutputs(), EndpointRequiredDefinition.class);
 
+            List<String> outputUris = new ArrayList<>();
+            outputs.forEach(erd -> outputUris.add(erd.getEndpointUri()));
+            for (ProcessorDefinition<?> output : rd.getOutputs()) {
+                staticDynamicSends(output).forEach(td -> outputUris.add(td.getUri()));
+            }
             int outIdx = 0;
-            for (EndpointRequiredDefinition erd : outputs) {
-                String outputUri = URISupport.stripQuery(erd.getEndpointUri());
+            for (String uri : outputUris) {
+                String outputUri = URISupport.stripQuery(uri);
                 String outputScheme = extractScheme(outputUri);
                 if (isRemoteScheme(outputScheme, schemeRemoteMap) && !inputUriToRouteIds.containsKey(outputUri)) {
                     String dedupeKey = routeId + "|" + outputUri;

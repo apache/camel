@@ -256,6 +256,18 @@ in its model, so clearing them on the route saved little memory at the cost of m
 Applications that called `Route.clearRouteModel()` directly can remove the call. Implementations of the `Route` interface
 that override `clearRouteModel()` can remove the override.
 
+=== camel-core - the route topology says whether a route waits for the answer, and has the edges of a wire tap
+
+Each edge of the route topology (the `route-topology` developer console, the topology JSON of the dump routes strategy
+and `RouteTopologyDumper`) now says whether the route waits for the answer of the route it sends to: `reply` is `true`
+for a send to `direct`, and for a send that is InOut, as a request-reply over a JMS queue is
+(`exchangePattern=InOut`). The topology JSON writes `reply` only when it is `true`, and the text output of the console
+marks a request-reply with `request-reply`. The `RouteTopologyDumper.TopologyEdge` record has the new `reply`
+component; its seven-argument constructor is kept and creates an edge without it.
+
+A `wireTap` or a `toD` to an endpoint the route names, rather than one it computes with an expression, is now an edge
+too (a wire tap never waits for the answer), and an external endpoint when no route consumes from it.
+
 === camel-management - LastExchangeCompletedExchangeId is updated at most once per millisecond
 
 The JMX attribute `LastExchangeCompletedExchangeId`, of the `CamelContext`, route and processor MBeans, is now updated
