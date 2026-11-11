@@ -64,14 +64,15 @@ final class RuntimeLinks {
                 }
                 String from = e.getString("fromRouteId");
                 String to = e.getString("toRouteId");
-                if (from == null || to == null || from.equals(to)) {
+                String endpoint = e.getString("endpoint");
+                if (from == null || to == null || endpoint == null || from.equals(to)) {
                     continue;
                 }
                 // a hand-off unless the route waits for the answer; an edge the TUI adds for the sends the runtime saw
                 // (a recipient list) waits, as a call
                 String how = "error".equals(e.getString("kind")) ? "error"
                         : Boolean.TRUE.equals(e.get("reply")) || Boolean.TRUE.equals(e.get("observed")) ? "call" : "async";
-                answer.add(new Link(from, to, e.getString("endpoint"), how));
+                answer.add(new Link(from, to, endpoint, how));
             }
         }
         return new RuntimeLinks(answer);

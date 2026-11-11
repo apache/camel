@@ -74,9 +74,8 @@ class RuntimeLinksTest {
         e.put("toRouteId", to);
         e.put("endpoint", endpoint);
         e.put("kind", kind);
-        if (reply) {
-            e.put("reply", true);
-        }
+        // the runtime writes reply on every edge
+        e.put("reply", reply);
         return e;
     }
 
@@ -121,6 +120,15 @@ class RuntimeLinksTest {
         About.Model m = RuntimeLinks.of(topology()).apply(sources(), info);
 
         assertThat(m.in()).extracting(About.In::label).containsExactly("file:orders", "jms:queue:orders  +5 from outside");
+    }
+
+    @Test
+    void anEdgeWithoutAnEndpointIsLeftOut() {
+        JsonObject topology = topology();
+        JsonArray edges = (JsonArray) topology.get("edges");
+        edges.add(edge("shipping", "invoicing", null, "call", true));
+
+        assertThat(RuntimeLinks.of(topology).howReached()).doesNotContainEntry("invoicing", "call");
     }
 
     @Test
