@@ -259,6 +259,72 @@ public class OpenFgaAuthorizer {
         return permitted;
     }
 
+    /** Captures this check once; running the returned action submits the SDK future without waiting for its result. */
+    public OpenFgaAsyncExecutor.Action prepareCheckAsync(Exchange exchange, OpenFgaAsyncExecutor executor) {
+        clearDecisionHeaders(exchange);
+        String resolvedUser = resolveUser(exchange);
+        String resolvedRelation = resolveRelation(exchange);
+        String resolvedObject = resolveObject(exchange);
+        if (resolvedUser == null || resolvedRelation == null || resolvedObject == null) {
+            return () -> CompletableFuture.completedFuture(false);
+        }
+        List<ClientTupleKey> contextual = resolveContextualTuples(exchange);
+        if (contextual == null) {
+            return () -> CompletableFuture.completedFuture(false);
+        }
+        ClientCheckRequest request
+                = new ClientCheckRequest().user(resolvedUser).relation(resolvedRelation)._object(resolvedObject);
+        if (!contextual.isEmpty()) {
+            request.contextualTuples(contextual);
+        }
+        if (conditionContext != null && !conditionContext.isEmpty()) {
+            request.context(OpenFgaAsyncExecutor.snapshotValue(conditionContext));
+        }
+        var options = checkOptions();
+        return () -> awaitAsync(executor, exchange, "check " + resolvedRelation + " on " + resolvedObject,
+                () -> client.check(request, options)).handle((response, error) -> {
+                    if (error != null) {
+                        Throwable failure
+                                = error instanceof java.util.concurrent.CompletionException && error.getCause() != null
+                                        ? error.getCause() : error;
+                        if (failOpen && isDecisionPointUnavailable(failure)) {
+                            setDecision(exchange, true);
+                            exchange.getMessage().setHeader(OpenFgaConstants.FAILED_OPEN, true);
+                            return true;
+                        }
+                        throw new java.util.concurrent.CompletionException(failure);
+                    }
+                    boolean allowed = Boolean.TRUE.equals(response.getAllowed());
+                    setDecision(exchange, allowed);
+                    if (!allowed) {
+                        exchange.getMessage().setHeader(OpenFgaConstants.DENY_REASON, "denied");
+                    }
+                    return allowed;
+                });
+    }
+
+    <T> CompletableFuture<T> awaitAsync(OpenFgaAsyncExecutor executor, Exchange exchange, String what, CallSupplier<T> call) {
+        return awaitAsync(executor, exchange, what, call, awaitTimeoutMillis);
+    }
+
+    <T> CompletableFuture<T> awaitAsync(
+            OpenFgaAsyncExecutor executor, Exchange exchange, String what, CallSupplier<T> call, long timeout) {
+        try {
+            return executor.bound(call.get(), timeout).handle((response, failure) -> {
+                if (failure != null) {
+                    Throwable cause = failure instanceof java.util.concurrent.CompletionException && failure.getCause() != null
+                            ? failure.getCause() : failure;
+                    throw new java.util.concurrent.CompletionException(
+                            new OpenFgaEvaluationException("OpenFGA failed to " + what, exchange, cause));
+                }
+                return response;
+            });
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(
+                    new OpenFgaEvaluationException("Could not build the OpenFGA request to " + what, exchange, e));
+        }
+    }
+
     /**
      * Whether a failure means OpenFGA could not answer, which is the only thing {@code failOpen} is for.
      * <p/>

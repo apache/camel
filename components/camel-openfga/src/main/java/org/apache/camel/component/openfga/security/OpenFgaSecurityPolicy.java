@@ -70,6 +70,51 @@ import org.slf4j.LoggerFactory;
 @Configurer(metadataOnly = true)
 public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
 
+    @Metadata(label = "advanced", defaultValue = "false")
+    private boolean asyncProcessing;
+    @Metadata(label = "advanced", defaultValue = "4")
+    private int asyncPoolSize = 4;
+    @Metadata(label = "advanced", defaultValue = "100")
+    private int asyncQueueSize = 100;
+    @Metadata(label = "advanced", defaultValue = "30000")
+    private long asyncTimeout = 30000;
+
+    public boolean isAsyncProcessing() {
+        return asyncProcessing;
+    }
+
+    /** Offload authorization with bounded managed resources instead of blocking the routing thread. */
+    public void setAsyncProcessing(boolean asyncProcessing) {
+        this.asyncProcessing = asyncProcessing;
+    }
+
+    public int getAsyncPoolSize() {
+        return asyncPoolSize;
+    }
+
+    /** Fixed SDK submission worker count; workers do not await responses. Must be positive. */
+    public void setAsyncPoolSize(int asyncPoolSize) {
+        this.asyncPoolSize = asyncPoolSize;
+    }
+
+    public int getAsyncQueueSize() {
+        return asyncQueueSize;
+    }
+
+    /** Maximum queued authorization submissions; saturation fails closed rather than running on the routing thread. */
+    public void setAsyncQueueSize(int asyncQueueSize) {
+        this.asyncQueueSize = asyncQueueSize;
+    }
+
+    public long getAsyncTimeout() {
+        return asyncTimeout;
+    }
+
+    /** Total queued and running authorization deadline in milliseconds; must be positive. */
+    public void setAsyncTimeout(long asyncTimeout) {
+        this.asyncTimeout = asyncTimeout;
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(OpenFgaSecurityPolicy.class);
 
     // the defaults of the endpoint options this policy shares, so that the two cannot drift apart
@@ -281,6 +326,10 @@ public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
         return new OpenFgaSecurityProcessor(processor, this);
     }
 
+    org.apache.camel.CamelContext getCamelContext() {
+        return camelContext;
+    }
+
     OpenFgaAuthorizer getAuthorizer() {
         return authorizer;
     }
@@ -315,6 +364,10 @@ public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
      */
     OpenFgaConfiguration toConfiguration() {
         OpenFgaConfiguration answer = new OpenFgaConfiguration();
+        answer.setAsyncProcessing(asyncProcessing);
+        answer.setAsyncPoolSize(asyncPoolSize);
+        answer.setAsyncQueueSize(asyncQueueSize);
+        answer.setAsyncTimeout(asyncTimeout);
         answer.setApiUrl(apiUrl);
         answer.setStoreId(storeId);
         answer.setAuthorizationModelId(authorizationModelId);

@@ -419,6 +419,78 @@ public interface OpenfgaComponentBuilderFactory {
     
         
         /**
+         * Fixed SDK submission worker count; workers do not await responses.
+         * Must be positive.
+         *
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         *
+         * Default: 4
+         * Group: advanced
+         *
+         * @param asyncPoolSize the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder asyncPoolSize(int asyncPoolSize) {
+            doSetProperty("asyncPoolSize", asyncPoolSize);
+            return this;
+        }
+
+
+        /**
+         * Offload authorization with bounded managed resources instead of
+         * blocking the routing thread.
+         *
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         *
+         * Default: false
+         * Group: advanced
+         *
+         * @param asyncProcessing the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder asyncProcessing(boolean asyncProcessing) {
+            doSetProperty("asyncProcessing", asyncProcessing);
+            return this;
+        }
+
+
+        /**
+         * Maximum queued authorization submissions; saturation fails closed
+         * rather than running on the routing thread.
+         *
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         *
+         * Default: 100
+         * Group: advanced
+         *
+         * @param asyncQueueSize the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder asyncQueueSize(int asyncQueueSize) {
+            doSetProperty("asyncQueueSize", asyncQueueSize);
+            return this;
+        }
+
+
+        /**
+         * Total queued and running authorization deadline in milliseconds; must
+         * be positive.
+         *
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         *
+         * Default: 30000
+         * Group: advanced
+         *
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder asyncTimeout(long asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+
+
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -776,6 +848,10 @@ public interface OpenfgaComponentBuilderFactory {
             case "type": getOrCreateConfiguration((OpenFgaComponent) component).setType((java.lang.String) value); return true;
             case "user": getOrCreateConfiguration((OpenFgaComponent) component).setUser((java.lang.String) value); return true;
             case "userFilters": getOrCreateConfiguration((OpenFgaComponent) component).setUserFilters((java.lang.String) value); return true;
+            case "asyncPoolSize": getOrCreateConfiguration((OpenFgaComponent) component).setAsyncPoolSize((int) value); return true;
+            case "asyncProcessing": getOrCreateConfiguration((OpenFgaComponent) component).setAsyncProcessing((boolean) value); return true;
+            case "asyncQueueSize": getOrCreateConfiguration((OpenFgaComponent) component).setAsyncQueueSize((int) value); return true;
+            case "asyncTimeout": getOrCreateConfiguration((OpenFgaComponent) component).setAsyncTimeout((long) value); return true;
             case "autowiredEnabled": ((OpenFgaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectTimeout": getOrCreateConfiguration((OpenFgaComponent) component).setConnectTimeout((long) value); return true;
             case "maxParallelRequests": getOrCreateConfiguration((OpenFgaComponent) component).setMaxParallelRequests((int) value); return true;

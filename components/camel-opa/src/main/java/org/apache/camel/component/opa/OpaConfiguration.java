@@ -26,6 +26,51 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class OpaConfiguration implements Cloneable {
 
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean asyncProcessing;
+    @UriParam(label = "advanced", defaultValue = "4")
+    private int asyncPoolSize = 4;
+    @UriParam(label = "advanced", defaultValue = "100")
+    private int asyncQueueSize = 100;
+    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
+    private long asyncTimeout = 30000;
+
+    public boolean isAsyncProcessing() {
+        return asyncProcessing;
+    }
+
+    /** Offload authorization with bounded managed resources instead of blocking the routing thread. */
+    public void setAsyncProcessing(boolean asyncProcessing) {
+        this.asyncProcessing = asyncProcessing;
+    }
+
+    public int getAsyncPoolSize() {
+        return asyncPoolSize;
+    }
+
+    /** Fixed blocking authorization worker count; must be positive. */
+    public void setAsyncPoolSize(int asyncPoolSize) {
+        this.asyncPoolSize = asyncPoolSize;
+    }
+
+    public int getAsyncQueueSize() {
+        return asyncQueueSize;
+    }
+
+    /** Maximum queued authorization submissions; saturation fails closed rather than running on the routing thread. */
+    public void setAsyncQueueSize(int asyncQueueSize) {
+        this.asyncQueueSize = asyncQueueSize;
+    }
+
+    public long getAsyncTimeout() {
+        return asyncTimeout;
+    }
+
+    /** Total queued and running authorization deadline in milliseconds; must be positive. */
+    public void setAsyncTimeout(long asyncTimeout) {
+        this.asyncTimeout = asyncTimeout;
+    }
+
     static final String DEFAULT_SERVER_URL = "http://localhost:8181";
 
     @UriParam(defaultValue = "http://localhost:8181")

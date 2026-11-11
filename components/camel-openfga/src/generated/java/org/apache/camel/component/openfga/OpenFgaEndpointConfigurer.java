@@ -32,6 +32,14 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "apiTokenIssuer": target.getConfiguration().setApiTokenIssuer(property(camelContext, java.lang.String.class, value)); return true;
         case "apiurl":
         case "apiUrl": target.getConfiguration().setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "asyncpoolsize":
+        case "asyncPoolSize": target.getConfiguration().setAsyncPoolSize(property(camelContext, int.class, value)); return true;
+        case "asyncprocessing":
+        case "asyncProcessing": target.getConfiguration().setAsyncProcessing(property(camelContext, boolean.class, value)); return true;
+        case "asyncqueuesize":
+        case "asyncQueueSize": target.getConfiguration().setAsyncQueueSize(property(camelContext, int.class, value)); return true;
+        case "asynctimeout":
+        case "asyncTimeout": target.getConfiguration().setAsyncTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "authorizationmodelid":
         case "authorizationModelId": target.getConfiguration().setAuthorizationModelId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientid":
@@ -95,6 +103,14 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "apiTokenIssuer": return java.lang.String.class;
         case "apiurl":
         case "apiUrl": return java.lang.String.class;
+        case "asyncpoolsize":
+        case "asyncPoolSize": return int.class;
+        case "asyncprocessing":
+        case "asyncProcessing": return boolean.class;
+        case "asyncqueuesize":
+        case "asyncQueueSize": return int.class;
+        case "asynctimeout":
+        case "asyncTimeout": return long.class;
         case "authorizationmodelid":
         case "authorizationModelId": return java.lang.String.class;
         case "clientid":
@@ -154,6 +170,14 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "apiTokenIssuer": return target.getConfiguration().getApiTokenIssuer();
         case "apiurl":
         case "apiUrl": return target.getConfiguration().getApiUrl();
+        case "asyncpoolsize":
+        case "asyncPoolSize": return target.getConfiguration().getAsyncPoolSize();
+        case "asyncprocessing":
+        case "asyncProcessing": return target.getConfiguration().isAsyncProcessing();
+        case "asyncqueuesize":
+        case "asyncQueueSize": return target.getConfiguration().getAsyncQueueSize();
+        case "asynctimeout":
+        case "asyncTimeout": return target.getConfiguration().getAsyncTimeout();
         case "authorizationmodelid":
         case "authorizationModelId": return target.getConfiguration().getAuthorizationModelId();
         case "clientid":
