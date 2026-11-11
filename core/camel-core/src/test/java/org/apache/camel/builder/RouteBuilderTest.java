@@ -57,7 +57,7 @@ public class RouteBuilderTest extends TestSupport {
     protected DelegateProcessor interceptor2;
 
     protected CamelContext createCamelContext() {
-        // disable stream cache otherwise to much hassle in this unit test to
+        // disable stream cache otherwise too much hassle in this unit test to
         // filter the stream cache
         // in all the assertion codes
         DefaultCamelContext ctx = new DefaultCamelContext();
