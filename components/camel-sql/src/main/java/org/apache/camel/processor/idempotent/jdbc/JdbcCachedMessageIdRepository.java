@@ -107,6 +107,11 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
         // waited for its row lock may have cached it meanwhile. This narrows the window in which the cache keeps a
         // deleted key; it does not close it, as that add's afterCommit can still run after this line.
         cache.remove(key);
+        // in a transaction of the caller the row is deleted when it commits: until then another thread still sees the
+        // row and caches the key (its add is a duplicate), so the key is removed from the cache again after the commit
+        if (removed) {
+            evictAfterCommit(key);
+        }
         return removed;
     }
 
@@ -117,8 +122,9 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
         hitCount.set(0);
         missCount.set(0);
         super.clear();
-        // and again after the delete, as in remove
+        // and again after the delete, and after the commit of a transaction of the caller, as in remove
         cache.clear();
+        evictAfterCommit(null);
     }
 
     /**
@@ -145,6 +151,37 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
                         && (key == null || pending.key.equals(key))) {
                     pending.cancelled = true;
                 }
+            }
+        }
+    }
+
+    /**
+     * Removes the key (or every key when the key is null) from the cache again once the transaction of the caller that
+     * deleted its row commits. Without a transaction with synchronization the delete has committed already. When the
+     * transaction of the caller is of another transaction manager (another DataSource, JMS), the delete committed in a
+     * transaction of its own already, and this only costs a cache miss.
+     */
+    private void evictAfterCommit(String key) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new EvictAfterCommit(this, key));
+        }
+    }
+
+    private static final class EvictAfterCommit implements TransactionSynchronization {
+        private final JdbcCachedMessageIdRepository repository;
+        private final String key;
+
+        private EvictAfterCommit(JdbcCachedMessageIdRepository repository, String key) {
+            this.repository = repository;
+            this.key = key;
+        }
+
+        @Override
+        public void afterCommit() {
+            if (key == null) {
+                repository.cache.clear();
+            } else {
+                repository.cache.remove(key);
             }
         }
     }
