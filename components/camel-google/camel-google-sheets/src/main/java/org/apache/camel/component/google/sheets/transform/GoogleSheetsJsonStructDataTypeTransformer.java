@@ -262,10 +262,6 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
     }
 
     /**
-     * Converts message body to list of Json objects. Supports different message body types such as List, String,
-     * InputStream.
-     */
-    /**
      * A JSON object whose values property is an array of arrays is a ValueRange.
      */
     @SuppressWarnings("unchecked")
@@ -353,6 +349,10 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
         return jsonBeans;
     }
 
+    /**
+     * Converts message body to list of Json objects. Supports different message body types such as List, String,
+     * InputStream.
+     */
     private static List<String> bodyAsJsonBeans(Message message) throws InvalidPayloadException, DeserializationException {
         if (message.getBody() == null) {
             return Collections.emptyList();
