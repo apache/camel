@@ -31,12 +31,12 @@ import org.apache.camel.util.URISupport;
  * check probes the server's {@code /healthz} endpoint so that an unavailable decision point is visible before traffic
  * starts failing, rather than only in the error logs afterwards.
  */
-public class OpenFgaProducerHealthCheck extends AbstractHealthCheck {
+public class OpenFgaProducerHealthCheck extends AbstractHealthCheck implements AutoCloseable {
 
     private final String apiUrl;
     private final String apiToken;
     private final String storeId;
-    private final SSLContext sslContext;
+    private final OpenFgaHealthProbe probe;
 
     public OpenFgaProducerHealthCheck(String apiUrl, String apiToken, String storeId, String id,
                                       SSLContext sslContext) {
@@ -46,11 +46,16 @@ public class OpenFgaProducerHealthCheck extends AbstractHealthCheck {
         this.apiUrl = apiUrl;
         this.apiToken = apiToken;
         this.storeId = storeId;
-        this.sslContext = sslContext;
+        this.probe = new OpenFgaHealthProbe(sslContext);
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        OpenFgaHealthProbe.probe(builder, apiUrl, apiToken, storeId, sslContext);
+        probe.probe(builder, apiUrl, apiToken, storeId);
+    }
+
+    @Override
+    public void close() {
+        probe.close();
     }
 }
