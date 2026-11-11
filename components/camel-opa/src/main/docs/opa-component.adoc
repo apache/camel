@@ -682,3 +682,61 @@ where the policy is evaluated in-process and there is no server to probe.
 * The component decides; it does not authenticate. Establish *who* the caller is first — with SPIFFE workload
   identity, a verified JWT, or the surrounding transport's authentication — and hand the policy that identity
   through `includeProperties` rather than through a header, as <<authorizing-an-identity>> explains.
+
+== Asynchronous authorization processing
+
+Set `asyncProcessing=true` to release the invoking routing thread while the
+component performs authorization or identity work. It defaults to false, preserving
+existing scheduling. Synchronous `ProducerTemplate` calls remain usable and wait
+for the same result and exception contract.
+
+OPA REST and WASM evaluation can block in the SDK or while borrowing a WASM instance. With asynchronous processing these calls run on bounded Camel-managed workers.
+
+[source,java]
+----
+.to("opa:authz/allow?asyncProcessing=true&asyncPoolSize=4&asyncQueueSize=100&asyncTimeout=30000")
+----
+
+`asyncPoolSize` defaults to 4 and `asyncQueueSize` to 100; both must be positive.
+The component also caps queued and running invocations at their sum.
+Saturation rejects immediately
+instead of running authorization on the routing thread. Executors are managed by
+Camel and reused for the lifetime of the producer or wrapped policy processor;
+none is created per exchange.
+
+The authorization worker limit is enforced even with Camel's virtual-thread pool
+factory. Cancelled blocking calls retain capacity until their SDK invocation
+returns. Separate bounded completion workers deliver routing callbacks so a
+callback cannot occupy the deadline scheduler. Each asynchronous producer or
+wrapped policy uses one deadline scheduler and up to `max(2, asyncPoolSize)`
+completion workers, capped by the admitted-invocation limit. Completion callbacks
+must follow Camel's nonblocking callback contract.
+
+`asyncTimeout` defaults to 30000 milliseconds and must be positive. It covers
+queueing, SDK invocation and authorization completion, not downstream route
+processing. Expiry, rejection and shutdown fail closed and do not activate
+`failOpen`. Backend availability errors still follow the
+existing configured failed-open rules. Stopping cancels admitted work and returns
+one callback per invocation. A late result cannot replace an interrupted or
+cancelled invocation with an allow.
+
+Inputs are captured per invocation before queueing, including Map/List container
+snapshots. Snapshot processing does not complete the original exchange's unit of
+work. Other body objects retain normal Camel object ownership rules. Policy
+wrappers resume their guarded processors through Camel's asynchronous routing
+engine after authorization succeeds.
+
+Cancelling the future returned by a component producer's `processAsync` cancels
+its admitted invocation. Interrupting that producer's synchronous facade also
+cancels it and preserves the interrupt flag. Camel's own `ProducerTemplate` wait
+or future cancellation has its framework lifecycle semantics and may stop waiting
+without immediately cancelling the SDK request; the component deadline and stop
+handling remain in effect. Cancelling an SDK future or interrupting a worker is a
+best-effort transport cancellation: an SDK that ignores cancellation can keep its
+bounded worker occupied until it returns, but cannot commit a late exchange result.
+
+The OPA security policy supports the same four options, for example
+`opaPolicy.setAsyncProcessing(true)`. Existing `connectionTimeout` and
+`requestTimeout` still govern REST requests; `borrowTimeout` still bounds a WASM
+pool borrow. `asyncTimeout` adds a whole-invocation cap, including any retries or
+batch fallback, so configure it to accommodate the backend budget you require.

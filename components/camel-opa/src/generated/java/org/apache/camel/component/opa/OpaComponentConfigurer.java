@@ -33,6 +33,14 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowkey":
         case "allowKey": getOrCreateConfiguration(target).setAllowKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "asyncpoolsize":
+        case "asyncPoolSize": getOrCreateConfiguration(target).setAsyncPoolSize(property(camelContext, int.class, value)); return true;
+        case "asyncprocessing":
+        case "asyncProcessing": getOrCreateConfiguration(target).setAsyncProcessing(property(camelContext, boolean.class, value)); return true;
+        case "asyncqueuesize":
+        case "asyncQueueSize": getOrCreateConfiguration(target).setAsyncQueueSize(property(camelContext, int.class, value)); return true;
+        case "asynctimeout":
+        case "asyncTimeout": getOrCreateConfiguration(target).setAsyncTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "batch": getOrCreateConfiguration(target).setBatch(property(camelContext, boolean.class, value)); return true;
@@ -88,6 +96,14 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowkey":
         case "allowKey": return java.lang.String.class;
+        case "asyncpoolsize":
+        case "asyncPoolSize": return int.class;
+        case "asyncprocessing":
+        case "asyncProcessing": return boolean.class;
+        case "asyncqueuesize":
+        case "asyncQueueSize": return int.class;
+        case "asynctimeout":
+        case "asyncTimeout": return long.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "batch": return boolean.class;
@@ -139,6 +155,14 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowkey":
         case "allowKey": return getOrCreateConfiguration(target).getAllowKey();
+        case "asyncpoolsize":
+        case "asyncPoolSize": return getOrCreateConfiguration(target).getAsyncPoolSize();
+        case "asyncprocessing":
+        case "asyncProcessing": return getOrCreateConfiguration(target).isAsyncProcessing();
+        case "asyncqueuesize":
+        case "asyncQueueSize": return getOrCreateConfiguration(target).getAsyncQueueSize();
+        case "asynctimeout":
+        case "asyncTimeout": return getOrCreateConfiguration(target).getAsyncTimeout();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "batch": return getOrCreateConfiguration(target).isBatch();

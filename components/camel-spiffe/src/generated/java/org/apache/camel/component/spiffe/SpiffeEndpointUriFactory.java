@@ -24,8 +24,12 @@ public class SpiffeEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(12);
         props.add("allowOperationHeader");
+        props.add("asyncPoolSize");
+        props.add("asyncProcessing");
+        props.add("asyncQueueSize");
+        props.add("asyncTimeout");
         props.add("audience");
         props.add("label");
         props.add("lazyStartProducer");

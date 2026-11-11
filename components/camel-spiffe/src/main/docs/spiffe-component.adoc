@@ -347,3 +347,59 @@ include::spring-boot:partial$starter.adoc[]
   cannot assert an identity by setting a header - and it requires mutual TLS, failing closed when the peer presented
   no verified certificate. The verified id it publishes is the `CamelSpiffePeerId` exchange *property*, never a header,
   so it likewise cannot be injected by an inbound message.
+
+== Asynchronous authorization processing
+
+Set `asyncProcessing=true` to release the invoking routing thread while the
+component performs authorization or identity work. It defaults to false, preserving
+existing scheduling. Synchronous `ProducerTemplate` calls remain usable and wait
+for the same result and exception contract.
+
+SPIFFE Workload API calls can block. With asynchronous processing the producer offloads them to bounded Camel-managed workers. The mutual TLS security policy remains inline: its verified-certificate comparison has no remote I/O and already preserves asynchronous downstream processing.
+
+[source,java]
+----
+.to("spiffe:validate?operation=validateJwtSvid&audience=orders&asyncProcessing=true&asyncPoolSize=4&asyncQueueSize=100&asyncTimeout=30000")
+----
+
+`asyncPoolSize` defaults to 4 and `asyncQueueSize` to 100; both must be positive.
+The component also caps queued and running invocations at their sum.
+Saturation rejects immediately
+instead of running authorization on the routing thread. Executors are managed by
+Camel and reused for the lifetime of the producer or wrapped policy processor;
+none is created per exchange.
+
+The authorization worker limit is enforced even with Camel's virtual-thread pool
+factory. Cancelled blocking calls retain capacity until their SDK invocation
+returns. Separate bounded completion workers deliver routing callbacks so a
+callback cannot occupy the deadline scheduler. Each asynchronous producer or
+wrapped policy uses one deadline scheduler and up to `max(2, asyncPoolSize)`
+completion workers, capped by the admitted-invocation limit. Completion callbacks
+must follow Camel's nonblocking callback contract.
+
+`asyncTimeout` defaults to 30000 milliseconds and must be positive. It covers
+queueing, SDK invocation and authorization completion, not downstream route
+processing. Expiry, rejection and shutdown fail the operation rather than
+publishing a successful validation. Stopping cancels admitted work and returns
+one callback per invocation. A late result cannot replace an interrupted or
+cancelled invocation with an allow.
+
+Inputs are captured per invocation before queueing, including Map/List container
+snapshots. Snapshot processing does not complete the original exchange's unit of
+work. Other body objects retain normal Camel object ownership rules. Policy
+wrappers resume their guarded processors through Camel's asynchronous routing
+engine after authorization succeeds.
+
+Cancelling the future returned by a component producer's `processAsync` cancels
+its admitted invocation. Interrupting that producer's synchronous facade also
+cancels it and preserves the interrupt flag. Camel's own `ProducerTemplate` wait
+or future cancellation has its framework lifecycle semantics and may stop waiting
+without immediately cancelling the SDK request; the component deadline and stop
+handling remain in effect. Cancelling an SDK future or interrupting a worker is a
+best-effort transport cancellation: an SDK that ignores cancellation can keep its
+bounded worker occupied until it returns, but cannot commit a late exchange result.
+
+Configured Workload API client transport deadlines continue to apply.
+The validation operation captures its configured audiences and presented token
+before queueing; asynchronous processing does not change which identity or
+operation is trusted.

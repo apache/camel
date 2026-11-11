@@ -17,17 +17,20 @@
 package org.apache.camel.component.spiffe;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 import io.spiffe.exception.JwtSvidException;
 import io.spiffe.svid.jwtsvid.JwtSvid;
 import io.spiffe.svid.x509svid.X509Svid;
 import io.spiffe.workloadapi.WorkloadApiClient;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 
-public class SpiffeProducer extends DefaultProducer {
+public class SpiffeProducer extends DefaultAsyncProducer {
+    private SpiffeAsyncExecutor asyncExecutor;
 
     public SpiffeProducer(final SpiffeEndpoint endpoint) {
         super(endpoint);
@@ -39,7 +42,103 @@ public class SpiffeProducer extends DefaultProducer {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        SpiffeConfiguration configuration = getEndpoint().getConfiguration();
+        if (configuration.isAsyncProcessing()) {
+            asyncExecutor = new SpiffeAsyncExecutor(
+                    getEndpoint().getCamelContext(), this,
+                    configuration.getAsyncPoolSize(), configuration.getAsyncQueueSize(), configuration.getAsyncTimeout());
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (asyncExecutor != null) {
+            asyncExecutor.close();
+            asyncExecutor = null;
+        }
+        super.doStop();
+    }
+
+    @Override
     public void process(Exchange exchange) throws Exception {
+        if (!getEndpoint().getConfiguration().isAsyncProcessing()) {
+            processBlocking(exchange);
+            return;
+        }
+        SpiffeAsyncExecutor executor = asyncExecutor;
+        try {
+            super.process(exchange);
+        } catch (InterruptedException e) {
+            if (executor != null) {
+                executor.cancel(exchange);
+            }
+            Thread.currentThread().interrupt();
+            throw e;
+        }
+        if (exchange.getException() instanceof InterruptedException && executor != null) {
+            executor.cancel(exchange, exchange.getException());
+        }
+        if (exchange.getException() != null) {
+            throw exchange.getException();
+        }
+    }
+
+    @Override
+    public java.util.concurrent.CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        return SpiffeAsyncExecutor.processFuture(exchange, this, asyncExecutor);
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        if (!getEndpoint().getConfiguration().isAsyncProcessing()) {
+            try {
+                processBlocking(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+            callback.done(true);
+            return true;
+        }
+        SpiffeAsyncExecutor executor = asyncExecutor;
+        if (executor == null) {
+            exchange.setException(new java.util.concurrent.CancellationException("Authorization producer is not started"));
+            callback.done(true);
+            return true;
+        }
+        return executor.process(exchange, callback, this::prepareAsync);
+    }
+
+    private SpiffeAsyncExecutor.Action prepareAsync(Exchange snapshot) throws Exception {
+        WorkloadApiClient client = getEndpoint().getWorkloadApiClient();
+        SpiffeOperation operation = determineOperation(snapshot);
+        if (operation == SpiffeOperation.validateJwtSvid) {
+            String token = resolveToken(snapshot);
+            String[] audiences = resolveConfiguredAudiences();
+            return () -> {
+                applyValidatedSvid(client, snapshot, token, audiences);
+                return CompletableFuture.completedFuture(null);
+            };
+        }
+        if (operation == SpiffeOperation.fetchJwtSvid) {
+            String[] audiences = resolveAudiences(snapshot);
+            return () -> {
+                fetchJwtSvid(client, snapshot, audiences);
+                return CompletableFuture.completedFuture(null);
+            };
+        }
+        if (operation != SpiffeOperation.fetchX509Svid) {
+            throw new IllegalArgumentException("Unsupported operation " + operation);
+        }
+        SpiffeX509Response response = getEndpoint().getConfiguration().getX509Response();
+        return () -> {
+            fetchX509Svid(client, snapshot, response);
+            return CompletableFuture.completedFuture(null);
+        };
+    }
+
+    private void processBlocking(Exchange exchange) throws Exception {
         final WorkloadApiClient client = getEndpoint().getWorkloadApiClient();
         switch (determineOperation(exchange)) {
             case fetchX509Svid -> fetchX509Svid(client, exchange);
@@ -50,12 +149,16 @@ public class SpiffeProducer extends DefaultProducer {
     }
 
     private void fetchX509Svid(WorkloadApiClient client, Exchange exchange) throws Exception {
+        fetchX509Svid(client, exchange, getEndpoint().getConfiguration().getX509Response());
+    }
+
+    private void fetchX509Svid(WorkloadApiClient client, Exchange exchange, SpiffeX509Response response) throws Exception {
         X509Svid svid = client.fetchX509Context().getDefaultSvid();
         Message message = getMessageForResponse(exchange);
         // the identity is always available through the headers, so a route that only needs it can avoid the key
         message.setHeader(SpiffeConstants.SPIFFE_ID, svid.getSpiffeId().toString());
         message.setHeader(SpiffeConstants.EXPIRY, svid.getLeaf().getNotAfter());
-        switch (getEndpoint().getConfiguration().getX509Response()) {
+        switch (response) {
             // the full SVID carries the private key; the chain does not; id leaves the body untouched
             case svid -> message.setBody(svid);
             case chain -> message.setBody(svid.getChain());
@@ -68,7 +171,10 @@ public class SpiffeProducer extends DefaultProducer {
     }
 
     private void fetchJwtSvid(WorkloadApiClient client, Exchange exchange) throws Exception {
-        String[] audiences = resolveAudiences(exchange);
+        fetchJwtSvid(client, exchange, resolveAudiences(exchange));
+    }
+
+    private void fetchJwtSvid(WorkloadApiClient client, Exchange exchange, String[] audiences) throws Exception {
         JwtSvid svid = audiences.length > 1
                 ? client.fetchJwtSvid(audiences[0], Arrays.copyOfRange(audiences, 1, audiences.length))
                 : client.fetchJwtSvid(audiences[0]);
@@ -79,6 +185,10 @@ public class SpiffeProducer extends DefaultProducer {
     }
 
     private void validateJwtSvid(WorkloadApiClient client, Exchange exchange) throws Exception {
+        applyValidatedSvid(client, exchange, resolveToken(exchange), resolveConfiguredAudiences());
+    }
+
+    private String resolveToken(Exchange exchange) {
         String token = exchange.getIn().getHeader(SpiffeConstants.TOKEN, String.class);
         if (ObjectHelper.isEmpty(token)) {
             // a JWT-SVID is presented over HTTP as "Authorization: Bearer <token>", so an HTTP route can validate it
@@ -94,10 +204,15 @@ public class SpiffeProducer extends DefaultProducer {
                     "A JWT-SVID token is required for validateJwtSvid (set the CamelSpiffeToken header, an"
                                                + " Authorization: Bearer header, or the message body)");
         }
+        return token;
+    }
+
+    private void applyValidatedSvid(WorkloadApiClient client, Exchange exchange, String token, String[] audiences)
+            throws Exception {
         // the audience is the check here, not a parameter: it is what binds the token to THIS workload, so it
         // comes from the configuration only. Honouring CamelSpiffeAudience would let a caller validate a token
         // minted for someone else against an audience of their choosing.
-        JwtSvid svid = validateAgainstAnyAudience(client, token, resolveConfiguredAudiences());
+        JwtSvid svid = validateAgainstAnyAudience(client, token, audiences);
         Message message = getMessageForResponse(exchange);
         message.setBody(svid);
         message.setHeader(SpiffeConstants.SPIFFE_ID, svid.getSpiffeId().toString());

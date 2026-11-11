@@ -133,6 +133,77 @@ public interface SpiffeComponentBuilderFactory {
     
         
         /**
+         * Fixed blocking authorization worker count; must be positive.
+         *
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         *
+         * Default: 4
+         * Group: advanced
+         *
+         * @param asyncPoolSize the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder asyncPoolSize(int asyncPoolSize) {
+            doSetProperty("asyncPoolSize", asyncPoolSize);
+            return this;
+        }
+
+
+        /**
+         * Offload authorization with bounded managed resources instead of
+         * blocking the routing thread.
+         *
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         *
+         * Default: false
+         * Group: advanced
+         *
+         * @param asyncProcessing the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder asyncProcessing(boolean asyncProcessing) {
+            doSetProperty("asyncProcessing", asyncProcessing);
+            return this;
+        }
+
+
+        /**
+         * Maximum queued authorization submissions; saturation fails closed
+         * rather than running on the routing thread.
+         *
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         *
+         * Default: 100
+         * Group: advanced
+         *
+         * @param asyncQueueSize the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder asyncQueueSize(int asyncQueueSize) {
+            doSetProperty("asyncQueueSize", asyncQueueSize);
+            return this;
+        }
+
+
+        /**
+         * Total queued and running authorization deadline in milliseconds; must
+         * be positive.
+         *
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         *
+         * Default: 30000
+         * Group: advanced
+         *
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder asyncTimeout(long asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+
+
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -257,6 +328,10 @@ public interface SpiffeComponentBuilderFactory {
             case "configuration": ((SpiffeComponent) component).setConfiguration((org.apache.camel.component.spiffe.SpiffeConfiguration) value); return true;
             case "lazyStartProducer": ((SpiffeComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((SpiffeComponent) component).setOperation((org.apache.camel.component.spiffe.SpiffeOperation) value); return true;
+            case "asyncPoolSize": getOrCreateConfiguration((SpiffeComponent) component).setAsyncPoolSize((int) value); return true;
+            case "asyncProcessing": getOrCreateConfiguration((SpiffeComponent) component).setAsyncProcessing((boolean) value); return true;
+            case "asyncQueueSize": getOrCreateConfiguration((SpiffeComponent) component).setAsyncQueueSize((int) value); return true;
+            case "asyncTimeout": getOrCreateConfiguration((SpiffeComponent) component).setAsyncTimeout((long) value); return true;
             case "autowiredEnabled": ((SpiffeComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "workloadApiClient": getOrCreateConfiguration((SpiffeComponent) component).setWorkloadApiClient((io.spiffe.workloadapi.WorkloadApiClient) value); return true;
             case "allowOperationHeader": getOrCreateConfiguration((SpiffeComponent) component).setAllowOperationHeader((boolean) value); return true;

@@ -292,6 +292,77 @@ public interface OpaComponentBuilderFactory {
     
         
         /**
+         * Fixed blocking authorization worker count; must be positive.
+         *
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         *
+         * Default: 4
+         * Group: advanced
+         *
+         * @param asyncPoolSize the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder asyncPoolSize(int asyncPoolSize) {
+            doSetProperty("asyncPoolSize", asyncPoolSize);
+            return this;
+        }
+
+
+        /**
+         * Offload authorization with bounded managed resources instead of
+         * blocking the routing thread.
+         *
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         *
+         * Default: false
+         * Group: advanced
+         *
+         * @param asyncProcessing the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder asyncProcessing(boolean asyncProcessing) {
+            doSetProperty("asyncProcessing", asyncProcessing);
+            return this;
+        }
+
+
+        /**
+         * Maximum queued authorization submissions; saturation fails closed
+         * rather than running on the routing thread.
+         *
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         *
+         * Default: 100
+         * Group: advanced
+         *
+         * @param asyncQueueSize the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder asyncQueueSize(int asyncQueueSize) {
+            doSetProperty("asyncQueueSize", asyncQueueSize);
+            return this;
+        }
+
+
+        /**
+         * Total queued and running authorization deadline in milliseconds; must
+         * be positive.
+         *
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         *
+         * Default: 30000
+         * Group: advanced
+         *
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder asyncTimeout(long asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+
+
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -559,6 +630,10 @@ public interface OpaComponentBuilderFactory {
             case "lazyStartProducer": ((OpaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "policyBundle": getOrCreateConfiguration((OpaComponent) component).setPolicyBundle((java.lang.String) value); return true;
             case "serverUrl": getOrCreateConfiguration((OpaComponent) component).setServerUrl((java.lang.String) value); return true;
+            case "asyncPoolSize": getOrCreateConfiguration((OpaComponent) component).setAsyncPoolSize((int) value); return true;
+            case "asyncProcessing": getOrCreateConfiguration((OpaComponent) component).setAsyncProcessing((boolean) value); return true;
+            case "asyncQueueSize": getOrCreateConfiguration((OpaComponent) component).setAsyncQueueSize((int) value); return true;
+            case "asyncTimeout": getOrCreateConfiguration((OpaComponent) component).setAsyncTimeout((long) value); return true;
             case "autowiredEnabled": ((OpaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "borrowTimeout": getOrCreateConfiguration((OpaComponent) component).setBorrowTimeout((long) value); return true;
             case "connectionTimeout": getOrCreateConfiguration((OpaComponent) component).setConnectionTimeout((long) value); return true;

@@ -33,6 +33,14 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowoperationheader":
         case "allowOperationHeader": getOrCreateConfiguration(target).setAllowOperationHeader(property(camelContext, boolean.class, value)); return true;
+        case "asyncpoolsize":
+        case "asyncPoolSize": getOrCreateConfiguration(target).setAsyncPoolSize(property(camelContext, int.class, value)); return true;
+        case "asyncprocessing":
+        case "asyncProcessing": getOrCreateConfiguration(target).setAsyncProcessing(property(camelContext, boolean.class, value)); return true;
+        case "asyncqueuesize":
+        case "asyncQueueSize": getOrCreateConfiguration(target).setAsyncQueueSize(property(camelContext, int.class, value)); return true;
+        case "asynctimeout":
+        case "asyncTimeout": getOrCreateConfiguration(target).setAsyncTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "audience": getOrCreateConfiguration(target).setAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
@@ -60,6 +68,14 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowoperationheader":
         case "allowOperationHeader": return boolean.class;
+        case "asyncpoolsize":
+        case "asyncPoolSize": return int.class;
+        case "asyncprocessing":
+        case "asyncProcessing": return boolean.class;
+        case "asyncqueuesize":
+        case "asyncQueueSize": return int.class;
+        case "asynctimeout":
+        case "asyncTimeout": return long.class;
         case "audience": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
@@ -83,6 +99,14 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowoperationheader":
         case "allowOperationHeader": return getOrCreateConfiguration(target).isAllowOperationHeader();
+        case "asyncpoolsize":
+        case "asyncPoolSize": return getOrCreateConfiguration(target).getAsyncPoolSize();
+        case "asyncprocessing":
+        case "asyncProcessing": return getOrCreateConfiguration(target).isAsyncProcessing();
+        case "asyncqueuesize":
+        case "asyncQueueSize": return getOrCreateConfiguration(target).getAsyncQueueSize();
+        case "asynctimeout":
+        case "asyncTimeout": return getOrCreateConfiguration(target).getAsyncTimeout();
         case "audience": return getOrCreateConfiguration(target).getAudience();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();

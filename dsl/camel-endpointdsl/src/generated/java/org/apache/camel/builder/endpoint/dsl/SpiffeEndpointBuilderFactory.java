@@ -255,6 +255,132 @@ public interface SpiffeEndpointBuilderFactory {
             return this;
         }
         /**
+         * Fixed blocking authorization worker count; must be positive.
+         *
+         * The option is a: <code>int</code> type.
+         *
+         * Default: 4
+         * Group: advanced
+         *
+         * @param asyncPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpiffeEndpointBuilder asyncPoolSize(int asyncPoolSize) {
+            doSetProperty("asyncPoolSize", asyncPoolSize);
+            return this;
+        }
+        /**
+         * Fixed blocking authorization worker count; must be positive.
+         *
+         * The option will be converted to a <code>int</code> type.
+         *
+         * Default: 4
+         * Group: advanced
+         *
+         * @param asyncPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpiffeEndpointBuilder asyncPoolSize(String asyncPoolSize) {
+            doSetProperty("asyncPoolSize", asyncPoolSize);
+            return this;
+        }
+        /**
+         * Offload authorization with bounded managed resources instead of
+         * blocking the routing thread.
+         *
+         * The option is a: <code>boolean</code> type.
+         *
+         * Default: false
+         * Group: advanced
+         *
+         * @param asyncProcessing the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpiffeEndpointBuilder asyncProcessing(boolean asyncProcessing) {
+            doSetProperty("asyncProcessing", asyncProcessing);
+            return this;
+        }
+        /**
+         * Offload authorization with bounded managed resources instead of
+         * blocking the routing thread.
+         *
+         * The option will be converted to a <code>boolean</code> type.
+         *
+         * Default: false
+         * Group: advanced
+         *
+         * @param asyncProcessing the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpiffeEndpointBuilder asyncProcessing(String asyncProcessing) {
+            doSetProperty("asyncProcessing", asyncProcessing);
+            return this;
+        }
+        /**
+         * Maximum queued authorization submissions; saturation fails closed
+         * rather than running on the routing thread.
+         *
+         * The option is a: <code>int</code> type.
+         *
+         * Default: 100
+         * Group: advanced
+         *
+         * @param asyncQueueSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpiffeEndpointBuilder asyncQueueSize(int asyncQueueSize) {
+            doSetProperty("asyncQueueSize", asyncQueueSize);
+            return this;
+        }
+        /**
+         * Maximum queued authorization submissions; saturation fails closed
+         * rather than running on the routing thread.
+         *
+         * The option will be converted to a <code>int</code> type.
+         *
+         * Default: 100
+         * Group: advanced
+         *
+         * @param asyncQueueSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpiffeEndpointBuilder asyncQueueSize(String asyncQueueSize) {
+            doSetProperty("asyncQueueSize", asyncQueueSize);
+            return this;
+        }
+        /**
+         * Total queued and running authorization deadline in milliseconds; must
+         * be positive.
+         *
+         * The option is a: <code>long</code> type.
+         *
+         * Default: 30000
+         * Group: advanced
+         *
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpiffeEndpointBuilder asyncTimeout(long asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+        /**
+         * Total queued and running authorization deadline in milliseconds; must
+         * be positive.
+         *
+         * The option will be converted to a <code>long</code> type.
+         *
+         * Default: 30000
+         * Group: advanced
+         *
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpiffeEndpointBuilder asyncTimeout(String asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+        /**
          * An existing WorkloadApiClient to use. When set, the component does
          * not create or close its own client and spiffeSocketPath is ignored.
          * 

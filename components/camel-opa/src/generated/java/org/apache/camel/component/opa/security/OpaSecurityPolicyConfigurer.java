@@ -26,6 +26,14 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowkey":
         case "allowKey": target.setAllowKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "asyncpoolsize":
+        case "asyncPoolSize": target.setAsyncPoolSize(property(camelContext, int.class, value)); return true;
+        case "asyncprocessing":
+        case "asyncProcessing": target.setAsyncProcessing(property(camelContext, boolean.class, value)); return true;
+        case "asyncqueuesize":
+        case "asyncQueueSize": target.setAsyncQueueSize(property(camelContext, int.class, value)); return true;
+        case "asynctimeout":
+        case "asyncTimeout": target.setAsyncTimeout(property(camelContext, long.class, value)); return true;
         case "bearertoken":
         case "bearerToken": target.setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
         case "borrowtimeout":
@@ -70,6 +78,14 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowkey":
         case "allowKey": return java.lang.String.class;
+        case "asyncpoolsize":
+        case "asyncPoolSize": return int.class;
+        case "asyncprocessing":
+        case "asyncProcessing": return boolean.class;
+        case "asyncqueuesize":
+        case "asyncQueueSize": return int.class;
+        case "asynctimeout":
+        case "asyncTimeout": return long.class;
         case "bearertoken":
         case "bearerToken": return java.lang.String.class;
         case "borrowtimeout":
@@ -115,6 +131,14 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowkey":
         case "allowKey": return target.getAllowKey();
+        case "asyncpoolsize":
+        case "asyncPoolSize": return target.getAsyncPoolSize();
+        case "asyncprocessing":
+        case "asyncProcessing": return target.isAsyncProcessing();
+        case "asyncqueuesize":
+        case "asyncQueueSize": return target.getAsyncQueueSize();
+        case "asynctimeout":
+        case "asyncTimeout": return target.getAsyncTimeout();
         case "bearertoken":
         case "bearerToken": return target.getBearerToken();
         case "borrowtimeout":

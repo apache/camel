@@ -32,6 +32,14 @@ public class OpenFgaSecurityPolicyConfigurer extends org.apache.camel.support.co
         case "apiTokenIssuer": target.setApiTokenIssuer(property(camelContext, java.lang.String.class, value)); return true;
         case "apiurl":
         case "apiUrl": target.setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "asyncpoolsize":
+        case "asyncPoolSize": target.setAsyncPoolSize(property(camelContext, int.class, value)); return true;
+        case "asyncprocessing":
+        case "asyncProcessing": target.setAsyncProcessing(property(camelContext, boolean.class, value)); return true;
+        case "asyncqueuesize":
+        case "asyncQueueSize": target.setAsyncQueueSize(property(camelContext, int.class, value)); return true;
+        case "asynctimeout":
+        case "asyncTimeout": target.setAsyncTimeout(property(camelContext, long.class, value)); return true;
         case "authorizationmodelid":
         case "authorizationModelId": target.setAuthorizationModelId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientid":
@@ -80,6 +88,14 @@ public class OpenFgaSecurityPolicyConfigurer extends org.apache.camel.support.co
         case "apiTokenIssuer": return java.lang.String.class;
         case "apiurl":
         case "apiUrl": return java.lang.String.class;
+        case "asyncpoolsize":
+        case "asyncPoolSize": return int.class;
+        case "asyncprocessing":
+        case "asyncProcessing": return boolean.class;
+        case "asyncqueuesize":
+        case "asyncQueueSize": return int.class;
+        case "asynctimeout":
+        case "asyncTimeout": return long.class;
         case "authorizationmodelid":
         case "authorizationModelId": return java.lang.String.class;
         case "clientid":
@@ -129,6 +145,14 @@ public class OpenFgaSecurityPolicyConfigurer extends org.apache.camel.support.co
         case "apiTokenIssuer": return target.getApiTokenIssuer();
         case "apiurl":
         case "apiUrl": return target.getApiUrl();
+        case "asyncpoolsize":
+        case "asyncPoolSize": return target.getAsyncPoolSize();
+        case "asyncprocessing":
+        case "asyncProcessing": return target.isAsyncProcessing();
+        case "asyncqueuesize":
+        case "asyncQueueSize": return target.getAsyncQueueSize();
+        case "asynctimeout":
+        case "asyncTimeout": return target.getAsyncTimeout();
         case "authorizationmodelid":
         case "authorizationModelId": return target.getAuthorizationModelId();
         case "clientid":

@@ -39,6 +39,14 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "apiTokenIssuer": getOrCreateConfiguration(target).setApiTokenIssuer(property(camelContext, java.lang.String.class, value)); return true;
         case "apiurl":
         case "apiUrl": getOrCreateConfiguration(target).setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "asyncpoolsize":
+        case "asyncPoolSize": getOrCreateConfiguration(target).setAsyncPoolSize(property(camelContext, int.class, value)); return true;
+        case "asyncprocessing":
+        case "asyncProcessing": getOrCreateConfiguration(target).setAsyncProcessing(property(camelContext, boolean.class, value)); return true;
+        case "asyncqueuesize":
+        case "asyncQueueSize": getOrCreateConfiguration(target).setAsyncQueueSize(property(camelContext, int.class, value)); return true;
+        case "asynctimeout":
+        case "asyncTimeout": getOrCreateConfiguration(target).setAsyncTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "authorizationmodelid":
         case "authorizationModelId": getOrCreateConfiguration(target).setAuthorizationModelId(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -111,6 +119,14 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "apiTokenIssuer": return java.lang.String.class;
         case "apiurl":
         case "apiUrl": return java.lang.String.class;
+        case "asyncpoolsize":
+        case "asyncPoolSize": return int.class;
+        case "asyncprocessing":
+        case "asyncProcessing": return boolean.class;
+        case "asyncqueuesize":
+        case "asyncQueueSize": return int.class;
+        case "asynctimeout":
+        case "asyncTimeout": return long.class;
         case "authorizationmodelid":
         case "authorizationModelId": return java.lang.String.class;
         case "autowiredenabled":
@@ -179,6 +195,14 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "apiTokenIssuer": return getOrCreateConfiguration(target).getApiTokenIssuer();
         case "apiurl":
         case "apiUrl": return getOrCreateConfiguration(target).getApiUrl();
+        case "asyncpoolsize":
+        case "asyncPoolSize": return getOrCreateConfiguration(target).getAsyncPoolSize();
+        case "asyncprocessing":
+        case "asyncProcessing": return getOrCreateConfiguration(target).isAsyncProcessing();
+        case "asyncqueuesize":
+        case "asyncQueueSize": return getOrCreateConfiguration(target).getAsyncQueueSize();
+        case "asynctimeout":
+        case "asyncTimeout": return getOrCreateConfiguration(target).getAsyncTimeout();
         case "authorizationmodelid":
         case "authorizationModelId": return getOrCreateConfiguration(target).getAuthorizationModelId();
         case "autowiredenabled":

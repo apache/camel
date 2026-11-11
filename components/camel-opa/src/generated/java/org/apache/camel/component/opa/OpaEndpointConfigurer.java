@@ -26,6 +26,14 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowkey":
         case "allowKey": target.getConfiguration().setAllowKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "asyncpoolsize":
+        case "asyncPoolSize": target.getConfiguration().setAsyncPoolSize(property(camelContext, int.class, value)); return true;
+        case "asyncprocessing":
+        case "asyncProcessing": target.getConfiguration().setAsyncProcessing(property(camelContext, boolean.class, value)); return true;
+        case "asyncqueuesize":
+        case "asyncQueueSize": target.getConfiguration().setAsyncQueueSize(property(camelContext, int.class, value)); return true;
+        case "asynctimeout":
+        case "asyncTimeout": target.getConfiguration().setAsyncTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "batch": target.getConfiguration().setBatch(property(camelContext, boolean.class, value)); return true;
         case "bearertoken":
         case "bearerToken": target.getConfiguration().setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
@@ -72,6 +80,14 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowkey":
         case "allowKey": return java.lang.String.class;
+        case "asyncpoolsize":
+        case "asyncPoolSize": return int.class;
+        case "asyncprocessing":
+        case "asyncProcessing": return boolean.class;
+        case "asyncqueuesize":
+        case "asyncQueueSize": return int.class;
+        case "asynctimeout":
+        case "asyncTimeout": return long.class;
         case "batch": return boolean.class;
         case "bearertoken":
         case "bearerToken": return java.lang.String.class;
@@ -114,6 +130,14 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowkey":
         case "allowKey": return target.getConfiguration().getAllowKey();
+        case "asyncpoolsize":
+        case "asyncPoolSize": return target.getConfiguration().getAsyncPoolSize();
+        case "asyncprocessing":
+        case "asyncProcessing": return target.getConfiguration().isAsyncProcessing();
+        case "asyncqueuesize":
+        case "asyncQueueSize": return target.getConfiguration().getAsyncQueueSize();
+        case "asynctimeout":
+        case "asyncTimeout": return target.getConfiguration().getAsyncTimeout();
         case "batch": return target.getConfiguration().isBatch();
         case "bearertoken":
         case "bearerToken": return target.getConfiguration().getBearerToken();

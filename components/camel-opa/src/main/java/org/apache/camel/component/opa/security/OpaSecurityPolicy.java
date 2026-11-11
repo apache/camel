@@ -63,6 +63,51 @@ import org.slf4j.LoggerFactory;
 @Configurer(metadataOnly = true)
 public class OpaSecurityPolicy implements AuthorizationPolicy {
 
+    @Metadata(label = "advanced", defaultValue = "false")
+    private boolean asyncProcessing;
+    @Metadata(label = "advanced", defaultValue = "4")
+    private int asyncPoolSize = 4;
+    @Metadata(label = "advanced", defaultValue = "100")
+    private int asyncQueueSize = 100;
+    @Metadata(label = "advanced", defaultValue = "30000")
+    private long asyncTimeout = 30000;
+
+    public boolean isAsyncProcessing() {
+        return asyncProcessing;
+    }
+
+    /** Offload authorization with bounded managed resources instead of blocking the routing thread. */
+    public void setAsyncProcessing(boolean asyncProcessing) {
+        this.asyncProcessing = asyncProcessing;
+    }
+
+    public int getAsyncPoolSize() {
+        return asyncPoolSize;
+    }
+
+    /** Fixed blocking authorization worker count; must be positive. */
+    public void setAsyncPoolSize(int asyncPoolSize) {
+        this.asyncPoolSize = asyncPoolSize;
+    }
+
+    public int getAsyncQueueSize() {
+        return asyncQueueSize;
+    }
+
+    /** Maximum queued authorization submissions; saturation fails closed rather than running on the routing thread. */
+    public void setAsyncQueueSize(int asyncQueueSize) {
+        this.asyncQueueSize = asyncQueueSize;
+    }
+
+    public long getAsyncTimeout() {
+        return asyncTimeout;
+    }
+
+    /** Total queued and running authorization deadline in milliseconds; must be positive. */
+    public void setAsyncTimeout(long asyncTimeout) {
+        this.asyncTimeout = asyncTimeout;
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(OpaSecurityPolicy.class);
 
     private static final String WASM_MODE = "wasm";
@@ -305,6 +350,10 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
             LOG.debug("Securing route {} with OPA policy {}", route.getRouteId(), policyPath);
         }
         return new OpaSecurityProcessor(processor, this);
+    }
+
+    org.apache.camel.CamelContext getCamelContext() {
+        return camelContext;
     }
 
     OpaPolicyEvaluator getEvaluator() {
