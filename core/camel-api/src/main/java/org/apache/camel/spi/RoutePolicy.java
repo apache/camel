@@ -22,12 +22,12 @@ import org.apache.camel.Route;
 /**
  * Per-route lifecycle hook that receives callbacks at each state change and at the beginning and end of every
  * {@link Exchange}, enabling dynamic control of route behaviour at runtime.
- * <p/>
+ * <p>
  * A {@code RoutePolicy} can suspend or resume a route's consumer in response to external conditions, implement
- * throttling by counting inflight exchanges (as {@link org.apache.camel.throttling.ThrottlingInflightRoutePolicy}
+ * throttling by counting inflight exchanges (as {@code org.apache.camel.throttling.ThrottlingInflightRoutePolicy}
  * does), enforce time-window scheduling, or perform custom instrumentation. Policies are attached to a route via the
  * DSL {@code .routePolicy()} call or globally via a {@link RoutePolicyFactory} registered on the context.
- * <p/>
+ * <p>
  * See the <a href="https://camel.apache.org/manual/route-policy.html">Route Policy</a> documentation for usage patterns
  * and built-in implementations.
  *
@@ -88,10 +88,10 @@ public interface RoutePolicy {
 
     /**
      * Callback invoked when an {@link Exchange} is done being routed, where it started from the given {@link Route}
-     * <p/>
+     * <p>
      * Notice this callback is invoked when the <b>Exchange</b> is done and the {@link Route} is the route where the
-     * {@link Exchange} was started. Most often its also the route where the exchange is done. However, it's possible to
-     * route an {@link Exchange} to other routes using endpoints such as <b>direct</b> or <b>seda</b>. Bottom line is
+     * {@link Exchange} was started. Most often it's also the route where the exchange is done. However, it's possible
+     * to route an {@link Exchange} to other routes using endpoints such as <b>direct</b> or <b>seda</b>. Bottom line is
      * that the {@link Route} parameter may not be the endpoint route and thus why we state it's the starting route.
      *
      * @param route    the route where the exchange started from

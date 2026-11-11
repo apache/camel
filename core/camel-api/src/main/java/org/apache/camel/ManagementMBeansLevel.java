@@ -20,11 +20,11 @@ import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
  * Controls which Camel objects are registered as JMX MBeans for management and monitoring.
- * <p/>
+ * <p>
  * When JMX management is active, Camel can expose the {@link CamelContext}, its {@link Route}s, and individual
  * {@link Processor}s as MBeans. Registering many processors improves observability but increases heap usage; this enum
  * lets operators trade off granularity against overhead.
- * <p/>
+ * <p>
  * Configure via {@code ManagementAgent.setMBeansLevel(ManagementMBeansLevel)} or the property
  * {@code camel.main.jmx-management-mbeans-level}.
  *

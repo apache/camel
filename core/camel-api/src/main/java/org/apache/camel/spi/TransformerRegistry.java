@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Registry that stores and resolves {@link Transformer} instances for Camel's
  * <a href="https://camel.apache.org/manual/transformer.html">data type contract</a> mechanism.
- * <p/>
+ * <p>
  * The registry maintains two separate caches to balance memory usage and lookup performance:
  * <ul>
  * <li><b>static cache</b> — holds all transformers registered at route startup; no eviction, no size limit. Contains
@@ -76,7 +76,7 @@ public interface TransformerRegistry extends Map<TransformerKey, Transformer>, S
      * Whether the given transformer is stored in the static cache
      *
      * @param  scheme the scheme supported by this transformer
-     * @return        <tt>true</tt> if in static cache, <tt>false</tt> if not
+     * @return        <code>true</code> if in static cache, <code>false</code> if not
      */
     boolean isStatic(String scheme);
 
@@ -85,7 +85,7 @@ public interface TransformerRegistry extends Map<TransformerKey, Transformer>, S
      *
      * @param  from 'from' data type
      * @param  to   'to' data type
-     * @return      <tt>true</tt> if in static cache, <tt>false</tt> if not
+     * @return      <code>true</code> if in static cache, <code>false</code> if not
      */
     boolean isStatic(DataType from, DataType to);
 
@@ -93,7 +93,7 @@ public interface TransformerRegistry extends Map<TransformerKey, Transformer>, S
      * Whether the given transformer is stored in the dynamic cache
      *
      * @param  scheme the scheme supported by this transformer
-     * @return        <tt>true</tt> if in dynamic cache, <tt>false</tt> if not
+     * @return        <code>true</code> if in dynamic cache, <code>false</code> if not
      */
     boolean isDynamic(String scheme);
 
@@ -102,7 +102,7 @@ public interface TransformerRegistry extends Map<TransformerKey, Transformer>, S
      *
      * @param  from 'from' data type
      * @param  to   'to' data type
-     * @return      <tt>true</tt> if in dynamic cache, <tt>false</tt> if not
+     * @return      <code>true</code> if in dynamic cache, <code>false</code> if not
      */
     boolean isDynamic(DataType from, DataType to);
 

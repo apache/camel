@@ -20,7 +20,7 @@ import org.apache.camel.Processor;
 
 /**
  * Implemented by a {@link Processor} to control whether it may be wrapped by an {@link InterceptStrategy}.
- * <p/>
+ * <p>
  * Most processors are interceptable, but some EIPs (such as try/catch/finally) cannot be intercepted safely;
  * {@link #canIntercept()} returns {@code false} for those so Camel skips wrapping them.
  *

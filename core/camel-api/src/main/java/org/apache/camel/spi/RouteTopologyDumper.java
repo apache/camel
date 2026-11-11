@@ -23,14 +23,14 @@ import org.apache.camel.CamelContext;
 /**
  * SPI that analyses the active Camel routes and computes a graph describing how they interconnect through shared
  * endpoints.
- * <p/>
+ * <p>
  * The implementation is discovered via the service key {@link #FACTORY}. The single
  * {@link #dumpTopology(org.apache.camel.CamelContext)} method returns a {@link TopologyResult} record containing:
  * {@link TopologyNode} entries (one per route, classified as {@code route} or {@code trigger}), {@link TopologyEdge}
  * entries (connections between two routes via a shared endpoint URI, classified as {@code internal} for direct/seda or
  * {@code external} for remote transports), and {@link TopologyExternalEndpoint} entries (remote systems a route talks
  * to). The developer console uses this output to render an interactive route graph.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/camel-jbang.html">Camel CLI (camel-jbang)</a> for the developer console
  * that renders this graph.
  *

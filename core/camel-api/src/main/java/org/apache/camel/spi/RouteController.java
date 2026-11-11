@@ -29,12 +29,12 @@ import org.apache.camel.StaticService;
  * Central SPI for managing the start, stop, suspend, resume, and reload lifecycle of all {@link Route}s in a
  * {@link org.apache.camel.CamelContext}, as described in the
  * <a href="https://camel.apache.org/manual/route-controller.html">Route Controller</a> documentation.
- * <p/>
+ * <p>
  * The default implementation starts and stops routes synchronously in the order determined by each route's
  * {@code startupOrder} attribute and delegates graceful stopping to the {@link ShutdownStrategy}. A more capable
  * variant, {@link SupervisingRouteController}, can be enabled via {@link #supervising()} to add asynchronous startup
  * and exponential-backoff retry for routes that fail to start.
- * <p/>
+ * <p>
  * End users interact with routes via {@link org.apache.camel.CamelContext#getRouteController()} rather than this
  * interface directly. Implementors providing a custom controller should also implement
  * {@link org.apache.camel.CamelContextAware} and register it before the context starts.
@@ -69,11 +69,11 @@ public interface RouteController extends CamelContextAware, StaticService {
 
     /**
      * Adapts this {@link org.apache.camel.spi.RouteController} to the specialized type.
-     * <p/>
-     * For example to adapt to <tt>SupervisingRouteController</tt>.
+     * <p>
+     * For example to adapt to <code>SupervisingRouteController</code>.
      *
      * @param  type the type to adapt to
-     * @return      this {@link org.apache.camel.CamelContext} adapted to the given type
+     * @return      this {@link org.apache.camel.spi.RouteController} adapted to the given type
      */
     <T extends RouteController> T adapt(Class<T> type);
 
@@ -126,10 +126,10 @@ public interface RouteController extends CamelContextAware, StaticService {
 
     /**
      * Indicates whether current thread is reloading route(s).
-     * <p/>
+     * <p>
      * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
      *
-     * @return <tt>true</tt> if current thread is reloading route(s), or <tt>false</tt> if not.
+     * @return <code>true</code> if current thread is reloading route(s), or <code>false</code> if not.
      */
     boolean isReloadingRoutes();
 
@@ -187,7 +187,7 @@ public interface RouteController extends CamelContextAware, StaticService {
      * @param  timeout           timeout
      * @param  timeUnit          the unit to use
      * @param  abortAfterTimeout should abort shutdown after timeout
-     * @return                   <tt>true</tt> if the route is stopped before the timeout
+     * @return                   <code>true</code> if the route is stopped before the timeout
      * @throws Exception         is thrown if the route could not be stopped for whatever reason
      * @see                      #suspendRoute(String, long, java.util.concurrent.TimeUnit)
      */
@@ -195,14 +195,15 @@ public interface RouteController extends CamelContextAware, StaticService {
 
     /**
      * Suspends the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
-     * <p/>
-     * Suspending a route is more gently than stopping, as the route consumers will be suspended (if they support)
+     * <p>
+     * Suspending a route is more gentle than stopping, as the route consumers will be suspended (if they support)
      * otherwise the consumers will be stopped.
-     * <p/>
-     * By suspending the route services will be kept running (if possible) and therefore its faster to resume the route.
-     * <p/>
+     * <p>
+     * By suspending the route services will be kept running (if possible) and therefore it's faster to resume the
+     * route.
+     * <p>
      * If the route does <b>not</b> support suspension the route will be stopped instead
-     * <p/>
+     * <p>
      * A route that is not started (such as a stopped route) is left as is.
      *
      * @param  routeId   the route id
@@ -212,14 +213,15 @@ public interface RouteController extends CamelContextAware, StaticService {
 
     /**
      * Suspends the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
-     * <p/>
-     * Suspending a route is more gently than stopping, as the route consumers will be suspended (if they support)
+     * <p>
+     * Suspending a route is more gentle than stopping, as the route consumers will be suspended (if they support)
      * otherwise the consumers will be stopped.
-     * <p/>
-     * By suspending the route services will be kept running (if possible) and therefore its faster to resume the route.
-     * <p/>
+     * <p>
+     * By suspending the route services will be kept running (if possible) and therefore it's faster to resume the
+     * route.
+     * <p>
      * If the route does <b>not</b> support suspension the route will be stopped instead
-     * <p/>
+     * <p>
      * A route that is not started (such as a stopped route) is left as is.
      *
      * @param  routeId   the route id
@@ -231,7 +233,7 @@ public interface RouteController extends CamelContextAware, StaticService {
 
     /**
      * Resumes the given route if it has been previously suspended
-     * <p/>
+     * <p>
      * If the route does <b>not</b> support suspension the route will be started instead
      *
      * @param  routeId   the route id

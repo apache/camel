@@ -20,7 +20,7 @@ import java.util.Objects;
 
 /**
  * Thrown when a {@link Component} fails to start as part of the {@link CamelContext} startup sequence.
- * <p/>
+ * <p>
  * Carries the component name so the error message points at the offending component (typically the URI scheme used in
  * route DSL, e.g. {@code kafka}, {@code http}).
  *

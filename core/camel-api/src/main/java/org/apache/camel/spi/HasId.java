@@ -18,7 +18,7 @@ package org.apache.camel.spi;
 
 /**
  * Marker for an object that exposes a unique id, useful for referencing it in REST, JMX, and tooling APIs.
- * <p/>
+ * <p>
  * Many Camel runtime objects (routes, processors, services) carry an id so they can be looked up, managed, and
  * correlated back to their model definition. {@link IdAware} extends this to also allow the id to be set.
  *

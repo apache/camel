@@ -23,7 +23,7 @@ import org.apache.camel.StaticService;
 /**
  * Strategy that runs {@link StartupCondition} checks during startup to decide whether Camel may start, optionally
  * waiting until the conditions are satisfied.
- * <p/>
+ * <p>
  * Conditions are registered via {@link #addStartupCondition(StartupCondition)} (or by class name) and evaluated by
  * {@link #checkStartupConditions()}; the strategy polls at a configurable {@link #getInterval() interval} up to a
  * {@link #getTimeout() timeout}, and {@link #getOnTimeout() on timeout} either fails, stops, or ignores. Useful to

@@ -17,15 +17,15 @@
 package org.apache.camel;
 
 /**
- * To perform optional initialization on an element after its properties has been configured.
- * <p/>
- * Currently only languages is supported using this callback.
+ * To perform optional initialization on an element after its properties have been configured.
+ * <p>
+ * Currently only languages are supported using this callback.
  */
 public interface AfterPropertiesConfigured {
 
     /**
-     * Callback invoked after the element have configured its properties.
-     * <p/>
+     * Callback invoked after the element has configured its properties.
+     * <p>
      * This allows to perform any post init work.
      *
      * @param camelContext the Camel Context

@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * A {@link StartupListener} variant whose callback is guaranteed to fire exactly once, after all route consumers are
  * fully started and the {@link CamelContext} is considered completely running.
- * <p/>
+ * <p>
  * Unlike the base {@link StartupListener} (which fires twice during startup: once before consumers start and once
  * after), {@code ExtendedStartupListener} provides a single, unambiguous signal that the context is fully operational.
  * This makes it the correct hook for code that must run after every route is reachable, such as adding and starting

@@ -66,7 +66,7 @@ public interface RestClientRequestValidator {
      *
      * @param  exchange          the current exchange
      * @param  validationContent validation context
-     * @return                   the validation error, or <tt>null</tt> if success
+     * @return                   the validation error, or <code>null</code> if success
      */
     @Nullable
     ValidationError validate(Exchange exchange, ValidationContext validationContent);

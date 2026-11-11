@@ -30,17 +30,17 @@ import org.jspecify.annotations.Nullable;
  * High-level route debugger SPI that suspends {@link Exchange} processing at named breakpoints and exposes the
  * suspended state for inspection, as described in the
  * <a href="https://camel.apache.org/manual/debugger.html">Debugger</a> documentation.
- * <p/>
+ * <p>
  * The {@code BacklogDebugger} builds on the lower-level {@link Debugger} API but adds breakpoint management with
  * optional conditions, step-mode execution, and exchange inspection via XML/JSON dumps in
  * {@link BacklogTracerEventMessage} format. All operations are exposed over JMX through
- * {@link org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean}, allowing IDE tooling (e.g.,
+ * {@code org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean}, allowing IDE tooling (e.g.,
  * camel-idea-plugin) to control a running Camel context remotely.
- * <p/>
+ * <p>
  * On reaching a breakpoint, only the <em>first</em> arriving {@link Exchange} is suspended; concurrent exchanges on the
  * same breakpoint continue to route past it. A suspended exchange blocks its carrier thread until explicitly resumed
  * via one of the {@code resume*} methods.
- * <p/>
+ * <p>
  * When the environment variable {@value #SUSPEND_MODE_ENV_VAR_NAME} (or system property
  * {@value #SUSPEND_MODE_SYSTEM_PROP_NAME}) is set to {@code true}, the debugger suspends <em>all</em> routes at startup
  * and waits for a debugger client to attach before processing any messages.

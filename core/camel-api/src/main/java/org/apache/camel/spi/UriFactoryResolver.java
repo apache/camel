@@ -31,7 +31,7 @@ public interface UriFactoryResolver {
      *
      * @param  name    the name of the factory (timer-endpoint etc)
      * @param  context the camel context
-     * @return         the resolved factory, or <tt>null</tt> if no factory could be found
+     * @return         the resolved factory, or <code>null</code> if no factory could be found
      */
     @Nullable
     EndpointUriFactory resolveFactory(String name, CamelContext context);

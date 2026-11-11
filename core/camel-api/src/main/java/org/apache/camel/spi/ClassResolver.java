@@ -26,12 +26,12 @@ import org.jspecify.annotations.Nullable;
 /**
  * Platform-neutral strategy for loading classes and classpath resources across the different runtimes that Camel
  * supports (standalone JVM, Spring Boot, Quarkus, OSGi, JBang, and others).
- * <p/>
+ * <p>
  * A single {@link org.apache.camel.CamelContext} maintains one {@code ClassResolver} instance. Instead of calling
  * {@code Class.forName()} or {@code ClassLoader.getResourceAsStream()} directly, all Camel internals delegate to this
  * interface so that custom or container-aware class loaders can participate in class resolution without changes to the
  * framework. Additional class loaders can be plugged in at any time via {@link #addClassLoader(ClassLoader)}.
- * <p/>
+ * <p>
  * The interface exposes both optional-return ({@link #resolveClass(String)}) and throwing
  * ({@link #resolveMandatoryClass(String)}) variants so that callers can choose the appropriate error-handling strategy.
  *
@@ -56,7 +56,7 @@ public interface ClassResolver {
      * Gets a custom class loader by its name
      *
      * @param  name the name of the custom classloader
-     * @return      the class loader or <tt>null</tt> if not found
+     * @return      the class loader or <code>null</code> if not found
      */
     @Nullable
     ClassLoader getClassLoader(String name);
@@ -65,7 +65,7 @@ public interface ClassResolver {
      * Resolves the given class by its name
      *
      * @param  name full qualified name of class
-     * @return      the class if resolved, <tt>null</tt> if not found.
+     * @return      the class if resolved, <code>null</code> if not found.
      */
     @Nullable
     Class<?> resolveClass(String name);
@@ -75,7 +75,7 @@ public interface ClassResolver {
      *
      * @param  name full qualified name of class
      * @param  type the expected type of the class
-     * @return      the class if resolved, <tt>null</tt> if not found.
+     * @return      the class if resolved, <code>null</code> if not found.
      */
     <T> @Nullable Class<T> resolveClass(String name, Class<T> type);
 
@@ -84,7 +84,7 @@ public interface ClassResolver {
      *
      * @param  name   full qualified name of class
      * @param  loader use the provided class loader
-     * @return        the class if resolved, <tt>null</tt> if not found.
+     * @return        the class if resolved, <code>null</code> if not found.
      */
     @Nullable
     Class<?> resolveClass(String name, ClassLoader loader);
@@ -95,7 +95,7 @@ public interface ClassResolver {
      * @param  name   full qualified name of class
      * @param  type   the expected type of the class
      * @param  loader use the provided class loader
-     * @return        the class if resolved, <tt>null</tt> if not found.
+     * @return        the class if resolved, <code>null</code> if not found.
      */
     <T> @Nullable Class<T> resolveClass(String name, Class<T> type, ClassLoader loader);
 
@@ -103,7 +103,7 @@ public interface ClassResolver {
      * Resolves the given class by its name
      *
      * @param  name                   full qualified name of class
-     * @return                        the class if resolved, <tt>null</tt> if not found.
+     * @return                        the class if resolved, <code>null</code> if not found.
      * @throws ClassNotFoundException is thrown if class not found
      */
     Class<?> resolveMandatoryClass(String name) throws ClassNotFoundException;
@@ -113,7 +113,7 @@ public interface ClassResolver {
      *
      * @param  name                   full qualified name of class
      * @param  type                   the expected type of the class
-     * @return                        the class if resolved, <tt>null</tt> if not found.
+     * @return                        the class if resolved, <code>null</code> if not found.
      * @throws ClassNotFoundException is thrown if class not found
      */
     <T> Class<T> resolveMandatoryClass(String name, Class<T> type) throws ClassNotFoundException;
@@ -123,7 +123,7 @@ public interface ClassResolver {
      *
      * @param  name                   full qualified name of class
      * @param  loader                 use the provided class loader
-     * @return                        the class if resolved, <tt>null</tt> if not found.
+     * @return                        the class if resolved, <code>null</code> if not found.
      * @throws ClassNotFoundException is thrown if class not found
      */
     Class<?> resolveMandatoryClass(String name, ClassLoader loader) throws ClassNotFoundException;
@@ -134,7 +134,7 @@ public interface ClassResolver {
      * @param  name                   full qualified name of class
      * @param  type                   the expected type of the class
      * @param  loader                 use the provided class loader
-     * @return                        the class if resolved, <tt>null</tt> if not found.
+     * @return                        the class if resolved, <code>null</code> if not found.
      * @throws ClassNotFoundException is thrown if class not found
      */
     <T> Class<T> resolveMandatoryClass(String name, Class<T> type, ClassLoader loader) throws ClassNotFoundException;

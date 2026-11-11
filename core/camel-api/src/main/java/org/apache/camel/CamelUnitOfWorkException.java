@@ -21,9 +21,9 @@ import java.util.Objects;
 
 /**
  * A {@link org.apache.camel.spi.UnitOfWork} failed with a number of caused exceptions.
- * <p/>
- * This implementation will provide the first exception from the list in its cause, so its shown in the stacktrace etc
- * when logging this exception. But the remainder exceptions is only available from the {@link #getCauses()} method.
+ * <p>
+ * This implementation will provide the first exception from the list in its cause, so it's shown in the stacktrace etc
+ * when logging this exception. But the remaining exceptions are only available from the {@link #getCauses()} method.
  */
 public class CamelUnitOfWorkException extends CamelExchangeException {
 

@@ -24,12 +24,12 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Declares the expected input and/or output {@link DataType} of an {@link Endpoint} or {@link Processor}.
- * <p/>
+ * <p>
  * When a route step declares a contract, Camel compares the message's actual {@link DataType} against the declared
  * input and output types and, if they differ, applies a matching {@link Transformer} to convert the payload; it can
  * also run a {@link Validator} when {@link #isValidateInput()} or {@link #isValidateOutput()} is set. This is the
  * mechanism behind declarative input/output typing on routes.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/transformer.html">Transformer</a> in the Camel user manual.
  *
  * @see DataType
@@ -47,7 +47,7 @@ public class Contract {
     /**
      * Gets the declared input data type.
      *
-     * @return the input type, or <tt>null</tt> if none is declared
+     * @return the input type, or <code>null</code> if none is declared
      */
     public @Nullable DataType getInputType() {
         return inputType;
@@ -78,7 +78,7 @@ public class Contract {
     /**
      * Gets the declared output data type.
      *
-     * @return the output type, or <tt>null</tt> if none is declared
+     * @return the output type, or <code>null</code> if none is declared
      */
     public @Nullable DataType getOutputType() {
         return outputType;
@@ -109,7 +109,7 @@ public class Contract {
     /**
      * Whether the input should be validated against the input data type.
      *
-     * @return <tt>true</tt> if input validation is enabled
+     * @return <code>true</code> if input validation is enabled
      */
     public boolean isValidateInput() {
         return validateInput;
@@ -125,7 +125,7 @@ public class Contract {
     /**
      * Whether the output should be validated against the output data type.
      *
-     * @return <tt>true</tt> if output validation is enabled
+     * @return <code>true</code> if output validation is enabled
      */
     public boolean isValidateOutput() {
         return validateOutput;

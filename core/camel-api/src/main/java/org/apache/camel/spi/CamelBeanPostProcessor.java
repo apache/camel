@@ -23,7 +23,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Processes beans as they are created or registered, applying Camel's annotation-based dependency injection.
- * <p/>
+ * <p>
  * For every bean it inspects, the post processor wires up the Camel injection annotations such as
  * {@link org.apache.camel.EndpointInject}, {@link org.apache.camel.Produce}, {@link org.apache.camel.Consume},
  * {@link org.apache.camel.BeanInject}, and {@link org.apache.camel.PropertyInject}, and binds
@@ -35,7 +35,7 @@ import org.jspecify.annotations.Nullable;
  * in via {@link CamelBeanPostProcessorInjector}, and {@link CamelDependencyInjectionAnnotationFactory} controls how
  * {@link org.apache.camel.BindToRegistry} beans are bound. Bean post processing can be disabled via
  * {@link #setEnabled(boolean)} for runtimes that do not use these Camel features.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/bean-injection.html">Bean Injection</a> in the Camel user manual.
  *
  * @see   CamelBeanPostProcessorInjector

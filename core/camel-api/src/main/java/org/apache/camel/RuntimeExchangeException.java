@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Unchecked base exception carrying the {@link Exchange} whose processing triggered the failure.
- * <p/>
+ * <p>
  * This is the unchecked counterpart of {@link CamelExchangeException} and is the base for exceptions such as
  * {@link InvalidPayloadRuntimeException} that are thrown in contexts where a checked exception is not permitted.
  *
@@ -54,8 +54,8 @@ public class RuntimeExchangeException extends RuntimeCamelException {
 
     /**
      * Returns the exchange which caused the exception
-     * <p/>
-     * Can be <tt>null</tt>
+     * <p>
+     * Can be <code>null</code>
      */
     public @Nullable Exchange getExchange() {
         return exchange;

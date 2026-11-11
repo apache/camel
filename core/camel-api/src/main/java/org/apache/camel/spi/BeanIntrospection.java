@@ -30,18 +30,17 @@ import org.jspecify.annotations.Nullable;
 /**
  * Low-level SPI for reading and writing bean properties via Java reflection, used internally by Camel's property
  * binding infrastructure.
- * <p/>
+ * <p>
  * This interface operates directly on getter/setter pairs discovered at runtime and is consulted by Camel when
  * configuring components, endpoints, and EIP options from properties files, YAML, or the
  * <a href="https://camel.apache.org/manual/camel-jbang.html">Camel JBang</a> CLI. Introspection results are cached
  * internally to minimise repeated reflection calls during configuration-intensive startup sequences. Call
  * {@link #clearCache()} to invalidate the cache when class definitions change at runtime (for example in OSGi
  * hot-deployment scenarios).
- * <p/>
- * End users should prefer the higher-level {@link org.apache.camel.support.PropertyBindingSupport} utility, which
+ * <p>
+ * End users should prefer the higher-level {@code org.apache.camel.support.PropertyBindingSupport} utility, which
  * handles placeholder resolution, type conversion, and nested property paths on top of this interface.
  *
- * @see   org.apache.camel.support.PropertyBindingSupport
  * @see   PropertyConfigurer
  * @since 3.0
  */
@@ -104,27 +103,27 @@ public interface BeanIntrospection extends StaticService, AfterPropertiesConfigu
 
     /**
      * Will inspect the target for properties.
-     * <p/>
-     * Notice a property must have both a getter/setter method to be included. Notice all <tt>null</tt> values will be
-     * included.
+     * <p>
+     * Notice a property must have both a getter/setter method to be included. Notice all <code>null</code> values will
+     * be included.
      *
      * @param  target       the target bean
      * @param  properties   the map to fill in found properties
      * @param  optionPrefix an optional prefix to append the property key
-     * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
+     * @return              <code>true</code> if any properties were found, <code>false</code> otherwise.
      */
     boolean getProperties(Object target, Map<String, Object> properties, @Nullable String optionPrefix);
 
     /**
      * Will inspect the target for properties.
-     * <p/>
+     * <p>
      * Notice a property must have both a getter/setter method to be included.
      *
      * @param  target       the target bean
      * @param  properties   the map to fill in found properties
      * @param  optionPrefix an optional prefix to append the property key
-     * @param  includeNull  whether to include <tt>null</tt> values
-     * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
+     * @param  includeNull  whether to include <code>null</code> values
+     * @return              <code>true</code> if any properties were found, <code>false</code> otherwise.
      */
     boolean getProperties(Object target, Map<String, Object> properties, @Nullable String optionPrefix, boolean includeNull);
 

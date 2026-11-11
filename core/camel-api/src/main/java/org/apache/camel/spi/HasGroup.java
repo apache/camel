@@ -21,7 +21,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Marker for an object that belongs to a named group, useful for group-related operations such as clustering and JMX
  * APIs.
- * <p/>
+ * <p>
  * Grouping lets related objects be addressed or managed together. {@link GroupAware} extends this to also allow the
  * group to be set.
  *

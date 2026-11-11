@@ -21,12 +21,12 @@ import java.io.IOException;
 /**
  * Core lifecycle contract for every managed object inside a {@link CamelContext}: build &rarr; init &rarr; start &rarr;
  * stop &rarr; close.
- * <p/>
+ * <p>
  * {@link Component}, {@link Endpoint}, {@link Consumer}, {@link Producer}, {@link Route} and most SPI plug-ins extend
  * {@link Service} (often via {@code ServiceSupport} in {@code camel-support}). The {@link CamelContext} drives the
  * lifecycle of registered services so that resources (threads, connections, files, ...) are acquired and released in
  * the right order.
- * <p/>
+ * <p>
  * Sub-interfaces extend this contract: {@link StatefulService} exposes the current {@link ServiceStatus},
  * {@link SuspendableService} adds suspend/resume, and {@link ShutdownableService} adds an explicit shutdown step.
  *

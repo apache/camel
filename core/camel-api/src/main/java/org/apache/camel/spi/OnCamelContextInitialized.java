@@ -20,11 +20,11 @@ import org.apache.camel.CamelContext;
 
 /**
  * Event handler invoked after the {@link CamelContext} has been initialized, before it is started.
- * <p/>
+ * <p>
  * Implementations are registered in the {@link Registry} and discovered by Camel during bootstrap. At this point all
  * routes and services have been initialized but not yet started, so this phase suits inspection or final adjustments
  * that depend on a fully initialized context. For the full set of lifecycle callbacks see {@link OnCamelContextEvent}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/lifecycle.html">Lifecycle</a> in the Camel user manual.
  *
  * @see   OnCamelContextEvent

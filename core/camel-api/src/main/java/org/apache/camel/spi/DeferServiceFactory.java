@@ -35,8 +35,8 @@ public interface DeferServiceFactory {
     /**
      * Creates the {@link Producer} which is deferred started until {@link org.apache.camel.CamelContext} is being
      * started.
-     * <p/>
-     * When the producer is started, it re-lookup the endpoint to capture any changes such as the endpoint has been
+     * <p>
+     * When the producer is started, it looks up the endpoint again to capture any changes such as the endpoint has been
      * intercepted. This allows the producer to react and send messages to the updated endpoint.
      *
      * @param  endpoint  the endpoint

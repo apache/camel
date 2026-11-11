@@ -21,10 +21,10 @@ import java.util.Set;
 
 /**
  * Low-level SPI interface for objects that can contribute {@link Route}s to a {@link CamelContext}.
- * <p/>
+ * <p>
  * Implementations translate a route definition (from any DSL or model) into live {@link Route} instances and register
  * them with the context. The actual routes become active after the context starts.
- * <p/>
+ * <p>
  * This interface is not intended to be used directly by Camel application developers. Application code should extend
  * {@code org.apache.camel.builder.RouteBuilder} (Java DSL) or use the YAML / XML DSLs instead, all of which implement
  * this interface under the hood.
@@ -62,7 +62,7 @@ public interface RoutesBuilder {
 
     /**
      * Adds or updates the templated routes from this Route Builder to the CamelContext.
-     * <p/>
+     * <p>
      * This is called after the routes (and route templates) of all the Route Builders that are updated together have
      * been updated, as a templated route may use a route template from another Route Builder.
      *

@@ -25,14 +25,14 @@ import org.jspecify.annotations.Nullable;
 /**
  * A live registry of all REST services running within the {@link org.apache.camel.CamelContext} that were defined using
  * the Camel REST DSL.
- * <p/>
+ * <p>
  * Each REST-DSL route registers its verb-plus-path pair at startup via {@link #addRestService addRestService()}; the
  * registry keeps a {@link RestService} record per operation that carries the URL, HTTP method, media types, binding
  * types, and hit counter. The developer console, JMX management layer, and the {@code camel-openapi-java} module all
  * query this registry to render live service listings and to generate the OpenAPI specification
  * ({@link #apiDocAsJson()}). Separately, OpenAPI contract entries are tracked as "specifications" via
  * {@link #addRestSpecification addRestSpecification()}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/rest-dsl.html">Rest DSL</a> in the Camel user manual.
  *
  * @see RestConsumerFactory
@@ -121,16 +121,16 @@ public interface RestRegistry extends StaticService {
 
         /**
          * Optional detail about input binding to a FQN class name.
-         * <p/>
-         * If the input accepts a list, then <tt>List&lt;class name&gt;</tt> is enclosed the name.
+         * <p>
+         * If the input accepts a list, then <code>List&lt;class name&gt;</code> is enclosed in the name.
          */
         @Nullable
         String getInType();
 
         /**
          * Optional detail about output binding to a FQN class name.
-         * <p/>
-         * If the output accepts a list, then <tt>List&lt;class name&gt;</tt> is enclosed the name.
+         * <p>
+         * If the output accepts a list, then <code>List&lt;class name&gt;</code> is enclosed in the name.
          */
         @Nullable
         String getOutType();
@@ -242,7 +242,7 @@ public interface RestRegistry extends StaticService {
     /**
      * Outputs the Rest services API documentation in JSON (requires camel-openapi-java on classpath)
      *
-     * @return the API docs in JSon, or <tt>null</tt> if camel-openapi-java is not on classpath
+     * @return the API docs in JSon, or <code>null</code> if camel-openapi-java is not on classpath
      */
     @Nullable
     String apiDocAsJson();

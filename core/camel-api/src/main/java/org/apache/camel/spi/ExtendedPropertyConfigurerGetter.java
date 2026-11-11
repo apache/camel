@@ -20,11 +20,11 @@ import java.util.Map;
 
 /**
  * Extends {@link PropertyConfigurerGetter} with the ability to enumerate every option a target supports.
- * <p/>
+ * <p>
  * In addition to inspecting individual options, {@link #getAllOptions(Object)} returns the full map of option name to
  * class type for a target. This is used primarily by API-based components and is only available while the
  * {@link org.apache.camel.CamelContext} is bootstrapping.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/property-binding.html">Property Binding</a> in the Camel user manual.
  *
  * @see   PropertyConfigurer

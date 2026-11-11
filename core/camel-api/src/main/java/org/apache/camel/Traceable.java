@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Implemented by {@link Processor}s that want to expose a human-readable label used by the Camel tracing infrastructure
  * to identify them in trace output and log messages.
- * <p/>
+ * <p>
  * When the backlog tracer or message-history feature is active, Camel calls {@link #getTraceLabel()} on each processor
  * to build a concise, path-style identifier such as {@code log:myLogger} or {@code to:direct:next}. The label is also
  * shown in the startup route summary and in JMX management output.
@@ -30,7 +30,7 @@ public interface Traceable {
 
     /**
      * Gets the trace label used for logging when tracing is enabled.
-     * <p/>
+     * <p>
      * The label should be short and precise.
      *
      * @return the label

@@ -24,14 +24,14 @@ import org.jspecify.annotations.Nullable;
 /**
  * SPI factory that creates the {@link ManagementStrategy} and its associated {@link LifecycleStrategy} for a
  * {@link org.apache.camel.CamelContext}.
- * <p/>
+ * <p>
  * Camel discovers implementations via {@link FactoryFinder} from the {@code META-INF/services/} directory. Adding
  * {@code camel-management} to the classpath registers the JMX-backed factory; without it the default no-op strategy is
  * used. The factory produces three artifacts: a {@link ManagementStrategy} (which owns the event-notifier list and
  * delegates to the {@link ManagementAgent}), an optional {@link LifecycleStrategy} (which listens to route and service
  * lifecycle events and drives MBean registration), and then wires both into the context via
  * {@link #setupManagement(org.apache.camel.CamelContext, ManagementStrategy, LifecycleStrategy)}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/jmx.html">JMX</a> in the Camel user manual.
  *
  * @see ManagementStrategy
@@ -61,7 +61,7 @@ public interface ManagementStrategyFactory {
 
     /**
      * Setup the management on the {@link CamelContext}.
-     * <p/>
+     * <p>
      * This allows implementations to provide the logic for setting up management on Camel.
      *
      * @param camelContext the camel context

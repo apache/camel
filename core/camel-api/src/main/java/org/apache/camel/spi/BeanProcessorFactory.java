@@ -26,13 +26,13 @@ import org.jspecify.annotations.Nullable;
 /**
  * Factory for creating a {@link Processor} that invokes a method on a bean with full support for
  * <a href="https://camel.apache.org/manual/bean-integration.html">Camel bean parameter bindings</a>.
- * <p/>
+ * <p>
  * When a route contains a {@code .bean()} DSL call, Camel delegates processor creation to this factory. The factory
  * implementation lives in {@code camel-bean} (loaded via the META-INF service file convention) and supports resolving
  * the target bean from multiple sources: a direct instance, a registry reference by name, a class name, or a
  * {@link Class} literal. The {@code method} parameter may be omitted to let Camel auto-select the best matching method
  * using the bean-binding algorithm.
- * <p/>
+ * <p>
  * The {@code scope} parameter controls bean lifecycle: {@link org.apache.camel.BeanScope#Singleton} reuses one shared
  * instance, while {@link org.apache.camel.BeanScope#Prototype} creates a new instance per exchange.
  *

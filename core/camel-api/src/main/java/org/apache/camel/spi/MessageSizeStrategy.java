@@ -21,7 +21,7 @@ import org.apache.camel.StaticService;
 
 /**
  * Strategy for computing the size of message payloads (body and headers) for observation purposes.
- * <p/>
+ * <p>
  * Not all message body types can be sized efficiently. For example, Java objects have no inherent "size", and streaming
  * payloads would be destructive to read unless stream caching is enabled. Implementations should return -1 when the
  * size cannot be determined without side effects.

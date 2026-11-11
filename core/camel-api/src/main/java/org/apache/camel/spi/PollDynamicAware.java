@@ -25,9 +25,9 @@ import org.apache.camel.Service;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Used for components that can optimise the usage of {@link org.apache.camel.processor.PollProcessor} (poll/pollEnrich)
+ * Used for components that can optimise the usage of {@code org.apache.camel.processor.PollProcessor} (poll/pollEnrich)
  * to reuse a static {@link Endpoint} and {@link org.apache.camel.DynamicPollingConsumer} that supports using headers to
- * provide the dynamic parts. For example many of the file based components supports this.
+ * provide the dynamic parts. For example many of the file based components support this.
  *
  * @since 4.11
  */
@@ -46,8 +46,8 @@ public interface PollDynamicAware extends Service, CamelContextAware {
     String getScheme();
 
     /**
-     * Whether to traverse the given parameters, and resolve any parameter values which uses the RAW token syntax:
-     * <tt>key=RAW(value)</tt>. And then remove the RAW tokens, and replace the content of the value, with just the
+     * Whether to traverse the given parameters, and resolve any parameter values which use the RAW token syntax:
+     * <code>key=RAW(value)</code>. And then remove the RAW tokens, and replace the content of the value, with just the
      * value.
      */
     default boolean resolveRawParameterValues() {
@@ -109,12 +109,12 @@ public interface PollDynamicAware extends Service, CamelContextAware {
     DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception;
 
     /**
-     * Resolves the static part of the uri that are used for creating a single {@link Endpoint} and
+     * Resolves the static part of the uri that is used for creating a single {@link Endpoint} and
      * {@link org.apache.camel.DynamicPollingConsumer} that will be reused for processing the optimised poll/pollEnrich.
      *
      * @param  exchange  the exchange
      * @param  entry     prepared information about the dynamic endpoint to use
-     * @return           the static uri, or <tt>null</tt> to not let poll/pollEnrich use this optimisation.
+     * @return           the static uri, or <code>null</code> to not let poll/pollEnrich use this optimisation.
      * @throws Exception is thrown if error resolving the static uri.
      */
     @Nullable

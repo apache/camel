@@ -55,7 +55,7 @@ public interface SimpleFunctionRegistry extends StaticService {
      * Gets the function (will resolve custom functions from registry)
      *
      * @param  name name of function
-     * @return      the function, or <tt>null</tt> if no function exists
+     * @return      the function, or <code>null</code> if no function exists
      */
     @Nullable
     Expression getFunction(String name);

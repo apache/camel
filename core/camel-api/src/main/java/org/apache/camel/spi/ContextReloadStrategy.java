@@ -20,11 +20,11 @@ import org.apache.camel.CamelContext;
 
 /**
  * SPI strategy for reloading a running {@link CamelContext} in place.
- * <p/>
+ * <p>
  * Reloading is limited to all routes and property placeholders; general services in the {@link CamelContext} are not
  * reloaded. This is the context-wide counterpart to {@link ResourceReloadStrategy} (which reloads from changed
  * resources) and builds on the generic {@link ReloadStrategy}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/context-reload.html">Context Reload</a> in the Camel user manual.
  *
  * @see   ReloadStrategy

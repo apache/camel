@@ -56,11 +56,11 @@ public interface Endpoint extends IsSingleton, Service, ComponentAware {
 
     /**
      * Returns a string key of this endpoint.
-     * <p/>
+     * <p>
      * This key is used by {@link org.apache.camel.spi.LifecycleStrategy} when registering endpoint. This allows to
      * register different instances of endpoints with the same key.
-     * <p/>
-     * For JMX mbeans this allows us to use the same JMX Mbean for all endpoints that are logical the same but have
+     * <p>
+     * For JMX mbeans this allows us to use the same JMX Mbean for all endpoints that are logically the same but have
      * different parameters. For instance the http endpoint.
      *
      * @return the endpoint key
@@ -69,7 +69,7 @@ public interface Endpoint extends IsSingleton, Service, ComponentAware {
 
     /**
      * Create a new exchange for communicating with this endpoint.
-     * <p/>
+     * <p>
      * <b>Important:</b> Consumers should use {@link Consumer#createExchange(boolean)} to create an exchange for which
      * the consumer received a message.
      *
@@ -79,8 +79,8 @@ public interface Endpoint extends IsSingleton, Service, ComponentAware {
 
     /**
      * Create a new exchange for communicating with this endpoint with the specified {@link ExchangePattern} such as
-     * whether its going to be an {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut} exchange
-     * <p/>
+     * whether it's going to be an {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut} exchange
+     * <p>
      * <b>Important:</b> Consumers should use {@link Consumer#createExchange(boolean)} to create an exchange for which
      * the consumer received a message.
      *
@@ -176,15 +176,15 @@ public interface Endpoint extends IsSingleton, Service, ComponentAware {
 
     /**
      * Should all properties be known or does the endpoint allow unknown options?
-     * <p/>
-     * <tt>lenient = false</tt> means that the endpoint should validate that all given options is known and configured
-     * properly. <tt>lenient = true</tt> means that the endpoint allows additional unknown options to be passed to it
-     * but does not throw a ResolveEndpointFailedException when creating the endpoint.
-     * <p/>
-     * This options is used by a few components for instance the HTTP based that can have dynamic URI options appended
+     * <p>
+     * <code>lenient = false</code> means that the endpoint should validate that all given options are known and
+     * configured properly. <code>lenient = true</code> means that the endpoint allows additional unknown options to be
+     * passed to it but does not throw a ResolveEndpointFailedException when creating the endpoint.
+     * <p>
+     * This option is used by a few components for instance the HTTP based that can have dynamic URI options appended
      * that is targeted for an external system.
-     * <p/>
-     * Most endpoints is configured to be <b>not</b> lenient.
+     * <p>
+     * Most endpoints are configured to be <b>not</b> lenient.
      *
      * @return whether properties is lenient or not
      */
