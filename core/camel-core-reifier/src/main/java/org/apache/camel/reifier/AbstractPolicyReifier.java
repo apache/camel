@@ -17,6 +17,7 @@
 package org.apache.camel.reifier;
 
 import java.lang.reflect.Method;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
@@ -79,7 +80,16 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
             if (tmClazz != null) {
                 // see if we can find the platform transaction manager in the
                 // registry
-                Object transactionManager = mandatoryFindSingleByType(tmClazz);
+                Object transactionManager = findSingleByType(tmClazz);
+                if (transactionManager == null) {
+                    // none, but the application has one DataSource (Camel Main, camel run): a local transaction
+                    // manager for it
+                    transactionManager = localTransactionManager(tmClazz);
+                }
+                if (transactionManager == null) {
+                    // fails telling that there is no PlatformTransactionManager
+                    transactionManager = mandatoryFindSingleByType(tmClazz);
+                }
                 // only one platform manager then use it as default and
                 // create a transacted
                 // policy with it and default to required
@@ -118,5 +128,35 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
         }
 
         return answer;
+    }
+
+    /**
+     * A local transaction manager for the one DataSource of the registry, when the registry has no transaction manager,
+     * as with Camel Main and camel run (CAMEL-26851). It is bound as transactionManager, so the other transacted routes
+     * use it too. Null without exactly one DataSource, or without spring-jdbc on the classpath.
+     */
+    private Object localTransactionManager(Class<?> tmClazz) {
+        Class<?> dsClazz = camelContext.getClassResolver().resolveClass("javax.sql.DataSource");
+        Class<?> jtmClazz = camelContext.getClassResolver()
+                .resolveClass("org.springframework.jdbc.support.JdbcTransactionManager");
+        if (dsClazz == null || jtmClazz == null || !tmClazz.isAssignableFrom(jtmClazz)) {
+            return null;
+        }
+        Set<?> dataSources = camelContext.getRegistry().findByType(dsClazz);
+        if (dataSources.size() != 1) {
+            return null;
+        }
+        Object dataSource = dataSources.iterator().next();
+        Object transactionManager;
+        try {
+            transactionManager = jtmClazz.getConstructor(dsClazz).newInstance(dataSource);
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Cannot create a JdbcTransactionManager for the DataSource: " + dataSource, e);
+        }
+        if (camelContext.getRegistry().lookupByName("transactionManager") == null) {
+            camelContext.getRegistry().bind("transactionManager", transactionManager);
+        }
+        LOG.info("Using a local JdbcTransactionManager for transacted routes, with the DataSource: {}", dataSource);
+        return transactionManager;
     }
 }
