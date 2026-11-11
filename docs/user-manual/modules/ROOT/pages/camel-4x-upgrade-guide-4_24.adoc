@@ -592,11 +592,10 @@ in the same route:
   component documents for sends in a `doCatch` block) instead of being aborted, unless the caught failure was a Kafka
   send failure.
 
-There is no option for the old end-of-exchange outcome. For the Idempotent Consumer, rethrowing the exception in the
-`doCatch` block with `removeOnFailure` (the default) removes the message id. As a last resort, a processor at the end
-of the `doCatch` block can mark the exchange as failure handled with
-`exchange.getExchangeExtension().setFailureHandled(true)` (an internal API, so a Java processor or bean); this applies
-when the `doCatch` block completes.
+There is no option for the old end-of-exchange outcome. For the Idempotent Consumer, throw an exception from the
+`doCatch` block (for example with `throwException`): the exchange then fails (or an error handler of the route handles
+the new failure), and with `removeOnFailure` (the default) the message id is removed, so the message is processed again
+when it comes again.
 
 === camel-core - Simple: more predicates inside ${ } are read as predicates
 

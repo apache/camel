@@ -25,6 +25,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -94,18 +95,35 @@ class DoCatchFailureHandledMarkTest extends ContextTestSupport {
                             .end()
                             .end();
 
-                    // the way back to the old outcome: the doCatch block marks the exchange as failure handled itself
-                    failingTry(from("direct:wayBack-" + variant)
+                    // the advice of the upgrade guide: the doCatch block throws, the exchange fails, and the
+                    // idempotent consumer removes the id (removeOnFailure, the default), so the message is processed
+                    // when it comes again
+                    failingTry(from("direct:rethrow-" + variant)
                             .idempotentConsumer(header("id"), repository(variant)), variant)
                             .doCatch(IllegalArgumentException.class)
                                 .to("mock:catch")
-                                .process(e -> e.getExchangeExtension().setFailureHandled(true))
+                                .throwException(new IllegalStateException("rethrown"))
                             .end()
                             .end();
                 }
 
                 // the callee fails unhandled (default error handler)
                 from("direct:failing").throwException(new IllegalArgumentException("callee"));
+
+                // the doTry fails with an exchange marked as handled by an error handler (both marks, as an error
+                // handler that handled a failure sets them). Such an exchange rarely gets to a doCatch (for example an
+                // aggregation strategy that combines a part whose failure was handled with a part that failed), so the
+                // marks are set directly
+                from("direct:markedFailure")
+                        .doTry()
+                        .process(e -> {
+                            e.getExchangeExtension().setFailureHandled(true);
+                            e.getExchangeExtension().setErrorHandlerHandled(true);
+                            throw new IllegalArgumentException("marked");
+                        })
+                        .doCatch(IllegalArgumentException.class)
+                        .to("mock:catch")
+                        .end();
 
                 from("direct:dlcRoute").errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0))
                         .throwException(new IOException("in called route"));
@@ -182,14 +200,23 @@ class DoCatchFailureHandledMarkTest extends ContextTestSupport {
 
     @ParameterizedTest
     @ValueSource(strings = { "viaCallee", "inRoute" })
-    void doCatchCanMarkTheExchangeAsFailureHandled(String variant) {
-        Exchange out = template.send("direct:wayBack-" + variant, e -> e.getMessage().setHeader("id", "m2"));
-        assertNull(out.getException());
-        assertTrue(out.getExchangeExtension().isFailureHandled(), "failure handled");
-        assertFalse(repository(variant).contains("m2"), "the id of a failure handled message is removed");
+    void rethrowInTheDoCatchRemovesTheIdempotentId(String variant) {
+        Exchange out = template.send("direct:rethrow-" + variant, e -> e.getMessage().setHeader("id", "m2"));
+        assertInstanceOf(IllegalStateException.class, out.getException());
+        assertFalse(repository(variant).contains("m2"), "the id of a failed message is removed");
 
-        template.send("direct:wayBack-" + variant, e -> e.getMessage().setHeader("id", "m2"));
+        template.send("direct:rethrow-" + variant, e -> e.getMessage().setHeader("id", "m2"));
         assertEquals(2, count("mock:catch"), "the message is processed again");
+    }
+
+    @Test
+    void doCatchLeavesNoHandledMarkOfTheCaughtFailure() {
+        // the doCatch handled the failure: the exchange carries neither mark of it, and never one without the other
+        Exchange out = template.send("direct:markedFailure", e -> e.getMessage().setBody("hello"));
+        assertNull(out.getException());
+        assertEquals(1, count("mock:catch"), "mock:catch");
+        assertFalse(out.getExchangeExtension().isFailureHandled(), "failure handled");
+        assertFalse(out.getExchangeExtension().isErrorHandlerHandledSet(), "handled by the error handler");
     }
 
     private IdempotentRepository repository(String variant) {
