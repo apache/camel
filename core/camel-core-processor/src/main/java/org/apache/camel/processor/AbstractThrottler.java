@@ -165,8 +165,8 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
      * Sets the maximum number of concurrent requests.
      */
     @Override
-    public void setMaximumRequestsExpression(Expression maxConcurrentRequestsExpression) {
-        this.maxRequestsExpression = maxConcurrentRequestsExpression;
+    public void setMaximumRequestsExpression(Expression maxRequestsExpression) {
+        this.maxRequestsExpression = maxRequestsExpression;
     }
 
     public Expression getMaximumRequestsExpression() {
