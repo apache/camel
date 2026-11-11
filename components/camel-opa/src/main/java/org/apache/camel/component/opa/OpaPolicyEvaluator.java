@@ -27,6 +27,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
+import org.apache.camel.support.security.AuthorizationObservation;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +83,48 @@ public abstract class OpaPolicyEvaluator {
      * @throws OpaPolicyEvaluationException when the policy could not be evaluated and {@code failOpen} is false
      */
     public boolean evaluate(Exchange exchange) throws OpaPolicyEvaluationException {
+        AuthorizationObservation observation
+                = AuthorizationObservation.begin(exchange, observationEngine(), Operation.DECISION, null);
+        if (!observation.isEnabled()) {
+            return evaluateInternal(exchange, null);
+        }
+        long[] poolWait = observationEngine() == Engine.OPA_WASM ? new long[] { -1 } : null;
+        try {
+            boolean allowed = evaluateInternal(exchange, poolWait);
+            if (poolWait != null) {
+                observation.poolWait(poolWait[0]);
+            }
+            boolean failedOpen = Boolean.TRUE.equals(exchange.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN));
+            observation.complete(failedOpen ? Outcome.FAILED_OPEN : allowed ? Outcome.ALLOW : Outcome.DENY,
+                    failedOpen ? Failure.UNAVAILABLE : Failure.NONE);
+            return allowed;
+        } catch (OpaPolicyEvaluationException | RuntimeException e) {
+            if (poolWait != null) {
+                observation.poolWait(poolWait[0]);
+            }
+            boolean unavailable = observationUnavailable(e);
+            observation.complete(unavailable ? Outcome.UNAVAILABLE : Outcome.ERROR,
+                    AuthorizationObservation.interrupted(e) ? Failure.INTERRUPTED
+                            : unavailable ? Failure.UNAVAILABLE : Failure.EVALUATION);
+            throw e;
+        }
+    }
+
+    private boolean observationUnavailable(Exception failure) {
+        Exception cause = failure instanceof OpaPolicyEvaluationException && failure.getCause() instanceof Exception wrapped
+                ? wrapped : failure;
+        return isDecisionPointUnavailable(cause);
+    }
+
+    protected Engine observationEngine() {
+        return Engine.OPA_REST;
+    }
+
+    protected Object evaluateDecision(Map<String, Object> input, long[] poolWaitNanos) throws Exception {
+        return evaluateDecision(input);
+    }
+
+    private boolean evaluateInternal(Exchange exchange, long[] poolWaitNanos) throws OpaPolicyEvaluationException {
         // a verdict the message arrived with is a claim, not evidence. Clear it before deciding anything, so that
         // every way out of this method - allowed, denied, or a failure the route goes on to handle - leaves only
         // what this component decided. Overwriting at the end is not enough: the paths that throw never get there,
@@ -85,7 +132,7 @@ public abstract class OpaPolicyEvaluator {
         clearDecisionHeaders(exchange);
         Object decision;
         try {
-            decision = evaluateDecision(buildInput(exchange));
+            decision = evaluateDecision(buildInput(exchange), poolWaitNanos);
         } catch (InterruptedException e) {
             // not a policy failure but a shutdown, so failOpen must not turn it into an allow: nothing decided
             // that this exchange was permitted. Restore the flag the interruptible wait cleared, then fail closed.
@@ -188,6 +235,33 @@ public abstract class OpaPolicyEvaluator {
      * {@code UNAVAILABLE} and failed open; they do not say which of the two happened.
      */
     public List<Boolean> evaluateBatch(Exchange exchange, List<?> elements) throws OpaPolicyEvaluationException {
+        AuthorizationObservation observation
+                = AuthorizationObservation.begin(exchange, observationEngine(), Operation.BATCH, null);
+        try {
+            List<Boolean> verdicts = evaluateBatchInternal(exchange, elements);
+            if (observation.isEnabled()) {
+                @SuppressWarnings("unchecked")
+                List<OpaBatchOutcome> outcomes = exchange.getMessage().getHeader(OpaConstants.BATCH_OUTCOMES, List.class);
+                for (OpaBatchOutcome outcome : outcomes) {
+                    observation.item(outcome.isFailedOpen() ? Outcome.FAILED_OPEN
+                            : outcome.getFailureCategory() == OpaBatchOutcome.FailureCategory.UNAVAILABLE ? Outcome.UNAVAILABLE
+                            : outcome.getFailureCategory() != OpaBatchOutcome.FailureCategory.NONE ? Outcome.ERROR
+                            : outcome.isAllowed() ? Outcome.ALLOW : Outcome.DENY);
+                }
+                observation.completeBatch();
+            }
+            return verdicts;
+        } catch (OpaPolicyEvaluationException | RuntimeException e) {
+            boolean unavailable = observationUnavailable(e);
+            observation.remainingItems(unavailable ? Outcome.UNAVAILABLE : Outcome.ERROR, elements.size());
+            observation.complete(unavailable ? Outcome.UNAVAILABLE : Outcome.ERROR,
+                    AuthorizationObservation.interrupted(e) ? Failure.INTERRUPTED
+                            : unavailable ? Failure.UNAVAILABLE : Failure.EVALUATION);
+            throw e;
+        }
+    }
+
+    private List<Boolean> evaluateBatchInternal(Exchange exchange, List<?> elements) throws OpaPolicyEvaluationException {
         clearDecisionHeaders(exchange);
         // an empty list has nothing to authorize. Short-circuit before the engine call: an empty batch is a case the
         // OPA SDK does not define, and letting it reach the server could turn "nothing to decide" into a whole-batch

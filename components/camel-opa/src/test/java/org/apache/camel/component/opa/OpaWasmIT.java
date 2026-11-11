@@ -144,6 +144,33 @@ public class OpaWasmIT extends CamelTestSupport {
      * health check is registered (CAMEL-24743).
      */
     @Test
+    void observesActualWasmPoolBorrowWithoutCreatingAnotherSpan() throws Exception {
+        var events = new java.util.ArrayList<org.apache.camel.support.security.AuthorizationDecisionEvent>();
+        var observer = new org.apache.camel.support.EventNotifierSupport() {
+            @Override
+            public boolean isEnabled(org.apache.camel.spi.CamelEvent event) {
+                return event instanceof org.apache.camel.support.security.AuthorizationDecisionEvent;
+            }
+
+            @Override
+            public void notify(org.apache.camel.spi.CamelEvent event) {
+                events.add((org.apache.camel.support.security.AuthorizationDecisionEvent) event);
+            }
+        };
+        context.getManagementStrategy().addEventNotifier(observer);
+        try {
+            Exchange out = template.request(wasm("authz/allow"), exchange -> exchange.getMessage().setHeader("user", "alice"));
+            assertThat(out.getException()).isNull();
+            assertThat(events).hasSize(1);
+            assertThat(events.getFirst().getEngine())
+                    .isEqualTo(org.apache.camel.support.security.AuthorizationDecisionEvent.Engine.OPA_WASM);
+            assertThat(events.getFirst().getPoolWaitNanos()).isNotNegative();
+        } finally {
+            context.getManagementStrategy().removeEventNotifier(observer);
+        }
+    }
+
+    @Test
     void registersTheCheckForTheRestRouteButNotTheWasmRoute() {
         List<HealthCheck> checks = producerChecks();
         // exactly one check, and it is the rest route's - the wasm route evaluates in-process with no server to probe
