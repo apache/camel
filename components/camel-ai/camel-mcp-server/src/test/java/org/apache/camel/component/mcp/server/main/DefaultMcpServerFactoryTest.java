@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mcp.server.main;
 
+import org.apache.camel.component.mcp.server.McpServerBridge;
 import org.apache.camel.component.mcp.server.McpServerEngine;
 import org.apache.camel.component.mcp.server.stdio.StdioMcpServerEngine;
 import org.apache.camel.main.HttpServerConfigurationProperties;
@@ -24,6 +25,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DefaultMcpServerFactoryTest extends CamelTestSupport {
 
@@ -51,6 +53,65 @@ class DefaultMcpServerFactoryTest extends CamelTestSupport {
         factory.newMcpServer(context, server);
 
         assertThat(context.getRegistry().findSingleByType(McpServerEngine.class)).isNull();
+    }
+
+    @Test
+    void passesOAuthConfigurationToBridgeForTheVertxEngine() {
+        DefaultMcpServerFactory factory = new DefaultMcpServerFactory();
+        HttpServerConfigurationProperties server = new MainConfigurationProperties().httpServer();
+        server.setMcpEnabled(true);
+        server.setMcpOauthProfile("keycloak");
+        server.setMcpRequiredScopes("mcp:read,mcp:write");
+        server.withMcpResourceUri("https://mcp.example.test/mcp");
+
+        McpServerBridge bridge = (McpServerBridge) factory.newMcpServer(context, server);
+
+        assertThat(bridge.getConfiguration().getOauthProfile()).isEqualTo("keycloak");
+        assertThat(bridge.getConfiguration().getRequiredScopes()).isEqualTo("mcp:read,mcp:write");
+        assertThat(bridge.getConfiguration().getResourceUri()).isEqualTo("https://mcp.example.test/mcp");
+    }
+
+    @Test
+    void requiresExplicitResourceUriWhenOAuthIsConfigured() {
+        DefaultMcpServerFactory factory = new DefaultMcpServerFactory();
+        HttpServerConfigurationProperties server = new MainConfigurationProperties().httpServer();
+        server.setMcpEnabled(true);
+        server.setMcpOauthProfile("keycloak");
+
+        assertThatThrownBy(() -> factory.newMcpServer(context, server))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("camel.server.mcp-resource-uri");
+    }
+
+    @Test
+    void rejectsRequiredScopesWithoutOAuthProfile() {
+        DefaultMcpServerFactory factory = new DefaultMcpServerFactory();
+        HttpServerConfigurationProperties server = new MainConfigurationProperties().httpServer();
+        server.setMcpEnabled(true);
+        server.setMcpRequiredScopes("mcp:read");
+
+        assertThatThrownBy(() -> factory.newMcpServer(context, server))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("camel.server.mcp-oauth-profile");
+    }
+
+    @Test
+    void ignoresOAuthConfigurationForStdioTransport() {
+        DefaultMcpServerFactory factory = new DefaultMcpServerFactory();
+        HttpServerConfigurationProperties server = new MainConfigurationProperties().httpServer();
+        server.setMcpEnabled(true);
+        server.setMcpTransport("stdio");
+        server.setMcpOauthProfile("keycloak");
+        server.setMcpRequiredScopes("mcp:read");
+        server.setMcpResourceUri("https://mcp.example.test/mcp");
+
+        McpServerBridge bridge = (McpServerBridge) factory.newMcpServer(context, server);
+
+        assertThat(bridge.getConfiguration().getOauthProfile()).isNull();
+        assertThat(bridge.getConfiguration().getRequiredScopes()).isNull();
+        assertThat(bridge.getConfiguration().getResourceUri()).isNull();
+        assertThat(context.getRegistry().findSingleByType(McpServerEngine.class))
+                .isInstanceOf(StdioMcpServerEngine.class);
     }
 
     @Test

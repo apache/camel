@@ -17,7 +17,12 @@
 package org.apache.camel.component.mcp.server;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.camel.spi.OAuthTokenValidationResult;
 
 /**
  * Transport-supplied context for a single MCP tool call, carrying the caller's authenticated security principal when
@@ -33,20 +38,32 @@ import java.util.List;
  * runtime-neutral view the engine derives from that principal, so a route or the shipped identity policies can
  * authorize on a stable name and roles regardless of the MCP server runtime.
  *
- * @param securityPrincipal the authenticated caller principal, or {@code null} when the transport has none
- * @param principalName     the runtime-neutral caller name derived from the principal, or {@code null} when there is no
- *                          principal or the transport cannot determine a name
- * @param principalRoles    the runtime-neutral caller role names derived from the principal, or {@code null} when there
- *                          is no principal or the transport cannot determine any roles; when present it is an immutable
- *                          copy and never contains {@code null}
- * @since                   4.23
+ * @param securityPrincipal          the authenticated caller principal, or {@code null} when the transport has none
+ * @param principalName              the runtime-neutral caller name derived from the principal, or {@code null} when
+ *                                   there is no principal or the transport cannot determine a name
+ * @param principalRoles             the runtime-neutral caller role names derived from the principal, or {@code null}
+ *                                   when there is no principal or the transport cannot determine any roles; when
+ *                                   present it is an immutable copy and never contains {@code null}
+ * @param oauthSubject               the subject from the validated bearer token, or {@code null} when OAuth is not used
+ * @param oauthScopes                the scopes from the validated bearer token, or {@code null} when OAuth is not used
+ * @param oauthClaims                the claims from the validated bearer token, or {@code null} when OAuth is not used
+ * @param oauthTokenValidationResult the full validated token result for compatibility with Camel HTTP OAuth routes, or
+ *                                   {@code null} when no bearer-token validation was performed
+ * @since                            4.23
  */
-public record McpToolCallContext(Object securityPrincipal, String principalName, Collection<String> principalRoles) {
+public record McpToolCallContext(
+        Object securityPrincipal,
+        String principalName,
+        Collection<String> principalRoles,
+        String oauthSubject,
+        Collection<String> oauthScopes,
+        Map<String, Object> oauthClaims,
+        OAuthTokenValidationResult oauthTokenValidationResult) {
 
     /**
      * An empty context: no transport-supplied caller principal.
      */
-    public static final McpToolCallContext EMPTY = new McpToolCallContext(null, null, null);
+    public static final McpToolCallContext EMPTY = new McpToolCallContext(null, null, null, null, null, null, null);
 
     /**
      * Exchange property under which the bridge stamps {@link #securityPrincipal()} on the tool exchange, so a tool
@@ -76,6 +93,18 @@ public record McpToolCallContext(Object securityPrincipal, String principalName,
      */
     public static final String SECURITY_PRINCIPAL_ROLES_PROPERTY = "CamelMcpSecurityPrincipalRoles";
 
+    /** Exchange property containing the validated OAuth subject. */
+    public static final String OAUTH_SUBJECT_PROPERTY = "CamelMcpOAuthSubject";
+
+    /** Exchange property containing the validated OAuth scopes. */
+    public static final String OAUTH_SCOPES_PROPERTY = "CamelMcpOAuthScopes";
+
+    /** Exchange property containing the validated OAuth claims. */
+    public static final String OAUTH_CLAIMS_PROPERTY = "CamelMcpOAuthClaims";
+
+    /** Exchange property containing the full validated OAuth result, shared with HTTP OAuth consumers. */
+    public static final String OAUTH_TOKEN_VALIDATION_RESULT_PROPERTY = "CamelOAuthTokenValidationResult";
+
     /**
      * Canonical constructor; defensively copies the roles into an immutable collection so the stamped exchange property
      * cannot be mutated through the caller's reference.
@@ -84,6 +113,20 @@ public record McpToolCallContext(Object securityPrincipal, String principalName,
         if (principalRoles != null) {
             principalRoles = List.copyOf(principalRoles);
         }
+        if (oauthScopes != null) {
+            oauthScopes = List.copyOf(oauthScopes);
+        }
+        if (oauthClaims != null) {
+            oauthClaims = Collections.unmodifiableMap(new LinkedHashMap<>(oauthClaims));
+        }
+    }
+
+    /**
+     * Compatibility constructor for transports that provide a principal, name and roles only.
+     */
+    public McpToolCallContext(
+                              Object securityPrincipal, String principalName, Collection<String> principalRoles) {
+        this(securityPrincipal, principalName, principalRoles, null, null, null, null);
     }
 
     /**

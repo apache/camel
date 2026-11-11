@@ -453,6 +453,39 @@ class DefaultOAuthTokenValidationFactoryTest {
     }
 
     @Test
+    void introspectionReadsScpArrayClaim() throws Exception {
+        AtomicInteger requests = new AtomicInteger();
+        HttpServer server = startIntrospectionServer(requests, new AtomicReference<>(), new AtomicReference<>(),
+                new AtomicReference<>(),
+                """
+                        {"active":true,"sub":"opaque-user","iss":"%s","aud":["%s"],
+                        "scope":"mcp:read common","scp":["mcp:write common","common"],"exp":%d}
+                        """
+                        .formatted(ISSUER, AUDIENCE, System.currentTimeMillis() / 1000L + 300));
+        try {
+            OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
+                    .setIntrospectionEndpoint("http://127.0.0.1:" + server.getAddress().getPort() + "/introspect")
+                    .setIntrospectionClientId("client")
+                    .setIntrospectionClientSecret("secret")
+                    .setAllowMissingAudience(true)
+                    .setAllowMissingIssuer(true)
+                    .setAllowInsecureHttp(true)
+                    .setExpectedIssuer(ISSUER)
+                    .setExpectedAudience(AUDIENCE);
+
+            OAuthTokenValidationResult result = factory.validateToken(config, "opaque-token");
+
+            assertTrue(result.isValid());
+            assertEquals(List.of("mcp:read", "common", "mcp:write"), result.getScopes());
+            assertTrue(result.hasScope("mcp:read"));
+            assertTrue(result.hasScope("mcp:write"));
+            assertEquals(1, requests.get());
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
     void mixedProfileIntrospectsOpaqueTokenWithDots() throws Exception {
         AtomicInteger requests = new AtomicInteger();
         HttpServer server = startIntrospectionServer(requests, new AtomicReference<>(), new AtomicReference<>(),

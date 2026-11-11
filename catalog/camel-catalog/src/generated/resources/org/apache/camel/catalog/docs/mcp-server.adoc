@@ -323,6 +323,9 @@ JBang (see the xref:main.adoc[camel-main] options) or on
   list gets HTTP 403. Scheme and host are compared ignoring case, and a default
   port may be left out. `+*+` is not supported. When not set, only loopback
   origins are allowed. See <<_origins_and_binding>>. | loopback origins | engine
+| `camel.server.mcp-oauth-profile` | Name of the `camel-oauth` profile used to validate bearer tokens. Requires `camel-oauth` on the classpath. Supported by the Camel Main / JBang Vert.x HTTP engine. |  | engine
+| `camel.server.mcp-required-scopes` | Comma-separated OAuth scopes required to access the MCP HTTP endpoint. Requires `camel.server.mcp-oauth-profile`. |  | engine
+| `camel.server.mcp-resource-uri` | Explicit public HTTPS resource identifier for the MCP endpoint, used by RFC 9728 metadata. Requires `camel.server.mcp-oauth-profile`; its path must match `camel.server.mcp-path`. It is never inferred from request headers. |  | engine
 |===
 
 Bridge-owned options are honored identically on every runtime. Engine-owned
@@ -412,17 +415,78 @@ following rules:
 * *Bounded execution*: every call, read and prompt request is subject to its
   configured timeout. A timed-out route keeps running server-side until it
   completes; the timeout bounds the MCP request, not the route.
-* *Authentication (HTTP)*: the MCP endpoint is served through the main HTTP server
-  router, so platform-http authentication (basic, JWT via
-  `camel.server.authentication*` options) applies to it. The MCP
-  specification's authorization model is OAuth 2.1; see
-  xref:oauth.adoc[camel-oauth] for resource-server style
-  protection. On Quarkus and Spring Boot, authentication is owned by the
-  native runtime security.
+* *Authentication (HTTP)*: on Camel Main and Camel JBang, the Vert.x engine can validate
+  bearer tokens with the MCP OAuth options below. The embedded server's global
+  `camel.server.authentication*` settings may also apply; they are separate from
+  the MCP OAuth profile. On Quarkus and Spring Boot, authentication is owned by
+  the native runtime security.
 * *Authentication (stdio)*: stdio mode has no HTTP transport and therefore no
   HTTP authentication layer. Trust is the parent process that launched the
   Camel subprocess (local IDE or agent). Route authors remain fully trusted;
   only explicitly tagged tools are exposed.
+
+
+=== OAuth bearer-token authentication (Camel Main / Camel JBang)
+
+The Vert.x streamable HTTP engine can protect the MCP endpoint with OAuth bearer tokens. Add
+xref:oauth.adoc[camel-oauth] to the runtime classpath and configure a named incoming-token validation profile.
+For production, use HTTPS for both the MCP endpoint and the authorization-server endpoints, and
+configure an expected issuer and audience.
+
+[source,properties]
+----
+camel.server.mcp-enabled = true
+camel.server.mcp-transport = http
+camel.server.mcp-path = /mcp
+camel.server.mcp-oauth-profile = keycloak
+camel.server.mcp-required-scopes = mcp:read,mcp:write
+camel.server.mcp-resource-uri = https://mcp.example.com/mcp
+
+camel.oauth.keycloak.base-uri = https://id.example.com/realms/my-realm
+camel.oauth.keycloak.expected-audience = mcp-server
+camel.oauth.keycloak.allowed-jws-algorithms = RS256
+----
+
+`camel.server.mcp-resource-uri` is the canonical, externally visible HTTPS URI of the protected
+MCP resource. It must not contain user-info, a query, or a fragment, and its path must exactly match
+`camel.server.mcp-path`. The embedded HTTP context path `camel.server.path` must remain `/` while
+OAuth is enabled; a non-root context path is rejected by the Vert.x engine because RFC 9728 requires
+the protected-resource metadata document to be discoverable from the origin root, not below the
+HTTP context-path prefix. Configure any public path prefix in `camel.server.mcp-path` and in the
+resource URI. TLS may terminate at a trusted reverse proxy, but
+the configured resource URI must be the URL that clients use. The OAuth profile's
+`allow-insecure-http` option applies only to local authorization-server discovery/JWKS/introspection
+endpoints; it does not permit an HTTP MCP resource URI.
+
+The unauthenticated RFC 9728 document is served at
+`/.well-known/oauth-protected-resource` followed by the MCP resource path. Requests without a
+bearer token or with an invalid token receive HTTP 401 and a `WWW-Authenticate` challenge containing
+`resource_metadata`; a valid token missing a required scope receives HTTP 403 with
+`error="insufficient_scope"`, the required scopes, and the metadata URL. Identity-provider
+infrastructure failures return HTTP 503. Error responses do not expose the token, client secret, or
+internal validation details.
+
+When OAuth is enabled, an MCP session is bound to the validated token's `sub` claim at
+initialization. Subsequent POST, GET, and DELETE requests must use a token with the same
+subject; requests from another subject receive the same not-found response as an unknown
+session ID. A token without a non-empty subject cannot initialize an OAuth-protected MCP
+session. This prevents a session identifier from being reused across authenticated users.
+
+For an authenticated tool call, the bridge exposes the following exchange properties:
+
+* `CamelMcpOAuthSubject`, `CamelMcpOAuthScopes`, and `CamelMcpOAuthClaims` contain the subject,
+  scopes, and claims from the validated token.
+* `CamelMcpSecurityPrincipalName` and `CamelMcpSecurityPrincipalRoles` expose the runtime-neutral
+  caller name and roles when available. Roles are extracted from common `roles`,
+  `realm_access.roles`, or `groups` claim shapes.
+* `CamelOAuthTokenValidationResult` contains the full Camel OAuth validation result for route code
+  that already consumes the standard HTTP OAuth exchange property.
+
+These options configure OAuth only on the Camel Main / JBang Vert.x HTTP engine. Camel Main stdio
+mode has no HTTP authentication layer: it logs a warning and ignores these OAuth options. Native
+Spring Boot and Quarkus MCP engines own their security configuration; passing these Camel-engine
+OAuth options to an unsupported programmatic engine fails at bridge initialization instead of
+silently leaving an endpoint unprotected.
 
 === Origins and binding
 

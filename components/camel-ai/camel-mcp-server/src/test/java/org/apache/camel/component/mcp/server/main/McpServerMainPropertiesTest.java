@@ -76,6 +76,12 @@ class McpServerMainPropertiesTest {
 
             McpSchema.InitializeResult init = client.initialize();
             assertThat(init.serverInfo().name()).isEqualTo("my-integration-app");
+            HttpResponse<String> metadata = HttpClient.newHttpClient().send(
+                    HttpRequest.newBuilder(URI.create("http://localhost:" + port
+                                                      + "/.well-known/oauth-protected-resource/mcp"))
+                            .GET().build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertThat(metadata.statusCode()).isEqualTo(404);
 
             assertThat(client.listTools().tools())
                     .extracting(McpSchema.Tool::name)
