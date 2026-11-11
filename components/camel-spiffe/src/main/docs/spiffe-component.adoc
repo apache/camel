@@ -138,6 +138,12 @@ Because it extends `SSLContextParameters`, the inherited configuration is still 
 `CamelContext` shutdown, and the cached context is invalidated at the same time so a restarted context rebuilds a
 fresh source.
 
+`SpiffeSSLContextParameters` also implements `AutoCloseable` for standalone use. When neither the
+`createSSLContext` argument nor the parameters instance supplies a `CamelContext`, use try-with-resources or call
+`close()` explicitly to release the Workload API watcher. Closing invalidates the cached context and is idempotent;
+a subsequent `createSSLContext` call creates a new source. Stop using existing SSL contexts and TLS connections
+before closing their parameters.
+
 [tabs]
 ====
 Java::

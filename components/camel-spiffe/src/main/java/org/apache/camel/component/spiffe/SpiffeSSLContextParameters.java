@@ -56,7 +56,8 @@ import org.apache.camel.util.ObjectHelper;
  * {@link #getSecureSocketProtocol()} (default {@code TLSv1.3}).
  * <p>
  * The underlying {@code X509Source} is created lazily on the first call, closed when the {@link CamelContext} shuts
- * down, and the cached context is invalidated at the same time so a restarted context rebuilds a fresh source.
+ * down, and the cached context is invalidated at the same time so a restarted context rebuilds a fresh source. When
+ * used without a CamelContext, close this instance explicitly, for example with try-with-resources.
  */
 @Metadata(label = "bean",
           description = "SSLContextParameters whose SSLContext is backed by the SPIFFE Workload API: the X.509-SVID and"
@@ -66,7 +67,7 @@ import org.apache.camel.util.ObjectHelper;
                         + " still apply.",
           annotations = { "interfaceName=org.apache.camel.support.jsse.SSLContextParameters" })
 @Configurer(metadataOnly = true)
-public class SpiffeSSLContextParameters extends SSLContextParameters {
+public class SpiffeSSLContextParameters extends SSLContextParameters implements AutoCloseable {
 
     private static final String DEFAULT_PROTOCOL = "TLSv1.3";
 
@@ -90,6 +91,7 @@ public class SpiffeSSLContextParameters extends SSLContextParameters {
     private long initTimeout = 30000L;
 
     private volatile SSLContext sslContext;
+    private X509SourceService sourceService;
 
     public String getSpiffeSocketPath() {
         return spiffeSocketPath;
@@ -179,6 +181,7 @@ public class SpiffeSSLContextParameters extends SSLContextParameters {
             }
 
             X509Source source = createX509Source();
+            X509SourceService service = new X509SourceService(source);
             try {
                 SslContextOptions.SslContextOptionsBuilder options
                         = SslContextOptions.builder().x509Source(source).sslProtocol(protocol);
@@ -196,11 +199,12 @@ public class SpiffeSSLContextParameters extends SSLContextParameters {
                                 getSSLEngineConfigurers(spiffeContext),
                                 getSSLSocketFactoryConfigurers(spiffeContext),
                                 getSSLServerSocketFactoryConfigurers(spiffeContext)));
-                registerForShutdown(camelContext, source);
+                registerForShutdown(camelContext, service);
+                this.sourceService = service;
                 this.sslContext = decorated;
                 return decorated;
             } catch (GeneralSecurityException | RuntimeException e) {
-                closeQuietly(source);
+                service.stop();
                 throw e;
             }
         }
@@ -219,16 +223,32 @@ public class SpiffeSSLContextParameters extends SSLContextParameters {
         }
     }
 
-    private void registerForShutdown(CamelContext camelContext, X509Source source) {
+    private void registerForShutdown(CamelContext camelContext, X509SourceService service) {
         // fall back to the context this instance already knows (JsseParameters is CamelContextAware), so callers
         // that pass null - e.g. some HTTP server factories - still get the source closed on shutdown
         CamelContext context = camelContext != null ? camelContext : getCamelContext();
         if (context != null) {
             try {
-                context.addService(new X509SourceService(source));
+                context.addService(service);
             } catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
+        }
+    }
+
+    /**
+     * Closes the current Workload API source and invalidates the cached SSLContext. This is required when no
+     * CamelContext owns this instance, and is safe to call more than once. A later call to createSSLContext creates a
+     * fresh source; existing TLS connections and SSLContext references must no longer be used after closing.
+     */
+    @Override
+    public void close() {
+        X509SourceService service;
+        synchronized (this) {
+            service = sourceService;
+        }
+        if (service != null) {
+            service.stop();
         }
     }
 
@@ -259,6 +279,7 @@ public class SpiffeSSLContextParameters extends SSLContextParameters {
      */
     private final class X509SourceService implements Service {
         private final X509Source source;
+        private boolean stopped;
 
         X509SourceService(X509Source source) {
             this.source = source;
@@ -271,10 +292,17 @@ public class SpiffeSSLContextParameters extends SSLContextParameters {
 
         @Override
         public void stop() {
-            closeQuietly(source);
             synchronized (SpiffeSSLContextParameters.this) {
-                sslContext = null;
+                if (stopped) {
+                    return;
+                }
+                stopped = true;
+                if (sourceService == this) {
+                    sourceService = null;
+                    sslContext = null;
+                }
             }
+            closeQuietly(source);
         }
     }
 }
