@@ -289,4 +289,19 @@ class HistoryTabRenderTest {
     private static HistoryTab.WaterfallStep step(String id, boolean first, boolean last, long elapsed, long start) {
         return new HistoryTab.WaterfallStep(id, id, "-->", first, last, 0, elapsed, 0, start);
     }
+
+    @Test
+    void theInfoPanelSaysWhatAStepIsAndWhatItChangedInWords() {
+        // CAMEL-26864: it showed the marker of the table ("Step: 1/6 *->") and an empty "Changed:"
+        assertEquals("message in", HistoryTab.stepKind(true, false, false, false));
+        assertEquals("message in (remote)", HistoryTab.stepKind(true, false, true, false));
+        assertEquals("message out", HistoryTab.stepKind(false, true, false, false));
+        assertEquals("to a remote endpoint", HistoryTab.stepKind(false, false, true, false));
+        assertEquals("to a stub", HistoryTab.stepKind(false, false, true, true));
+        assertEquals("", HistoryTab.stepKind(false, false, false, false));
+
+        assertEquals("(first step)", HistoryTab.changedWords("", true).content());
+        assertEquals("nothing", HistoryTab.changedWords("    ", false).content());
+        assertEquals("body, properties", HistoryTab.changedWords("B P ", false).content());
+    }
 }

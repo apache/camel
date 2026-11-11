@@ -28,6 +28,8 @@ class ConsumerInfo {
     int inflight;
     Boolean polling;
     Long totalCounter;
+    // the messages its route received (the exchanges of the route), also for an event-driven consumer (CAMEL-26864)
+    long total = -1;
     Long delay;
     Long period;
     String schedule;

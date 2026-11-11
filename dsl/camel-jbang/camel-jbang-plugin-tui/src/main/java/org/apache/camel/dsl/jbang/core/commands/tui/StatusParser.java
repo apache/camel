@@ -478,6 +478,11 @@ final class StatusParser {
                     ci.inflight = cj.getIntegerOrDefault("inflight", 0);
                     ci.polling = Boolean.TRUE.equals(cj.get("polling"));
                     ci.totalCounter = cj.getLong("totalCounter");
+                    for (RouteInfo r : info.routes) {
+                        if (r.routeId != null && r.routeId.equals(ci.id)) {
+                            ci.total = r.total;
+                        }
+                    }
                     ci.delay = cj.getLong("delay");
                     ci.period = cj.getLong("period");
                     JsonObject cStats = (JsonObject) cj.get("statistics");
