@@ -115,7 +115,9 @@ Camel is a large, long-lived project — code often looks "wrong" but exists for
    configurations), [`chaos.adoc`](design/chaos.adoc) (proposed `camel-chaos`),
    [`exchange-sanitizer.adoc`](design/exchange-sanitizer.adoc) (proposed exchange sanitizer, dev-mode checks),
    [`java-dsl-parser.adoc`](design/java-dsl-parser.adoc) (`LwJavaParser`, reading Java routes without compiling them),
-   [`payload-mode.adoc`](design/payload-mode.adoc) (proposed `payloadMode`, the `PayloadMode` SPI).
+   [`payload-mode.adoc`](design/payload-mode.adoc) (proposed `payloadMode`, the `PayloadMode` SPI),
+   [`kamelets-in-camel.adoc`](design/kamelets-in-camel.adoc) (proposed move of `camel-kamelets` into Camel, released
+   with Camel).
 5. **Understand the broader context**: if a module replaced another (e.g. `camel-opentelemetry2`), understand what was
    intentionally changed vs. accidentally omitted.
 6. **Check if the fix reverts prior work**: if so, stop and reconsider; if still justified, say so in the PR description.
