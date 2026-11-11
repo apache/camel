@@ -126,7 +126,7 @@ public class DeviceClientPool {
 
     private DeviceClientFactory deviceClientFactory = DeviceClient::new;
     private LongSupplier nowMillisSupplier = System::currentTimeMillis;
-    private ScheduledExecutorService evictionExecutor;
+    private volatile ScheduledExecutorService evictionExecutor;
     private final AtomicBoolean started = new AtomicBoolean(false);
 
     public DeviceClientPool(Duration idleTimeout, Duration evictionInterval) {
