@@ -27,6 +27,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowoperationheader":
         case "allowOperationHeader": target.getConfiguration().setAllowOperationHeader(property(camelContext, boolean.class, value)); return true;
         case "audience": target.getConfiguration().setAudience(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthcheckexpirythreshold":
+        case "healthCheckExpiryThreshold": target.getConfiguration().setHealthCheckExpiryThreshold(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "localspiffeid":
@@ -55,6 +57,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowoperationheader":
         case "allowOperationHeader": return boolean.class;
         case "audience": return java.lang.String.class;
+        case "healthcheckexpirythreshold":
+        case "healthCheckExpiryThreshold": return long.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "localspiffeid":
@@ -79,6 +83,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowoperationheader":
         case "allowOperationHeader": return target.getConfiguration().isAllowOperationHeader();
         case "audience": return target.getConfiguration().getAudience();
+        case "healthcheckexpirythreshold":
+        case "healthCheckExpiryThreshold": return target.getConfiguration().getHealthCheckExpiryThreshold();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "localspiffeid":
