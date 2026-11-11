@@ -192,6 +192,9 @@ public final class SourceValidator {
             // an option at the column of its EIP: the lines to write, which a model copies (the words it does not,
             // CAMEL-25556)
             msgs = IndentLines.withLines(msgs, content);
+            // a constant with ${...}: the lines with simple: in its place, which the write tool can also apply when the
+            // same content comes a third time (CAMEL-26825)
+            msgs = ConstantLines.withLines(msgs, content);
             return KameletChecks.withTemplateHints(name, content, msgs);
         }
         if (name.endsWith(".properties")) {
