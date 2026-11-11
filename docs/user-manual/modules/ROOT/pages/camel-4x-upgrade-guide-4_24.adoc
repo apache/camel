@@ -193,6 +193,16 @@ Apache MINA SSHD leaves it off by default, so a small request, such as one that 
 listing, could wait for the server to acknowledge the previous reply. The `org.apache.sshd.config.tcp-nodelay` system
 property no longer applies to the connections of `mina-sftp`.
 
+=== camel-master - the consumer keeps the leadership until its delegated consumer has stopped
+
+When a `master:` consumer stops (its route stops, or the CamelContext shuts down), it now stops the delegated consumer
+first, then the processor of the route, and only then releases the cluster view, so the leadership moves to another node
+once this node no longer consumes. Before, it released the view first, so another node could start consuming while this
+one was still stopping its consumer (a consumer may wait in its stop for the messages it is processing, as JMS does, and
+these messages now reach a started route). The hand-over on a graceful stop can therefore come later, by up to the time
+the delegated consumer takes to stop (a stop that blocks holds back the failover until it returns). Exchanges in flight
+that the delegated consumer does not wait for in its stop may still be in flight when the leadership moves, as before.
+
 === camel-ftp - sftp checks whether a file exists with one lstat request
 
 The `sftp` component now checks whether a remote file exists (`fileExist=Ignore|Fail|Move`, `tempFileName`,

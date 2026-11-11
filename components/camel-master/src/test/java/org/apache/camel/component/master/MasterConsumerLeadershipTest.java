@@ -28,10 +28,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cluster.CamelClusterMember;
+import org.apache.camel.cluster.CamelClusterView;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
@@ -48,6 +51,7 @@ import org.junit.jupiter.api.Timeout;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -290,6 +294,54 @@ public class MasterConsumerLeadershipTest {
         return registry.getTasks().stream().anyMatch(task -> "Leadership".equals(task.getName()));
     }
 
+    @Test
+    @Timeout(60)
+    void testDelegateIsStoppedBeforeTheLeadershipIsGivenUp() throws Exception {
+        TestClusterView view = clusterService.getTestView();
+        view.setLeader(true);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, probe.started.get()));
+
+        // while the delegated consumer stops, this node must still hold the view, and a message it still routes (as a
+        // consumer that completes its messages in its stop does) must reach a started route
+        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedBodiesReceived("in flight");
+        AtomicBoolean viewHeldWhileStopping = new AtomicBoolean();
+        AtomicReference<Exception> routingFailure = new AtomicReference<>();
+        probe.stopHook.set(consumer -> {
+            viewHeldWhileStopping.set(view.isRunAllowed());
+            Exchange exchange = consumer.createExchange(false);
+            exchange.getMessage().setBody("in flight");
+            try {
+                consumer.getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+            routingFailure.set(exchange.getException());
+        });
+        context.getRouteController().stopRoute("master-route");
+
+        assertEquals(1, probe.stopped.get());
+        assertTrue(viewHeldWhileStopping.get(), "The leadership was given up before the delegated consumer stopped");
+        assertNull(routingFailure.get(), "A message routed while the delegated consumer stops failed");
+        mock.assertIsSatisfied();
+        assertFalse(view.isRunAllowed(), "The view is not released after the consumer stopped");
+    }
+
+    @Test
+    @Timeout(60)
+    void testDelegateIsStoppedWhenReleasingTheViewFails() throws Exception {
+        TestClusterView view = clusterService.getTestView();
+        view.setLeader(true);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, probe.started.get()));
+
+        // the failure is logged by the shutdown strategy
+        clusterService.failRelease = true;
+        context.getRouteController().stopRoute("master-route");
+
+        assertEquals(1, probe.stopped.get(), "The delegated consumer was not stopped");
+        assertFalse(view.isRunAllowed(), "The view is not released");
+    }
+
     // ************************************
     // Delegated endpoint under observation
     // ************************************
@@ -303,6 +355,8 @@ public class MasterConsumerLeadershipTest {
         private final AtomicReference<CountDownLatch> startGate = new AtomicReference<>();
         private final AtomicReference<CountDownLatch> suspendEntered = new AtomicReference<>();
         private final AtomicReference<CountDownLatch> suspendGate = new AtomicReference<>();
+        // runs when a delegated consumer starts to stop
+        private final AtomicReference<StopHook> stopHook = new AtomicReference<>();
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
@@ -317,6 +371,11 @@ public class MasterConsumerLeadershipTest {
                 }
             });
         }
+    }
+
+    @FunctionalInterface
+    private interface StopHook {
+        void stopping(ProbeConsumer consumer);
     }
 
     private static final class ProbeEndpoint extends DefaultEndpoint {
@@ -369,6 +428,10 @@ public class MasterConsumerLeadershipTest {
 
         @Override
         protected void doStop() throws Exception {
+            StopHook hook = component.stopHook.get();
+            if (hook != null) {
+                hook.stopping(this);
+            }
             super.doStop();
             component.stopped.incrementAndGet();
         }
@@ -393,6 +456,7 @@ public class MasterConsumerLeadershipTest {
 
     private static final class TestClusterService extends AbstractCamelClusterService<TestClusterView> {
         private volatile TestClusterView view;
+        private volatile boolean failRelease;
 
         TestClusterService() {
             super("test-cluster-service");
@@ -406,6 +470,14 @@ public class MasterConsumerLeadershipTest {
         protected TestClusterView createView(String namespace) {
             view = new TestClusterView(this, namespace);
             return view;
+        }
+
+        @Override
+        public void releaseView(CamelClusterView view) throws Exception {
+            super.releaseView(view);
+            if (failRelease) {
+                throw new IllegalStateException("Simulated failure to release the view");
+            }
         }
     }
 
