@@ -47,13 +47,16 @@ import static org.junit.jupiter.api.Assertions.fail;
  * {@code System.nanoTime()}, {@code System.currentTimeMillis()}, {@code Thread.sleep},
  * {@code TimeUnit.SECONDS.sleep(...)} and the other units, {@code Instant.now()}, the {@code now()} of
  * {@code LocalDateTime}, {@code LocalDate}, {@code LocalTime}, {@code OffsetDateTime}, {@code OffsetTime} and
- * {@code ZonedDateTime}, {@code new Date()} and {@code Clock.systemUTC()} and the other {@code Clock.system...} clocks;
- * and the static imports of {@code System.nanoTime}, {@code System.currentTimeMillis}, {@code Thread.sleep},
- * {@code System.*} and {@code Thread.*}. It does not find other static imports (such as of {@code Instant.now} or of a
- * {@code TimeUnit} constant), nor a {@code sleep} on a variable or a field, such as {@code unit.sleep(x)}: the listed
- * classes make such calls that are fine ({@code TimeSource} calls its provider, and the redelivery error handler
- * {@code RedeliveryPolicy.sleep}), so that rule would only add false reports. camel-chaos is not scanned: nothing was
- * moved there, and the waits of its assertions run in real time on purpose.
+ * {@code ZonedDateTime}, {@code Year}, {@code YearMonth} and {@code MonthDay}, {@code new Date()},
+ * {@code Calendar.getInstance(...)} (also of {@code GregorianCalendar}), {@code new GregorianCalendar()} and
+ * {@code Clock.systemUTC()} and the other {@code Clock.system...} clocks; and the static imports of
+ * {@code System.nanoTime}, {@code System.currentTimeMillis}, {@code Thread.sleep}, {@code System.*} and
+ * {@code Thread.*}. It does not find other static imports (such as of {@code Instant.now} or of a {@code TimeUnit}
+ * constant), nor a {@code GregorianCalendar} created with a time zone or a locale, nor a {@code sleep} on a variable or
+ * a field, such as {@code unit.sleep(x)}: the listed classes make such calls that are fine ({@code TimeSource} calls
+ * its provider, and the redelivery error handler {@code RedeliveryPolicy.sleep}), so that rule would only add false
+ * reports. camel-chaos is not scanned: nothing was moved there, and the waits of its assertions run in real time on
+ * purpose.
  */
 class TimeSourceDirectClockCallsTest {
 
@@ -91,10 +94,6 @@ class TimeSourceDirectClockCallsTest {
             // camel-base-engine
             "camel-base-engine/src/main/java/org/apache/camel/impl/engine/DefaultShutdownStrategy.java");
 
-    /** The core modules of the classes in {@link #CLASSES}. */
-    static final List<String> MODULES
-            = List.of("camel-util", "camel-support", "camel-core-processor", "camel-base-engine");
-
     /**
      * The nested classes allowed to call the system clock, by source file: only the default provider of
      * {@link TimeSource}.
@@ -122,8 +121,13 @@ class TimeSourceDirectClockCallsTest {
             rule("\\bimport\\s+static\\s+java\\.lang\\.(System\\s*\\.\\s*(nanoTime|currentTimeMillis|\\*)"
                  + "|Thread\\s*\\.\\s*(sleep|\\*))",
                     "a static import of the system clock or sleep", "the TimeSource methods"),
-            rule("\\b(LocalDateTime|LocalDate|LocalTime|OffsetDateTime|OffsetTime|ZonedDateTime)\\s*(\\.|::)\\s*now\\b",
+            rule("\\b(LocalDateTime|LocalDate|LocalTime|OffsetDateTime|OffsetTime|ZonedDateTime"
+                 + "|Year|YearMonth|MonthDay)\\s*(\\.|::)\\s*now\\b",
                     "<java.time type>.now()", "TimeSource.instant()"),
+            rule("\\b(Gregorian)?Calendar\\s*(\\.\\s*getInstance\\s*\\(|::\\s*getInstance\\b)"
+                 + "|\\bnew\\s+(java\\s*\\.\\s*util\\s*\\.\\s*)?GregorianCalendar\\s*\\(\\s*\\)"
+                 + "|\\bGregorianCalendar\\s*::\\s*new\\b",
+                    "a Calendar of the current time", "a Calendar set to TimeSource.currentTimeMillis()"),
             rule("\\bnew\\s+(java\\s*\\.\\s*util\\s*\\.\\s*)?Date\\s*\\(\\s*\\)|\\bDate\\s*::\\s*new\\b", "new Date()",
                     "new Date(TimeSource.currentTimeMillis())"),
             rule("\\bClock\\s*(\\.|::)\\s*system\\w*\\b", "Clock.<system clock>()",
@@ -186,13 +190,20 @@ class TimeSourceDirectClockCallsTest {
         Path core = coreDir();
         Pattern use = Pattern.compile("\\bTimeSource\\s*(\\.|::)");
         List<String> unlisted = new ArrayList<>();
-        for (String module : MODULES) {
-            Path root = core.resolve(module).resolve("src/main/java");
-            assertTrue(Files.isDirectory(root), root + " is not found");
+        // every core module, so a class of another module (such as camel-core-engine) that starts to use TimeSource
+        // is found too
+        List<Path> roots;
+        try (Stream<Path> modules = Files.list(core)) {
+            roots = modules.map(m -> m.resolve("src/main/java")).filter(Files::isDirectory).sorted().toList();
+        }
+        for (String module : List.of("camel-util", "camel-support", "camel-core-processor", "camel-base-engine")) {
+            assertTrue(roots.contains(core.resolve(module).resolve("src/main/java")), module + " is not found");
+        }
+        for (Path root : roots) {
             try (Stream<Path> files = Files.walk(root)) {
                 for (Path path : files.filter(f -> f.toString().endsWith(".java")).toList()) {
                     String file = core.relativize(path).toString().replace('\\', '/');
-                    String code = blankCommentsAndLiterals(Files.readString(path, StandardCharsets.UTF_8));
+                    String code = blankCommentsAndLiterals(file, Files.readString(path, StandardCharsets.UTF_8));
                     if (!CLASSES.contains(file) && use.matcher(code).find()) {
                         unlisted.add(file);
                     }
@@ -229,6 +240,9 @@ class TimeSourceDirectClockCallsTest {
                     Object g = LocalDateTime.now();
                     Object h = new java.util.Date();
                     Object i = Clock.systemUTC(); Object k = TimeUnit.SECONDS::sleep; Supplier<Date> m = Date::new;
+                    Object n = Calendar.getInstance(); Object o = new java.util.GregorianCalendar();
+                    Object p = Year.now(); Object q = new GregorianCalendar(2026, 0, 1); Object r = YearMonth.now(zone);
+                    Supplier<Calendar> s = Calendar::getInstance; Supplier<Calendar> t = GregorianCalendar::new;
                     void j(TimeUnit unit, RedeliveryPolicy policy) throws Exception { unit.sleep(1); policy.sleep(2); }
                     static final class SystemProvider {
                         long nanoTime() {
@@ -249,9 +263,19 @@ class TimeSourceDirectClockCallsTest {
                 "Foo.java:19: new Date(), use new Date(TimeSource.currentTimeMillis()) instead",
                 "Foo.java:20: TimeUnit.<unit>.sleep(...), use TimeSource.sleep(unit.toMillis(duration)) instead",
                 "Foo.java:20: new Date(), use new Date(TimeSource.currentTimeMillis()) instead",
-                "Foo.java:20: Clock.<system clock>(), use TimeSource.instant() instead"),
+                "Foo.java:20: Clock.<system clock>(), use TimeSource.instant() instead",
+                "Foo.java:21: a Calendar of the current time, use a Calendar set to TimeSource.currentTimeMillis()"
+                                                                                         + " instead",
+                "Foo.java:21: a Calendar of the current time, use a Calendar set to TimeSource.currentTimeMillis()"
+                                                                                                       + " instead",
+                "Foo.java:22: <java.time type>.now(), use TimeSource.instant() instead",
+                "Foo.java:22: <java.time type>.now(), use TimeSource.instant() instead",
+                "Foo.java:23: a Calendar of the current time, use a Calendar set to TimeSource.currentTimeMillis()"
+                                                                                         + " instead",
+                "Foo.java:23: a Calendar of the current time, use a Calendar set to TimeSource.currentTimeMillis()"
+                                                                                                       + " instead"),
                 scan("Foo.java", source, "SystemProvider"));
-        assertEquals(12, scan("Foo.java", source, null).size());
+        assertEquals(18, scan("Foo.java", source, null).size());
         assertEquals(List.of(
                 "Bar.java:1: a static import of the system clock or sleep, use the TimeSource methods instead",
                 "Bar.java:2: a static import of the system clock or sleep, use the TimeSource methods instead"),
@@ -266,7 +290,7 @@ class TimeSourceDirectClockCallsTest {
      * character literals and the body of the allowed nested class.
      */
     static List<String> scan(String file, String source, String allowedNestedClass) {
-        String code = blankCommentsAndLiterals(source);
+        String code = blankCommentsAndLiterals(file, source);
         if (allowedNestedClass != null) {
             code = blankNestedClass(file, code, allowedNestedClass);
         }
@@ -294,6 +318,15 @@ class TimeSourceDirectClockCallsTest {
             }
         }
         return line;
+    }
+
+    /** {@link #blankCommentsAndLiterals(String)} of a source file, naming the file if its scan fails. */
+    private static String blankCommentsAndLiterals(String file, String source) {
+        try {
+            return blankCommentsAndLiterals(source);
+        } catch (AssertionFailedError e) {
+            throw new AssertionFailedError(file + ": " + e.getMessage(), e);
+        }
     }
 
     /** Replaces comments and string, text block and character literals by spaces, keeping the line breaks. */

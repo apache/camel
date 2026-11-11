@@ -17,6 +17,8 @@
 package org.apache.camel.util;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +84,11 @@ public final class TimeSource {
 
     private static volatile Provider provider = SYSTEM;
 
+    // what was logged at INFO (guarded by the class): the install of each provider class, and putting the default back
+    // after each provider class. The next time it is logged at DEBUG, as a test harness installs its provider for each
+    // test or each seed. Class names, so no class of a test harness is held
+    private static final Set<String> LOGGED = new HashSet<>();
+
     private TimeSource() {
     }
 
@@ -123,8 +130,9 @@ public final class TimeSource {
      * Installs a provider, for test harnesses only.
      * <p>
      * The provider is used by every {@code CamelContext} that shares this class (in a shared runtime such as Karaf, all
-     * of them), so installing a provider other than the default is logged at INFO with its class, and so is putting the
-     * default back.
+     * of them), so installing a provider other than the default is logged with its class (and the class of the provider
+     * it replaces, if that was not the default), and so is putting the default back. The first time for each provider
+     * class it is logged at INFO, and then at DEBUG, as a test harness installs its provider for each test or seed.
      *
      * @param  provider the provider to use from now on
      * @return          the provider that was installed before, to be installed again when the test is done
@@ -136,11 +144,27 @@ public final class TimeSource {
             TimeSource.provider = provider;
             // logged under the lock, so the lines of two installs come in the order of the installs
             if (provider != SYSTEM) {
-                LOG.info("Installed TimeSource provider: {}", provider.getClass().getName());
+                String name = provider.getClass().getName();
+                boolean info = LOGGED.add("install " + name);
+                if (previous == SYSTEM || previous == provider) {
+                    log(info, "Installed TimeSource provider: {}", name);
+                } else {
+                    log(info, "Installed TimeSource provider: {} (replacing: {})", name, previous.getClass().getName());
+                }
             } else if (previous != SYSTEM) {
-                LOG.info("Installed default TimeSource provider (replacing: {})", previous.getClass().getName());
+                String replaced = previous.getClass().getName();
+                boolean info = LOGGED.add("default " + replaced);
+                log(info, "Installed default TimeSource provider (replacing: {})", replaced);
             }
             return previous;
+        }
+    }
+
+    private static void log(boolean info, String message, Object... args) {
+        if (info) {
+            LOG.info(message, args);
+        } else {
+            LOG.debug(message, args);
         }
     }
 
