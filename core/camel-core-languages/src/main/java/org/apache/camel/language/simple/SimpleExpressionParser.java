@@ -173,7 +173,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
 
     /**
      * Removes any ignorable whitespace tokens before and after other operators.
-     * <p/>
+     * <p>
      * During the initial parsing (input -> tokens), then there may be excessive whitespace tokens, which can safely be
      * removed, which makes the succeeding parsing easier.
      */

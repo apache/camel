@@ -32,15 +32,16 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
  * A language for tokenizer expressions.
- * <p/>
- * This tokenizer language can operator in the following modes:
+ * <p>
+ * This tokenizer language can operate in the following modes:
  * <ul>
  * <li>default - using a single tokenizer</li>
  * <li>pair - using both start and end tokens</li>
  * <li>xml - using both start and end tokens in XML mode, support inheriting namespaces</li>
  * </ul>
- * The default mode supports the <tt>headerName</tt> and <tt>regex</tt> options. Where as the pair mode only supports
- * <tt>token</tt> and <tt>endToken</tt>. And the <tt>xml</tt> mode supports the <tt>inheritNamespaceTagName</tt> option.
+ * The default mode supports the <code>headerName</code> and <code>regex</code> options. Whereas the pair mode only
+ * supports <code>token</code> and <code>endToken</code>. And the <code>xml</code> mode supports the
+ * <code>inheritNamespaceTagName</code> option.
  */
 @Language("tokenize")
 @BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },

@@ -186,10 +186,10 @@ public class SimplePredicateParser extends BaseSimpleParser {
     }
 
     /**
-     * Parses the tokens and crates the AST nodes.
-     * <p/>
+     * Parses the tokens and creates the AST nodes.
+     * <p>
      * After the initial parsing of the input (input -> tokens) then we parse again (tokens -> ast).
-     * <p/>
+     * <p>
      * In this parsing the balance of the blocks is checked, so that each block has a matching start and end token. For
      * example a single quote block, or a function block etc.
      */
@@ -299,7 +299,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * @param  startSingle   state of single quoted blocks
      * @param  startDouble   state of double quoted blocks
      * @param  startFunction state of function blocks
-     * @return               the created node, or <tt>null</tt> to let a default node be created instead.
+     * @return               the created node, or <code>null</code> to let a default node be created instead.
      */
     private SimpleNode createNode(
             SimpleToken token, AtomicBoolean startSingle, AtomicBoolean startDouble,
@@ -385,7 +385,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     /**
      * Removes any ignorable whitespace tokens.
-     * <p/>
+     * <p>
      * During the initial parsing (input -> tokens), then there may be excessive whitespace tokens, which can safely be
      * removed, which makes the succeeding parsing easier.
      */
@@ -422,10 +422,10 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     /**
      * Prepares binary expressions.
-     * <p/>
+     * <p>
      * This process prepares the binary expressions in the AST. This is done by linking the binary operator with both
      * the right and left hand side nodes, to have the AST graph updated and prepared properly.
-     * <p/>
+     * <p>
      * So when the AST node is later used to create the {@link Predicate}s to be used by Camel then the AST graph has a
      * linked and prepared graph of nodes which represent the input expression.
      */
@@ -485,10 +485,10 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     /**
      * Prepares logical expressions.
-     * <p/>
+     * <p>
      * This process prepares the logical expressions in the AST. This is done by linking the logical operator with both
      * the right and left hand side nodes, to have the AST graph updated and prepared properly.
-     * <p/>
+     * <p>
      * So when the AST node is later used to create the {@link Predicate}s to be used by Camel then the AST graph has a
      * linked and prepared graph of nodes which represent the input expression.
      */
@@ -549,7 +549,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
     /**
      * Creates the {@link Predicate}s from the AST nodes.
      *
-     * @return the created {@link Predicate}s, is never <tt>null</tt>.
+     * @return the created {@link Predicate}s, is never <code>null</code>.
      */
     private List<Predicate> createPredicates() {
         List<Predicate> answer = new ArrayList<>();

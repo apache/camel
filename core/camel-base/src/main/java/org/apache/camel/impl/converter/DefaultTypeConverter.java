@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default implementation of a type converter registry used for
  * <a href="http://camel.apache.org/type-converter.html">type converters</a> in Camel.
- * <p/>
+ * <p>
  * This implementation will load type converters up-front on startup.
  */
 public class DefaultTypeConverter extends BaseTypeConverterRegistry implements AnnotationScanTypeConverters {

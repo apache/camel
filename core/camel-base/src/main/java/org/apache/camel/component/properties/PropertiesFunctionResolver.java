@@ -46,7 +46,7 @@ public interface PropertiesFunctionResolver {
      * Resolves the properties function with the given name
      *
      * @param  name the name of the properties function
-     * @return      the function or <tt>null</tt> if not found
+     * @return      the function or <code>null</code> if not found
      */
     PropertiesFunction resolvePropertiesFunction(String name);
 

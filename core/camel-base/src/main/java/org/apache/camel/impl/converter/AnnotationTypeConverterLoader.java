@@ -53,13 +53,13 @@ import static java.lang.reflect.Modifier.isStatic;
 /**
  * A class which will auto-discover {@link Converter} objects and methods to pre-load the {@link TypeConverterRegistry}
  * of converters on startup.
- * <p/>
+ * <p>
  * This implementation supports scanning for type converters in JAR files. The {@link #META_INF_SERVICES} contains a
- * list of packages or FQN class names for {@link Converter} classes. The FQN class names is loaded first and directly
+ * list of packages or FQN class names for {@link Converter} classes. The FQN class names are loaded first and directly
  * by the class loader.
- * <p/>
+ * <p>
  * The {@link PackageScanClassResolver} is being used to scan packages for {@link Converter} classes and this procedure
- * is slower than loading the {@link Converter} classes directly by its FQN class name. Therefore its recommended to
+ * is slower than loading the {@link Converter} classes directly by its FQN class name. Therefore it is recommended to
  * specify FQN class names in the {@link #META_INF_SERVICES} file. Likewise the procedure for scanning using
  * {@link PackageScanClassResolver} may require custom implementations to work in various containers such as JBoss,
  * OSGi, etc.
@@ -148,7 +148,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     /**
      * Filters the given list of packages and returns an array of <b>only</b> package names.
-     * <p/>
+     * <p>
      * This implementation will check the given list of packages, and if it contains a class name, that class will be
      * loaded directly and added to the list of classes. This optimizes the type converter to avoid excessive file
      * scanning for .class files.

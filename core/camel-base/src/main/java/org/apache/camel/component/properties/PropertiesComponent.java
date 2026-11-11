@@ -76,9 +76,9 @@ public class PropertiesComponent extends ServiceSupport
     public static final int SYSTEM_PROPERTIES_MODE_FALLBACK = 1;
 
     /**
-     * Check system properties variables) first, before trying the specified properties. This allows system properties
-     * to override any other property source (environment variable and then system properties takes precedence).
-     * <p/>
+     * Check system properties variables first, before trying the specified properties. This allows system properties to
+     * override any other property source (environment variable and then system properties take precedence).
+     * <p>
      * This is the default.
      */
     public static final int SYSTEM_PROPERTIES_MODE_OVERRIDE = 2;
@@ -90,14 +90,14 @@ public class PropertiesComponent extends ServiceSupport
 
     /**
      * Check OS environment variables if not resolvable in the specified properties.
-     * <p/>
+     * <p>
      * This is the default.
      */
     public static final int ENVIRONMENT_VARIABLES_MODE_FALLBACK = 1;
 
     /**
      * Check OS environment variables first, before trying the specified properties. This allows environment variables
-     * to override any other property source (environment variable and then system properties takes precedence).
+     * to override any other property source (environment variable and then system properties take precedence).
      */
     public static final int ENVIRONMENT_VARIABLES_MODE_OVERRIDE = 2;
 
@@ -499,8 +499,8 @@ public class PropertiesComponent extends ServiceSupport
 
     /**
      * Encoding to use when loading properties file from the file system or classpath.
-     * <p/>
-     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as
+     * <p>
+     * If no encoding has been set, then the properties files are loaded using ISO-8859-1 encoding (latin-1) as
      * documented by {@link java.util.Properties#load(java.io.InputStream)}
      */
     @Override
@@ -638,8 +638,8 @@ public class PropertiesComponent extends ServiceSupport
     }
 
     /**
-     * Gets a list of properties that are local for the current thread only (ie thread local), or <tt>null</tt> if not
-     * currently in use.
+     * Gets a list of properties that are local for the current thread only (ie thread local), or <code>null</code> if
+     * not currently in use.
      */
     public Properties getLocalProperties() {
         Deque<Properties> stack = this.localProperties.get();
