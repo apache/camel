@@ -102,12 +102,12 @@ public interface SpiffeEndpointBuilderFactory {
          * exchange property. In this mode the token must be in CamelSpiffeToken
          * or an Authorization Bearer header: the body is never read as a token.
          * The default returns the JwtSvid in the body as before.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: producer
-         *
+         * 
          * @param preserveBody the value to set
          * @return the dsl builder
          */
@@ -121,12 +121,12 @@ public interface SpiffeEndpointBuilderFactory {
          * exchange property. In this mode the token must be in CamelSpiffeToken
          * or an Authorization Bearer header: the body is never read as a token.
          * The default returns the JwtSvid in the body as before.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: producer
-         *
+         * 
          * @param preserveBody the value to set
          * @return the dsl builder
          */

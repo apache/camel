@@ -138,12 +138,12 @@ public interface SpiffeComponentBuilderFactory {
          * exchange property. In this mode the token must be in CamelSpiffeToken
          * or an Authorization Bearer header: the body is never read as a token.
          * The default returns the JwtSvid in the body as before.
-         *
+         * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         *
+         * 
          * Default: false
          * Group: producer
-         *
+         * 
          * @param preserveBody the value to set
          * @return the dsl builder
          */
@@ -151,8 +151,8 @@ public interface SpiffeComponentBuilderFactory {
             doSetProperty("preserveBody", preserveBody);
             return this;
         }
-
-
+    
+        
         /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the

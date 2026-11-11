@@ -672,6 +672,8 @@ public final class ArtifactUtils {
                     "org.apache.camel.component.redis.RedisKeyValueRepository|org.apache.camel.spi.KeyValueRepository|camel-redis"),
             Map.<String, String> entry("SimpleScheduledRoutePolicy",
                     "org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy|org.apache.camel.spi.RoutePolicy|camel-quartz"),
+            Map.<String, String> entry("SpiffeJwtSecurityPolicy",
+                    "org.apache.camel.component.spiffe.SpiffeJwtSecurityPolicy|org.apache.camel.spi.AuthorizationPolicy|camel-spiffe"),
             Map.<String, String> entry("SpiffeSSLContextParameters",
                     "org.apache.camel.component.spiffe.SpiffeSSLContextParameters|org.apache.camel.support.jsse.SSLContextParameters|camel-spiffe"),
             Map.<String, String> entry("SpiffeSecurityPolicy",
