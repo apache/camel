@@ -25,7 +25,7 @@ public class DefaultPGPPassphraseAccessor implements PGPPassphraseAccessor {
     private final Map<String, String> userId2Passphrase;
 
     public DefaultPGPPassphraseAccessor(Map<String, String> userId2Passphrase) {
-        ObjectHelper.notNull(userId2Passphrase, "userIdPassphrase");
+        ObjectHelper.notNull(userId2Passphrase, "userId2Passphrase");
 
         this.userId2Passphrase = userId2Passphrase;
     }
