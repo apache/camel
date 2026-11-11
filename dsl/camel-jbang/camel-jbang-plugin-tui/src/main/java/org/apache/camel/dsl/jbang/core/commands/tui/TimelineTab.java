@@ -38,6 +38,7 @@ import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -401,8 +402,9 @@ class TimelineTab extends AbstractTableTab {
         int routeHeight = routes.size() * room.strip() + (room.spaced() ? Math.max(0, routes.size() - 1) : 0);
         // the cause, the legend of the routes, a strip per route and the time axis, in a border
         int detailHeight = DETAIL_LINES + 2 + room.detailRows() - DETAIL_ROWS + 4 * gap;
-        int topHeight = Math.max(6,
-                Math.min(area.height() - detailHeight - gap, causeHeight + Math.max(1, routeHeight) + 4 + 4 * gap));
+        boolean noData = pausedOnNoData(routes);
+        int topHeight = Math.max(6, Math.min(area.height() - detailHeight - gap,
+                causeHeight + Math.max(1, routeHeight) + 4 + 4 * gap + (noData ? 1 : 0)));
         List<Rect> rows = Layout.vertical()
                 .constraints(Constraint.length(topHeight), Constraint.length(gap), Constraint.length(detailHeight),
                         Constraint.fill())
@@ -436,6 +438,14 @@ class TimelineTab extends AbstractTableTab {
             lines.add(Line.from(Span.styled(pad("", label) + "no routes yet", Theme.muted())));
         }
         lines.add(axis(columns, per, label));
+        if (noData) {
+            // a screen paused before there was anything to see looks like an integration that does nothing
+            List<Span> hint = new ArrayList<>();
+            hint.add(Span.raw(pad("", label)));
+            hint.add(Span.styled("‖ paused on seconds with no data  ", Theme.warning()));
+            hint(hint, "Space", "back to now");
+            lines.add(Line.from(hint));
+        }
         Rect top = rows.get(0);
         // the lines of the routes, for the clicks
         routeTop = top.y() + 1 + gap + routeLinesY;
@@ -446,7 +456,9 @@ class TimelineTab extends AbstractTableTab {
         drillArea = null;
         Padding padding = room.roomy() ? Padding.uniform(1) : Padding.NONE;
         frame.renderWidget(
-                Paragraph.builder().text(Text.from(lines)).block(block(title(info), padding, !drill.isOpen())).build(), top);
+                Paragraph.builder().text(Text.from(lines))
+                        .block(block(title(info), padding, !drill.isOpen(), pausedAt >= 0)).build(),
+                top);
 
         if (drill.isOpen()) {
             List<Timeline.Kept> kept = keptAtCursor();
@@ -485,7 +497,11 @@ class TimelineTab extends AbstractTableTab {
                         ? "   ▶ started  ■ stopped  ↻ reloaded" : ""));
     }
 
-    private String title(IntegrationInfo info) {
+    /**
+     * The title, with a badge that says at a glance whether the screen follows now ({@code ● live}) or stays at a
+     * moment ({@code ‖ PAUSED}, reversed, with how long ago that moment is).
+     */
+    private Title title(IntegrationInfo info) {
         String span = seconds() >= 120 ? (seconds() / 60) + "m" : seconds() + "s";
         StringBuilder sb = new StringBuilder(" Timeline ─ ").append(info.name != null ? info.name : info.pid)
                 .append(" ─ last ").append(span).append(' ');
@@ -497,11 +513,31 @@ class TimelineTab extends AbstractTableTab {
         } else if (pausedAt < 0 && last < 0 && ctx.timeline.endSecond(info.pid) >= 0) {
             sb.append("─ no exchange in the last 5m ");
         }
+        sb.append("─ ");
+        Span badge;
         if (pausedAt >= 0) {
             long ago = nowSecond() - pausedAt;
-            sb.append("─ paused").append(ago > 0 ? ", " + ChaosTab.shortTime(ago * 1000) + " ago " : " ");
+            badge = Span.styled(" ‖ PAUSED" + (ago > 0 ? ", " + ChaosTab.shortTime(ago * 1000) + " ago " : " "),
+                    Theme.warning().bold().reversed());
+        } else {
+            badge = Span.styled("● live", Theme.success().bold());
         }
-        return sb.toString();
+        return Title.from(Line.from(Span.raw(sb.toString()), badge, Span.raw(" ")));
+    }
+
+    /** Paused on seconds the integration did not report (before it started, or before the TUI read it). */
+    private boolean pausedOnNoData(List<Timeline.RouteSeries> routes) {
+        if (pausedAt < 0 || routes.isEmpty()) {
+            return false;
+        }
+        for (Timeline.RouteSeries r : routes) {
+            for (long v : r.completed()) {
+                if (v >= 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     // ---- the cause ----
@@ -703,7 +739,8 @@ class TimelineTab extends AbstractTableTab {
         if (cursor >= 0) {
             long ago = nowSecond() - cursorTo();
             return Line.from(Span.raw(pad("", label)), Span.styled(text, Theme.muted()),
-                    Span.styled("  ▲ " + (ago > 0 ? ChaosTab.shortTime(ago * 1000) + " ago" : "now"), Theme.label()),
+                    Span.styled("  ▲ " + (ago > 0 ? ChaosTab.shortTime(ago * 1000) + " ago" : "now"),
+                            ago > 0 ? Theme.warning() : Theme.label()),
                     Span.styled(drill.isOpen() ? "" : "  Enter: its exchanges", Theme.muted()));
         }
         return Line.from(Span.raw(pad("", label)), Span.styled(text, Theme.muted()));
@@ -954,9 +991,17 @@ class TimelineTab extends AbstractTableTab {
         return s.length() >= width ? s : " ".repeat(width - s.length()) + s;
     }
 
-    /** A panel: the one the keys go to has the focus border (the routes, or the exchanges of a second when open). */
+    /**
+     * A panel: the one the keys go to has the focus border (the routes, or the exchanges of a second when open). The
+     * timeline paused has a warning border, so a screen that stays at a moment does not pass for one that follows now.
+     */
     private Block block(String title, Padding padding, boolean focused) {
-        return Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(focused))
+        return block(Title.from(title), padding, focused, false);
+    }
+
+    private Block block(Title title, Padding padding, boolean focused, boolean paused) {
+        Style border = paused ? Theme.warning() : ctx.paneBorder(focused);
+        return Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(border)
                 .title(title).padding(padding).build();
     }
 
@@ -972,7 +1017,7 @@ class TimelineTab extends AbstractTableTab {
     public void renderFooter(List<Span> spans) {
         hint(spans, "↑↓", "route");
         hint(spans, "w", "window " + (seconds() >= 120 ? seconds() / 60 + "m" : seconds() + "s"));
-        hint(spans, "Space", pausedAt >= 0 ? "follow" : "pause");
+        hint(spans, "Space", pausedAt >= 0 ? "resume" : "pause");
         if (pausedAt >= 0) {
             hint(spans, "←→", "second");
             hint(spans, "Shift+←→", "back and forth");

@@ -142,13 +142,37 @@ class TimelineTabRenderTest {
         now.addAndGet(10_000);
         ctx.timeline.merge("1234", outage(T0 / 1000 + 69, 10, 60).json(), false);
         String screen = TuiTestHelper.renderToString(tab, 160, 40);
-        assertThat(screen).contains("paused, 10s ago").contains("▲ 10s ago");
+        assertThat(screen).contains("‖ PAUSED, 10s ago").contains("▲ 10s ago").doesNotContain("● live")
+                .doesNotContain("paused on seconds with no data");
         List<Span> hints = new ArrayList<>();
         tab.renderFooter(hints);
-        assertThat(text(hints)).contains("follow").contains("back and forth").contains("exchanges");
+        assertThat(text(hints)).contains("resume").contains("back and forth").contains("exchanges");
 
         assertThat(tab.handleEscape()).isTrue();
         assertThat(tab.isPaused()).isFalse();
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("● live").doesNotContain("PAUSED");
+    }
+
+    @Test
+    void pausedOnSecondsWithNoDataSaysSoAndHowToGoBackToNow() {
+        // the integration has just started, and Enter pauses before the TUI has read a second of it
+        ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.selectedPid = "1234";
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+        assertThat(tab.isPaused()).isTrue();
+        tab.handleEscape();
+        assertThat(tab.isPaused()).isTrue();
+        // minutes later the integration has worked, but the screen stays at the moment it had no data
+        now.addAndGet(150_000);
+        ctx.timeline.merge("1234", outage(T0 / 1000 + 209, 60, 0).json(), true);
+        String screen = TuiTestHelper.renderToString(tab, 160, 40);
+        assertThat(screen).contains("‖ PAUSED, 2m30s ago").contains("no data yet")
+                .contains("paused on seconds with no data").contains("back to now");
+
+        tab.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertThat(tab.isPaused()).isFalse();
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).doesNotContain("paused on seconds with no data");
     }
 
     @Test
