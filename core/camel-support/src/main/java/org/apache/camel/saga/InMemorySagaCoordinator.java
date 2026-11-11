@@ -189,8 +189,8 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
 
     /**
      * Changes the status from RUNNING to the given status, and returns the steps enlisted at that time, or
-     * <tt>null</tt> if the saga is not running. This holds the lock that beginStep holds while it checks the status and
-     * enlists a step, so every step that began is in the returned list, and is finalized.
+     * <code>null</code> if the saga is not running. This holds the lock that beginStep holds while it checks the status
+     * and enlists a step, so every step that began is in the returned list, and is finalized.
      */
     private List<StepEnlistment> end(Status status) {
         lock.lock();

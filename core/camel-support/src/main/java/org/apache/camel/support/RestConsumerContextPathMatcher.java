@@ -31,10 +31,10 @@ import java.util.stream.Collectors;
 
 /**
  * A context path matcher when using rest-dsl that allows components to reuse the same matching logic.
- * <p/>
+ * <p>
  * The component should use the {@link #matchBestPath(String, String, List)} with the request details and the matcher
- * returns the best matched, or <tt>null</tt> if none could be determined.
- * <p/>
+ * returns the best matched, or <code>null</code> if none could be determined.
+ * <p>
  * The {@link ConsumerPath} is used for the components to provide the details to the matcher.
  */
 public final class RestConsumerContextPathMatcher {
@@ -83,7 +83,7 @@ public final class RestConsumerContextPathMatcher {
      * @param  requestPath      the incoming request context path
      * @param  consumerPath     a consumer path
      * @param  matchOnUriPrefix whether to use the matchOnPrefix option
-     * @return                  <tt>true</tt> if matched, <tt>false</tt> otherwise
+     * @return                  <code>true</code> if matched, <code>false</code> otherwise
      */
     public static boolean matchPath(String requestPath, String consumerPath, boolean matchOnUriPrefix) {
         // deal with null parameters
@@ -116,7 +116,7 @@ public final class RestConsumerContextPathMatcher {
      * @param  requestMethod the incoming request HTTP method
      * @param  requestPath   the incoming request context path
      * @param  consumerPaths the list of consumer context path details
-     * @return               the best matched consumer, or <tt>null</tt> if none could be determined.
+     * @return               the best matched consumer, or <code>null</code> if none could be determined.
      */
     public static <
             T> ConsumerPath<T> matchBestPath(String requestMethod, String requestPath, List<ConsumerPath<T>> consumerPaths) {
@@ -301,7 +301,7 @@ public final class RestConsumerContextPathMatcher {
      *
      * @param  method   the request HTTP method
      * @param  restrict the consumer configured HTTP restrict method
-     * @return          <tt>true</tt> if matched, <tt>false</tt> otherwise
+     * @return          <code>true</code> if matched, <code>false</code> otherwise
      */
     private static boolean matchRestMethod(String method, String restrict) {
         if (restrict == null) {
@@ -314,7 +314,7 @@ public final class RestConsumerContextPathMatcher {
     /**
      * Is the request method OPTIONS
      *
-     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     * @return <code>true</code> if matched, <code>false</code> otherwise
      */
     private static boolean isOptionsMethod(String method) {
         return "options".equalsIgnoreCase(method);
@@ -325,7 +325,7 @@ public final class RestConsumerContextPathMatcher {
      *
      * @param  requestPath   the request path
      * @param  isUriTemplate the consumer path which may use { } tokens
-     * @return               <tt>true</tt> if matched, <tt>false</tt> otherwise
+     * @return               <code>true</code> if matched, <code>false</code> otherwise
      */
     private static boolean matchRestPath(String requestPath, String consumerPath, boolean isUriTemplate) {
         // deal with null parameters
@@ -382,7 +382,7 @@ public final class RestConsumerContextPathMatcher {
      * Counts the number of uri template's curlyBraces in the path
      *
      * @param  consumerPath the consumer path which may use { } tokens
-     * @return              number of curlyBraces, or <tt>0</tt> if no curlyBraces
+     * @return              number of curlyBraces, or <code>0</code> if no curlyBraces
      */
     private static int countCurlyBraces(String consumerPath) {
         int curlyBraces = 0;

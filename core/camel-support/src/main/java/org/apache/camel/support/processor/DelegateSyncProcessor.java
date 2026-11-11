@@ -32,7 +32,7 @@ import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A delegate pattern which delegates synchronous processing to a nested {@link org.apache.camel.Processor}.
- * <p/>
+ * <p>
  * <b>Important:</b> This implementation <b>does</b> support the asynchronous routing engine, <b>only</b> if the logic
  * in the {@link #process(org.apache.camel.Exchange)} does not invoke EIPs; as it forces using synchronous processing
  * during the {@link #process(org.apache.camel.Exchange)} method call. If you are implementing an EIP pattern please use

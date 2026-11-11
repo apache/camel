@@ -42,7 +42,7 @@ import org.apache.camel.spi.Metadata;
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
-     * A filter pattern that only accepts keys starting with <tt>Camel</tt>.
+     * A filter pattern that only accepts keys starting with <code>Camel</code>.
      *
      * @deprecated use {@link #CAMEL_FILTER_STARTS_WITH}
      */
@@ -50,7 +50,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)Camel[.a-zA-z0-9]*");
 
     /**
-     * A filter pattern for keys starting with <tt>Camel</tt> or <tt>camel</tt>.
+     * A filter pattern for keys starting with <code>Camel</code> or <code>camel</code>.
      */
     public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel" };
 
@@ -269,9 +269,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Gets the caseInsensitive property which is a boolean to determine whether header names should be case insensitive
      * when checking it with the filter set. This ensures that all variations of header names will be taken into
-     * account.. It does not affect filtering using regular expression pattern.
+     * account. It does not affect filtering using regular expression pattern.
      *
-     * @return <tt>true</tt> if header names is case insensitive.
+     * @return <code>true</code> if header names are case insensitive.
      */
     public boolean isCaseInsensitive() {
         return caseInsensitive;
@@ -280,9 +280,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the caseInsensitive property which is a boolean to determine whether header names should be case insensitive
      * when checking it with the filter set. This ensures that all variations of header names will be taken into
-     * account.. It does not affect filtering using regular expression pattern,
+     * account. It does not affect filtering using regular expression pattern.
      *
-     * @param caseInsensitive <tt>true</tt> if header names is case insensitive.
+     * @param caseInsensitive <code>true</code> if header names are case insensitive.
      */
     public void setCaseInsensitive(boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
@@ -314,7 +314,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      * When set to false, the pattern or filter will indicate that the header must be kept; anything not matched will be
      * filtered (skipped).
      *
-     * @param filterOnMatch <tt>true</tt> if a match filters (skips) the header.
+     * @param filterOnMatch <code>true</code> if a match filters (skips) the header.
      */
     public void setFilterOnMatch(boolean filterOnMatch) {
         this.filterOnMatch = filterOnMatch;

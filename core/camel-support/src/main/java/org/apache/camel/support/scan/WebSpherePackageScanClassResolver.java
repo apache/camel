@@ -45,7 +45,7 @@ public class WebSpherePackageScanClassResolver extends DefaultPackageScanClassRe
      * Is the classloader from IBM and thus the WebSphere platform?
      *
      * @param  loader the classloader
-     * @return        <tt>true</tt> if IBM classloader, <tt>false</tt> otherwise.
+     * @return        <code>true</code> if IBM classloader, <code>false</code> otherwise.
      */
     public static boolean isWebSphereClassLoader(ClassLoader loader) {
         return loader != null && loader.getClass().getName().startsWith("com.ibm.");
@@ -53,7 +53,7 @@ public class WebSpherePackageScanClassResolver extends DefaultPackageScanClassRe
 
     /**
      * Overloaded to handle specific problem with getting resources on the IBM WebSphere platform.
-     * <p/>
+     * <p>
      * WebSphere can <b>not</b> load resources if the resource to load is a folder name, such as a packagename, you have
      * to explicit name a resource that is a file.
      *

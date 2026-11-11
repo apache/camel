@@ -102,11 +102,11 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
     /**
      * Re-applies the configuration properties whose value is a property placeholder, so that components are
      * re-configured with what those placeholders resolve to now.
-     * <p/>
-     * A component option such as <tt>camel.component.kafka.saslJaasConfig</tt> has its placeholder resolved once, when
-     * the component is configured, and the resolved value is what is stored on the component. Reloading the routes
+     * <p>
+     * A component option such as <code>camel.component.kafka.saslJaasConfig</code> has its placeholder resolved once,
+     * when the component is configured, and the resolved value is what is stored on the component. Reloading the routes
      * rebuilds the endpoints from that same already-resolved value, so without this step a rotated secret would never
-     * reach the component. Only <tt>camel.</tt> options whose value is a placeholder are handed to the listener, as
+     * reach the component. Only <code>camel.</code> options whose value is a placeholder are handed to the listener, as
      * they are the only ones whose resolved value can change while the raw configuration stays the same.
      */
     protected void reloadComponentProperties(Object source) throws Exception {
@@ -140,7 +140,7 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
     /**
      * Notifies every {@link SecretRotationAware} component and registry bean that the secrets they captured may have
      * been rotated, so they can re-authenticate before the routes are restarted.
-     * <p/>
+     * <p>
      * A listener that throws is logged and skipped, so that one component cannot prevent the others from being
      * refreshed, nor fail the reload as a whole.
      */

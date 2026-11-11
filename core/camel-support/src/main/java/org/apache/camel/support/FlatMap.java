@@ -29,7 +29,7 @@ import java.util.Set;
  * A lightweight {@link Map} backed by a flat {@code Object[]} with alternating key/value pairs. Optimized for very
  * small maps (0-8 entries) where linear scan is faster than hashing due to cache locality and zero per-entry object
  * overhead.
- * <p/>
+ * <p>
  * Not thread-safe. Keys are compared by {@link Object#equals}.
  */
 class FlatMap<K, V> extends AbstractMap<K, V> {

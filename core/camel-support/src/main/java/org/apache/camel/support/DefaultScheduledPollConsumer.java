@@ -78,12 +78,12 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
     }
 
     /**
-     * Sets a timeout to use with {@link PollingConsumer}. <br/>
-     * <br/>
-     * Use <tt>timeout < 0</tt> for {@link PollingConsumer#receive()}. <br/>
-     * Use <tt>timeout == 0</tt> for {@link PollingConsumer#receiveNoWait()}. <br/>
-     * Use <tt>timeout > 0</tt> for {@link PollingConsumer#receive(long)}}. <br/>
-     * The default timeout value is <tt>0</tt>
+     * Sets a timeout to use with {@link PollingConsumer}. <br>
+     * <br>
+     * Use <code>timeout &lt; 0</code> for {@link PollingConsumer#receive()}. <br>
+     * Use <code>timeout == 0</code> for {@link PollingConsumer#receiveNoWait()}. <br>
+     * Use <code>timeout &gt; 0</code> for {@link PollingConsumer#receive(long)}. <br>
+     * The default timeout value is <code>0</code>
      *
      * @param timeout the timeout value
      */

@@ -47,10 +47,10 @@ import org.slf4j.LoggerFactory;
 /**
  * A throttle based {@link org.apache.camel.spi.RoutePolicy} which is capable of dynamic throttling a route based on
  * number of current inflight exchanges.
- * <p/>
+ * <p>
  * This implementation supports two scopes {@link ThrottlingScope#Context} and {@link ThrottlingScope#Route} (is
  * default). If context scope is selected then this implementation will use a {@link org.apache.camel.spi.EventNotifier}
- * to listen for events when {@link Exchange}s is done, and trigger the
+ * to listen for events when {@link Exchange}s are done, and trigger the
  * {@link #throttle(org.apache.camel.Route, org.apache.camel.Exchange)} method. If the route scope is selected then
  * <b>no</b> {@link org.apache.camel.spi.EventNotifier} is in use, as there is already a
  * {@link org.apache.camel.spi.Synchronization} callback on the current {@link Exchange} which triggers the
@@ -223,7 +223,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     /**
      * Sets the upper limit of number of concurrent inflight exchanges at which point reached the throttler should
      * suspend the route.
-     * <p/>
+     * <p>
      * Is default 1000.
      *
      * @param maxInflightExchanges the upper limit of concurrent inflight exchanges
@@ -242,7 +242,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
 
     /**
      * Sets at which percentage of the max the throttler should start resuming the route.
-     * <p/>
+     * <p>
      * Will by default use 70%.
      *
      * @param resumePercentOfMax the percentage must be between 0 and 100
@@ -294,8 +294,8 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
 
     /**
      * Sets the logging level to report the throttling activity.
-     * <p/>
-     * Is default <tt>INFO</tt> level.
+     * <p>
+     * Is default <code>INFO</code> level.
      *
      * @param loggingLevel the logging level
      */

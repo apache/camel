@@ -239,14 +239,13 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Gets an header or property of the correct type
+     * Gets a header or property of the correct type
      *
      * @param  exchange                the exchange
      * @param  name                    the name of the header or the property
      * @param  type                    the type
      * @return                         the header or property value
      * @throws TypeConversionException is thrown if error during type conversion
-     * @throws NoSuchHeaderException   is thrown if no headers exists
      */
     public static <T> T getHeaderOrProperty(Exchange exchange, String name, Class<T> type) throws TypeConversionException {
         T answer = exchange.getIn().getHeader(name, type);
@@ -609,7 +608,7 @@ public final class ExchangeHelper {
      *
      * @param  exchange the exchange
      * @param  name     the bean name
-     * @return          the bean, or <tt>null</tt> if no bean could be found
+     * @return          the bean, or <code>null</code> if no bean could be found
      */
     public static Object lookupBean(Exchange exchange, String name) {
         return exchange.getContext().getRegistry().lookupByName(name);
@@ -621,7 +620,7 @@ public final class ExchangeHelper {
      * @param  exchange the exchange
      * @param  name     the bean name
      * @param  type     the expected bean type
-     * @return          the bean, or <tt>null</tt> if no bean could be found
+     * @return          the bean, or <code>null</code> if no bean could be found
      */
     public static <T> T lookupBean(Exchange exchange, String name, Class<T> type) {
         return exchange.getContext().getRegistry().lookupByNameAndType(name, type);
@@ -629,7 +628,7 @@ public final class ExchangeHelper {
 
     /**
      * Prepares the exchanges for aggregation.
-     * <p/>
+     * <p>
      * This implementation will copy the OUT body to the IN body so when you do aggregation the body is <b>only</b> in
      * the IN body to avoid confusing end users.
      *
@@ -648,10 +647,10 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Checks whether the exchange has been failure handed
+     * Checks whether the exchange has been failure handled
      *
      * @param  exchange the exchange
-     * @return          <tt>true</tt> if failure handled, <tt>false</tt> otherwise
+     * @return          <code>true</code> if failure handled, <code>false</code> otherwise
      */
     public static boolean isFailureHandled(Exchange exchange) {
         return exchange.getExchangeExtension().isFailureHandled();
@@ -661,7 +660,7 @@ public final class ExchangeHelper {
      * Checks whether the exchange has been error handler bridged
      *
      * @param  exchange the exchange
-     * @return          <tt>true</tt> if error handler bridged, <tt>false</tt> otherwise
+     * @return          <code>true</code> if error handler bridged, <code>false</code> otherwise
      */
     public static boolean isErrorHandlerBridge(Exchange exchange) {
         return exchange.getProperty(ExchangePropertyKey.ERRORHANDLER_BRIDGE, false, Boolean.class);
@@ -671,7 +670,7 @@ public final class ExchangeHelper {
      * Checks whether the exchange {@link UnitOfWork} is exhausted
      *
      * @param  exchange the exchange
-     * @return          <tt>true</tt> if exhausted, <tt>false</tt> otherwise
+     * @return          <code>true</code> if exhausted, <code>false</code> otherwise
      */
     public static boolean isUnitOfWorkExhausted(Exchange exchange) {
         return exchange.getProperty(ExchangePropertyKey.UNIT_OF_WORK_EXHAUSTED, false, Boolean.class);
@@ -693,7 +692,7 @@ public final class ExchangeHelper {
      * counter, which a route cannot remove), or the {@link Exchange#REDELIVERED} header says so.
      *
      * @param  exchange the exchange
-     * @return          <tt>true</tt> if redelivered, <tt>false</tt> otherwise
+     * @return          <code>true</code> if redelivered, <code>false</code> otherwise
      */
     public static boolean isRedelivered(Exchange exchange) {
         // the counter of the exchange first: a route that removes the Camel headers after the redelivery (such as
@@ -708,7 +707,7 @@ public final class ExchangeHelper {
      * Check whether or not stream caching is enabled for the given route or globally.
      *
      * @param  exchange the exchange
-     * @return          <tt>true</tt> if enabled, <tt>false</tt> otherwise
+     * @return          <code>true</code> if enabled, <code>false</code> otherwise
      */
     public static boolean isStreamCachingEnabled(final Exchange exchange) {
         Route route = exchange.getContext().getRoute(exchange.getFromRouteId());
@@ -721,13 +720,13 @@ public final class ExchangeHelper {
 
     /**
      * Extracts the body from the given exchange.
-     * <p/>
+     * <p>
      * If the exchange pattern is provided it will try to honor it and retrieve the body from either IN or OUT according
      * to the pattern.
      *
      * @param  exchange                the exchange
-     * @param  pattern                 exchange pattern if given, can be <tt>null</tt>
-     * @return                         the result body, can be <tt>null</tt>.
+     * @param  pattern                 exchange pattern if given, can be <code>null</code>
+     * @return                         the result body, can be <code>null</code>.
      * @throws CamelExecutionException is thrown if the processing of the exchange failed
      */
     public static Object extractResultBody(Exchange exchange, ExchangePattern pattern) {
@@ -762,13 +761,13 @@ public final class ExchangeHelper {
 
     /**
      * Extracts the body from the given future, that represents a handle to an asynchronous exchange.
-     * <p/>
+     * <p>
      * Will wait until the future task is complete.
      *
      * @param  context                 the camel context
      * @param  future                  the future handle
      * @param  type                    the expected body response type
-     * @return                         the result body, can be <tt>null</tt>.
+     * @return                         the result body, can be <code>null</code>.
      * @throws CamelExecutionException is thrown if the processing of the exchange failed
      */
     public static <T> T extractFutureBody(CamelContext context, Future<?> future, Class<T> type) {
@@ -790,7 +789,7 @@ public final class ExchangeHelper {
 
     /**
      * Extracts the body from the given future, that represents a handle to an asynchronous exchange.
-     * <p/>
+     * <p>
      * Will wait for the future task to complete, but waiting at most the timeout value.
      *
      * @param  context                               the camel context
@@ -798,7 +797,7 @@ public final class ExchangeHelper {
      * @param  timeout                               timeout value
      * @param  unit                                  timeout unit
      * @param  type                                  the expected body response type
-     * @return                                       the result body, can be <tt>null</tt>.
+     * @return                                       the result body, can be <code>null</code>.
      * @throws CamelExecutionException               is thrown if the processing of the exchange failed
      * @throws java.util.concurrent.TimeoutException is thrown if a timeout triggered
      */
@@ -855,7 +854,7 @@ public final class ExchangeHelper {
 
     /**
      * Gets both the messageId and exchangeId to be used for logging purposes.
-     * <p/>
+     * <p>
      * Logging both ids, can help to correlate exchanges which may be redelivered messages from for example a JMS
      * broker.
      *
@@ -932,10 +931,10 @@ public final class ExchangeHelper {
 
     /**
      * Gets the original IN {@link Message} this Unit of Work was started with.
-     * <p/>
+     * <p>
      * The original message is only returned if the option
      * {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()} is enabled. If it is disabled, then
-     * <tt>IllegalStateException</tt> is thrown.
+     * <code>IllegalStateException</code> is thrown.
      *
      * @return the original IN {@link Message}
      */
@@ -954,7 +953,7 @@ public final class ExchangeHelper {
      * Resolve the component scheme (aka name) from the given endpoint uri
      *
      * @param  uri the endpoint uri
-     * @return     the component scheme (name), or <tt>null</tt> if not possible to resolve
+     * @return     the component scheme (name), or <code>null</code> if not possible to resolve
      */
     public static String resolveScheme(String uri) {
         return StringHelper.before(uri, ":");
@@ -964,7 +963,7 @@ public final class ExchangeHelper {
      * Resolve the context-path from the given endpoint uri
      *
      * @param  uri the endpoint uri
-     * @return     the context path, or <tt>null</tt> if not possible to resolve
+     * @return     the context path, or <code>null</code> if not possible to resolve
      */
     public static String resolveContextPath(String uri) {
         uri = StringHelper.before(uri, "?", uri);
@@ -996,7 +995,7 @@ public final class ExchangeHelper {
      *
      * @param  exchange   the exchange
      * @param  useDefault should we fallback and use JVM default charset if no property existed?
-     * @return            the charset, or <tt>null</tt> if no found
+     * @return            the charset, or <code>null</code> if not found
      */
     public static String getCharsetName(Exchange exchange, boolean useDefault) {
         if (exchange != null) {
@@ -1022,7 +1021,7 @@ public final class ExchangeHelper {
      *
      * @param  exchange   the exchange
      * @param  useDefault should we fallback and use JVM default charset if no property existed?
-     * @return            the charset, or <tt>null</tt> if no found
+     * @return            the charset, or <code>null</code> if not found
      */
     public static Charset getCharset(Exchange exchange, boolean useDefault) {
         if (exchange != null) {
@@ -1057,7 +1056,7 @@ public final class ExchangeHelper {
      * @param  exchange  the current exchange
      * @param  value     the value, typically the message IN body
      * @param  delimiter the delimiter pattern to use
-     * @return           the scanner, is newer <tt>null</tt>
+     * @return           the scanner, is never <code>null</code>
      */
     public static Scanner getScanner(Exchange exchange, Object value, String delimiter) {
         if (value instanceof WrappedFile gf) {
@@ -1140,7 +1139,7 @@ public final class ExchangeHelper {
      * Captures where the Exchange failed - the route id, node id, and source location - as the
      * {@link Exchange#FAILURE_ROUTE_ID}, {@link Exchange#FAILURE_NODE_ID} and {@link Exchange#FAILURE_LOCATION}
      * properties, based on the current route and the last entry in the message history.
-     * <p/>
+     * <p>
      * This must be called as soon as the exception is caught (handled or not), before any exception handler
      * (onException, doCatch, dead letter channel, ...) has a chance to run any of its own processing steps - otherwise
      * those steps would also be recorded in the message history, and the last entry would no longer point to the node
@@ -1423,12 +1422,12 @@ public final class ExchangeHelper {
 
     /**
      * Returns the body as the specified type. If <a href="http://camel.apache.org/stream-caching.html">stream
-     * caching</a>. is enabled and the body is an instance of {@link StreamCache}, the stream is reset before converting
+     * caching</a> is enabled and the body is an instance of {@link StreamCache}, the stream is reset before converting
      * and returning the body.
      *
      * @param  exchange the message exchange being processed
      * @param  type     the type to convert to
-     * @return          the body of the message as the specified type, or <tt>null</tt> if body does not exist
+     * @return          the body of the message as the specified type, or <code>null</code> if body does not exist
      */
     public static <T> T getBodyAndResetStreamCache(Exchange exchange, Class<T> type) {
         Object body = exchange.getMessage().getBody();

@@ -225,7 +225,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
 
     /**
      * Milliseconds before the first poll starts.
-     * <p/>
+     * <p>
      * The default value is 1000.
      */
     public void setInitialDelay(long initialDelay) {
@@ -238,7 +238,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
 
     /**
      * Milliseconds before the next poll.
-     * <p/>
+     * <p>
      * The default value is 500.
      */
     public void setDelay(long delay) {
@@ -329,7 +329,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     /**
      * Allow to plugin a custom org.apache.camel.spi.ScheduledPollConsumerScheduler to use as the scheduler for firing
      * when the polling consumer runs. This option is used for referring to one of the built-in schedulers either
-     * <tt>spring</tt>, or <tt>quartz</tt>. Using <tt>none</tt> refers to no scheduler to be used.
+     * <code>spring</code>, or <code>quartz</code>. Using <code>none</code> refers to no scheduler to be used.
      *
      * Notice: If using a custom scheduler then the options for initialDelay, useFixedDelay, timeUnit, and
      * scheduledExecutorService may not be in use. Use the text quartz to refer to use the Quartz scheduler; and use the

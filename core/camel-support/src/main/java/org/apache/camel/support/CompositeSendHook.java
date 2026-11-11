@@ -28,7 +28,7 @@ import org.apache.camel.spi.SendHook;
 /**
  * A {@link SendHook} that runs several hooks, in their {@link Ordered order} (lower first; a hook that does not
  * implement {@link Ordered} has order 0, and hooks with the same order keep the order they were given in).
- * <p/>
+ * <p>
  * {@link SendHelper} runs the hooks of a composite one by one, as follows:
  * <ul>
  * <li>{@link #beforeSend(Exchange, Endpoint)} is called on the hooks in their order. A hook that throws an exception,
@@ -39,11 +39,11 @@ import org.apache.camel.spi.SendHook;
  * <li>{@link #afterSend(Exchange, Endpoint)} is called only on the hooks whose {@code beforeSend} returned, in the
  * reverse order, so the hook that was asked first is called last, as for nested hooks.</li>
  * </ul>
- * <p/>
+ * <p>
  * Code that calls a composite itself does not know which hooks were asked: its {@code beforeSend} combines the hooks as
  * above (as it returns one value, {@link SendHook#SEND_TWICE} wins over a delay), and its {@code afterSend} calls every
  * hook, in the reverse order.
- * <p/>
+ * <p>
  * It is immutable: the {@link org.apache.camel.CamelContext} creates a new one when a hook is added or removed (see
  * {@link org.apache.camel.ExtendedCamelContext#addSendHook(SendHook)}).
  *

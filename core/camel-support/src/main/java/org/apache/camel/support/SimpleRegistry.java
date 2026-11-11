@@ -30,7 +30,7 @@ import org.apache.camel.spi.Registry;
 
 /**
  * A {@link Map}-based registry.
- * <p/>
+ * <p>
  * Favour using {@link DefaultRegistry} instead of this.
  *
  * @see DefaultRegistry

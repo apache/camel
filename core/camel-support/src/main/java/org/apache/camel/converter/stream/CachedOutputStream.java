@@ -30,12 +30,13 @@ import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.util.IOHelper;
 
 /**
- * This output stream will store the content into a File if the stream context size is exceed the THRESHOLD value. The
- * default THRESHOLD value is {@link StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes .
- * <p/>
- * The temp file will store in the temp directory, you can configure it by setting the TEMP_DIR property. If you don't
- * set the TEMP_DIR property, it will choose the directory which is set by the system property of "java.io.tmpdir".
- * <p/>
+ * This output stream will store the content into a File if the stream content size exceeds the THRESHOLD value. The
+ * default THRESHOLD value is {@link StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes.
+ * <p>
+ * The temp file will be stored in the temp directory, you can configure it by setting the TEMP_DIR property. If you
+ * don't set the TEMP_DIR property, it will choose the directory which is set by the system property of
+ * "java.io.tmpdir".
+ * <p>
  * You can get a cached input stream of this stream. The temp file which is created with this output stream will be
  * deleted when you close this output stream or the cached fileInputStream(s) is/are closed after all the exchanges
  * using the temp file are completed.

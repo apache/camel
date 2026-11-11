@@ -33,10 +33,10 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link javax.management.modelmbean.RequiredModelMBean} which allows us to intercept invoking operations on the
  * MBean.
- * <p/>
- * This allows us to intercept calls to custom mbeans where allows us to mix-in the standard set of mbean attributes and
+ * <p>
+ * This allows us to intercept calls to custom mbeans which allows us to mix-in the standard set of mbean attributes and
  * operations that Camel provides out of the box.
- * <p/>
+ * <p>
  * For example if mask has been enabled on JMX, then we use this implementation to hide sensitive information from the
  * returned JMX attributes / operations.
  */

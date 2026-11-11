@@ -31,10 +31,10 @@ public final class LoggerHelper {
 
     /**
      * If the node is {@link LineNumberAware} then get a logger name that will point to the source:line, otherwise
-     * return <tt>null</tt>.
+     * return <code>null</code>.
      *
      * @param  node the node
-     * @return      the logger name, or <tt>null</tt>
+     * @return      the logger name, or <code>null</code>
      */
     public static String getLineNumberLoggerName(Object node) {
         String name = null;
