@@ -62,7 +62,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.tooling.maven.MavenArtifact;
-import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.JsonArray;
