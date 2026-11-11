@@ -732,14 +732,14 @@ public final class AuthoringTools {
     /** How long a write waits after the reload for the first output of the routes (CAMEL-25513). */
     static final long OUTPUT_WAIT_MILLIS = 3000;
 
+    /** How many lines of the file are handed back on either side of the place an edit was aiming at. */
+    private static final int EDIT_WINDOW_LINES = 20;
+
     /**
      * Replaces one snippet of a file and writes the result through {@link #writeFile}, so a change to an existing file
      * does not rewrite every line of it: a model that re-emits a whole file corrupts the lines it did not mean to touch
      * (CAMEL-24909). The snippet must occur exactly once; the answer says what was replaced.
      */
-    /** How many lines of the file are handed back on either side of the place an edit was aiming at. */
-    private static final int EDIT_WINDOW_LINES = 20;
-
     public static JsonObject editFile(ToolContext ctx, Path dir, String file, String find, String replace) {
         return editFile(ctx, dir, file, find, replace, null);
     }
