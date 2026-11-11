@@ -152,7 +152,7 @@ class SourceRouteValidationTest {
         viewer.setRouteValidator(content -> assist.validateRoutes(file, content));
         viewer.loadFile(file);
         viewer.enterEditMode();
-        // line 3: period=1000 becomes peroid=1000
+        // line 3: period=1000 becomes period=1000
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.HOME, KeyModifiers.NONE));
@@ -186,7 +186,7 @@ class SourceRouteValidationTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        // line 6: timer:tick?period=1000 becomes timer:tick?peroid=1000
+        // line 6: timer:tick?period=1000 becomes timer:tick?period=1000
         for (int i = 0; i < 5; i++) {
             viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
         }
