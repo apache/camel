@@ -365,4 +365,20 @@ class DeviceClientPoolTest {
         verify(client, times(1)).close();
     }
 
+    @Test
+    void testStartIsIdempotent() throws Exception {
+        DeviceClient client = mock(DeviceClient.class);
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> client);
+        pool.start();
+        pool.start();
+
+        try {
+            pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
+            assertEquals(1, pool.getActiveClientCount());
+        } finally {
+            pool.shutdown();
+        }
+    }
+
 }

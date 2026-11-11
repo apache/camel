@@ -127,6 +127,7 @@ public class DeviceClientPool {
     private DeviceClientFactory deviceClientFactory = DeviceClient::new;
     private LongSupplier nowMillisSupplier = System::currentTimeMillis;
     private ScheduledExecutorService evictionExecutor;
+    private final AtomicBoolean started = new AtomicBoolean(false);
 
     public DeviceClientPool(Duration idleTimeout, Duration evictionInterval) {
         this(idleTimeout, evictionInterval, null);
@@ -143,6 +144,9 @@ public class DeviceClientPool {
     }
 
     public void start() {
+        if (!started.compareAndSet(false, true)) {
+            return;
+        }
         if (evictionExecutor == null) {
             evictionExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
                 Thread t = new Thread(r, "camel-azure-iothub-device-client-evictor");
@@ -171,9 +175,9 @@ public class DeviceClientPool {
             return existing.client;
         }
 
-        CompletableFuture<DeviceClient> inFlight = creationFutures.putIfAbsent(poolKey, new CompletableFuture<>());
+        CompletableFuture<DeviceClient> createdFuture = new CompletableFuture<>();
+        CompletableFuture<DeviceClient> inFlight = creationFutures.putIfAbsent(poolKey, createdFuture);
         if (inFlight == null) {
-            CompletableFuture<DeviceClient> createdFuture = creationFutures.get(poolKey);
             try {
                 PooledClient rechecked = pool.get(poolKey);
                 if (rechecked != null) {
@@ -488,6 +492,7 @@ public class DeviceClientPool {
 
     private void touchAndMaybeEvict(String poolKey) {
         long now = nowMillisSupplier.getAsLong();
+        AtomicReference<PooledClient> retired = new AtomicReference<>();
         pool.computeIfPresent(poolKey, (key, current) -> {
             if (current.inUse.get() > 0) {
                 current.touch(now);
@@ -495,12 +500,16 @@ public class DeviceClientPool {
             }
             if ((now - current.lastUsed) > idleTimeout.toMillis()) {
                 current.retired = true;
-                closeRetired(current);
+                retired.set(current);
                 return null;
             }
             current.touch(now);
             return current;
         });
+        PooledClient expired = retired.get();
+        if (expired != null) {
+            closeRetired(expired);
+        }
     }
 
     private void closeRetired(PooledClient pooled) {
@@ -516,17 +525,22 @@ public class DeviceClientPool {
         long now = nowMillisSupplier.getAsLong();
         for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
             String key = entry.getKey();
+            AtomicReference<PooledClient> retired = new AtomicReference<>();
             pool.computeIfPresent(key, (k, current) -> {
                 if (current.inUse.get() > 0) {
                     return current;
                 }
                 if ((now - current.lastUsed) > idleTimeout.toMillis()) {
                     current.retired = true;
-                    closeRetired(current);
+                    retired.set(current);
                     return null;
                 }
                 return current;
             });
+            PooledClient expired = retired.get();
+            if (expired != null) {
+                closeRetired(expired);
+            }
         }
     }
 
