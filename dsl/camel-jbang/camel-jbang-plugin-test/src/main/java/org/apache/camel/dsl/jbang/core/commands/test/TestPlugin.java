@@ -38,7 +38,7 @@ import org.citrusframework.jbang.cli.commands.ListTests;
 import org.citrusframework.jbang.cli.commands.Run;
 import picocli.CommandLine;
 
-@CamelJBangPlugin(name = "camel-jbang-plugin-test", firstVersion = "4.14.0")
+@CamelJBangPlugin(name = "camel-jbang-plugin-test", firstVersion = "4.14.0", appliesTo = { "export" })
 public class TestPlugin implements Plugin {
 
     public static final String TEST_DIR = "test";

@@ -361,9 +361,27 @@ public final class PluginHelper {
                 final String firstVersion = properties.getOrDefault("firstVersion", "").toString();
                 final String gav = properties.getOrDefault("dependency", "").toString();
 
+                // auto-migrate old config entries for known plugins that now declare appliesTo
+                if (properties.get("appliesTo") == null) {
+                    Optional<PluginType> knownType = PluginType.findByName(name);
+                    if (knownType.isPresent() && knownType.get().getAppliesTo().length > 0) {
+                        JsonArray appliesToArray = new JsonArray();
+                        appliesToArray.addAll(Arrays.asList(knownType.get().getAppliesTo()));
+                        properties.put("appliesTo", appliesToArray);
+                        configDirty = true;
+                        main.getOut().printWarn(
+                                ("Plugin '%s' configuration updated with 'appliesTo' filter. "
+                                 + "Run 'camel plugin add %s' to refresh the full configuration.")
+                                        .formatted(name, name));
+                    }
+                }
+
                 // skip plugins that don't match the target command to avoid unnecessary downloads
                 if (target != null && !"shell".equals(target) && !target.equals(command)) {
-                    continue;
+                    Object appliesToObj = properties.get("appliesTo");
+                    if (!(appliesToObj instanceof Collection<?> appliesToList) || !appliesToList.contains(target)) {
+                        continue;
+                    }
                 }
 
                 // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
@@ -817,6 +835,12 @@ public final class PluginHelper {
         newPlugin.put("command", pluginType.getCommand());
         newPlugin.put("description", pluginType.getDescription());
         newPlugin.put("firstVersion", pluginType.getFirstVersion());
+        String[] appliesTo = pluginType.getAppliesTo();
+        if (appliesTo.length > 0) {
+            JsonArray appliesToArray = new JsonArray();
+            appliesToArray.addAll(Arrays.asList(appliesTo));
+            newPlugin.put("appliesTo", appliesToArray);
+        }
         plugins.putIfAbsent(pluginType.getName(), newPlugin);
 
         PluginHelper.savePluginConfig(pluginConfig);
@@ -939,7 +963,10 @@ public final class PluginHelper {
 
                 // Only load the plugin if the command-line is calling this plugin or if target is null (shell mode)
                 if (target != null && !"shell".equals(target) && !target.equals(command)) {
-                    return false;
+                    CamelJBangPlugin ann = pluginClass.getAnnotation(CamelJBangPlugin.class);
+                    if (ann == null || !Arrays.asList(ann.appliesTo()).contains(target)) {
+                        return false;
+                    }
                 }
 
                 // Check version compatibility if needed

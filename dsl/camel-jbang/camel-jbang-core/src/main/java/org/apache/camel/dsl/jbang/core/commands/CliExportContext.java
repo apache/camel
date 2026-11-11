@@ -42,7 +42,7 @@ public final class CliExportContext {
      * @param yes     whether to answer yes to the confirmations
      */
     public static ExportContext create(CamelJBangMain main, Printer printer, boolean yes) {
-        return configure(new ExportContext(), main, printer, yes);
+        return configure(new ExportContext(), main, printer, yes, "export");
     }
 
     /**
@@ -52,12 +52,14 @@ public final class CliExportContext {
      * @param  main    the CLI
      * @param  printer where the export prints
      * @param  yes     whether to answer yes to the confirmations
+     * @param  target  the command name used to filter plugins (e.g. "run" or "export")
      * @return         the context
      */
-    public static <T extends ExportContext> T configure(T context, CamelJBangMain main, Printer printer, boolean yes) {
+    public static <T extends ExportContext> T configure(
+            T context, CamelJBangMain main, Printer printer, boolean yes, String target) {
         context.withPrinter(printer)
                 .withPlugins(repos -> {
-                    Collection<Plugin> plugins = PluginHelper.getActivePlugins(main, repos).values();
+                    Collection<Plugin> plugins = PluginHelper.getActivePlugins(main, repos, target).values();
                     return new ExportContext.ActivePlugins(
                             plugins.stream().map(Plugin::getRunCustomizer).flatMap(Optional::stream).toList(),
                             plugins.stream().map(Plugin::getExporter).flatMap(Optional::stream).toList());

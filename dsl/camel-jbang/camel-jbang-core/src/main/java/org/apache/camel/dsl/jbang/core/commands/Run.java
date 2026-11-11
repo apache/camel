@@ -937,7 +937,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
      * what a run with Maven does set a process starter, so they run neither Maven nor the application.
      */
     protected RunContext runContext() {
-        return CliExportContext.configure(new RunContext(), getMain(), printer(), false)
+        return CliExportContext.configure(new RunContext(), getMain(), printer(), false, "run")
                 .withFailureExitCode(new CliExecutionExceptionHandler(getMain())::getExitCode)
                 // a YAML route file that did not load in dev mode: the validator's report (CAMEL-24851)
                 .withReloadFailureListener(YamlLoadFailureReport::logIfYamlLoadFailure)
