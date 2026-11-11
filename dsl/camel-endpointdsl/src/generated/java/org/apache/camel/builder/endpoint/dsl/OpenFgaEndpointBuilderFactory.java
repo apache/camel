@@ -228,6 +228,80 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
+         * How writeTuples and write handle an existing relationship: error (the
+         * default) fails the operation, while ignore leaves that relationship
+         * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
+         * later.
+         *
+         * The option is a:
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         *
+         * Default: error
+         * Group: producer
+         *
+         * @param onDuplicate the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder onDuplicate(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onDuplicate) {
+            doSetProperty("onDuplicate", onDuplicate);
+            return this;
+        }
+        /**
+         * How writeTuples and write handle an existing relationship: error (the
+         * default) fails the operation, while ignore leaves that relationship
+         * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
+         * later.
+         *
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         *
+         * Default: error
+         * Group: producer
+         *
+         * @param onDuplicate the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder onDuplicate(String onDuplicate) {
+            doSetProperty("onDuplicate", onDuplicate);
+            return this;
+        }
+        /**
+         * How deleteTuples and write handle an absent relationship: error (the
+         * default) fails the operation, while ignore skips that deletion and
+         * continues. The ignore mode requires OpenFGA 1.10.0 or later.
+         *
+         * The option is a:
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         *
+         * Default: error
+         * Group: producer
+         *
+         * @param onMissing the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder onMissing(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onMissing) {
+            doSetProperty("onMissing", onMissing);
+            return this;
+        }
+        /**
+         * How deleteTuples and write handle an absent relationship: error (the
+         * default) fails the operation, while ignore skips that deletion and
+         * continues. The ignore mode requires OpenFGA 1.10.0 or later.
+         *
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
+         *
+         * Default: error
+         * Group: producer
+         *
+         * @param onMissing the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder onMissing(String onMissing) {
+            doSetProperty("onMissing", onMissing);
+            return this;
+        }
+        /**
          * How many entries a readTuples or readChanges page returns. Left
          * unset, OpenFGA's own default applies. A page is one request: this
          * bounds the answer, not the number of requests a route makes.
@@ -851,9 +925,9 @@ public interface OpenFgaEndpointBuilderFactory {
          * only: it is deliberately not overridable by a message header, so that
          * an inbound message cannot turn a check into a tuple write, nor a
          * check for one relation into a check for a weaker one.
-         * There are 10 enums and the value can be one of: check, batchCheck,
+         * There are 11 enums and the value can be one of: check, batchCheck,
          * listObjects, listRelations, listUsers, readTuples, readChanges,
-         * expand, writeTuples, deleteTuples
+         * expand, writeTuples, deleteTuples, write
          * 
          * @param path operation
          * @return the dsl builder
@@ -877,9 +951,9 @@ public interface OpenFgaEndpointBuilderFactory {
          * only: it is deliberately not overridable by a message header, so that
          * an inbound message cannot turn a check into a tuple write, nor a
          * check for one relation into a check for a weaker one.
-         * There are 10 enums and the value can be one of: check, batchCheck,
+         * There are 11 enums and the value can be one of: check, batchCheck,
          * listObjects, listRelations, listUsers, readTuples, readChanges,
-         * expand, writeTuples, deleteTuples
+         * expand, writeTuples, deleteTuples, write
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -1023,7 +1097,9 @@ public interface OpenFgaEndpointBuilderFactory {
             return "CamelOpenFgaContinuationToken";
         }
         /**
-         * How many relationship tuples the writeTuples operation wrote.
+         * How many relationship tuples a successful writeTuples or write
+         * operation submitted. Ignored duplicate writes are included in this
+         * count.
          * 
          * The option is a: {@code Integer} type.
          * 
@@ -1035,7 +1111,9 @@ public interface OpenFgaEndpointBuilderFactory {
             return "CamelOpenFgaWrittenTuples";
         }
         /**
-         * How many relationship tuples the deleteTuples operation deleted.
+         * How many relationship tuples a successful deleteTuples or write
+         * operation submitted for deletion. Ignored missing deletes are
+         * included in this count.
          * 
          * The option is a: {@code Integer} type.
          * 

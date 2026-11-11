@@ -103,6 +103,12 @@ public class OpenFgaConfiguration implements Cloneable {
     @UriParam(label = "advanced", defaultValue = "10")
     private int maxParallelRequests = 10;
 
+    @UriParam(defaultValue = "error")
+    private OpenFgaWriteConflictMode onDuplicate = OpenFgaWriteConflictMode.error;
+
+    @UriParam(defaultValue = "error")
+    private OpenFgaWriteConflictMode onMissing = OpenFgaWriteConflictMode.error;
+
     @UriParam
     private Integer pageSize;
 
@@ -474,6 +480,30 @@ public class OpenFgaConfiguration implements Cloneable {
 
     public void setMaxParallelRequests(int maxParallelRequests) {
         this.maxParallelRequests = maxParallelRequests;
+    }
+
+    public OpenFgaWriteConflictMode getOnDuplicate() {
+        return onDuplicate;
+    }
+
+    /**
+     * How writeTuples and write handle an existing relationship: error (the default) fails the operation, while ignore
+     * leaves that relationship unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or later.
+     */
+    public void setOnDuplicate(OpenFgaWriteConflictMode onDuplicate) {
+        this.onDuplicate = onDuplicate;
+    }
+
+    public OpenFgaWriteConflictMode getOnMissing() {
+        return onMissing;
+    }
+
+    /**
+     * How deleteTuples and write handle an absent relationship: error (the default) fails the operation, while ignore
+     * skips that deletion and continues. The ignore mode requires OpenFGA 1.10.0 or later.
+     */
+    public void setOnMissing(OpenFgaWriteConflictMode onMissing) {
+        this.onMissing = onMissing;
     }
 
     public Integer getPageSize() {
