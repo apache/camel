@@ -40,6 +40,9 @@ public class SpiffeConfiguration implements Cloneable {
     @UriParam(label = "security", defaultValue = "false", security = "insecure:dev")
     private boolean allowOperationHeader;
 
+    @UriParam(label = "health", defaultValue = "60000")
+    private long healthCheckExpiryThreshold = 60000;
+
     @UriParam(label = "advanced",
               description = "An existing WorkloadApiClient to use. When set, the component does not"
                             + " create or close its own client and spiffeSocketPath is ignored.")
@@ -112,6 +115,19 @@ public class SpiffeConfiguration implements Cloneable {
      */
     public void setAllowOperationHeader(boolean allowOperationHeader) {
         this.allowOperationHeader = allowOperationHeader;
+    }
+
+    public long getHealthCheckExpiryThreshold() {
+        return healthCheckExpiryThreshold;
+    }
+
+    /**
+     * Minimum remaining X.509-SVID validity, in milliseconds, for the producer readiness check to report UP. A
+     * certificate at or below this threshold reports DOWN before expiry. Zero requires only an unexpired identity. Does
+     * not apply to JWT-bundle readiness because bundles have no expiry timestamp.
+     */
+    public void setHealthCheckExpiryThreshold(long healthCheckExpiryThreshold) {
+        this.healthCheckExpiryThreshold = healthCheckExpiryThreshold;
     }
 
     /**

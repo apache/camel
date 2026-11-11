@@ -97,6 +97,44 @@ public interface SpiffeEndpointBuilderFactory {
             return this;
         }
         /**
+         * Minimum remaining X.509-SVID validity, in milliseconds, for the
+         * producer readiness check to report UP. A certificate at or below this
+         * threshold reports DOWN before expiry. Zero requires only an unexpired
+         * identity. Does not apply to JWT-bundle readiness because bundles have
+         * no expiry timestamp.
+         *
+         * The option is a: <code>long</code> type.
+         *
+         * Default: 60000
+         * Group: health
+         *
+         * @param healthCheckExpiryThreshold the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder healthCheckExpiryThreshold(long healthCheckExpiryThreshold) {
+            doSetProperty("healthCheckExpiryThreshold", healthCheckExpiryThreshold);
+            return this;
+        }
+        /**
+         * Minimum remaining X.509-SVID validity, in milliseconds, for the
+         * producer readiness check to report UP. A certificate at or below this
+         * threshold reports DOWN before expiry. Zero requires only an unexpired
+         * identity. Does not apply to JWT-bundle readiness because bundles have
+         * no expiry timestamp.
+         *
+         * The option will be converted to a <code>long</code> type.
+         *
+         * Default: 60000
+         * Group: health
+         *
+         * @param healthCheckExpiryThreshold the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder healthCheckExpiryThreshold(String healthCheckExpiryThreshold) {
+            doSetProperty("healthCheckExpiryThreshold", healthCheckExpiryThreshold);
+            return this;
+        }
+        /**
          * Whether the CamelSpiffeOperation header may override the configured
          * operation. Disabled by default: the operation decides whether this
          * endpoint validates a token or mints one, so a message that can set it

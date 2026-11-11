@@ -82,17 +82,23 @@ public class SpiffeEndpoint extends DefaultEndpoint {
         if (configuration.getWorkloadApiClient() != null) {
             workloadApiClient = configuration.getWorkloadApiClient();
             ownClient = false;
-        } else if (ObjectHelper.isNotEmpty(configuration.getSpiffeSocketPath())) {
-            workloadApiClient = DefaultWorkloadApiClient.newClient(
-                    DefaultWorkloadApiClient.ClientOptions.builder()
-                            .spiffeSocketPath(configuration.getSpiffeSocketPath())
-                            .build());
-            ownClient = true;
         } else {
-            // uses the SPIFFE_ENDPOINT_SOCKET environment variable
-            workloadApiClient = DefaultWorkloadApiClient.newClient();
+            workloadApiClient = createWorkloadApiClient(configuration.getSpiffeSocketPath());
             ownClient = true;
         }
+    }
+
+    static WorkloadApiClient createWorkloadApiClient(String socketPath) throws Exception {
+        if (ObjectHelper.isNotEmpty(socketPath)) {
+            return DefaultWorkloadApiClient.newClient(
+                    DefaultWorkloadApiClient.ClientOptions.builder().spiffeSocketPath(socketPath).build());
+        }
+        return DefaultWorkloadApiClient.newClient();
+    }
+
+    @Override
+    public SpiffeComponent getComponent() {
+        return (SpiffeComponent) super.getComponent();
     }
 
     @Override

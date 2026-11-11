@@ -347,3 +347,36 @@ include::spring-boot:partial$starter.adoc[]
   cannot assert an identity by setting a header - and it requires mutual TLS, failing closed when the peer presented
   no verified certificate. The verified id it publishes is the `CamelSpiffePeerId` exchange *property*, never a header,
   so it likewise cannot be injected by an inbound message.
+
+== Producer readiness and identity observations
+
+Enable producer health checks with `camel.health.producersEnabled=true` before starting the route. The component
+also supports `healthCheckProducerEnabled` to disable its checks. A check is registered with the producer and removed
+when it stops. For each enabled check, a dedicated SDK-managed Workload API client maintains one streaming observer;
+stopping the producer closes that client and cancels its observer, even when the endpoint remains cached. Health
+calls read an immutable metadata snapshot and never fetch credentials, contact the API, or start another observer.
+Producer checks remain disabled globally by default, and no observer client is opened while they are disabled.
+If producer checks are enabled dynamically after route startup, restart the route to start its observer.
+
+The observation depends on the endpoint's configured operation:
+
+* `fetchX509Svid` observes the default workload X.509 identity. Readiness requires an available, unexpired SVID outside
+  `healthCheckExpiryThreshold` (default 60000 milliseconds). Set the threshold to zero to require only that it has not
+  expired. Health details include the observed expiry, remaining validity, and whether the identity is approaching expiry.
+* `fetchJwtSvid` and `validateJwtSvid` observe JWT trust bundles. Readiness requires a non-empty bundle update. Bundles
+  have no expiry timestamp, so the check makes no expiry claim and does not mint or validate a token. In particular,
+  it does not prove that a particular audience can be issued or that an incoming token will validate.
+
+Both report the most recent update timestamp and the observer's state (`connecting`, `connected`, `disconnected`,
+`not-started` or `stopped`). These are SDK callback observations, not an independently measured connection heartbeat;
+`lastUpdate` is the local observation time, not the SPIRE credential's issuance time. When the SDK reports an error,
+readiness becomes DOWN while retaining the last observation's validity details. For X.509 observations, `materialValid=true` alongside
+`connection=disconnected` distinguishes still-valid observed material from API availability. Producer operations still
+contact the Workload API; the observer is not a credential cache for those operations. The rotating SSL context has
+its own source lifecycle and is not measured by these producer checks.
+
+No token, private key, certificate contents or exception text is retained or published by the check. A configured
+`workloadApiClient` is not actively probed: it can address a different API from `spiffeSocketPath`, and the SDK offers
+no independent unsubscribe handle for a borrowed client. Supply your own health check for that injected client. If
+`allowOperationHeader=true` is explicitly enabled, changing an individual message's operation does not retarget the
+readiness observer, which always reflects the endpoint's configured operation.

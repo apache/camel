@@ -22,13 +22,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 /**
  * SPIFFE Workload Identity component.
  */
 @Component("spiffe")
-public class SpiffeComponent extends DefaultComponent {
+public class SpiffeComponent extends HealthCheckComponent {
 
     @Metadata
     private SpiffeConfiguration configuration = new SpiffeConfiguration();
