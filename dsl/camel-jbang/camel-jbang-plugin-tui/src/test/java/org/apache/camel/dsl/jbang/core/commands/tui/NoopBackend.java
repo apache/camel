@@ -22,6 +22,7 @@ import dev.tamboui.buffer.DiffResult;
 import dev.tamboui.layout.Position;
 import dev.tamboui.layout.Size;
 import dev.tamboui.terminal.Backend;
+import dev.tamboui.terminal.KeyboardProtocol;
 
 /**
  * Minimal {@link Backend} stand-in. Only {@link #size()} needs a meaningful value, so that the test fails if the
@@ -31,6 +32,7 @@ final class NoopBackend implements Backend {
 
     private final int[] input;
     private int inputPos;
+    private KeyboardProtocol keyboardProtocol;
 
     /**
      * @param input the bytes the terminal sends, read through TamboUI's event parser by tests of key handling
@@ -101,6 +103,19 @@ final class NoopBackend implements Backend {
     @Override
     public int peek(int timeoutMs) throws IOException {
         return inputPos < input.length ? input[inputPos] : -2;
+    }
+
+    @Override
+    public boolean enableKeyboardProtocol(KeyboardProtocol protocol) throws IOException {
+        keyboardProtocol = protocol;
+        return Backend.super.enableKeyboardProtocol(protocol);
+    }
+
+    /**
+     * @return the keyboard protocol TuiRunner asked for, or null when it did not ask
+     */
+    KeyboardProtocol keyboardProtocol() {
+        return keyboardProtocol;
     }
 
     @Override

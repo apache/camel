@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import dev.tamboui.internal.record.AnsiTerminalCapture;
 import dev.tamboui.layout.Size;
 import dev.tamboui.terminal.Backend;
+import dev.tamboui.terminal.KeyboardProtocol;
 import dev.tamboui.tui.TuiRunner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -67,6 +68,16 @@ class TuiBackendHelperRecordingTest {
 
         try (TuiRunner runner = TuiBackendHelper.createTuiRunner(original)) {
             assertThat(runner.backend()).isSameAs(original);
+        }
+    }
+
+    @Test
+    void theTerminalStaysOnTheLegacyKeyboardProtocol() throws Exception {
+        // TamboUI 0.7 defaults to the Kitty keyboard protocol, which changes how some keys arrive
+        NoopBackend backend = new NoopBackend();
+
+        try (TuiRunner runner = TuiBackendHelper.createTuiRunner(backend)) {
+            assertThat(backend.keyboardProtocol()).isEqualTo(KeyboardProtocol.LEGACY);
         }
     }
 
