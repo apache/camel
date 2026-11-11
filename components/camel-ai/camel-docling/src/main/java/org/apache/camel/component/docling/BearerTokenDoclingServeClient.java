@@ -35,6 +35,10 @@ import tools.jackson.databind.json.JsonMapper;
  * <p>
  * The client leaves {@link #createRequestBuilder(RequestContext)} open for subclasses, which is where the header is
  * added here. Everything else, including the JSON codec, mirrors the client the builder itself would have created.
+ * <p>
+ * Upstream support for a bearer token is proposed in
+ * <a href="https://github.com/docling-project/docling-java/pull/785">docling-java#785</a>; this subclass can be
+ * replaced by the client option once it lands.
  */
 final class BearerTokenDoclingServeClient extends DoclingServeClient {
 
@@ -57,14 +61,11 @@ final class BearerTokenDoclingServeClient extends DoclingServeClient {
 
     @Override
     protected <T> String writeValueAsString(T value) {
-        try {
-            if (prettyPrintJson()) {
-                return jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(value);
-            }
-            return jsonMapper.writeValueAsString(value);
-        } catch (JacksonException e) {
-            throw new RuntimeException(e);
+        // Jackson 3 makes JacksonException unchecked, so it propagates as it is, as in the client of the builder
+        if (prettyPrintJson()) {
+            return jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(value);
         }
+        return jsonMapper.writeValueAsString(value);
     }
 
     @Override
