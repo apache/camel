@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.JarURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
@@ -807,20 +809,21 @@ public final class PluginHelper {
         return foundAny;
     }
 
+    /**
+     * The jar file that a jar URL points into, such as {@code jar:file:/opt/my%20camel/lib/camel.jar!/META-INF/...}:
+     * decoded, as the path of a folder with a space is encoded in the URL.
+     */
+    static Path jarFileOf(URL jarUrl) throws IOException, URISyntaxException {
+        URL fileUrl = ((JarURLConnection) jarUrl.openConnection()).getJarFileURL();
+        return Path.of(fileUrl.toURI());
+    }
+
     private static boolean scanJarForPlugins(
             CommandLine commandLine, CamelJBangMain main, String target,
             ClassLoader classLoader, URL jarUrl) {
         boolean foundAny = false;
         try {
-            String jarPath = jarUrl.getPath();
-            if (jarPath.startsWith("file:")) {
-                jarPath = jarPath.substring(5);
-            }
-            if (jarPath.contains("!")) {
-                jarPath = jarPath.substring(0, jarPath.indexOf("!"));
-            }
-
-            try (JarFile jarFile = new JarFile(jarPath)) {
+            try (JarFile jarFile = new JarFile(jarFileOf(jarUrl).toFile())) {
                 Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
