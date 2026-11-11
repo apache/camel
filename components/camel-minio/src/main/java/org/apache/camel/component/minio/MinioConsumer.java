@@ -73,6 +73,12 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     // read to the end)
     private String lastListedObjectName;
     private int listedObjects;
+    // whether the listing of the last poll was read to its end (false when a limit stopped the poll, or when the
+    // server capped the page below the limit)
+    private boolean listingExhausted;
+    // whether the last poll listed at least one object, or found the listing ended, so its outcome decides the
+    // continuation (a listing whose only result failed leaves the outcome of the previous poll in place)
+    private boolean lastListedConclusive;
     private transient String minioConsumerToString;
 
     public MinioConsumer(MinioEndpoint endpoint, Processor processor) {
@@ -181,18 +187,26 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             if (listObjects.hasNext()) {
                 lastListedObjectName = null;
                 listedObjects = 0;
+                // kept until the listing of this poll is known to have ended, so a listing request that fails
+                // leaves the token of the previous poll in place
+                lastListedConclusive = false;
+                boolean listingEnded = false;
                 try {
                     exchanges = createExchanges(listObjects);
+                    listingEnded = listingExhausted;
                 } finally {
                     // the next poll continues after the last listed object, also when objects of this poll are skipped
                     // or none of them could be got: such objects must not hold the consumer back, and they are listed
-                    // again when the listing starts over
-                    if (lastListedObjectName != null) {
-                        if (maxMessagesPerPoll <= 0 || listedObjects < maxMessagesPerPoll) {
-                            continuationToken = null;
-                        } else {
-                            continuationToken = lastListedObjectName;
-                        }
+                    // again when the listing starts over. The token is kept when the listing has not ended: when a
+                    // limit stopped the poll at a full page, and also when the page held fewer objects than the limit
+                    // (the server may cap the page size below the limit). A poll that listed nothing (the object it
+                    // would continue after was deleted) starts over, as before
+                    if (listingEnded) {
+                        continuationToken = null;
+                    } else if (lastListedObjectName != null) {
+                        continuationToken = lastListedObjectName;
+                    } else if (lastListedConclusive) {
+                        continuationToken = null;
                     }
                 }
                 if (LOG.isTraceEnabled()) {
@@ -222,6 +236,11 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         // whether the stat of at least one listed object succeeded
         boolean anyGot = false;
         String lastListed = null;
+        // whether the listing was read to its end, and whether that is known: it is not when a listing request
+        // failed (the listing is then not known to have ended), nor when a limit stopped the poll below the last
+        // page the request read (that page was truncated, so the listing continues)
+        boolean exhausted = false;
+        boolean exhaustionKnown = true;
         try {
             do {
                 messageCounter++;
@@ -239,9 +258,27 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     }
                 }
                 lastListed = minioObjectSummary.objectName();
-            } while (minioObjectSummaries.hasNext());
+                // a limit above 0 caps the objects listed by a poll, so do not read further pages of the listing:
+                // the next poll continues after the last listed object. A page the server capped below the limit is
+                // truncated, so the listing has not ended when the poll stops there or reads it to its end
+                if (maxMessagesPerPoll > 0 && messageCounter >= maxMessagesPerPoll) {
+                    if (minioObjectSummaries.hasNext()) {
+                        // a truncated page is not the last fetch of the request, so the listing continues
+                        exhaustionKnown = false;
+                    } else {
+                        exhausted = true;
+                    }
+                    break;
+                }
+                if (!minioObjectSummaries.hasNext()) {
+                    exhausted = true;
+                    break;
+                }
+            } while (true);
             lastListedObjectName = lastListed;
             listedObjects = messageCounter;
+            listingExhausted = exhaustionKnown && exhausted;
+            lastListedConclusive = lastListed != null || listingExhausted;
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Received {} messages in this poll", messageCounter);
