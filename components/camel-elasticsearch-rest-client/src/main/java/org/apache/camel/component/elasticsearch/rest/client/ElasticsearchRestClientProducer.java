@@ -290,7 +290,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isNotEmpty(advancedQuery)) {
             request.setJsonEntity(advancedQuery);
         } else {
-            // check if we have criterias in the body for simple matches, to create the query Json request
+            // check if we have criteria in the body for simple matches, to create the query Json request
             var queryParameters = exchange.getMessage().getBody(Map.class);
             if (ObjectHelper.isNotEmpty(queryParameters)) {
                 var jsonRequest = createQueryFromMap(queryParameters);

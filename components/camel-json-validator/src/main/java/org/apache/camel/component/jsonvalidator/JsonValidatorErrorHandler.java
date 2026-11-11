@@ -36,7 +36,7 @@ public interface JsonValidatorErrorHandler {
     void handleErrors(Exchange exchange, Schema schema, Set<Error> errors) throws ValidationException;
 
     /**
-     * Process a general error that happens during valdating
+     * Process a general error that happens during validating
      *
      * @param  exchange            the exchange
      * @param  schema              the schema

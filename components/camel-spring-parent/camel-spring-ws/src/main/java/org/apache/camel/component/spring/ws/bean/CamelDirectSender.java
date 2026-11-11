@@ -25,7 +25,7 @@ import org.springframework.ws.transport.WebServiceConnection;
 import org.springframework.ws.transport.WebServiceMessageSender;
 
 /**
- * Use this class with conjuctions of wsa:replyTo custom routing using prefix direct Received message will be route like
+ * Use this class with conjunctions of wsa:replyTo custom routing using prefix direct Received message will be route like
  * this: <to uri="direct:uri" />
  */
 public class CamelDirectSender implements WebServiceMessageSender {

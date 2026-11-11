@@ -101,7 +101,7 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
     }
 
     /**
-     * Checks whether the consumer is possible to connect to the endoint.
+     * Checks whether the consumer is possible to connect to the endpoint.
      *
      * @param  consumer  the consumer
      * @throws Exception can be thrown

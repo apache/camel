@@ -52,7 +52,7 @@ import static javax.crypto.Cipher.ENCRYPT_MODE;
  * <code>CryptoDataFormat</code> uses a specified key and algorithm to encrypt, decrypt and verify exchange payloads.
  * The Data format allows an initialization vector to be supplied. The use of this initialization vector or IV is
  * different depending on the algorithm type block or streaming, but it is desirable to be able to control it. Also in
- * certain cases it may be necessary to have access to the IV in the decryption phase and as the IV doens't necessarily
+ * certain cases it may be necessary to have access to the IV in the decryption phase and as the IV doesn't necessarily
  * need to be kept secret it is ok to inline this in the stream and read it out on the other side prior to decryption.
  * For more information on Initialization vectors see
  * <ul>
@@ -410,7 +410,7 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
 
     /**
      * Sets a custom {@link AlgorithmParameterSpec} that should be used to configure the Cipher. Note that if an
-     * Initalization vector is provided then the IvParameterSpec will be used and any value set here will be ignored
+     * Initialization vector is provided then the IvParameterSpec will be used and any value set here will be ignored
      */
     public void setAlgorithmParameterSpec(AlgorithmParameterSpec parameterSpec) {
         this.algorithmParameterSpec = parameterSpec;

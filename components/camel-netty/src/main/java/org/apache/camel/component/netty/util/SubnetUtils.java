@@ -133,7 +133,7 @@ public class SubnetUtils {
 
         /**
          * Returns true if the parameter <code>address</code> is in the range of usable endpoint addresses for this
-         * subnet. This excludes the network and broadcast adresses.
+         * subnet. This excludes the network and broadcast addresses.
          *
          * @param  address A dot-delimited IPv4 address, e.g. "192.168.0.1"
          * @return         True if in range, false otherwise

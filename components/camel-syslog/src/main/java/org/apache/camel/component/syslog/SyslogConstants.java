@@ -29,7 +29,7 @@ public final class SyslogConstants {
     public static final String SYSLOG_REMOTE_ADDRESS = "CamelSyslogRemoteAddress";
 
     /**
-     * The Sylog message Facility
+     * The Syslog message Facility
      */
     public static final String SYSLOG_FACILITY = "CamelSyslogFacility";
 

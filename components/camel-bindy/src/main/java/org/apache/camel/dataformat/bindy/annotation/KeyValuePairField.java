@@ -48,7 +48,7 @@ public @interface KeyValuePairField {
     String name() default "";
 
     /**
-     * pattern that the formater will use to transform the data (optional)
+     * pattern that the formatter will use to transform the data (optional)
      *
      * @return String
      */

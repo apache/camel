@@ -24,7 +24,7 @@ import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.Configuration;
 
 @SuppressWarnings("unused")
-// NOTE, altough redundant, the Cloneable interface is required during sources generation process, so it must stay.
+// NOTE, although redundant, the Cloneable interface is required during sources generation process, so it must stay.
 public class InfinispanRemoteClusterConfiguration
         extends InfinispanClusterConfiguration<InfinispanRemoteConfiguration>
         implements Cloneable {

@@ -57,7 +57,7 @@ public final class MailSorter {
      * @return          Sort terms list including if the respective sort should be sorted in descending order
      */
     private static List<SortTermWithDescending> getSortTermsWithDescending(SortTerm[] sortTerm) {
-        // List of reversable sort terms. If the boolean is true the respective sort term is descending
+        // List of reversible sort terms. If the boolean is true the respective sort term is descending
         final List<SortTermWithDescending> sortTermsWithDescending = new ArrayList<>(sortTerm.length);
         // Descending next item in input because the last item was a "descending"
         boolean descendingNext = false;

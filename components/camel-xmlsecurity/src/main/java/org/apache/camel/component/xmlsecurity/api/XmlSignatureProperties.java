@@ -94,7 +94,7 @@ public interface XmlSignatureProperties {
         String getContentReferenceUri();
 
         /**
-         * Retruns the signature type.
+         * Returns the signature type.
          *
          * @return signature type
          */

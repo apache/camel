@@ -105,7 +105,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
             throws Throwable {
         final Exchange exchange = DefaultExchange.newFromEndpoint(endpoint, pattern);
 
-        //Need to check if there are mutiple arguments and the parameters have no annotations for binding,
+        //Need to check if there are multiple arguments and the parameters have no annotations for binding,
         //then use the original bean invocation.
 
         boolean canUseBinding = method.getParameterCount() == 1;

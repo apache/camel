@@ -61,7 +61,7 @@ final class SalesforceClientTemplate {
 
     private static <T> T invokeInternal(final RestClient client, final WithClient<T> performer) throws Exception {
         // we'll handle HTTP client lifecycle so we'll start here and stop at
-        // the end; we won't handle SalesforceSession lifecycle as stoping a
+        // the end; we won't handle SalesforceSession lifecycle as stopping a
         // SalesforceSession that we borrowed from a configured
         // SalesforceComponent could mean logging out any running endpoints also
         final boolean isHttpClientHolder = client instanceof HttpClientHolder;
