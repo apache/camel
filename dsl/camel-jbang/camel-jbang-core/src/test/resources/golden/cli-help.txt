@@ -5003,11 +5003,17 @@ Commands:
 Usage: camel plugin add [-h] [--artifactId=<artifactId>] [--command=<command>]
                         [--description=<description>]
                         [--first-version=<firstVersion>] [--gav=<gav>]
-                        [--groupId=<groupId>] [--repo=<repositories>]
-                        [--version=<version>] <name>
+                        [--groupId=<groupId>] [--plugin-config=<pluginConfig>]
+                        [--repo=<repositories>] [--version=<version>] <name>
 Add new plugin
       <name>                The Camel plugin to add
   -h, --help                Display the help and sub-commands
+      --plugin-config=<pluginConfig>
+                            Path to a custom plugin configuration file or
+                              directory. Only applies to the plugin
+                              subcommands; for plugin commands themselves (e.g.
+                              'camel kubernetes'), set CAMEL_CLI_PLUGIN_CONFIG
+                              instead.
       --command=<command>   The command that the plugin uses
       --description=<description>
                             A short description of the plugin
@@ -5028,18 +5034,28 @@ Examples:
   camel plugin add --command=my-cmd --gav=com.foo:bar:1.0
 
 == camel plugin delete --help
-Usage: camel plugin delete [-h] <plugin>
+Usage: camel plugin delete [-h] [--plugin-config=<pluginConfig>] <plugin>
 Removes a plugin
       <plugin>   The Camel plugin to remove
   -h, --help     Display the help and sub-commands
+      --plugin-config=<pluginConfig>
+                 Path to a custom plugin configuration file or directory. Only
+                   applies to the plugin subcommands; for plugin commands
+                   themselves (e.g. 'camel kubernetes'), set
+                   CAMEL_CLI_PLUGIN_CONFIG instead.
 
 Examples:
   camel plugin delete my-cmd
 
 == camel plugin get --help
-Usage: camel plugin get [-h] [--json] [--repos]
+Usage: camel plugin get [-h] [--json] [--repos] [--plugin-config=<pluginConfig>]
 Get installed plugins
   -h, --help    Display the help and sub-commands
+      --plugin-config=<pluginConfig>
+                Path to a custom plugin configuration file or directory. Only
+                  applies to the plugin subcommands; for plugin commands
+                  themselves (e.g. 'camel kubernetes'), set
+                  CAMEL_CLI_PLUGIN_CONFIG instead.
       --repos   Display maven repository column
       --json    Output in JSON Format
 
@@ -5049,8 +5065,14 @@ Examples:
 
 == camel plugin list --help
 Usage: camel plugin list [-h] [--json] [--repos]
+                         [--plugin-config=<pluginConfig>]
 List all available plugins
   -h, --help    Display the help and sub-commands
+      --plugin-config=<pluginConfig>
+                Path to a custom plugin configuration file or directory. Only
+                  applies to the plugin subcommands; for plugin commands
+                  themselves (e.g. 'camel kubernetes'), set
+                  CAMEL_CLI_PLUGIN_CONFIG instead.
       --repos   Display maven repository column
       --json    Output in JSON Format
 

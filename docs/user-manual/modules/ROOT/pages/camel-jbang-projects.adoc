@@ -274,6 +274,33 @@ camel plugin get
 camel plugin delete <plugin-name>
 ----
 
+=== Custom plugin configuration
+
+By default, the CLI stores the plugin configuration in `~/.camel-jbang-plugins.json`.
+To use a different location, pass the `--plugin-config` option to any `plugin` subcommand:
+
+[source,bash]
+----
+camel plugin get --plugin-config /path/to/my-plugins.json
+camel plugin add kubernetes --plugin-config /path/to/my-plugins.json
+----
+
+The path can point to a JSON file or to a directory (in which case the default filename `.camel-jbang-plugins.json` is resolved inside it).
+
+Alternatively, set the `CAMEL_CLI_PLUGIN_CONFIG` environment variable:
+
+[source,bash]
+----
+export CAMEL_CLI_PLUGIN_CONFIG=/path/to/my-plugins.json
+camel plugin get
+----
+
+The resolution order is: `--plugin-config` option > `CAMEL_CLI_PLUGIN_CONFIG` environment variable > default `~/.camel-jbang-plugins.json`.
+
+NOTE: The `--plugin-config` option only applies to the `plugin` subcommands (`add`, `get`, `delete`).
+Running a plugin's own command (e.g. `camel kubernetes ...`) discovers plugins only through the environment variable or the default file.
+So a plugin added with `camel plugin add --plugin-config X` is not seen unless `CAMEL_CLI_PLUGIN_CONFIG` is also set.
+
 === Plugin versions
 
 The plugins of the Apache Camel project always use the version of the CLI.

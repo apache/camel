@@ -100,7 +100,7 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
     public void shouldUseCustomPluginConfigDirectory() throws Exception {
         Path configDir = customConfigDir.resolve("config-dir");
         Files.createDirectories(configDir);
-        Path configFile = configDir.resolve(PluginHelper.PLUGIN_CONFIG_FILE);
+        Path configFile = configDir.resolve(PluginHelper.PLUGIN_CONFIG);
         String configContent = """
                 {
                   "plugins": {
