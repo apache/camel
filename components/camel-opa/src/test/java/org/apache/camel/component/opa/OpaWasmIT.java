@@ -46,6 +46,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * In-process evaluation of a bundle compiled from the very {@code authz.rego} that {@link OpaIT} uploads to a real OPA
@@ -267,6 +268,39 @@ public class OpaWasmIT extends CamelTestSupport {
                     .as("data.admins was still visible on message %d", i)
                     .isEqualTo(true);
             assertThat(denied.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(false);
+        }
+    }
+
+    @Test
+    void atomicallyReloadsGeneratedWasmWithChangedDataAndRetainsItAfterInvalidReplacement() throws Exception {
+        var original = OpaWasmEvaluator.loadPolicy(context, roles);
+        var content = new java.util.concurrent.atomic.AtomicReference<>(original);
+        try (var evaluator = new OpaReloadableWasmEvaluator(
+                context, 0, content::get,
+                bundle -> new OpaWasmEvaluator(
+                        bundle.wasm(), bundle.data(), "roles/allow", 1, 1000,
+                        "roles/allow", "allow", "*", "", false, false),
+                "roles/allow", "allow", "*", "", false, false)) {
+            Map<String, Object> alice = Map.of("headers", Map.of("user", "alice"));
+            assertThat(evaluator.evaluateDecision(alice)).isEqualTo(false);
+            String originalRevision = evaluator.getReloadStatus().getActiveRevision();
+            content.set(new OpaWasmEvaluator.Bundle(original.wasm(), "{\"admins\":[\"alice\"]}"));
+            assertThat(evaluator.reload()).isTrue();
+            assertThat(evaluator.evaluateDecision(alice)).isEqualTo(true);
+            String activeRevision = evaluator.getReloadStatus().getActiveRevision();
+            assertThat(activeRevision).isNotEqualTo(originalRevision);
+            content.set(new OpaWasmEvaluator.Bundle(new byte[] { 0, 1, 2 }, "{}"));
+            assertThatThrownBy(evaluator::reload).isInstanceOf(Exception.class);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(activeRevision);
+            assertThat(evaluator.evaluateDecision(alice)).isEqualTo(true);
+            // A valid module whose exported entrypoints do not include roles/allow is also rejected.
+            content.set(OpaWasmEvaluator.loadPolicy(context, authz));
+            assertThatThrownBy(evaluator::reload).isInstanceOf(Exception.class);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(activeRevision);
+            assertThat(evaluator.evaluateDecision(alice)).isEqualTo(true);
+            content.set(new OpaWasmEvaluator.Bundle(original.wasm(), "{invalid"));
+            assertThatThrownBy(evaluator::reload).isInstanceOf(Exception.class);
+            assertThat(evaluator.getReloadStatus().getActiveRevision()).isEqualTo(activeRevision);
         }
     }
 

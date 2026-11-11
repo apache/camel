@@ -51,6 +51,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "policyBundle": target.setPolicyBundle(property(camelContext, java.lang.String.class, value)); return true;
         case "policypath":
         case "policyPath": target.setPolicyPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "policyreloadinterval":
+        case "policyReloadInterval": target.setPolicyReloadInterval(property(camelContext, long.class, value)); return true;
         case "poolsize":
         case "poolSize": target.setPoolSize(property(camelContext, int.class, value)); return true;
         case "requesttimeout":
@@ -95,6 +97,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "policyBundle": return java.lang.String.class;
         case "policypath":
         case "policyPath": return java.lang.String.class;
+        case "policyreloadinterval":
+        case "policyReloadInterval": return long.class;
         case "poolsize":
         case "poolSize": return int.class;
         case "requesttimeout":
@@ -140,6 +144,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "policyBundle": return target.getPolicyBundle();
         case "policypath":
         case "policyPath": return target.getPolicyPath();
+        case "policyreloadinterval":
+        case "policyReloadInterval": return target.getPolicyReloadInterval();
         case "poolsize":
         case "poolSize": return target.getPoolSize();
         case "requesttimeout":
