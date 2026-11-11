@@ -1,0 +1,167 @@
+= Authorization observations
+
+Camel OPA, OpenFGA and SPIFFE emit optional `AuthorizationDecisionEvent` events
+through the existing Camel `EventNotifier` lifecycle. Register a notifier before
+starting the context. No event or observation clock is created when there are no
+started listeners accepting exchange events. Disabled notifiers,
+`ignoreExchangeEvents` and `isEnabled(event)` are honored. Listener failures do
+not change an authorization result or prevent delivery to other listeners.
+
+[source,java]
+----
+context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+    @Override
+    public boolean isEnabled(CamelEvent event) {
+        return event instanceof AuthorizationDecisionEvent;
+    }
+
+    @Override
+    public void notify(CamelEvent event) {
+        AuthorizationDecisionEvent decision = (AuthorizationDecisionEvent) event;
+        // Send the bounded decision metadata to your audit sink.
+    }
+});
+----
+
+The immutable event lives in `org.apache.camel.support.security`. It is a
+`CamelEvent` of type `Custom`, with no retained `Exchange`, credentials, subject,
+resource identifier, full input or exception text. It records:
+
+* Engine: OPA REST, OPA WASM, OpenFGA or SPIFFE.
+* Operation: a single decision, batch, SPIFFE mutual TLS check or JWT validation.
+* Outcome: `ALLOW`, `DENY`, `ERROR`, `UNAVAILABLE` or `FAILED_OPEN`.
+* Failure category: `NONE`, `EVALUATION`, `UNAVAILABLE` or `INTERRUPTED`.
+* Monotonic elapsed nanoseconds and outcome counts. OPA WASM also reports the
+  actual pool borrow wait, including a failed borrow; other operations use -1.
+* Exchange and originating route identifiers for event correlation.
+* The configured OpenFGA model revision, when pinned. OPA REST does not expose a
+  verified deployed revision here, and the WASM evaluator does not infer one from
+  a bundle filename; unknown revisions are null. An unpinned OpenFGA model is
+  likewise unknown.
+
+An explicit negative decision is `DENY`. An evaluation that never obtains a
+verdict is `ERROR` or, where the engine can identify an availability failure,
+`UNAVAILABLE`. `FAILED_OPEN` means configuration allowed processing without a
+verdict. It is distinct from `ALLOW`. For SPIFFE, unavailable Workload API gRPC
+statuses are reported as availability failures; an invalid JWT is a denial.
+
+Batch counts distinguish allowed and denied decisions from failed elements.
+For mixed successful batches the aggregate outcome prioritizes failed-open,
+evaluation error, unavailability and denial, in that order. A whole OpenFGA batch
+that throws still reports failure even if some individual checks had answered.
+Existing verdict headers, failure handling and filtering behavior are unchanged.
+Query and tuple maintenance operations do not emit authorization decisions.
+Fetching a local SVID is not a peer authorization decision and emits no such event.
+
+== Optional Micrometer metrics
+
+Add `camel-micrometer` and register its
+`MicrometerAuthorizationEventNotifier`. No Micrometer dependency is needed in
+OPA, OpenFGA or SPIFFE themselves:
+
+[source,java]
+----
+MicrometerAuthorizationEventNotifier notifier = new MicrometerAuthorizationEventNotifier();
+notifier.setCamelContext(context);
+notifier.setMeterRegistry(meterRegistry);
+context.getManagementStrategy().addEventNotifier(notifier);
+----
+
+The notifier records `camel.authorization.duration`, element counts in
+`camel.authorization.decisions` and, for WASM, `camel.authorization.pool.wait`.
+Labels are fixed enums only: engine, operation, outcome and failure as applicable.
+Revision, correlation IDs, route IDs, principal and resource are never metric
+labels. Processing more exchanges or deploying another model revision does not
+create another metric series with the same engine and outcomes.
+
+Events provide authorization semantics alongside normal Camel telemetry. They
+do not create spans or duplicate OpenFGA SDK spans. An application can attach
+safe event attributes to its existing tracing integration through a notifier;
+do not turn correlation IDs, inputs or identities into metric labels.
+
+== Compose verified identity with policy decisions
+
+The following examples assume registered `spiffeIdentity` and `opaAuthorization`
+policies. Require mutual TLS in `SpiffeSSLContextParameters`, and configure the
+SPIFFE policy with an appropriate peer allow-list. Configure the OPA policy's
+`includeProperties` to include `CamelSpiffePeerId`.
+
+`mapVerifiedIdentity` is an application processor that maps the verified
+`CamelSpiffePeerId` exchange property to an OpenFGA subject and sets
+`verifiedFgaUser`. It must not take the subject from an inbound identity header.
+Keep the mapping explicit: the engines retain their own subject and policy models.
+Every decision event shares the exchange correlation while retaining its engine.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("netty-http:https://0.0.0.0:8443?sslContextParameters=#spiffeSsl")
+    .policy(spiffeIdentity)
+    .policy(opaAuthorization)
+    .process(mapVerifiedIdentity)
+    .to("openfga:check?storeId={{fga.store}}&authorizationModelId={{fga.model}}"
+        + "&user=${exchangeProperty.verifiedFgaUser}&relation=reader"
+        + "&object=document:${header.documentId}")
+    .filter(header("CamelOpenFgaAllowed").isEqualTo(true))
+        .to("direct:serveDocument")
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty-http:https://0.0.0.0:8443?sslContextParameters=#spiffeSsl"/>
+  <policy ref="spiffeIdentity">
+    <policy ref="opaAuthorization">
+      <process ref="mapVerifiedIdentity"/>
+      <to uri="openfga:check?storeId={{fga.store}}&amp;authorizationModelId={{fga.model}}&amp;user=${exchangeProperty.verifiedFgaUser}&amp;relation=reader&amp;object=document:${header.documentId}"/>
+      <filter>
+        <simple>${header.CamelOpenFgaAllowed} == true</simple>
+        <to uri="direct:serveDocument"/>
+      </filter>
+    </policy>
+  </policy>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty-http:https://0.0.0.0:8443
+      parameters:
+        sslContextParameters: "#spiffeSsl"
+      steps:
+        - policy:
+            ref: spiffeIdentity
+            steps:
+              - policy:
+                  ref: opaAuthorization
+                  steps:
+                    - process:
+                        ref: mapVerifiedIdentity
+                    - to:
+                        uri: openfga:check
+                        parameters:
+                          storeId: "{{fga.store}}"
+                          authorizationModelId: "{{fga.model}}"
+                          user: "${exchangeProperty.verifiedFgaUser}"
+                          relation: reader
+                          object: "document:${header.documentId}"
+                    - filter:
+                        simple: "${header.CamelOpenFgaAllowed} == true"
+                        steps:
+                          - to: direct:serveDocument
+----
+====
+
+See xref:components::spiffe-component.adoc[SPIFFE] for the verified TLS session
+requirements, xref:components::opa-component.adoc[OPA] for input selection, and
+xref:components::openfga-component.adoc[OpenFGA] for subject and model configuration.

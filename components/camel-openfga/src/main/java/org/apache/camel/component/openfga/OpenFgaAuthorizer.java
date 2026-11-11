@@ -36,6 +36,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
+import org.apache.camel.support.security.AuthorizationObservation;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,6 +195,27 @@ public class OpenFgaAuthorizer {
      * @throws OpenFgaEvaluationException when no answer could be obtained and {@code failOpen} is false
      */
     public boolean check(Exchange exchange) throws OpenFgaEvaluationException {
+        AuthorizationObservation observation
+                = AuthorizationObservation.begin(exchange, Engine.OPENFGA, Operation.DECISION, authorizationModelId);
+        if (!observation.isEnabled()) {
+            return checkInternal(exchange);
+        }
+        try {
+            boolean allowed = checkInternal(exchange);
+            boolean failedOpen = Boolean.TRUE.equals(exchange.getMessage().getHeader(OpenFgaConstants.FAILED_OPEN));
+            observation.complete(failedOpen ? Outcome.FAILED_OPEN : allowed ? Outcome.ALLOW : Outcome.DENY,
+                    failedOpen ? Failure.UNAVAILABLE : Failure.NONE);
+            return allowed;
+        } catch (OpenFgaEvaluationException | RuntimeException e) {
+            boolean unavailable = isDecisionPointUnavailable(e);
+            observation.complete(unavailable ? Outcome.UNAVAILABLE : Outcome.ERROR,
+                    AuthorizationObservation.interrupted(e) ? Failure.INTERRUPTED
+                            : unavailable ? Failure.UNAVAILABLE : Failure.EVALUATION);
+            throw e;
+        }
+    }
+
+    private boolean checkInternal(Exchange exchange) throws OpenFgaEvaluationException {
         // Clear first, and before anything is resolved. A verdict a message arrived with is a claim, not evidence, and
         // overwriting at the end would not be enough: the paths that throw never reach the end, and a route that
         // handles the exception would carry on with the sender's own verdict still on the message. Clearing before the
@@ -271,7 +297,7 @@ public class OpenFgaAuthorizer {
      * A 429 is the exception that proves the rule: it is a 4xx by status class, but what it says is "not right now",
      * which is precisely a decision point that could not answer.
      */
-    private static boolean isDecisionPointUnavailable(Throwable failure) {
+    static boolean isDecisionPointUnavailable(Throwable failure) {
         boolean looksUnavailable = false;
         for (Throwable cause = failure; cause != null; cause = cause.getCause()) {
             if (cause instanceof FgaError error) {

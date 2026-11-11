@@ -22,6 +22,11 @@ import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
+import org.apache.camel.support.security.AuthorizationObservation;
 
 /**
  * Enforces a {@link SpiffeSecurityPolicy} before the wrapped processor runs.
@@ -52,6 +57,24 @@ public class SpiffeSecurityProcessor extends DelegateAsyncProcessor {
     }
 
     protected void authorize(Exchange exchange) throws CamelAuthorizationException {
+        AuthorizationObservation observation = AuthorizationObservation.begin(exchange, Engine.SPIFFE, Operation.MTLS, null);
+        if (!observation.isEnabled()) {
+            authorizeInternal(exchange);
+            return;
+        }
+        try {
+            authorizeInternal(exchange);
+            observation.complete(Outcome.ALLOW, Failure.NONE);
+        } catch (CamelAuthorizationException e) {
+            observation.complete(Outcome.DENY, Failure.NONE);
+            throw e;
+        } catch (RuntimeException e) {
+            observation.complete(Outcome.ERROR, Failure.EVALUATION);
+            throw e;
+        }
+    }
+
+    private void authorizeInternal(Exchange exchange) throws CamelAuthorizationException {
         SpiffeId peer = SpiffePeerIdentity.fromExchange(exchange, policy.getSslSessionHeader());
         if (peer == null) {
             markFailure(exchange);

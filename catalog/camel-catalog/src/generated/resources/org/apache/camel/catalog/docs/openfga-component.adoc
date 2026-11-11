@@ -810,3 +810,10 @@ YAML::
                   uri: direct:serveOrder
 ----
 ====
+
+== Authorization observations
+
+See xref:manual::authorization-observability.adoc[Authorization observations]
+for optional decision events, low-cardinality metrics and verified-identity
+composition examples. Observations preserve the component's existing decision
+headers and error handling.

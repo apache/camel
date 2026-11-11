@@ -18,6 +18,7 @@ package org.apache.camel.component.spiffe;
 
 import java.util.Arrays;
 
+import io.grpc.Status;
 import io.spiffe.exception.JwtSvidException;
 import io.spiffe.svid.jwtsvid.JwtSvid;
 import io.spiffe.svid.x509svid.X509Svid;
@@ -25,6 +26,11 @@ import io.spiffe.workloadapi.WorkloadApiClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
+import org.apache.camel.support.security.AuthorizationObservation;
 import org.apache.camel.util.ObjectHelper;
 
 public class SpiffeProducer extends DefaultProducer {
@@ -79,6 +85,30 @@ public class SpiffeProducer extends DefaultProducer {
     }
 
     private void validateJwtSvid(WorkloadApiClient client, Exchange exchange) throws Exception {
+        AuthorizationObservation observation
+                = AuthorizationObservation.begin(exchange, Engine.SPIFFE, Operation.VALIDATE_JWT, null);
+        if (!observation.isEnabled()) {
+            validateJwtSvidInternal(client, exchange);
+            return;
+        }
+        try {
+            validateJwtSvidInternal(client, exchange);
+            observation.complete(Outcome.ALLOW, Failure.NONE);
+        } catch (Exception e) {
+            boolean interrupted = AuthorizationObservation.interrupted(e);
+            Status.Code code = Status.fromThrowable(e).getCode();
+            boolean unavailable = !interrupted && (code == Status.Code.UNAVAILABLE
+                    || code == Status.Code.DEADLINE_EXCEEDED);
+            boolean denied = e instanceof JwtSvidException || e instanceof IllegalArgumentException;
+            observation.complete(
+                    interrupted ? Outcome.ERROR : unavailable ? Outcome.UNAVAILABLE : denied ? Outcome.DENY : Outcome.ERROR,
+                    interrupted ? Failure.INTERRUPTED : unavailable ? Failure.UNAVAILABLE : denied ? Failure.NONE
+                            : Failure.EVALUATION);
+            throw e;
+        }
+    }
+
+    private void validateJwtSvidInternal(WorkloadApiClient client, Exchange exchange) throws Exception {
         String token = exchange.getIn().getHeader(SpiffeConstants.TOKEN, String.class);
         if (ObjectHelper.isEmpty(token)) {
             // a JWT-SVID is presented over HTTP as "Authorization: Bearer <token>", so an HTTP route can validate it

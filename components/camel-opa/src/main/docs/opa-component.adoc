@@ -682,3 +682,10 @@ where the policy is evaluated in-process and there is no server to probe.
 * The component decides; it does not authenticate. Establish *who* the caller is first — with SPIFFE workload
   identity, a verified JWT, or the surrounding transport's authentication — and hand the policy that identity
   through `includeProperties` rather than through a header, as <<authorizing-an-identity>> explains.
+
+== Authorization observations
+
+See xref:manual::authorization-observability.adoc[Authorization observations]
+for optional decision events, low-cardinality metrics and verified-identity
+composition examples. Observations preserve the component's existing decision
+headers and error handling.

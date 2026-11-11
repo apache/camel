@@ -164,7 +164,25 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
 
     @Override
     protected Object evaluateDecision(Map<String, Object> input) throws Exception {
-        OpaWasmPolicyPool.Lease lease = pool.borrow();
+        return evaluateDecision(input, null);
+    }
+
+    @Override
+    protected org.apache.camel.support.security.AuthorizationDecisionEvent.Engine observationEngine() {
+        return org.apache.camel.support.security.AuthorizationDecisionEvent.Engine.OPA_WASM;
+    }
+
+    @Override
+    protected Object evaluateDecision(Map<String, Object> input, long[] poolWaitNanos) throws Exception {
+        long started = poolWaitNanos != null ? System.nanoTime() : 0;
+        OpaWasmPolicyPool.Lease lease;
+        try {
+            lease = pool.borrow();
+        } finally {
+            if (poolWaitNanos != null) {
+                poolWaitNanos[0] = System.nanoTime() - started;
+            }
+        }
         try {
             prepare(lease.policy());
             Object decision = unwrap(lease.policy().evaluate(MAPPER.writeValueAsString(input)));

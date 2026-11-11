@@ -56,6 +56,12 @@
             <version>${java-spiffe-version}</version>
         </dependency>
 
+        <!-- The SDK exposes gRPC failures at runtime; observation classifies their status codes. -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-api</artifactId>
+        </dependency>
+
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
