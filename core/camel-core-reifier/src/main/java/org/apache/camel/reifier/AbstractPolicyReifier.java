@@ -155,8 +155,12 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
         }
         if (camelContext.getRegistry().lookupByName("transactionManager") == null) {
             camelContext.getRegistry().bind("transactionManager", transactionManager);
+            LOG.info("Using a local JdbcTransactionManager for transacted routes, with the DataSource: {}", dataSource);
+        } else {
+            LOG.debug("Using a local JdbcTransactionManager for this transacted route only, with the DataSource: {},"
+                      + " as another bean is bound as transactionManager",
+                    dataSource);
         }
-        LOG.info("Using a local JdbcTransactionManager for transacted routes, with the DataSource: {}", dataSource);
         return transactionManager;
     }
 }
