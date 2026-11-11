@@ -27,10 +27,6 @@ public class CassandraSessionHolder {
      */
     private CqlSession session;
     /**
-     * Keyspace name
-     */
-    //private String keyspace; // this field is reported unused
-    /**
      * Indicates whether Session is externally managed
      */
     private final boolean managedSession;
