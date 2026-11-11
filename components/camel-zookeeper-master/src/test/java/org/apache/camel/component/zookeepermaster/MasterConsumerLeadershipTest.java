@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.zookeepermaster;
 
+import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,8 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.listen.StandardListenerManager;
+import org.apache.curator.framework.state.ConnectionStateListener;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -160,6 +163,38 @@ class MasterConsumerLeadershipTest extends CamelTestSupport {
         groupThread.join(20000);
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, delegateEndpoint.running.get(),
                 "A master started again while its old start was in flight must consume"));
+    }
+
+    @Test
+    void testStoppedConsumerLeavesNoListenerOnTheSharedCurator() throws Exception {
+        // the "curator" bean of the registry (as with Spring) is shared by the consumers: each consumer that starts adds a
+        // connection state listener to it, which must be removed when the consumer stops
+        StandardListenerManager<ConnectionStateListener> listeners = StandardListenerManager.standard();
+        CuratorFramework curator = (CuratorFramework) Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] { CuratorFramework.class },
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getConnectionStateListenable" -> listeners;
+                    case "hashCode" -> System.identityHashCode(proxy);
+                    case "equals" -> proxy == args[0];
+                    case "toString" -> "test curator";
+                    default -> throw new UnsupportedOperationException(method.getName());
+                });
+        context.getRegistry().bind("curator", curator);
+        startRoute();
+        // the component (which takes the bean) and the consumer
+        int started = listeners.size();
+        assertEquals(2, started);
+
+        for (int i = 0; i < 3; i++) {
+            context.getRouteController().stopRoute("master");
+            assertEquals(started - 1, listeners.size(), "the stopped consumer must not stay a listener of the curator");
+            context.getRouteController().startRoute("master");
+            assertEquals(started, listeners.size());
+        }
+
+        // and the component leaves none either when the CamelContext stops
+        context.stop();
+        assertEquals(0, listeners.size());
     }
 
     private MasterConsumer masterConsumer() {
