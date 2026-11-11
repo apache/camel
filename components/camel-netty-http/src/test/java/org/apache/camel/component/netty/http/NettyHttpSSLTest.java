@@ -20,16 +20,20 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.NettyConstants;
+import org.apache.camel.spi.TlsPeerCertificateProvider;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class NettyHttpSSLTest extends BaseNettyTestSupport {
@@ -83,6 +87,10 @@ public class NettyHttpSSLTest extends BaseNettyTestSupport {
                 from("netty-http:https://localhost:{{port}}?ssl=true&passphrase=changeit&keyStoreResource=jsse/localhost.p12&trustStoreResource=jsse/localhost.p12")
                         .to("mock:input")
                         .process(exchange -> {
+                            var provider = exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY,
+                                    TlsPeerCertificateProvider.class);
+                            assertNotNull(provider);
+                            assertThrows(SSLPeerUnverifiedException.class, provider::getPeerCertificates);
                             SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
                             if (session != null) {
                                 exchange.getMessage().setBody("Bye World");

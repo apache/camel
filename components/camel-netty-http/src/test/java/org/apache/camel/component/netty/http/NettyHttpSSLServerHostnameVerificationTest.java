@@ -17,10 +17,13 @@
 package org.apache.camel.component.netty.http;
 
 import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLSession;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.netty.NettyConstants;
+import org.apache.camel.spi.TlsPeerCertificateProvider;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -28,7 +31,9 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -76,6 +81,15 @@ public class NettyHttpSSLServerHostnameVerificationTest extends BaseNettyTestSup
             public void configure() {
                 from("netty-http:https://localhost:{{port}}/hello?sslContextParameters=#clientCertParameters"
                      + "&needClientAuth=true&hostnameVerification=true")
+                        .process(exchange -> {
+                            var provider = exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY,
+                                    TlsPeerCertificateProvider.class);
+                            assertNotNull(provider);
+                            var peer = provider.getPeerCertificates();
+                            assertTrue(peer.length > 0);
+                            var session = exchange.getMessage().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
+                            assertArrayEquals(session.getPeerCertificates(), peer);
+                        })
                         .transform().constant("Bye World");
             }
         };

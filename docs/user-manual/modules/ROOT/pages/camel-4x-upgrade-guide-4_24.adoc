@@ -8198,3 +8198,11 @@ not pass a language on; a language header alone turns OCR on, unless the endpoin
 
 The language itself is passed to docling untouched, in both forms: it is docling's own identifier (language codes such
 as `en,de`, BCP-47 tags such as `iso:zh-Hant`, or `script/Latin`), and docling validates it.
+
+=== camel-spiffe
+
+`SpiffeSecurityPolicy` now recognizes authenticated TLS peer certificates supplied by servlet/Jetty, Undertow,
+Netty HTTP and Vert.x platform HTTP consumers through a typed exchange property. When that property is present,
+it takes precedence over `sslSessionHeader`; an unverified peer fails closed even if a legacy session header is
+present. Consumers without the property retain the existing session-header behavior. Mutual TLS must still be
+configured at the consuming server; forwarded certificate and identity headers do not establish a verified peer.

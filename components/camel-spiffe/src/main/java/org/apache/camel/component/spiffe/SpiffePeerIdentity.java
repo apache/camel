@@ -28,13 +28,15 @@ import javax.net.ssl.SSLSession;
 import io.spiffe.spiffeid.SpiffeId;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.TlsPeerCertificateProvider;
 
 /**
  * Extracts the peer SPIFFE ID from the <em>verified</em> TLS peer certificate carried on an exchange.
  * <p>
  * The identity is taken from the certificate the TLS layer authenticated, never from a message header a sender could
- * set (see CAMEL-24730 for why that distinction matters in this component). The source is the {@link SSLSession} a TLS
- * consumer places on the message - camel-netty-http stores it under {@code CamelNettySSLSession}:
+ * set (see CAMEL-24730 for why that distinction matters in this component). The preferred source is the
+ * transport-neutral {@link TlsPeerCertificateProvider} exchange property, populated from server TLS state. For
+ * compatibility, an {@link SSLSession} a consumer places on the message is accepted when the property is absent:
  * {@link SSLSession#getPeerCertificates()} returns only the peer certificates the handshake verified, and throws when
  * the peer presented none. A certificate object read from a message header is deliberately not trusted, because nothing
  * proves the TLS layer verified it.
@@ -54,7 +56,21 @@ final class SpiffePeerIdentity {
      * certificate or the certificate is not a valid SPIFFE X509-SVID.
      */
     static SpiffeId fromExchange(Exchange exchange, String sslSessionHeader) {
-        X509Certificate peer = peerCertificate(exchange.getMessage(), sslSessionHeader);
+        Object state = exchange.getProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY);
+        X509Certificate peer;
+        if (state != null) {
+            if (!(state instanceof TlsPeerCertificateProvider provider)) {
+                return null;
+            }
+            try {
+                peer = leafOf(provider.getPeerCertificates());
+            } catch (SSLPeerUnverifiedException e) {
+                return null;
+            }
+        } else {
+            // Preserve the legacy Netty session contract for consumers that have not adopted the property.
+            peer = peerCertificate(exchange.getMessage(), sslSessionHeader);
+        }
         return peer != null ? fromCertificate(peer) : null;
     }
 

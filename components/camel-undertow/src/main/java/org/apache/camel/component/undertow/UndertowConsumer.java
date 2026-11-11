@@ -60,6 +60,7 @@ import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.TlsPeerCertificateSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -401,9 +402,17 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         return nextHandler;
     }
 
+    static void populateTlsPeer(Exchange exchange, HttpServerExchange request) {
+        // SSL-header forwarding handlers can install synthetic SSLSessionInfo. Only the connection's actual TLS
+        // session is evidence of a handshake; a forwarded certificate without a session must not become identity.
+        var info = request.getConnection().getSslSessionInfo();
+        TlsPeerCertificateSupport.populateFromSession(exchange, info != null ? info.getSSLSession() : null);
+    }
+
     private Exchange createExchange(HttpServerExchange httpExchange) throws Exception {
         Exchange exchange = createExchange(false);
         exchange.setPattern(ExchangePattern.InOut);
+        populateTlsPeer(exchange, httpExchange);
 
         Message in = getEndpoint().getUndertowHttpBinding().toCamelMessage(httpExchange, exchange);
         OAuthTokenValidationResult oauthTokenValidationResult

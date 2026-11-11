@@ -29,6 +29,8 @@ import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.TlsPeerCertificateProvider;
+import org.apache.camel.support.TlsPeerCertificateSupport;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -80,6 +82,69 @@ class SpiffeSecurityPolicyTest extends CamelTestSupport {
             }
             e.getMessage().setBody("payload");
         });
+    }
+
+    @Test
+    void authorizesTransportNeutralVerifiedPeerWithoutSessionHeader() throws Exception {
+        var certificate = certWithUriSans(FRONTEND);
+        Exchange result = template.request("direct:start", exchange -> {
+            TlsPeerCertificateSupport.populateFromVerifiedCertificates(exchange, new Certificate[] { certificate });
+        });
+        assertThat(result.getException()).isNull();
+        assertThat(result.getProperty(SpiffeConstants.PEER_SPIFFE_ID)).isEqualTo(FRONTEND);
+    }
+
+    @Test
+    void transportStateTakesPrecedenceOverMismatchedLegacySession() throws Exception {
+        var certificate = certWithUriSans(BACKEND);
+        var legacy = sessionPresenting(certWithUriSans(FRONTEND));
+        Exchange result = template.request("direct:start", exchange -> {
+            TlsPeerCertificateSupport.populateFromVerifiedCertificates(exchange, new Certificate[] { certificate });
+            exchange.getMessage().setHeader(SpiffeSecurityPolicy.DEFAULT_SSL_SESSION_HEADER, legacy);
+        });
+        assertThat(result.getException()).isInstanceOf(CamelAuthorizationException.class);
+        assertThat(result.getProperty(SpiffeConstants.PEER_SPIFFE_ID)).isNull();
+    }
+
+    @Test
+    void unverifiedTransportStateCannotFallBackToLegacySession() throws Exception {
+        var legacy = sessionPresenting(certWithUriSans(FRONTEND));
+        Exchange result = template.request("direct:start", exchange -> {
+            TlsPeerCertificateSupport.populateFromSession(exchange, null);
+            exchange.getMessage().setHeader(SpiffeSecurityPolicy.DEFAULT_SSL_SESSION_HEADER, legacy);
+        });
+        assertThat(result.getException()).isInstanceOf(CamelAuthorizationException.class);
+    }
+
+    @Test
+    void typedStateStillRejectsInvalidSvid() throws Exception {
+        var certificate = certWithUriSans(FRONTEND, "https://example.org/other");
+        Exchange result = template.request("direct:start", exchange -> {
+            TlsPeerCertificateSupport.populateFromVerifiedCertificates(exchange, new Certificate[] { certificate });
+        });
+        assertThat(result.getException()).isInstanceOf(CamelAuthorizationException.class);
+    }
+
+    @Test
+    void malformedTypedStateCannotFallBackToLegacySession() throws Exception {
+        var legacy = sessionPresenting(certWithUriSans(FRONTEND));
+        Exchange result = template.request("direct:start", exchange -> {
+            exchange.setProperty(TlsPeerCertificateProvider.EXCHANGE_PROPERTY, FRONTEND);
+            exchange.getMessage().setHeader(SpiffeSecurityPolicy.DEFAULT_SSL_SESSION_HEADER, legacy);
+        });
+        assertThat(result.getException()).isInstanceOf(CamelAuthorizationException.class);
+    }
+
+    @Test
+    void forgedTypedProviderHeaderIsNotAnExchangeProperty() throws Exception {
+        var certificate = certWithUriSans(FRONTEND);
+        Exchange result = template.request("direct:start", exchange -> {
+            exchange.getMessage().setHeader(TlsPeerCertificateProvider.EXCHANGE_PROPERTY,
+                    (TlsPeerCertificateProvider) () -> new X509Certificate[] { certificate });
+            exchange.getMessage().setHeader("X-Forwarded-Client-Cert", FRONTEND);
+        });
+        assertThat(result.getException()).isInstanceOf(CamelAuthorizationException.class);
+        assertThat(result.getProperty(SpiffeConstants.PEER_SPIFFE_ID)).isNull();
     }
 
     @Test
