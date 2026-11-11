@@ -221,7 +221,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
     @UriParam(label = "advanced")
     protected volatile Bus bus;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "Whether to set the Bus of this endpoint as the CXF default bus by calling"
+                            + " BusFactory.setDefaultBus. This applies to a Bus set with the bus option as well as to a Bus"
+                            + " that the endpoint creates.")
     protected boolean defaultBus;
     protected volatile boolean createBus;
     protected final AtomicBoolean getBusHasBeenCalled = new AtomicBoolean();
@@ -240,7 +243,12 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
     @UriPath(description = "To lookup an existing configured CxfEndpoint. Must used bean: as prefix.")
     private String beanId;
-    @UriParam(defaultValue = "POJO")
+    @UriParam(defaultValue = "POJO",
+              description = "How the SOAP message is represented in the Camel message body. POJO: the parameters of the"
+                            + " operation as Java objects (requires serviceClass). PAYLOAD: the contents of the soap:Body as a"
+                            + " CxfPayload. RAW: the raw message stream from the transport layer, with most CXF interceptors"
+                            + " removed, so SOAP headers are not available. CXF_MESSAGE: a SAAJ SOAPMessage, processed by the"
+                            + " full set of CXF interceptors. MESSAGE is deprecated and is the same as RAW.")
     private DataFormat dataFormat = DataFormat.POJO;
     @UriPath(label = "service")
     private String address;
@@ -248,15 +256,23 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private String wsdlURL;
     @UriParam(label = "service")
     private Class<?> serviceClass;
-    @UriParam(label = "service")
+    @UriParam(label = "service",
+              description = "The WSDL port, which is the name attribute of the wsdl:port element. Written as a QName in the"
+                            + " form {namespaceURI}localPart, for example {http://example.org/orders}OrderPort.")
     private String portName;
     private transient QName portNameQName;
-    @UriParam(label = "service")
+    @UriParam(label = "service",
+              description = "The WSDL service, which is the name attribute of the wsdl:service element. Written as a QName in"
+                            + " the form {namespaceURI}localPart, for example {http://example.org/orders}OrderService. If not"
+                            + " set and wsdlURL points to a WSDL with one service, that service is used.")
     private String serviceName;
     private transient QName serviceNameQName;
     @UriParam(label = "service")
     private String bindingId;
-    @UriParam(label = "service")
+    @UriParam(label = "service",
+              description = "The address to publish in the WSDL that the consumer serves at the service address followed by"
+                            + " ?wsdl. It replaces the location of the address element in the wsdl:port. Use it when clients"
+                            + " reach the service through another address, for example when the service is behind a proxy.")
     private String publishedEndpointUrl;
     @UriParam(label = "producer")
     private String defaultOperationName;
@@ -282,7 +298,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private int loggingSizeLimit = AbstractLoggingInterceptor.DEFAULT_LIMIT;
     @UriParam(label = "advanced")
     private boolean mtomEnabled;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "Whether to skip the check that each element in the SOAP body matches the message part that the"
+                            + " operation declares. Sets the CXF property soap.no.validate.parts to true. This is not XML"
+                            + " schema validation, which schemaValidationEnabled controls.")
     private boolean skipPayloadMessagePartCheck;
     @UriParam(label = "logging")
     private boolean skipFaultLogging;
@@ -290,7 +309,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private boolean muteException = true;
     @UriParam(label = "advanced")
     private boolean mergeProtocolHeaders;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom org.apache.camel.component.cxf.jaxws.CxfConfigurer to configure CXF in Java"
+                            + " code. Its configure method receives the CXF factory bean before the client or server is"
+                            + " created, and configureClient and configureServer receive the created Client or Server.")
     private CxfConfigurer cxfConfigurer;
     @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long continuationTimeout = 30000;
@@ -870,9 +892,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return dataFormat;
     }
 
-    /**
-     * The data type messages supported by the CXF endpoint.
-     */
     public void setDataFormat(DataFormat format) {
         dataFormat = format;
     }
@@ -881,10 +900,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return resolvePropertyPlaceholders(publishedEndpointUrl);
     }
 
-    /**
-     * This option can override the endpointUrl that published from the WSDL which can be accessed with service address
-     * url plus ?wsd
-     */
     public void setPublishedEndpointUrl(String url) {
         publishedEndpointUrl = url;
     }
@@ -928,9 +943,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         serviceClass = ClassLoaderUtils.loadClass(resolvePropertyPlaceholders(type), getClass());
     }
 
-    /**
-     * The service name this service is implementing, it maps to the wsdl:service@name.
-     */
     public void setServiceName(String service) {
         serviceName = service;
     }
@@ -983,10 +995,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return portName;
     }
 
-    /**
-     * The endpoint name this service is implementing, it maps to the wsdl:port@name. In the format of ns:PORT_NAME
-     * where ns is a namespace prefix valid at this scope.
-     */
     public void setPortName(String port) {
         portName = port;
     }
@@ -1131,9 +1139,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return bus;
     }
 
-    /**
-     * Will set the default bus when CXF endpoint create a bus by itself
-     */
     public void setDefaultBus(boolean defaultBus) {
         this.defaultBus = defaultBus;
     }
@@ -1172,9 +1177,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return skipPayloadMessagePartCheck;
     }
 
-    /**
-     * Sets whether SOAP message validation should be disabled.
-     */
     public void setSkipPayloadMessagePartCheck(boolean skipPayloadMessagePartCheck) {
         this.skipPayloadMessagePartCheck = skipPayloadMessagePartCheck;
     }
@@ -1598,11 +1600,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return cxfConfigurer;
     }
 
-    /**
-     * This option could apply the implementation of org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
-     * to configure the CXF endpoint in programmatic way. User can configure the CXF server and client by implementing
-     * configure{Server|Client} method of CxfEndpointConfigurer.
-     */
     public void setCxfConfigurer(CxfConfigurer configurer) {
         this.cxfConfigurer = configurer;
     }

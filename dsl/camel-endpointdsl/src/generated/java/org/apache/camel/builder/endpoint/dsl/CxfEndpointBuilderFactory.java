@@ -45,7 +45,13 @@ public interface CxfEndpointBuilderFactory {
             return (AdvancedCxfEndpointConsumerBuilder) this;
         }
         /**
-         * The data type messages supported by the CXF endpoint.
+         * How the SOAP message is represented in the Camel message body. POJO:
+         * the parameters of the operation as Java objects (requires
+         * serviceClass). PAYLOAD: the contents of the soap:Body as a
+         * CxfPayload. RAW: the raw message stream from the transport layer,
+         * with most CXF interceptors removed, so SOAP headers are not
+         * available. CXF_MESSAGE: a SAAJ SOAPMessage, processed by the full set
+         * of CXF interceptors. MESSAGE is deprecated and is the same as RAW.
          * 
          * The option is a:
          * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
@@ -61,7 +67,13 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The data type messages supported by the CXF endpoint.
+         * How the SOAP message is represented in the Camel message body. POJO:
+         * the parameters of the operation as Java objects (requires
+         * serviceClass). PAYLOAD: the contents of the soap:Body as a
+         * CxfPayload. RAW: the raw message stream from the transport layer,
+         * with most CXF interceptors removed, so SOAP headers are not
+         * available. CXF_MESSAGE: a SAAJ SOAPMessage, processed by the full set
+         * of CXF interceptors. MESSAGE is deprecated and is the same as RAW.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
@@ -294,9 +306,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The endpoint name this service is implementing, it maps to the
-         * wsdl:portname. In the format of ns:PORT_NAME where ns is a namespace
-         * prefix valid at this scope.
+         * The WSDL port, which is the name attribute of the wsdl:port element.
+         * Written as a QName in the form {namespaceURI}localPart, for example
+         * {http://example.org/orders}OrderPort.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -310,8 +322,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option can override the endpointUrl that published from the WSDL
-         * which can be accessed with service address url plus ?wsd.
+         * The address to publish in the WSDL that the consumer serves at the
+         * service address followed by ?wsdl. It replaces the location of the
+         * address element in the wsdl:port. Use it when clients reach the
+         * service through another address, for example when the service is
+         * behind a proxy.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -357,8 +372,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The service name this service is implementing, it maps to the
-         * wsdl:servicename.
+         * The WSDL service, which is the name attribute of the wsdl:service
+         * element. Written as a QName in the form {namespaceURI}localPart, for
+         * example {http://example.org/orders}OrderService. If not set and
+         * wsdlURL points to a WSDL with one service, that service is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -647,11 +664,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option could apply the implementation of
-         * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
-         * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{Server|Client}
-         * method of CxfEndpointConfigurer.
+         * To use a custom org.apache.camel.component.cxf.jaxws.CxfConfigurer to
+         * configure CXF in Java code. Its configure method receives the CXF
+         * factory bean before the client or server is created, and
+         * configureClient and configureServer receive the created Client or
+         * Server.
          * 
          * The option is a:
          * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
@@ -666,11 +683,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option could apply the implementation of
-         * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
-         * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{Server|Client}
-         * method of CxfEndpointConfigurer.
+         * To use a custom org.apache.camel.component.cxf.jaxws.CxfConfigurer to
+         * configure CXF in Java code. Its configure method receives the CXF
+         * factory bean before the client or server is created, and
+         * configureClient and configureServer receive the created Client or
+         * Server.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
@@ -685,7 +702,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Will set the default bus when CXF endpoint create a bus by itself.
+         * Whether to set the Bus of this endpoint as the CXF default bus by
+         * calling BusFactory.setDefaultBus. This applies to a Bus set with the
+         * bus option as well as to a Bus that the endpoint creates.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -700,7 +719,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Will set the default bus when CXF endpoint create a bus by itself.
+         * Whether to set the Bus of this endpoint as the CXF default bus by
+         * calling BusFactory.setDefaultBus. This applies to a Bus set with the
+         * bus option as well as to a Bus that the endpoint creates.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -889,7 +910,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether SOAP message validation should be disabled.
+         * Whether to skip the check that each element in the SOAP body matches
+         * the message part that the operation declares. Sets the CXF property
+         * soap.no.validate.parts to true. This is not XML schema validation,
+         * which schemaValidationEnabled controls.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -904,7 +928,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether SOAP message validation should be disabled.
+         * Whether to skip the check that each element in the SOAP body matches
+         * the message part that the operation declares. Sets the CXF property
+         * soap.no.validate.parts to true. This is not XML schema validation,
+         * which schemaValidationEnabled controls.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -931,7 +958,13 @@ public interface CxfEndpointBuilderFactory {
         }
 
         /**
-         * The data type messages supported by the CXF endpoint.
+         * How the SOAP message is represented in the Camel message body. POJO:
+         * the parameters of the operation as Java objects (requires
+         * serviceClass). PAYLOAD: the contents of the soap:Body as a
+         * CxfPayload. RAW: the raw message stream from the transport layer,
+         * with most CXF interceptors removed, so SOAP headers are not
+         * available. CXF_MESSAGE: a SAAJ SOAPMessage, processed by the full set
+         * of CXF interceptors. MESSAGE is deprecated and is the same as RAW.
          * 
          * The option is a:
          * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
@@ -947,7 +980,13 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The data type messages supported by the CXF endpoint.
+         * How the SOAP message is represented in the Camel message body. POJO:
+         * the parameters of the operation as Java objects (requires
+         * serviceClass). PAYLOAD: the contents of the soap:Body as a
+         * CxfPayload. RAW: the raw message stream from the transport layer,
+         * with most CXF interceptors removed, so SOAP headers are not
+         * available. CXF_MESSAGE: a SAAJ SOAPMessage, processed by the full set
+         * of CXF interceptors. MESSAGE is deprecated and is the same as RAW.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
@@ -1293,9 +1332,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The endpoint name this service is implementing, it maps to the
-         * wsdl:portname. In the format of ns:PORT_NAME where ns is a namespace
-         * prefix valid at this scope.
+         * The WSDL port, which is the name attribute of the wsdl:port element.
+         * Written as a QName in the form {namespaceURI}localPart, for example
+         * {http://example.org/orders}OrderPort.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1309,8 +1348,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option can override the endpointUrl that published from the WSDL
-         * which can be accessed with service address url plus ?wsd.
+         * The address to publish in the WSDL that the consumer serves at the
+         * service address followed by ?wsdl. It replaces the location of the
+         * address element in the wsdl:port. Use it when clients reach the
+         * service through another address, for example when the service is
+         * behind a proxy.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1356,8 +1398,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The service name this service is implementing, it maps to the
-         * wsdl:servicename.
+         * The WSDL service, which is the name attribute of the wsdl:service
+         * element. Written as a QName in the form {namespaceURI}localPart, for
+         * example {http://example.org/orders}OrderService. If not set and
+         * wsdlURL points to a WSDL with one service, that service is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1604,11 +1648,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option could apply the implementation of
-         * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
-         * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{Server|Client}
-         * method of CxfEndpointConfigurer.
+         * To use a custom org.apache.camel.component.cxf.jaxws.CxfConfigurer to
+         * configure CXF in Java code. Its configure method receives the CXF
+         * factory bean before the client or server is created, and
+         * configureClient and configureServer receive the created Client or
+         * Server.
          * 
          * The option is a:
          * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
@@ -1623,11 +1667,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option could apply the implementation of
-         * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
-         * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{Server|Client}
-         * method of CxfEndpointConfigurer.
+         * To use a custom org.apache.camel.component.cxf.jaxws.CxfConfigurer to
+         * configure CXF in Java code. Its configure method receives the CXF
+         * factory bean before the client or server is created, and
+         * configureClient and configureServer receive the created Client or
+         * Server.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
@@ -1642,7 +1686,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Will set the default bus when CXF endpoint create a bus by itself.
+         * Whether to set the Bus of this endpoint as the CXF default bus by
+         * calling BusFactory.setDefaultBus. This applies to a Bus set with the
+         * bus option as well as to a Bus that the endpoint creates.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1657,7 +1703,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Will set the default bus when CXF endpoint create a bus by itself.
+         * Whether to set the Bus of this endpoint as the CXF default bus by
+         * calling BusFactory.setDefaultBus. This applies to a Bus set with the
+         * bus option as well as to a Bus that the endpoint creates.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1846,7 +1894,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether SOAP message validation should be disabled.
+         * Whether to skip the check that each element in the SOAP body matches
+         * the message part that the operation declares. Sets the CXF property
+         * soap.no.validate.parts to true. This is not XML schema validation,
+         * which schemaValidationEnabled controls.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1861,7 +1912,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether SOAP message validation should be disabled.
+         * Whether to skip the check that each element in the SOAP body matches
+         * the message part that the operation declares. Sets the CXF property
+         * soap.no.validate.parts to true. This is not XML schema validation,
+         * which schemaValidationEnabled controls.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1889,7 +1943,13 @@ public interface CxfEndpointBuilderFactory {
         }
 
         /**
-         * The data type messages supported by the CXF endpoint.
+         * How the SOAP message is represented in the Camel message body. POJO:
+         * the parameters of the operation as Java objects (requires
+         * serviceClass). PAYLOAD: the contents of the soap:Body as a
+         * CxfPayload. RAW: the raw message stream from the transport layer,
+         * with most CXF interceptors removed, so SOAP headers are not
+         * available. CXF_MESSAGE: a SAAJ SOAPMessage, processed by the full set
+         * of CXF interceptors. MESSAGE is deprecated and is the same as RAW.
          * 
          * The option is a:
          * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
@@ -1905,7 +1965,13 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The data type messages supported by the CXF endpoint.
+         * How the SOAP message is represented in the Camel message body. POJO:
+         * the parameters of the operation as Java objects (requires
+         * serviceClass). PAYLOAD: the contents of the soap:Body as a
+         * CxfPayload. RAW: the raw message stream from the transport layer,
+         * with most CXF interceptors removed, so SOAP headers are not
+         * available. CXF_MESSAGE: a SAAJ SOAPMessage, processed by the full set
+         * of CXF interceptors. MESSAGE is deprecated and is the same as RAW.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.common.DataFormat</code> type.
@@ -2098,9 +2164,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The endpoint name this service is implementing, it maps to the
-         * wsdl:portname. In the format of ns:PORT_NAME where ns is a namespace
-         * prefix valid at this scope.
+         * The WSDL port, which is the name attribute of the wsdl:port element.
+         * Written as a QName in the form {namespaceURI}localPart, for example
+         * {http://example.org/orders}OrderPort.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2114,8 +2180,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option can override the endpointUrl that published from the WSDL
-         * which can be accessed with service address url plus ?wsd.
+         * The address to publish in the WSDL that the consumer serves at the
+         * service address followed by ?wsdl. It replaces the location of the
+         * address element in the wsdl:port. Use it when clients reach the
+         * service through another address, for example when the service is
+         * behind a proxy.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2161,8 +2230,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The service name this service is implementing, it maps to the
-         * wsdl:servicename.
+         * The WSDL service, which is the name attribute of the wsdl:service
+         * element. Written as a QName in the form {namespaceURI}localPart, for
+         * example {http://example.org/orders}OrderService. If not set and
+         * wsdlURL points to a WSDL with one service, that service is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2336,11 +2407,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option could apply the implementation of
-         * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
-         * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{Server|Client}
-         * method of CxfEndpointConfigurer.
+         * To use a custom org.apache.camel.component.cxf.jaxws.CxfConfigurer to
+         * configure CXF in Java code. Its configure method receives the CXF
+         * factory bean before the client or server is created, and
+         * configureClient and configureServer receive the created Client or
+         * Server.
          * 
          * The option is a:
          * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
@@ -2355,11 +2426,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option could apply the implementation of
-         * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
-         * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{Server|Client}
-         * method of CxfEndpointConfigurer.
+         * To use a custom org.apache.camel.component.cxf.jaxws.CxfConfigurer to
+         * configure CXF in Java code. Its configure method receives the CXF
+         * factory bean before the client or server is created, and
+         * configureClient and configureServer receive the created Client or
+         * Server.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.jaxws.CxfConfigurer</code> type.
@@ -2374,7 +2445,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Will set the default bus when CXF endpoint create a bus by itself.
+         * Whether to set the Bus of this endpoint as the CXF default bus by
+         * calling BusFactory.setDefaultBus. This applies to a Bus set with the
+         * bus option as well as to a Bus that the endpoint creates.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2389,7 +2462,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Will set the default bus when CXF endpoint create a bus by itself.
+         * Whether to set the Bus of this endpoint as the CXF default bus by
+         * calling BusFactory.setDefaultBus. This applies to a Bus set with the
+         * bus option as well as to a Bus that the endpoint creates.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2578,7 +2653,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether SOAP message validation should be disabled.
+         * Whether to skip the check that each element in the SOAP body matches
+         * the message part that the operation declares. Sets the CXF property
+         * soap.no.validate.parts to true. This is not XML schema validation,
+         * which schemaValidationEnabled controls.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2593,7 +2671,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether SOAP message validation should be disabled.
+         * Whether to skip the check that each element in the SOAP body matches
+         * the message part that the operation declares. Sets the CXF property
+         * soap.no.validate.parts to true. This is not XML schema validation,
+         * which schemaValidationEnabled controls.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
