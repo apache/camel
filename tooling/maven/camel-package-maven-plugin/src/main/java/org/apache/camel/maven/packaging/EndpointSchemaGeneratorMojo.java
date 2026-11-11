@@ -2061,12 +2061,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     /**
-     * Gets the default value accordingly to its type
-     *
-     * @param defaultValue  the current default value
-     * @param fieldTypeName the field type such as int, boolean, String etc
-     */
-    /**
      * An option declared as an {@link org.apache.camel.Expression} or {@link org.apache.camel.Predicate} is evaluated
      * for each message by definition, so it needs no annotation to say so (CAMEL-24918). The option may still be
      * reported as a String, as the file component's fileName is, which is why this reads the declared type.
@@ -2079,6 +2073,12 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         return "org.apache.camel.Expression".equals(name) || "org.apache.camel.Predicate".equals(name);
     }
 
+    /**
+     * Gets the default value accordingly to its type
+     *
+     * @param defaultValue  the current default value
+     * @param fieldTypeName the field type such as int, boolean, String etc
+     */
     static Object getDefaultValue(Object defaultValue, String fieldTypeName, boolean isDuration) {
         // special for boolean as it should not be literal
         if ("boolean".equals(fieldTypeName)) {
