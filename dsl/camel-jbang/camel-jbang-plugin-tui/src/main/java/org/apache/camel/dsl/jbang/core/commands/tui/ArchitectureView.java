@@ -58,6 +58,8 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget.NodeLine;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 
@@ -421,6 +423,38 @@ final class ArchitectureView {
     }
 
     // ---- for the Diagram tab ----
+
+    /**
+     * The groups as the Diagram tab draws them, for tui_get_diagram: the boxes and links, each group with its name and
+     * routes. Null while the architecture is not shown.
+     */
+    JsonObject getDataAsJson() {
+        Capabilities caps = capabilities;
+        JsonObject json = active && !suspended ? DiagramJson.boxes(support) : null;
+        if (json == null || caps == null) {
+            return json;
+        }
+        for (Object o : (JsonArray) json.get("nodes")) {
+            JsonObject n = (JsonObject) o;
+            String id = (String) n.remove("routeId");
+            n.put("id", id);
+            Group g = caps.group(id);
+            if (g != null) {
+                n.put("name", g.name());
+                n.put("routes", new JsonArray(g.routes()));
+                if (!g.entryPoints().isEmpty()) {
+                    n.put("entryPoints", new JsonArray(g.entryPoints()));
+                }
+                if (!g.systems().isEmpty()) {
+                    n.put("systems", new JsonArray(g.systems()));
+                }
+                if (g.text() != null && !g.text().isBlank()) {
+                    n.put("text", g.text().strip());
+                }
+            }
+        }
+        return json;
+    }
 
     /** Whether the utility routes are shown; the topology follows the same setting. */
     boolean isShowUtility() {

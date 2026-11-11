@@ -366,8 +366,8 @@ final class TuiToolDefinitions {
                 List.of("theme")), r::callSetTheme));
         tools.add(tool(toolDef(
                 "tui_get_diagram",
-                "Returns the route topology diagram as text. "
-                                   + "Shows the ASCII/Unicode art diagram of routes and their connections.",
+                "The Diagram tab's diagram as JSON: level, boxes (row, col, height, width) and links, "
+                                   + "or a route's steps (id, type, label, parent, children).",
                 Map.of()), args -> r.callGetDiagram(), READ_ONLY));
         tools.add(tool(toolDef(
                 "tui_get_history",

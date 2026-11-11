@@ -1223,7 +1223,7 @@ class TuiToolRegistry {
     String callGetDiagram() {
         JsonObject data = facade.getDiagramData();
         if (data == null) {
-            return "No diagram available. Navigate to the Diagram tab first.";
+            return "No diagram yet: the Diagram tab draws one when it is open (tui_navigate tab=Diagram).";
         }
         return Jsoner.serialize(data);
     }
