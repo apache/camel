@@ -536,12 +536,15 @@ public class DeviceClientPool {
                             }
                             closeQuietly("retired", pooled.client, "retired eviction");
                         } finally {
-                            pendingClose.remove(pooled);
+                            // No-op: pendingClose.remove already called above if executed
                         }
                     });
                     return;
                 } catch (RejectedExecutionException ignored) {
-                    pendingClose.remove(pooled);
+                    if (pendingClose.remove(pooled)) {
+                        closeQuietly("retired", pooled.client, "retired eviction");
+                    }
+                    return;
                 }
             }
         }
