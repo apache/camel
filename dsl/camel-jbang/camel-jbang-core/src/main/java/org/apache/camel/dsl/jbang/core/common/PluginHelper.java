@@ -365,9 +365,7 @@ public final class PluginHelper {
                 if (properties.get("appliesTo") == null) {
                     Optional<PluginType> knownType = PluginType.findByName(name);
                     if (knownType.isPresent() && knownType.get().getAppliesTo().length > 0) {
-                        JsonArray appliesToArray = new JsonArray();
-                        appliesToArray.addAll(Arrays.asList(knownType.get().getAppliesTo()));
-                        properties.put("appliesTo", appliesToArray);
+                        properties.put("appliesTo", toJsonArray(knownType.get().getAppliesTo()));
                         configDirty = true;
                         main.getOut().printWarn(
                                 ("Plugin '%s' configuration updated with 'appliesTo' filter. "
@@ -626,6 +624,12 @@ public final class PluginHelper {
         return o == null ? null : o.toString();
     }
 
+    public static JsonArray toJsonArray(String[] values) {
+        JsonArray array = new JsonArray();
+        array.addAll(Arrays.asList(values));
+        return array;
+    }
+
     private record ResolveResult(Optional<Plugin> plugin, boolean cacheWritten) {
     }
 
@@ -837,9 +841,7 @@ public final class PluginHelper {
         newPlugin.put("firstVersion", pluginType.getFirstVersion());
         String[] appliesTo = pluginType.getAppliesTo();
         if (appliesTo.length > 0) {
-            JsonArray appliesToArray = new JsonArray();
-            appliesToArray.addAll(Arrays.asList(appliesTo));
-            newPlugin.put("appliesTo", appliesToArray);
+            newPlugin.put("appliesTo", toJsonArray(appliesTo));
         }
         plugins.putIfAbsent(pluginType.getName(), newPlugin);
 
