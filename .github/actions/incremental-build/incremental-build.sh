@@ -245,6 +245,12 @@ runScalpelDetection() {
   # - explain=true: add per-module evidence[] to the report (exact file/property/dep that triggered each module)
   # - fullBuildTriggers="": override .mvn/** default (Scalpel lives in .mvn/extensions.xml)
   # - fetchBaseBranch=false: base branch is pre-fetched by the CI workflow
+  # - excludePaths: .github/** plus the root-level files that do not affect the build.
+  #   Since Scalpel 0.5.0 a changed root-level file that no module owns triggers a full
+  #   build, so a PR that only edits CLAUDE.md or README.md would lose its module list.
+  #   mvnw, mvnw.cmd and pom.xml are left out on purpose: they do affect the build.
+  #   A pattern without a "/" also matches at any depth (e.g. a module's README.md);
+  #   the file-path step above still picks up the module of such a file.
   # - skipTestsForDownstreamModules: derived from EXCLUSION_LIST — tells Scalpel which
   #   downstream modules should not run tests in skip-tests mode (for shadow comparison)
   # Strip the Maven "!:" prefix from each entry to get bare artifact IDs for Scalpel.
@@ -253,7 +259,8 @@ runScalpelDetection() {
   # Always pass baseBranch explicitly — relying on Scalpel's env.GITHUB_BASE_REF
   # auto-detection is fragile across Maven wrappers and CI rerun contexts.
   local base_branch="origin/${GITHUB_BASE_REF:-main}"
-  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.explain=true -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.baseBranch=${base_branch} -Dscalpel.excludePaths=.github/** -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
+  local exclude_paths=".github/**,AGENTS.md,CLAUDE.md,CONTRIBUTING.md,README.md,SECURITY.md,KEYS,LICENSE.txt,NOTICE.txt,doap.rdf,Jenkinsfile*,.asf.yaml,.gitattributes,.gitignore,.gitmodules,.sdkmanrc,jbang-catalog.json"
+  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.explain=true -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.baseBranch=${base_branch} -Dscalpel.excludePaths=${exclude_paths} -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
 
   # Verify merge base is reachable (pre-fetched by the CI workflow step)
   if ! git merge-base HEAD "${base_branch}" >/dev/null 2>&1; then
