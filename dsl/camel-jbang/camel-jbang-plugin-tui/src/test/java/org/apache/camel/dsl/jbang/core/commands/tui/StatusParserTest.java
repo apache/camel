@@ -76,6 +76,36 @@ class StatusParserTest {
     }
 
     @Test
+    void theSecretsOfAnEndpointAreMasked() {
+        // connect-service/ftp: the endpoints and services the integration has carry its URI as configured
+        String uri = "ftp://localhost:2121/courier?passiveMode=true&password=RAW(admin)&username=RAW(admin)";
+        JsonObject ep = new JsonObject();
+        ep.put("uri", uri);
+        JsonArray endpoints = new JsonArray();
+        endpoints.add(ep);
+        JsonObject endpointHolder = new JsonObject();
+        endpointHolder.put("endpoints", endpoints);
+        JsonObject service = new JsonObject();
+        service.put("endpointUri", uri);
+        service.put("serviceUrl", "ftp://admin:secret@localhost:2121");
+        JsonArray services = new JsonArray();
+        services.add(service);
+        JsonObject serviceHolder = new JsonObject();
+        serviceHolder.put("services", services);
+        JsonObject root = new JsonObject();
+        root.put("context", new JsonObject());
+        root.put("endpoints", endpointHolder);
+        root.put("services", serviceHolder);
+
+        IntegrationInfo info = StatusParser.parseIntegration(ProcessHandle.current(), root);
+
+        String masked = "ftp://localhost:2121/courier?passiveMode=true&password=xxxxxx&username=xxxxxx";
+        assertEquals(masked, info.endpoints.get(0).uri);
+        assertEquals(masked, info.services.get(0).endpointUri);
+        assertFalse(info.services.get(0).serviceUrl.contains("secret"), info.services.get(0).serviceUrl);
+    }
+
+    @Test
     void aFailedReloadIsReadAsCamelPsReadsIt() {
         JsonObject root = new JsonObject();
         JsonObject context = new JsonObject();
