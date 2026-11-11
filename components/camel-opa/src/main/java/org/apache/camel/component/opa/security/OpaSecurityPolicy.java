@@ -30,8 +30,9 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.opa.OpaHttpClient;
 import org.apache.camel.component.opa.OpaPolicyEvaluator;
+import org.apache.camel.component.opa.OpaPolicyReloadStatus;
+import org.apache.camel.component.opa.OpaReloadableWasmEvaluator;
 import org.apache.camel.component.opa.OpaRestEvaluator;
-import org.apache.camel.component.opa.OpaWasmEvaluator;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.Configurer;
@@ -133,6 +134,10 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
                             + " Running out of time is an evaluation failure rather than a deny: it fails closed, or"
                             + " proceeds when failOpen is set.")
     private long borrowTimeout = 30000;
+    @Metadata(label = "advanced", defaultValue = "0",
+              description = "How often, in milliseconds, to check the WASM resource for changed policy/data. Zero disables"
+                            + " automatic reload. Failed validation retains the active revision. Applies only to wasm mode.")
+    private long policyReloadInterval;
     @Metadata(label = "advanced",
               description = "An existing OPAClient to use instead of building one from serverUrl, bearerToken and"
                             + " sslContextParameters. No readiness check is registered for it.")
@@ -216,8 +221,9 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
         if (WASM_MODE.equalsIgnoreCase(evaluationMode)) {
             warnIgnoredServerOptions();
             try {
-                return OpaWasmEvaluator.create(camelContext, policyBundle, entrypoint, poolSize, borrowTimeout,
-                        policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen, inputExpression);
+                return OpaReloadableWasmEvaluator.create(camelContext, policyBundle, entrypoint, poolSize, borrowTimeout,
+                        policyReloadInterval, policyPath, allowKey, includeHeaders, includeProperties, includeBody,
+                        failOpen, inputExpression);
             } catch (RuntimeException e) {
                 // the validation messages (policyBundle, poolSize) already read correctly; do not bury them
                 throw e;
@@ -302,6 +308,9 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      * route is merely restarted.
      */
     synchronized void onProcessorStart() {
+        if (activeProcessors == 0 && evaluator instanceof OpaReloadableWasmEvaluator wasm) {
+            wasm.startWatching();
+        }
         activeProcessors++;
         registerHealthCheck();
     }
@@ -314,6 +323,9 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     synchronized void onProcessorStop() {
         if (activeProcessors > 0 && --activeProcessors == 0) {
             unregisterHealthCheck();
+            if (evaluator instanceof OpaReloadableWasmEvaluator wasm) {
+                wasm.stopWatching();
+            }
         }
     }
 
@@ -485,6 +497,29 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      */
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
+    }
+
+    public long getPolicyReloadInterval() {
+        return policyReloadInterval;
+    }
+
+    public void setPolicyReloadInterval(long policyReloadInterval) {
+        this.policyReloadInterval = policyReloadInterval;
+    }
+
+    public boolean reloadPolicy() throws Exception {
+        OpaReloadableWasmEvaluator wasm;
+        synchronized (this) {
+            if (activeProcessors == 0 || !(evaluator instanceof OpaReloadableWasmEvaluator)) {
+                throw new IllegalStateException("A started WASM policy is required to reload its policy");
+            }
+            wasm = (OpaReloadableWasmEvaluator) evaluator;
+        }
+        return wasm.reload();
+    }
+
+    public OpaPolicyReloadStatus getPolicyReloadStatus() {
+        return evaluator instanceof OpaReloadableWasmEvaluator wasm ? wasm.getReloadStatus() : null;
     }
 
     public long getBorrowTimeout() {
