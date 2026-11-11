@@ -1103,6 +1103,10 @@ The Camel CLI parses its command lines, prints its help and completes its comman
 https://github.com/aeshell/aesh[aesh] instead of picocli. The commands and their options are the same. The help looks a
 little different: the default value of an option is on a line of its own (`Default: ...`).
 
+An argument `@file` is no longer replaced by the arguments in that file (picocli did that, such as
+`camel run @args.txt`). Give the arguments on the command line instead, for example `camel run $(cat args.txt)` in a
+shell script.
+
 A plugin of the Camel CLI (an implementation of `org.apache.camel.dsl.jbang.core.common.Plugin`) must be changed and
 built for Camel 4.24:
 
