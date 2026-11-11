@@ -138,9 +138,10 @@ final class OpaWasmPolicyPool implements AutoCloseable {
          * Returns the instance to the pool for reuse.
          * <p/>
          * Nothing is reset on the way in. {@code OpaPolicy.reset()} is package-private to the SDK and so cannot be
-         * called from here, but it is also not needed: the borrower sets the entrypoint and the data document on every
-         * borrow, and {@code OpaPolicy.input()} - which {@code evaluate(String)} calls - rewinds the WebAssembly heap
-         * to the data pointer each time, so nothing accumulates across reuses.
+         * called from here, but it is also not needed: the evaluator's factory initializes each instance with its fixed
+         * entrypoint and data, and borrowers never modify them. {@code OpaPolicy.input()} - which
+         * {@code evaluate(String)} calls - rewinds the WebAssembly heap to the saved data boundary each time, so
+         * per-request allocations do not accumulate across reuses. A failed evaluation discards the instance.
          */
         @Override
         public void close() {

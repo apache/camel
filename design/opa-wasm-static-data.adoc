@@ -1,0 +1,174 @@
+---
+title: OPA WASM static data preparation
+authors: []
+reviewers: []
+approvers: []
+creation-date: 2026-11-11
+last-updated: 2026-11-11
+status: implemented
+see-also: []
+replaces: []
+superseded-by: []
+---
+
+== Decision
+
+CAMEL-26839 prepares the configured entrypoint and immutable data once in each `OpaWasmEvaluator` pool-instance
+factory. The constructor still borrows an instance to validate initialization before startup completes. A failed
+evaluation still discards its lease, and every replacement is prepared by the same factory. Pool capacity,
+borrowing timeouts, decision normalization and `failOpen` behavior are unchanged.
+
+This deliberately revises the previous comment that every borrow must restore the configured entrypoint and data.
+The evaluator owns its private pool; borrowers supply input and evaluate, and never replace its entrypoint or data.
+The SDK's input operation already resets the transient heap. Reapplying the same data therefore adds parsing work
+without establishing an additional boundary between requests. Tests pin both ordinary reuse and request-scoped
+data overrides, so future SDK upgrades must preserve this contract or restore defensive preparation.
+
+== SDK and ABI evidence
+
+The managed SDK is `com.styra.opa:opa-java-wasm:1.1.0`. Inspection of its installed bytecode with `javap -p -c`
+agrees with the https://github.com/open-policy-agent/opa-java-wasm/blob/1.1.0/core/src/main/java/com/styra/opa/wasm/OpaPolicy.java[official 1.1.0 source]:
+
+* `entrypoint(String)` exports and parses the entrypoint map to resolve the numeric entrypoint.
+* `data(String)` frees the previous data value, rewinds to `baseHeapPtr`, UTF-8 encodes and parses the document,
+  then saves `dataHeapPtr`.
+* `input(String)`, called by `evaluate(String)`, rewinds to `dataHeapPtr` before loading the next input.
+* `reset()` is package-private and also clears data and entrypoint. Camel's own pool does not call the SDK pool
+  or its reset operation.
+
+The https://www.openpolicyagent.org/docs/wasm[OPA WASM ABI documentation] describes the data/input heap boundary.
+The tests use the exact OPA compiler pinned by test-infra, `1.22.2`, and exercise real compiled WASM, including a
+conflicting complete-rule result that causes a runtime error. There are no reflection-based SDK modifications,
+shared SDK policy instances, or committed WASM binaries.
+
+== Smoke measurements
+
+These measurements justify avoiding repeated parsing for this workload; they are not JMH results or production
+throughput targets. They compare the actual Camel pool and managed SDK with identical policy, data and alternating
+allow/deny inputs. One variant sets data/entrypoint after each borrow, reproducing the former behavior; the other
+sets them in the instance factory. Every measured decision is checked for correctness.
+
+Recorded on 2026-11-11: OpenJDK 21.0.10, 64-bit HotSpot, Linux amd64, Intel Core Ultra 7 255U, 14 available CPUs,
+`-Xms512m -Xmx512m`. The SDK resolves Endive 1.0.0 and the project manages ASM 9.11.1. No dependency versions were
+changed for the experiment. The OPA 1.22.2 compiler binary was checked against its GitHub release SHA-256:
+`24e344d1fc394cd93dc75666f584cfb97c6981f7255af25f8d2979834317317b`.
+The measured module's SHA-256 was `01e71821ffdab2c23c352ca380cf79c64f391f9d5e6ed7f56f18e7bc1de92749`.
+
+Each cell below is the mean of two independent JVM invocations. Each mode has 750 ms of warmup after lazy initial
+compilation/data loading, then 1000 ms of measurement. The pool size equals the thread count. Data is a permission
+map with resource, enabled, tenant and description fields; input selects a permission directly, without iterating
+the whole map. Sizes count the UTF-8 data bytes.
+
+[cols="1,1,1,1,1,1,1",options="header"]
+|===
+| Entries | Data bytes | Threads | Per-borrow ops/s | Prepare-once ops/s | Per-borrow Java bytes/op | Prepare-once Java bytes/op
+| 100 | 11,287 | 1 | 7,457 | 476,358 | 13,676 | 800
+| 100 | 11,287 | 4 | 23,361 | 1,441,042 | 13,661 | 800
+| 1,000 | 114,697 | 1 | 673 | 470,199 | 117,099 | 800
+| 1,000 | 114,697 | 4 | 1,515 | 457,115 | 117,100 | 800
+| 10,000 | 1,166,797 | 1 | 50 | 414,916 | 1,169,194 | 800
+| 10,000 | 1,166,797 | 4 | 111 | 212,713 | 1,169,204 | 800
+|===
+
+`ThreadMXBean` measures worker-thread Java allocation, including pool leases, SDK input/result work and repeated
+UTF-8 data encoding. It does not measure retained WASM linear memory, native memory, whole-process allocation or
+GC pause time. The experiment excludes resource loading, bundle compilation, Camel exchange creation, input
+mapping/serialization and result normalization. Each instance still pays module creation and data preparation;
+the optimization removes repeated preparation, rather than reducing that initialization work.
+
+Limitations: short warmup and measurement windows, fixed mode order (per-borrow first), two forks, shared host
+load, no confidence intervals, no latency histogram, and no measurements on Java 17, other architectures or other
+SDK versions. Large-data per-borrow samples contain few operations. Scaling and exact rates vary substantially;
+use longer JMH runs with multiple forks and allocation/GC profiling before making capacity estimates. The
+standalone harness also reports mean first-evaluation time including lazy instance creation; that diagnostic is
+order/JIT dependent and is not a startup-speed claim.
+
+A separate one-thread first-evaluation diagnostic observed 695 ms per-borrow / 186 ms prepare-once for 1000
+entries, and 614 ms / 201 ms for 10000 entries. Both include lazy SDK module compilation and data preparation;
+prepare-once ran second in the same JVM, so the difference cannot establish a cold-start improvement. The
+initialization work remains necessary and is excluded from the steady-state table above.
+
+== Correctness coverage
+
+`OpaWasmStaticDataIT` compiles the fixture using test-infra by default. It checks:
+
+* 1000 alternating allow/deny decisions with varying input sizes on a single reused instance.
+* Eight workers sharing four pooled instances, with per-user inputs and alternating decisions.
+* Actual WASM runtime failures followed by correct allow/deny decisions from replacements.
+* Discarding a real failed instance creates a different, initialized instance with the configured static data.
+* A request-scoped `with data.permissions as ...` override does not change following requests' static data.
+* Missing entrypoint startup validation and bare-module evaluation without bundled data.
+
+All six tests also passed using a locally generated module from the pinned official compiler. This standalone run
+used the explicit `camel.opa.staticDataModule` test override, without Docker. The default Docker compilation path
+and the regular Maven integration-test lifecycle still require normal project validation.
+
+== Reproducing
+
+With current snapshot dependencies installed and Docker available, build the component's test classpath:
+
+[source,shell]
+----
+mvn -f components/camel-opa/pom.xml -DskipTests test-compile dependency:build-classpath \
+    -DincludeScope=test -Dmdep.outputFile=target/benchmark-classpath.txt
+----
+
+The benchmark is an opt-in executable test helper, so normal unit tests do not run timing loops. The `--compile`
+argument invokes `OpaWasmBundleBuilder`, which uses the image pinned in test-infra. Run each cell in a fresh JVM
+and repeat with several forks; longer windows than the recorded smoke run are recommended:
+
+[source,shell]
+----
+java -Xms512m -Xmx512m \
+    -cp "components/camel-opa/target/test-classes:components/camel-opa/target/classes:$(cat components/camel-opa/target/benchmark-classpath.txt)" \
+    org.apache.camel.component.opa.OpaWasmStaticDataBenchmark --compile 1000 4 3000 10000
+----
+
+Arguments after the module/`--compile` are permission entries, threads, warmup milliseconds and measurement
+milliseconds. Allocation is `-1` when the JVM does not support the counter. To reuse an explicit local compiler
+output instead of Docker, build the checked-in fixture and extract its `policy.wasm`, then give that bare-module
+path as the first argument:
+
+[source,shell]
+----
+opa build -t wasm -e benchmark/allow -e benchmark/strict -e benchmark/isolation \
+    -o /tmp/permissions.tar.gz components/camel-opa/src/test/resources/wasm-benchmark/permissions.rego
+----
+
+Use OPA 1.22.2 for the recorded configuration. No module or downloaded compiler should be committed. The real-WASM
+correctness suite can use that same module through `-Dcamel.opa.staticDataModule=/absolute/path/policy.wasm`.
+
+== Raw smoke observations
+
+CSV below records the two forks behind the table. `createdInstances` includes warmup and equals the configured
+pool size in every sample; the steady-state measurements did not require trap replacement or new instances.
+The checksum consumes the validated results to keep the work observable.
+
+[source,csv]
+----
+entries,dataBytes,threads,fork,mode,operations,operationsPerSecond,allocatedBytesPerOperation,createdInstances,checksum
+100,11287,1,1,per-borrow,8415,8409.58,13669.91,1,-2663212788924
+100,11287,1,1,prepare-once,503643,503483.36,800.0,1,-159412474040862
+100,11287,1,2,per-borrow,6511,6504.91,13681.92,1,-2060559882740
+100,11287,1,2,prepare-once,449326,449231.69,800.0,1,-142220388510521
+100,11287,4,1,per-borrow,21746,21725.8,13658.97,4,-6882434867134
+100,11287,4,1,prepare-once,1356349,1356012.42,800.0,4,-429310451467613
+100,11287,4,2,per-borrow,25017,24996.17,13662.6,4,-7917471947334
+100,11287,4,2,prepare-once,1526598,1526072.13,800.0,4,-483197262165876
+1000,114697,1,1,per-borrow,738,737.3,117098.54,1,-233591305023
+1000,114697,1,1,prepare-once,442453,442356.79,800.0,1,-140044652964497
+1000,114697,1,2,per-borrow,610,609.64,117098.71,1,-193076823935
+1000,114697,1,2,prepare-once,498140,498041.11,800.0,1,-157670965696690
+1000,114697,4,1,per-borrow,1959,1954.92,117098.55,4,-619168002591
+1000,114697,4,1,prepare-once,535692,535509.51,800.0,4,-169555710292968
+1000,114697,4,2,per-borrow,1078,1074.79,117100.62,4,-340612248956
+1000,114697,4,2,prepare-once,378816,378721.12,800.0,4,-119902606779936
+10000,1166797,1,1,per-borrow,62,61.56,1169193.42,1,-19624201777
+10000,1166797,1,1,prepare-once,423475,423378.67,800.0,1,-134037748104434
+10000,1166797,1,2,per-borrow,39,38.93,1169194.46,1,-12046432728
+10000,1166797,1,2,prepare-once,406614,406453.92,800.0,1,-128701212602469
+10000,1166797,4,1,per-borrow,87,83.22,1169203.22,4,-27239363136
+10000,1166797,4,1,prepare-once,152223,151333.67,800.0,4,-48181232291292
+10000,1166797,4,2,per-borrow,142,138.44,1169205.35,4,-43754459543
+10000,1166797,4,2,prepare-once,274190,274092.58,800.0,4,-86785854115408
+----
