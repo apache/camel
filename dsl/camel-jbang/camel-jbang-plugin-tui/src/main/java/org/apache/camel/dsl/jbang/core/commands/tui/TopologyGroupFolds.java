@@ -17,7 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +94,7 @@ final class TopologyGroupFolds {
         nodes.addAll(kept);
 
         List<TopologyEdgeInfo> moved = new ArrayList<>();
-        Set<String> seen = new HashSet<>();
+        Map<String, TopologyEdgeInfo> seen = new HashMap<>();
         for (TopologyEdgeInfo e : edges) {
             String from = boxOf.getOrDefault(e.fromRouteId, e.fromRouteId);
             String to = boxOf.getOrDefault(e.toRouteId, e.toRouteId);
@@ -102,10 +102,14 @@ final class TopologyGroupFolds {
                 // between the routes of the group
                 continue;
             }
-            if (seen.add(from + "\u0000" + to + "\u0000" + e.kind)) {
+            TopologyEdgeInfo known = seen.putIfAbsent(from + "\u0000" + to + "\u0000" + e.kind, e);
+            if (known == null) {
                 e.fromRouteId = from;
                 e.toRouteId = to;
                 moved.add(e);
+            } else if (e.reply) {
+                // one of the routes of the group waits for the answer: the box does
+                known.reply = true;
             }
         }
         edges.clear();

@@ -118,17 +118,6 @@ class SourceViewer {
         Set<Integer> scan(List<JsonObject> codeData);
     }
 
-    /**
-     * A link on a line to where it leads; callersOf is the endpoint of a route sent to from more than one place, whose
-     * link opens a popup to choose one (CAMEL-25411), else null.
-     */
-    record JumpLink(String routeId, String filePath, int targetLine, String callersOf) {
-
-        JumpLink(String routeId, String filePath, int targetLine) {
-            this(routeId, filePath, targetLine, null);
-        }
-    }
-
     private boolean visible;
     private List<String> lines = Collections.emptyList();
     private List<JsonObject> codeData = Collections.emptyList();
@@ -2845,7 +2834,7 @@ class SourceViewer {
             if (isSelected) {
                 linkStyle = linkStyle.patch(selBg);
             }
-            spans.add(Span.styled(" ↵ " + jl.routeId(), linkStyle));
+            spans.add(Span.styled(jl.hint(), linkStyle));
         }
         liveColumn.addBodyTypes(spans, lineIndex, plainMode, isSelected ? selBg : null, viewportWidth - 1 + hSkip);
         Line full = Line.from(spans);

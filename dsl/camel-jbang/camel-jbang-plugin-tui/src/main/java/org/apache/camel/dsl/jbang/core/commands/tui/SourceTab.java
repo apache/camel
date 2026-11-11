@@ -143,7 +143,8 @@ class SourceTab extends AbstractTab {
     record RouteEntry(String routeId, String fromUri, String filePath, int fromLine) {
     }
 
-    record ToEntry(String routeId, String toUri, String filePath, int toLine) {
+    /** A send of a route; how is how it reaches the route it sends to, see {@link SendHow#of}. */
+    record ToEntry(String routeId, String toUri, String filePath, int toLine, String how) {
     }
 
     private List<RouteEntry> routeIndex = Collections.emptyList();
@@ -1357,9 +1358,11 @@ class SourceTab extends AbstractTab {
             emitRouteEntry(fromEntries, route.id(), JavaRouteScanner.uri(route.fromUri()), filePath, route.line());
             String routeId = fromEntries.size() > before ? fromEntries.get(before).routeId() : "";
             for (ScannedRoute.To to : route.tos()) {
-                String toUri = stripQueryParams(JavaRouteScanner.uri(to.uri()));
+                String uri = JavaRouteScanner.uri(to.uri());
+                String toUri = stripQueryParams(uri);
                 if (toUri != null && !toUri.isEmpty()) {
-                    toEntries.add(new ToEntry(routeId, toUri, filePath, to.line()));
+                    // the scanners do not say which step sends (a wire tap): the uri decides
+                    toEntries.add(new ToEntry(routeId, toUri, filePath, to.line(), SendHow.of(null, uri, false)));
                 }
             }
         }
@@ -1420,6 +1423,8 @@ class SourceTab extends AbstractTab {
         int pendingFromLine = -1;
         boolean inLinkableBlock = false;
         int linkableBlockIndent = -1;
+        String blockKeyword = null;
+        int blockStart = -1;
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
@@ -1491,14 +1496,18 @@ class SourceTab extends AbstractTab {
                             ? trimmed.substring(prefix2.length()).trim()
                             : trimmed.substring(prefix1.length()).trim();
                     if (!after.isEmpty() && !after.equals("{") && !after.startsWith("#")) {
-                        String toUri = stripQueryParams(unquote(after));
+                        String uri = unquote(after);
+                        String toUri = stripQueryParams(uri);
                         if (toUri != null && !toUri.isEmpty()) {
                             toEntries.add(new ToEntry(
-                                    currentRouteId != null ? currentRouteId : "", toUri, filePath, i));
+                                    currentRouteId != null ? currentRouteId : "", toUri, filePath, i,
+                                    SendHow.of(kw, uri, false)));
                         }
                     } else {
                         inLinkableBlock = true;
                         linkableBlockIndent = indent;
+                        blockKeyword = kw;
+                        blockStart = i;
                     }
                     break;
                 }
@@ -1511,7 +1520,8 @@ class SourceTab extends AbstractTab {
                     String toUri = stripQueryParams(val);
                     if (toUri != null && !toUri.isEmpty()) {
                         toEntries.add(new ToEntry(
-                                currentRouteId != null ? currentRouteId : "", toUri, filePath, i));
+                                currentRouteId != null ? currentRouteId : "", toUri, filePath, i,
+                                SendHow.of(blockKeyword, val, SendHow.blockSaysInOut(lines, blockStart, linkableBlockIndent))));
                     }
                 }
             }
@@ -1561,8 +1571,8 @@ class SourceTab extends AbstractTab {
     }
 
     /** The jump links of a file: to the routes its steps send to or are called from, and to the beans it refers to. */
-    Map<Integer, SourceViewer.JumpLink> computeJumpLinks(Path currentFile) {
-        Map<Integer, SourceViewer.JumpLink> result = new LinkedHashMap<>(computeRouteJumpLinks(currentFile));
+    Map<Integer, JumpLink> computeJumpLinks(Path currentFile) {
+        Map<Integer, JumpLink> result = new LinkedHashMap<>(computeRouteJumpLinks(currentFile));
         ProjectBeans beans = projectBeans();
         List<String> lines;
         try {
@@ -1573,7 +1583,7 @@ class SourceTab extends AbstractTab {
         for (int i = 0; i < lines.size(); i++) {
             ProjectBeans.Location bean = beans.refOn(lines.get(i));
             if (bean != null && !(bean.filePath().equals(currentFile.toString()) && bean.line() == i)) {
-                result.putIfAbsent(i, new SourceViewer.JumpLink(bean.label(), bean.filePath(), bean.line()));
+                result.putIfAbsent(i, new JumpLink(bean.label(), bean.filePath(), bean.line()));
             }
         }
         return result;
@@ -1642,7 +1652,7 @@ class SourceTab extends AbstractTab {
         };
     }
 
-    private Map<Integer, SourceViewer.JumpLink> computeRouteJumpLinks(Path currentFile) {
+    private Map<Integer, JumpLink> computeRouteJumpLinks(Path currentFile) {
         if (routeIndex.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -1655,7 +1665,8 @@ class SourceTab extends AbstractTab {
         }
 
         String currentFilePath = currentFile.toString();
-        Map<Integer, SourceViewer.JumpLink> result = new LinkedHashMap<>();
+        Map<Integer, JumpLink> result = new LinkedHashMap<>();
+        Map<String, String> runtime = SendHow.runtime(ctx);
 
         Map<String, RouteEntry> fromUriToRoute = new HashMap<>();
         for (RouteEntry re : routeIndex) {
@@ -1669,17 +1680,20 @@ class SourceTab extends AbstractTab {
                     RouteEntry target = fromUriToRoute.get(te.toUri());
                     if (target != null && !target.routeId().equals(te.routeId())) {
                         result.putIfAbsent(te.toLine(),
-                                new SourceViewer.JumpLink(target.routeId(), target.filePath(), target.fromLine()));
+                                new JumpLink(target.routeId(), target.filePath(), target.fromLine())
+                                        .withHow(SendHow.how(te.routeId(), target.routeId(), te.how(), runtime)));
                     }
                 }
             }
-            addReverseLinks(currentFilePath, result);
+            addReverseLinks(currentFilePath, result, runtime);
             return result;
         }
 
         // forward links: to/toD/wireTap → target route's from
         boolean inLinkableBlock = false;
         int linkableBlockIndent = -1;
+        String blockKeyword = null;
+        int blockStart = -1;
         String currentRouteId = null;
 
         for (int i = 0; i < lines.size(); i++) {
@@ -1710,6 +1724,7 @@ class SourceTab extends AbstractTab {
             }
 
             String uri = null;
+            String how = null;
             for (String kw : LINKABLE_KEYWORDS) {
                 String prefix1 = kw + ":";
                 String prefix2 = "- " + kw + ":";
@@ -1719,9 +1734,12 @@ class SourceTab extends AbstractTab {
                             : trimmed.substring(prefix1.length()).trim();
                     if (!after.isEmpty() && !after.equals("{") && !after.startsWith("#")) {
                         uri = unquote(after);
+                        how = SendHow.of(kw, uri, false);
                     } else {
                         inLinkableBlock = true;
                         linkableBlockIndent = indent;
+                        blockKeyword = kw;
+                        blockStart = i;
                     }
                     break;
                 }
@@ -1731,6 +1749,7 @@ class SourceTab extends AbstractTab {
                 String val = extractYamlValue(uriLine(trimmed), "uri");
                 if (val != null && !val.isEmpty()) {
                     uri = val;
+                    how = SendHow.of(blockKeyword, val, SendHow.blockSaysInOut(lines, blockStart, linkableBlockIndent));
                 }
             }
 
@@ -1738,12 +1757,13 @@ class SourceTab extends AbstractTab {
                 String baseUri = stripQueryParams(uri);
                 RouteEntry target = fromUriToRoute.get(baseUri);
                 if (target != null && !target.routeId().equals(currentRouteId)) {
-                    result.put(i, new SourceViewer.JumpLink(target.routeId(), target.filePath(), target.fromLine()));
+                    result.put(i, new JumpLink(target.routeId(), target.filePath(), target.fromLine())
+                            .withHow(SendHow.how(currentRouteId, target.routeId(), how, runtime)));
                 }
             }
         }
 
-        addReverseLinks(currentFilePath, result);
+        addReverseLinks(currentFilePath, result, runtime);
         return result;
     }
 
@@ -1751,7 +1771,8 @@ class SourceTab extends AbstractTab {
      * Reverse links: a from line to the route that sends to it (jumps to the caller's to line), or when several do, to
      * a popup to choose one of them: a Kamelet or a direct: route used by more than one route.
      */
-    private void addReverseLinks(String currentFilePath, Map<Integer, SourceViewer.JumpLink> result) {
+    private void addReverseLinks(
+            String currentFilePath, Map<Integer, JumpLink> result, Map<String, String> runtime) {
         for (RouteEntry re : routeIndex) {
             if (!currentFilePath.equals(re.filePath())) {
                 continue;
@@ -1760,10 +1781,11 @@ class SourceTab extends AbstractTab {
             if (callers.size() == 1) {
                 ToEntry te = callers.get(0);
                 String callerRouteId = te.routeId().isEmpty() ? "route" : te.routeId();
-                result.putIfAbsent(re.fromLine(), new SourceViewer.JumpLink(callerRouteId, te.filePath(), te.toLine()));
+                result.putIfAbsent(re.fromLine(), new JumpLink(callerRouteId, te.filePath(), te.toLine())
+                        .withHow(SendHow.how(te.routeId(), re.routeId(), te.how(), runtime)));
             } else if (callers.size() > 1) {
                 result.putIfAbsent(re.fromLine(),
-                        new SourceViewer.JumpLink(callers.size() + " callers", null, -1, re.fromUri()));
+                        new JumpLink(callers.size() + " callers", null, -1, re.fromUri()));
             }
         }
     }
@@ -1876,7 +1898,7 @@ class SourceTab extends AbstractTab {
         }
     }
 
-    private void handleJumpLink(SourceViewer.JumpLink link) {
+    private void handleJumpLink(JumpLink link) {
         if (link.callersOf() != null) {
             // sent to from more than one place: choose which
             gotoRoutePopup.openItems(callersOf(link.callersOf()), "Callers of " + link.callersOf());
@@ -1959,7 +1981,7 @@ class SourceTab extends AbstractTab {
         return q >= 0 ? uri.substring(0, q) : uri;
     }
 
-    private static int lineIndent(String line) {
+    static int lineIndent(String line) {
         int indent = 0;
         for (int i = 0; i < line.length(); i++) {
             if (line.charAt(i) == ' ') {

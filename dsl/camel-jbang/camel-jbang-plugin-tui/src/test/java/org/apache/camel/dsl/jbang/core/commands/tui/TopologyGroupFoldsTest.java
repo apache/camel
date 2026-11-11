@@ -80,6 +80,21 @@ class TopologyGroupFoldsTest {
     }
 
     @Test
+    void aFoldedGroupWaitsWhenOneOfItsRoutesIsWaitedOn() {
+        // CAMEL-26823: orders hands off to audit but waits for archive; the one link to the box waits
+        List<TopologyNodeInfo> nodes = new ArrayList<>(
+                List.of(route("orders", 10, 0), route("audit", 8, 1), route("archive", 9, 2)));
+        TopologyEdgeInfo archive = call("orders", "archive");
+        archive.reply = true;
+        List<TopologyEdgeInfo> edges = new ArrayList<>(List.of(call("orders", "audit"), archive));
+
+        TopologyGroupFolds.fold(nodes, edges, tags, Set.of("utility"));
+
+        assertThat(edges).extracting(e -> e.fromRouteId + ">" + e.toRouteId + (e.reply ? " waits" : ""))
+                .containsExactly("orders>group:utility waits");
+    }
+
+    @Test
     void nothingFoldedLeavesTheTopologyAsItIs() {
         List<TopologyNodeInfo> nodes = new ArrayList<>(List.of(route("orders", 10, 0), route("audit", 8, 1)));
         List<TopologyEdgeInfo> edges = new ArrayList<>(List.of(call("orders", "audit")));
