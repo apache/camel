@@ -1347,8 +1347,7 @@ class MemoryLeakTab extends AbstractTab {
     }
 
     private JsonObject getComparisonDataAsJson() {
-        JsonObject result = new JsonObject();
-        result.put("tab", "Memory Leak Comparison");
+        JsonObject result = new JsonObject(Map.of("tab", "Memory Leak", "view", "Comparison"));
         result.put("baselineDurationMs", baselineDurationMs);
         result.put("currentDurationMs", currentDurationMs);
         result.put("durationRatio", durationRatio);

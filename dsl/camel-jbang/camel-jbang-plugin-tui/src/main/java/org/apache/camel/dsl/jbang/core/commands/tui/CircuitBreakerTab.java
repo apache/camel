@@ -414,7 +414,7 @@ class CircuitBreakerTab extends AbstractTableTab {
             return null;
         }
         JsonObject result = new JsonObject();
-        result.put("tab", "CircuitBreaker");
+        result.put("tab", "Circuit Breaker");
         JsonArray rows = new JsonArray();
         List<CircuitBreakerInfo> sorted = new ArrayList<>(info.circuitBreakers);
         sorted.sort(this::sortCb);

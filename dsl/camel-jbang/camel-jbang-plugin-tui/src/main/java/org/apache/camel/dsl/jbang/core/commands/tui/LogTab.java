@@ -350,7 +350,7 @@ class LogTab extends AbstractTab {
             titleSpans.add(Span.styled(ctx.selectedName(), Theme.label().bold()));
             titleSpans.add(Span.raw("] Log "));
             if (!ctx.logPinVisible && info != null && info.rootLogLevel != null) {
-                titleSpans.add(Span.raw("level:" + info.rootLogLevel + " "));
+                titleSpans.add(Span.raw("level: " + info.rootLogLevel + " "));
             }
         } else {
             titleSpans.add(Span.raw(" Log "));

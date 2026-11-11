@@ -656,8 +656,9 @@ class RoutesTab extends AbstractDiagramTab {
                         Cell.from(Span.styled(routeSortLabel("FROM", "from"), routeSortStyle("from"))),
                         Cell.from(Span.styled(routeSortLabel("STATUS", "status"), routeSortStyle("status"))),
                         rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
-                        centerCell(routeSortLabel("TOTAL", "total"), 14, routeSortStyle("total")),
-                        centerCell(routeSortLabel("FAIL", "failed"), 14, routeSortStyle("failed"))));
+                        // the time in brackets is since the last one
+                        centerCell(routeSortLabel("TOTAL (AGO)", "total"), 14, routeSortStyle("total")),
+                        centerCell(routeSortLabel("FAIL (AGO)", "failed"), 14, routeSortStyle("failed"))));
         List<Constraint> widths = new ArrayList<>(
                 List.of(
                         Constraint.length(24),

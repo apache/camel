@@ -500,7 +500,7 @@ class MemoryTab extends AbstractTab {
             return null;
         }
         JsonObject result = new JsonObject();
-        result.put("tab", "Memory");
+        result.put("tab", "Memory Usage");
         JsonObject data = new JsonObject();
         data.put("heapMemUsed", info.heapMemUsed);
         data.put("heapMemCommitted", info.heapMemCommitted);

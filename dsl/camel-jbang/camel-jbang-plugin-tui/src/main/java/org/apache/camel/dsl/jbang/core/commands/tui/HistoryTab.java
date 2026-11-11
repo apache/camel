@@ -2327,15 +2327,6 @@ class HistoryTab extends AbstractTab {
         return DocHelper.loadHelpText("history");
     }
 
-    void selectTraceExchange(String exchangeId) {
-        if (exchangeId != null && traceSortedExchangeIds.contains(exchangeId)) {
-            traceSelectedExchangeId = exchangeId;
-            traceDetailView = true;
-            traceStepTableState.select(0);
-            traceDetailScroll = 0;
-        }
-    }
-
     String toggleDisplaySection(String section, Boolean enabled) {
         boolean tracerActive = !traces.get().isEmpty();
         boolean newValue;
@@ -2392,71 +2383,83 @@ class HistoryTab extends AbstractTab {
         return section + "=" + (newValue ? "on" : "off");
     }
 
+    /**
+     * The trace steps of an exchange with all their details, as tui_get_history returns them, without changing what the
+     * tab shows.
+     */
+    JsonObject traceStepsAsJson(String exchangeId) {
+        JsonObject result = new JsonObject();
+        result.put("tab", "Inspect");
+        result.put("view", "Trace Steps");
+        List<TraceEntry> steps = getTraceStepsDepthFirst(exchangeId);
+        JsonArray rows = new JsonArray();
+        for (TraceEntry t : steps) {
+            JsonObject row = new JsonObject();
+            row.put("exchangeId", t.exchangeId);
+            row.put("routeId", t.routeId);
+            row.put("nodeId", t.nodeId);
+            row.put("processor", t.processor);
+            row.put("elapsed", t.elapsed);
+            row.put("timestamp", t.timestamp);
+            row.put("direction", t.direction);
+            row.put("status", t.status);
+            row.put("failed", t.failed);
+            row.put("first", t.first);
+            row.put("last", t.last);
+            if (t.body != null) {
+                row.put("body", t.body);
+            }
+            if (t.bodyType != null) {
+                row.put("bodyType", t.bodyType);
+            }
+            if (t.exception != null) {
+                row.put("exception", t.exception);
+            }
+            if (t.nodeLabel != null) {
+                row.put("nodeLabel", t.nodeLabel);
+            }
+            if (t.nodeShortName != null) {
+                row.put("nodeShortName", t.nodeShortName);
+            }
+            if (t.location != null) {
+                row.put("location", t.location);
+            }
+            if (t.threadName != null) {
+                row.put("threadName", t.threadName);
+            }
+            row.put("nodeLevel", t.nodeLevel);
+            if (t.headers != null && !t.headers.isEmpty()) {
+                row.put("headers", new JsonObject(t.headers));
+            }
+            if (t.headerTypes != null && !t.headerTypes.isEmpty()) {
+                row.put("headerTypes", new JsonObject(t.headerTypes));
+            }
+            if (t.exchangeProperties != null && !t.exchangeProperties.isEmpty()) {
+                row.put("exchangeProperties", new JsonObject(t.exchangeProperties));
+            }
+            if (t.exchangeVariables != null && !t.exchangeVariables.isEmpty()) {
+                row.put("exchangeVariables", new JsonObject(t.exchangeVariables));
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", steps.size());
+        result.put("exchangeId", exchangeId);
+        return result;
+    }
+
     @Override
     public JsonObject getTableDataAsJson() {
         JsonObject result = new JsonObject();
         boolean tracerActive = !traces.get().isEmpty();
         if (tracerActive) {
             if (traceDetailView && traceSelectedExchangeId != null) {
-                result.put("tab", "Trace Steps");
-                List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
-                JsonArray rows = new JsonArray();
-                for (TraceEntry t : steps) {
-                    JsonObject row = new JsonObject();
-                    row.put("exchangeId", t.exchangeId);
-                    row.put("routeId", t.routeId);
-                    row.put("nodeId", t.nodeId);
-                    row.put("processor", t.processor);
-                    row.put("elapsed", t.elapsed);
-                    row.put("timestamp", t.timestamp);
-                    row.put("direction", t.direction);
-                    row.put("status", t.status);
-                    row.put("failed", t.failed);
-                    row.put("first", t.first);
-                    row.put("last", t.last);
-                    if (t.body != null) {
-                        row.put("body", t.body);
-                    }
-                    if (t.bodyType != null) {
-                        row.put("bodyType", t.bodyType);
-                    }
-                    if (t.exception != null) {
-                        row.put("exception", t.exception);
-                    }
-                    if (t.nodeLabel != null) {
-                        row.put("nodeLabel", t.nodeLabel);
-                    }
-                    if (t.nodeShortName != null) {
-                        row.put("nodeShortName", t.nodeShortName);
-                    }
-                    if (t.location != null) {
-                        row.put("location", t.location);
-                    }
-                    if (t.threadName != null) {
-                        row.put("threadName", t.threadName);
-                    }
-                    row.put("nodeLevel", t.nodeLevel);
-                    if (t.headers != null && !t.headers.isEmpty()) {
-                        row.put("headers", new JsonObject(t.headers));
-                    }
-                    if (t.headerTypes != null && !t.headerTypes.isEmpty()) {
-                        row.put("headerTypes", new JsonObject(t.headerTypes));
-                    }
-                    if (t.exchangeProperties != null && !t.exchangeProperties.isEmpty()) {
-                        row.put("exchangeProperties", new JsonObject(t.exchangeProperties));
-                    }
-                    if (t.exchangeVariables != null && !t.exchangeVariables.isEmpty()) {
-                        row.put("exchangeVariables", new JsonObject(t.exchangeVariables));
-                    }
-                    rows.add(row);
-                }
-                result.put("rows", rows);
-                result.put("totalRows", steps.size());
-                result.put("exchangeId", traceSelectedExchangeId);
+                result = traceStepsAsJson(traceSelectedExchangeId);
                 Integer sel = traceStepTableState.selected();
                 result.put("selectedIndex", sel != null ? sel : -1);
             } else {
-                result.put("tab", "Traces");
+                result.put("tab", "Inspect");
+                result.put("view", "Traces");
                 List<String> exchangeIds = getTraceExchangeIds();
                 JsonArray rows = new JsonArray();
                 for (String eid : exchangeIds) {
@@ -2470,7 +2473,8 @@ class HistoryTab extends AbstractTab {
                 result.put("selectedIndex", sel != null ? sel : -1);
             }
         } else {
-            result.put("tab", "History");
+            result.put("tab", "Inspect");
+            result.put("view", "History");
             List<HistoryEntry> entries = reorderHistoryDepthFirst(historyEntries);
             JsonArray rows = new JsonArray();
             for (int i = 0; i < entries.size(); i++) {

@@ -371,11 +371,11 @@ final class TuiToolDefinitions {
                 Map.of()), args -> r.callGetDiagram(), READ_ONLY));
         tools.add(tool(toolDef(
                 "tui_get_history",
-                "Trace and history data of the History tab with all exchange details (body and headers with types, "
+                "Trace and history data of the Inspect tab with all exchange details (body and headers with types, "
                                    + "properties, variables, thread, source location, node labels); richer than "
                                    + "tui_get_table. The shape follows the tab's mode: traces, trace steps or history.",
                 Map.of("exchangeId", propDef("string",
-                        "Trace steps of this exchange; otherwise the current History tab view"))),
+                        "Trace steps of this exchange (the tab's view does not change); otherwise the current Inspect tab view"))),
                 r::callGetHistory, READ_ONLY, CORE));
         tools.add(tool(toolDef(
                 "tui_get_topology",

@@ -97,6 +97,51 @@ class StartupTabRenderTest {
         assertEquals(steps, StartupTab.ordered(steps, false));
     }
 
+    @Test
+    void eachStepIsUnderItsOwnParentWhenTwoBeganInTheSameMillisecond() {
+        // CAMEL-26864: "seven Create Route" (19) and "hello Init Route" (22) began in the same millisecond, and the
+        // children of 19 were shown under 22
+        StartupTab.StartupStep routes = step(18, 0, "Init Routes", 1, 100, 20);
+        StartupTab.StartupStep create = step(19, 18, "seven Create Route", 2, 105, 5);
+        StartupTab.StartupStep endpoint = step(20, 19, "direct:seven Get Endpoint", 3, 105, 1);
+        StartupTab.StartupStep log = step(21, 19, "log2 Create Log Processor", 3, 106, 1);
+        StartupTab.StartupStep init = step(22, 18, "hello Init Route", 2, 105, 10);
+        List<StartupTab.StartupStep> steps = List.of(endpoint, log, create, init, routes);
+
+        assertEquals(List.of(routes, create, endpoint, log, init), StartupTab.ordered(steps, false));
+    }
+
+    @Test
+    void theTotalIsFromTheFirstStepToTheEndOfTheLast() {
+        StartupTab.StartupStep init = step(1, 0, "Init CamelContext", 0, 1000, 222);
+        StartupTab.StartupStep start = step(2, 0, "Start CamelContext", 0, 1282, 182);
+        assertEquals(464, StartupTab.totalDuration(List.of(init, start)));
+        // without begin times (an older Camel): the longest step
+        init.beginTime = 0;
+        start.beginTime = 0;
+        assertEquals(222, StartupTab.totalDuration(List.of(init, start)));
+    }
+
+    @Test
+    void aStepWithNoNameIsItsDescription() {
+        StartupTab.StartupStep st = step("", 0, 0, 1);
+        st.description = "Init CamelContext";
+        assertEquals("Init CamelContext", StartupTab.label(st));
+        st.name = null;
+        assertEquals("Init CamelContext", StartupTab.label(st));
+        st.name = "hello";
+        st.description = "Init Route";
+        assertEquals("hello Init Route", StartupTab.label(st));
+    }
+
+    private static StartupTab.StartupStep step(
+            int id, int parentId, String name, int level, long begin, long duration) {
+        StartupTab.StartupStep st = step(name, level, begin, duration);
+        st.id = id;
+        st.parentId = parentId;
+        return st;
+    }
+
     private static StartupTab.StartupStep step(String name, int level, long begin, long duration) {
         StartupTab.StartupStep st = new StartupTab.StartupStep();
         st.name = name;

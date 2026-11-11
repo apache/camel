@@ -302,8 +302,20 @@ public final class ProjectCapabilities {
     private static List<String> entryPoints(Overview overview, List<String> routes) {
         List<String> answer = new ArrayList<>();
         overview.entryPoints().stream().filter(e -> e.route() != null && routes.contains(e.route()))
-                .forEach(e -> answer.add(ProjectOverview.isInternal(e) ? e.label() + " (internal)" : e.label()));
+                .forEach(e -> answer.add(entryPointLabel(e)));
         return answer;
+    }
+
+    /**
+     * An entry point as a group's box shows it: internal ones say so, inside the brackets of the label when it has some
+     * ("timer:tick (period=2000, internal)").
+     */
+    static String entryPointLabel(ProjectOverview.EntryPoint e) {
+        String label = e.label();
+        if (!ProjectOverview.isInternal(e)) {
+            return label;
+        }
+        return label.endsWith(")") ? label.substring(0, label.length() - 1) + ", internal)" : label + " (internal)";
     }
 
     private static List<String> systems(Overview overview, List<String> routes) {

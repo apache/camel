@@ -16,10 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.tamboui.layout.Constraint;
@@ -275,23 +281,96 @@ class StartupTab extends AbstractTab {
                 Span.styled("█".repeat(barWidth), bandStyle));
     }
 
-    private static String label(StartupStep step) {
-        String label = step.name != null ? step.name : "";
-        if (step.description != null && !step.description.isEmpty() && !step.description.equals(label)) {
-            label += " " + step.description;
+    static String label(StartupStep step) {
+        String name = step.name != null ? step.name : "";
+        String description = step.description != null ? step.description : "";
+        if (name.isEmpty() || description.equals(name)) {
+            // a step with no name (Init CamelContext) is its description alone, without a leading space
+            return name.isEmpty() ? description : name;
         }
-        return label;
+        return description.isEmpty() ? name : name + " " + description;
     }
 
-    /** The steps in the order they started (by begin time, the outer step first), or the slowest first. */
+    /**
+     * The steps in the order they started, each under its own parent (depth-first by parent id), or the slowest first.
+     */
     static List<StartupStep> ordered(List<StartupStep> steps, boolean slowestFirst) {
         List<StartupStep> ordered = new ArrayList<>(steps);
         if (slowestFirst) {
             ordered.sort(Comparator.comparingLong((StartupStep st) -> st.duration).reversed());
+        } else if (hasIds(steps)) {
+            ordered = depthFirst(steps);
         } else if (steps.stream().anyMatch(st -> st.beginTime > 0)) {
             ordered.sort(Comparator.comparingLong((StartupStep st) -> st.beginTime).thenComparingInt(st -> st.level));
         }
         return ordered;
+    }
+
+    /** Whether every step has its own id, so the steps can be put under their parents. */
+    private static boolean hasIds(List<StartupStep> steps) {
+        Set<Integer> ids = new HashSet<>();
+        for (StartupStep st : steps) {
+            if (st.id <= 0 || !ids.add(st.id)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Each step followed by its children: the recorder gives the ids in the order the steps begin, so ordering by id
+     * keeps the begin order even where two steps began in the same millisecond, and a step whose parent is not in the
+     * list is a root.
+     */
+    private static List<StartupStep> depthFirst(List<StartupStep> steps) {
+        Set<Integer> ids = new HashSet<>();
+        steps.forEach(st -> ids.add(st.id));
+        List<StartupStep> byId = new ArrayList<>(steps);
+        byId.sort(Comparator.comparingInt(st -> st.id));
+        Map<Integer, List<StartupStep>> children = new HashMap<>();
+        List<StartupStep> roots = new ArrayList<>();
+        for (StartupStep st : byId) {
+            if (st.parentId != st.id && ids.contains(st.parentId)) {
+                children.computeIfAbsent(st.parentId, k -> new ArrayList<>()).add(st);
+            } else {
+                roots.add(st);
+            }
+        }
+        List<StartupStep> answer = new ArrayList<>(steps.size());
+        Set<Integer> visited = new HashSet<>();
+        Deque<StartupStep> stack = new ArrayDeque<>();
+        for (StartupStep root : roots) {
+            stack.push(root);
+            while (!stack.isEmpty()) {
+                StartupStep st = stack.pop();
+                if (visited.add(st.id)) {
+                    answer.add(st);
+                    List<StartupStep> kids = children.getOrDefault(st.id, List.of());
+                    for (int i = kids.size() - 1; i >= 0; i--) {
+                        stack.push(kids.get(i));
+                    }
+                }
+            }
+        }
+        if (answer.size() < byId.size()) {
+            // steps in a parent loop: after the others, in id order
+            byId.stream().filter(st -> !visited.contains(st.id)).forEach(answer::add);
+        }
+        return answer;
+    }
+
+    /**
+     * The time the startup took: from the first step to the end of the last one, or (without begin times, as an older
+     * Camel has them) the longest step.
+     */
+    static long totalDuration(List<StartupStep> steps) {
+        long t0 = steps.stream().mapToLong(st -> st.beginTime).filter(b -> b > 0).min().orElse(0);
+        if (t0 > 0) {
+            return steps.stream().filter(st -> st.beginTime > 0).mapToLong(st -> st.beginTime + st.duration).max()
+                    .orElse(t0)
+                   - t0;
+        }
+        return steps.stream().mapToLong(s -> s.duration).max().orElse(0);
     }
 
     private Style colorForDuration(long duration) {
@@ -366,8 +445,8 @@ class StartupTab extends AbstractTab {
             dataLoaded = true;
 
             if (!steps.isEmpty()) {
-                totalDuration = steps.stream().mapToLong(s -> s.duration).max().orElse(0);
-                maxDuration = totalDuration;
+                totalDuration = totalDuration(steps);
+                maxDuration = steps.stream().mapToLong(s -> s.duration).max().orElse(0);
                 minDurationColor
                         = steps.stream().filter(s -> s.level > 0).mapToLong(s -> s.duration).min().orElse(0);
                 maxDurationColor

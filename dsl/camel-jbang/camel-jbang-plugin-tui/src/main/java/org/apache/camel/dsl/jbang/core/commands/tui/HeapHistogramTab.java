@@ -304,7 +304,7 @@ class HeapHistogramTab extends AbstractTableTab {
             return null;
         }
         JsonObject result = new JsonObject();
-        result.put("tab", "Heap Histogram");
+        result.put("tab", "Heap Memory Histogram");
         JsonArray rows = new JsonArray();
         for (HeapEntry e : entries) {
             JsonObject row = new JsonObject();

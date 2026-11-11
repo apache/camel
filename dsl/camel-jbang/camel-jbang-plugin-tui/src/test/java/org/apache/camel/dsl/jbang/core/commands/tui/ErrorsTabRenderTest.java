@@ -215,8 +215,10 @@ class ErrorsTabRenderTest {
         ErrorsTab tab = new ErrorsTab(ctx);
         String rendered = renderToString(tab, 160, 20);
 
-        assertTrue(rendered.contains("No errors captured"),
-                "Should show placeholder when no errors exist");
+        // in the first column, under ID, as the empty state of the other tabs (it was under MESSAGE)
+        String header = rendered.lines().filter(l -> l.contains("EXCEPTION")).findFirst().orElseThrow();
+        String empty = rendered.lines().filter(l -> l.contains("No errors")).findFirst().orElseThrow();
+        assertEquals(header.indexOf("ID"), empty.indexOf("No errors"), rendered);
     }
 
     @Test

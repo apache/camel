@@ -807,8 +807,10 @@ class McpFacade {
         return tabRegistry.diagramTab().getTableDataAsJson();
     }
 
-    void selectTraceExchange(String exchangeId) {
-        tabRegistry.historyTab().selectTraceExchange(exchangeId);
+    /** The trace steps of an exchange, or null when it has none; the Inspect tab's view stays as it is. */
+    JsonObject getTraceSteps(String exchangeId) {
+        JsonObject steps = tabRegistry.historyTab().traceStepsAsJson(exchangeId);
+        return steps.getIntegerOrDefault("totalRows", 0) > 0 ? steps : null;
     }
 
     JsonObject getTopologyData() {
