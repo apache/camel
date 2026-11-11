@@ -30,7 +30,8 @@ enum HashicorpVaultAuthentication {
     TOKEN("token", "Token"),
     APPROLE("approle", "AppRole"),
     KUBERNETES("kubernetes", "Kubernetes"),
-    JWT("jwt", "JWT");
+    JWT("jwt", "JWT"),
+    CERT("cert", "TLS certificate");
 
     private final String value;
     private final String displayName;

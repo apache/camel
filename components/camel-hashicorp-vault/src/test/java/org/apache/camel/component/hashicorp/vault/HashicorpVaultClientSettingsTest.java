@@ -26,12 +26,16 @@ import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSet
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.CLOUD_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.HOST_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.JWT_FILE_ENV;
+import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.KEY_STORE_ENV;
+import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.KEY_STORE_PASSWORD_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.NAMESPACE_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.PORT_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.ROLE_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.ROLE_ID_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.SCHEME_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.SECRET_ID_ENV;
+import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.TRUST_STORE_ENV;
+import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.TRUST_STORE_PASSWORD_ENV;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -70,6 +74,39 @@ class HashicorpVaultClientSettingsTest {
         assertEquals("env-role-id", settings.getRoleId());
         assertEquals("env-secret-id", settings.getSecretId());
         assertNull(settings.getHost());
+    }
+
+    @Test
+    void aTlsEnvironmentVariableSelectsTheEnvironmentVariables() {
+        Map<String, String> environment = Map.of(
+                TRUST_STORE_ENV, "/etc/vault/ca.pem", TRUST_STORE_PASSWORD_ENV, "trust-password",
+                KEY_STORE_ENV, "/etc/vault/client.p12", KEY_STORE_PASSWORD_ENV, "key-password");
+
+        HashicorpVaultClientSettings settings
+                = HashicorpVaultClientSettings.fromEnvironmentOrConfiguration(configuration(), environment::get);
+
+        assertEquals("/etc/vault/ca.pem", settings.getTrustStore());
+        assertEquals("trust-password", settings.getTrustStorePassword());
+        assertEquals("/etc/vault/client.p12", settings.getKeyStore());
+        assertEquals("key-password", settings.getKeyStorePassword());
+        assertNull(settings.getHost());
+    }
+
+    @Test
+    void takesTheTlsSettingsOfTheConfiguration() {
+        HashicorpVaultConfiguration configuration = configuration();
+        configuration.setTrustStore("/etc/vault/ca.pem");
+        configuration.setTrustStorePassword("trust-password");
+        configuration.setKeyStore("/etc/vault/client.p12");
+        configuration.setKeyStorePassword("key-password");
+
+        HashicorpVaultClientSettings settings
+                = HashicorpVaultClientSettings.fromEnvironmentOrConfiguration(configuration, name -> null);
+
+        assertEquals("/etc/vault/ca.pem", settings.getTrustStore());
+        assertEquals("trust-password", settings.getTrustStorePassword());
+        assertEquals("/etc/vault/client.p12", settings.getKeyStore());
+        assertEquals("key-password", settings.getKeyStorePassword());
     }
 
     @Test

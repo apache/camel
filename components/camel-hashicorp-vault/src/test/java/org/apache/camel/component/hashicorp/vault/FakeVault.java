@@ -16,25 +16,42 @@
  */
 package org.apache.camel.component.hashicorp.vault;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.TrustManagerFactory;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpsConfigurator;
+import com.sun.net.httpserver.HttpsExchange;
+import com.sun.net.httpserver.HttpsParameters;
+import com.sun.net.httpserver.HttpsServer;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
 /**
- * A fake HashiCorp Vault over HTTP, which records the requests it receives and answers them with the replies set per
- * path (404 for any other path).
+ * A fake HashiCorp Vault over HTTP or HTTPS, which records the requests it receives and answers them with the replies
+ * set per path (404 for any other path).
  */
 final class FakeVault implements AutoCloseable {
 
@@ -42,9 +59,10 @@ final class FakeVault implements AutoCloseable {
 
     /**
      * A request to Vault: the path is without /v1/, the token and namespace are the X-Vault-Token and X-Vault-Namespace
-     * headers (null when not sent).
+     * headers (null when not sent), and the client certificate is the subject of the certificate the client presented
+     * over HTTPS (null when none).
      */
-    record Request(String method, String path, String token, String namespace, String body) {
+    record Request(String method, String path, String token, String namespace, String body, String clientCertificate) {
 
         Map<?, ?> json() {
             try {
@@ -63,9 +81,54 @@ final class FakeVault implements AutoCloseable {
     private final Map<String, Function<Request, Reply>> replies = new ConcurrentHashMap<>();
 
     FakeVault() throws IOException {
-        server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        this(null);
+    }
+
+    private FakeVault(SSLContext tls) throws IOException {
+        InetSocketAddress address = new InetSocketAddress("localhost", 0);
+        if (tls == null) {
+            server = HttpServer.create(address, 0);
+        } else {
+            HttpsServer https = HttpsServer.create(address, 0);
+            https.setHttpsConfigurator(new HttpsConfigurator(tls) {
+                @Override
+                public void configure(HttpsParameters parameters) {
+                    SSLParameters ssl = getSSLContext().getDefaultSSLParameters();
+                    // ask for a client certificate, as Vault does for the cert login, without requiring one
+                    ssl.setWantClientAuth(true);
+                    parameters.setSSLParameters(ssl);
+                }
+            });
+            server = https;
+        }
         server.createContext("/v1/", this::handle);
         server.start();
+    }
+
+    /**
+     * A fake Vault over HTTPS, with the certificate of localhost (tls/server.p12) signed by the test CA (tls/ca.pem),
+     * which trusts the client certificates of the test CA.
+     */
+    static FakeVault https() throws IOException, GeneralSecurityException {
+        char[] password = "changeit".toCharArray();
+        KeyManagerFactory keys = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keys.init(KeyStore.getInstance(new File(tlsFile("server.p12")), password), password);
+        TrustManagerFactory trust = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trust.init(KeyStore.getInstance(new File(tlsFile("truststore.p12")), password));
+        SSLContext tls = SSLContext.getInstance("TLS");
+        tls.init(keys.getKeyManagers(), trust.getTrustManagers(), null);
+        return new FakeVault(tls);
+    }
+
+    /**
+     * The path of a file of the test TLS material (tls/ next to this class)
+     */
+    static String tlsFile(String name) {
+        try {
+            return Path.of(FakeVault.class.getResource("tls/" + name).toURI()).toString();
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     int port() {
@@ -124,7 +187,7 @@ final class FakeVault implements AutoCloseable {
         Request request = new Request(
                 http.getRequestMethod(), http.getRequestURI().getPath().substring("/v1/".length()),
                 http.getRequestHeaders().getFirst("X-Vault-Token"), http.getRequestHeaders().getFirst("X-Vault-Namespace"),
-                new String(http.getRequestBody().readAllBytes(), StandardCharsets.UTF_8));
+                new String(http.getRequestBody().readAllBytes(), StandardCharsets.UTF_8), clientCertificate(http));
         requests.add(request);
         Function<Request, Reply> answer = replies.get(request.path());
         Reply reply = answer != null ? answer.apply(request) : new Reply(404, "{\"errors\":[]}");
@@ -139,6 +202,18 @@ final class FakeVault implements AutoCloseable {
         try (OutputStream os = http.getResponseBody()) {
             os.write(bytes);
         }
+    }
+
+    private static String clientCertificate(HttpExchange http) {
+        if (http instanceof HttpsExchange https) {
+            try {
+                Certificate[] chain = https.getSSLSession().getPeerCertificates();
+                return ((X509Certificate) chain[0]).getSubjectX500Principal().getName();
+            } catch (SSLPeerUnverifiedException e) {
+                // the client presented no certificate
+            }
+        }
+        return null;
     }
 
     @Override
