@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Parser for Anthropic Claude model streaming responses (v3+ format)
@@ -32,23 +32,23 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class ClaudeStreamParser implements StreamResponseParser {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     @Override
-    public String extractText(String chunk) throws JsonProcessingException {
+    public String extractText(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return "";
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode type = node.get("type");
 
-        if (ObjectHelper.isNotEmpty(type) && "content_block_delta".equals(type.asText())) {
+        if (ObjectHelper.isNotEmpty(type) && "content_block_delta".equals(type.asString())) {
             JsonNode delta = node.get("delta");
             if (ObjectHelper.isNotEmpty(delta)) {
                 JsonNode deltaType = delta.get("type");
-                if (ObjectHelper.isNotEmpty(deltaType) && "text_delta".equals(deltaType.asText())) {
+                if (ObjectHelper.isNotEmpty(deltaType) && "text_delta".equals(deltaType.asString())) {
                     JsonNode text = delta.get("text");
-                    return ObjectHelper.isNotEmpty(text) && !text.isNull() ? text.asText() : "";
+                    return ObjectHelper.isNotEmpty(text) && !text.isNull() ? text.asString() : "";
                 }
             }
         }
@@ -56,32 +56,32 @@ public class ClaudeStreamParser implements StreamResponseParser {
     }
 
     @Override
-    public String extractCompletionReason(String chunk) throws JsonProcessingException {
+    public String extractCompletionReason(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode type = node.get("type");
 
-        if (ObjectHelper.isNotEmpty(type) && "message_delta".equals(type.asText())) {
+        if (ObjectHelper.isNotEmpty(type) && "message_delta".equals(type.asString())) {
             JsonNode delta = node.get("delta");
             if (ObjectHelper.isNotEmpty(delta)) {
                 JsonNode stopReason = delta.get("stop_reason");
-                return ObjectHelper.isNotEmpty(stopReason) && !stopReason.isNull() ? stopReason.asText() : null;
+                return ObjectHelper.isNotEmpty(stopReason) && !stopReason.isNull() ? stopReason.asString() : null;
             }
         }
         return null;
     }
 
     @Override
-    public Integer extractTokenCount(String chunk) throws JsonProcessingException {
+    public Integer extractTokenCount(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode type = node.get("type");
 
-        if (ObjectHelper.isNotEmpty(type) && "message_delta".equals(type.asText())) {
+        if (ObjectHelper.isNotEmpty(type) && "message_delta".equals(type.asString())) {
             JsonNode usage = node.get("usage");
             if (ObjectHelper.isNotEmpty(usage)) {
                 JsonNode outputTokens = usage.get("output_tokens");
@@ -92,12 +92,12 @@ public class ClaudeStreamParser implements StreamResponseParser {
     }
 
     @Override
-    public boolean isFinalChunk(String chunk) throws JsonProcessingException {
+    public boolean isFinalChunk(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return false;
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode type = node.get("type");
-        return ObjectHelper.isNotEmpty(type) && "message_stop".equals(type.asText());
+        return ObjectHelper.isNotEmpty(type) && "message_stop".equals(type.asString());
     }
 }

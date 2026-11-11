@@ -23,7 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolGroups;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -175,6 +178,24 @@ class AskToolsTest {
     }
 
     @Test
+    void anArgumentNamedAsAnotherToolNamesItRunsAndTheAnswerSaysTheName() {
+        // CAMEL-26399: models carry the argument names of one tool over to the next
+        AskTools tools = tools(true);
+        tools.context().setDefaultDirectory(dir);
+
+        String found = tools.executeTool("camel_catalog_find", new JsonObject(Map.of("query", "mqtt")));
+        assertThat(found).startsWith("{\"argumentNote\":\"term is the argument name (got query)\"")
+                .contains("\"term\":\"mqtt\"").doesNotContain("error");
+
+        String validated = tools.executeTool("camel_validate_source",
+                new JsonObject(Map.of("filename", "tick.camel.yaml", "source", ROUTE)));
+        assertThat(validated)
+                .contains("\"argumentNote\":\"file is the argument name (got filename); content is the argument name"
+                          + " (got source)\"")
+                .contains("\"valid\":true");
+    }
+
+    @Test
     void theToolGroupsSayTheNamesOfTheSharedTools() {
         assertThat(AskTools.sharedToolNames(
                 "HTTP: GET /orders; camel_runtime_http_request calls it, camel_runtime_http_endpoints lists the operations."))
@@ -188,5 +209,78 @@ class AskToolsTest {
         assertThat(prompt).contains("YAML DSL shape").contains("read the log (camel_get_log)")
                 .contains("Some calls ask the user first").contains("\nThe integration:\n- SQL: one datasource\n")
                 .doesNotContain("stop_route").doesNotContain("do not use markdown");
+    }
+
+    @Test
+    void addingOrChangingAChaosRuleIsAskedFirst() {
+        List<ToolConfirms.Call> asked = new ArrayList<>();
+        AskTools tools = new AskTools(-1, call -> {
+            asked.add(call);
+            return false;
+        });
+
+        String answer = tools.executeTool("chaos_add",
+                new JsonObject(Map.of("rule", "endpoint=kafka:* error rate=0.5", "name", "orders")));
+
+        // not confirmed, so it did not run
+        assertThat(answer).contains("\"status\":\"rejected\"");
+        assertThat(asked).hasSize(1);
+        assertThat(asked.get(0).title()).isEqualTo("add a chaos rule to orders");
+        assertThat(asked.get(0).target()).isEqualTo("endpoint=kafka:* error rate=0.5");
+
+        ToolConfirms.Call change = tools.confirmation("chaos_change", Map.of("id", "r1", "rule", "endpoint=* drop"));
+        assertThat(change.title()).isEqualTo("change chaos rule r1 of the selected integration");
+        assertThat(change.target()).isEqualTo("endpoint=* drop");
+        // the others only read or take faults away
+        ToolConfirms.Call load = tools.confirmation("chaos_load",
+                Map.of("scenario", "# outage\nendpoint=http:* error\n", "scenarioName", "outage"));
+        assertThat(load.title()).isEqualTo("load chaos scenario outage into the selected integration");
+        // the user sees the rules of the scenario
+        assertThat(load.target()).isEqualTo("# outage\nendpoint=http:* error");
+        for (String name : List.of("chaos_check", "chaos_suggest", "chaos_remove", "chaos_clear", "chaos_list",
+                "chaos_report", "chaos_explore_finish")) {
+            assertThat(tools.confirmation(name, Map.of("id", "r1"))).as(name).isNull();
+        }
+    }
+
+    @Test
+    void anExplorationIsAskedOnceAndItsExperimentsNot() {
+        AskTools tools = new AskTools(-1, call -> true);
+
+        // the consent to the experiments in it, which camel-chaos ends at its deadline
+        ToolConfirms.Call explore = tools.confirmation("chaos_explore_start",
+                Map.of("name", "shop", "budget", "30m", "focus", "refunds"));
+        assertThat(explore.title()).isEqualTo("explore chaos in shop for 30m");
+        assertThat(explore.target()).isEqualTo("focus: refunds");
+        assertThat(tools.confirmation("chaos_explore_start", Map.of()).title())
+                .isEqualTo("explore chaos in the selected integration for 10m");
+        // an experiment adds its rules without asking, and its messages to a route stay inside the integration
+        assertThat(tools.confirmation("chaos_experiment",
+                Map.of("rule", "route=refunds error expect=refunds:failed<=0", "feed", "refunds"))).isNull();
+        assertThat(tools.confirmation("chaos_experiment", Map.of("rule", "route=refunds error"))).isNull();
+        // a message that leaves the integration is asked, as send_message asks it
+        assertThat(tools.confirmation("chaos_experiment",
+                Map.of("rule", "route=refunds error", "feed", "kafka:refunds")).title())
+                .isEqualTo("send a message to an endpoint the integration does not have");
+    }
+
+    @Test
+    void theChaosGroupNamesTheSharedTools() {
+        AppFeatures chaos = AppFeatures.fromStatus(new JsonObject(Map.of("chaos", Map.of("enabled", true))));
+        for (String mcpTool : ToolGroups.select(chaos).mcpTools()) {
+            // camel_runtime_chaos_add is chaos_add, and so on
+            String shared = AskTools.GROUP_TOOLS.get(mcpTool);
+            assertThat(shared).as(mcpTool).isEqualTo(mcpTool.substring("camel_runtime_".length()));
+            assertThat(ToolRegistry.findTool(shared)).as(shared).isNotNull();
+        }
+        assertThat(AskTools.sharedToolNames(ToolGroups.describeChaos(chaos)))
+                .contains("chaos_list and chaos_report show the rules").doesNotContain("camel_runtime_");
+    }
+
+    @Test
+    void aGroupToolThatStartsWithTheNameOfAnotherIsNamedRight() {
+        // camel_runtime_sql is the start of camel_runtime_sql_trace: the longer name is replaced first
+        assertThat(AskTools.sharedToolNames("camel_runtime_sql_trace and camel_runtime_sql"))
+                .isEqualTo("get_sql_trace and execute_sql");
     }
 }

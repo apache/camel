@@ -2,6 +2,7 @@
 package org.apache.camel.component.file.remote.mina;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MinaSftpEndpoint target = (MinaSftpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullbody":
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
         case "antexclude":
@@ -189,16 +190,6 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "readLock": target.setReadLock(property(camelContext, java.lang.String.class, value)); return true;
         case "readlockcheckinterval":
         case "readLockCheckInterval": target.setReadLockCheckInterval(property(camelContext, long.class, value)); return true;
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": target.setReadLockDeleteOrphanLockFiles(property(camelContext, boolean.class, value)); return true;
-        case "readlockidempotentreleaseasync":
-        case "readLockIdempotentReleaseAsync": target.setReadLockIdempotentReleaseAsync(property(camelContext, boolean.class, value)); return true;
-        case "readlockidempotentreleaseasyncpoolsize":
-        case "readLockIdempotentReleaseAsyncPoolSize": target.setReadLockIdempotentReleaseAsyncPoolSize(property(camelContext, int.class, value)); return true;
-        case "readlockidempotentreleasedelay":
-        case "readLockIdempotentReleaseDelay": target.setReadLockIdempotentReleaseDelay(property(camelContext, int.class, value)); return true;
-        case "readlockidempotentreleaseexecutorservice":
-        case "readLockIdempotentReleaseExecutorService": target.setReadLockIdempotentReleaseExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
         case "readlocklogginglevel":
         case "readLockLoggingLevel": target.setReadLockLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "readlockmarkerfile":
@@ -207,10 +198,6 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "readLockMinAge": target.setReadLockMinAge(property(camelContext, long.class, value)); return true;
         case "readlockminlength":
         case "readLockMinLength": target.setReadLockMinLength(property(camelContext, long.class, value)); return true;
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": target.setReadLockRemoveOnCommit(property(camelContext, boolean.class, value)); return true;
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": target.setReadLockRemoveOnRollback(property(camelContext, boolean.class, value)); return true;
         case "readlocktimeout":
         case "readLockTimeout": target.setReadLockTimeout(property(camelContext, long.class, value)); return true;
         case "reconnectdelay":
@@ -277,7 +264,7 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullbody":
         case "allowNullBody": return boolean.class;
         case "antexclude":
@@ -444,16 +431,6 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "readLock": return java.lang.String.class;
         case "readlockcheckinterval":
         case "readLockCheckInterval": return long.class;
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": return boolean.class;
-        case "readlockidempotentreleaseasync":
-        case "readLockIdempotentReleaseAsync": return boolean.class;
-        case "readlockidempotentreleaseasyncpoolsize":
-        case "readLockIdempotentReleaseAsyncPoolSize": return int.class;
-        case "readlockidempotentreleasedelay":
-        case "readLockIdempotentReleaseDelay": return int.class;
-        case "readlockidempotentreleaseexecutorservice":
-        case "readLockIdempotentReleaseExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
         case "readlocklogginglevel":
         case "readLockLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "readlockmarkerfile":
@@ -462,10 +439,6 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "readLockMinAge": return long.class;
         case "readlockminlength":
         case "readLockMinLength": return long.class;
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": return boolean.class;
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": return boolean.class;
         case "readlocktimeout":
         case "readLockTimeout": return long.class;
         case "reconnectdelay":
@@ -533,7 +506,7 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MinaSftpEndpoint target = (MinaSftpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullbody":
         case "allowNullBody": return target.isAllowNullBody();
         case "antexclude":
@@ -700,16 +673,6 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "readLock": return target.getReadLock();
         case "readlockcheckinterval":
         case "readLockCheckInterval": return target.getReadLockCheckInterval();
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": return target.isReadLockDeleteOrphanLockFiles();
-        case "readlockidempotentreleaseasync":
-        case "readLockIdempotentReleaseAsync": return target.isReadLockIdempotentReleaseAsync();
-        case "readlockidempotentreleaseasyncpoolsize":
-        case "readLockIdempotentReleaseAsyncPoolSize": return target.getReadLockIdempotentReleaseAsyncPoolSize();
-        case "readlockidempotentreleasedelay":
-        case "readLockIdempotentReleaseDelay": return target.getReadLockIdempotentReleaseDelay();
-        case "readlockidempotentreleaseexecutorservice":
-        case "readLockIdempotentReleaseExecutorService": return target.getReadLockIdempotentReleaseExecutorService();
         case "readlocklogginglevel":
         case "readLockLoggingLevel": return target.getReadLockLoggingLevel();
         case "readlockmarkerfile":
@@ -718,10 +681,6 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "readLockMinAge": return target.getReadLockMinAge();
         case "readlockminlength":
         case "readLockMinLength": return target.getReadLockMinLength();
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": return target.isReadLockRemoveOnCommit();
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": return target.isReadLockRemoveOnRollback();
         case "readlocktimeout":
         case "readLockTimeout": return target.getReadLockTimeout();
         case "reconnectdelay":
@@ -788,7 +747,7 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": return org.apache.camel.component.file.remote.SftpRemoteFile.class;
         case "filter": return org.apache.camel.component.file.remote.SftpRemoteFile.class;

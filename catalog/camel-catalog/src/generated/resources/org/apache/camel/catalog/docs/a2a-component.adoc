@@ -735,7 +735,7 @@ The stable user-facing surface for this Preview release is the endpoint URI/opti
 
 The protocol and operation implementation classes under `org.apache.camel.component.a2a.protocol` and `org.apache.camel.component.a2a.operation` are public so the component can share implementation code across packages and tests, but they are not extension SPIs. `A2AProtocol` is sealed deliberately to the built-in REST and JSON-RPC bindings; select a binding with `protocolBinding` rather than implementing a custom protocol class.
 
-The JSON mapper helper returns configured mapper copies. Customizing the returned `ObjectMapper` does not change component-wide serialization behavior.
+The JSON mapper helper returns a shared, immutable Jackson 3 `ObjectMapper`. Use `rebuild()` to derive a customized mapper: this does not change component-wide serialization behavior.
 
 == Dependencies
 

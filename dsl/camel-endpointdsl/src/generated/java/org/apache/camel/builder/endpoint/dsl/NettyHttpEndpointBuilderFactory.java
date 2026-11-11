@@ -849,8 +849,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint. When set via URI (e.g. {code
-         * bootstrapConfiguration=#myBean}), its properties are merged into the
+         * configuring this endpoint. When set via URI (e.g.
+         * ?bootstrapConfiguration=#myBean), its properties are merged into the
          * endpoint configuration by NettyHttpComponent.createEndpoint(). Note:
          * this parameter is URI-resolved by the component and is not applied
          * when set programmatically via this setter.
@@ -869,8 +869,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint. When set via URI (e.g. {code
-         * bootstrapConfiguration=#myBean}), its properties are merged into the
+         * configuring this endpoint. When set via URI (e.g.
+         * ?bootstrapConfiguration=#myBean), its properties are merged into the
          * endpoint configuration by NettyHttpComponent.createEndpoint(). Note:
          * this parameter is URI-resolved by the component and is not applied
          * when set programmatically via this setter.
@@ -1327,9 +1327,9 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum length of the initial line (e.g. {code GET / HTTP/1.0} or
-         * {code HTTP/1.0 200 OK}) If the length of the initial line exceeds
-         * this value, a TooLongFrameException will be raised. See
+         * The maximum length of the initial line (e.g. GET / HTTP/1.0 or
+         * HTTP/1.0 200 OK) If the length of the initial line exceeds this
+         * value, a TooLongFrameException will be raised. See
          * io.netty.handler.codec.http.HttpObjectDecoder.
          * 
          * The option is a: <code>int</code> type.
@@ -1345,9 +1345,9 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum length of the initial line (e.g. {code GET / HTTP/1.0} or
-         * {code HTTP/1.0 200 OK}) If the length of the initial line exceeds
-         * this value, a TooLongFrameException will be raised. See
+         * The maximum length of the initial line (e.g. GET / HTTP/1.0 or
+         * HTTP/1.0 200 OK) If the length of the initial line exceeds this
+         * value, a TooLongFrameException will be raised. See
          * io.netty.handler.codec.http.HttpObjectDecoder.
          * 
          * The option will be converted to a <code>int</code> type.
@@ -2178,7 +2178,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2198,7 +2204,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3929,7 +3941,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3949,7 +3967,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -5138,7 +5162,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -5158,7 +5188,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

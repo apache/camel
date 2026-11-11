@@ -2,7 +2,7 @@
 :doctitle: MCP Server
 :shortname: mcp-server
 :artifactid: camel-mcp-server
-:description: Expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP
+:description: Expose ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP prompts
 :since: 4.22
 :supportlevel: Preview
 :tabs-sync-option:
@@ -68,6 +68,11 @@ logs a WARN when `ai-resource` routes match the tags but the engine cannot
 serve them. The conformance kit follows the same split: resource assertions
 live in a separate `McpServerResourceConformanceTestSupport` class that an
 engine extends once it supports resources.
+
+An engine refuses a tool, resource or prompt it cannot serve, for example a name its
+runtime already serves, by throwing `McpServerRefusedException` from
+`toolAdded`, `resourceAdded` or `promptAdded`. The bridge logs an ERROR, as for
+its own name clashes, and does not track the refused item as published.
 
 == Usage
 
@@ -140,6 +145,29 @@ see xref:ROOT:ai-resource-component.adoc[ai-resource] for the details.
 Unlike `tools/call`, `resources/read` has no in-band error flag, so a failed
 read is returned as a JSON-RPC error with the same sanitized message the
 client would get from a failing tool.
+
+=== Prompts
+
+Reusable prompt templates are exposed through `ai-prompt` routes. Prompt argument
+metadata is declared with `argument.NAME.description` and
+`argument.NAME.required`; argument values arrive in the route as String headers.
+
+[source,java]
+----
+from("ai-prompt:summarize_account"
+    + "?tags=crm"
+    + "&description=Summarize an account"
+    + "&argument.accountId.description=The account identifier"
+    + "&argument.accountId.required=true")
+    .setBody(simple("Summarize account ${header.accountId} and its recent activity."));
+----
+
+A String body becomes one MCP `user` message. A List body can return multiple
+messages: each element is a String (a `user` message) or a Map with `role`
+(`user` or `assistant`) and `content`. Content may be a String or an MCP
+content block. Camel Main and JBang serve prompts over both streamable HTTP
+and stdio. Changes to prompt routes are announced with
+`notifications/prompts/list_changed`.
 
 === Tool annotation hints
 
@@ -215,7 +243,10 @@ JSON-RPC only. Camel JBang configures a stderr Log4j2 appender automatically
 when `--mcp-stdio` is used or when `camel.server.mcp-transport=stdio` is set
 in the profile. On Camel Main, configure logging to stderr yourself (for
 example using the `log4j2-mcp-stdio.properties` resource shipped in
-`camel-mcp-server`). Configure your MCP client (for example in `mcp.json`) to launch
+`camel-mcp-server`). Anything else written to `System.out` while the MCP server runs, such as
+a `stream:out` endpoint or a `System.out.println` in a bean, goes to stderr as well.
+When the MCP client closes stdin, Camel stops and the process exits.
+Configure your MCP client (for example in `mcp.json`) to launch
 the Camel process as a subprocess:
 
 [source,json]
@@ -240,13 +271,14 @@ JBang (see the xref:main.adoc[camel-main] options) or on
 |===
 | Option | Description | Default | Owner
 
-| `camel.server.mcp-enabled` | Whether to expose ai-tool routes as MCP tools
-  and ai-resource routes as MCP resources. | `false` | bridge
+| `camel.server.mcp-enabled` | Whether to expose ai-tool routes as MCP tools,
+  ai-resource routes as MCP resources and ai-prompt routes as MCP prompts.
+  | `false` | bridge
 | `camel.server.mcp-transport` | MCP transport: `http` (streamable HTTP on the
   embedded server, default) or `stdio` (JSON-RPC on process stdin/stdout for
-  local agent subprocesses). Stdio exposes tools only. | `http` | engine
+  local agent subprocesses). Stdio exposes tools and prompts. | `http` | engine
 | `camel.server.mcp-tags` | Comma-separated list of tag patterns selecting the
-  ai-tool and ai-resource routes to expose. Patterns support exact match,
+  ai-tool, ai-resource and ai-prompt routes to expose. Patterns support exact match,
   wildcard prefix (`foo*`), and `*` to match all tags. Only routes registered
   under a matching tag are published; the untagged default pools are never
   exposed. When not set, nothing is published. |  | bridge
@@ -258,6 +290,9 @@ JBang (see the xref:main.adoc[camel-main] options) or on
   milliseconds. A read exceeding the timeout returns an error to the MCP
   client; the underlying route keeps running until it completes on its
   own. | `20000` | bridge
+| `camel.server.mcp-prompt-timeout` | Per-request prompt execution timeout in
+  milliseconds. A request exceeding the timeout returns an error to the MCP
+  client; the underlying route may keep running until it completes. | `20000` | bridge
 | `camel.server.mcp-path` | HTTP path where the MCP endpoint is served. |
   `/mcp` | engine
 | `camel.server.mcp-server-name` | MCP server name advertised to clients. |
@@ -281,6 +316,13 @@ JBang (see the xref:main.adoc[camel-main] options) or on
   sessions on the Vert.x streamable transport. Sessions with no activity for
   longer than this interval are evicted. `0` disables idle eviction. |
   `300000` | engine
+| `camel.server.mcp-allowed-origins` | Comma-separated list of origins allowed
+  to call the MCP endpoint, such as `+https://app.example.com+` or
+  `+http://localhost:*+` (`+:*+` matches any port). A request without an `Origin`
+  header is always served; a request with an `Origin` header that is not in the
+  list gets HTTP 403. Scheme and host are compared ignoring case, and a default
+  port may be left out. `+*+` is not supported. When not set, only loopback
+  origins are allowed. See <<_origins_and_binding>>. | loopback origins | engine
 |===
 
 Bridge-owned options are honored identically on every runtime. Engine-owned
@@ -329,10 +371,12 @@ The Vert.x engine implements the MCP streamable HTTP transport:
   removes sessions with no traffic. Configure with
   `camel.server.mcp-session-keep-alive-interval` and
   `camel.server.mcp-session-idle-ttl` (set either to `0` to disable).
+* an `Origin` header check on every method (`POST`, `GET` and `DELETE`), see
+  <<_origins_and_binding>>.
 
-Tools and resources appearing or disappearing (routes starting and stopping)
-emit `notifications/tools/list_changed` and
-`notifications/resources/list_changed` to connected clients. Per-resource
+Tools, resources and prompts appearing or disappearing (routes starting and stopping)
+emit `notifications/tools/list_changed`, `notifications/resources/list_changed`
+and `notifications/prompts/list_changed` to connected clients. Per-resource
 subscriptions (`resources/subscribe`) are not offered: the server advertises
 `resources` with `listChanged` only.
 
@@ -341,8 +385,10 @@ subscriptions (`resources/subscribe`) are not offered: the server advertises
 The stdio engine uses the MCP Java SDK `StdioServerTransportProvider`. MCP
 JSON-RPC is read from stdin and written to stdout. Logging and startup banners
 must not appear on stdout — Camel Main/JBang configure Log4j2 to write logs to
-stderr in stdio mode. No HTTP port is opened and no session management headers
-apply.
+stderr in stdio mode. While the engine runs, `System.out` points at stderr, and the
+transport writes to the original stdout. When stdin reaches its end (the client went
+away), the engine stops the CamelContext. No HTTP port is opened and no session
+management headers apply.
 
 == Security
 
@@ -350,20 +396,22 @@ External MCP clients are *untrusted senders* under the
 xref:manual::security-model.adoc[Camel security model]. The module applies the
 following rules:
 
-* *Explicit opt-in per route*: only tools and resources whose tags match the
-  configured tag patterns are exposed. The untagged default pools are never
-  exposed, even when using the `*` wildcard.
-* *Flat namespace protection*: a tool whose name collides with an already
-  exposed tool is refused with an ERROR log — never silently replaced.
+* *Explicit opt-in per route*: only tools, resources and prompts whose tags
+  match the configured tag patterns are exposed. The untagged default pools are
+  never exposed, even when using the `*` wildcard.
+* *Flat namespace protection*: a tool or prompt whose name collides with an
+  already exposed item is refused with an ERROR log — never silently replaced.
   Resources follow the same rule on their uri.
 * *Error sanitization*: route exceptions are mapped to a generic error
   message; the cause is logged server-side and never sent to the client.
   Argument validation messages (missing or invalid parameters) are returned
   as-is.
-* *Bounded execution*: every call is subject to the `toolTimeout` and every
-  read to the `resourceTimeout`. Note that a timed-out route keeps running
-  server-side until it completes; the timeout bounds the MCP request, not the
-  route.
+* *Returned content*: the result of a tool, resource or prompt is passed to the
+  client and the model as it is. Data that a route reads from a source outsiders can write may
+  contain prompt injection; the route author decides what goes in.
+* *Bounded execution*: every call, read and prompt request is subject to its
+  configured timeout. A timed-out route keeps running server-side until it
+  completes; the timeout bounds the MCP request, not the route.
 * *Authentication (HTTP)*: the MCP endpoint is served through the main HTTP server
   router, so platform-http authentication (basic, JWT via
   `camel.server.authentication*` options) applies to it. The MCP
@@ -375,6 +423,57 @@ following rules:
   HTTP authentication layer. Trust is the parent process that launched the
   Camel subprocess (local IDE or agent). Route authors remain fully trusted;
   only explicitly tagged tools are exposed.
+
+=== Origins and binding
+
+The MCP streamable HTTP transport requires a server to validate the `Origin`
+header. The Vert.x engine on Camel Main and Camel JBang does so on every request
+to the MCP endpoint (`POST`, the SSE `GET` and `DELETE`):
+
+* A request *without* an `Origin` header is served. MCP clients run as a
+  process (an IDE, an agent, another Camel integration) and send none.
+* A request *with* an `Origin` header is served only when the origin is
+  allowed. Any other origin gets HTTP 403 with a JSON-RPC error that has no
+  `id`, and no tool or resource route is called.
+* By default only loopback origins are allowed: `localhost`, `127.0.0.1` and
+  `[::1]`, over `http` or `https`, on any port. Browser-based tools on the
+  same machine, such as the MCP Inspector, keep working.
+* `camel.server.mcp-allowed-origins` replaces the default with your own list.
+  Each entry is an origin (scheme, host and port), or ends with `+:*+` to match
+  any port. Add the loopback entries again if you still need them:
+
+[source,properties]
+----
+camel.server.mcp-allowed-origins = https://app.example.com, http://localhost:*
+----
+
+Entries are compared in the form a browser sends the `Origin` header: the
+scheme and host ignoring case, and without the default port, so
+`+https://App.Example.com:443/+` and `+https://app.example.com+` are the same
+origin. An entry that can never match an `Origin` header fails the startup with
+a message saying why: `+*+` (the check cannot be turned off; clients that are
+not browsers send no `Origin` header and are always served), an entry with a
+path such as `+https://app.example.com/mcp+`, an entry without a scheme such as
+`app.example.com`, or a wildcard in the host such as `+https://*.example.com+`.
+
+A refused request is logged at `DEBUG` level by the
+`org.apache.camel.component.mcp.server.vertx.VertxMcpStreamableServerTransportProvider`
+logger, with the `Origin` it carried.
+
+The check is independent of the platform-http CORS configuration: CORS only
+adds response headers for the browser, while the origin check refuses the
+request on the server.
+
+The main HTTP server listens on all network interfaces by default
+(`camel.server.host = 0.0.0.0`). When the MCP server is only meant for clients
+on the same machine, bind it to the loopback interface:
+
+[source,properties]
+----
+camel.server.host = 127.0.0.1
+----
+
+Stdio mode has no HTTP transport and is not affected.
 
 == Runtime notes
 

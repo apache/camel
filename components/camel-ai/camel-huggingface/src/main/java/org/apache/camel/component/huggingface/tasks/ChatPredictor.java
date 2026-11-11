@@ -21,16 +21,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
+import org.apache.camel.support.LRUCacheFactory;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
 
 /**
  * Predictor for the CHAT task, handling conversational LLM inference with automatic history management.
@@ -40,6 +43,11 @@ import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
  * models. It supports automatic history retention in-memory (keyed by a header for multi-user support), system prompts,
  * and configurable roles. The predictor is designed to be model-agnostic, allowing seamless swapping of compatible
  * chat-tuned LLMs via the modelId configuration.
+ * </p>
+ *
+ * <p>
+ * The turns of one memory ID run one at a time, so each turn sees the history of the turn before it. Turns of different
+ * memory IDs are not held up by each other.
  * </p>
  *
  * <p>
@@ -79,6 +87,8 @@ import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
  * <li>{@code authToken}: Optional String, HF API token for gated models.</li>
  * <li>{@code userRole}: Optional String, role for user messages (default "user").</li>
  * <li>{@code systemPrompt}: Optional String, initial system message (appended if history is empty).</li>
+ * <li>{@code maxChatHistories}: Optional int, the number of memory IDs whose history is kept (default 1000).</li>
+ * <li>{@code maxHistoryMessages}: Optional int, the number of messages kept in a history (default 50, 0 for all).</li>
  * </ul>
  *
  * <p>
@@ -97,13 +107,28 @@ import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
  */
 public class ChatPredictor extends AbstractTaskPredictor {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
     // In-memory chat history (key = memoryId, value = JSON string of list of dicts)
-    private final Map<String, String> chatHistories = new ConcurrentHashMap<>();
+    private final Map<String, String> chatHistories;
+
+    // A turn reads the history, runs the model and writes the history back, so the turns of one memory ID hold its
+    // lock. A lock is kept only while turns of its memory ID are in flight, so the map needs no bound.
+    private final Map<String, TurnLock> turnLocks = new ConcurrentHashMap<>();
 
     public ChatPredictor(HuggingFaceEndpoint endpoint) {
         super(endpoint);
+        int maxHistoryMessages = config.getMaxHistoryMessages();
+        if (maxHistoryMessages < 0 || maxHistoryMessages == 1) {
+            // a history trimmed to 1 message keeps no reply, as the kept messages start with a user message
+            throw new IllegalArgumentException(
+                    "The maxHistoryMessages option must be 0 (no limit) or at least 2, but was " + maxHistoryMessages);
+        }
+        // keeps the most recently updated histories only, so the map does not grow without bound
+        int maxChatHistories = config.getMaxChatHistories();
+        this.chatHistories = maxChatHistories > 0
+                ? LRUCacheFactory.newLRUCache(16, maxChatHistories, false)
+                : new ConcurrentHashMap<>();
     }
 
     @Override
@@ -117,9 +142,36 @@ public class ChatPredictor extends AbstractTaskPredictor {
     }
 
     @Override
+    public void predict(Exchange exchange) throws Exception {
+        String memoryId = memoryId(exchange);
+        TurnLock turnLock = turnLocks.compute(memoryId, (id, existing) -> {
+            TurnLock answer = existing != null ? existing : new TurnLock();
+            answer.turns++;
+            return answer;
+        });
+        turnLock.lock.lock();
+        try {
+            super.predict(exchange);
+        } finally {
+            turnLock.lock.unlock();
+            turnLocks.computeIfPresent(memoryId, (id, existing) -> --existing.turns == 0 ? null : existing);
+        }
+    }
+
+    /**
+     * The number of memory IDs with turns in flight.
+     */
+    int conversationsInFlight() {
+        return turnLocks.size();
+    }
+
+    private String memoryId(Exchange exchange) {
+        return exchange.getIn().getHeader(config.getMemoryIdHeader(), "default", String.class);
+    }
+
+    @Override
     protected Input prepareInput(Exchange exchange) throws Exception {
-        String memoryIdHeader = config.getMemoryIdHeader();
-        String memoryId = exchange.getIn().getHeader(memoryIdHeader, "default", String.class);
+        String memoryId = memoryId(exchange);
 
         // Clear if requested
         Boolean clear = exchange.getIn().getHeader("CamelChatClearHistory", Boolean.class);
@@ -166,25 +218,22 @@ public class ChatPredictor extends AbstractTaskPredictor {
     protected void processOutput(Exchange exchange, Output output) throws Exception {
         String resultJson = output.getAsString("data");
 
-        if (resultJson.contains("\"error\"")) {
-            throw new RuntimeCamelException("Python inference failed: " + resultJson);
-        }
-
         // Parse JSON and extract generated text
         JsonNode node = objectMapper.readTree(resultJson);
+        failOnPythonError(node);
         String generatedText = null;
 
         if (node.isArray() && !node.isEmpty()) {
             JsonNode first = node.get(0);
             if (first.has("generated_text")) {
                 JsonNode genText = first.get("generated_text");
-                if (genText.isTextual()) {
-                    generatedText = genText.asText();
+                if (genText.isString()) {
+                    generatedText = genText.asString("");
                 } else if (genText.isArray()) {
                     JsonNode lastMessage = genText.get(genText.size() - 1);
-                    String role = lastMessage.get("role").asText();
+                    String role = lastMessage.get("role").asString("");
                     if (role.equals("assistant") || role.equals("AI")) {
-                        generatedText = lastMessage.get("content").asText();
+                        generatedText = lastMessage.get("content").asString("");
                     }
                 }
             }
@@ -198,15 +247,45 @@ public class ChatPredictor extends AbstractTaskPredictor {
         exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, generatedText);
 
         // Update history with full returned history
-        String memoryIdHeader = config.getMemoryIdHeader();
-        String memoryId = exchange.getIn().getHeader(memoryIdHeader, "default", String.class);
+        String memoryId = memoryId(exchange);
         if (node.isArray() && !node.isEmpty()) {
             JsonNode first = node.get(0);
             if (first.has("generated_text") && first.get("generated_text").isArray()) {
-                String fullHistoryJson = first.get("generated_text").toString();
+                String fullHistoryJson = trimHistory(first.get("generated_text")).toString();
                 chatHistories.put(memoryId, fullHistoryJson);
                 LOG.debug("Updated chat history for ID: {}", memoryId);
             }
         }
+    }
+
+    /**
+     * Keeps the system message and at most maxHistoryMessages of the other messages. The oldest messages are dropped
+     * first, and the kept messages start with a user message, as chat templates that alternate the roles expect.
+     */
+    private JsonNode trimHistory(JsonNode history) {
+        int maxMessages = config.getMaxHistoryMessages();
+        int systemMessages = !history.isEmpty() && "system".equals(history.get(0).path("role").asString()) ? 1 : 0;
+        if (maxMessages <= 0 || history.size() - systemMessages <= maxMessages) {
+            return history;
+        }
+        int from = history.size() - maxMessages;
+        while (from < history.size() && !config.getUserRole().equals(history.get(from).path("role").asString())) {
+            from++;
+        }
+        ArrayNode trimmed = objectMapper.createArrayNode();
+        if (systemMessages > 0) {
+            trimmed.add(history.get(0));
+        }
+        for (int i = from; i < history.size(); i++) {
+            trimmed.add(history.get(i));
+        }
+        LOG.debug("Dropped {} old messages from the chat history", history.size() - trimmed.size());
+        return trimmed;
+    }
+
+    private static final class TurnLock {
+        private final ReentrantLock lock = new ReentrantLock();
+        // the turns that hold or wait for the lock, only changed inside a compute of turnLocks
+        private int turns;
     }
 }

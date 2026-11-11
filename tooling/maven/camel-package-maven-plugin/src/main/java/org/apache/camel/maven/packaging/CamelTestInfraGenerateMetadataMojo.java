@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -31,8 +32,6 @@ import java.util.jar.JarFile;
 
 import javax.inject.Inject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.tooling.util.FileUtil;
@@ -49,6 +48,10 @@ import org.codehaus.plexus.build.BuildContext;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.DotName;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Gather all classes annotated with @InfraService and create a JSON file containing all the metadata.
@@ -144,8 +147,9 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         }
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults()
+                    .enable(SerializationFeature.INDENT_OUTPUT)
+                    .build();
             String modelsAsJson = mapper.writeValueAsString(models);
 
             if (generatedResourcesOutputDir == null) {
@@ -155,7 +159,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
             FileUtil.updateFile(generatedResourcesOutputDir.toPath()
                     .resolve("META-INF")
                     .resolve("metadata.json"), modelsAsJson);
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -237,7 +241,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
             String normalizedAlias = normalizeForMatching(alias);
 
             for (String key : props.stringPropertyNames()) {
-                String lowerKey = key.toLowerCase();
+                String lowerKey = key.toLowerCase(Locale.ROOT);
 
                 // Skip platform-specific keys
                 if (lowerKey.endsWith(".ppc64le") || lowerKey.endsWith(".s390x")
@@ -358,7 +362,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
     }
 
     private static String normalizeForMatching(String s) {
-        return s.replace("-", "").replace(".", "").toLowerCase();
+        return s.replace("-", "").replace(".", "").toLowerCase(Locale.ROOT);
     }
 
     private boolean classExistsInDependency(String classPath, File dependency) throws IOException {

@@ -990,4 +990,30 @@ public class URISupportTest {
         assertThat(URISupport.sanitizePath("joe:pa/ss@host/dir")).isEqualTo("joe:xxxxxx@host/dir");
     }
 
+    @Test
+    public void testTextBlockToSingleLine() {
+        assertThat(URISupport.textBlockToSingleLine(null)).isNull();
+        assertThat(URISupport.textBlockToSingleLine("")).isEmpty();
+        // the context-path is kept as-is before the query, and the query lines are trimmed
+        assertThat(URISupport.textBlockToSingleLine("""
+                sql:select *
+                  from orders?
+                  dataSource=#ds&
+                  useIterator=false
+                """)).isEqualTo("sql:select * from orders?dataSource=#ds&useIterator=false");
+        assertThat(URISupport.textBlockToSingleLine("sql:select *\r\nfrom orders\r\n"))
+                .isEqualTo("sql:select * from orders");
+    }
+
+    @Test
+    public void testTextBlockToSingleLineWithoutLineBreak() {
+        // a uri on a single line is only trimmed, white space inside it is kept
+        assertThat(URISupport.textBlockToSingleLine("  sql:select  *  from t?x=1  "))
+                .isEqualTo("sql:select  *  from t?x=1");
+        assertThat(URISupport.textBlockToSingleLine(" \t ")).isEmpty();
+        // getEndpoint(String) calls this for every uri, so a uri that needs no change must not be copied
+        String uri = "direct:foo?bar=1";
+        assertThat(URISupport.textBlockToSingleLine(uri)).isSameAs(uri);
+    }
+
 }

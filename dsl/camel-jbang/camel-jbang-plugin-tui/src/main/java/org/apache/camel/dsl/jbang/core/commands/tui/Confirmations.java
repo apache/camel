@@ -22,6 +22,7 @@ import java.util.Queue;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 
@@ -30,12 +31,14 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
  * of an AI tool ({@link ToolConfirms}), an AI edit waiting to be saved, a tool of its own an ACP agent wants to run,
  * deleting a file or discarding changes. Only the user answers them (CAMEL-25444): a key an MCP client sends
  * (tui_send_keys) or a tape plays never reaches one, and is dropped while one is open. While a tape drives the monitor
- * nothing asks at all ({@link MonitorContext#confirmFirst}), as the model or the tape does everything itself.
+ * nothing asks at all ({@link MonitorContext#confirmFirst}), as the model or the tape does everything itself. A lone
+ * Esc still reaches a dialog that Esc only cancels ({@link MonitorTab#isConfirmCancelledByEsc()}), so an MCP client can
+ * close a dialog it opened (CAMEL-26699).
  */
 final class Confirmations {
 
-    /** A dialog that asks to confirm, and whether it is open now. */
-    private record Dialog(String name, BooleanSupplier open) {
+    /** A dialog that asks to confirm, whether it is open now, and whether Esc only cancels it. */
+    private record Dialog(String name, BooleanSupplier open, BooleanSupplier cancelledByEsc) {
     }
 
     private final List<Dialog> dialogs = new ArrayList<>();
@@ -61,13 +64,31 @@ final class Confirmations {
                 .add("a confirm dialog of the tab", () -> {
                     MonitorTab tab = tabs.activeTab();
                     return tab != null && tab.isConfirming();
+                }, () -> {
+                    MonitorTab tab = tabs.activeTab();
+                    return tab != null && tab.isConfirmCancelledByEsc();
                 });
     }
 
     /** Adds a dialog that asks to confirm, named as the user sees it. */
     Confirmations add(String name, BooleanSupplier open) {
-        dialogs.add(new Dialog(name, open));
+        return add(name, open, () -> false);
+    }
+
+    /** Adds a dialog that asks to confirm, and whether Esc only cancels it. */
+    Confirmations add(String name, BooleanSupplier open, BooleanSupplier cancelledByEsc) {
+        dialogs.add(new Dialog(name, open, cancelledByEsc));
         return this;
+    }
+
+    /** Whether the dialog that is open is one that Esc only cancels (false when none is open). */
+    boolean isOpenCancelledByEsc() {
+        for (Dialog dialog : dialogs) {
+            if (dialog.open().getAsBoolean()) {
+                return dialog.cancelledByEsc().getAsBoolean();
+            }
+        }
+        return false;
     }
 
     /** The dialog that asks to confirm and is open, or null when none is. */
@@ -82,7 +103,8 @@ final class Confirmations {
 
     /**
      * Delivers the keys an MCP client or a tape sent that are due now, one by one, as a key can open a dialog. A key
-     * that comes while a dialog asks to confirm is dropped: only the user answers it.
+     * that comes while a dialog asks to confirm is dropped: only the user answers it. An Esc that only cancels the
+     * dialog gets through.
      *
      * @return whether a key was taken from the queue
      */
@@ -92,7 +114,7 @@ final class Confirmations {
         while ((key = pendingKeys.peek()) != null && key.isDue(now)) {
             pendingKeys.poll();
             taken = true;
-            if (open() != null) {
+            if (open() != null && !(isEsc(key.event()) && isOpenCancelledByEsc())) {
                 continue;
             }
             delivering = true;
@@ -103,6 +125,10 @@ final class Confirmations {
             }
         }
         return taken;
+    }
+
+    private static boolean isEsc(KeyEvent ke) {
+        return ke.isKey(KeyCode.ESCAPE) && !ke.hasCtrl() && !ke.hasAlt() && !ke.hasShift();
     }
 
     /** Whether the key being handled was sent by an MCP client or a tape, not typed by the user. */

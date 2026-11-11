@@ -57,7 +57,7 @@ public class GrpcConfiguration {
     @UriParam(label = "security", defaultValue = "NONE", enums = "NONE,GOOGLE,JWT")
     private GrpcAuthType authenticationType = GrpcAuthType.NONE;
 
-    @UriParam(label = "security", defaultValue = "HMAC256", enums = "HMAC256,HMAC384,HMAC512,RSA256,RSA384,RSA512")
+    @UriParam(label = "security", defaultValue = "HMAC256")
     private JwtAlgorithm jwtAlgorithm = JwtAlgorithm.HMAC256;
 
     @UriParam(label = "security", security = "secret")
@@ -349,7 +349,9 @@ public class GrpcConfiguration {
      * to the stream, and the response will be immediately sent back to the sender. If a delegation strategy is
      * selected, request is sent to the stream, but no response generated under the assumption that all necessary
      * responses will be sent at another part of route. Delegation strategy always comes with
-     * routeControlledStreamObserver=true to be able to achieve the assumption.
+     * routeControlledStreamObserver=true to be able to achieve the assumption. With routeControlledStreamObserver=true,
+     * the propagation strategy does not send responses either: it sends the requests to the route one at a time, and
+     * the route sends the responses.
      */
     public GrpcConsumerStrategy getConsumerStrategy() {
         return consumerStrategy;

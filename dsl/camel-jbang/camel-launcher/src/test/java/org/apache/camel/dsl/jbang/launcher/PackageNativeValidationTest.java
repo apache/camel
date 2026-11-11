@@ -334,6 +334,29 @@ class PackageNativeValidationTest {
     }
 
     @Test
+    void homebrewValidatorTrustsItsTapForTheAuditAndUntrustsItOnExit(@TempDir Path tmp) throws Exception {
+        // Recent Homebrew refuses to load a formula from an untrusted tap, so the validator must
+        // trust its throwaway tap before `brew audit`, and must not leave that trust behind.
+        Path fakeBinDir = Files.createDirectory(tmp.resolve("fake-bin"));
+        writeFakeBrew(fakeBinDir.resolve("brew"));
+        Path target = Files.createDirectory(tmp.resolve("target"));
+        Path tapDir = Files.createDirectory(tmp.resolve("tap"));
+        stageHomebrewFormula(target, "camel-launcher-9.9.9-bin.tar.gz");
+
+        Result r = sh(null, List.of(
+                "PATH=" + fakeBinDir.toAbsolutePath() + File.pathSeparator + System.getenv("PATH"),
+                "CAMEL_PACKAGE_TEST_MODE=true",
+                "CAMEL_PACKAGE_TEST_VERSION=" + VERSION,
+                "CAMEL_VALIDATE_TARGET_DIR=" + target.toAbsolutePath(),
+                "FAKE_BREW_TAP_DIR=" + tapDir.toAbsolutePath(),
+                "FAKE_BREW_REQUIRE_TRUST=true"),
+                "/bin/bash " + VALIDATE.toAbsolutePath() + " homebrew");
+
+        assertThat(r.out()).doesNotContain("untrusted tap").contains("PASS: homebrew style/audit passed");
+        assertThat(tapDir.resolve(".trusted")).doesNotExist();
+    }
+
+    @Test
     void homebrewValidatorSkipsWhenJavaDependencyMissing(@TempDir Path tmp) throws Exception {
         // A `brew install` failure caused by a missing/incompatible Java on the host is an environment
         // limitation, not a defect in the generated formula, and must SKIP (exit 0), not FAIL - this pins
@@ -424,8 +447,9 @@ class PackageNativeValidationTest {
      * heuristics can be pinned without needing a real Homebrew install. Behavior for the {@code audit} and
      * {@code install} subcommands is driven by {@code FAKE_BREW_AUDIT_RC}/{@code
      * FAKE_BREW_AUDIT_OUTPUT} and {@code FAKE_BREW_INSTALL_RC}/{@code FAKE_BREW_INSTALL_OUTPUT}; the tap directory it
-     * reports is {@code FAKE_BREW_TAP_DIR}. Every other subcommand it needs (tap-new, untap, style, uninstall) just
-     * succeeds.
+     * reports is {@code FAKE_BREW_TAP_DIR}. With {@code FAKE_BREW_REQUIRE_TRUST=true}, {@code audit} refuses the tap
+     * unless {@code trust --tap} was called, as recent Homebrew does. Every other subcommand it needs (tap-new, untap,
+     * untrust, style, uninstall) just succeeds.
      */
     private static Path writeFakeBrew(Path file) throws IOException {
         return writeExecutable(file, "#!/bin/sh\n"
@@ -433,8 +457,13 @@ class PackageNativeValidationTest {
                                      + "    tap-new) mkdir -p \"$FAKE_BREW_TAP_DIR/Formula\"; exit 0 ;;\n"
                                      + "    --repository) echo \"$FAKE_BREW_TAP_DIR\"; exit 0 ;;\n"
                                      + "    untap) exit 0 ;;\n"
+                                     + "    trust) touch \"$FAKE_BREW_TAP_DIR/.trusted\"; exit 0 ;;\n"
+                                     + "    untrust) rm -f \"$FAKE_BREW_TAP_DIR/.trusted\"; exit 0 ;;\n"
                                      + "    style) exit 0 ;;\n"
                                      + "    audit)\n"
+                                     + "        if [ \"$FAKE_BREW_REQUIRE_TRUST\" = true ] && [ ! -f \"$FAKE_BREW_TAP_DIR/.trusted\" ]; then\n"
+                                     + "            echo \"Error: Refusing to load formula $3 from untrusted tap.\"; exit 1\n"
+                                     + "        fi\n"
                                      + "        [ -n \"$FAKE_BREW_AUDIT_OUTPUT\" ] && echo \"$FAKE_BREW_AUDIT_OUTPUT\"\n"
                                      + "        exit \"${FAKE_BREW_AUDIT_RC:-0}\" ;;\n"
                                      + "    install)\n"

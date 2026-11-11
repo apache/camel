@@ -39,9 +39,10 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_MAP
              category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
                                    description = "The value of the entry for an added or updated event, as any "
-                                                 + "member of the cluster stored it, and no body for removed and "
-                                                 + "evicted: the key is in the CamelHazelcastObjectId header and the "
-                                                 + "event in CamelHazelcastListenerAction"),
+                                                 + "member of the cluster stored it, and no body for removed, evicted "
+                                                 + "and expired (the time to live of the entry ended): the key is in "
+                                                 + "the CamelHazelcastObjectId header and the event in "
+                                                 + "CamelHazelcastListenerAction"),
            producerIn = @BodyType(value = {
                    Carrier.TEXT, Carrier.BYTES, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
                                   description = "The value that put, putIfAbsent and update store under the key "

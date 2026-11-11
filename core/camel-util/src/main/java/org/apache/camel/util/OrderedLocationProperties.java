@@ -69,7 +69,7 @@ public final class OrderedLocationProperties extends BaseOrderedProperties {
      * Gets the location from where the property was resolved
      *
      * @param  key the property key
-     * @return     the location, or <tt>null</tt> if not possible to determine the location.
+     * @return     the location, or <code>null</code> if not possible to determine the location.
      */
     public String getLocation(Object key) {
         return locations.get(key);
@@ -79,7 +79,7 @@ public final class OrderedLocationProperties extends BaseOrderedProperties {
      * Gets the default value of the property, if a default value exists
      *
      * @param  key the property key
-     * @return     the default value, or <tt>null</tt> if not possible to determine the default value.
+     * @return     the default value, or <code>null</code> if not possible to determine the default value.
      */
     public Object getDefaultValue(Object key) {
         return defaultValues.get(key);

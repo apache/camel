@@ -2,6 +2,7 @@
 package org.apache.camel.component.amqp;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,9 +23,11 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AMQPComponent target = (AMQPComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "brokerurl":
         case "brokerUrl": target.setBrokerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "cacheconnection":
+        case "cacheConnection": target.setCacheConnection(property(camelContext, boolean.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "includeamqpannotations":
         case "includeAmqpAnnotations": target.setIncludeAmqpAnnotations(property(camelContext, boolean.class, value)); return true;
@@ -51,9 +54,11 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "brokerurl":
         case "brokerUrl": return java.lang.String.class;
+        case "cacheconnection":
+        case "cacheConnection": return boolean.class;
         case "host": return java.lang.String.class;
         case "includeamqpannotations":
         case "includeAmqpAnnotations": return boolean.class;
@@ -81,9 +86,11 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AMQPComponent target = (AMQPComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "brokerurl":
         case "brokerUrl": return target.getBrokerUrl();
+        case "cacheconnection":
+        case "cacheConnection": return target.isCacheConnection();
         case "host": return target.getHost();
         case "includeamqpannotations":
         case "includeAmqpAnnotations": return target.isIncludeAmqpAnnotations();

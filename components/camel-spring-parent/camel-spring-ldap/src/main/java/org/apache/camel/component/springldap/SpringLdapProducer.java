@@ -26,6 +26,7 @@ import javax.naming.directory.ModificationItem;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapOperations;
@@ -72,7 +73,7 @@ public class SpringLdapProducer extends DefaultProducer {
      * see <a http://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol>http://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol</a>
      * key: "attributes" - necessary for the bind operation only; an instance of javax.naming.directory.Attributes,
      * containing the information necessary to create an LDAP node.
-     * key: "password" - necessary for the authentication operation only;
+     * key: "password" - necessary for the authentication operation only; a missing or empty password fails the operation
      * key: "modificationItems" - necessary for the modify_attributes operation only;
      * key: "function" - necessary for the function_driven operation only; provides a flexible hook into the {@link LdapTemplate} to call any method
      * key: "request" - necessary for the function_driven operation only; passed into the "function" to enable the client to bind parameters that need to be passed into the {@link LdapTemplate}
@@ -82,13 +83,13 @@ public class SpringLdapProducer extends DefaultProducer {
      */
     @Override
     public void process(Exchange exchange) throws Exception {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> body = exchange.getIn().getBody(Map.class);
-
         LdapOperation operation = endpoint.getOperation();
         if (null == operation) {
             throw new UnsupportedOperationException("LDAP operation must not be empty, but you provided an empty operation");
         }
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = exchange.getIn().getMandatoryBody(Map.class);
 
         LdapTemplate ldapTemplate = endpoint.getLdapTemplate();
 
@@ -118,8 +119,15 @@ public class SpringLdapProducer extends DefaultProducer {
                 ldapTemplate.unbind(dn);
                 break;
             case AUTHENTICATE:
-                ldapTemplate.authenticate(LdapQueryBuilder.query().base(dn).filter((String) body.get(FILTER)),
-                        (String) body.get(PASSWORD));
+                String password = (String) body.get(PASSWORD);
+                if (password == null || password.isEmpty()) {
+                    // fail the same way regardless of the Spring LDAP version and authentication strategy in use
+                    throw new AuthenticationException(
+                            new javax.naming.AuthenticationException(
+                                    "The authenticate operation needs a non-empty password in the '" + PASSWORD
+                                                                     + "' entry of the body"));
+                }
+                ldapTemplate.authenticate(LdapQueryBuilder.query().base(dn).filter((String) body.get(FILTER)), password);
                 break;
             case MODIFY_ATTRIBUTES:
                 ModificationItem[] modificationItems = (ModificationItem[]) body.get(MODIFICATION_ITEMS);
@@ -128,6 +136,10 @@ public class SpringLdapProducer extends DefaultProducer {
             case FUNCTION_DRIVEN:
                 BiFunction<LdapOperations, Object, ?> ldapOperationFunction
                         = (BiFunction<LdapOperations, Object, ?>) body.get(FUNCTION);
+                if (ldapOperationFunction == null) {
+                    throw new UnsupportedOperationException(
+                            "The function_driven operation needs a BiFunction in the '" + FUNCTION + "' entry of the body");
+                }
                 Object ldapOperationRequest = body.get(REQUEST);
                 exchange.getIn().setBody(ldapOperationFunction.apply(ldapTemplate, ldapOperationRequest));
                 break;

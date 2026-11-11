@@ -19,6 +19,7 @@ package org.apache.camel.component.jackson.avro.transform;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -64,6 +65,7 @@ class AvroStructDataTypeTransformerTest {
 
     @Test
     void shouldHandleJsonString() throws Exception {
+        // CAMEL-26300: Json text is read as Json, not as Avro binary
         Exchange exchange = new DefaultExchange(camelContext);
 
         AvroSchema avroSchema = getSchema();
@@ -74,6 +76,36 @@ class AvroStructDataTypeTransformerTest {
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(ObjectNode.class, exchange.getMessage().getBody().getClass());
+        JsonNode body = exchange.getMessage().getBody(JsonNode.class);
+        Assertions.assertEquals("Christoph", body.get("name").asText());
+        Assertions.assertEquals(32, body.get("age").asInt());
+    }
+
+    @Test
+    void shouldWrapMalformedJsonInCamelExecutionException() throws Exception {
+        // CAMEL-26300: text that looks like Json is read as Json, and fails as Json
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
+        exchange.getMessage().setBody("{ this is no json }");
+
+        Assertions.assertThrows(CamelExecutionException.class,
+                () -> transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY));
+    }
+
+    @Test
+    void shouldReadJsonStringWhateverTheExchangeCharset() throws Exception {
+        // CAMEL-26300: Json text is read as the String it is, so a non-ASCII character works with any exchange charset
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
+        exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.ISO_8859_1.name());
+        exchange.getMessage().setBody("{ \"name\": \"Jos\u00e9\", \"age\": 32 }");
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        JsonNode body = exchange.getMessage().getBody(JsonNode.class);
+        Assertions.assertEquals("Jos\u00e9", body.get("name").asText());
+        Assertions.assertEquals(32, body.get("age").asInt());
     }
 
     @Test
@@ -131,17 +163,17 @@ class AvroStructDataTypeTransformerTest {
 
     @Test
     void theBodyTypesSayTheBody(@TempDir Path dir) throws Exception {
-        // CAMEL-25928: Avro binary as bytes, a stream or a file, a POJO or a JsonNode, as transformerIn says, and
-        // the JsonNode transformerOut says
+        // CAMEL-25928: Json text, Avro binary as bytes, a stream or a file, a POJO or a JsonNode, as transformerIn
+        // says, and the JsonNode transformerOut says
         BodyTypes bodyTypes = AvroStructDataTypeTransformer.class.getAnnotation(BodyTypes.class);
-        Assertions.assertEquals(List.of(Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO),
+        Assertions.assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO),
                 List.of(bodyTypes.transformerIn().value()));
         Assertions.assertEquals(List.of(Carrier.POJO), List.of(bodyTypes.transformerOut().value()));
         Assertions.assertEquals(JsonNode.class.getName(), bodyTypes.transformerOut().javaType());
         String json = "{ \"name\": \"Goofy\", \"age\": 25 }";
         byte[] binary = Avro.mapper().writer(getSchema()).writeValueAsBytes(new Person("Goofy", 25));
         Path file = Files.write(dir.resolve("person.bin"), binary);
-        for (Object body : Arrays.asList(binary, new ByteArrayInputStream(binary), file.toFile(), new Person("Goofy", 25),
+        for (Object body : Arrays.asList(json, binary, new ByteArrayInputStream(binary), file.toFile(), new Person("Goofy", 25),
                 Json.mapper().readerFor(JsonNode.class).readValue(json))) {
             Exchange exchange = new DefaultExchange(camelContext);
             exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
@@ -155,11 +187,5 @@ class AvroStructDataTypeTransformerTest {
         other.getMessage().setBody(Map.of("name", "Goofy"));
         Assertions.assertThrows(CamelExecutionException.class,
                 () -> transformer.transform(other.getMessage(), DataType.ANY, DataType.ANY));
-        // nor is Json text
-        Exchange text = new DefaultExchange(camelContext);
-        text.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
-        text.getMessage().setBody(json);
-        Assertions.assertThrows(RuntimeException.class,
-                () -> transformer.transform(text.getMessage(), DataType.ANY, DataType.ANY));
     }
 }

@@ -1,0 +1,435 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.processor.errorhandler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.AsyncProducer;
+import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
+import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * An {@link AsyncProcessor} that throws from {@code process(exchange, callback)}, instead of setting the exception on
+ * the exchange, in a route with {@code noErrorHandler()}: the exchange must complete with the thrown exception instead
+ * of hanging, and be continued exactly once. Each send is bounded, so a hang fails the test. The helpers, and the tests
+ * of a late callback with the next exchange and of a double callback, are those of
+ * {@link SimpleTaskProcessorThrowsTestSupport}, with the route of {@link #start(Processor)}.
+ */
+class NoErrorHandlerProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSupport {
+
+    /**
+     * Throws on the first call, and succeeds on the later calls.
+     */
+    private final class ThrowsFirst extends AsyncProcessorSupport {
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            if (calls.incrementAndGet() == 1) {
+                throw new IllegalStateException("thrown");
+            }
+            callback.done(true);
+            return true;
+        }
+    }
+
+    @Override
+    protected void start(Processor processor) throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").errorHandler(noErrorHandler()).process(processor).to("mock:result");
+            }
+        });
+        context.start();
+    }
+
+    @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
+    void noErrorHandler() throws Exception {
+        start(new ThrowsFirst());
+        assertFailedWithTheThrownException(send());
+    }
+
+    @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
+    void processorThrowsError() throws Exception {
+        // an Error, not an Exception: before, the reactive executor let it through (it catches only exceptions), and the
+        // exchange never completed
+        start(new AsyncProcessorSupport() {
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                calls.incrementAndGet();
+                throw new NoClassDefFoundError("thrown");
+            }
+        });
+        Exchange out = send();
+        assertInstanceOf(NoClassDefFoundError.class, out.getException().getCause());
+        assertEquals("thrown", out.getException().getCause().getMessage());
+        assertEquals(1, calls.get(), "calls");
+        assertEquals(0, getMockEndpoint("mock:result").getReceivedCounter(), "mock:result");
+    }
+
+    @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
+    void afterAnAsynchronousStep() throws Exception {
+        // the step runs on the thread of the asynchronous delay, not on the caller's
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").errorHandler(noErrorHandler()).delay(10).asyncDelayed().process(new ThrowsFirst())
+                        .to("mock:result");
+            }
+        });
+        context.start();
+        assertFailedWithTheThrownException(send());
+    }
+
+    @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
+    void controlTransacted() throws Exception {
+        // control: a transacted exchange runs on the reactive executor's queue, and the exchange fails with the thrown
+        // exception on main too
+        start(new ThrowsFirst());
+        assertFailedWithTheThrownException(send(true));
+    }
+
+    @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
+    void nextExchangeIsProcessed() throws Exception {
+        start(new ThrowsFirst());
+        assertFailedWithTheThrownException(send());
+
+        Exchange out = send();
+        assertNull(out.getException());
+        assertEquals(1, getMockEndpoint("mock:result").getReceivedCounter(), "mock:result");
+        assertEquals(2, calls.get(), "calls");
+    }
+
+    @Test
+    void controlPlainProcessorThrows() throws Exception {
+        // control, as before: the converter of a plain Processor to an AsyncProcessor catches the exception and sets it
+        // on the exchange
+        start(exchange -> {
+            calls.incrementAndGet();
+            throw new IllegalStateException("thrown");
+        });
+        assertFailedWithTheThrownException(send());
+    }
+
+    @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
+    void controlCallbackCalledBeforeTheProcessorThrows() throws Exception {
+        // control, as before: the processor calls the callback and then throws. The callback continued the exchange, so
+        // the exception is left to the reactive executor (which logs it), and the exchange completes once
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+        start(new AsyncProcessorSupport() {
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                calls.incrementAndGet();
+                callback.done(true);
+                throw new IllegalStateException("after the callback");
+            }
+        });
+        AtomicInteger done = countDoneExchanges();
+
+        Exchange out = sendOnThisThread();
+        assertNull(out.getException());
+        result.assertIsSatisfied();
+        assertEquals(1, result.getReceivedCounter(), "mock:result");
+        assertEquals(1, done.get(), "the exchange was done once");
+        assertEquals(1, calls.get(), "calls");
+    }
+
+    @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
+    void controlTransactedCallbackCalledBeforeTheProcessorThrows() throws Exception {
+        // control, as before: for a transacted exchange the exception thrown after the callback reaches the caller, which
+        // fails the exchange (so a transaction rolls back)
+        start(new AsyncProcessorSupport() {
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                calls.incrementAndGet();
+                callback.done(true);
+                throw new IllegalStateException("after the callback");
+            }
+        });
+
+        Exchange out = send(true);
+        assertInstanceOf(IllegalStateException.class, out.getException());
+        assertEquals("after the callback", out.getException().getMessage());
+        assertEquals(1, calls.get(), "calls");
+    }
+
+    @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
+    void controlCallbackQueuedBeforeTheProcessorThrows() throws Exception {
+        // control, as before: the processor queues the call of the callback on the reactive executor and then throws.
+        // The thrown failure is taken over through the reactive executor, after the work already queued there, so the
+        // queued callback comes first and continues the exchange
+        start(new AsyncProcessorSupport() {
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                calls.incrementAndGet();
+                exchange.getContext().getCamelContextExtension().getReactiveExecutor().schedule(() -> {
+                    exchange.getMessage().setBody("queued");
+                    callback.done(false);
+                });
+                throw new IllegalStateException("after the callback was queued");
+            }
+        });
+        AtomicInteger done = countDoneExchanges();
+
+        Exchange out = sendOnThisThread();
+        assertNull(out.getException());
+        assertEquals("queued", out.getMessage().getBody());
+        assertEquals(1, getMockEndpoint("mock:result").getReceivedCounter(), "mock:result");
+        assertEquals(1, done.get(), "the exchange was done once");
+        assertEquals(1, calls.get(), "calls");
+    }
+
+    @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
+    void controlCallbackOfARouteBeforeTheProcessorThrows() throws Exception {
+        // control, as before: the processor hands the exchange and the callback to a direct route (with the default
+        // error handler) and then throws. Each step of that route runs ahead of the takeover queued on the reactive
+        // executor, and the route calls the callback through it, so the route continues the exchange: the exchange
+        // completes with the reply of that route, once. (A called route with noErrorHandler() loses to the takeover,
+        // even with one step: its steps do not go through the reactive executor ahead of the takeover; the exchange
+        // then fails with the thrown exception and the reply of that route is ignored with a WARN.)
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:inner").setBody(constant("inner")).setHeader("inner", constant("yes"));
+            }
+        });
+        AtomicReference<AsyncProducer> producer = new AtomicReference<>();
+        start(new AsyncProcessorSupport() {
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                calls.incrementAndGet();
+                producer.get().process(exchange, callback);
+                throw new IllegalStateException("after the callback was handed to a route");
+            }
+        });
+        AsyncProducer direct = context.getEndpoint("direct:inner").createAsyncProducer();
+        direct.start();
+        producer.set(direct);
+        AtomicInteger done = countDoneExchanges();
+        try {
+            Exchange out = sendOnThisThread();
+            assertNull(out.getException());
+            assertEquals("inner", out.getMessage().getBody());
+            assertEquals("yes", out.getMessage().getHeader("inner"));
+            assertEquals(1, getMockEndpoint("mock:result").getReceivedCounter(), "mock:result");
+            assertEquals(1, done.get(), "the exchange was done once");
+            assertEquals(1, calls.get(), "calls");
+        } finally {
+            direct.stop();
+        }
+    }
+
+    @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
+    void callbackCalledAfterTheProcessorThrewIsIgnored() throws Exception {
+        // the processor hands the callback to another thread and then throws. NoErrorHandler cannot tell this from a
+        // callback that never comes, so it fails the exchange with the thrown exception (before, the exchange waited
+        // for the callback), and the late callback must not continue the exchange a second time
+        CountDownLatch release = new CountDownLatch(1);
+        AtomicReference<Thread> late = new AtomicReference<>();
+        AtomicReference<Throwable> lateFailure = new AtomicReference<>();
+        AtomicInteger done = countDoneExchanges();
+        start(new AsyncProcessorSupport() {
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                calls.incrementAndGet();
+                Thread thread = new Thread(() -> {
+                    try {
+                        if (release.await(10, TimeUnit.SECONDS)) {
+                            callback.done(false);
+                        }
+                    } catch (Throwable t) {
+                        lateFailure.set(t);
+                    }
+                }, "late-callback");
+                late.set(thread);
+                thread.start();
+                throw new IllegalStateException("thrown");
+            }
+        });
+
+        assertFailedWithTheThrownException(send());
+
+        // now the processor calls the callback, after the exchange completed
+        release.countDown();
+        late.get().join(TimeUnit.SECONDS.toMillis(10));
+        assertFalse(late.get().isAlive(), "the late callback thread ended");
+        assertNull(lateFailure.get(), "the late callback failed");
+        assertEquals(1, done.get(), "the exchange was done once");
+        assertEquals(0, getMockEndpoint("mock:result").getReceivedCounter(), "mock:result");
+    }
+
+    @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
+    void callbackAndThrowAtTheSameTimeContinueEachExchangeOnce() throws Exception {
+        // the processor hands the callback to another thread, which calls it at once, and throws: the callback and the
+        // takeover race, and whichever wins, each exchange is continued once (as a success or with the thrown failure)
+        int count = 50;
+        ExecutorService callbacks = Executors.newFixedThreadPool(2);
+        try {
+            start(new AsyncProcessorSupport() {
+                @Override
+                public boolean process(Exchange exchange, AsyncCallback callback) {
+                    calls.incrementAndGet();
+                    callbacks.execute(() -> callback.done(false));
+                    throw new IllegalStateException("thrown");
+                }
+            });
+            AtomicInteger done = countDoneExchanges();
+
+            List<CompletableFuture<Exchange>> sends = new ArrayList<>();
+            for (int i = 0; i < count; i++) {
+                sends.add(asyncSend("direct:start", false));
+            }
+            int succeeded = 0;
+            for (CompletableFuture<Exchange> send : sends) {
+                Exchange out = send.get(20, TimeUnit.SECONDS);
+                if (out.getException() == null) {
+                    succeeded++;
+                } else {
+                    assertEquals("thrown", out.getException().getMessage());
+                }
+            }
+            await().atMost(10, TimeUnit.SECONDS).until(() -> done.get() >= count);
+            // the callbacks that lost have run too
+            callbacks.shutdown();
+            assertTrue(callbacks.awaitTermination(10, TimeUnit.SECONDS), "the callbacks ran");
+
+            assertEquals(count, done.get(), "each exchange was done once");
+            assertEquals(succeeded, getMockEndpoint("mock:result").getReceivedCounter(), "mock:result");
+            assertEquals(count, calls.get(), "calls");
+        } finally {
+            callbacks.shutdownNow();
+        }
+    }
+
+    /**
+     * An endpoint whose producer is an AsyncProcessor that throws from process(exchange, callback).
+     */
+    private void addThrowingEndpoint() {
+        context.addComponent("throwing", new DefaultComponent() {
+            @Override
+            protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+                return new DefaultEndpoint(uri, this) {
+                    @Override
+                    public Producer createProducer() {
+                        return new DefaultAsyncProducer(this) {
+                            @Override
+                            public boolean process(Exchange exchange, AsyncCallback callback) {
+                                calls.incrementAndGet();
+                                throw new IllegalStateException("thrown");
+                            }
+                        };
+                    }
+
+                    @Override
+                    public Consumer createConsumer(Processor processor) {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        });
+    }
+
+    @Test
+    void recipientListWithARecipientThatThrows() throws Exception {
+        // a recipient list wraps each producer in a clone of the error handler of the route: the recipient that throws
+        // fails, and without stopOnException the next recipient still gets the message
+        addThrowingEndpoint();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").errorHandler(noErrorHandler()).recipientList(constant("throwing:a,mock:b")).end()
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        Exchange out = send();
+        assertEquals(1, calls.get(), "calls");
+        assertEquals(1, getMockEndpoint("mock:b").getReceivedCounter(), "mock:b");
+        // the failure of the recipient fails the exchange at the end of the recipient list
+        assertInstanceOf(IllegalStateException.class, out.getException());
+        assertEquals("thrown", out.getException().getMessage());
+        assertEquals(0, getMockEndpoint("mock:result").getReceivedCounter(), "mock:result");
+    }
+
+    @Test
+    void recipientListStopOnExceptionWithARecipientThatThrows() throws Exception {
+        addThrowingEndpoint();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").errorHandler(noErrorHandler()).recipientList(constant("throwing:a,mock:b"))
+                        .stopOnException().end()
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        Exchange out = send();
+        assertInstanceOf(CamelExchangeException.class, out.getException());
+        assertInstanceOf(IllegalStateException.class, out.getException().getCause());
+        assertEquals(1, calls.get(), "calls");
+        assertEquals(0, getMockEndpoint("mock:b").getReceivedCounter(), "mock:b");
+        assertEquals(0, getMockEndpoint("mock:result").getReceivedCounter(), "mock:result");
+    }
+}

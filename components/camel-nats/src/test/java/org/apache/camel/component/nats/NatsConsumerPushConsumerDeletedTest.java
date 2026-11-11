@@ -212,6 +212,9 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
 
     @Test
     void removesItsConnectionListenerWhenTheRouteStopsWhileItSubscribes() throws Exception {
+        // the route of the test subscribes on the executor of its consumer: wait for it, so that the hook below
+        // applies to the subscribe of the route that replaces it, not to this first one
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !server.listeners.isEmpty());
         int added = server.listenersAdded.get();
         // the route is stopped while the consumer makes its first subscription, so the stop does not see the keeper
         // yet: the keeper must not stay registered on the (shared) connection

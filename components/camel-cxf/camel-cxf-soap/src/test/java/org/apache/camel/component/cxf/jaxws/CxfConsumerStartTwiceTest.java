@@ -18,20 +18,34 @@ package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfConsumerStartTwiceTest {
-    static final int PORT = CXFTestSupport.getPort6();
+    private static AvailablePortFinder.Port PORT;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
 
     @Test
     public void startServiceTwice() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            final String fromStr = "cxf:http://localhost:" + PORT + "/"
+            final String fromStr = "cxf:http://localhost:" + PORT.getPort() + "/"
                                    + this.getClass().getSimpleName()
                                    + "/test?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 
@@ -52,7 +66,7 @@ public class CxfConsumerStartTwiceTest {
 
             Exception ex = assertThrows(Exception.class, context::start);
             assertTrue(ex.getMessage().endsWith(
-                    "Multiple consumers for the same endpoint is not allowed: cxf://http://localhost:" + PORT
+                    "Multiple consumers for the same endpoint is not allowed: cxf://http://localhost:" + PORT.getPort()
                                                 + "/" + getClass().getSimpleName()
                                                 + "/test?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"));
 

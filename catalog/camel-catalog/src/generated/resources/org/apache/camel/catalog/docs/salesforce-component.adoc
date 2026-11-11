@@ -267,7 +267,7 @@ header will be automatically set based on the `format` option, but this can be o
 |===
 | Parameter | Type | Description| Default| Required
 
-| Body | `String` or `InputStream` | Body of the HTTP request | |
+| Body | `String` or `InputStream` | Body of the HTTP request. A body that cannot be converted to an `InputStream`, such as a `Map`, fails with an `InvalidPayloadException`. | |
 | `rawPath` | `String` | The portion of the endpoint URL after the domain name, e.g., '/services/data/v51.0/sobjects/Account/' | | x
 | `rawMethod` | `String` | The HTTP method | | x
 | `rawQueryParameters` | `String` | Comma separated list of message headers to include as query parameters. Do not url-encode values as this will be done automatically. | |
@@ -372,8 +372,7 @@ public class ContentProcessor implements Processor {
         cv.setTitle("test document");
         cv.setPathOnClient("test_doc.html");
         byte[] document = message.getBody(byte[].class);
-        ObjectMapper mapper = new ObjectMapper();
-        String enc = mapper.convertValue(document, String.class);
+        String enc = Base64.getEncoder().encodeToString(document);
         cv.setVersionData(enc);  // Uses base64 encoding and standard JSON request
         message.setBody(cv);
     }

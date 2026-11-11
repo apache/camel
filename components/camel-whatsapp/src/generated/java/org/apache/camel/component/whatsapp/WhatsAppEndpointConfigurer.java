@@ -2,6 +2,7 @@
 package org.apache.camel.component.whatsapp;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WhatsAppEndpoint target = (WhatsAppEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "authorizationtoken":
@@ -43,6 +44,8 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
         case "webhookPath": target.getConfiguration().setWebhookPath(property(camelContext, java.lang.String.class, value)); return true;
         case "webhooksecret":
         case "webhookSecret": target.getConfiguration().setWebhookSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "webhookverification":
+        case "webhookVerification": target.getConfiguration().setWebhookVerification(property(camelContext, boolean.class, value)); return true;
         case "webhookverifytoken":
         case "webhookVerifyToken": target.getConfiguration().setWebhookVerifyToken(property(camelContext, java.lang.String.class, value)); return true;
         case "whatsappservice":
@@ -53,7 +56,7 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
         case "authorizationtoken":
@@ -74,6 +77,8 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
         case "webhookPath": return java.lang.String.class;
         case "webhooksecret":
         case "webhookSecret": return java.lang.String.class;
+        case "webhookverification":
+        case "webhookVerification": return boolean.class;
         case "webhookverifytoken":
         case "webhookVerifyToken": return java.lang.String.class;
         case "whatsappservice":
@@ -85,7 +90,7 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WhatsAppEndpoint target = (WhatsAppEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
         case "authorizationtoken":
@@ -106,6 +111,8 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
         case "webhookPath": return target.getConfiguration().getWebhookPath();
         case "webhooksecret":
         case "webhookSecret": return target.getConfiguration().getWebhookSecret();
+        case "webhookverification":
+        case "webhookVerification": return target.getConfiguration().isWebhookVerification();
         case "webhookverifytoken":
         case "webhookVerifyToken": return target.getConfiguration().getWebhookVerifyToken();
         case "whatsappservice":

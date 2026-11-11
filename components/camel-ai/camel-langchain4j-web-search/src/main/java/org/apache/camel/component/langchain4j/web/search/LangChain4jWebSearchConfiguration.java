@@ -52,11 +52,9 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
     @UriParam
     private Boolean safeSearch;
     @UriParam
-    @Metadata(autowired = true)
     private Map<String, Object> additionalParams;
 
     @UriParam(label = "advanced")
-    @Metadata(autowired = true)
     private WebSearchRequest webSearchRequest;
 
     public WebSearchEngine getWebSearchEngine() {
@@ -79,8 +77,9 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
      * The {@link #resultType} is the result type of the request. Valid values are
      * LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT, CONTENT, or SNIPPET. CONTENT is the default value; it will return a list
      * of String . You can also specify to return either the Langchain4j Web Search Organic Result object (using
-     * `LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT`) or snippet (using `SNIPPET`) for each result. If {@link #maxResults} is
-     * equal to 1, the response will be a single object instead of a list.
+     * `LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT`) or snippet (using `SNIPPET`) for each result. With CONTENT, a result
+     * without content returns its snippet, as some engines give no content. If {@link #maxResults} is equal to 1, the
+     * response will be a single object instead of a list.
      */
     public void setResultType(LangChain4jWebSearchResultType resultType) {
         this.resultType = resultType;
@@ -176,7 +175,8 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
     }
 
     /**
-     * The {@link #webSearchRequest} is the custom WebSearchRequest - advanced
+     * The {@link #webSearchRequest} is the custom WebSearchRequest - advanced. When set, the message body and the other
+     * search options are not used.
      */
     public void setWebSearchRequest(WebSearchRequest webSearchRequest) {
         this.webSearchRequest = webSearchRequest;

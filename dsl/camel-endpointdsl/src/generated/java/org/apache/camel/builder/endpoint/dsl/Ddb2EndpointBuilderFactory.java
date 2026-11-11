@@ -861,7 +861,7 @@ public interface Ddb2EndpointBuilderFactory {
             return "CamelAwsDdbItem";
         }
         /**
-         * The list of attributes returned by the operation.
+         * The list of items returned by the operation.
          * 
          * The option is a: {@code List<Map<String,AttributeValue>>} type.
          * 
@@ -913,8 +913,8 @@ public interface Ddb2EndpointBuilderFactory {
         }
         /**
          * This header specify the selection criteria for the query, and merge
-         * together the two old headers CamelAwsDdbHashKeyValue and
-         * CamelAwsDdbScanRangeKeyCondition.
+         * together the two old headers *CamelAwsDdbHashKeyValue* and
+         * *CamelAwsDdbScanRangeKeyCondition*.
          * 
          * The option is a: {@code Map<String, Condition>} type.
          * 
@@ -927,7 +927,7 @@ public interface Ddb2EndpointBuilderFactory {
         }
         /**
          * The KeySchema that identifies the primary key for this table. From
-         * Camel 2.16.0 the type of this header is List and not KeySchema.
+         * Camel 2.16.0 the type of this header is List and not KeySchema*.
          * 
          * The option is a: {@code List<KeySchemaElement>} type.
          * 

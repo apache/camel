@@ -34,6 +34,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
 import org.apache.camel.spi.Transformer;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.dataformat.avro.AvroSchema;
 
@@ -77,7 +78,7 @@ public class AvroBinaryDataTypeTransformer extends Transformer {
 
             message.setHeader(Exchange.CONTENT_TYPE, MimeType.AVRO_BINARY.type());
             message.setHeader(SchemaHelper.CONTENT_SCHEMA, schema.getAvroSchema().getFullName());
-        } catch (InvalidPayloadException | IOException | ClassNotFoundException e) {
+        } catch (InvalidPayloadException | IOException | JacksonException | ClassNotFoundException e) {
             throw new CamelExecutionException("Failed to apply Avro binary data type on exchange", message.getExchange(), e);
         }
     }

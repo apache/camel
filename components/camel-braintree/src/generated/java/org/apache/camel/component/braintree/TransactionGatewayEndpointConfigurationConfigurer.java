@@ -2,6 +2,7 @@
 package org.apache.camel.component.braintree;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -42,6 +43,7 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         map.put("Query", com.braintreegateway.TransactionSearchRequest.class);
         map.put("RefundRequest", com.braintreegateway.TransactionRefundRequest.class);
         map.put("Request", com.braintreegateway.TransactionRequest.class);
+        map.put("ReverseRequest", com.braintreegateway.TransactionReverseRequest.class);
         map.put("VoidRequest", com.braintreegateway.TransactionVoidRequest.class);
         ALL_OPTIONS = map;
     }
@@ -49,7 +51,7 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.braintree.TransactionGatewayEndpointConfiguration target = (org.apache.camel.component.braintree.TransactionGatewayEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "amount": target.setAmount(property(camelContext, java.math.BigDecimal.class, value)); return true;
@@ -85,6 +87,8 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         case "refundrequest":
         case "refundRequest": target.setRefundRequest(property(camelContext, com.braintreegateway.TransactionRefundRequest.class, value)); return true;
         case "request": target.setRequest(property(camelContext, com.braintreegateway.TransactionRequest.class, value)); return true;
+        case "reverserequest":
+        case "reverseRequest": target.setReverseRequest(property(camelContext, com.braintreegateway.TransactionReverseRequest.class, value)); return true;
         case "voidrequest":
         case "voidRequest": target.setVoidRequest(property(camelContext, com.braintreegateway.TransactionVoidRequest.class, value)); return true;
         default: return false;
@@ -98,7 +102,7 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
         case "amount": return java.math.BigDecimal.class;
@@ -134,6 +138,8 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         case "refundrequest":
         case "refundRequest": return com.braintreegateway.TransactionRefundRequest.class;
         case "request": return com.braintreegateway.TransactionRequest.class;
+        case "reverserequest":
+        case "reverseRequest": return com.braintreegateway.TransactionReverseRequest.class;
         case "voidrequest":
         case "voidRequest": return com.braintreegateway.TransactionVoidRequest.class;
         default: return null;
@@ -143,7 +149,7 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.braintree.TransactionGatewayEndpointConfiguration target = (org.apache.camel.component.braintree.TransactionGatewayEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
         case "amount": return target.getAmount();
@@ -179,6 +185,8 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         case "refundrequest":
         case "refundRequest": return target.getRefundRequest();
         case "request": return target.getRequest();
+        case "reverserequest":
+        case "reverseRequest": return target.getReverseRequest();
         case "voidrequest":
         case "voidRequest": return target.getVoidRequest();
         default: return null;

@@ -69,7 +69,20 @@ the HL7 message content.
 
 |`convertLFtoCR` |`false` |Will convert `\n` to `\r` (`0x0d`, 13 decimal) as HL7 stipulates `\r` as
 segment terminators. The HAPI library requires the use of `\r`.
+
+|`maxFrameLength` |`2147483647` |The maximum length in bytes of a message, for the MINA codec (`HL7MLLPCodec`) and the
+Netty decoder (`HL7MLLPNettyDecoderFactory`). The default (`Integer.MAX_VALUE`) means no limit.
 |===
+
+The `maxFrameLength` limit counts from the start of the data up to the end bytes (the start byte included, the end
+bytes not). Both codecs fail as soon as a message is longer than the limit, without waiting for its end bytes, and
+discard the rest of the long message up to its end bytes:
+
+* MINA codec: the message fails with a `ProtocolDecoderException`, and the rest of the data received with it is
+discarded too. The MINA consumer closes the connection, and a MINA producer fails the exchange when the reply is longer.
+* Netty decoder: the message fails with a `TooLongFrameException`, which the Netty consumer reports to its exception
+handler before it closes the connection. The Netty decoder counts a first end byte that arrives without the second, so a
+message of exactly the limit can fail: set the limit with some margin over the largest message you expect.
 
 === Exposing an HL7 listener using Mina
 
@@ -93,6 +106,19 @@ up in the Spring XML file:
 ----
 <bean id="hl7codec" class="org.apache.camel.component.hl7.HL7MLLPCodec">
     <property name="charset" value="iso-8859-1"/>
+</bean>
+----
+
+By default the codec accepts messages of any size. To limit the size of a message, set `maxFrameLength` (in bytes)
+on the codec; a longer message fails with a `ProtocolDecoderException` and the connection is closed (see
+`maxFrameLength` in the options above):
+
+._XML-only: Spring bean declaration for HL7 MLLP codec with a message size limit_
+[source,xml]
+----
+<bean id="hl7codec" class="org.apache.camel.component.hl7.HL7MLLPCodec">
+    <property name="charset" value="iso-8859-1"/>
+    <property name="maxFrameLength" value="1048576"/>
 </bean>
 ----
 
@@ -159,6 +185,18 @@ The beans can be set in the Spring XML file:
 ----
 <bean id="hl7decoder" class="org.apache.camel.component.hl7.HL7MLLPNettyDecoderFactory"/>
 <bean id="hl7encoder" class="org.apache.camel.component.hl7.HL7MLLPNettyEncoderFactory"/>
+----
+
+By default the decoder accepts messages of any size. To limit the size of a message, set `maxFrameLength` (in bytes)
+on the decoder factory; a longer message fails with a `TooLongFrameException` and the connection is closed (see
+`maxFrameLength` in the options above):
+
+._XML-only: Spring bean declaration for an HL7 Netty decoder with a message size limit_
+[source,xml]
+----
+<bean id="hl7decoder" class="org.apache.camel.component.hl7.HL7MLLPNettyDecoderFactory">
+  <property name="maxFrameLength" value="1048576"/>
+</bean>
 ----
 
 The endpoint *hl7NettyListener* can then be used in a route as a

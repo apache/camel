@@ -1,0 +1,98 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.kafka.transform;
+
+import java.util.Map;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+
+class FieldTransformsTest {
+
+    private static final String BASE_JSON = "{\"name\":\"Rajesh\",\"age\":30}";
+
+    private final ObjectMapper mapper = JsonMapper.builder().build();
+    private Exchange exchange;
+
+    @BeforeEach
+    void setup() {
+        exchange = new DefaultExchange(new DefaultCamelContext());
+    }
+
+    @Test
+    void dropFieldRemovesTheField() throws Exception {
+        exchange.getMessage().setBody(mapper.readTree(BASE_JSON));
+
+        DropField processor = new DropField();
+        processor.setField("age");
+        processor.process(exchange);
+
+        Assertions.assertEquals("{\"name\":\"Rajesh\"}", exchange.getMessage().getBody().toString());
+    }
+
+    @Test
+    void dropFieldConvertsATextBody() throws Exception {
+        exchange.getMessage().setBody(BASE_JSON);
+
+        DropField processor = new DropField();
+        processor.setField("age");
+        processor.process(exchange);
+
+        Assertions.assertEquals("{\"name\":\"Rajesh\"}", exchange.getMessage().getBody().toString());
+    }
+
+    @Test
+    void extractFieldSetsTheValueAsBody() throws Exception {
+        exchange.getMessage().setBody(mapper.readTree(BASE_JSON));
+
+        new ExtractField("name").process(exchange);
+
+        Assertions.assertEquals("Rajesh", exchange.getMessage().getBody());
+    }
+
+    @Test
+    void extractFieldWithoutABodyFails() {
+        Assertions.assertThrows(InvalidPayloadException.class, () -> new ExtractField("name").process(exchange));
+    }
+
+    @Test
+    void hoistFieldWritesANodeAsItsJson() throws Exception {
+        exchange.getMessage().setBody(mapper.readTree(BASE_JSON));
+
+        JsonNode result = new HoistField().process("element", exchange);
+
+        Assertions.assertEquals("{\"element\":{\"name\":\"Rajesh\",\"age\":30}}", result.toString());
+    }
+
+    @Test
+    void valueToKeySetsTheKeyHeader() throws Exception {
+        exchange.getMessage().setBody(mapper.readTree(BASE_JSON));
+
+        new ValueToKey().process("name", exchange);
+
+        Assertions.assertEquals(Map.of("name", "Rajesh"), exchange.getMessage().getHeader(KafkaConstants.KEY));
+    }
+}

@@ -18,9 +18,11 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.camel.util.json.JsonArray;
@@ -57,6 +59,16 @@ final class DiagramTopology {
     }
 
     private volatile Structure structure;
+
+    /**
+     * The topology asked for last, when it is of this integration, without asking for it: null until a tab (Diagram,
+     * Routes, About) has asked for it. For what must not wait on the integration, such as the jump links of the source
+     * editor.
+     */
+    JsonObject cached(String pid) {
+        Structure s = structure;
+        return s != null && pid != null && s.pid().equals(pid) ? s.topology() : null;
+    }
 
     /**
      * The step of a route by its id, from the structure asked for last (the Routes tab shows what each step does); null
@@ -194,7 +206,53 @@ final class DiagramTopology {
                 addStepStatistics(route, r);
             }
         });
+        addObservedCalls(answer, info);
         return answer;
+    }
+
+    /**
+     * The calls between routes that the integration made but the topology of its routes cannot know: a recipient list,
+     * a toD or a dynamic router computes the endpoint as it routes. The endpoints a route sent to (as the runtime
+     * endpoint registry counted them) that another route consumes are calls from the one to the other.
+     */
+    static void addObservedCalls(JsonObject topology, IntegrationInfo info) {
+        Map<String, String> consumers = new HashMap<>();
+        for (RouteInfo r : info.routes) {
+            if (r.from != null) {
+                consumers.putIfAbsent(endpointKey(r.from), r.routeId);
+            }
+        }
+        Collection<?> known = topology.getCollection("edges");
+        JsonArray edges = known != null ? new JsonArray(known) : new JsonArray();
+        Set<String> calls = new HashSet<>();
+        for (Object o : edges) {
+            if (o instanceof Map<?, ?> e) {
+                calls.add(e.get("fromRouteId") + ">" + e.get("toRouteId"));
+            }
+        }
+        boolean added = false;
+        for (EndpointInfo ep : info.endpoints) {
+            if (!"out".equals(ep.direction) || ep.routeId == null || ep.uri == null || ep.hits <= 0) {
+                continue;
+            }
+            String target = consumers.get(endpointKey(ep.uri));
+            if (target == null || target.equals(ep.routeId) || !calls.add(ep.routeId + ">" + target)) {
+                continue;
+            }
+            JsonObject edge = new JsonObject();
+            edge.put("fromRouteId", ep.routeId);
+            edge.put("toRouteId", target);
+            edge.put("endpoint", ep.uri);
+            edge.put("connectionType", ep.component != null ? ep.component : "internal");
+            edge.put("kind", "call");
+            // seen at runtime, not in the routes
+            edge.put("observed", true);
+            edges.add(edge);
+            added = true;
+        }
+        if (added) {
+            topology.put("edges", edges);
+        }
     }
 
     /**

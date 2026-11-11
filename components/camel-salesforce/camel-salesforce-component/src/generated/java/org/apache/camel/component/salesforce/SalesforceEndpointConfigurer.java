@@ -2,6 +2,7 @@
 package org.apache.camel.component.salesforce;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SalesforceEndpoint target = (SalesforceEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allornone":
         case "allOrNone": target.getConfiguration().setAllOrNone(property(camelContext, boolean.class, value)); return true;
         case "apexmethod":
@@ -102,7 +103,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyforoperations":
         case "notifyForOperations": target.getConfiguration().setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
         case "objectmapper":
-        case "objectMapper": target.getConfiguration().setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "objectMapper": target.getConfiguration().setObjectMapper(property(camelContext, tools.jackson.databind.ObjectMapper.class, value)); return true;
         case "pkchunking":
         case "pkChunking": target.getConfiguration().setPkChunking(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "pkchunkingchunksize":
@@ -169,7 +170,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allornone":
         case "allOrNone": return boolean.class;
         case "apexmethod":
@@ -249,7 +250,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyforoperations":
         case "notifyForOperations": return org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class;
         case "objectmapper":
-        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "objectMapper": return tools.jackson.databind.ObjectMapper.class;
         case "pkchunking":
         case "pkChunking": return java.lang.Boolean.class;
         case "pkchunkingchunksize":
@@ -317,7 +318,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SalesforceEndpoint target = (SalesforceEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allornone":
         case "allOrNone": return target.getConfiguration().isAllOrNone();
         case "apexmethod":
@@ -464,7 +465,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apexqueryparams":
         case "apexQueryParams": return java.lang.Object.class;
         case "initialreplayidmap":

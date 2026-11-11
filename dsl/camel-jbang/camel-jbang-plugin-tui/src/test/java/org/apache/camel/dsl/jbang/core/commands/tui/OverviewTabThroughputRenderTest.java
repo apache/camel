@@ -89,7 +89,7 @@ class OverviewTabThroughputRenderTest {
         failedHistory.put("1234", fHistory);
 
         OverviewTab tab = new OverviewTab(ctx, metrics, new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         tab.chartMode = OverviewTab.CHART_ALL;
 
         String rendered = TuiTestHelper.renderToString(tab, 160, 40);
@@ -114,7 +114,7 @@ class OverviewTabThroughputRenderTest {
         failedHistory.put("1234", new LinkedList<>(history));
 
         OverviewTab tab = new OverviewTab(ctx, metrics, new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         tab.chartMode = OverviewTab.CHART_ALL;
 
         String rendered = TuiTestHelper.renderToString(tab, 160, 40);
@@ -143,7 +143,7 @@ class OverviewTabThroughputRenderTest {
         failedHistory.put("1234", fHistory);
 
         OverviewTab tab = new OverviewTab(ctx, metrics, new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         tab.chartMode = OverviewTab.CHART_ALL;
 
         String rendered = TuiTestHelper.renderToString(tab, 160, 40);
@@ -173,7 +173,7 @@ class OverviewTabThroughputRenderTest {
         failedHistory.put("1234", fHistory);
 
         OverviewTab tab = new OverviewTab(ctx, metrics, new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         tab.chartMode = OverviewTab.CHART_ALL;
 
         String rendered = TuiTestHelper.renderToString(tab, 160, 40);

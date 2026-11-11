@@ -118,6 +118,32 @@ class McpFacadeConfirmTest {
     }
 
     @Test
+    void addingAndChangingAChaosRuleAskFirstAndCheckingDoesNot() throws Exception {
+        AnsweringBridge bridge = new AnsweringBridge(false);
+        TuiToolRegistry registry = new TuiToolRegistry(facade(context(), bridge));
+
+        JsonObject added = (JsonObject) Jsoner.deserialize(registry.execute("tui_chaos_add",
+                new JsonObject(Map.of("rule", "route=orders error rate=0.05"))));
+        JsonObject changed = (JsonObject) Jsoner.deserialize(registry.execute("tui_chaos_change",
+                new JsonObject(Map.of("id", "r1", "rule", "route=orders error rate=0.1"))));
+
+        // not confirmed: nothing went to the integration
+        assertThat(added.getString("status")).isEqualTo("rejected");
+        assertThat(changed.getString("status")).isEqualTo("rejected");
+        assertThat(bridge.calls).extracting(ToolConfirms.Call::target)
+                .containsExactly("route=orders error rate=0.05", "route=orders error rate=0.1");
+        assertThat(registry.execute("tui_chaos_add", new JsonObject(Map.of()))).isEqualTo("Error: rule is required");
+
+        // the check only reads: it is not asked (here no integration answers it)
+        try {
+            registry.execute("tui_chaos_check", new JsonObject(Map.of("rule", "route=orders error")));
+        } catch (RuntimeException e) {
+            // no integration with pid 1 runs in the test
+        }
+        assertThat(bridge.calls).hasSize(2);
+    }
+
+    @Test
     void groovyAsksFirstThroughTheTool() throws Exception {
         AnsweringBridge bridge = new AnsweringBridge(false);
         TuiToolRegistry registry = new TuiToolRegistry(facade(context(), bridge));

@@ -16,23 +16,27 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Drives {@link RunOptionsForm} through key events to verify the JFR checkbox row toggles {@code --jfr} into
- * {@link RunOptionsForm#buildArgs()}, and that inserting that row did not break navigation past the other checkbox rows
- * or the down-wrap back to row 0.
+ * Drives {@link RunOptionsForm} through key events to verify the JFR and chaos checkbox rows toggle {@code --jfr} and
+ * {@code --chaos} into {@link RunOptionsForm#buildArgs()}, and that inserting those rows did not break navigation past
+ * the other checkbox rows or the down-wrap back to row 0.
  */
 class RunOptionsFormTest {
 
@@ -80,11 +84,11 @@ class RunOptionsFormTest {
     }
 
     @Test
-    void downNavigationWrapsFromJfrRowBackToNameRow() {
+    void downNavigationWrapsFromChaosRowBackToNameRow() {
         RunOptionsForm form = openForm();
 
-        // 14 rows total (0=Name .. 13=JFR); 14 downs from row 0 wraps back to row 0 (Name).
-        for (int i = 0; i < 14; i++) {
+        // 15 rows total (0=Name .. 13=JFR, 14=Chaos); 15 downs from row 0 wraps back to row 0 (Name).
+        for (int i = 0; i < 15; i++) {
             form.handleKeyEvent(key(KeyCode.DOWN));
         }
         form.handleKeyEvent(KeyEvent.ofChar('x'));
@@ -108,6 +112,116 @@ class RunOptionsFormTest {
     }
 
     @Test
+    void chaosOffByDefaultOmitsFlag() {
+        RunOptionsForm form = openForm();
+
+        assertThat(form.buildArgs()).doesNotContain("--chaos");
+        assertThat(form.isChaosEnabled()).isFalse();
+    }
+
+    @Test
+    void togglingChaosRowAddsChaosFlag() {
+        RunOptionsForm form = openForm();
+
+        // up from Name wraps to the last row, Chaos
+        form.handleKeyEvent(key(KeyCode.UP));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+
+        assertThat(form.buildArgs()).contains("--chaos").doesNotContain("--jfr");
+        assertThat(form.isChaosEnabled()).isTrue();
+    }
+
+    @Test
+    void chaosNotPassedWithProfileProd() {
+        RunOptionsForm form = openForm();
+
+        form.handleKeyEvent(key(KeyCode.UP));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        // Profile is row 2: cycle it from dev to prod
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+
+        assertThat(form.buildArgs()).contains("--profile=prod").doesNotContain("--chaos");
+        assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("Chaos testing (not available with profile prod)"));
+    }
+
+    @Test
+    void chaosRowCannotBeToggledWithProfileProd() {
+        RunOptionsForm form = openForm();
+
+        // Profile is row 2: cycle it from dev to prod, then go up to the Chaos row and try to tick it
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        for (int i = 0; i < 3; i++) {
+            form.handleKeyEvent(key(KeyCode.UP));
+        }
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        // back to dev: the box was not ticked while prod was selected
+        for (int i = 0; i < 3; i++) {
+            form.handleKeyEvent(key(KeyCode.DOWN));
+        }
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+
+        assertThat(form.buildArgs()).contains("--profile=dev").doesNotContain("--chaos");
+    }
+
+    @Test
+    void aChaosScenarioOfTheExampleIsPickedNextToChaosTesting() {
+        RunOptionsForm form = openForm();
+        form.setChaosScenarios(RunOptionsForm.chaosScenarios(List.of("README.md", "chaos.camel.yaml",
+                "test/chaos/payment-outage.chaos", "test/chaos.citrus.it.yaml", "test/chaos/reports/run.chaos")));
+        form.handleKeyEvent(key(KeyCode.UP));
+        // offered once chaos is on
+        assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("Chaos testing (inject faults with camel-chaos)"));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertThat(renderPopupRows(form))
+                .anyMatch(row -> row.contains("[x] Chaos testing, scenario: ◂ none, add rules yourself ▸"));
+        List<Span> footer = new ArrayList<>();
+        form.renderFooter(footer);
+        assertThat(footer.stream().map(Span::content).reduce("", String::concat)).contains("scenario");
+
+        form.handleKeyEvent(key(KeyCode.RIGHT));
+        assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("scenario: ◂ payment-outage ▸"));
+        assertThat(form.buildArgs()).contains("--chaos=test/chaos/payment-outage.chaos").doesNotContain("--chaos");
+        // and back to none: chaos on without rules, to add them while it runs
+        form.handleKeyEvent(key(KeyCode.LEFT));
+        assertThat(form.buildArgs()).contains("--chaos");
+        assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("scenario: ◂ none, add rules yourself ▸"));
+    }
+
+    @Test
+    void theChaosScenariosOfAFolder(@TempDir Path dir) throws Exception {
+        Files.createDirectories(dir.resolve("test/chaos/reports"));
+        Files.writeString(dir.resolve("test/chaos/outage.chaos"), "endpoint=http* error\n");
+        Files.writeString(dir.resolve("test/chaos/slow.chaos"), "endpoint=http* delay duration=1s\n");
+        Files.writeString(dir.resolve("test/chaos/notes.md"), "notes\n");
+
+        assertThat(RunOptionsForm.chaosScenarios(dir)).containsExactly(
+                dir.resolve("test/chaos/outage.chaos").toAbsolutePath().toString(),
+                dir.resolve("test/chaos/slow.chaos").toAbsolutePath().toString());
+        assertThat(RunOptionsForm.chaosScenarios(dir.resolve("test"))).isEmpty();
+    }
+
+    @Test
+    void aChaosScenarioIsNotPassedWithProfileProd() {
+        RunOptionsForm form = openForm();
+        form.setChaosScenarios(List.of("test/chaos/payment-outage.chaos"));
+        form.handleKeyEvent(key(KeyCode.UP));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        form.handleKeyEvent(key(KeyCode.RIGHT));
+        assertThat(form.chaosScenario()).isEqualTo("test/chaos/payment-outage.chaos");
+        // Profile is row 2: down from the last row wraps to Name, then Runtime, then Profile
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertThat(form.buildArgs()).contains("--profile=prod").noneMatch(a -> a.startsWith("--chaos"));
+    }
+
+    @Test
     void optionsPageHasNoBlankRows() {
         RunOptionsForm form = openForm();
         // no app holds a port, so the form shows no port warning that would take a row of its own
@@ -115,8 +229,8 @@ class RunOptionsFormTest {
 
         List<String> inner = renderPopupRows(form);
 
-        // Name .. JFR: one row each, nothing left empty below the last checkbox
-        assertThat(inner).hasSize(14 + (form.portWarning(MonotonicClock.millis()) != null ? 1 : 0));
+        // Name .. Chaos: one row each, nothing left empty below the last checkbox
+        assertThat(inner).hasSize(15 + (form.portWarning(MonotonicClock.millis()) != null ? 1 : 0));
         assertThat(inner).noneMatch(String::isBlank);
     }
 

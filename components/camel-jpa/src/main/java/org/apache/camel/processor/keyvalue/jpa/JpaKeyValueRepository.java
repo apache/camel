@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.keyvalue.jpa;
 
+import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Duration;
 import java.util.Iterator;
@@ -32,6 +33,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.jpa.DefaultTransactionStrategy;
+import org.apache.camel.component.jpa.JpaHelper;
 import org.apache.camel.component.jpa.TransactionStrategy;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
@@ -69,6 +71,12 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
             = "select e from " + KeyValueEntry.class.getName() + " e";
     private static final String QUERY_COUNT_VALID
             = "select count(e) from " + KeyValueEntry.class.getName() + " e where e.expiresAt = 0 or e.expiresAt > ?1";
+    private static final String DELETE_IF_EXPIRED
+            = "delete from " + KeyValueEntry.class.getName()
+              + " e where e.itemKey = ?1 and e.expiresAt > 0 and e.expiresAt <= ?2";
+
+    // how many transactions putIfAbsent may use when concurrent inserts of the same key keep failing
+    private static final int PUT_IF_ABSENT_ATTEMPTS = 3;
 
     private static final String SOMETHING_WENT_WRONG
             = "Something went wrong in JpaKeyValueRepository: %s";
@@ -125,8 +133,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                 if (entry == null) {
                     rc[0] = null;
                 } else if (entry.isExpired()) {
-                    entityManager.remove(entry);
-                    entityManager.flush();
+                    deleteIfExpired(entityManager, key);
                     rc[0] = null;
                 } else {
                     rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue(), deserializationFilter);
@@ -199,8 +206,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                 if (entry == null) {
                     rc[0] = null;
                 } else if (entry.isExpired()) {
-                    entityManager.remove(entry);
-                    entityManager.flush();
+                    deleteIfExpired(entityManager, key);
                     rc[0] = null;
                 } else {
                     rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue(), deserializationFilter);
@@ -235,8 +241,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                 if (entry == null) {
                     rc[0] = Boolean.FALSE;
                 } else if (entry.isExpired()) {
-                    entityManager.remove(entry);
-                    entityManager.flush();
+                    deleteIfExpired(entityManager, key);
                     rc[0] = Boolean.FALSE;
                 } else {
                     rc[0] = Boolean.TRUE;
@@ -314,8 +319,35 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
         LOG.debug("clear the store {}", KeyValueEntry.class.getName());
     }
 
+    /**
+     * Stores the value only if no non-expired entry exists for the key. The primary key of the table decides between
+     * concurrent callers: when the insert fails with a constraint violation, the transaction is rolled back and the key
+     * is read again in a new transaction, which returns the value stored by the other caller, or inserts again if that
+     * entry has been deleted meanwhile. In a transaction of the caller, the failed insert marks that transaction for
+     * rollback.
+     *
+     * @throws PersistenceException if the insert failed in all attempts
+     */
     @Override
     public Object putIfAbsent(String key, Object value, Duration ttl) {
+        final byte[] serializedValue = KeyValueRepositoryHelper.serialize(value);
+        for (int attempt = 1;; attempt++) {
+            try {
+                Object answer = doPutIfAbsent(key, serializedValue, ttl);
+                LOG.debug("putIfAbsent {} -> {}", key, answer != null ? "existing" : "inserted");
+                return answer;
+            } catch (PersistenceException e) {
+                // another thread/node inserted the key: read it again in a new transaction, as the failed one may
+                // not see that entry (REPEATABLE READ) or the entry may be deleted meanwhile
+                if (attempt >= PUT_IF_ABSENT_ATTEMPTS || !isConstraintViolation(e)) {
+                    throw e;
+                }
+                LOG.debug("Concurrent insert of key '{}' -- reading it again in a new transaction", key);
+            }
+        }
+    }
+
+    private Object doPutIfAbsent(String key, byte[] serializedValue, Duration ttl) {
         final Object[] rc = new Object[1];
         final EntityManager entityManager
                 = getTargetEntityManager(null, entityManagerFactory, false, sharedEntityManager, true);
@@ -325,50 +357,29 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                 entityManager.joinTransaction();
             }
             try {
-                long expiresAt = toExpiresAt(ttl);
-                byte[] serializedValue = KeyValueRepositoryHelper.serialize(value);
-
                 KeyValueEntry entry = findByKey(entityManager, key);
                 if (entry != null && !entry.isExpired()) {
                     // key exists and is valid -- return existing value
                     rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue(), deserializationFilter);
-                } else if (entry != null) {
-                    // key exists but expired -- update in place
-                    entry.setItemValue(serializedValue);
-                    entry.setExpiresAt(expiresAt);
-                    entityManager.merge(entry);
-                    entityManager.flush();
-                    rc[0] = null;
                 } else {
-                    // no entry -- persist new one
-                    entry = new KeyValueEntry(key, serializedValue, expiresAt);
-                    entityManager.persist(entry);
+                    if (entry != null) {
+                        // key exists but expired -- delete it, unless it has been stored again meanwhile, in which
+                        // case the insert below fails
+                        deleteIfExpired(entityManager, key);
+                        entityManager.detach(entry);
+                    }
+                    entityManager.persist(new KeyValueEntry(key, serializedValue, toExpiresAt(ttl)));
                     entityManager.flush();
                     rc[0] = null;
                 }
             } catch (Exception ex) {
-                if (isConstraintViolation(ex)) {
-                    // concurrent insert of the same key -- treat as "already present"
-                    LOG.debug("Concurrent insert detected for key: {}", key);
-                    // re-read to return the existing value
-                    try {
-                        KeyValueEntry existing = findByKey(entityManager, key);
-                        rc[0] = existing != null
-                                ? KeyValueRepositoryHelper.deserialize(existing.getItemValue(), deserializationFilter) : null;
-                    } catch (Exception inner) {
-                        // fall through with null
-                        rc[0] = null;
-                    }
-                } else {
-                    String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
-                    throw new PersistenceException(contextInfo, ex);
-                }
+                String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
+                throw new PersistenceException(contextInfo, ex);
             } finally {
                 closeEntityManager(entityManager);
             }
         });
 
-        LOG.debug("putIfAbsent {} -> {}", key, rc[0] != null ? "existing" : "inserted");
         return rc[0];
     }
 
@@ -476,7 +487,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
     @Override
     protected void doInit() throws Exception {
         if (transactionStrategy == null) {
-            transactionStrategy = new DefaultTransactionStrategy(null, entityManagerFactory);
+            transactionStrategy = JpaHelper.resolveTransactionStrategy(null, entityManagerFactory, false);
         }
     }
 
@@ -502,11 +513,22 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
         return (KeyValueEntry) list.get(0);
     }
 
+    /**
+     * Deletes the entry of the key only if it is still expired: another transaction may have stored the key again since
+     * it was read, and that entry must be kept.
+     */
+    private static void deleteIfExpired(EntityManager entityManager, String key) {
+        Query query = entityManager.createQuery(DELETE_IF_EXPIRED);
+        query.setParameter(1, key);
+        query.setParameter(2, System.currentTimeMillis());
+        query.executeUpdate();
+    }
+
     private static long toExpiresAt(Duration ttl) {
         if (ttl == null || ttl.isZero() || ttl.isNegative()) {
             return 0;
         }
-        return System.currentTimeMillis() + ttl.toMillis();
+        return KeyValueRepositoryHelper.expiresAt(ttl);
     }
 
     private static void closeEntityManager(EntityManager entityManager) {
@@ -526,6 +548,11 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                 return true;
             }
             if (cause instanceof EntityExistsException) {
+                return true;
+            }
+            // drivers such as the PostgreSQL and SQL Server ones report it only with the SQL state class 23
+            if (cause instanceof SQLException sqlException && sqlException.getSQLState() != null
+                    && sqlException.getSQLState().startsWith("23")) {
                 return true;
             }
             cause = cause.getCause();

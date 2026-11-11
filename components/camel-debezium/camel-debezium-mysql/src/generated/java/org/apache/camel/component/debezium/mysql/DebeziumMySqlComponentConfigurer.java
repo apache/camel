@@ -2,6 +2,7 @@
 package org.apache.camel.component.debezium.mysql;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,13 +30,15 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DebeziumMySqlComponent target = (DebeziumMySqlComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": getOrCreateConfiguration(target).setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": getOrCreateConfiguration(target).setBigintUnsignedHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": getOrCreateConfiguration(target).setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "binlogbuffersize":
         case "binlogBufferSize": getOrCreateConfiguration(target).setBinlogBufferSize(property(camelContext, int.class, value)); return true;
         case "binlognetreadtimeout":
@@ -55,6 +58,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "connectKeepAlive": getOrCreateConfiguration(target).setConnectKeepAlive(property(camelContext, boolean.class, value)); return true;
         case "connectkeepaliveintervalms":
         case "connectKeepAliveIntervalMs": getOrCreateConfiguration(target).setConnectKeepAliveIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "connectkeepalivemaxreconnectattempts":
+        case "connectKeepAliveMaxReconnectAttempts": getOrCreateConfiguration(target).setConnectKeepAliveMaxReconnectAttempts(property(camelContext, int.class, value)); return true;
         case "connecttimeoutms":
         case "connectTimeoutMs": getOrCreateConfiguration(target).setConnectTimeoutMs(property(camelContext, int.class, value)); return true;
         case "connectionvalidationtimeoutms":
@@ -108,6 +113,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "enableTimeAdjuster": getOrCreateConfiguration(target).setEnableTimeAdjuster(property(camelContext, boolean.class, value)); return true;
         case "errorsmaxretries":
         case "errorsMaxRetries": getOrCreateConfiguration(target).setErrorsMaxRetries(property(camelContext, int.class, value)); return true;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": getOrCreateConfiguration(target).setEventConvertingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": getOrCreateConfiguration(target).setEventDeserializationFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
@@ -116,6 +123,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "executorShutdownTimeoutMs": getOrCreateConfiguration(target).setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": getOrCreateConfiguration(target).setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": getOrCreateConfiguration(target).setFieldNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "gtidignoreonrecovery":
         case "gtidIgnoreOnRecovery": getOrCreateConfiguration(target).setGtidIgnoreOnRecovery(property(camelContext, boolean.class, value)); return true;
         case "gtidsourceexcludes":
@@ -170,6 +179,14 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "minRowCountToStreamResults": getOrCreateConfiguration(target).setMinRowCountToStreamResults(property(camelContext, int.class, value)); return true;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": getOrCreateConfiguration(target).setNotificationEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": getOrCreateConfiguration(target).setNotificationHttpAllowPrivateNetworks(property(camelContext, boolean.class, value)); return true;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": getOrCreateConfiguration(target).setNotificationHttpRetries(property(camelContext, int.class, value)); return true;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": getOrCreateConfiguration(target).setNotificationHttpTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": getOrCreateConfiguration(target).setNotificationHttpUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": getOrCreateConfiguration(target).setNotificationSinkTopicName(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
@@ -210,12 +227,16 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "provideTransactionMetadata": getOrCreateConfiguration(target).setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
         case "queryfetchsize":
         case "queryFetchSize": getOrCreateConfiguration(target).setQueryFetchSize(property(camelContext, int.class, value)); return true;
+        case "resolvecreatetablelikeschema":
+        case "resolveCreateTableLikeSchema": getOrCreateConfiguration(target).setResolveCreateTableLikeSchema(property(camelContext, boolean.class, value)); return true;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": getOrCreateConfiguration(target).setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "schemahistoryinternal":
         case "schemaHistoryInternal": getOrCreateConfiguration(target).setSchemaHistoryInternal(property(camelContext, java.lang.String.class, value)); return true;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": getOrCreateConfiguration(target).setSchemaHistoryInternalFileFilename(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": getOrCreateConfiguration(target).setSchemaHistoryInternalMemoryOptimization(property(camelContext, java.lang.String.class, value)); return true;
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": getOrCreateConfiguration(target).setSchemaHistoryInternalSkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -226,10 +247,16 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "schemaNameAdjustmentMode": getOrCreateConfiguration(target).setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": getOrCreateConfiguration(target).setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": getOrCreateConfiguration(target).setSignalEmitFailureBackoffMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": getOrCreateConfiguration(target).setSignalEmitFailureMaxRetries(property(camelContext, int.class, value)); return true;
         case "signalenabledchannels":
         case "signalEnabledChannels": getOrCreateConfiguration(target).setSignalEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
         case "signalpollintervalms":
         case "signalPollIntervalMs": getOrCreateConfiguration(target).setSignalPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": getOrCreateConfiguration(target).setSkipMessagesWithoutChange(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": getOrCreateConfiguration(target).setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
@@ -298,13 +325,15 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return java.util.Map.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return java.lang.String.class;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return java.lang.String.class;
         case "binlogbuffersize":
         case "binlogBufferSize": return int.class;
         case "binlognetreadtimeout":
@@ -324,6 +353,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "connectKeepAlive": return boolean.class;
         case "connectkeepaliveintervalms":
         case "connectKeepAliveIntervalMs": return long.class;
+        case "connectkeepalivemaxreconnectattempts":
+        case "connectKeepAliveMaxReconnectAttempts": return int.class;
         case "connecttimeoutms":
         case "connectTimeoutMs": return int.class;
         case "connectionvalidationtimeoutms":
@@ -377,6 +408,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "enableTimeAdjuster": return boolean.class;
         case "errorsmaxretries":
         case "errorsMaxRetries": return int.class;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return java.lang.String.class;
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
@@ -385,6 +418,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "executorShutdownTimeoutMs": return long.class;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return boolean.class;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return java.lang.String.class;
         case "gtidignoreonrecovery":
         case "gtidIgnoreOnRecovery": return boolean.class;
         case "gtidsourceexcludes":
@@ -439,6 +474,14 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "minRowCountToStreamResults": return int.class;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return java.lang.String.class;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return boolean.class;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return int.class;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return int.class;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return java.lang.String.class;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return java.lang.String.class;
         case "offsetcommitpolicy":
@@ -479,12 +522,16 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "provideTransactionMetadata": return boolean.class;
         case "queryfetchsize":
         case "queryFetchSize": return int.class;
+        case "resolvecreatetablelikeschema":
+        case "resolveCreateTableLikeSchema": return boolean.class;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return long.class;
         case "schemahistoryinternal":
         case "schemaHistoryInternal": return java.lang.String.class;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return java.lang.String.class;
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": return java.lang.String.class;
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": return boolean.class;
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -495,10 +542,16 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return long.class;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return int.class;
         case "signalenabledchannels":
         case "signalEnabledChannels": return java.lang.String.class;
         case "signalpollintervalms":
         case "signalPollIntervalMs": return long.class;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return boolean.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotdelayms":
@@ -568,13 +621,15 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DebeziumMySqlComponent target = (DebeziumMySqlComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return getOrCreateConfiguration(target).getAdditionalProperties();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return getOrCreateConfiguration(target).getBigintUnsignedHandlingMode();
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return getOrCreateConfiguration(target).getBinaryHandlingMode();
         case "binlogbuffersize":
         case "binlogBufferSize": return getOrCreateConfiguration(target).getBinlogBufferSize();
         case "binlognetreadtimeout":
@@ -594,6 +649,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "connectKeepAlive": return getOrCreateConfiguration(target).isConnectKeepAlive();
         case "connectkeepaliveintervalms":
         case "connectKeepAliveIntervalMs": return getOrCreateConfiguration(target).getConnectKeepAliveIntervalMs();
+        case "connectkeepalivemaxreconnectattempts":
+        case "connectKeepAliveMaxReconnectAttempts": return getOrCreateConfiguration(target).getConnectKeepAliveMaxReconnectAttempts();
         case "connecttimeoutms":
         case "connectTimeoutMs": return getOrCreateConfiguration(target).getConnectTimeoutMs();
         case "connectionvalidationtimeoutms":
@@ -647,6 +704,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "enableTimeAdjuster": return getOrCreateConfiguration(target).isEnableTimeAdjuster();
         case "errorsmaxretries":
         case "errorsMaxRetries": return getOrCreateConfiguration(target).getErrorsMaxRetries();
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return getOrCreateConfiguration(target).getEventConvertingFailureHandlingMode();
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": return getOrCreateConfiguration(target).getEventDeserializationFailureHandlingMode();
         case "eventprocessingfailurehandlingmode":
@@ -655,6 +714,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "executorShutdownTimeoutMs": return getOrCreateConfiguration(target).getExecutorShutdownTimeoutMs();
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return getOrCreateConfiguration(target).isExtendedHeadersEnabled();
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return getOrCreateConfiguration(target).getFieldNameAdjustmentMode();
         case "gtidignoreonrecovery":
         case "gtidIgnoreOnRecovery": return getOrCreateConfiguration(target).isGtidIgnoreOnRecovery();
         case "gtidsourceexcludes":
@@ -709,6 +770,14 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "minRowCountToStreamResults": return getOrCreateConfiguration(target).getMinRowCountToStreamResults();
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return getOrCreateConfiguration(target).getNotificationEnabledChannels();
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return getOrCreateConfiguration(target).isNotificationHttpAllowPrivateNetworks();
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return getOrCreateConfiguration(target).getNotificationHttpRetries();
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return getOrCreateConfiguration(target).getNotificationHttpTimeoutMs();
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return getOrCreateConfiguration(target).getNotificationHttpUrl();
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return getOrCreateConfiguration(target).getNotificationSinkTopicName();
         case "offsetcommitpolicy":
@@ -749,12 +818,16 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "provideTransactionMetadata": return getOrCreateConfiguration(target).isProvideTransactionMetadata();
         case "queryfetchsize":
         case "queryFetchSize": return getOrCreateConfiguration(target).getQueryFetchSize();
+        case "resolvecreatetablelikeschema":
+        case "resolveCreateTableLikeSchema": return getOrCreateConfiguration(target).isResolveCreateTableLikeSchema();
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return getOrCreateConfiguration(target).getRetriableRestartConnectorWaitMs();
         case "schemahistoryinternal":
         case "schemaHistoryInternal": return getOrCreateConfiguration(target).getSchemaHistoryInternal();
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return getOrCreateConfiguration(target).getSchemaHistoryInternalFileFilename();
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": return getOrCreateConfiguration(target).getSchemaHistoryInternalMemoryOptimization();
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": return getOrCreateConfiguration(target).isSchemaHistoryInternalSkipUnparseableDdl();
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -765,10 +838,16 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "schemaNameAdjustmentMode": return getOrCreateConfiguration(target).getSchemaNameAdjustmentMode();
         case "signaldatacollection":
         case "signalDataCollection": return getOrCreateConfiguration(target).getSignalDataCollection();
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return getOrCreateConfiguration(target).getSignalEmitFailureBackoffMs();
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return getOrCreateConfiguration(target).getSignalEmitFailureMaxRetries();
         case "signalenabledchannels":
         case "signalEnabledChannels": return getOrCreateConfiguration(target).getSignalEnabledChannels();
         case "signalpollintervalms":
         case "signalPollIntervalMs": return getOrCreateConfiguration(target).getSignalPollIntervalMs();
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return getOrCreateConfiguration(target).isSkipMessagesWithoutChange();
         case "skippedoperations":
         case "skippedOperations": return getOrCreateConfiguration(target).getSkippedOperations();
         case "snapshotdelayms":
@@ -837,7 +916,7 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return java.lang.Object.class;
         default: return null;

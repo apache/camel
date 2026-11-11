@@ -2,6 +2,7 @@
 package org.apache.camel.component.jacksonxml;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -45,7 +46,7 @@ public class JacksonXMLDataFormatConfigurer extends org.apache.camel.support.com
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JacksonXMLDataFormat target = (JacksonXMLDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowjmstype":
         case "allowJmsType": target.setAllowJmsType(property(camelContext, boolean.class, value)); return true;
         case "allowunmarshalltype":
@@ -89,7 +90,7 @@ public class JacksonXMLDataFormatConfigurer extends org.apache.camel.support.com
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowjmstype":
         case "allowJmsType": return boolean.class;
         case "allowunmarshalltype":
@@ -129,7 +130,7 @@ public class JacksonXMLDataFormatConfigurer extends org.apache.camel.support.com
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JacksonXMLDataFormat target = (JacksonXMLDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowjmstype":
         case "allowJmsType": return target.isAllowJmsType();
         case "allowunmarshalltype":

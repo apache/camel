@@ -43,25 +43,25 @@ import org.apache.camel.util.ObjectHelper;
                                                          carriers = {
                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
                                           @BodyType.When(option = "operation", value = "listVoices", carriers = Carrier.ANY),
-                                          @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO,
-                                                         javaType = "com.google.cloud.texttospeech.v1.SynthesizeSpeechRequest") },
+                                          @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO) },
                                   description = "The text to speak for synthesize: bytes, a stream or a file are read as"
                                                 + " text, a Map or a POJO is spoken as its toString(), so take the text out of"
                                                 + " it first, and no body fails. listVoices does not use the body. With"
-                                                + " pojoRequest=true a SynthesizeSpeechRequest of the Google Cloud SDK, whatever"
-                                                + " the operation: another body fails"),
+                                                + " pojoRequest=true the request of the Google Cloud SDK for the operation: a"
+                                                + " SynthesizeSpeechRequest for synthesize, a ListVoicesRequest for listVoices;"
+                                                + " another body fails"),
            producerOut = @BodyType(value = { Carrier.BYTES, Carrier.LIST },
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "synthesize", carriers = Carrier.BYTES,
                                                           javaType = "byte[]"),
                                            @BodyType.When(option = "operation", value = "listVoices", carriers = Carrier.LIST,
-                                                          javaType = "java.util.List<com.google.cloud.texttospeech.v1.Voice>"),
-                                           @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.BYTES,
-                                                          javaType = "byte[]") },
+                                                          javaType = "java.util.List<com.google.cloud.texttospeech.v1.Voice>") },
                                    description = "The audio of synthesize as bytes, in the audioEncoding option (MP3 by"
                                                  + " default), with the SynthesizeSpeechResponse in the"
                                                  + " CamelGoogleCloudTextToSpeechResponseObject header. The List of the voices"
-                                                 + " for listVoices, of the languageCode option (en-US by default)"))
+                                                 + " for listVoices: of the language in the languageCode option when it is"
+                                                 + " set, of all languages when it is not, and with pojoRequest=true of the"
+                                                 + " ListVoicesRequest"))
 public class GoogleCloudTextToSpeechEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

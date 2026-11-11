@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -42,6 +43,7 @@ import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -195,6 +197,31 @@ class DocExamplesXmlSchemaTest {
     }
 
     @Test
+    void anUndeclaredPrefixIsLeftAloneInAnyLocale() {
+        // the parser words the error in the language of the default locale, so the check must not read the message
+        String fragment = "<multicast prop:stopOnException=\"stop\"><to uri=\"mock:a\"/></multicast>";
+        String camelContext = "<camelContext><route><from uri=\"direct:a\"/>"
+                              + "<multicast prop:stopOnException=\"stop\"><to uri=\"mock:b\"/></multicast>"
+                              + "</route></camelContext>";
+        Locale before = Locale.getDefault();
+        try {
+            for (Locale locale : List.of(Locale.ENGLISH, Locale.ITALIAN, Locale.GERMAN, Locale.FRENCH, Locale.JAPANESE)) {
+                Locale.setDefault(locale);
+                assertTrue(validateBlock(fragment).isEmpty(), "a fragment with an undeclared prefix, in " + locale);
+                assertTrue(validateBlock(camelContext).isEmpty(), "a camelContext with an undeclared prefix, in " + locale);
+                // while a real mistake is still reported in that locale
+                assertTrue(!validateBlock("<from>seda:a?size=1</from>").isEmpty(), "a from with text content, in " + locale);
+            }
+        } finally {
+            Locale.setDefault(before);
+        }
+        assertTrue(!usesAnUndeclaredPrefix("<a xmlns:p=\"urn:p\"><b p:c=\"1\"/></a>"), "declared on an ancestor");
+        assertTrue(!usesAnUndeclaredPrefix("<a xml:lang=\"en\"/>"), "the xml prefix is always bound");
+        assertTrue(usesAnUndeclaredPrefix("<a><p:b/></a>"), "an undeclared element prefix");
+        assertTrue(usesAnUndeclaredPrefix("<a xmlns:q=\"urn:q\"><b p:c=\"1\"/></a>"), "an undeclared attribute prefix");
+    }
+
+    @Test
     void theSkippedPagesStillExist() throws Exception {
         Map<String, String> manual = UserManualPages.pages();
         for (String page : EXAMPLES_SKIPPED.keySet()) {
@@ -305,15 +332,72 @@ class DocExamplesXmlSchemaTest {
             Validator validator = schema.newValidator();
             validator.validate(new StreamSource(new StringReader(document)));
         } catch (SAXParseException e) {
-            String msg = e.getMessage();
-            if (msg != null && msg.contains("is not bound")) {
+            if (usesAnUndeclaredPrefix(document)) {
                 // a fragment using a prefix its page declares elsewhere (camel:, prop:, xsl:...), nothing to judge
                 return;
             }
-            errors.add(msg);
+            errors.add(e.getMessage());
         } catch (Exception e) {
             errors.add(e.toString());
         }
+    }
+
+    /**
+     * Whether the document uses a namespace prefix it does not declare, on an element or an attribute. It is read from
+     * a parse without namespaces, which accepts what a namespace-aware parser rejects, rather than from the parser's
+     * error message: that is in the language of the JVM's locale, so matching its English text failed the build in any
+     * other language (CAMEL-26519).
+     */
+    static boolean usesAnUndeclaredPrefix(String document) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(false);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            Document dom = factory.newDocumentBuilder().parse(new InputSource(new StringReader(document)));
+            return usesAnUndeclaredPrefix(dom.getDocumentElement());
+        } catch (Exception e) {
+            // not well-formed even without namespaces, so what failed was not an undeclared prefix
+            return false;
+        }
+    }
+
+    private static boolean usesAnUndeclaredPrefix(Element element) {
+        if (!isDeclared(element, element.getTagName())) {
+            return true;
+        }
+        NamedNodeMap attributes = element.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            String name = attributes.item(i).getNodeName();
+            if (!"xmlns".equals(name) && !name.startsWith("xmlns:") && !isDeclared(element, name)) {
+                return true;
+            }
+        }
+        NodeList children = element.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            if (children.item(i) instanceof Element child && usesAnUndeclaredPrefix(child)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Whether the prefix of a qualified name, when it has one, is declared on the element or one of its ancestors. */
+    private static boolean isDeclared(Element element, String qualifiedName) {
+        int colon = qualifiedName.indexOf(':');
+        if (colon < 0) {
+            return true;
+        }
+        String prefix = qualifiedName.substring(0, colon);
+        if ("xml".equals(prefix)) {
+            // bound by definition, as xml:lang and xml:space are
+            return true;
+        }
+        for (Node node = element; node instanceof Element e; node = node.getParentNode()) {
+            if (e.hasAttribute("xmlns:" + prefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Drops the XML declaration, the placeholder lines and the AsciiDoc callouts, which are not part of the XML. */

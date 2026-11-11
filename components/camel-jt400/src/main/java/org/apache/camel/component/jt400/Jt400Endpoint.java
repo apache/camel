@@ -17,7 +17,6 @@
 package org.apache.camel.component.jt400;
 
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
@@ -57,7 +56,7 @@ import org.apache.camel.util.URISupport;
            producerIn = @BodyType(value = Carrier.ANY, dependsOn = { "objectPath", "format" },
                                   description = "A queue writes the body converted to a String, or to a byte array with"
                                                 + " format=binary (text, bytes or a stream). A program call (.PGM, .SRVPGM)"
-                                                + " needs an Object[] of the parameters: a List fails"),
+                                                + " needs an Object[] of the parameters (a List is converted to an array)"),
            producerOut = @BodyType(value = Carrier.UNCHANGED, dependsOn = "objectPath",
                                    description = "Unchanged for a queue. A program call sets an Object[] of the parameters,"
                                                  + " the output ones replaced by what the program returned: Strings, or byte"
@@ -266,11 +265,27 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     }
 
     public boolean isFieldIdxForOuput(int idx) {
-        return Arrays.binarySearch(getOutputFieldsIdxArray(), idx) >= 0;
+        Integer[] outputFieldsIdxArray = getOutputFieldsIdxArray();
+        // no outputFieldsIdx configured means no output fields
+        if (outputFieldsIdxArray == null) {
+            return false;
+        }
+        // the indexes can be listed in any order
+        for (Integer outputIdx : outputFieldsIdxArray) {
+            if (outputIdx == idx) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getOutputFieldLength(int idx) {
-        return configuration.getOutputFieldsLengthArray()[idx];
+        Integer[] fieldsLengthArray = configuration.getOutputFieldsLengthArray();
+        if (fieldsLengthArray == null || idx >= fieldsLengthArray.length) {
+            throw new IllegalArgumentException(
+                    "The fieldsLength option must specify the length of the field (program parameter) at index " + idx);
+        }
+        return fieldsLengthArray[idx];
     }
 
     public void setObjectPath(String objectPath) {

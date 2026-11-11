@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Hints that turn a Simple parser error into a message that says what to write (CAMEL-24703). Every consumer of the
@@ -28,8 +30,9 @@ import java.util.Set;
  */
 public final class SimpleSyntaxHints {
 
-    public static final String OPERATORS = "==, =~, !=, <, <=, >, >=, contains, !contains, ~~, !~~, regex, !regex, in, !in, "
-                                           + "is, !is, range, !range, startsWith, endsWith, && and ||";
+    public static final String OPERATORS = "==, =~, !=, !=~, <, <=, >, >=, equals, !equals, contains, !contains, ~~, !~~, "
+                                           + "regex, !regex, in, !in, is, !is, range, !range, startsWith, !startsWith, "
+                                           + "endsWith, !endsWith, && and ||";
 
     /** The value forms an operator accepts on its right hand side. */
     public static final String VALUE_FORMS = "a quoted literal 'x', a number, true, false, null, or a function ${...}";
@@ -80,9 +83,20 @@ public final class SimpleSyntaxHints {
             Map.entry("avg", "average"),
             Map.entry("count", "size"));
 
+    /** The functions of the file language, as written after file:: name.noext is ${file:name.noext}. */
+    static final List<String> FILE_FUNCTIONS = List.of("name", "name.noext", "name.noext.single", "name.ext",
+            "name.ext.single", "ext", "onlyname", "onlyname.noext", "onlyname.noext.single", "parent", "path", "absolute",
+            "absolute.path", "length", "size", "modified");
+
+    /** The file functions a hint lists, after "the" or "The". */
+    private static final String FILE_FUNCTIONS_TEXT = "file: functions describe the file being consumed: ${file:name},"
+                                                      + " ${file:name.noext}, ${file:onlyname}, ${file:onlyname.noext},"
+                                                      + " ${file:ext}, ${file:parent}, ${file:size} and ${file:modified}";
+
     private static final String[] OPERATOR_WORDS = {
             "==", "!=", ">=", "<=", ">", "<", "=~", "!=~", "~~", "!~~", "contains",
-            "!contains", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range", "startsWith", "endsWith", "&&", "||" };
+            "!contains", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range", "startsWith", "!startsWith",
+            "endsWith", "!endsWith", "equals", "!equals", "&&", "||" };
 
     private SimpleSyntaxHints() {
     }
@@ -160,8 +174,82 @@ public final class SimpleSyntaxHints {
             return "Unexpected token " + word + ": text outside ${...} is a literal, functions are written as ${body}, "
                    + "${header.name}; did you mean " + rewrite + "?";
         }
+        // ${body.lines}.size() > 0: the method after the closing brace of the function
+        int start = Math.min(Math.max(index, 0), expression.length());
+        while (start > 0 && !Character.isWhitespace(expression.charAt(start - 1))) {
+            start--;
+        }
+        int close = word.startsWith("${") ? closingBrace(word) : -1;
+        String after = close > 0 ? afterFunction(expression, start + close + 1) : null;
+        if (after != null) {
+            return "Unexpected token " + word + ": " + after;
+        }
         return "Unexpected token " + word + ": text outside ${...} must be " + VALUE_FORMS + ", or an operator ("
                + OPERATORS + ")";
+    }
+
+    /** The functions whose value can be read further with a field, a method or an index, as ${body.lines.size()}. */
+    private static final Pattern READ_FURTHER = Pattern.compile(
+            "(?:in\\.)?(?:body|headers?|exchangeProperty|variables?|exception)(?:[.\\[?].*)?"
+                                                                + "|(?:mandatoryB|b)odyAs\\(.*|messageAs\\(.*");
+
+    /** A path that reads further: .lines, ?.lines, .size(), [0] or ['sku'], one after the other. */
+    private static final Pattern PATH = Pattern.compile(
+            "(?:\\??\\.[A-Za-z_]\\w*(?:\\([^()]*\\))?|\\[[^\\]]*])+");
+
+    /**
+     * A method, a field or an index written right after the closing brace of a function, as in ${body.lines}.size():
+     * the parser reads it as text, not as part of the function (r27 of the local-model benchmark, 18 calls of the
+     * expression tool with it in one step). The hint writes it inside the braces: ${body.lines.size()}. Null when the
+     * text at the index does not follow a function whose value can be read further, or is a filter, which Simple does
+     * not have.
+     *
+     * @param  expression the expression
+     * @param  index      the index of the first character after the closing brace of the function
+     * @return            the hint, or null
+     */
+    public static String afterFunction(String expression, int index) {
+        if (expression == null || index < 3 || index >= expression.length() || expression.charAt(index - 1) != '}') {
+            return null;
+        }
+        // the ${ that the brace closes
+        int depth = 0;
+        int open = -1;
+        for (int i = index - 1; i > 0 && open < 0; i--) {
+            char c = expression.charAt(i);
+            if (c == '}') {
+                depth++;
+            } else if (c == '{' && expression.charAt(i - 1) == '$' && --depth == 0) {
+                open = i - 1;
+            }
+        }
+        String rest = expression.substring(index);
+        Matcher path = PATH.matcher(rest);
+        if (open < 0 || !path.lookingAt() || rest.matches("(?s)\\??\\.[?^$!]\\[.*|\\[\\?\\(.*")) {
+            return null;
+        }
+        String inner = expression.substring(open + 2, index - 1);
+        if (!READ_FURTHER.matcher(inner).matches()) {
+            return null;
+        }
+        String written = path.group();
+        String what = written.endsWith(")") ? "method" : written.endsWith("]") ? "index" : "field";
+        return "the " + what + " " + written + " is outside the function, as text after its closing brace: write it inside"
+               + " the braces, ${" + inner + written + "}";
+    }
+
+    /** The index of the brace that closes the ${ the text starts with, or -1. */
+    private static int closingBrace(String text) {
+        int depth = 0;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.startsWith("${", i)) {
+                depth++;
+                i++;
+            } else if (text.charAt(i) == '}' && --depth == 0) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /** The message when an operator has no usable value next to it. */
@@ -187,7 +275,7 @@ public final class SimpleSyntaxHints {
             " >= ", " <= ", " > ", " < ", " == ", " != ", " =~ ", " !=~ ",
             " contains ", " !contains ", " ~~ ", " !~~ ", " regex ", " !regex ",
             " in ", " !in ", " is ", " !is ", " range ", " !range ",
-            " startsWith ", " !startsWith ", " endsWith ", " !endsWith " };
+            " startsWith ", " !startsWith ", " endsWith ", " !endsWith ", " equals ", " !equals " };
 
     /**
      * Wraps the function references of a predicate written inside {@code ${ }} so that it can be parsed as one:
@@ -310,6 +398,54 @@ public final class SimpleSyntaxHints {
         return -1;
     }
 
+    /** The elvis operator, with the spaces it must be surrounded by. */
+    private static final String SPACED_ELVIS = " ?: ";
+
+    /**
+     * The elvis operator written inside {@code ${ }}, as the same expression with the operator after the function:
+     * {@code header.a ?: 'x'} is {@code ${header.a} ?: 'x'}, and {@code header.a ?: ${header.b} ?: 'x'} is
+     * {@code ${header.a} ?: ${header.b} ?: 'x'}; null when the text has no elvis operator (CAMEL-26401).
+     * <p/>
+     * Like the other operators it counts only with a space on both sides, outside quotes, brackets, parentheses and
+     * nested functions, so {@code ${header.a ?:10}} is a header named {@code a ?:10}, as {@code ?:10} after the braces
+     * is text, and {@code ${body.replace('a ?: b', '')}} is a function. The default value of a property is text too:
+     * {@code ${properties:msg:which ?: none}}.
+     */
+    public static String elvisOutside(String function) {
+        int at = elvisIndex(function);
+        if (at <= 0 || at + SPACED_ELVIS.length() >= function.length()) {
+            return null;
+        }
+        String head = function.substring(0, at);
+        if (head.isBlank() || head.startsWith("properties:") && head.indexOf(':', 11) > 0) {
+            return null;
+        }
+        return "${" + head + "}" + function.substring(at);
+    }
+
+    /** The index of the first spaced elvis operator outside quotes, brackets, parentheses and nested functions. */
+    private static int elvisIndex(String text) {
+        boolean single = false;
+        boolean dubble = false;
+        int depth = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\'' && !dubble) {
+                single = !single;
+            } else if (c == '"' && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble && (c == '(' || c == '[' || c == '{')) {
+                // a { opens a nested ${ } function
+                depth++;
+            } else if (!single && !dubble && (c == ')' || c == ']' || c == '}')) {
+                depth--;
+            } else if (!single && !dubble && depth == 0 && text.startsWith(SPACED_ELVIS, i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private static boolean isNumeric(String text) {
         if (text == null || text.isEmpty()) {
             return false;
@@ -330,7 +466,10 @@ public final class SimpleSyntaxHints {
         int best = -1;
         String bestOp = null;
         for (String op : OPERATOR_WORDS) {
-            int i = function.indexOf(" " + op + " ");
+            // an operator inside quotes belongs to a literal, such as the argument of ${uppercase('a') == 'A'}: the
+            // first one outside quotes, brackets and parentheses is the operator, so a function with a quoted argument
+            // can be compared
+            int i = indexOutsideQuotes(function, " " + op + " ");
             if (i > 0 && (best < 0 || i < best)) {
                 best = i;
                 bestOp = op;
@@ -339,24 +478,9 @@ public final class SimpleSyntaxHints {
         if (bestOp == null) {
             return null;
         }
+        // an operator inside an argument list that may hold a predicate (iif, filter, forEach), or inside a key such as
+        // ${header[order in progress]}, is not at the top level, so indexOutsideQuotes has skipped it
         String head = function.substring(0, best);
-        if (head.contains("'") || head.contains("\"")) {
-            return null;
-        }
-        int open = 0;
-        for (int i = 0; i < head.length(); i++) {
-            char c = head.charAt(i);
-            if (c == '(' || c == '[') {
-                open++;
-            } else if (c == ')' || c == ']') {
-                open--;
-            }
-        }
-        if (open > 0) {
-            // the operator is inside an argument list that may hold a predicate (iif, filter, forEach),
-            // or inside a key such as ${header[order in progress]}
-            return null;
-        }
         if (head.startsWith("properties:") && head.indexOf(':', 11) > 0) {
             // the operator word is in the default value: ${properties:msg:value is not set}
             return null;
@@ -432,6 +556,61 @@ public final class SimpleSyntaxHints {
             return "did you mean ${" + closest + rest + "}?";
         }
         return "the functions are documented on the simple language page (functions)";
+    }
+
+    /**
+     * The hint for a file: function the file language does not have: the function meant, such as ${file:name.noext} for
+     * ${file:noext} or ${file:name:noext}, and the usual ones. A path, such as ${file:data/stock.json}, is a file to
+     * read, which the file: functions do not do.
+     *
+     * @param remainder the text after file:, such as noext
+     */
+    public static String unknownFileFunction(String remainder) {
+        String text = remainder != null ? remainder.strip() : "";
+        // name:noext, name_noext, Name.NoExt: the separators and the case of a function name written another way
+        String normalized = text.toLowerCase(Locale.ROOT).replaceAll("[:_\\- ]+", ".").replaceAll("\\.{2,}", ".")
+                .replaceAll("^\\.|\\.$", "");
+        if ("noext".equals(normalized)) {
+            // the name without the extension: ${file:name.noext} has the folders below the starting directory too
+            return "did you mean ${file:name.noext}, the file name without its extension? ${file:onlyname.noext} also"
+                   + " leaves out its folders. The " + FILE_FUNCTIONS_TEXT;
+        }
+        String meant = closestFileFunction(normalized);
+        if (meant != null) {
+            return "did you mean ${file:" + meant + "}? The " + FILE_FUNCTIONS_TEXT;
+        }
+        if (text.contains("/") || text.contains("\\") || text.matches(".+\\.[A-Za-z0-9]{1,5}")) {
+            return "the " + FILE_FUNCTIONS_TEXT + "; they do not read a file. To read a file into the body use the poll"
+                   + " EIP with a file: endpoint";
+        }
+        return "the " + FILE_FUNCTIONS_TEXT;
+    }
+
+    /** The file function a name written another way means: nameNoExt, absolutepath, a letter or two off; or null. */
+    private static String closestFileFunction(String normalized) {
+        if (normalized.isEmpty()) {
+            return null;
+        }
+        if (FILE_FUNCTIONS.contains(normalized)) {
+            return normalized;
+        }
+        String compact = normalized.replace(".", "");
+        for (String f : FILE_FUNCTIONS) {
+            if (f.replace(".", "").equals(compact)) {
+                return f;
+            }
+        }
+        String best = null;
+        int bestDistance = Integer.MAX_VALUE;
+        int threshold = Math.max(2, normalized.length() / 3);
+        for (String f : FILE_FUNCTIONS) {
+            int d = distance(normalized, f);
+            if (d <= threshold && d < bestDistance) {
+                best = f;
+                bestDistance = d;
+            }
+        }
+        return best;
     }
 
     /** The did-you-mean for a function whose argument was written after a colon instead of in parentheses. */

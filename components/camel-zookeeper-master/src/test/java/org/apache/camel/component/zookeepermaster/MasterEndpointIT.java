@@ -17,6 +17,7 @@
 package org.apache.camel.component.zookeepermaster;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
@@ -65,7 +66,7 @@ public class MasterEndpointIT {
         resultEndpoint.expectedBodiesReceived(expectedBody);
 
         MasterConsumer masterConsumer = (MasterConsumer) camelContext.getRoute("zookeeper-master-to-direct").getConsumer();
-        Awaitility.await().until(() -> masterConsumer.isMaster() && masterConsumer.isConnected());
+        Awaitility.await().atMost(30, TimeUnit.SECONDS).until(() -> masterConsumer.isMaster() && masterConsumer.isConnected());
 
         template.sendBodyAndHeader(expectedBody, "foo", "bar");
 

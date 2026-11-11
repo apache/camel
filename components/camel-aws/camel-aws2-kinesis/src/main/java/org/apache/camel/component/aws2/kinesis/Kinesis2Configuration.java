@@ -49,9 +49,11 @@ public class Kinesis2Configuration implements Cloneable, AwsCommonConfiguration 
     @UriParam(description = "Amazon Kinesis client to use for all requests for this endpoint")
     @Metadata(label = "advanced", autowired = true)
     private KinesisClient amazonKinesisClient;
-    @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll",
-              defaultValue = "1")
-    private int maxResultsPerRequest = 1;
+    @UriParam(label = "consumer",
+              description = "Maximum number of records fetched from each shard in each poll: the Limit of the GetRecords request,"
+                            + " from 1 to 10000. Not used by the KCL consumer (useKclConsumers).",
+              defaultValue = "1000")
+    private int maxResultsPerRequest = 1000;
     @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records",
               defaultValue = "TRIM_HORIZON")
     private ShardIteratorType iteratorType = ShardIteratorType.TRIM_HORIZON;
@@ -125,6 +127,13 @@ public class Kinesis2Configuration implements Cloneable, AwsCommonConfiguration 
     @UriParam(label = "advanced",
               description = "If we want to use a KCL Consumer and disable the CloudWatch Metrics Export")
     private boolean kclDisableCloudwatchMetricsExport;
+    @UriParam(label = "consumer,advanced",
+              description = "If we want to use a KCL Consumer and keep the checkpoint of a shard before the first record whose"
+                            + " exchange fails, so the next holder of the lease of the shard (the route started again, or another"
+                            + " worker) consumes the records from that one on again. The consumer goes on routing the shard, so"
+                            + " these records can be routed twice and out of order. By default a failed record is reported to the"
+                            + " exception handler and checkpointed with its batch. See the KCL consumer section of the docs.")
+    private boolean kclStopCheckpointOnFailure;
     @UriParam(description = "Supply a pre-constructed Amazon Kinesis async client to use for the KCL Consumer")
     @Metadata(label = "advanced", autowired = true)
     private KinesisAsyncClient amazonKinesisAsyncClient;
@@ -378,6 +387,14 @@ public class Kinesis2Configuration implements Cloneable, AwsCommonConfiguration 
 
     public void setKclDisableCloudwatchMetricsExport(boolean kclDisableCloudwatchMetricsExport) {
         this.kclDisableCloudwatchMetricsExport = kclDisableCloudwatchMetricsExport;
+    }
+
+    public boolean isKclStopCheckpointOnFailure() {
+        return kclStopCheckpointOnFailure;
+    }
+
+    public void setKclStopCheckpointOnFailure(boolean kclStopCheckpointOnFailure) {
+        this.kclStopCheckpointOnFailure = kclStopCheckpointOnFailure;
     }
 
     // *************************************************

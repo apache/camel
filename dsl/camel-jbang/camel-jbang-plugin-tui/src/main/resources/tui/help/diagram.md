@@ -33,6 +33,12 @@ Each box represents a route. The first line is the route ID,
 the second line shows the `from` endpoint, and the bottom line
 shows metrics when enabled. Arrows show how routes connect.
 
+The head of an arrow says whether the route waits for the answer
+of the route it sends to:
+- `⇅` it waits: a call to a `direct` route, or a request-reply over
+  a broker (`exchangePattern=InOut`)
+- `▼` it hands the message off: a queue, a topic, a `wireTap`
+
 ## Metrics
 
 When metrics are enabled, each route box shows exchange counts:

@@ -71,8 +71,8 @@ import org.slf4j.LoggerFactory;
                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
                    Carrier.VALUE },
                                      description = "The response body: text, bytes, a stream, a file, or a Netty ByteBuf or"
-                                                   + " HttpResponse; no body sends 204. A Map or a POJO is written as its"
-                                                   + " toString() and a List is not written at all: marshal it first. A"
+                                                   + " HttpResponse; no body sends 204. A Map, a List or a POJO is written as"
+                                                   + " its toString(): marshal it first. A"
                                                    + " failed exchange sends 500 with an empty body (muteException)"),
            producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "The request body: text, bytes, a stream or a file, or a Netty ByteBuf or"
@@ -91,6 +91,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     static final String PROXY_NOT_SUPPORTED_MESSAGE = "Netty Http Producer does not support proxy mode";
 
     private OAuthHttpSecuritySupport oauthHttpSecurity;
+    // the http address: scheme, host, port, path and the query parameters that are not endpoint options
+    private String addressUri;
 
     @UriParam
     private NettyHttpConfiguration configuration;
@@ -349,8 +351,21 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         oauthHttpSecurity = OAuthHttpSecuritySupport.create(getCamelContext(), oauthProfile);
     }
 
+    /**
+     * The HTTP address of this endpoint, which the producer sends its requests to: the scheme, host, port and path, and
+     * the query parameters that are not endpoint options.
+     */
+    public String getAddressUri() {
+        return addressUri != null ? addressUri : getEndpointUri();
+    }
+
+    void setAddressUri(String addressUri) {
+        this.addressUri = addressUri;
+    }
+
     private boolean isProxyProtocol() {
-        URI baseUri = URI.create(getEndpointBaseUri());
+        String address = getAddressUri();
+        URI baseUri = URI.create(StringHelper.before(address, "?", address));
         String protocol = baseUri.getScheme();
         return protocol != null && protocol.equalsIgnoreCase("proxy");
     }

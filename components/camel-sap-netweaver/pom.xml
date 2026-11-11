@@ -46,7 +46,7 @@
         </dependency>
         <!-- Jackson -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
@@ -54,7 +54,7 @@
             <artifactId>jackson-annotations</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
@@ -74,6 +74,11 @@
             <artifactId>camel-velocity</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -84,6 +89,8 @@
                     <includes>
                         <!-- Here we only run test of  -->
                         <include>**/*UriConfigurationTest.java</include>
+                        <!-- uses a local http server -->
+                        <include>**/NetWeaverProducerTest.java</include>
                     </includes>
                 </configuration>
             </plugin>

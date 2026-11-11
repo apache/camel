@@ -24,6 +24,7 @@ public final class PostgresProperties {
     public static final String USERNAME = "postgres.user.name";
     public static final String PASSWORD = "postgres.user.password";
     public static final String POSTGRES_CONTAINER = "postgres.container";
+    public static final String POSTGRES_CONTAINER_STARTUP = "postgres.container.startup.attempts";
     public static final String POSTGRES_VECTOR_CONTAINER = "postgres.vector.container";
 
     public static final int DEFAULT_PORT = 5432;

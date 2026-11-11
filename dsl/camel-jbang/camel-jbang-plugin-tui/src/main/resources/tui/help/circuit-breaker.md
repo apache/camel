@@ -44,8 +44,8 @@ CLOSED ──(failures exceed threshold)──> OPEN
 - **STATE** — Current breaker state: `CLOSED` (green, normal), `OPEN` (red, rejecting), or `HALF_OPEN` (yellow, testing)
 - **WINDOW** — Number of calls in the current sliding window used to calculate the failure rate
 - **INFLIGHT** — Calls currently in progress inside the circuit breaker
-- **SUCCESS** — Total number of successful calls
-- **FAIL** — Total number of failed calls (exceptions thrown by the protected code)
+- **SUCCESS** — Successful calls in the sliding window
+- **FAIL** — Failed calls in the sliding window (exceptions thrown by the protected code)
 - **RATE%** — Current failure rate percentage in the sliding window. When this exceeds the configured threshold, the circuit trips to OPEN
 - **REJECT** — Calls rejected because the circuit is OPEN. These calls never reach the downstream service — they fail fast with a fallback
 - **FALLBACK** — Calls answered by the `onFallback`, whatever the cause: a failed call, a timeout or a rejected call. This is how many callers got a degraded answer
@@ -76,13 +76,15 @@ HALF_OPEN state.
 
 ## Reading the counters
 
-- FAIL counts calls the protected code failed, timeouts included.
-  TIMEOUT tells how many of those were timeouts.
+- SUCCESS and FAIL are the calls of the sliding window, which the
+  breaker keeps to work out RATE%: they stop growing once the window
+  is full. FAIL includes the timeouts; TIMEOUT tells how many of those
+  were timeouts.
 - REJECT counts calls the OPEN breaker refused. They are not in FAIL.
-- FALLBACK counts every call the `onFallback` answered, so it is
-  normally FAIL plus REJECT plus the bulkhead rejections, as long as
-  the breaker has a fallback. Without a fallback it stays at zero and
-  the exceptions reach the route instead.
+- FALLBACK is a running total: every call the `onFallback` answered,
+  whether it failed, timed out or was rejected, as long as the breaker
+  has a fallback. Without a fallback it stays at zero and the
+  exceptions reach the route instead.
 - Calls rejected by a full bulkhead are not in REJECT; they appear as
   `bulkhead` in the detail view.
 
@@ -92,8 +94,9 @@ The bottom panel shows when a circuit breaker is selected:
 
 - **Failure rate gauge**: Visual bar from 0% to 100%, colored green
   (low risk), yellow (approaching threshold), or red (above threshold)
-- **Sparkline chart**: Mirrored view showing successful calls (green,
-  upward) vs failed calls (red, downward) over time
+- **Sparkline chart**: Mirrored view of the calls per second: those the
+  protected steps answered (green, upward) and those the fallback answered
+  (red, downward), whether the call failed, timed out or was rejected
 - **Metrics**: Detailed counts for total, fail, inflight, reject,
   fallback, timeout, bulkhead (calls rejected because the bulkhead
   was full) and timing statistics (mean/min/max processing time)

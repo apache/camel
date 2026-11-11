@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hazelcast.list;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -118,6 +119,10 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
     }
 
     private void get(Integer pos, Exchange exchange) {
+        if (pos == null) {
+            throw new IllegalArgumentException(
+                    "The get operation needs the index of the item in the " + HazelcastConstants.OBJECT_POS + " header");
+        }
         exchange.getMessage().setBody(this.list.get(pos));
     }
 
@@ -166,6 +171,7 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
     }
 
     private void getAll(Exchange exchange) {
-        exchange.getMessage().setBody(list);
+        // a copy: the list itself is a proxy of the distributed list, which later steps would read and change
+        exchange.getMessage().setBody(new ArrayList<>(list));
     }
 }

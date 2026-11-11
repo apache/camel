@@ -34,8 +34,8 @@ import java.util.regex.Pattern;
  * A small XMPP server for tests, on plain TCP, that does what Smack needs to connect, log in (SASL PLAIN, any password,
  * or ANONYMOUS), bind a resource, send messages and enter a multi-user chat room. Like a real server it only delivers
  * stanzas to sessions that logged in and bound a resource, and to room occupants that entered the room on their current
- * session, and it closes the older session with a conflict stream error when a session binds the full JID (account and
- * resource) of another session.
+ * session, it takes a groupchat message only from an occupant of the room, and it closes the older session with a
+ * conflict stream error when a session binds the full JID (account and resource) of another session.
  */
 final class FakeXmppServer implements AutoCloseable {
 
@@ -59,6 +59,7 @@ final class FakeXmppServer implements AutoCloseable {
     private final AtomicInteger counter = new AtomicInteger();
     private final AtomicInteger binds = new AtomicInteger();
     private final AtomicInteger conflicts = new AtomicInteger();
+    private final AtomicInteger roomJoins = new AtomicInteger();
     private volatile boolean running = true;
 
     FakeXmppServer() throws IOException {
@@ -91,6 +92,13 @@ final class FakeXmppServer implements AutoCloseable {
      */
     int conflicts() {
         return conflicts.get();
+    }
+
+    /**
+     * The number of times a session entered a room since the server started, also when it was in the room already.
+     */
+    int roomJoins() {
+        return roomJoins.get();
     }
 
     /**
@@ -254,10 +262,17 @@ final class FakeXmppServer implements AutoCloseable {
                 }
             } else if (pattern == PRESENCE) {
                 String to = attribute(TO, element);
-                if (jid == null || to == null || !element.contains("http://jabber.org/protocol/muc")) {
+                if (jid == null || to == null) {
                     return;
                 }
-                if (element.contains("type='unavailable'") || element.contains("type=\"unavailable\"")) {
+                boolean unavailable
+                        = element.contains("type='unavailable'") || element.contains("type=\"unavailable\"");
+                // an occupant leaves the room with an unavailable presence to its occupant JID (no muc element)
+                boolean leaving = unavailable && to.indexOf('/') > 0 && to.substring(0, to.indexOf('/')).equals(room);
+                if (!leaving && !element.contains("http://jabber.org/protocol/muc")) {
+                    return;
+                }
+                if (unavailable) {
                     room = null;
                     write("<presence from='" + to + "' to='" + jid + "' type='unavailable'>"
                           + "<x xmlns='http://jabber.org/protocol/muc#user'><item affiliation='none' role='none'/>"
@@ -266,12 +281,18 @@ final class FakeXmppServer implements AutoCloseable {
                 }
                 // entering a room: the room answers with the occupant's own presence (status 110)
                 room = to.substring(0, to.indexOf('/'));
+                roomJoins.incrementAndGet();
                 write("<presence from='" + to + "' to='" + jid + "' id='" + attribute(ID, element) + "'>"
                       + "<x xmlns='http://jabber.org/protocol/muc#user'><item affiliation='none' role='participant'/>"
                       + "<status code='110'/></x></presence>");
             } else if (pattern == MESSAGE && jid != null) {
                 String to = attribute(TO, element);
                 String body = content(BODY, element);
+                if ((element.contains("type='groupchat'") || element.contains("type=\"groupchat\""))
+                        && (to == null || !to.equals(room))) {
+                    // a room takes messages only from its occupants
+                    return;
+                }
                 if (to != null && body != null) {
                     received.add(new String[] { to, body });
                 }

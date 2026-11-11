@@ -26,9 +26,11 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,22 +39,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Tests different binding configuration options of the CXFRS consumer.
  */
 public class CxfRsBindingConfigurationSelectionTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+    private static AvailablePortFinder.Port PORT3;
+    private static AvailablePortFinder.Port PORT4;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT1 = AvailablePortFinder.find();
+        PORT2 = AvailablePortFinder.find();
+        PORT3 = AvailablePortFinder.find();
+        PORT4 = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+        if (PORT3 != null) {
+            PORT3.release();
+        }
+        if (PORT4 != null) {
+            PORT4.release();
+        }
+    }
 
     private static final String RESOURCE_CLASS
             = "resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceResource";
-    private static final String CXF_RS_ENDPOINT_URI_CUSTOM = String
-            .format("cxfrs://http://localhost:%s/CxfRsConsumerTest/rest?bindingStyle=Custom&", CXFTestSupport.getPort2())
-                                                             + RESOURCE_CLASS + "&binding=#binding";
-    private static final String CXF_RS_ENDPOINT_URI_SIMPLE
-            = String.format("cxfrs://http://localhost:%s/CxfRsConsumerTest/rest?bindingStyle=SimpleConsumer&",
-                    CXFTestSupport.getPort1())
-              + RESOURCE_CLASS;
-    private static final String CXF_RS_ENDPOINT_URI_DEFAULT
-            = String.format("cxfrs://http://localhost:%s/CxfRsConsumerTest/rest?bindingStyle=Default&",
-                    CXFTestSupport.getPort3())
-              + RESOURCE_CLASS;
-    private static final String CXF_RS_ENDPOINT_URI_NONE
-            = String.format("cxfrs://http://localhost:%s/CxfRsConsumerTest/rest?", CXFTestSupport.getPort4()) + RESOURCE_CLASS;
 
     @BindToRegistry("binding")
     private DummyCxfRsBindingImplementation dummyCxfRsBindingImplementation = new DummyCxfRsBindingImplementation();
@@ -81,16 +98,24 @@ public class CxfRsBindingConfigurationSelectionTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from(CXF_RS_ENDPOINT_URI_CUSTOM).routeId("custom")
+                from(String.format("cxfrs://http://localhost:%s/CxfRsConsumerTest/rest?bindingStyle=Custom&",
+                        PORT2.getPort())
+                     + RESOURCE_CLASS + "&binding=#binding").routeId("custom")
                         .to("log:foo");
 
-                from(CXF_RS_ENDPOINT_URI_SIMPLE).routeId("simple")
+                from(String.format("cxfrs://http://localhost:%s/CxfRsConsumerTest/rest?bindingStyle=SimpleConsumer&",
+                        PORT1.getPort())
+                     + RESOURCE_CLASS).routeId("simple")
                         .to("log:foo");
 
-                from(CXF_RS_ENDPOINT_URI_DEFAULT).routeId("default")
+                from(String.format("cxfrs://http://localhost:%s/CxfRsConsumerTest/rest?bindingStyle=Default&",
+                        PORT3.getPort())
+                     + RESOURCE_CLASS).routeId("default")
                         .to("log:foo");
 
-                from(CXF_RS_ENDPOINT_URI_NONE).routeId("none")
+                from(String.format("cxfrs://http://localhost:%s/CxfRsConsumerTest/rest?",
+                        PORT4.getPort())
+                     + RESOURCE_CLASS).routeId("none")
                         .to("log:foo");
 
             }

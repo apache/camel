@@ -16,9 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import org.apache.camel.main.Main;
+import java.nio.file.Path;
+
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
+import org.apache.camel.dsl.jbang.run.RunRequest;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,48 +29,36 @@ class RunOpenApiUiOptionsTest {
     @Test
     void shouldParseOpenApiUiFlag() {
         Run run = new Run(new CamelJBangMain());
-        CommandLine cmd = new CommandLine(run);
-
-        cmd.parseArgs("--openapi-ui", "hello.java");
+        CommandLineTestHelper.parse(run, "--openapi-ui", "hello.java");
 
         assertThat(run.serverOptions.openapiUi).isTrue();
         assertThat(run.files).containsExactly("hello.java");
     }
 
     @Test
-    void shouldAlignManagementPortWithAppPortForOpenApiUi() {
+    void shouldPassTheOpenApiUiOptionsToTheSettingsPipeline() {
         Run run = new Run(new CamelJBangMain());
-        new CommandLine(run).parseArgs("--openapi-ui", "--port=9090", "hello.java");
+        CommandLineTestHelper.parse(run, "--openapi-ui", "--port=9090", "--management-port=9999", "hello.java");
 
-        run.prepareOpenApiUiServerOptions();
+        RunRequest request = run.toRunRequest(Path.of("."));
 
-        assertThat(run.serverOptions.port).isEqualTo(9090);
-        assertThat(run.serverOptions.managementPort).isEqualTo(9090);
+        assertThat(request.openapiUi).isTrue();
+        assertThat(request.port).isEqualTo(9090);
+        assertThat(request.managementPort).isEqualTo(9999);
     }
 
     @Test
-    void shouldPreserveExplicitManagementPortForOpenApiUi() {
+    void shouldTakeThePortsThePipelineCompleted() {
         Run run = new Run(new CamelJBangMain());
-        new CommandLine(run).parseArgs("--openapi-ui", "--port=9090", "--management-port=9999", "hello.java");
+        CommandLineTestHelper.parse(run, "--openapi-ui", "hello.java");
+        RunRequest request = run.toRunRequest(Path.of("."));
+        // as the pipeline does for the OpenAPI UI
+        request.port = 8080;
+        request.managementPort = 8080;
 
-        run.prepareOpenApiUiServerOptions();
+        run.fromRunRequest(request);
 
-        assertThat(run.serverOptions.port).isEqualTo(9090);
-        assertThat(run.serverOptions.managementPort).isEqualTo(9999);
-    }
-
-    @Test
-    void shouldApplyOpenApiUiOverrideProperties() {
-        Run run = new Run(new CamelJBangMain());
-        new CommandLine(run).parseArgs("--openapi-ui", "hello.java");
-        Main main = new Main();
-
-        run.applyOpenApiUiRuntimeOptions(main);
-
-        assertThat(main.getOverrideProperties().getProperty("camel.rest.component")).isEqualTo("platform-http");
-        assertThat(main.getOverrideProperties().getProperty("camel.rest.apiContextPath")).isEqualTo("/q/openapi.json");
-        assertThat(main.getOverrideProperties().getProperty("camel.management.openapiUiEnabled")).isEqualTo("true");
-        assertThat(main.getOverrideProperties().getProperty("camel.server.enabled")).isEqualTo("true");
-        assertThat(main.getOverrideProperties().getProperty("camel.management.enabled")).isEqualTo("true");
+        assertThat(run.serverOptions.port).isEqualTo(8080);
+        assertThat(run.serverOptions.managementPort).isEqualTo(8080);
     }
 }

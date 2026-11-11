@@ -36,6 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kubernetes.KubernetesHelper.extractNamespace;
 import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesServicesProducer extends DefaultProducer {
@@ -87,7 +88,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         ServiceList servicesList;
 
         if (ObjectHelper.isEmpty(namespace)) {
@@ -99,7 +100,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
     }
 
     protected void doListServiceByLabels(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
         ServiceList servicesList;
 
@@ -119,7 +120,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
 
     protected void doGetService(Exchange exchange) {
         String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(serviceName)) {
             LOG.error("Get a specific service require specify a service name");
             throw new IllegalArgumentException("Get a specific service require specify a service name");
@@ -144,7 +145,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
     private void doCreateOrUpdateService(
             Exchange exchange, String operationName, Function<Resource<Service>, Service> operation) {
         String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         ServiceSpec serviceSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, ServiceSpec.class);
         if (ObjectHelper.isEmpty(serviceName)) {
             LOG.error("{} a specific service require specify a service name", operationName);
@@ -173,7 +174,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
 
     protected void doDeleteService(Exchange exchange) {
         String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(serviceName)) {
             LOG.error("Delete a specific service require specify a service name");
             throw new IllegalArgumentException("Delete a specific service require specify a service name");

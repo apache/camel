@@ -31,13 +31,13 @@ public class Web3jConfiguration implements Cloneable {
     private String operation = Web3jConstants.TRANSACTION.toLowerCase(); // TODO: Make this an enum
 
     @UriParam(label = "common", defaultValue = "latest")
-    private String fromBlock;
+    private String fromBlock = "latest";
 
     @UriParam(label = "common", defaultValue = "latest")
-    private String toBlock;
+    private String toBlock = "latest";
 
     @UriParam(label = "producer", defaultValue = "latest")
-    private String atBlock;
+    private String atBlock = "latest";
 
     @UriParam(label = "common")
     private String addresses;
@@ -417,7 +417,7 @@ public class Web3jConfiguration implements Cloneable {
     }
 
     /**
-     * The transaction index position withing a block.
+     * The transaction index position within a block.
      */
     public void setPosition(BigInteger position) {
         this.position = position;
@@ -524,7 +524,10 @@ public class Web3jConfiguration implements Cloneable {
     }
 
     /**
-     * Operation to use.
+     * Operation to use. The producer needs an operation, set with this option or the CamelWeb3jOperation header. The
+     * consumer needs one of the observable operations: ETH_LOG_OBSERVABLE, ETH_BLOCK_HASH_OBSERVABLE,
+     * ETH_PENDING_TRANSACTION_HASH_OBSERVABLE, TRANSACTION_OBSERVABLE, PENDING_TRANSACTION_OBSERVABLE,
+     * BLOCK_OBSERVABLE, REPLAY_BLOCKS_OBSERVABLE or REPLAY_TRANSACTIONS_OBSERVABLE.
      */
     public void setOperation(String operation) {
         this.operation = operation;

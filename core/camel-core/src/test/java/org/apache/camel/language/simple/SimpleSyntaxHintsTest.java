@@ -96,6 +96,17 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testUnknownOperatorListsEveryOperator() {
+        // the hint lists every binary operator of the tokenizer, including the negated and the text-only ones
+        String message = predicateError("${body} = 'x'");
+        String operators = message.substring(message.indexOf("Operators are ") + 14, message.indexOf(" at location"));
+        List<String> listed = List.of(operators.split(", | and "));
+        assertThat(listed).containsExactlyInAnyOrder("==", "=~", "!=", "!=~", "<", "<=", ">", ">=", "equals", "!equals",
+                "contains", "!contains", "~~", "!~~", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range",
+                "startsWith", "!startsWith", "endsWith", "!endsWith", "&&", "||");
+    }
+
+    @Test
     public void testQuotes() {
         assertThat(predicateError("${body} == 'it''s'")).contains("double quotes");
     }
@@ -157,6 +168,33 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         assertThat(SimpleSyntaxHints.unknownFunction("bean:myBean")).doesNotContain("${bean:myBean}");
         assertThat(SimpleSyntaxHints.unknownFunction("date:now:HH:mm")).doesNotContain("${date:now:HH:mm}");
         assertThat(SimpleSyntaxHints.unknownFunction("jsonpath:$.status")).doesNotContain("${jsonpath:$.status}");
+    }
+
+    /**
+     * r27 of the local-model benchmark, contracts-rest-code-first steps 1 and 2: ${body.lines}.size() > 0 was told that
+     * operators and values must be separated by a space, and a model sent it to the expression tool 18 times. The
+     * method is text after the function; it goes inside the braces.
+     */
+    @Test
+    public void testAMethodAfterTheFunctionGoesInsideIt() {
+        assertThat(predicateError("${body.lines} != null && ${body.lines}.size() > 0"))
+                .contains("expected symbol whiteSpace but was character: the method .size() is outside the function, as"
+                          + " text after its closing brace: write it inside the braces, ${body.lines.size()}")
+                .doesNotContain("separated by a space");
+        assertThat(predicateError("${header.foundOrder}.size() > 0"))
+                .contains("Unexpected token ${header.foundOrder}.size(): the method .size() is outside the function, as"
+                          + " text after its closing brace: write it inside the braces, ${header.foundOrder.size()}");
+        assertThat(predicateError("${body}[0] == 'a'"))
+                .contains("the index [0] is outside the function, as text after its closing brace: write it inside the"
+                          + " braces, ${body[0]}");
+        assertThat(predicateError("${variable.order}.lines.size() > 0"))
+                .contains("the method .lines.size() is outside the function").contains("${variable.order.lines.size()}");
+        // a filter is not Simple at all, and a function that cannot be read further keeps the message it had
+        assertThat(predicateError("${body}?.?[orderId == 'A'] != null")).doesNotContain("outside the function");
+        assertThat(predicateError("${date:now:yyyy}.x > 0")).doesNotContain("outside the function");
+        // the rewrite is what works
+        exchange.getIn().setBody(Map.of("lines", List.of("a", "b")));
+        assertEquals(true, context.resolveLanguage("simple").createPredicate("${body.lines.size()} > 0").matches(exchange));
     }
 
     @Test
@@ -441,6 +479,28 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
                 .contains("Unknown file language syntax")
                 .contains("they do not read a file")
                 .contains("poll EIP");
+    }
+
+    @Test
+    public void testFileFunctionWrittenAnotherWaySaysDidYouMean() {
+        // r26 of the local-model benchmark (connect-sftp-transfer step 3): the receipt named like the batch, but .txt
+        assertThat(expressionError("${file:noext}.txt"))
+                .contains("Unknown file language syntax: noext (did you mean ${file:name.noext}, the file name without"
+                          + " its extension? ${file:onlyname.noext} also leaves out its folders. The file: functions"
+                          + " describe the file being consumed: ${file:name}, ${file:name.noext}, ${file:onlyname},")
+                .doesNotContain("they do not read a file");
+        assertThat(expressionError("${file:name:noext}.txt"))
+                .contains("Unknown file language syntax: name:noext (did you mean ${file:name.noext}? The file:"
+                          + " functions describe");
+        // the case, the separators and a letter off
+        assertThat(expressionError("${file:onlyName}")).contains("(did you mean ${file:onlyname}?");
+        assertThat(expressionError("${file:nameNoExt}")).contains("(did you mean ${file:name.noext}?");
+        assertThat(expressionError("${file:absolute_path}")).contains("(did you mean ${file:absolute.path}?");
+        assertThat(expressionError("${file:nmae}")).contains("(did you mean ${file:name}?");
+        // a name that is no function: the functions there are
+        assertThat(expressionError("${file:cheese}"))
+                .contains("Unknown file language syntax: cheese (the file: functions describe the file being consumed:")
+                .doesNotContain("did you mean").doesNotContain("they do not read a file");
     }
 
     @Test

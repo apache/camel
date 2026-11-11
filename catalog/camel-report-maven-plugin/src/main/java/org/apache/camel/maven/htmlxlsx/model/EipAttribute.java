@@ -20,15 +20,17 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.type.CollectionType;
 
 public class EipAttribute implements Comparable<EipAttribute> {
 
@@ -50,9 +52,10 @@ public class EipAttribute implements Comparable<EipAttribute> {
     protected ObjectMapper objectMapper() {
 
         if (OBJECT_MAPPER == null) {
-            OBJECT_MAPPER = new ObjectMapper();
-            OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            OBJECT_MAPPER.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+            OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults()
+                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                    .build();
         }
 
         return OBJECT_MAPPER;
@@ -112,7 +115,7 @@ public class EipAttribute implements Comparable<EipAttribute> {
                 }
                 childEipMap.put(key, Collections.singletonList(childEip));
                 properties.remove(key);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeException(e);
             }
         } else if (value instanceof List) {
@@ -122,7 +125,7 @@ public class EipAttribute implements Comparable<EipAttribute> {
                 List<ChildEip> childEipList = objectMapper().readValue(childJson, javaType);
                 childEipMap.put(key, childEipList);
                 properties.remove(key);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -155,7 +158,7 @@ public class EipAttribute implements Comparable<EipAttribute> {
         if (o == null) {
             return 1;
         }
-        return index - o.index;
+        return Integer.compare(index, o.index);
     }
 
     @Override
@@ -169,7 +172,13 @@ public class EipAttribute implements Comparable<EipAttribute> {
             return false;
         }
 
-        return id.equals(((EipAttribute) o).id);
+        return Objects.equals(id, ((EipAttribute) o).id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hashCode(id);
     }
 
     @Override

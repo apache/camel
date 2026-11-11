@@ -26,14 +26,30 @@ class LoadAvg {
     private double load1 = Double.NaN;
     private double load5 = Double.NaN;
     private double load15 = Double.NaN;
+    private boolean updated;
+
+    /** The averages start with the first value, as Camel's own load of inflight exchanges. */
+    LoadAvg() {
+    }
+
+    /**
+     * The averages start at a value, as a load average of the system starts at 0: the CPU of a process, whose first
+     * value is the start of its JVM, and is no average of the last 15 minutes.
+     */
+    LoadAvg(double start) {
+        load1 = start;
+        load5 = start;
+        load15 = start;
+    }
 
     synchronized void update(double value) {
+        updated = true;
         load1 = Double.isNaN(load1) ? value : value + EXP_1 * (load1 - value);
         load5 = Double.isNaN(load5) ? value : value + EXP_5 * (load5 - value);
         load15 = Double.isNaN(load15) ? value : value + EXP_15 * (load15 - value);
     }
 
     synchronized String format(String fmt) {
-        return Double.isNaN(load1) ? "-" : String.format(Locale.US, fmt, load1, load5, load15);
+        return Double.isNaN(load1) || !updated ? "-" : String.format(Locale.US, fmt, load1, load5, load15);
     }
 }

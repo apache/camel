@@ -109,6 +109,26 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
                 exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
     }
 
+    @Test
+    public void testRobotFrameworkCamelNullBodyHeaderAndProperty() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:resultNoBody");
+        mock.expectedMessageCount(1);
+
+        template.send("direct:setVariableCamelNoBody", exchange -> {
+            exchange.getIn().setBody(null);
+            exchange.getIn().setHeader("stringKey", "headerValue");
+            exchange.getIn().setHeader("nullKey", null);
+            exchange.setProperty("stringKey", "propertyValue");
+            exchange.setProperty("nullKey", null);
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        Exchange exchange = mock.getExchanges().get(0);
+        assertEquals(0, (int) ObjectHelper.cast(Integer.class,
+                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -135,6 +155,10 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
                 from("direct:setVariableCamelBodyAndProperty").to(
                         "robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_property.robot?xunitFile=target/out.xml&allowContextMapAll=true")
                         .to("mock:resultProperty");
+
+                from("direct:setVariableCamelNoBody").to(
+                        "robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_no_body.robot?xunitFile=target/out.xml&allowContextMapAll=true")
+                        .to("mock:resultNoBody");
 
                 from("direct:setVariableCamelBodyResourceUri")
                         .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI)

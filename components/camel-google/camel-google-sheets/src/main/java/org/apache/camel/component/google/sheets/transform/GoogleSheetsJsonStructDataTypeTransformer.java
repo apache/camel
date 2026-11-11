@@ -17,23 +17,22 @@
 
 package org.apache.camel.component.google.sheets.transform;
 
-import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants;
-import org.apache.camel.component.jackson.transform.Json;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -42,6 +41,10 @@ import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.DeserializationException;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Data type supports generic JsonNode representation of Google Sheets row and column values. Transforms generic
@@ -107,7 +110,7 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
                 final ArrayList<String> properties = createCoordinateNameSpec(range, majorDimension, columnNames);
 
                 for (String json : jsonBeans) {
-                    Map<String, Object> dataShape = Json.mapper().reader().forType(Map.class).readValue(json);
+                    Map<String, Object> dataShape = readJsonObject(json);
 
                     if (dataShape.containsKey("spreadsheetId")) {
                         spreadsheetId = Optional.ofNullable(dataShape.remove("spreadsheetId"))
@@ -138,7 +141,7 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
             message.setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values", valueRange);
 
             return valueRange;
-        } catch (InvalidPayloadException | JsonProcessingException e) {
+        } catch (InvalidPayloadException | DeserializationException e) {
             throw new CamelExecutionException(
                     "Failed to apply Google Sheets Json struct data type on exchange",
                     message.getExchange(), e);
@@ -153,50 +156,41 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
             Message message, ValueRange valueRange, String spreadsheetId, String range, String majorDimension,
             String[] columnNames) {
         final List<String> jsonBeans = new ArrayList<>();
+        if (valueRange != null) {
+            if (ObjectHelper.isNotEmpty(valueRange.getRange())) {
+                range = valueRange.getRange();
+            }
+            RangeCoordinate rangeCoordinate = RangeCoordinate.fromRange(range);
 
-        try {
-            if (valueRange != null) {
-                if (ObjectHelper.isNotEmpty(valueRange.getRange())) {
-                    range = valueRange.getRange();
-                }
-                RangeCoordinate rangeCoordinate = RangeCoordinate.fromRange(range);
-
-                if (ObjectHelper.isNotEmpty(valueRange.getMajorDimension())) {
-                    majorDimension = valueRange.getMajorDimension();
-                }
-
-                if (ObjectHelper.equal(RangeCoordinate.DIMENSION_ROWS, majorDimension)) {
-                    for (List<Object> values : valueRange.getValues()) {
-                        final Map<String, Object> model = new HashMap<>();
-                        model.put("spreadsheetId", spreadsheetId);
-                        int columnIndex = rangeCoordinate.getColumnStartIndex();
-                        for (Object value : values) {
-                            model.put(CellCoordinate.getColumnName(columnIndex, rangeCoordinate.getColumnStartIndex(),
-                                    columnNames), value);
-                            columnIndex++;
-                        }
-                        jsonBeans.add(Json.mapper().writer().writeValueAsString(model));
-                    }
-                } else if (ObjectHelper.equal(RangeCoordinate.DIMENSION_COLUMNS, majorDimension)) {
-                    for (List<Object> values : valueRange.getValues()) {
-                        final Map<String, Object> model = new HashMap<>();
-                        model.put("spreadsheetId", spreadsheetId);
-                        int rowIndex = rangeCoordinate.getRowStartIndex() + 1;
-                        for (Object value : values) {
-                            model.put(ROW_PREFIX + rowIndex, value);
-                            rowIndex++;
-                        }
-                        jsonBeans.add(Json.mapper().writer().writeValueAsString(model));
-                    }
-                }
+            if (ObjectHelper.isNotEmpty(valueRange.getMajorDimension())) {
+                majorDimension = valueRange.getMajorDimension();
             }
 
-        } catch (IOException e) {
-            throw new CamelExecutionException(
-                    "Failed to apply Google Sheets Json struct data type on exchange",
-                    message.getExchange(), e);
+            if (ObjectHelper.equal(RangeCoordinate.DIMENSION_ROWS, majorDimension)) {
+                for (List<Object> values : valueRange.getValues()) {
+                    final Map<String, Object> model = new HashMap<>();
+                    model.put("spreadsheetId", spreadsheetId);
+                    int columnIndex = rangeCoordinate.getColumnStartIndex();
+                    for (Object value : values) {
+                        model.put(CellCoordinate.getColumnName(columnIndex, rangeCoordinate.getColumnStartIndex(),
+                                columnNames), value);
+                        columnIndex++;
+                    }
+                    jsonBeans.add(Jsoner.serialize(model));
+                }
+            } else if (ObjectHelper.equal(RangeCoordinate.DIMENSION_COLUMNS, majorDimension)) {
+                for (List<Object> values : valueRange.getValues()) {
+                    final Map<String, Object> model = new HashMap<>();
+                    model.put("spreadsheetId", spreadsheetId);
+                    int rowIndex = rangeCoordinate.getRowStartIndex() + 1;
+                    for (Object value : values) {
+                        model.put(ROW_PREFIX + rowIndex, value);
+                        rowIndex++;
+                    }
+                    jsonBeans.add(Jsoner.serialize(model));
+                }
+            }
         }
-
         return jsonBeans;
     }
 
@@ -238,8 +232,8 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
                 }
             }
 
-            return Json.mapper().writer().writeValueAsString(model);
-        } catch (InvalidPayloadException | JsonProcessingException e) {
+            return Jsoner.serialize(model);
+        } catch (InvalidPayloadException | DeserializationException e) {
             throw new CamelExecutionException(
                     "Failed to apply Google Sheets Json struct data type on exchange",
                     message.getExchange(), e);
@@ -258,9 +252,8 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
         String jsonBody = MessageHelper.extractBodyAsString(message);
         if (jsonBody != null) {
             try {
-                ValueRange valueRange = Json.mapper().reader().readValue(jsonBody, ValueRange.class);
-                return valueRange.getValues() != null ? Optional.of(valueRange) : Optional.empty();
-            } catch (IOException e) {
+                return valueRangeOf(Jsoner.deserialize(jsonBody));
+            } catch (DeserializationException e) {
                 return Optional.empty();
             }
         }
@@ -272,7 +265,95 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
      * Converts message body to list of Json objects. Supports different message body types such as List, String,
      * InputStream.
      */
-    private static List<String> bodyAsJsonBeans(Message message) throws JsonProcessingException, InvalidPayloadException {
+    /**
+     * A JSON object whose values property is an array of arrays is a ValueRange.
+     */
+    @SuppressWarnings("unchecked")
+    private static Optional<ValueRange> valueRangeOf(Object json) {
+        if (json instanceof JsonObject object && object.get("values") instanceof List<?> rows
+                && rows.stream().allMatch(row -> row instanceof List)) {
+            ValueRange valueRange = new ValueRange();
+            valueRange.setValues((List<List<Object>>) normalize(rows));
+            if (object.get("range") instanceof String range) {
+                valueRange.setRange(range);
+            }
+            if (object.get("majorDimension") instanceof String majorDimension) {
+                valueRange.setMajorDimension(majorDimension);
+            }
+            return Optional.of(valueRange);
+        }
+        return Optional.empty();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> readJsonObject(String json) throws DeserializationException {
+        Object parsed = normalize(Jsoner.deserialize(json));
+        if (parsed instanceof Map) {
+            return (Map<String, Object>) parsed;
+        }
+        throw new IllegalArgumentException("Expected a JSON object: " + json);
+    }
+
+    /**
+     * Gives the numbers of a parsed JSON value the types Jackson gives them: an integral literal is an Integer, Long or
+     * BigInteger, any other number a Double.
+     */
+    @SuppressWarnings("unchecked")
+    private static Object normalize(Object value) {
+        if (value instanceof BigDecimal number) {
+            return toJavaNumber(number);
+        }
+        if (value instanceof Map<?, ?> map) {
+            for (Map.Entry<String, Object> entry : ((Map<String, Object>) map).entrySet()) {
+                entry.setValue(normalize(entry.getValue()));
+            }
+        } else if (value instanceof List<?> list) {
+            for (ListIterator<Object> it = ((List<Object>) list).listIterator(); it.hasNext();) {
+                it.set(normalize(it.next()));
+            }
+        }
+        return value;
+    }
+
+    private static Number toJavaNumber(BigDecimal number) {
+        if (number.scale() != 0) {
+            return number.doubleValue();
+        }
+        try {
+            return number.intValueExact();
+        } catch (ArithmeticException e) {
+            // too large for an int
+        }
+        try {
+            return number.longValueExact();
+        } catch (ArithmeticException e) {
+            return number.toBigInteger();
+        }
+    }
+
+    private static boolean isJsonObject(String value) {
+        String trimmed = value.trim();
+        return !trimmed.isEmpty() && trimmed.charAt(0) == '{' && trimmed.charAt(trimmed.length() - 1) == '}';
+    }
+
+    private static boolean isJsonArray(String value) {
+        String trimmed = value.trim();
+        return !trimmed.isEmpty() && trimmed.charAt(0) == '[' && trimmed.charAt(trimmed.length() - 1) == ']';
+    }
+
+    /**
+     * The elements of a JSON array as JSON Strings; a String element is taken as is.
+     */
+    private static List<String> arrayToJsonBeans(List<?> array) {
+        List<String> jsonBeans = new ArrayList<>();
+        for (Object item : array) {
+            jsonBeans.add(
+                    item instanceof String text ? StringHelper.removeLeadingAndEndingQuotes(text) : Jsoner.serialize(item));
+        }
+        return jsonBeans;
+    }
+
+    private static List<String> bodyAsJsonBeans(Message message) throws InvalidPayloadException, DeserializationException {
         if (message.getBody() == null) {
             return Collections.emptyList();
         }
@@ -282,9 +363,9 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
         }
 
         String body = message.getMandatoryBody(String.class);
-        if (Json.isJsonArray(body)) {
-            return Json.arrayToJsonBeans(Json.mapper().reader().readTree(body));
-        } else if (Json.isJson(body)) {
+        if (isJsonArray(body)) {
+            return arrayToJsonBeans((List<?>) Jsoner.deserialize(body));
+        } else if (isJsonObject(body)) {
             return Collections.singletonList(body);
         }
 

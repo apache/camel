@@ -83,6 +83,16 @@ public class AMQPAuthRouteTest implements ConfigurableContext, ConfigurableRoute
     }
 
     @Test
+    public void testConfigJmsQueueWithBrokerUrl() throws Exception {
+        resultEndpoint.expectedBodiesReceived("Hello World", "Hello Again");
+
+        // the producers of the component share a connection, which logs in with the username and password of the component
+        template.sendBody("amqp-auth-url:queue:ping-auth", "Hello World");
+        template.sendBody("amqp-auth-url:queue:ping-auth", "Hello Again");
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
     public void testConfigRequestReply() {
         String response = template.requestBody("amqp-auth:queue:inOut-auth", "Hello World", String.class);
         assertEquals("response", response);
@@ -104,6 +114,12 @@ public class AMQPAuthRouteTest implements ConfigurableContext, ConfigurableRoute
         customizedComponent.setUsername("camel");
         customizedComponent.setPassword("rider");
         context.addComponent("amqp-auth", customizedComponent);
+
+        AMQPComponent brokerUrlComponent = new AMQPComponent();
+        brokerUrlComponent.setBrokerUrl("amqp://localhost:" + service.brokerPort());
+        brokerUrlComponent.setUsername("camel");
+        brokerUrlComponent.setPassword("rider");
+        context.addComponent("amqp-auth-url", brokerUrlComponent);
     }
 
     @RouteFixture

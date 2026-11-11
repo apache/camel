@@ -46,7 +46,8 @@ public final class SecurityUtils {
      * Information about a security-sensitive configuration option.
      *
      * @param category      the security category (e.g., "insecure:ssl", "insecure:serialization", "insecure:dev")
-     * @param insecureValue the value that makes this option insecure (e.g., "true" for boolean flags)
+     * @param insecureValue the value that makes this option insecure (e.g., "true" for boolean flags), or null when any
+     *                      value that is not empty makes it insecure
      */
     public record SecurityOption(String category, String insecureValue) {
     }
@@ -59,7 +60,10 @@ public final class SecurityUtils {
         // SECURITY-OPTIONS: START
         map.put("acceptallobjects", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("acceptanyspiffeid", new SecurityOption(INSECURE_SSL, "true"));
+        map.put("allowconnectionandcredentialsfromheaders", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowcontrolheaders", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowdatabaseandtablefromheaders", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowdatabasepathfromheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowexternalentities", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowfilepathsource", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowjavaserializedobject", new SecurityOption(INSECURE_SERIALIZATION, "true"));
@@ -67,7 +71,9 @@ public final class SecurityUtils {
         map.put("allowoperationheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowpredicatefrommessage", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowqueryfromheader", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowsecretstoreandkeyfromheaders", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowserializedheaders", new SecurityOption(INSECURE_SERIALIZATION, "true"));
+        map.put("allowsharedstatefulkey", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowtemplatefromheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlbody", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlsource", new SecurityOption(INSECURE_DEV, "true"));
@@ -104,6 +110,7 @@ public final class SecurityUtils {
         map.put("validateauth", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
         map.put("verifyssl", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("webhooksecrettokenenabled", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
+        map.put("webhookverification", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
         map.put("x509hostnameverifier", new SecurityOption(INSECURE_SSL, ""));
         // SECURITY-OPTIONS: END
         SECURITY_OPTIONS = Collections.unmodifiableMap(map);
@@ -120,8 +127,14 @@ public final class SecurityUtils {
         // SECURITY-OPTION-OWNERS: START
         owners.put("acceptallobjects", Set.of(
                 "component:jgroups"));
+        owners.put("allowconnectionandcredentialsfromheaders", Set.of(
+                "component:docker"));
         owners.put("allowcontrolheaders", Set.of(
                 "component:exec"));
+        owners.put("allowdatabaseandtablefromheaders", Set.of(
+                "component:clickhouse"));
+        owners.put("allowdatabasepathfromheader", Set.of(
+                "component:duckdb"));
         owners.put("allowexternalentities", Set.of(
                 "component:smooks"));
         owners.put("allowfilepathsource", Set.of(
@@ -136,11 +149,14 @@ public final class SecurityUtils {
         owners.put("allowlocalwebhookurls", Set.of(
                 "component:a2a"));
         owners.put("allowoperationheader", Set.of(
+                "component:keycloak",
                 "component:spiffe"));
         owners.put("allowpredicatefrommessage", Set.of(
                 "component:dynamicroutercontrol"));
         owners.put("allowqueryfromheader", Set.of(
                 "component:sql"));
+        owners.put("allowsecretstoreandkeyfromheaders", Set.of(
+                "component:dapr"));
         owners.put("allowserializedheaders", Set.of(
                 "component:activemq",
                 "component:activemq6",
@@ -148,6 +164,8 @@ public final class SecurityUtils {
                 "component:jms",
                 "component:netty",
                 "component:nettyhttp"));
+        owners.put("allowsharedstatefulkey", Set.of(
+                "component:pqc"));
         owners.put("allowtemplatefromheader", Set.of(
                 "component:sqlstored"));
         owners.put("allowurlbody", Set.of(
@@ -318,9 +336,12 @@ public final class SecurityUtils {
         owners.put("validateauth", Set.of(
                 "component:a2a"));
         owners.put("verifyssl", Set.of(
+                "component:cyberarkvault",
                 "component:ibmwatsonxai"));
         owners.put("webhooksecrettokenenabled", Set.of(
                 "component:telegram"));
+        owners.put("webhookverification", Set.of(
+                "component:whatsapp"));
         owners.put("x509hostnameverifier", Set.of(
                 "component:http",
                 "component:https"));
@@ -328,6 +349,14 @@ public final class SecurityUtils {
         // @formatter:on
         SECURITY_OPTION_OWNERS = Collections.unmodifiableMap(owners);
     }
+
+    // options that are matched by their whole configuration key rather than by their name, because options of other
+    // components have the same name (such as the rules option of the schematron endpoint), and that are insecure with
+    // any value that is not empty: the key in lower case without dashes, and the security category
+    private static final Map<String, String> SECURITY_KEYS = Map.of(
+            // the rules of camel-chaos to add at startup (CAMEL-26330), and a scenario file of rules (CAMEL-26722)
+            "camel.chaos.rules", INSECURE_DEV,
+            "camel.chaos.scenario", INSECURE_DEV);
 
     private SecurityUtils() {
     }
@@ -352,6 +381,10 @@ public final class SecurityUtils {
      * @return      the security option info, or null if the property has no security category
      */
     public static SecurityOption getSecurityOption(String text) {
+        String category = SECURITY_KEYS.get(text.toLowerCase(Locale.ENGLISH).replace("-", ""));
+        if (category != null) {
+            return new SecurityOption(category, null);
+        }
         String name = normalizeOptionName(text);
         SecurityOption answer = SECURITY_OPTIONS.get(name);
         if (answer != null) {
@@ -421,6 +454,10 @@ public final class SecurityUtils {
         SecurityOption option = getSecurityOption(text);
         if (option == null) {
             return false;
+        }
+        if (option.insecureValue() == null) {
+            // any value that is not empty
+            return value != null && !String.valueOf(value).isBlank();
         }
         String v = String.valueOf(value);
         if (INSECURE_SSL.equals(option.category()) && "sslendpointalgorithm".equals(normalizeOptionName(text))) {

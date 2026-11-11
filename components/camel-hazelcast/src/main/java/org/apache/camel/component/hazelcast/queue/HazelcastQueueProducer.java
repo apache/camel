@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.hazelcast.queue;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -94,7 +96,7 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
                 break;
 
             case DRAIN_TO:
-                this.drainTo((Collection<?>) drainToCollection, exchange);
+                this.drainTo(drainToCollection, exchange);
                 break;
 
             case TAKE:
@@ -152,8 +154,14 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
         exchange.getMessage().setBody(this.queue.remainingCapacity());
     }
 
-    private void drainTo(Collection c, Exchange exchange) {
-        exchange.getMessage().setBody(this.queue.drainTo(c));
+    @SuppressWarnings("unchecked")
+    private void drainTo(Object drainToCollection, Exchange exchange) {
+        if (!(drainToCollection instanceof Collection<?> c)) {
+            throw new IllegalArgumentException(
+                    "The drainTo operation needs the Collection to move the items into in the "
+                                               + HazelcastConstants.DRAIN_TO_COLLECTION + " header");
+        }
+        exchange.getMessage().setBody(this.queue.drainTo((Collection<Object>) c));
         exchange.getMessage().setHeader(HazelcastConstants.DRAIN_TO_COLLECTION, c);
     }
 
@@ -162,9 +170,21 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
         this.queue.removeAll(body);
     }
 
+    @SuppressWarnings("unchecked")
     private void removeIf(Exchange exchange) {
-        Predicate filter = exchange.getIn().getBody(Predicate.class);
-        exchange.getMessage().setBody(this.queue.removeIf(filter));
+        Predicate<Object> filter = exchange.getIn().getBody(Predicate.class);
+        if (filter == null) {
+            throw new IllegalArgumentException("The removeIf operation needs a java.util.function.Predicate as the body");
+        }
+        // Collection.removeIf removes through the iterator, which a Hazelcast queue does not support: test the items
+        // the queue holds now, then remove the matching ones in one call (so not atomic)
+        List<Object> matching = new ArrayList<>();
+        for (Object item : queue) {
+            if (filter.test(item)) {
+                matching.add(item);
+            }
+        }
+        exchange.getMessage().setBody(!matching.isEmpty() && this.queue.removeAll(matching));
     }
 
     private void take(Exchange exchange) throws InterruptedException {

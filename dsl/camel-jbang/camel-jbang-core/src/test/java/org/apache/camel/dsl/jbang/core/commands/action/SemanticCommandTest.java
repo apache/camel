@@ -38,7 +38,7 @@ import java.util.function.IntSupplier;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.MissingPluginParameterExceptionHandler;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -488,8 +488,6 @@ class SemanticCommandTest {
                 assertNotNull(semantic.getSubcommands().get("get"));
                 assertNotNull(semantic.getSubcommands().get("eval"));
                 assertNotNull(semantic.getSubcommands().get("audit"));
-                assertFalse(command.getSubcommands().get("get").getSubcommands().containsKey("semantic"));
-                assertFalse(command.getSubcommands().get("cmd").getSubcommands().containsKey("semantic-evaluate"));
             }
 
             @Override
@@ -505,6 +503,11 @@ class SemanticCommandTest {
         main.withPrinter(printer);
         main.execute("semantic", "eval", "--bad-option", "--json");
         assertError(2, "Unknown option");
+
+        // the command line of camel semantic has only that command: all of them are on a new command line
+        CommandLine all = main.newCommandLine();
+        assertFalse(all.getSubcommands().get("get").getSubcommands().containsKey("semantic"));
+        assertFalse(all.getSubcommands().get("cmd").getSubcommands().containsKey("semantic-evaluate"));
     }
 
     @ParameterizedTest

@@ -2,6 +2,7 @@
 package org.apache.camel.component.keycloak;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,9 +30,11 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KeycloakComponent target = (KeycloakComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "allowoperationheader":
+        case "allowOperationHeader": getOrCreateConfiguration(target).setAllowOperationHeader(property(camelContext, boolean.class, value)); return true;
         case "authclient":
         case "authClient": getOrCreateConfiguration(target).setAuthClient(property(camelContext, java.lang.String.class, value)); return true;
         case "authipaddress":
@@ -98,9 +101,11 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
+        case "allowoperationheader":
+        case "allowOperationHeader": return boolean.class;
         case "authclient":
         case "authClient": return java.lang.String.class;
         case "authipaddress":
@@ -163,9 +168,11 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KeycloakComponent target = (KeycloakComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
+        case "allowoperationheader":
+        case "allowOperationHeader": return getOrCreateConfiguration(target).isAllowOperationHeader();
         case "authclient":
         case "authClient": return getOrCreateConfiguration(target).getAuthClient();
         case "authipaddress":

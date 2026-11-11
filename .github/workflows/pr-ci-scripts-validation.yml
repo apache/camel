@@ -41,6 +41,11 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install container upgrade script dependencies
+        shell: bash
+        run: |
+          pip install --only-binary :all: --require-hashes -r .github/actions/check-container-upgrade/requirements.txt
+
       - name: Test the container upgrade scripts
         shell: bash
         run: |
@@ -49,7 +54,7 @@ jobs:
 
       # collect-flakes.py declares defusedxml inline (PEP 723); uv resolves it.
       - name: Install uv
-        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
           enable-cache: true
           version: "0.12.5"
@@ -60,3 +65,11 @@ jobs:
         run: |
           cd .github/actions/incremental-build
           uv run --with defusedxml python3 -m unittest discover --verbose
+
+      - name: Test the incremental build shell scripts
+        shell: bash
+        run: |
+          cd .github/actions/incremental-build
+          for test in *_test.sh; do
+            bash "$test"
+          done

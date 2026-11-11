@@ -53,6 +53,16 @@ class McpFacadeControlTest {
     }
 
     @Test
+    void aLongNameIsAnsweredInFull() {
+        // run/properties-and-profiles: the title shortens it, the answer and the shell must not
+        integration("properties-and-profiles", "100");
+
+        assertThat(facade.controlIntegration("stop", "properties-and-profiles")).isEqualTo("Stopping properties-and-profiles");
+        assertThat(ctx.selectedFullName()).isEqualTo("properties-and-profiles");
+        assertThat(ctx.selectedName()).isEqualTo("properties-and-pr...");
+    }
+
+    @Test
     void aPidWorksLikeAName() {
         integration("orders", "100");
         integration("shipping", "200");

@@ -24,11 +24,12 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.aws2.ddb.Ddb2Constants;
 import org.apache.camel.component.aws2.ddb.Ddb2Operations;
-import org.apache.camel.component.jackson.transform.Json;
+import org.apache.camel.component.jackson3.transform.Json;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -345,8 +346,10 @@ public class Ddb2JsonDataTypeTransformerTest {
         Assertions.assertEquals(Carrier.UNCHANGED, bodyTypes.transformerOut().value()[0]);
         File file = new File(dir, "item.json");
         Files.writeString(file.toPath(), itemJson);
+        // a Jackson node of either line is its JSON
         for (Object body : List.of(itemJson, itemJson.getBytes(StandardCharsets.UTF_8),
-                new ByteArrayInputStream(itemJson.getBytes(StandardCharsets.UTF_8)), file, Json.mapper().readTree(itemJson))) {
+                new ByteArrayInputStream(itemJson.getBytes(StandardCharsets.UTF_8)), file, Json.mapper().readTree(itemJson),
+                new ObjectMapper().readTree(itemJson))) {
             Exchange exchange = new DefaultExchange(camelContext);
             exchange.getMessage().setBody(body);
             transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));

@@ -2,6 +2,7 @@
 package org.apache.camel.component.debezium.sqlserver;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DebeziumSqlserverEndpoint target = (DebeziumSqlserverEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "binaryhandlingmode":
@@ -44,8 +45,12 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "customSanitizePattern": target.getConfiguration().setCustomSanitizePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "dataquerymode":
         case "dataQueryMode": target.getConfiguration().setDataQueryMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseexcludelist":
+        case "databaseExcludeList": target.getConfiguration().setDatabaseExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": target.getConfiguration().setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseincludelist":
+        case "databaseIncludeList": target.getConfiguration().setDatabaseIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseinstance":
         case "databaseInstance": target.getConfiguration().setDatabaseInstance(property(camelContext, java.lang.String.class, value)); return true;
         case "databasenames":
@@ -64,6 +69,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "decimalHandlingMode": target.getConfiguration().setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "errorsmaxretries":
         case "errorsMaxRetries": target.getConfiguration().setErrorsMaxRetries(property(camelContext, int.class, value)); return true;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": target.getConfiguration().setEventConvertingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": target.getConfiguration().setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -74,6 +81,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "executorShutdownTimeoutMs": target.getConfiguration().setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": target.getConfiguration().setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": target.getConfiguration().setFieldNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": target.getConfiguration().setGuardrailCollectionsLimitAction(property(camelContext, java.lang.String.class, value)); return true;
         case "guardrailcollectionsmax":
@@ -118,6 +127,14 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "messageKeyColumns": target.getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": target.getConfiguration().setNotificationEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": target.getConfiguration().setNotificationHttpAllowPrivateNetworks(property(camelContext, boolean.class, value)); return true;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": target.getConfiguration().setNotificationHttpRetries(property(camelContext, int.class, value)); return true;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": target.getConfiguration().setNotificationHttpTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": target.getConfiguration().setNotificationHttpUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": target.getConfiguration().setNotificationSinkTopicName(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
@@ -156,12 +173,16 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "postProcessors": target.getConfiguration().setPostProcessors(property(camelContext, java.lang.String.class, value)); return true;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": target.getConfiguration().setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
+        case "queryfetchsize":
+        case "queryFetchSize": target.getConfiguration().setQueryFetchSize(property(camelContext, int.class, value)); return true;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": target.getConfiguration().setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "schemahistoryinternal":
         case "schemaHistoryInternal": target.getConfiguration().setSchemaHistoryInternal(property(camelContext, java.lang.String.class, value)); return true;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": target.getConfiguration().setSchemaHistoryInternalFileFilename(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": target.getConfiguration().setSchemaHistoryInternalMemoryOptimization(property(camelContext, java.lang.String.class, value)); return true;
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": target.getConfiguration().setSchemaHistoryInternalSkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -172,10 +193,16 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "schemaNameAdjustmentMode": target.getConfiguration().setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": target.getConfiguration().setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": target.getConfiguration().setSignalEmitFailureBackoffMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": target.getConfiguration().setSignalEmitFailureMaxRetries(property(camelContext, int.class, value)); return true;
         case "signalenabledchannels":
         case "signalEnabledChannels": target.getConfiguration().setSignalEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
         case "signalpollintervalms":
         case "signalPollIntervalMs": target.getConfiguration().setSignalPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": target.getConfiguration().setSkipMessagesWithoutChange(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
@@ -240,7 +267,7 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return java.util.Map.class;
         case "binaryhandlingmode":
@@ -262,8 +289,12 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "customSanitizePattern": return java.lang.String.class;
         case "dataquerymode":
         case "dataQueryMode": return java.lang.String.class;
+        case "databaseexcludelist":
+        case "databaseExcludeList": return java.lang.String.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
+        case "databaseincludelist":
+        case "databaseIncludeList": return java.lang.String.class;
         case "databaseinstance":
         case "databaseInstance": return java.lang.String.class;
         case "databasenames":
@@ -282,6 +313,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "decimalHandlingMode": return java.lang.String.class;
         case "errorsmaxretries":
         case "errorsMaxRetries": return int.class;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
         case "exceptionhandler":
@@ -292,6 +325,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "executorShutdownTimeoutMs": return long.class;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return boolean.class;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return java.lang.String.class;
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": return java.lang.String.class;
         case "guardrailcollectionsmax":
@@ -336,6 +371,14 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "messageKeyColumns": return java.lang.String.class;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return java.lang.String.class;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return boolean.class;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return int.class;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return int.class;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return java.lang.String.class;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return java.lang.String.class;
         case "offsetcommitpolicy":
@@ -374,12 +417,16 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "postProcessors": return java.lang.String.class;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": return boolean.class;
+        case "queryfetchsize":
+        case "queryFetchSize": return int.class;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return long.class;
         case "schemahistoryinternal":
         case "schemaHistoryInternal": return java.lang.String.class;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return java.lang.String.class;
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": return java.lang.String.class;
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": return boolean.class;
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -390,10 +437,16 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return long.class;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return int.class;
         case "signalenabledchannels":
         case "signalEnabledChannels": return java.lang.String.class;
         case "signalpollintervalms":
         case "signalPollIntervalMs": return long.class;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return boolean.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotdelayms":
@@ -459,7 +512,7 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DebeziumSqlserverEndpoint target = (DebeziumSqlserverEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
         case "binaryhandlingmode":
@@ -481,8 +534,12 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "customSanitizePattern": return target.getConfiguration().getCustomSanitizePattern();
         case "dataquerymode":
         case "dataQueryMode": return target.getConfiguration().getDataQueryMode();
+        case "databaseexcludelist":
+        case "databaseExcludeList": return target.getConfiguration().getDatabaseExcludeList();
         case "databasehostname":
         case "databaseHostname": return target.getConfiguration().getDatabaseHostname();
+        case "databaseincludelist":
+        case "databaseIncludeList": return target.getConfiguration().getDatabaseIncludeList();
         case "databaseinstance":
         case "databaseInstance": return target.getConfiguration().getDatabaseInstance();
         case "databasenames":
@@ -501,6 +558,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "decimalHandlingMode": return target.getConfiguration().getDecimalHandlingMode();
         case "errorsmaxretries":
         case "errorsMaxRetries": return target.getConfiguration().getErrorsMaxRetries();
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return target.getConfiguration().getEventConvertingFailureHandlingMode();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return target.getConfiguration().getEventProcessingFailureHandlingMode();
         case "exceptionhandler":
@@ -511,6 +570,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "executorShutdownTimeoutMs": return target.getConfiguration().getExecutorShutdownTimeoutMs();
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return target.getConfiguration().isExtendedHeadersEnabled();
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return target.getConfiguration().getFieldNameAdjustmentMode();
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": return target.getConfiguration().getGuardrailCollectionsLimitAction();
         case "guardrailcollectionsmax":
@@ -555,6 +616,14 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "messageKeyColumns": return target.getConfiguration().getMessageKeyColumns();
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return target.getConfiguration().getNotificationEnabledChannels();
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return target.getConfiguration().isNotificationHttpAllowPrivateNetworks();
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return target.getConfiguration().getNotificationHttpRetries();
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return target.getConfiguration().getNotificationHttpTimeoutMs();
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return target.getConfiguration().getNotificationHttpUrl();
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return target.getConfiguration().getNotificationSinkTopicName();
         case "offsetcommitpolicy":
@@ -593,12 +662,16 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "postProcessors": return target.getConfiguration().getPostProcessors();
         case "providetransactionmetadata":
         case "provideTransactionMetadata": return target.getConfiguration().isProvideTransactionMetadata();
+        case "queryfetchsize":
+        case "queryFetchSize": return target.getConfiguration().getQueryFetchSize();
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return target.getConfiguration().getRetriableRestartConnectorWaitMs();
         case "schemahistoryinternal":
         case "schemaHistoryInternal": return target.getConfiguration().getSchemaHistoryInternal();
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return target.getConfiguration().getSchemaHistoryInternalFileFilename();
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": return target.getConfiguration().getSchemaHistoryInternalMemoryOptimization();
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": return target.getConfiguration().isSchemaHistoryInternalSkipUnparseableDdl();
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -609,10 +682,16 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "schemaNameAdjustmentMode": return target.getConfiguration().getSchemaNameAdjustmentMode();
         case "signaldatacollection":
         case "signalDataCollection": return target.getConfiguration().getSignalDataCollection();
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return target.getConfiguration().getSignalEmitFailureBackoffMs();
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return target.getConfiguration().getSignalEmitFailureMaxRetries();
         case "signalenabledchannels":
         case "signalEnabledChannels": return target.getConfiguration().getSignalEnabledChannels();
         case "signalpollintervalms":
         case "signalPollIntervalMs": return target.getConfiguration().getSignalPollIntervalMs();
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return target.getConfiguration().isSkipMessagesWithoutChange();
         case "skippedoperations":
         case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "snapshotdelayms":
@@ -677,7 +756,7 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return java.lang.Object.class;
         default: return null;

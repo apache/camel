@@ -51,8 +51,8 @@ import org.apache.camel.support.DefaultEndpoint;
                                    description = "With Google, the array of com.google.maps.model.GeocodingResult, empty for"
                                                  + " no results; unchanged when Google denies the request, with the status in"
                                                  + " the CamelGeoCoderStatus header. With Nominatim, its jsonv2 response as text:"
-                                                 + " an array of one place for an address, an object for a latitude and"
-                                                 + " longitude. The first result is also in the headers"))
+                                                 + " an array of one place for an address (empty for no results), an object"
+                                                 + " for a latitude and longitude. The first result is also in the headers"))
 public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath

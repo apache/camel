@@ -1,0 +1,11 @@
+# A bad half minute at the payment service: for 20 seconds it answers 503 to one call in four,
+# then it is down for 10 seconds. The shop must keep taking orders, ship every order it charged,
+# and park the orders it could not charge instead of losing them.
+seed=42
+
+# one call in four fails for 20 seconds: the redeliveries recover them, and the shop still takes 20 orders
+endpoint=http://localhost:8080/payment error status=503 rate=0.25 until=20s expect=orders:20 within=25s
+# shipping fails one message in five for 15 seconds: its redeliveries still ship every order charged
+route=shipping error rate=0.2 until=15s expect=orders->shipping:lost<=0 within=20s
+# then the payment service is down for 10 seconds: every order is charged or parked, none fails
+route=payment stall duration=10s from=+20s expect=orders:failed<=0 within=15s

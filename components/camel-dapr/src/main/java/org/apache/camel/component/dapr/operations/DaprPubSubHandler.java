@@ -37,7 +37,7 @@ public class DaprPubSubHandler implements DaprOperationHandler {
 
     @Override
     public DaprOperationResponse handle(Exchange exchange) {
-        Object payload = exchange.getIn().getBody();
+        Object payload = DaprOperationHandler.getPayload(exchange);
         String pubSubName = configurationOptionsProxy.getPubSubName(exchange);
         String topic = configurationOptionsProxy.getTopic(exchange);
         String contentType = configurationOptionsProxy.getContentType(exchange);

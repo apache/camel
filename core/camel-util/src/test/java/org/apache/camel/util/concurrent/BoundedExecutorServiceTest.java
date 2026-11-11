@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util.concurrent;
 
+import java.util.List;
+import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -236,6 +239,281 @@ public class BoundedExecutorServiceTest {
         } finally {
             sized.shutdown();
             delegate.shutdown();
+        }
+    }
+
+    @Test
+    public void testNestedTaskRunsInlineWhenItHoldsTheOnlyPermit() throws Exception {
+        // a parallel split runs in the executor and submits its items to it, so waiting cannot succeed
+        assertNestedTaskRunsInline(ThreadPoolRejectedPolicy.CallerRuns);
+    }
+
+    @Test
+    public void testNestedTaskRunsInlineWithBlockPolicy() throws Exception {
+        // this wait has no timeout, so the task would hang forever
+        assertNestedTaskRunsInline(ThreadPoolRejectedPolicy.Block);
+    }
+
+    @Test
+    public void testNestedTaskRunsInlineWithAbortPolicy() throws Exception {
+        // the wait cannot succeed, so the task was rejected after the timeout and a split with a single permit failed
+        assertNestedTaskRunsInline(ThreadPoolRejectedPolicy.Abort);
+    }
+
+    @Test
+    public void testNestedTaskRunsInlineWithAbortPolicyWhenOtherTasksHoldThePermits() throws Exception {
+        // a parallel split holds a permit while it submits its items, so when it waited for a permit it ran one item
+        // fewer at a time than the executor allows
+        var delegate = Executors.newCachedThreadPool();
+        var sized = new BoundedExecutorService(delegate, 2, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.Abort);
+        try {
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch done = new CountDownLatch(1);
+            AtomicBoolean ranInline = new AtomicBoolean();
+
+            sized.execute(() -> {
+                Thread outer = Thread.currentThread();
+                // the first item takes the other permit and keeps it
+                sized.execute(() -> {
+                    try {
+                        release.await(10, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                });
+                // the second item runs while the first one is still running
+                sized.execute(() -> ranInline.set(Thread.currentThread() == outer));
+                done.countDown();
+            });
+
+            assertTrue(done.await(5, TimeUnit.SECONDS), "The second item waited for the first one to finish");
+            assertTrue(ranInline.get(), "The second item should run in the task that submitted it");
+            assertEquals(1, sized.getCallerRunsCount());
+            assertEquals(0, sized.getRejectedCount());
+            release.countDown();
+        } finally {
+            sized.shutdownNow();
+        }
+    }
+
+    private void assertNestedTaskRunsInline(ThreadPoolRejectedPolicy policy) throws Exception {
+        var delegate = Executors.newCachedThreadPool();
+        var sized = new BoundedExecutorService(delegate, 1, 60, TimeUnit.SECONDS, false, policy);
+        try {
+            CountDownLatch done = new CountDownLatch(1);
+            AtomicBoolean sameThread = new AtomicBoolean();
+
+            sized.execute(() -> {
+                Thread outer = Thread.currentThread();
+                sized.execute(() -> {
+                    sameThread.set(Thread.currentThread() == outer);
+                    done.countDown();
+                });
+            });
+
+            assertTrue(done.await(5, TimeUnit.SECONDS), "The nested task waited for the permit its parent holds");
+            assertTrue(sameThread.get(), "The nested task should run in the task that submitted it");
+            assertEquals(1, sized.getCallerRunsCount());
+        } finally {
+            sized.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testTaskThatResubmitsItselfDoesNotOverflowTheStack() throws Exception {
+        // a parallel split submits itself again for each item, so a large split must not run all of them inline
+        var delegate = Executors.newCachedThreadPool();
+        var sized = new BoundedExecutorService(
+                delegate, 1, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.CallerRuns);
+        try {
+            int resubmits = 200_000;
+            AtomicInteger count = new AtomicInteger();
+            CountDownLatch done = new CountDownLatch(1);
+            Runnable[] task = new Runnable[1];
+            task[0] = () -> {
+                if (count.incrementAndGet() == resubmits) {
+                    done.countDown();
+                } else {
+                    sized.execute(task[0]);
+                }
+            };
+
+            sized.execute(task[0]);
+
+            assertTrue(done.await(30, TimeUnit.SECONDS), "Stopped after " + count.get() + " resubmits");
+        } finally {
+            sized.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testNestedTaskThatThrowsDoesNotUseUpTheInlineDepth() throws Exception {
+        // the depth must be restored on failure too, or a task that survives failures of the work it submits would
+        // reach the depth limit and hand the work to new tasks, outside the concurrency limit
+        var delegate = Executors.newCachedThreadPool();
+        var sized = new BoundedExecutorService(
+                delegate, 1, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.CallerRuns);
+        try {
+            int failures = 100;
+            AtomicInteger inline = new AtomicInteger();
+            CountDownLatch done = new CountDownLatch(1);
+
+            sized.execute(() -> {
+                Thread outer = Thread.currentThread();
+                for (int i = 0; i < failures; i++) {
+                    try {
+                        sized.execute(() -> {
+                            if (Thread.currentThread() == outer) {
+                                inline.incrementAndGet();
+                            }
+                            throw new IllegalStateException("Forced");
+                        });
+                    } catch (IllegalStateException e) {
+                        // an inline task fails in its caller, as a caller-run task does
+                    }
+                }
+                done.countDown();
+            });
+
+            assertTrue(done.await(5, TimeUnit.SECONDS));
+            assertEquals(failures, inline.get(), "Every nested task should still run inline after a failure");
+            assertEquals(failures, sized.getCallerRunsCount());
+        } finally {
+            sized.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testDelegateRunningATaskOnTheCallingThreadKeepsTheDepthOfTheOuterTask() throws Exception {
+        // a delegate that runs a task on the calling thread must not reset the depth of the task that submitted it,
+        // or that task would wait for a permit it holds itself
+        var pool = Executors.newCachedThreadPool();
+        ThreadLocal<Boolean> direct = new ThreadLocal<>();
+        var delegate = new AbstractExecutorService() {
+            @Override
+            public void execute(Runnable command) {
+                if (direct.get() != null) {
+                    command.run();
+                } else {
+                    pool.execute(command);
+                }
+            }
+
+            @Override
+            public void shutdown() {
+                pool.shutdown();
+            }
+
+            @Override
+            public List<Runnable> shutdownNow() {
+                return pool.shutdownNow();
+            }
+
+            @Override
+            public boolean isShutdown() {
+                return pool.isShutdown();
+            }
+
+            @Override
+            public boolean isTerminated() {
+                return pool.isTerminated();
+            }
+
+            @Override
+            public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+                return pool.awaitTermination(timeout, unit);
+            }
+        };
+        var sized = new BoundedExecutorService(delegate, 2, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.Block);
+        try {
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch done = new CountDownLatch(1);
+            AtomicBoolean ranInline = new AtomicBoolean();
+
+            sized.execute(() -> {
+                Thread outer = Thread.currentThread();
+                // a free permit: the delegate runs this one on the calling thread
+                direct.set(true);
+                sized.execute(() -> {
+                });
+                direct.remove();
+                // take the other permit, so that the next task finds none
+                sized.execute(() -> {
+                    try {
+                        release.await(10, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                });
+                // with Block this waits forever if the depth of this task was lost
+                sized.execute(() -> ranInline.set(Thread.currentThread() == outer));
+                done.countDown();
+            });
+
+            assertTrue(done.await(5, TimeUnit.SECONDS), "The nested task should not wait for the permit");
+            assertTrue(ranInline.get(), "The nested task should run inline");
+            release.countDown();
+        } finally {
+            sized.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testNestedTaskUsesAFreePermit() throws Exception {
+        var delegate = Executors.newCachedThreadPool();
+        var sized = new BoundedExecutorService(
+                delegate, 2, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.CallerRuns);
+        try {
+            CountDownLatch done = new CountDownLatch(1);
+            AtomicBoolean sameThread = new AtomicBoolean(true);
+
+            sized.execute(() -> {
+                Thread outer = Thread.currentThread();
+                sized.execute(() -> {
+                    sameThread.set(Thread.currentThread() == outer);
+                    done.countDown();
+                });
+            });
+
+            assertTrue(done.await(5, TimeUnit.SECONDS));
+            assertFalse(sameThread.get(), "The bound still allows this task to run concurrently");
+            assertEquals(0, sized.getCallerRunsCount());
+        } finally {
+            sized.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testTaskOfAnotherExecutorStillWaits() throws Exception {
+        // only a task of this executor can hold one of its permits, so others wait for backpressure as usual
+        var full = new BoundedExecutorService(
+                Executors.newCachedThreadPool(), 1, 200, TimeUnit.MILLISECONDS, false, ThreadPoolRejectedPolicy.CallerRuns);
+        var other = new BoundedExecutorService(
+                Executors.newCachedThreadPool(), 1, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.CallerRuns);
+        try {
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch done = new CountDownLatch(1);
+            AtomicInteger waitedMillis = new AtomicInteger();
+            full.execute(() -> {
+                try {
+                    release.await(10, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            });
+
+            other.execute(() -> {
+                long start = System.nanoTime();
+                full.execute(() -> waitedMillis.set((int) TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)));
+                done.countDown();
+            });
+
+            assertTrue(done.await(5, TimeUnit.SECONDS));
+            assertTrue(waitedMillis.get() >= 150, "It should wait for the timeout, but waited " + waitedMillis.get());
+            release.countDown();
+        } finally {
+            full.shutdownNow();
+            other.shutdownNow();
         }
     }
 }

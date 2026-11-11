@@ -26,13 +26,13 @@ import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.ExternalCommand;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.StringHelper;
@@ -267,8 +267,16 @@ public class Doctor extends CamelCommand {
     // "more than one installation found -> conflict" contract against fully controlled data, rather than
     // whatever InstallDetector.scanKnownLocations() happens to find on the machine running the test suite.
     boolean checkInstallLocations(List<InstallDetector.InstallInfo> installs, Optional<Path> active) {
-        String found = "Found %d Camel CLI installation%s".formatted(installs.size(), installs.size() == 1 ? "" : "s");
-        boolean conflict = installs.size() > 1;
+        // The version directories of the web installer are one installation: it keeps the previous versions after an
+        // upgrade, and runs the version its symlink points at.
+        long webVersions = installs.stream()
+                .filter(i -> i.method() == InstallDetector.InstallMethod.WEB_INSTALLER).count();
+        long count = installs.size() - Math.max(0, webVersions - 1);
+        String found = "Found %d Camel CLI installation%s".formatted(count, count == 1 ? "" : "s");
+        if (webVersions > 1) {
+            found += " (%d versions of the web installer)".formatted(webVersions);
+        }
+        boolean conflict = count > 1;
         checks.add(new Check("installs", conflict ? FAIL : OK, found));
         if (jsonOutput) {
             return conflict;

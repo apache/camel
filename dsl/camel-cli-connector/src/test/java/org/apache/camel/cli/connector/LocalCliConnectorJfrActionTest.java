@@ -33,10 +33,16 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
+/**
+ * Isolated: the action and output files are keyed on the pid, which all tests of the fork share, so another connector
+ * polling at the same time could take the action file of this test.
+ */
+@Isolated
 class LocalCliConnectorJfrActionTest extends CamelTestSupport {
 
     private LocalCliConnector connector;

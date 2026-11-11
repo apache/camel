@@ -18,7 +18,6 @@ package org.apache.camel.component.huaweicloud.obs;
 
 import java.io.InputStream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.obs.services.ObsClient;
 import com.obs.services.model.PutObjectResult;
 import com.obs.services.model.StorageClassEnum;
@@ -40,8 +39,6 @@ public class PutObjectStringTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PutObjectTest.class);
 
     TestConfiguration testConfiguration = new TestConfiguration();
-
-    ObjectMapper mapper = new ObjectMapper();
 
     @BindToRegistry("obsClient")
     ObsClient mockClient = Mockito.mock(ObsClient.class);

@@ -17,7 +17,11 @@
 package org.apache.camel.component.pqc.lifecycle;
 
 import java.security.KeyPair;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.time.Duration;
+import java.util.HexFormat;
 import java.util.List;
 
 /**
@@ -99,6 +103,66 @@ public interface KeyLifecycleManager {
      * Mark a key as revoked
      */
     void revokeKey(String keyId, String reason) throws Exception;
+
+    /**
+     * Claims a stateful signature key (XMSS, XMSSMT, LMS, HSS) for this process.
+     * <p/>
+     * These are one-time-signature schemes: signing twice from the same index breaks the key. A store that several
+     * processes read from - a shared directory, a vault - hands the same key, at the same index, to each of them, and
+     * each advances its own copy. The claim is what keeps a key to a single owner.
+     * <p/>
+     * The claim is on the key material, identified by its public key (see {@link #fingerprint(PublicKey)}), not on the
+     * name the key is stored under: the same key signed under two names, or under none, is one claim. The name, when
+     * there is one, is what the store knows the key by, for messages and for reading the key back.
+     * <p/>
+     * The claim is held until {@link #releaseStatefulKey(String, PublicKey)}, or until the process ends. Claiming a key
+     * this manager has already claimed succeeds again and adds a holder: the key is given back when the last holder
+     * releases it, so producers that share a manager do not release each other's claim.
+     *
+     * @param  keyId     the name the key is stored under, or {@code null} for a key that has none
+     * @param  publicKey the public key of the key pair, which identifies the claim
+     * @return           {@code true} when this manager guarantees no other process holds the same key, {@code false}
+     *                   when the store cannot offer that guarantee - the default, since most stores cannot
+     * @throws Exception when the key is held by someone else, or the claim cannot be attempted
+     * @since            4.24
+     */
+    default boolean claimStatefulKey(String keyId, PublicKey publicKey) throws Exception {
+        return false;
+    }
+
+    /**
+     * Releases a claim taken by {@link #claimStatefulKey(String, PublicKey)}. The key is given back once every claim on
+     * it is released. Releasing a key that was never claimed does nothing.
+     *
+     * @param  keyId     the name the key is stored under, or {@code null} for a key that has none
+     * @param  publicKey the public key of the key pair, which identifies the claim
+     * @throws Exception when the claim cannot be released
+     * @since            4.24
+     */
+    default void releaseStatefulKey(String keyId, PublicKey publicKey) throws Exception {
+        // nothing is claimed by default
+    }
+
+    /**
+     * The fingerprint of a public key: the SHA-256 digest of its encoding, in lower-case hex. It identifies the key
+     * material independently of the name the key is stored under, which is what a claim on a stateful key has to be
+     * tied to.
+     *
+     * @param  publicKey the public key, may be {@code null}
+     * @return           the fingerprint, or {@code null} when there is no key or the key gives no encoding
+     * @since            4.24
+     */
+    static String fingerprint(PublicKey publicKey) {
+        byte[] encoded = publicKey == null ? null : publicKey.getEncoded();
+        if (encoded == null) {
+            return null;
+        }
+        try {
+            return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(encoded));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 is not available", e);
+        }
+    }
 
     enum KeyFormat {
         PEM,

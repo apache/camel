@@ -63,9 +63,9 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_C
                                            @BodyType.When(option = "operation", value = "deleteCustomResource",
                                                           carriers = Carrier.UNCHANGED) },
                                    description = "A JsonArray of the GenericKubernetesResource of the instances for the list"
-                                                 + " operations, a JsonObject of the instance for getCustomResource, and the"
-                                                 + " GenericKubernetesResource of create and update (an empty one when it already"
-                                                 + " exists). deleteCustomResource leaves the body as it was, with whether it deleted"
+                                                 + " operations, a JsonObject of the instance for getCustomResource (an empty one when"
+                                                 + " it is not found), and the GenericKubernetesResource of create and update."
+                                                 + " deleteCustomResource leaves the body as it was, with whether it deleted"
                                                  + " the instance in the CamelKubernetesDeleteResult header"))
 public class KubernetesCustomResourcesEndpoint extends AbstractKubernetesEndpoint {
 

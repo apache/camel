@@ -350,14 +350,16 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     @Override
     public boolean add(String key) {
-        if (cache.putIfAbsent(key, key) != null) {
+        // the poller stores key -> key for an add of a peer, so roll back only the value put by this call
+        Object token = new Object();
+        if (cache.putIfAbsent(key, token) != null) {
             return false;
         }
         try {
             broadcastAction(key, CacheAction.add);
             return true;
         } catch (Exception e) {
-            cache.remove(key, key);
+            cache.remove(key, token);
             throw e;
         }
     }
@@ -377,10 +379,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     @Override
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
-        // update the local cache and broadcast the addition on the topic, which
+        // update the local cache and broadcast the removal on the topic, which
         // will be reflected
         // at a later point in any peers
-        cache.remove(key, key);
+        cache.remove(key);
         broadcastAction(key, CacheAction.remove);
         return true;
     }

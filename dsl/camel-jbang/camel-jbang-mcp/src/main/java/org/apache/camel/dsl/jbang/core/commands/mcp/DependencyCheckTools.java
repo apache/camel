@@ -28,6 +28,7 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.DependencyLookup;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
@@ -52,6 +53,7 @@ public class DependencyCheckTools {
     /**
      * Tool to check Camel dependency hygiene for a project.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Check Camel project dependency hygiene. Given a pom.xml (and optionally route definitions), "
                         + "detects an outdated Camel version compared to the latest Camel release, "

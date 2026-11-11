@@ -21,11 +21,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.Embedding;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -34,8 +36,12 @@ import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.embedding.EmbeddingResponseMetadata;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
+import org.springframework.ai.vectorstore.VectorStore;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
 
@@ -343,6 +349,152 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         // Verify delete count header
         Integer documentsDeleted = result.getHeader(SpringAiVectorStoreHeaders.DOCUMENTS_DELETED, Integer.class);
         assertThat(documentsDeleted).isEqualTo(1);
+    }
+
+    @Test
+    public void testAddDocumentIgnoresLeftoverInputTextHeader() {
+        // The header of an earlier spring-ai-embeddings call must not replace a Document body
+        Document doc = new Document("doc-new", "The new document", Map.of());
+
+        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=ADD")
+                .withBody(doc)
+                .withHeader("CamelSpringAiEmbeddingInputText", "Old embedded text")
+                .request(Message.class);
+
+        assertThat(result.getHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, List.class)).containsExactly("doc-new");
+        assertThat(allTexts()).containsExactly("The new document");
+    }
+
+    @Test
+    public void testAddListOfTextsIgnoresLeftoverInputTextsHeader() {
+        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=ADD")
+                .withBody(List.of("First text", "Second text"))
+                .withHeader("CamelSpringAiEmbeddingInputTexts", List.of("Old text"))
+                .request(Message.class);
+
+        assertThat(result.getHeader(SpringAiVectorStoreHeaders.DOCUMENTS_ADDED, Integer.class)).isEqualTo(2);
+        assertThat(allTexts()).containsExactlyInAnyOrder("First text", "Second text");
+    }
+
+    @Test
+    public void testAddVectorWithoutInputTextFails() {
+        assertThatThrownBy(() -> fluentTemplate.to("spring-ai-vector-store:test?operation=ADD")
+                .withBody(new float[] { 0.1f, 0.2f, 0.3f })
+                .request())
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("CamelSpringAiEmbeddingInputText");
+
+        assertThat(allTexts()).isEmpty();
+    }
+
+    @Test
+    public void testAddVectorsWithMismatchedInputTextsFails() {
+        assertThatThrownBy(() -> fluentTemplate.to("spring-ai-vector-store:test?operation=ADD")
+                .withBody(List.of(new float[] { 0.1f }, new float[] { 0.2f }))
+                .withHeader("CamelSpringAiEmbeddingInputTexts", List.of("Only one text"))
+                .request())
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("CamelSpringAiEmbeddingInputTexts")
+                .hasMessageContaining("1 texts for 2 embeddings");
+
+        assertThat(allTexts()).isEmpty();
+    }
+
+    @Test
+    public void testAddListOfMapFails() {
+        assertThatThrownBy(() -> fluentTemplate.to("spring-ai-vector-store:test?operation=ADD")
+                .withBody(List.of(Map.of("text", "A map")))
+                .request())
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Document or String elements")
+                .hasMessageContaining("Map");
+    }
+
+    @Test
+    public void testSimilaritySearchWithVectorBodySearchesInputText() {
+        VectorStore recordingStore = mock(VectorStore.class);
+        context.getRegistry().bind("recordingStore", recordingStore);
+
+        fluentTemplate.to("spring-ai-vector-store:test?operation=SIMILARITY_SEARCH&vectorStore=#recordingStore")
+                .withBody(new float[] { 0.1f, 0.2f, 0.3f })
+                .withHeader("CamelSpringAiEmbeddingInputText", "What is AI?")
+                .request(Message.class);
+
+        ArgumentCaptor<SearchRequest> request = ArgumentCaptor.forClass(SearchRequest.class);
+        verify(recordingStore).similaritySearch(request.capture());
+        assertThat(request.getValue().getQuery()).isEqualTo("What is AI?");
+    }
+
+    @Test
+    public void testSimilaritySearchWithVectorBodyWithoutInputTextFails() {
+        assertThatThrownBy(() -> fluentTemplate.to("spring-ai-vector-store:test?operation=SIMILARITY_SEARCH")
+                .withBody(new float[] { 0.1f, 0.2f, 0.3f })
+                .request())
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("CamelSpringAiEmbeddingInputText");
+    }
+
+    @Test
+    public void testDeleteAfterSearchDeletesIdsOfBody() {
+        vectorStore.add(List.of(
+                new Document("doc-a", "Document A", Map.of()),
+                new Document("doc-b", "Document B", Map.of()),
+                new Document("doc-c", "Document C", Map.of())));
+
+        // SIMILARITY_SEARCH sets the DocumentIds header to all the documents it found
+        Message found = fluentTemplate.to("spring-ai-vector-store:test?operation=SIMILARITY_SEARCH&topK=10")
+                .withBody("Document")
+                .request(Message.class);
+        assertThat(found.getHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, List.class)).hasSize(3);
+
+        // a later DELETE of one id in the body deletes only that id
+        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=DELETE")
+                .withBody("doc-b")
+                .withHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS,
+                        found.getHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS))
+                .request(Message.class);
+
+        assertThat(result.getHeader(SpringAiVectorStoreHeaders.DOCUMENTS_DELETED, Integer.class)).isEqualTo(1);
+        assertThat(allTexts()).containsExactlyInAnyOrder("Document A", "Document C");
+    }
+
+    @Test
+    public void testDeleteDocumentsOfSearchResult() {
+        vectorStore.add(List.of(
+                new Document("doc-x", "Outdated X", Map.of()),
+                new Document("doc-y", "Outdated Y", Map.of())));
+
+        // the body of SIMILARITY_SEARCH is a List of Document, which DELETE deletes by their ids
+        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=DELETE")
+                .withBody(List.of(new Document("doc-x", "Outdated X", Map.of())))
+                .request(Message.class);
+
+        assertThat(result.getHeader(SpringAiVectorStoreHeaders.DOCUMENTS_DELETED, Integer.class)).isEqualTo(1);
+        assertThat(allTexts()).containsExactly("Outdated Y");
+    }
+
+    @Test
+    public void testDeleteListOfOtherElementsFails() {
+        assertThatThrownBy(() -> fluentTemplate.to("spring-ai-vector-store:test?operation=DELETE")
+                .withBody(List.of(42))
+                .request())
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("java.lang.Integer");
+    }
+
+    private List<String> allTexts() {
+        return vectorStore.similaritySearch(SearchRequest.builder().query("any").topK(100).build())
+                .stream().map(Document::getText).toList();
     }
 
     @Override

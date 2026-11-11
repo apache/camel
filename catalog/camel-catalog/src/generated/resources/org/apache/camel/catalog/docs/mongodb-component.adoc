@@ -999,7 +999,7 @@ cursor is to be regenerated, it will run the query with a filter like:
 `increasingField > lastValue`, so that only unread data is consumed.
 
 *Setting the increasing field:* Set the key of the increasing field on
-the endpoint URI `tailTrackingIncreasingField` option. In Camel 2.10, it
+the endpoint URI `tailTrackIncreasingField` option. In Camel 2.10, it
 must be a top-level field in your data, as nested navigation for this
 field is not yet supported. That is, the "timestamp" field is okay, but
 `nested.timestamp` will not work. Please open a ticket in the Camel JIRA

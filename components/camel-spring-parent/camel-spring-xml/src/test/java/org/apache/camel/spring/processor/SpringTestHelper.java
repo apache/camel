@@ -26,6 +26,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.env.MapPropertySource;
 
 public final class SpringTestHelper {
 
@@ -47,8 +48,9 @@ public final class SpringTestHelper {
         try {
             DefaultCamelContext.setNoStart(true);
             applicationContext = new ClassPathXmlApplicationContext(new String[] { classpathUri }, false);
-            applicationContext.getEnvironment().getSystemProperties().put(
-                    PROPERTY_TEST_DIR, test.testDirectory().toString());
+            // use a per context property source (not the JVM wide system properties) so tests can run in parallel
+            applicationContext.getEnvironment().getPropertySources().addFirst(
+                    new MapPropertySource("testDirectory", Map.of(PROPERTY_TEST_DIR, test.testDirectory().toString())));
             applicationContext.refresh();
         } finally {
             DefaultCamelContext.setNoStart(isNoStart);

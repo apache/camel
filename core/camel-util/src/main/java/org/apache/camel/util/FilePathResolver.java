@@ -26,13 +26,13 @@ public final class FilePathResolver {
 
     /**
      * Resolves the path.
-     * <p/>
+     * <p>
      * The pattern is:
      * <ul>
-     * <li><tt>${env:key}</tt> or <tt>${env.key}</tt> for environment variables.</li>
-     * <li><tt>${key}</tt> for JVM system properties.</li>
+     * <li><code>${env:key}</code> or <code>${env.key}</code> for environment variables.</li>
+     * <li><code>${key}</code> for JVM system properties.</li>
      * </ul>
-     * For example: <tt>${env.KARAF_HOME}/data/logs</tt>
+     * For example: <code>${env.KARAF_HOME}/data/logs</code>
      *
      * @param  path                     the path
      * @return                          the resolved path

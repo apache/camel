@@ -33,6 +33,7 @@ public class McpServerConfiguration {
     private String tags;
     private long toolTimeout = McpServerConstants.DEFAULT_TOOL_TIMEOUT;
     private long resourceTimeout = McpServerConstants.DEFAULT_RESOURCE_TIMEOUT;
+    private long promptTimeout = McpServerConstants.DEFAULT_PROMPT_TIMEOUT;
     private String path = McpServerConstants.DEFAULT_PATH;
     private String serverName;
     private String serverTitle;
@@ -42,6 +43,7 @@ public class McpServerConfiguration {
     private List<McpServerIcon> serverIcons;
     private long sessionKeepAliveInterval = McpServerConstants.DEFAULT_SESSION_KEEP_ALIVE_INTERVAL;
     private long sessionIdleTtl = McpServerConstants.DEFAULT_SESSION_IDLE_TTL;
+    private String allowedOrigins;
 
     /**
      * Comma-separated list of ai-tool tag patterns to expose as MCP tools. Matching is case-insensitive and supports
@@ -78,6 +80,18 @@ public class McpServerConfiguration {
 
     public void setResourceTimeout(long resourceTimeout) {
         this.resourceTimeout = resourceTimeout;
+    }
+
+    /**
+     * Per-request prompt execution timeout in milliseconds. A request exceeding the timeout returns an error to the MCP
+     * client; the underlying route may continue running until it completes.
+     */
+    public long getPromptTimeout() {
+        return promptTimeout;
+    }
+
+    public void setPromptTimeout(long promptTimeout) {
+        this.promptTimeout = promptTimeout;
     }
 
     /**
@@ -184,5 +198,24 @@ public class McpServerConfiguration {
 
     public void setSessionIdleTtl(long sessionIdleTtl) {
         this.sessionIdleTtl = sessionIdleTtl;
+    }
+
+    /**
+     * Comma-separated list of origins allowed to call the MCP endpoint, such as {@code https://app.example.com} or
+     * {@code http://localhost:*} (any port). A request without an {@code Origin} header is always served; a request
+     * with an {@code Origin} header that is not allowed is rejected with HTTP 403. Scheme and host are compared
+     * ignoring case, and a default port ({@code :80} for http, {@code :443} for https) may be left out. An entry that
+     * is not of the form {@code scheme://host[:port]}, such as {@code *}, fails the startup (see
+     * {@link McpServerOrigins}). When not set, only loopback origins are allowed. Engine-owned: ignored by native
+     * engines.
+     *
+     * @since 4.24
+     */
+    public String getAllowedOrigins() {
+        return allowedOrigins;
+    }
+
+    public void setAllowedOrigins(String allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
     }
 }

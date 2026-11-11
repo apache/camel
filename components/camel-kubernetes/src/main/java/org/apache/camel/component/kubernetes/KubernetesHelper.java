@@ -204,6 +204,22 @@ public final class KubernetesHelper {
         return operation;
     }
 
+    /**
+     * The namespace of a producer operation: the CamelKubernetesNamespaceName header, or else the namespace option of
+     * the endpoint.
+     *
+     * @param  endpoint the endpoint of the producer
+     * @param  exchange the exchange
+     * @return          the namespace, or null when neither the header nor the option is set
+     */
+    public static String extractNamespace(AbstractKubernetesEndpoint endpoint, Exchange exchange) {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        if (ObjectHelper.isEmpty(namespace)) {
+            namespace = endpoint.getKubernetesConfiguration().getNamespace();
+        }
+        return namespace;
+    }
+
     public static void prepareOutboundMessage(Exchange exchange, Object body) {
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getMessage(), true);
         exchange.getMessage().setBody(body);

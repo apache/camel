@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -57,12 +58,72 @@ class ExpressionEvaluatorTest {
         JsonObject note = ExpressionEvaluator.evaluate(ctx, "simple", "${body.length()}", null);
         assertTrue(note.getString("note").contains("empty body"));
 
-        JsonObject error = ExpressionEvaluator.evaluate(ctx, "simple", "${header.foo ?: 'x'}", null);
-        assertEquals("error", error.getString("status"), "the operator is inside the placeholder");
+        JsonObject error = ExpressionEvaluator.evaluate(ctx, "simple", "${header.foo ?: x}", null);
+        assertEquals("error", error.getString("status"), "the fallback is not quoted");
         assertFalse(error.getString("error").isBlank());
 
         JsonObject unknown = ExpressionEvaluator.evaluate(ctx, "no-such-language", "x", null);
         assertEquals("error", unknown.getString("status"));
         assertTrue(unknown.getString("error").contains("no-such-language"));
+    }
+
+    @Test
+    void theElvisOperatorInsideThePlaceholderEvaluates() {
+        // the same as ${header.foo} ?: 'x' since Camel 4.24 (CAMEL-26401)
+        JsonObject value = ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${header.foo ?: 'x'}", null);
+        assertEquals("ok", value.getString("status"));
+        assertEquals("x", value.getString("result"));
+        assertNull(value.get("nullResult"));
+        assertNull(value.get("note"));
+    }
+
+    @Test
+    void aNullValueIsSaidToBeNull() {
+        // an answer without null fields (the MCP server) has no result then, which read as a form that works
+        JsonObject value = ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${header.missing}", null);
+        assertEquals("ok", value.getString("status"));
+        assertTrue(value.containsKey("result"));
+        assertNull(value.get("result"));
+        assertTrue(value.getBoolean("nullResult"));
+        assertEquals(ExpressionEvaluator.NULL_NOTE, value.getString("note"));
+
+        JsonObject empty = ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${body}", null);
+        assertNull(empty.get("nullResult"), "an empty body is a value");
+    }
+
+    @Test
+    void anElvisWithoutItsSpacesIsTheNote() {
+        JsonObject value = ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${header.offset ?:0}", null);
+        assertEquals("ok", value.getString("status"));
+        assertTrue(value.getBoolean("nullResult"));
+        assertTrue(value.getString("note").startsWith(
+                "`${header.offset ?:0}` reads a header named 'offset ?:0': the elvis operator needs a space on both sides"
+                                                      + " and goes after the function: `${header.offset} ?: 0` (from Camel 4.24 also"
+                                                      + " `${header.offset ?: 0}`"),
+                value.getString("note"));
+
+        // a value that is not null is no help either: the fallback was never applied
+        JsonObject text = ExpressionEvaluator.evaluate(new ToolContext(), "simple", "Limit ${header.limit?: 10}", null);
+        assertEquals("Limit ", text.getString("result"));
+        assertTrue(text.getString("note").contains("reads a header named 'limit?: 10'"), text.getString("note"));
+        assertTrue(text.getString("note").contains("`${header.limit} ?: 10`"), text.getString("note"));
+    }
+
+    @Test
+    void theElvisInsideThePlaceholderIsRewrittenForAnOlderCamel() {
+        ToolContext ctx = new ToolContext();
+        ctx.setCamelVersion("4.22.1");
+        // the catalog of the CLI, so the test downloads nothing
+        ctx.setCatalog(new DefaultCamelCatalog());
+        JsonObject value = ExpressionEvaluator.evaluate(ctx, "simple", "${header.limit ?: 10}", null);
+        assertEquals("ok", value.getString("status"), "this process reads it");
+        assertEquals("10", value.getString("result"));
+        assertEquals("`${header.limit ?: 10}` needs Camel 4.24 or later, where the elvis operator may be written inside"
+                     + " ${...} (here Camel 4.22.1): write it after the function: `${header.limit} ?: 10`",
+                value.getString("note"));
+        // without a space it is a header name in any version, and the form inside the braces is not offered
+        JsonObject offset = ExpressionEvaluator.evaluate(ctx, "simple", "${header.offset ?:0}", null);
+        assertTrue(offset.getString("note").endsWith("goes after the function: `${header.offset} ?: 0`"),
+                offset.getString("note"));
     }
 }

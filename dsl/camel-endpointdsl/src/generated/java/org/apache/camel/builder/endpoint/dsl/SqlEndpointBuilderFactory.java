@@ -141,7 +141,7 @@ public interface SqlEndpointBuilderFactory {
          * Make the output of consumer or producer to SelectList as List of Map,
          * or SelectOne as single Java object in the following way: a) If the
          * query has only single column, then that JDBC Column object is
-         * returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long
+         * returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long
          * object. b) If the query has more than one column, then it will return
          * a Map of that result. c) If the outputClass is set, then it will
          * convert the query result into an Java bean object by calling all the
@@ -172,7 +172,7 @@ public interface SqlEndpointBuilderFactory {
          * Make the output of consumer or producer to SelectList as List of Map,
          * or SelectOne as single Java object in the following way: a) If the
          * query has only single column, then that JDBC Column object is
-         * returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long
+         * returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long
          * object. b) If the query has more than one column, then it will return
          * a Map of that result. c) If the outputClass is set, then it will
          * convert the query result into an Java bean object by calling all the
@@ -1274,9 +1274,9 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies a character that will be replaced to in SQL query. Notice,
-         * that it is simple String.replaceAll() operation and no SQL parsing is
-         * involved (quoted strings will also change).
+         * Specifies a character that will be replaced to ? in SQL query.
+         * Notice, that it is simple String.replaceAll() operation and no SQL
+         * parsing is involved (quoted strings will also change).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1395,7 +1395,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries.
+         * characters with ? sign in the SQL queries.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1411,7 +1411,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries.
+         * characters with ? sign in the SQL queries.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1535,7 +1535,7 @@ public interface SqlEndpointBuilderFactory {
          * Make the output of consumer or producer to SelectList as List of Map,
          * or SelectOne as single Java object in the following way: a) If the
          * query has only single column, then that JDBC Column object is
-         * returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long
+         * returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long
          * object. b) If the query has more than one column, then it will return
          * a Map of that result. c) If the outputClass is set, then it will
          * convert the query result into an Java bean object by calling all the
@@ -1566,7 +1566,7 @@ public interface SqlEndpointBuilderFactory {
          * Make the output of consumer or producer to SelectList as List of Map,
          * or SelectOne as single Java object in the following way: a) If the
          * query has only single column, then that JDBC Column object is
-         * returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long
+         * returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long
          * object. b) If the query has more than one column, then it will return
          * a Map of that result. c) If the outputClass is set, then it will
          * convert the query result into an Java bean object by calling all the
@@ -1970,9 +1970,9 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies a character that will be replaced to in SQL query. Notice,
-         * that it is simple String.replaceAll() operation and no SQL parsing is
-         * involved (quoted strings will also change).
+         * Specifies a character that will be replaced to ? in SQL query.
+         * Notice, that it is simple String.replaceAll() operation and no SQL
+         * parsing is involved (quoted strings will also change).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2091,7 +2091,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries.
+         * characters with ? sign in the SQL queries.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2107,7 +2107,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries.
+         * characters with ? sign in the SQL queries.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2232,7 +2232,7 @@ public interface SqlEndpointBuilderFactory {
          * Make the output of consumer or producer to SelectList as List of Map,
          * or SelectOne as single Java object in the following way: a) If the
          * query has only single column, then that JDBC Column object is
-         * returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long
+         * returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long
          * object. b) If the query has more than one column, then it will return
          * a Map of that result. c) If the outputClass is set, then it will
          * convert the query result into an Java bean object by calling all the
@@ -2263,7 +2263,7 @@ public interface SqlEndpointBuilderFactory {
          * Make the output of consumer or producer to SelectList as List of Map,
          * or SelectOne as single Java object in the following way: a) If the
          * query has only single column, then that JDBC Column object is
-         * returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long
+         * returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long
          * object. b) If the query has more than one column, then it will return
          * a Map of that result. c) If the outputClass is set, then it will
          * convert the query result into an Java bean object by calling all the
@@ -2456,9 +2456,9 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies a character that will be replaced to in SQL query. Notice,
-         * that it is simple String.replaceAll() operation and no SQL parsing is
-         * involved (quoted strings will also change).
+         * Specifies a character that will be replaced to ? in SQL query.
+         * Notice, that it is simple String.replaceAll() operation and no SQL
+         * parsing is involved (quoted strings will also change).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2577,7 +2577,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries.
+         * characters with ? sign in the SQL queries.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2593,7 +2593,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries.
+         * characters with ? sign in the SQL queries.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2685,8 +2685,8 @@ public interface SqlEndpointBuilderFactory {
          * Query to execute. This header is ignored unless the endpoint enables
          * allowQueryFromHeader=true (disabled by default); when enabled it
          * takes precedence over the query specified in the endpoint URI. Note
-         * that query parameters in the header are represented by a instead of a
-         * pass:# symbol.
+         * that query parameters in the header are represented by a ? instead of
+         * a pass:[#] symbol.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2700,7 +2700,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * The number of rows updated for update operations, returned as an
          * Integer object. This header is not provided when using
-         * outputType=StreamList.
+         * outputType=StreamList. With batch=true, the sum of the update counts
+         * of the batch items; an item the JDBC driver returns no count for
+         * (Statement.SUCCESS_NO_INFO) is not counted, so the value can be lower
+         * than the number of rows updated, or 0.
          * 
          * The option is a: {@code Integer} type.
          * 

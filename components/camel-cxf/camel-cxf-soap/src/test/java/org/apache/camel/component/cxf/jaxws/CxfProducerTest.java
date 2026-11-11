@@ -30,7 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.converter.CxfPayloadConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -39,12 +38,20 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.hello_world_soap_http.GreeterImpl;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.Timeout.ThreadMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +60,29 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// CAMEL-26468: these tests sometimes hang on CI, which used to kill the whole fork (camel.surefire.forkTimeout).
+// The timeout fails only the stuck test, and junit-platform.properties prints a thread dump to show where it hangs.
+@Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
 public class CxfProducerTest {
+    private static AvailablePortFinder.Port simplePort;
+    private static AvailablePortFinder.Port jaxWsPort;
+
+    @BeforeAll
+    static void allocatePorts() {
+        simplePort = AvailablePortFinder.find();
+        jaxWsPort = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (simplePort != null) {
+            simplePort.release();
+        }
+        if (jaxWsPort != null) {
+            jaxWsPort.release();
+        }
+    }
+
     protected static final String ECHO_OPERATION = "echo";
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
@@ -66,11 +95,11 @@ public class CxfProducerTest {
     protected Endpoint endpoint;
 
     protected String getSimpleServerAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+        return "http://localhost:" + simplePort.getPort() + "/" + getClass().getSimpleName() + "/test";
     }
 
     protected String getJaxWsServerAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/test";
+        return "http://localhost:" + jaxWsPort.getPort() + "/" + getClass().getSimpleName() + "/test";
     }
 
     // Keep port reference to prevent reuse — this address must have nothing listening on it
@@ -83,6 +112,7 @@ public class CxfProducerTest {
     }
 
     @BeforeEach
+    @Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
     public void startService() throws Exception {
         // start a simple front service
         ServerFactoryBean svrBean = new ServerFactoryBean();
@@ -97,6 +127,7 @@ public class CxfProducerTest {
     }
 
     @AfterEach
+    @Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
     public void stopServices() throws Exception {
         endpoint.stop();
         server.stop();
@@ -104,16 +135,39 @@ public class CxfProducerTest {
     }
 
     @BeforeEach
+    @Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
+        camelContext.getRegistry().bind("wrongServerConfigurer", new CxfConfigurer() {
+            @Override
+            public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
+            }
+
+            @Override
+            public void configureClient(Client client) {
+                HTTPConduit conduit = (HTTPConduit) client.getConduit();
+                HTTPClientPolicy policy = new HTTPClientPolicy();
+                policy.setConnectionTimeout(3000);
+                policy.setReceiveTimeout(3000);
+                conduit.setClient(policy);
+            }
+
+            @Override
+            public void configureServer(Server server) {
+            }
+        });
         camelContext.start();
         template = camelContext.createProducerTemplate();
     }
 
     @AfterEach
+    @Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
     public void tearDown() throws Exception {
         template.stop();
         camelContext.stop();
+        if (wrongPort != null) {
+            wrongPort.release();
+        }
     }
 
     @Test
@@ -139,7 +193,7 @@ public class CxfProducerTest {
     }
 
     @Test
-    public void testInvokingAWrongServer() throws Exception {
+    void testInvokingAWrongServer() throws Exception {
         Exchange reply = sendSimpleMessage(getWrongEndpointUri());
         assertNotNull(reply.getException(), "We should get the exception here");
         assertInstanceOf(IOException.class, reply.getException().getCause());
@@ -152,6 +206,22 @@ public class CxfProducerTest {
         //Test the data format MESSAGE
         reply = sendSimpleMessageWithRawMessage(getWrongEndpointUri() + "&dataFormat=RAW");
         assertNotNull(reply.getException(), "We should get the exception here");
+        assertInstanceOf(IOException.class, reply.getException().getCause());
+    }
+
+    // CAMEL-26696: async producer must always complete the exchange when the connection fails.
+    // The @Timeout(30s) on the class guards against the exchange hanging in
+    // DefaultAsyncProcessorAwaitManager if camelAsyncCallback.done() is never called.
+    // For the callback exception-handling semantics (binding throws, Error thrown, etc.)
+    // see CxfClientCallbackTest which tests CxfClientCallback directly via Mockito.
+    // Disabled: this test passes with or without the fix (CXF goes through handleException, not
+    // through populateExchangeFromCxfResponse, on a connection failure), and CXF-9272 makes it
+    // hang occasionally under load. The CxfClientCallbackTest unit tests cover the invariants.
+    @Disabled("CXF-9272: may hang under load; callback invariants covered by CxfClientCallbackTest")
+    @Test
+    void testInvokingAWrongServerAsync() throws Exception {
+        Exchange reply = sendSimpleMessage(getWrongEndpointUriAsync());
+        assertNotNull(reply.getException(), "Async wrong-server call must complete with an exception");
         assertInstanceOf(IOException.class, reply.getException().getCause());
     }
 
@@ -183,7 +253,20 @@ public class CxfProducerTest {
     }
 
     protected String getWrongEndpointUri() {
-        return "cxf://" + getWrongServerAddress() + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
+        // CAMEL-26600: synchronous=true, as with the CXF async client the callback sometimes never completes
+        // when the connection fails, leaving the exchange waiting forever.
+        // The async error path is not covered here; see CxfClientCallbackTest and CAMEL-26696.
+        return "cxf://" + getWrongServerAddress()
+               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
+               + "&cxfConfigurer=#wrongServerConfigurer"
+               + "&synchronous=true";
+    }
+
+    // CAMEL-26696: async (synchronous=false) wrong-server endpoint — callback must always complete
+    protected String getWrongEndpointUriAsync() {
+        return "cxf://" + getWrongServerAddress()
+               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
+               + "&cxfConfigurer=#wrongServerConfigurer";
     }
 
     protected Exchange sendSimpleMessage() {

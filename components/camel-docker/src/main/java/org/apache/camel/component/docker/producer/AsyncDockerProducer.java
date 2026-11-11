@@ -16,13 +16,15 @@
  */
 package org.apache.camel.component.docker.producer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback.Adapter;
-import com.github.dockerjava.api.async.ResultCallbackTemplate;
 import com.github.dockerjava.api.command.AsyncDockerCmd;
 import com.github.dockerjava.api.command.AttachContainerCmd;
 import com.github.dockerjava.api.command.BuildImageCmd;
@@ -52,6 +54,7 @@ import org.apache.camel.component.docker.DockerHelper;
 import org.apache.camel.component.docker.DockerOperation;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,10 +120,10 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                     throw new DockerException("Invalid operation: " + operation);
             }
         } catch (InterruptedException e) {
-            LOG.error("Interrupted while processing", e);
             Thread.currentThread().interrupt();
-        } catch (DockerException e) {
-            LOG.error(e.getMessage(), e);
+            exchange.setException(e);
+        } catch (Exception e) {
+            exchange.setException(e);
         }
 
         callback.done(false);
@@ -130,7 +133,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
     private void runAsyncImageBuild(Exchange exchange, Message message, DockerClient client)
             throws DockerException, InterruptedException {
         // result contain an image id value
-        try (BuildImageCmd cmd = executeBuildImageRequest(client, message)) {
+        try (BuildImageCmd cmd = executeBuildImageRequest(exchange, client, message)) {
 
             BuildImageResultCallback item = cmd.exec(new BuildImageResultCallback() {
                 @Override
@@ -138,26 +141,34 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                     super.onNext(item);
 
                     LOG.trace("build image callback {}", item);
-
-                    exchange.getIn().setBody(item.getImageId());
                 }
             });
 
-            setResponse(exchange, item);
+            item.awaitCompletion();
+            // the image id is in the Successfully built line, which is not the last line of a tagged build
+            exchange.getIn().setBody(item.awaitImageId());
         }
     }
 
     private void runAsyncWithFrameResponse(Exchange exchange, AsyncDockerCmd<?, Frame> cmd) throws InterruptedException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
         Adapter<Frame> item = cmd.exec(new Adapter<Frame>() {
             @Override
             public void onNext(Frame item) {
                 LOG.trace("running framed callback {}", item);
                 super.onNext(item);
+
+                byte[] payload = item.getPayload();
+                if (payload != null) {
+                    output.writeBytes(payload);
+                }
             }
 
         });
 
-        setResponse(exchange, item);
+        item.awaitCompletion();
+        // the frames of stdout and stderr in the order they were received
+        exchange.getIn().setBody(output.toString(Charset.forName(ExchangeHelper.getCharsetName(exchange))));
     }
 
     private void runAsyncExecStart(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
@@ -178,14 +189,8 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
             });
 
-            setResponse(exchange, item);
-        }
-    }
-
-    private void setResponse(Exchange exchange, ResultCallbackTemplate item) throws InterruptedException {
-        if (item != null) {
-            exchange.getIn().setBody(item);
             item.awaitCompletion();
+            exchange.getIn().setBody(item.awaitStatusCode());
         }
     }
 
@@ -201,24 +206,36 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
         }
     }
 
-    private void runAsyncPush(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
+    private void runAsyncPush(Exchange exchange, Message message, DockerClient client)
+            throws InterruptedException, DockerException {
         try (PushImageCmd cmd = executePushImageRequest(client, message)) {
+            AtomicReference<PushResponseItem> last = new AtomicReference<>();
+            AtomicReference<String> error = new AtomicReference<>();
             Adapter<PushResponseItem> item = cmd.exec(new Adapter<PushResponseItem>() {
                 @Override
                 public void onNext(PushResponseItem item) {
                     super.onNext(item);
 
                     LOG.trace("push image callback {}", item);
+
+                    last.set(item);
+                    if (item.isErrorIndicated()) {
+                        error.compareAndSet(null, item.getError());
+                    }
                 }
             });
 
-            setResponse(exchange, item);
+            item.awaitCompletion();
+            if (error.get() != null) {
+                throw new DockerException("Could not push image: " + error.get());
+            }
+            exchange.getIn().setBody(last.get());
         }
     }
 
     private void runAsyncPull(Message message, DockerClient client, Exchange exchange) throws InterruptedException {
         try (PullImageCmd cmd = executePullImageRequest(client, message)) {
-
+            AtomicReference<PullResponseItem> last = new AtomicReference<>();
             PullImageResultCallback item = cmd.exec(new PullImageResultCallback() {
                 @Override
                 public void onNext(PullResponseItem item) {
@@ -226,17 +243,21 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
                     LOG.trace("pull image callback {}", item);
 
+                    last.set(item);
                 }
             });
 
-            setResponse(exchange, item);
+            // fails when the pull did not succeed
+            item.awaitCompletion();
+            exchange.getIn().setBody(last.get());
         }
     }
 
     /**
      * Produces a build image request
      */
-    private BuildImageCmd executeBuildImageRequest(DockerClient client, Message message) throws DockerException {
+    private BuildImageCmd executeBuildImageRequest(Exchange exchange, DockerClient client, Message message)
+            throws DockerException {
 
         LOG.debug("Executing Docker Build Image Request");
 
@@ -244,12 +265,18 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         BuildImageCmd buildImageCmd;
 
-        if (body instanceof InputStream) {
-            buildImageCmd = client.buildImageCmd((InputStream) body);
-        } else if (body instanceof File) {
-            buildImageCmd = client.buildImageCmd((File) body);
+        if (body instanceof File file) {
+            buildImageCmd = client.buildImageCmd(file);
         } else {
-            throw new DockerException("Unable to location source Image");
+            // the tar archive of the build context, such as a byte[] or the file of a file consumer
+            InputStream is = body != null
+                    ? exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body) : null;
+            if (is == null) {
+                throw new DockerException(
+                        "imagebuild needs the build context as an InputStream (a tar archive) or a java.io.File, but the body is "
+                                          + (body != null ? body.getClass().getName() : "null"));
+            }
+            buildImageCmd = client.buildImageCmd(is);
         }
 
         Boolean noCache = DockerHelper.getProperty(DockerConstants.DOCKER_NO_CACHE, configuration, message, Boolean.class);
@@ -303,7 +330,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
             pullImageCmd.withTag(tag);
         }
 
-        AuthConfig authConfig = client.authConfig();
+        AuthConfig authConfig = getRegistryAuthConfig(client, message, repository);
 
         if (authConfig != null) {
             pullImageCmd.withAuthConfig(authConfig);
@@ -332,7 +359,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
             pushImageCmd.withTag(tag);
         }
 
-        AuthConfig authConfig = client.authConfig();
+        AuthConfig authConfig = getRegistryAuthConfig(client, message, name);
 
         if (authConfig != null) {
             pushImageCmd.withAuthConfig(authConfig);
@@ -340,6 +367,37 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         return pushImageCmd;
 
+    }
+
+    /**
+     * The registry authentication of the endpoint for a pull or push of the given image. It applies only when a
+     * username is configured and the image is in the registry of the server address of the endpoint; otherwise the
+     * request is sent without authentication.
+     */
+    private AuthConfig getRegistryAuthConfig(DockerClient client, Message message, String image) {
+        // the username header applies only when the endpoint allows it, as in DockerClientFactory
+        Message credentialHeaders = configuration.isAllowConnectionAndCredentialsFromHeaders() ? message : null;
+        String username = DockerHelper.getProperty(DockerConstants.DOCKER_USERNAME, configuration, credentialHeaders,
+                String.class, configuration.getUsername());
+        if (username == null) {
+            LOG.debug("No registry username configured: sending the request for image {} without authentication", image);
+            return null;
+        }
+
+        AuthConfig authConfig = client.authConfig();
+        if (authConfig == null) {
+            return null;
+        }
+
+        String imageRegistry = DockerHelper.getImageRegistryHost(image);
+        String endpointRegistry = DockerHelper.getServerAddressRegistryHost(authConfig.getRegistryAddress());
+        if (imageRegistry == null || !imageRegistry.equals(endpointRegistry)) {
+            LOG.debug("Image {} is in registry {}, not in the registry {} of the endpoint:"
+                      + " sending the request without the registry authentication of the endpoint",
+                    image, imageRegistry, endpointRegistry);
+            return null;
+        }
+        return authConfig;
     }
 
     /**

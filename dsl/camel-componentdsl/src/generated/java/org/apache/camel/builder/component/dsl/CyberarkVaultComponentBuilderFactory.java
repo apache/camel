@@ -66,21 +66,6 @@ public interface CyberarkVaultComponentBuilderFactory {
         }
     
         /**
-         * Path to the SSL certificate for verification.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param certificatePath the value to set
-         * @return the dsl builder
-         */
-        default CyberarkVaultComponentBuilder certificatePath(java.lang.String certificatePath) {
-            doSetProperty("certificatePath", certificatePath);
-            return this;
-        }
-    
-        /**
          * Component configuration.
          * 
          * The option is a:
@@ -187,24 +172,6 @@ public interface CyberarkVaultComponentBuilderFactory {
     
         
         /**
-         * Whether to verify SSL certificates when connecting to CyberArk
-         * Conjur.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param verifySsl the value to set
-         * @return the dsl builder
-         */
-        default CyberarkVaultComponentBuilder verifySsl(boolean verifySsl) {
-            doSetProperty("verifySsl", verifySsl);
-            return this;
-        }
-    
-        
-        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -256,6 +223,24 @@ public interface CyberarkVaultComponentBuilderFactory {
         }
     
         /**
+         * Path of a file with the SSL certificate to trust when connecting to
+         * CyberArk Conjur, for example the certificate of a private CA, in PEM
+         * or DER format. The certificates in the file are trusted instead of
+         * the default trust store of the JVM. Not used when verifySsl is false.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param certificatePath the value to set
+         * @return the dsl builder
+         */
+        default CyberarkVaultComponentBuilder certificatePath(java.lang.String certificatePath) {
+            doSetProperty("certificatePath", certificatePath);
+            return this;
+        }
+    
+        /**
          * The password for authentication with CyberArk Conjur.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -284,6 +269,25 @@ public interface CyberarkVaultComponentBuilderFactory {
             doSetProperty("username", username);
             return this;
         }
+    
+        
+        /**
+         * Whether to verify the SSL certificate and the host name of the
+         * CyberArk Conjur server. Setting it to false trusts any server, so use
+         * it only for testing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param verifySsl the value to set
+         * @return the dsl builder
+         */
+        default CyberarkVaultComponentBuilder verifySsl(boolean verifySsl) {
+            doSetProperty("verifySsl", verifySsl);
+            return this;
+        }
     }
 
     class CyberarkVaultComponentBuilderImpl
@@ -306,19 +310,19 @@ public interface CyberarkVaultComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "account": getOrCreateConfiguration((CyberArkVaultComponent) component).setAccount((java.lang.String) value); return true;
-            case "certificatePath": getOrCreateConfiguration((CyberArkVaultComponent) component).setCertificatePath((java.lang.String) value); return true;
             case "configuration": ((CyberArkVaultComponent) component).setConfiguration((org.apache.camel.component.cyberark.vault.CyberArkVaultConfiguration) value); return true;
             case "conjurClient": getOrCreateConfiguration((CyberArkVaultComponent) component).setConjurClient((org.apache.camel.component.cyberark.vault.client.ConjurClient) value); return true;
             case "lazyStartProducer": ((CyberArkVaultComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((CyberArkVaultComponent) component).setOperation((org.apache.camel.component.cyberark.vault.CyberArkVaultOperations) value); return true;
             case "secretId": getOrCreateConfiguration((CyberArkVaultComponent) component).setSecretId((java.lang.String) value); return true;
             case "url": getOrCreateConfiguration((CyberArkVaultComponent) component).setUrl((java.lang.String) value); return true;
-            case "verifySsl": getOrCreateConfiguration((CyberArkVaultComponent) component).setVerifySsl((boolean) value); return true;
             case "autowiredEnabled": ((CyberArkVaultComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "apiKey": getOrCreateConfiguration((CyberArkVaultComponent) component).setApiKey((java.lang.String) value); return true;
             case "authToken": getOrCreateConfiguration((CyberArkVaultComponent) component).setAuthToken((java.lang.String) value); return true;
+            case "certificatePath": getOrCreateConfiguration((CyberArkVaultComponent) component).setCertificatePath((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((CyberArkVaultComponent) component).setPassword((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((CyberArkVaultComponent) component).setUsername((java.lang.String) value); return true;
+            case "verifySsl": getOrCreateConfiguration((CyberArkVaultComponent) component).setVerifySsl((boolean) value); return true;
             default: return false;
             }
         }

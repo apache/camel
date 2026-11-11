@@ -19,20 +19,34 @@ package org.apache.camel.component.cxf.jaxws;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port PORT;
 
-    private static final String SIMPLE_SERVER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1()
-                                                        + "/CxfProducerSynchronousFalseTest/test";
+    private static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        SIMPLE_SERVER_ADDRESS = "http://localhost:" + PORT.getPort()
+                                + "/CxfProducerSynchronousFalseTest/test";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
+    private static String SIMPLE_SERVER_ADDRESS;
     private static final String REQUEST_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                                   + "<soap:Body><ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
                                                   + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">Hello World!</arg0>"
@@ -47,6 +61,7 @@ public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
 
     @BeforeAll
     public static void startServer() throws Exception {
+        allocatePorts();
         // start a simple front service
         ServerFactoryBean svrBean = new ServerFactoryBean();
         svrBean.setAddress(SIMPLE_SERVER_ADDRESS);

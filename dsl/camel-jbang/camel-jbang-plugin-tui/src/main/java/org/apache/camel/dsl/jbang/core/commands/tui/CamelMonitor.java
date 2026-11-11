@@ -66,7 +66,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -598,8 +598,16 @@ public class CamelMonitor extends CamelCommand {
             }
 
             @Override
-            public void explainLogError(String error) {
-                openAiWithQuestion(dir -> AiFixPrompt.ofLogError(error));
+            public void ask(String question) {
+                openAiWithQuestion(dir -> question);
+            }
+
+            @Override
+            public void askNow(String question) {
+                if (shellPanel.isOpen()) {
+                    shellPanel.close();
+                }
+                aiPanel.askNow(question);
             }
         };
         ctx.projectOverviewCallback = () -> {
@@ -1346,7 +1354,7 @@ public class CamelMonitor extends CamelCommand {
             }
             if (!isPhantomSelected()) {
                 if (ke.isChar('4')) {
-                    return tabRegistry.handleTabKey(TAB_ACTIVITY);
+                    return tabRegistry.handleTabKey(TAB_TIMELINE);
                 }
                 if (ke.isChar('5')) {
                     return tabRegistry.handleTabKey(TAB_DIAGRAM);
@@ -1505,6 +1513,9 @@ public class CamelMonitor extends CamelCommand {
 
         int tab = tabRegistry.selectedTabIndex();
         if (ke.isConfirm() && tab == TAB_OVERVIEW) {
+            if (tabRegistry.overviewTab().openFromAbout()) {
+                return true;
+            }
             tabRegistry.overviewTab().selectCurrentIntegration();
             if (ctx.selectedPid != null) {
                 if (isPhantomSelected()) {
@@ -1875,8 +1886,8 @@ public class CamelMonitor extends CamelCommand {
                 monitorNotification = null;
             }
         }
-        // Right-aligned header spans (web server indicator)
-        List<Span> headerRight = new ArrayList<>();
+        // Right-aligned header spans (the chaos badge, web server indicator)
+        List<Span> headerRight = new ArrayList<>(ChaosTab.headerBadge(ctx.findSelectedIntegration()));
         if (web && webBackend == null) {
             headerRight.add(Span.styled("web :" + webPort + " ",
                     Theme.notice().underlined().hyperlink("http://127.0.0.1:" + webPort + "/")));
@@ -2033,7 +2044,7 @@ public class CamelMonitor extends CamelCommand {
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_SOURCE, "2", "Source")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "3", "Log")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ACTIVITY, "4", "Activity")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_TIMELINE, "4", "Timeline")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "5", "Diagram")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "6", "Route")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "7", "Endpoint")),
@@ -2157,10 +2168,6 @@ public class CamelMonitor extends CamelCommand {
             badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
             badgeStyles[TAB_ERRORS] = red;
         }
-        int activityCount = hasSelection ? sel.activity.size() : 0;
-        if (activityCount > 0) {
-            badgeTexts[TAB_ACTIVITY] = "(" + activityCount + ")";
-        }
     }
 
     private void openFilesPopup() {
@@ -2195,7 +2202,6 @@ public class CamelMonitor extends CamelCommand {
         ctx.fireAction(pid, root);
         dataService.metrics().resetStats(pid);
 
-        info.activity = List.of();
         info.errors = new ArrayList<>();
         dataService.traces().set(Collections.emptyList());
         dataService.traceFilePositions().clear();
@@ -2342,9 +2348,10 @@ public class CamelMonitor extends CamelCommand {
                 labelStyle = Theme.success();
                 suffixStyle = active ? Theme.success() : Theme.muted();
             } else {
-                suffix = " " + TuiIcons.CROSS;
+                // the server runs and waits for an agent: not an error
+                suffix = " no client";
                 labelStyle = Theme.muted();
-                suffixStyle = Theme.error();
+                suffixStyle = Theme.muted();
             }
             rightSpans.add(Span.styled(mcpLabel, labelStyle));
             rightSpans.add(Span.styled(suffix, suffixStyle));

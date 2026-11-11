@@ -46,7 +46,7 @@
     
     <jaxws:endpoint xmlns:s="http://camel.apache.org/hello_world_soap_http" 
         id="Signature" 
-        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterSignaturePort" 
+        address="http://localhost:${WSSecurityRouteTest.port1}/WSSecurityRouteTest/GreeterSignaturePort" 
         serviceName="s:GreeterService" 
         endpointName="s:GreeterSignaturePort" 
         implementor="org.apache.camel.component.cxf.wssecurity.server.GreeterImpl" 
@@ -80,7 +80,7 @@
     
     <jaxws:endpoint xmlns:s="http://camel.apache.org/hello_world_soap_http" 
         id="UsernameToken" 
-        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterUsernameTokenPort" 
+        address="http://localhost:${WSSecurityRouteTest.port1}/WSSecurityRouteTest/GreeterUsernameTokenPort" 
         serviceName="s:GreeterService" 
         endpointName="s:GreeterUsernameTokenPort" 
         implementor="org.apache.camel.component.cxf.wssecurity.server.GreeterImpl" 
@@ -99,7 +99,7 @@
     
     <jaxws:endpoint xmlns:s="http://camel.apache.org/hello_world_soap_http" 
         id="Encryption" 
-        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterEncryptionPort" 
+        address="http://localhost:${WSSecurityRouteTest.port1}/WSSecurityRouteTest/GreeterEncryptionPort" 
         serviceName="s:GreeterService" 
         endpointName="s:GreeterEncryptionPort" 
         implementor="org.apache.camel.component.cxf.wssecurity.server.GreeterImpl" 
@@ -131,7 +131,7 @@
     
     <jaxws:endpoint xmlns:s="http://camel.apache.org/hello_world_soap_http" 
         id="SecurityPolicy" 
-        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
+        address="http://localhost:${WSSecurityRouteTest.port1}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
         serviceName="s:GreeterService" 
         endpointName="s:GreeterSecurityPolicyPort" 
         implementor="org.apache.camel.component.cxf.wssecurity.server.GreeterImpl" 

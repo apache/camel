@@ -30,6 +30,7 @@ import java.util.function.Predicate;
 
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
 import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringGuidelines;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolArgumentAliases;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
@@ -58,16 +59,28 @@ public class AskTools {
             "catalog_component_doc", "catalog_eip_doc", "catalog_dataformat_doc", "catalog_language_doc");
 
     /** The shared tools that the tool groups (by their camel-jbang-mcp names) stand for. */
-    static final Map<String, String> GROUP_TOOLS = Map.of(
-            ToolGroups.SQL_TOOL, "execute_sql",
-            ToolGroups.DATASOURCES_TOOL, "get_datasources",
-            ToolGroups.SQL_TRACE_TOOL, "get_sql_trace",
-            ToolGroups.SPANS_TOOL, "get_spans",
-            ToolGroups.TRACE_TOOL, "trace_control",
-            ToolGroups.METRICS_TOOL, "get_metrics",
-            ToolGroups.CIRCUIT_BREAKERS_TOOL, "get_circuit_breakers",
-            ToolGroups.HTTP_ENDPOINTS_TOOL, "get_http_endpoints",
-            ToolGroups.HTTP_REQUEST_TOOL, "http_request");
+    static final Map<String, String> GROUP_TOOLS = Map.ofEntries(
+            Map.entry(ToolGroups.SQL_TOOL, "execute_sql"),
+            Map.entry(ToolGroups.DATASOURCES_TOOL, "get_datasources"),
+            Map.entry(ToolGroups.SQL_TRACE_TOOL, "get_sql_trace"),
+            Map.entry(ToolGroups.SPANS_TOOL, "get_spans"),
+            Map.entry(ToolGroups.TRACE_TOOL, "trace_control"),
+            Map.entry(ToolGroups.METRICS_TOOL, "get_metrics"),
+            Map.entry(ToolGroups.CIRCUIT_BREAKERS_TOOL, "get_circuit_breakers"),
+            Map.entry(ToolGroups.HTTP_ENDPOINTS_TOOL, "get_http_endpoints"),
+            Map.entry(ToolGroups.HTTP_REQUEST_TOOL, "http_request"),
+            Map.entry(ToolGroups.CHAOS_LIST_TOOL, "chaos_list"),
+            Map.entry(ToolGroups.CHAOS_REPORT_TOOL, "chaos_report"),
+            Map.entry(ToolGroups.CHAOS_CHECK_TOOL, "chaos_check"),
+            Map.entry(ToolGroups.CHAOS_ADD_TOOL, "chaos_add"),
+            Map.entry(ToolGroups.CHAOS_CHANGE_TOOL, "chaos_change"),
+            Map.entry(ToolGroups.CHAOS_REMOVE_TOOL, "chaos_remove"),
+            Map.entry(ToolGroups.CHAOS_CLEAR_TOOL, "chaos_clear"),
+            Map.entry(ToolGroups.CHAOS_SUGGEST_TOOL, "chaos_suggest"),
+            Map.entry(ToolGroups.CHAOS_LOAD_TOOL, "chaos_load"),
+            Map.entry(ToolGroups.CHAOS_EXPLORE_START_TOOL, "chaos_explore_start"),
+            Map.entry(ToolGroups.CHAOS_EXPERIMENT_TOOL, "chaos_experiment"),
+            Map.entry(ToolGroups.CHAOS_EXPLORE_FINISH_TOOL, "chaos_explore_finish"));
 
     private static final String CLI_LIST_COMMANDS = "cli_list_commands";
     private static final String CLI_COMMAND_HELP = "cli_command_help";
@@ -211,7 +224,8 @@ public class AskTools {
         tools.add(new LlmClient.ToolDef(
                 CLI_EXEC,
                 "Execute a Camel CLI command, such as 'get route' or 'ps', and return its exitCode, stdout and stderr as"
-                          + " JSON (exit code 0 is success, 1 failed, 2 wrong command line, 3 not found, 124 timed out)."
+                          + " JSON (exit code 0 is success, 1 failed, 2 wrong command line, 3 not found, 66 file not"
+                          + " found, 70 internal error, 124 timed out)."
                           + " A command that changes something (run, stop, cmd, infra run, ...) asks the user first; one"
                           + " that runs until it is stopped is refused with the form that returns.",
                 objectParams(Map.of(
@@ -238,7 +252,9 @@ public class AskTools {
         return names;
     }
 
-    /** The shared tools of the tool groups the selected integration calls for (SQL, tracing, resilience, HTTP). */
+    /**
+     * The shared tools of the tool groups the selected integration calls for (SQL, tracing, resilience, HTTP, chaos).
+     */
     private List<String> groupTools() {
         return ToolGroups.select(features()).mcpTools().stream()
                 .map(GROUP_TOOLS::get)
@@ -253,7 +269,10 @@ public class AskTools {
 
     static String sharedToolNames(String text) {
         String answer = text;
-        for (Map.Entry<String, String> e : GROUP_TOOLS.entrySet()) {
+        // the longest names first: camel_runtime_sql is the start of camel_runtime_sql_trace
+        List<Map.Entry<String, String>> entries = new ArrayList<>(GROUP_TOOLS.entrySet());
+        entries.sort((a, b) -> b.getKey().length() - a.getKey().length());
+        for (Map.Entry<String, String> e : entries) {
             answer = answer.replace(e.getKey(), e.getValue());
         }
         return answer;
@@ -294,16 +313,19 @@ public class AskTools {
                         }
                     }
                 }
-                ToolConfirms.Call call = confirmation(name, argMap);
+                // the argument names a model carries over from another tool, such as query for term (CAMEL-26399)
+                ToolArgumentAliases.Resolved<String> named
+                        = ToolArgumentAliases.resolve(name, ToolArgumentAliases.arguments(td), argMap);
+                ToolConfirms.Call call = confirmation(name, named.arguments());
                 if (!ctx.confirm(call)) {
                     return rejected(call);
                 }
-                Object result = ToolRegistry.execute(name, ctx, argMap);
+                Object result = ToolRegistry.execute(name, ctx, named.arguments());
                 if ("select_process".equals(name) && ctx.hasProcess()) {
                     // the file tools follow the integration
                     setTargetPid(ctx.pid());
                 }
-                return result != null ? result.toString() : "";
+                return ToolArgumentAliases.withNote(result != null ? result.toString() : "", named.note());
             }
             return switch (name) {
                 case CLI_LIST_COMMANDS -> executeCliListCommands(args);
@@ -335,6 +357,18 @@ public class AskTools {
                     ? args.get("files") : args.getOrDefault("directory", ctx.defaultDirectory().toString()));
             case "write_heap_dump" -> ToolConfirms.heapDump(
                     args.get("name") != null ? args.get("name") : processName());
+            case "chaos_add", "chaos_change" -> ToolConfirms.chaos(name.substring("chaos_".length()),
+                    args.get("name") != null ? args.get("name") : processName(), args.get("id"), args.get("rule"));
+            case "chaos_load" -> ToolConfirms.chaosLoad(args.get("name") != null ? args.get("name") : processName(),
+                    args.get("scenarioName"), args.get("scenario"));
+            // the consent to the experiments of the exploration, which camel-chaos ends at its deadline
+            case "chaos_explore_start" -> ToolConfirms.chaosExplore(
+                    args.get("name") != null ? args.get("name") : processName(), args.get("budget"), args.get("focus"));
+            // its rules are covered by the exploration; its messages are confirmed as send_message confirms them
+            case "chaos_experiment" -> args.get("feed") == null || args.get("feed").isBlank()
+                    ? null
+                    : ToolConfirms.sendMessage(args.get("feed"), endpointUris(),
+                            ToolConfirms.fileOutsideProject(args.get("body"), runtimeDirectory(), ctx.defaultDirectory()));
             default -> null;
         };
     }
@@ -390,9 +424,9 @@ public class AskTools {
             sb.append(" and cli_command_help find a command, cli_exec runs it.\n\n");
         }
         sb.append("Some calls ask the user first: a file write (the user sees the change), a message to an endpoint the");
-        sb.append(" integration does not have, SQL that changes data, an expression that runs code, stopping or");
-        sb.append(" restarting the integration, and a camel command that changes something. A call the user did not");
-        sb.append(" confirm did not run.\n\n");
+        sb.append(" integration does not have, SQL that changes data, an expression that runs code, adding or changing");
+        sb.append(" a chaos rule, stopping or restarting the integration, and a camel command that changes something.");
+        sb.append(" A call the user did not confirm did not run.\n\n");
 
         sb.append("Guidelines:\n");
         AuthoringGuidelines.lines().forEach(line -> sb.append("- ").append(line).append('\n'));

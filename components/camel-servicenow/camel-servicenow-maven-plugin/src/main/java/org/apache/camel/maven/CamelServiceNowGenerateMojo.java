@@ -35,8 +35,6 @@ import javax.lang.model.element.Modifier;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.palantir.javapoet.AnnotationSpec;
 import com.palantir.javapoet.FieldSpec;
 import com.palantir.javapoet.JavaFile;
@@ -54,6 +52,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
 
 /**
  * Goal to generate DTOs for ServiceNow objects
@@ -197,7 +197,7 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
                             .addMember("value", "$L", "JsonInclude.Include.NON_NULL")
                             .build());
 
-            schema.get("properties").fields().forEachRemaining(
+            schema.get("properties").properties().iterator().forEachRemaining(
                     entry -> generateBeanProperty(typeBuilder, schema, entry.getKey(), entry.getValue()));
 
             JavaFile.builder(packageName, typeBuilder.build())
@@ -219,28 +219,28 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
         Class<?> javaType = String.class;
 
         if (type != null) {
-            if ("boolean".equalsIgnoreCase(type.textValue())) {
+            if ("boolean".equalsIgnoreCase(type.stringValue(null))) {
                 javaType = boolean.class;
             }
-            if ("integer".equalsIgnoreCase(type.textValue())) {
+            if ("integer".equalsIgnoreCase(type.stringValue(null))) {
                 javaType = Integer.class;
             }
-            if ("number".equalsIgnoreCase(type.textValue())) {
+            if ("number".equalsIgnoreCase(type.stringValue(null))) {
                 javaType = Double.class;
             }
-            if ("string".equalsIgnoreCase(type.textValue())) {
+            if ("string".equalsIgnoreCase(type.stringValue(null))) {
                 javaType = String.class;
             }
         }
 
         if (javaType == String.class && format != null) {
-            if ("date".equalsIgnoreCase(format.textValue())) {
+            if ("date".equalsIgnoreCase(format.stringValue(null))) {
                 javaType = LocalDate.class;
             }
-            if ("time".equalsIgnoreCase(format.textValue())) {
+            if ("time".equalsIgnoreCase(format.stringValue(null))) {
                 javaType = LocalTime.class;
             }
-            if ("date-time".equalsIgnoreCase(format.textValue())) {
+            if ("date-time".equalsIgnoreCase(format.stringValue(null))) {
                 javaType = LocalDateTime.class;
             }
         }

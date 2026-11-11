@@ -18,8 +18,9 @@ package org.apache.camel.component.stripe;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.model.BalanceTransaction;
 import com.stripe.model.Charge;
 import com.stripe.model.Customer;
@@ -30,14 +31,17 @@ import com.stripe.model.Price;
 import com.stripe.model.Product;
 import com.stripe.model.Refund;
 import com.stripe.model.Subscription;
+import com.stripe.net.ApiResource;
 import com.stripe.net.RequestOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class StripeProducer extends DefaultProducer {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private volatile RequestOptions requestOptions;
 
@@ -76,6 +80,12 @@ public class StripeProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         StripeOperation operation = getEndpoint().getConfiguration().getOperation();
+        Object operationHeader = exchange.getIn().getHeader(StripeConstants.OPERATION_HEADER);
+        if (operationHeader instanceof StripeOperation op) {
+            operation = op;
+        } else if (ObjectHelper.isNotEmpty(operationHeader)) {
+            operation = StripeOperation.fromValue(exchange.getIn().getHeader(StripeConstants.OPERATION_HEADER, String.class));
+        }
         String method = exchange.getIn().getHeader(StripeConstants.METHOD_HEADER, String.class);
 
         if (operation == null) {
@@ -91,7 +101,8 @@ public class StripeProducer extends DefaultProducer {
     }
 
     /**
-     * Converts the exchange body to a Map for Stripe API calls. Supports Map objects and JSON strings.
+     * Converts the exchange body to a Map for Stripe API calls. Supports Map objects and JSON as a String, or as any
+     * other body that converts to a String, such as bytes or a stream.
      *
      * @param  exchange the Camel exchange
      * @return          a Map of parameters, or an empty map if body is null
@@ -107,19 +118,34 @@ public class StripeProducer extends DefaultProducer {
             return (Map<String, Object>) body;
         }
 
-        if (body instanceof String json) {
-            if (json.trim().isEmpty()) {
-                return Collections.emptyMap();
-            }
-            try {
-                return OBJECT_MAPPER.readValue(json, Map.class);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Failed to parse JSON body: " + e.getMessage(), e);
-            }
+        String json = body instanceof String text ? text : exchange.getIn().getBody(String.class);
+        if (json == null) {
+            throw new IllegalArgumentException(
+                    "Body must be a Map<String, Object> or a JSON String, but was: " + body.getClass().getName());
         }
+        if (json.trim().isEmpty()) {
+            return Collections.emptyMap();
+        }
+        try {
+            return OBJECT_MAPPER.readValue(json, Map.class);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to parse JSON body: " + e.getMessage(), e);
+        }
+    }
 
-        throw new IllegalArgumentException(
-                "Body must be a Map<String, Object> or a JSON String, but was: " + body.getClass().getName());
+    /**
+     * Creates a Stripe object that has only the given id, so update, delete, capture and cancel call the API on the id
+     * directly, without retrieving the object first.
+     */
+    private static <T extends ApiResource> T forId(Supplier<T> factory, BiConsumer<T, String> idSetter, String id) {
+        T resource = factory.get();
+        idSetter.accept(resource, id);
+        resource.setResponseGetter(ApiResource.getGlobalResponseGetter());
+        return resource;
+    }
+
+    private static String getObjectId(Exchange exchange) {
+        return exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
     }
 
     private Object performOperation(Exchange exchange, StripeOperation operation, String method) throws Exception {
@@ -157,15 +183,13 @@ public class StripeProducer extends DefaultProducer {
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
                 return Charge.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String chargeId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Charge charge = Charge.retrieve(chargeId, requestOptions);
-                return charge.update(getParametersFromBody(exchange), requestOptions);
+                return forId(Charge::new, Charge::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_LIST:
                 return Charge.list(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_CAPTURE:
-                String captureId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Charge captureCharge = Charge.retrieve(captureId, requestOptions);
-                return captureCharge.capture(getParametersFromBody(exchange), requestOptions);
+                return forId(Charge::new, Charge::setId, getObjectId(exchange)).capture(getParametersFromBody(exchange),
+                        requestOptions);
             default:
                 throw new IllegalArgumentException("Unsupported method for charges: " + method);
         }
@@ -179,13 +203,10 @@ public class StripeProducer extends DefaultProducer {
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
                 return Customer.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String customerId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Customer customer = Customer.retrieve(customerId, requestOptions);
-                return customer.update(getParametersFromBody(exchange), requestOptions);
+                return forId(Customer::new, Customer::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_DELETE:
-                String deleteId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Customer deleteCustomer = Customer.retrieve(deleteId, requestOptions);
-                return deleteCustomer.delete(requestOptions);
+                return forId(Customer::new, Customer::setId, getObjectId(exchange)).delete(requestOptions);
             case StripeConstants.METHOD_LIST:
                 return Customer.list(getParametersFromBody(exchange), requestOptions);
             default:
@@ -201,13 +222,10 @@ public class StripeProducer extends DefaultProducer {
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
                 return PaymentIntent.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String piId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                PaymentIntent pi = PaymentIntent.retrieve(piId, requestOptions);
-                return pi.update(getParametersFromBody(exchange), requestOptions);
+                return forId(PaymentIntent::new, PaymentIntent::setId, getObjectId(exchange))
+                        .update(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_CANCEL:
-                String cancelId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                PaymentIntent cancelPi = PaymentIntent.retrieve(cancelId, requestOptions);
-                return cancelPi.cancel(requestOptions);
+                return forId(PaymentIntent::new, PaymentIntent::setId, getObjectId(exchange)).cancel(requestOptions);
             case StripeConstants.METHOD_LIST:
                 return PaymentIntent.list(getParametersFromBody(exchange), requestOptions);
             default:
@@ -223,9 +241,8 @@ public class StripeProducer extends DefaultProducer {
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
                 return PaymentMethod.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String pmId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                PaymentMethod pm = PaymentMethod.retrieve(pmId, requestOptions);
-                return pm.update(getParametersFromBody(exchange), requestOptions);
+                return forId(PaymentMethod::new, PaymentMethod::setId, getObjectId(exchange))
+                        .update(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_LIST:
                 return PaymentMethod.list(getParametersFromBody(exchange), requestOptions);
             default:
@@ -241,9 +258,8 @@ public class StripeProducer extends DefaultProducer {
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
                 return Refund.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String refundId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Refund refund = Refund.retrieve(refundId, requestOptions);
-                return refund.update(getParametersFromBody(exchange), requestOptions);
+                return forId(Refund::new, Refund::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_LIST:
                 return Refund.list(getParametersFromBody(exchange), requestOptions);
             default:
@@ -259,13 +275,11 @@ public class StripeProducer extends DefaultProducer {
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
                 return Subscription.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String subId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Subscription subscription = Subscription.retrieve(subId, requestOptions);
-                return subscription.update(getParametersFromBody(exchange), requestOptions);
+                return forId(Subscription::new, Subscription::setId, getObjectId(exchange))
+                        .update(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_CANCEL:
-                String cancelId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Subscription cancelSub = Subscription.retrieve(cancelId, requestOptions);
-                return cancelSub.cancel((Map<String, Object>) null, requestOptions);
+                return forId(Subscription::new, Subscription::setId, getObjectId(exchange)).cancel((Map<String, Object>) null,
+                        requestOptions);
             case StripeConstants.METHOD_LIST:
                 return Subscription.list(getParametersFromBody(exchange), requestOptions);
             default:
@@ -281,9 +295,8 @@ public class StripeProducer extends DefaultProducer {
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
                 return Invoice.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String invoiceId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Invoice invoice = Invoice.retrieve(invoiceId, requestOptions);
-                return invoice.update(getParametersFromBody(exchange), requestOptions);
+                return forId(Invoice::new, Invoice::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_LIST:
                 return Invoice.list(getParametersFromBody(exchange), requestOptions);
             default:
@@ -299,13 +312,10 @@ public class StripeProducer extends DefaultProducer {
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
                 return Product.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String productId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Product product = Product.retrieve(productId, requestOptions);
-                return product.update(getParametersFromBody(exchange), requestOptions);
+                return forId(Product::new, Product::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_DELETE:
-                String deleteId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Product deleteProduct = Product.retrieve(deleteId, requestOptions);
-                return deleteProduct.delete(requestOptions);
+                return forId(Product::new, Product::setId, getObjectId(exchange)).delete(requestOptions);
             case StripeConstants.METHOD_LIST:
                 return Product.list(getParametersFromBody(exchange), requestOptions);
             default:
@@ -321,9 +331,8 @@ public class StripeProducer extends DefaultProducer {
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
                 return Price.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String priceId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Price price = Price.retrieve(priceId, requestOptions);
-                return price.update(getParametersFromBody(exchange), requestOptions);
+                return forId(Price::new, Price::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_LIST:
                 return Price.list(getParametersFromBody(exchange), requestOptions);
             default:

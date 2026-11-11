@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,7 @@ import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.OnCompletionListener;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.PropertiesComponent;
@@ -74,19 +76,26 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.SendHook;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.spi.StepHook;
+import org.apache.camel.spi.StepListener;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.support.CompositeSendHook;
+import org.apache.camel.support.CompositeStepHook;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.NormalizedUri;
+import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.startup.DefaultStartupStepRecorder;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.concurrent.ContextValue;
@@ -103,6 +112,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
     private final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
     private final Set<LogListener> logListeners = new LinkedHashSet<>();
+    private final CopyOnWriteArrayList<StepListener> stepListeners = new CopyOnWriteArrayList<>();
+    private final List<StepListener> stepListenersView = Collections.unmodifiableList(stepListeners);
+    private final CopyOnWriteArrayList<OnCompletionListener> onCompletionListeners = new CopyOnWriteArrayList<>();
+    private final List<OnCompletionListener> onCompletionListenersView = Collections.unmodifiableList(onCompletionListeners);
     private final PluginManager pluginManager = new DefaultContextPluginManager();
     private final RouteController internalRouteController;
 
@@ -120,6 +133,11 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile HeadersMapFactory headersMapFactory;
     private volatile boolean eventNotificationApplicable;
+    // null, the one hook, or a composite of the hooks: the senders read this field only
+    private volatile SendHook sendHook;
+    // the installed hooks, in the order they were added (guarded by the lock)
+    private final List<SendHook> sendHooks = new ArrayList<>();
+    private volatile List<SendHook> sendHooksInOrder = List.of();
     private volatile CamelContextNameStrategy nameStrategy;
     private volatile ManagementNameStrategy managementNameStrategy;
     private volatile PropertiesComponent propertiesComponent;
@@ -133,6 +151,11 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ErrorRegistry errorRegistry;
     private volatile UuidGenerator uuidGenerator;
     private volatile Tracer tracer;
+    // null, the one hook, or a composite of the hooks: the steps read this field only
+    private volatile StepHook stepHook;
+    // the installed hooks, in the order they were added (guarded by the lock)
+    private final List<StepHook> stepHooks = new ArrayList<>();
+    private volatile List<StepHook> stepHooksInOrder = List.of();
     private volatile TransformerRegistry transformerRegistry;
     private volatile ValidatorRegistry validatorRegistry;
     private volatile TypeConverterRegistry typeConverterRegistry;
@@ -522,6 +545,86 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
+    public StepHook getStepHook() {
+        return stepHook;
+    }
+
+    @Override
+    public List<StepHook> getStepHooks() {
+        return stepHooksInOrder;
+    }
+
+    /** The hooks in the order they are asked: by their order, and as they were added for the same order. */
+    private static <T> List<T> inOrder(List<T> hooks) {
+        List<T> answer = new ArrayList<>(hooks);
+        // a stable sort, as the composite hooks sort
+        answer.sort(OrderedComparator.get());
+        return Collections.unmodifiableList(answer);
+    }
+
+    @Override
+    public void addStepHook(StepHook stepHook) {
+        ObjectHelper.notNull(stepHook, "stepHook");
+        lock.lock();
+        try {
+            if (stepHooks.stream().noneMatch(h -> h == stepHook)) {
+                stepHooks.add(stepHook);
+                this.stepHook = CompositeStepHook.of(stepHooks);
+                this.stepHooksInOrder = inOrder(stepHooks);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void removeStepHook(StepHook stepHook) {
+        lock.lock();
+        try {
+            if (stepHooks.removeIf(h -> h == stepHook)) {
+                this.stepHook = CompositeStepHook.of(stepHooks);
+                this.stepHooksInOrder = inOrder(stepHooks);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void addStepListener(StepListener listener) {
+        ObjectHelper.notNull(listener, "listener");
+        // a listener equal to one already installed is ignored
+        stepListeners.addIfAbsent(listener);
+    }
+
+    @Override
+    public void removeStepListener(StepListener listener) {
+        stepListeners.remove(listener);
+    }
+
+    @Override
+    public List<StepListener> getStepListeners() {
+        return stepListenersView;
+    }
+
+    @Override
+    public void addOnCompletionListener(OnCompletionListener listener) {
+        ObjectHelper.notNull(listener, "listener");
+        // a listener equal to one already installed is ignored
+        onCompletionListeners.addIfAbsent(listener);
+    }
+
+    @Override
+    public void removeOnCompletionListener(OnCompletionListener listener) {
+        onCompletionListeners.remove(listener);
+    }
+
+    @Override
+    public List<OnCompletionListener> getOnCompletionListeners() {
+        return onCompletionListenersView;
+    }
+
+    @Override
     public Set<LogListener> getLogListeners() {
         return logListeners;
     }
@@ -551,6 +654,44 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
         this.eventNotificationApplicable = eventNotificationApplicable;
+    }
+
+    @Override
+    public SendHook getSendHook() {
+        return sendHook;
+    }
+
+    @Override
+    public List<SendHook> getSendHooks() {
+        return sendHooksInOrder;
+    }
+
+    @Override
+    public void addSendHook(SendHook sendHook) {
+        ObjectHelper.notNull(sendHook, "sendHook");
+        lock.lock();
+        try {
+            if (sendHooks.stream().noneMatch(h -> h == sendHook)) {
+                sendHooks.add(sendHook);
+                this.sendHook = CompositeSendHook.of(sendHooks);
+                this.sendHooksInOrder = inOrder(sendHooks);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void removeSendHook(SendHook sendHook) {
+        lock.lock();
+        try {
+            if (sendHooks.removeIf(h -> h == sendHook)) {
+                this.sendHook = CompositeSendHook.of(sendHooks);
+                this.sendHooksInOrder = inOrder(sendHooks);
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override

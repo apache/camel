@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.file.remote.mina;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.sshd.client.SshClient;
+import org.apache.sshd.sftp.common.SftpConstants;
+import org.apache.sshd.sftp.common.SftpException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -120,6 +124,40 @@ class MinaSftpOperationsDisconnectTest {
 
         // Should not throw when no connection was ever established
         operations.disconnect();
+    }
+
+    @Test
+    void testIsTransportErrorClassification() {
+        MinaSftpOperations disconnected = new MinaSftpOperations();
+        assertTrue(disconnected.isTransportError(new GenericFileOperationFailedException("disconnected")),
+                "Disconnected operations should classify any failure as transport error");
+
+        MinaSftpOperations connected = new MinaSftpOperations() {
+            @Override
+            public boolean isConnected() {
+                return true;
+            }
+        };
+
+        // Whitelisted transport errors
+        assertTrue(connected.isTransportError(new GenericFileOperationFailedException(
+                "connection lost", new SftpException(SftpConstants.SSH_FX_CONNECTION_LOST, "connection lost"))));
+        assertTrue(connected.isTransportError(new GenericFileOperationFailedException(
+                "no connection", new SftpException(SftpConstants.SSH_FX_NO_CONNECTION, "no connection"))));
+        assertTrue(connected.isTransportError(new GenericFileOperationFailedException(
+                "io exception", new IOException("broken pipe"))));
+
+        // Application-level errors are not transport errors
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "no such file", new SftpException(SftpConstants.SSH_FX_NO_SUCH_FILE, "no such file"))));
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "permission denied", new SftpException(SftpConstants.SSH_FX_PERMISSION_DENIED, "permission denied"))));
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "failure", new SftpException(SftpConstants.SSH_FX_FAILURE, "failure"))));
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "bad message", new SftpException(SftpConstants.SSH_FX_BAD_MESSAGE, "bad message"))));
+        assertFalse(connected.isTransportError(new GenericFileOperationFailedException(
+                "op unsupported", new SftpException(SftpConstants.SSH_FX_OP_UNSUPPORTED, "op unsupported"))));
     }
 
     private static void setField(Object target, String fieldName, Object value) throws Exception {

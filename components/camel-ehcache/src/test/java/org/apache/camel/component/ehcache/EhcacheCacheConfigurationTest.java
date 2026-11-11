@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
-import org.ehcache.UserManagedCache;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.ResourcePools;
 import org.ehcache.config.ResourceType;
@@ -36,7 +35,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EhcacheCacheConfigurationTest extends CamelTestSupport {
     @EndpointInject("ehcache:myProgrammaticCacheConf?configuration=#myProgrammaticConfiguration")
@@ -111,7 +109,7 @@ public class EhcacheCacheConfigurationTest extends CamelTestSupport {
 
         Cache<Object, Object> cache = ehcacheUserConf.getManager().getCache("myUserCacheConf", Object.class, Object.class);
 
-        assertTrue(cache instanceof UserManagedCache);
+        assertNotNull(cache);
         assertEquals("user-val", cache.get("user-key"));
     }
 

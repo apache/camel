@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.neo4j.transformer;
 
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,5 +56,27 @@ class Neo4jReverseEmbeddingsDataTypeTransformerTest {
         Exchange empty = new DefaultExchange(camelContext);
         assertThrows(NullPointerException.class,
                 () -> transformer.transform(empty.getMessage(), DataType.ANY, DataType.ANY));
+    }
+
+    @Test
+    void aTextThatIsNotAStringIsConverted() throws Exception {
+        // CAMEL-26300: a text value of another type, such as a number or bytes, is converted to a String instead of
+        // failing with a ClassCastException, and a null text gives an empty String, as a row without text does
+        Map<String, Object> nullText = new HashMap<>();
+        nullText.put("id", "4");
+        nullText.put("text", null);
+
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody(List.of(
+                    Map.of("id", "1", "text", 42L),
+                    Map.of("id", "2", "text", 0.5d),
+                    Map.of("id", "3", "text", "hello".getBytes(StandardCharsets.UTF_8)),
+                    nullText,
+                    Map.of("id", "5", "text", "hello")));
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            assertEquals(List.of("42", "0.5", "hello", "", "hello"), exchange.getMessage().getBody());
+        }
     }
 }

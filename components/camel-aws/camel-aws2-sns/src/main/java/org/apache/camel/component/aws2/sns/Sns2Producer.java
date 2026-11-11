@@ -35,6 +35,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkBytes;
@@ -153,7 +154,7 @@ public class Sns2Producer extends DefaultProducer {
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof List) {
                     String resultString = ((List<?>) value).stream()
-                            .map(o -> o instanceof String ? String.format("\"%s\"", o) : Objects.toString(o))
+                            .map(Sns2Producer::toStringArrayValue)
                             .collect(Collectors.joining(", "));
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("String.Array");
@@ -168,6 +169,16 @@ public class Sns2Producer extends DefaultProducer {
             }
         }
         return result;
+    }
+
+    private static String toStringArrayValue(Object value) {
+        boolean jsonPrimitive = value == null || value instanceof Boolean || value instanceof Number;
+        if (value instanceof Double number) {
+            jsonPrimitive = Double.isFinite(number);
+        } else if (value instanceof Float number) {
+            jsonPrimitive = Float.isFinite(number);
+        }
+        return jsonPrimitive ? Objects.toString(value) : "\"" + Jsoner.escape(value.toString()) + "\"";
     }
 
     private void configureFifoAttributes(PublishRequest.Builder request, Exchange exchange) {

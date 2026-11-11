@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  * Which Camel artifact (Maven artifactId) ships a component, data format, language or built-in bean.
- * <p/>
+ * <p>
  * The runtime cannot tell this on its own: the metadata that knows is in the jar that is missing. So the tables are
  * generated from the catalog at build time (like {@link SensitiveUtils}) and used by the error messages that say what
  * to add to the classpath when a name cannot be resolved, or which known name was likely meant.
@@ -37,6 +37,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("a2a", "camel-a2a"),
             Map.<String, String> entry("activemq", "camel-activemq"),
             Map.<String, String> entry("activemq6", "camel-activemq6"),
+            Map.<String, String> entry("ai-prompt", "camel-ai-prompt"),
             Map.<String, String> entry("ai-resource", "camel-ai-resource"),
             Map.<String, String> entry("ai-tool", "camel-ai-tool"),
             Map.<String, String> entry("alibaba-eventbridge", "camel-alibaba-eventbridge"),
@@ -48,6 +49,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("alibaba-sls", "camel-alibaba-sls"),
             Map.<String, String> entry("alibaba-sms", "camel-alibaba-sms"),
             Map.<String, String> entry("amqp", "camel-amqp"),
+            Map.<String, String> entry("apicurio-registry", "camel-apicurio-registry"),
             Map.<String, String> entry("arangodb", "camel-arangodb"),
             Map.<String, String> entry("as2", "camel-as2"),
             Map.<String, String> entry("asterisk", "camel-asterisk"),
@@ -312,6 +314,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("mock", "camel-mock"),
             Map.<String, String> entry("mongodb", "camel-mongodb"),
             Map.<String, String> entry("mongodb-gridfs", "camel-mongodb-gridfs"),
+            Map.<String, String> entry("mtconnect", "camel-mtconnect"),
             Map.<String, String> entry("mustache", "camel-mustache"),
             Map.<String, String> entry("mvel", "camel-mvel"),
             Map.<String, String> entry("mybatis", "camel-mybatis"),
@@ -430,6 +433,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("velocity", "camel-velocity"),
             Map.<String, String> entry("vertx", "camel-vertx"),
             Map.<String, String> entry("vertx-http", "camel-vertx-http"),
+            Map.<String, String> entry("vertx-mqtt", "camel-vertx-mqtt"),
             Map.<String, String> entry("vertx-websocket", "camel-vertx-websocket"),
             Map.<String, String> entry("wasm", "camel-wasm"),
             Map.<String, String> entry("weather", "camel-weather"),
@@ -495,7 +499,7 @@ public final class ArtifactUtils {
             // DATAFORMATS: START
             Map.<String, String> entry("asn1", "camel-asn1"),
             Map.<String, String> entry("avro", "camel-avro"),
-            Map.<String, String> entry("avroJackson", "camel-jackson-avro"),
+            Map.<String, String> entry("avroJackson", "camel-jackson3-avro"),
             Map.<String, String> entry("barcode", "camel-barcode"),
             Map.<String, String> entry("base64", "camel-base64"),
             Map.<String, String> entry("beanio", "camel-beanio"),
@@ -519,8 +523,8 @@ public final class ArtifactUtils {
             Map.<String, String> entry("hl7", "camel-hl7"),
             Map.<String, String> entry("ical", "camel-ical"),
             Map.<String, String> entry("iso8583", "camel-iso8583"),
-            Map.<String, String> entry("jackson", "camel-jackson"),
-            Map.<String, String> entry("jacksonXml", "camel-jacksonxml"),
+            Map.<String, String> entry("jackson", "camel-jackson3"),
+            Map.<String, String> entry("jacksonXml", "camel-jackson3xml"),
             Map.<String, String> entry("jaxb", "camel-jaxb"),
             Map.<String, String> entry("jsonApi", "camel-jsonapi"),
             Map.<String, String> entry("jsonb", "camel-jsonb"),
@@ -531,7 +535,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("pgp", "camel-crypto-pgp"),
             Map.<String, String> entry("pqc", "camel-pqc"),
             Map.<String, String> entry("protobuf", "camel-protobuf"),
-            Map.<String, String> entry("protobufJackson", "camel-jackson-protobuf"),
+            Map.<String, String> entry("protobufJackson", "camel-jackson3-protobuf"),
             Map.<String, String> entry("rss", "camel-rss"),
             Map.<String, String> entry("smooks", "camel-smooks"),
             Map.<String, String> entry("snakeYaml", "camel-snakeyaml"),
@@ -654,6 +658,12 @@ public final class ArtifactUtils {
                     "org.apache.camel.support.MemoryKeyValueRepository|org.apache.camel.spi.KeyValueRepository|camel-support"),
             Map.<String, String> entry("MongoDbIdempotentRepository",
                     "org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository|org.apache.camel.spi.IdempotentRepository|camel-mongodb"),
+            Map.<String, String> entry("NamespacedKeyValueRepository",
+                    "org.apache.camel.support.NamespacedKeyValueRepository|org.apache.camel.spi.KeyValueRepository|camel-support"),
+            Map.<String, String> entry("OpaSecurityPolicy",
+                    "org.apache.camel.component.opa.security.OpaSecurityPolicy|org.apache.camel.spi.AuthorizationPolicy|camel-opa"),
+            Map.<String, String> entry("OpenFgaSecurityPolicy",
+                    "org.apache.camel.component.openfga.security.OpenFgaSecurityPolicy|org.apache.camel.spi.AuthorizationPolicy|camel-openfga"),
             Map.<String, String> entry("OpensearchBulkRequestAggregationStrategy",
                     "org.apache.camel.component.opensearch.aggregation.OpensearchBulkRequestAggregationStrategy|org.apache.camel.AggregationStrategy|camel-opensearch"),
             Map.<String, String> entry("RedisAggregationRepository",
@@ -662,6 +672,10 @@ public final class ArtifactUtils {
                     "org.apache.camel.component.redis.RedisKeyValueRepository|org.apache.camel.spi.KeyValueRepository|camel-redis"),
             Map.<String, String> entry("SimpleScheduledRoutePolicy",
                     "org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy|org.apache.camel.spi.RoutePolicy|camel-quartz"),
+            Map.<String, String> entry("SpiffeSSLContextParameters",
+                    "org.apache.camel.component.spiffe.SpiffeSSLContextParameters|org.apache.camel.support.jsse.SSLContextParameters|camel-spiffe"),
+            Map.<String, String> entry("SpiffeSecurityPolicy",
+                    "org.apache.camel.component.spiffe.SpiffeSecurityPolicy|org.apache.camel.spi.AuthorizationPolicy|camel-spiffe"),
             Map.<String, String> entry("SpringCacheIdempotentRepository",
                     "org.apache.camel.spring.processor.idempotent.SpringCacheIdempotentRepository|org.apache.camel.spi.IdempotentRepository|camel-spring"),
             Map.<String, String> entry("SpringRedisIdempotentRepository",

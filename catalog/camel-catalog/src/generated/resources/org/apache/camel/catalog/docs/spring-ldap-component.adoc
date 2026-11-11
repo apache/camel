@@ -53,7 +53,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 The component supports producer endpoint only. An attempt to create a
 consumer endpoint will result in an `UnsupportedOperationException`. +
- The body of the message must be a map (an instance of `java.util.Map`).
+ The body of the message must be a map (an instance of `java.util.Map`); another body, or no body,
+fails with an `InvalidPayloadException`.
 Unless a base DN is specified by in the configuration of your ContextSource,
 this map must contain at least an entry with the key *`dn`* (not needed for function_driven operation) that
 specifies the root node for the LDAP operation to be performed. Other
@@ -125,6 +126,8 @@ deleted.
 
 The message body must have entries with the keys *`filter`* and  *`password`*. The
 values must be an instance of `String` representing a valid LDAP filter and a user password, respectively.
+A missing or empty password fails the operation with an `org.springframework.ldap.AuthenticationException`,
+without contacting the LDAP server.
 
 === Modify Attributes
 

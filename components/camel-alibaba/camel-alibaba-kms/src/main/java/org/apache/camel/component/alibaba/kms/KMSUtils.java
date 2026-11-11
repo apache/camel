@@ -79,22 +79,26 @@ public final class KMSUtils {
                 OpenApiClientSupport.resolveInteger(exchange, KMSProperties.NUMBER_OF_BYTES, endpoint.getNumberOfBytes()));
     }
 
+    /**
+     * The Base64 of the plaintext of encrypt: the plaintext option or header in UTF-8, else the body, a String in UTF-8
+     * and any other body as its bytes, so a binary stream or file is encrypted unchanged. Null without a body. A body
+     * that does not convert to bytes, such as a Map or a POJO, fails with an {@code InvalidPayloadException}.
+     */
     public static String encodePlaintextForEncrypt(Exchange exchange, ClientConfigurations configuration) throws Exception {
         if (ObjectHelper.isNotEmpty(configuration.plaintext())) {
             return Base64.getEncoder().encodeToString(configuration.plaintext().getBytes(StandardCharsets.UTF_8));
         }
         Object body = exchange.getMessage().getBody();
+        if (body == null) {
+            return null;
+        }
         if (body instanceof byte[] bytes) {
             return Base64.getEncoder().encodeToString(bytes);
         }
         if (body instanceof String stringBody) {
             return Base64.getEncoder().encodeToString(stringBody.getBytes(StandardCharsets.UTF_8));
         }
-        String value = exchange.getMessage().getBody(String.class);
-        if (ObjectHelper.isEmpty(value)) {
-            return null;
-        }
-        return Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(exchange.getMessage().getMandatoryBody(byte[].class));
     }
 
     public static Map<String, Object> toEncryptMap(EncryptResponse response) {

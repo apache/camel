@@ -204,6 +204,25 @@ YAML::
 ----
 ====
 
+=== Invoking a function
+
+The `invokeFunction` operation sends the message body to the function: text, a number or a boolean is sent as text
+(UTF-8), and bytes, a stream or a file (also the file of a file consumer) as their content. A `Map` or a POJO is not
+marshalled: marshal it to JSON first, for example with `marshal().json()`, as a body that does not convert to bytes
+fails the exchange. `GET` and `DELETE` send no body.
+
+A request with a body has the `Content-Type` that the `CamelAzureFunctionsHttpHeaders` header, a `Map<String, String>`
+of HTTP headers to send, sets. When that map sets none, the `Content-Type` header of the message is used, and when the
+message has none either, `Content-Type: application/json`. Text is always sent as UTF-8: the charset parameter of a
+`Content-Type` from the message, for example `text/plain; charset=ISO-8859-1`, is not used for the encoding.
+
+The response body of the function becomes the message body, as text, with the HTTP status in the
+`CamelAzureFunctionsStatusCode` header and the HTTP headers of the response in the `CamelAzureFunctionsResponseHeaders`
+header. A status of 400 or above fails the exchange with an `org.apache.camel.http.base.HttpOperationFailedException`,
+as the HTTP components do: it holds the status, the response body and the response headers. The message body is then
+still the request body, as in camel-http, with the status in the `CamelAzureFunctionsStatusCode` header. Set
+`throwExceptionOnFailure=false` to get the response of every status as the message body instead.
+
 == Operations
 
 The component supports the following operations:

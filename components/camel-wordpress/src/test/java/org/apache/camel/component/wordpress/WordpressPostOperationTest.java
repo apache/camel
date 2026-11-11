@@ -16,16 +16,24 @@
  */
 package org.apache.camel.component.wordpress;
 
+import java.util.Map;
+
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.wordpress.api.WordpressConstants;
 import org.apache.camel.component.wordpress.api.model.Content;
 import org.apache.camel.component.wordpress.api.model.Post;
 import org.apache.camel.component.wordpress.api.model.PublishableStatus;
+import org.apache.camel.component.wordpress.api.test.WordpressServerHttpRequestHandler;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WordpressPostOperationTest extends WordpressComponentTestSupport {
 
@@ -79,6 +87,61 @@ public class WordpressPostOperationTest extends WordpressComponentTestSupport {
         assertThat(response.getStatus(), is(PublishableStatus.draft));
         assertThat(response.getTitle().getRaw(), is("hello from postman 2 - update"));
         assertThat(response.getTitle().getRendered(), is("hello from postman 2 &#8211; update"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInsertPostFromJsonText() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:resultInsert");
+        mock.expectedMessageCount(1);
+
+        final Post response = (Post) template.requestBody("direct:insertPost",
+                "{\"author\": 2, \"title\": {\"raw\": \"hello from json text\"}}");
+        assertThat(response.getId(), is(9));
+        assertThat(WordpressServerHttpRequestHandler.getLastRequestBody(), containsString("\"hello from json text\""));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInsertPostFromJsonBytes() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:resultInsert");
+        mock.expectedMessageCount(1);
+
+        final Post response = (Post) template.requestBody("direct:insertPost",
+                "{\"author\": 2, \"title\": {\"raw\": \"hello from json bytes\"}}".getBytes());
+        assertThat(response.getId(), is(9));
+        assertThat(WordpressServerHttpRequestHandler.getLastRequestBody(), containsString("\"hello from json bytes\""));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testUpdatePostFromMap() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:resultUpdate");
+        mock.expectedMessageCount(1);
+
+        final Post response = (Post) template.requestBody("direct:updatePost",
+                Map.of("author", 2, "title", Map.of("raw", "hello from map")));
+        assertThat(response.getId(), is(9));
+        assertThat(WordpressServerHttpRequestHandler.getLastRequestBody(), containsString("\"hello from map\""));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInsertPostWithInvalidBody() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:resultInsert");
+        mock.expectedMessageCount(0);
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:insertPost", 123));
+        assertThat(e.getCause(), instanceOf(InvalidPayloadException.class));
+
+        e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:insertPost", "not json"));
+        assertThat(e.getCause(), instanceOf(InvalidPayloadException.class));
 
         MockEndpoint.assertIsSatisfied(context);
     }

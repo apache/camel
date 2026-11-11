@@ -52,7 +52,22 @@ The agent component automatically converts files from various Camel components t
 |`InputStream`
 |Various streaming components
 |From content type headers (required)
+
+|`java.io.File`, `java.nio.file.Path`
+|A local file set as the message body
+|From file extension or headers
 |===
+
+The MIME type selects the content sent to the model:
+
+* `image/*`, `audio/*` and `video/*` are sent as an image, audio or video content.
+* `application/pdf` is sent as a PDF content.
+* `text/*`, `application/json`, `application/xml`, `application/yaml` and types with a `+json` or `+xml` suffix are sent as a text content (read as UTF-8).
+
+Any other MIME type fails.
+
+The text of the `CamelLangChain4jAgentUserMessage` header is sent before the content in the same user message.
+Without that header (or when it is blank), the user message holds only the content.
 
 ==== Example: Processing Images from File Component
 

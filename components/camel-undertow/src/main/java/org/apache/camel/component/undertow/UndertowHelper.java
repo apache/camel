@@ -25,6 +25,8 @@ import java.util.Map;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -226,6 +228,49 @@ public final class UndertowHelper {
             // unknown or unsupported charset in the Content-Type
             return null;
         }
+    }
+
+    /**
+     * Converts a body to the bytes to send over HTTP. Text and a single value (a number, a boolean, a character or an
+     * enum) are written as text, in the charset that the Content-Type declares (UTF-8 otherwise): the type converter
+     * would write a number in its binary form. Other bodies are converted by the type converter.
+     *
+     * @param  tc          the type converter
+     * @param  body        the body, not <tt>null</tt>
+     * @param  contentType the Content-Type of the request or response being sent, may be <tt>null</tt>
+     * @return             the bytes, or <tt>null</tt> when the body cannot be converted, such as a Map, a List or an
+     *                     object, which must be marshalled first
+     */
+    public static ByteBuffer toByteBuffer(TypeConverter tc, Object body, String contentType) {
+        Object value = body;
+        if (body instanceof CharSequence || body instanceof Number || body instanceof Boolean
+                || body instanceof Character || body instanceof Enum<?>) {
+            value = body.toString();
+        }
+        ByteBuffer answer = null;
+        if (value instanceof String text) {
+            answer = toByteBuffer(text, contentType);
+        }
+        if (answer == null) {
+            answer = tc.tryConvertTo(ByteBuffer.class, value);
+        }
+        return answer;
+    }
+
+    /**
+     * Why the body cannot be sent as the body of an HTTP request or response: what the body is, the step that set it,
+     * and the marshal that writes it, in the data format that the Content-Type names (as camel-http and
+     * camel-platform-http say it).
+     *
+     * @param  exchange    the exchange
+     * @param  what        "request" or "response"
+     * @param  contentType the Content-Type of the request or response being sent, may be <tt>null</tt>
+     * @return             the message
+     */
+    public static String notAnHttpBody(Exchange exchange, String what, String contentType) {
+        String message = BodyFacts.describe(exchange) + ", which is not an HTTP " + what + " body";
+        String hint = BodyFacts.hint(exchange, BodyFacts.Need.BYTES, contentType);
+        return hint != null ? message + ": " + hint : message;
     }
 
     /**

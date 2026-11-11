@@ -22,7 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.DefaultProducer;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -41,6 +43,32 @@ public class XmppGroupChatProducer extends DefaultProducer {
     private XMPPTCPConnection connection;
     private MultiUserChat chat;
     private String room;
+    // set when the connection was lost (the server removed the producer from its room), until the producer entered its
+    // room again. It is set when the connection is lost, not only when it logs in again: when another consumer or
+    // producer of the account, or Smack's ReconnectionManager, logs the connection in, Smack reports the connection as
+    // logged in before it calls the authenticated listeners, and a message sent in between would go to the room before
+    // the producer entered it again. The authenticated listener must not set it again: it can be called after the
+    // producer entered its room again, and entering a room it is in already is slow and can time out.
+    private volatile boolean rejoinRoom;
+    private final ConnectionListener connectionListener = new ConnectionListener() {
+        @Override
+        public void connectionClosedOnError(Exception e) {
+            rejoinRoom = true;
+        }
+
+        @Override
+        public void connectionClosed() {
+            rejoinRoom = true;
+        }
+
+        @Override
+        public void authenticated(XMPPConnection connection, boolean resumed) {
+            // a resumed stream keeps the room membership
+            if (resumed) {
+                rejoinRoom = false;
+            }
+        }
+    };
 
     public XmppGroupChatProducer(XmppEndpoint endpoint) {
         super(endpoint);
@@ -78,10 +106,11 @@ public class XmppGroupChatProducer extends DefaultProducer {
 
             endpoint.getBinding().populateXmppMessage(message, exchange);
 
-            // make sure we are connected
-            if (!connection.isConnected()) {
-                this.reconnect();
-            }
+            // make sure we are connected and logged in (the connection is shared by the consumers and producers of
+            // the account, and Smack's ReconnectionManager can connect it again without logging it in yet), and in
+            // the room again after the connection was lost
+            this.reconnect();
+            rejoinRoomIfNeeded();
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending XMPP message: {}", message.getBody());
@@ -106,6 +135,37 @@ public class XmppGroupChatProducer extends DefaultProducer {
         } finally {
             lock.unlock();
         }
+    }
+
+    private void rejoinRoomIfNeeded()
+            throws InterruptedException, SmackException, XMPPException, XmppStringprepException {
+        lock.lock();
+        try {
+            if (rejoinRoom && chat != null && connection.isAuthenticated()) {
+                rejoinRoom = false;
+                try {
+                    joinRoom();
+                } catch (Exception e) {
+                    // try again at the next message
+                    rejoinRoom = true;
+                    throw e;
+                }
+                LOG.info("Joined room again: {} as: {}", room, endpoint.getNickname());
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void joinRoom() throws InterruptedException, SmackException, XMPPException, XmppStringprepException {
+        String roomPassword = endpoint.getRoomPassword();
+        MucEnterConfiguration.Builder mucc
+                = chat.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
+                        .requestNoHistory();
+        if (roomPassword != null) {
+            mucc.withPassword(roomPassword);
+        }
+        chat.join(mucc.build());
     }
 
     @Override
@@ -137,16 +197,18 @@ public class XmppGroupChatProducer extends DefaultProducer {
         try {
             if (chat == null) {
                 room = endpoint.resolveRoom(connection);
-                String roomPassword = endpoint.getRoomPassword();
                 MultiUserChatManager chatManager = MultiUserChatManager.getInstanceFor(connection);
                 chat = chatManager.getMultiUserChat(JidCreate.entityBareFrom(room));
-                MucEnterConfiguration.Builder mucc
-                        = chat.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
-                                .requestNoHistory();
-                if (roomPassword != null) {
-                    mucc.withPassword(roomPassword);
+                // the connection is logged in: a login from now on comes after the connection was lost
+                connection.addConnectionListener(connectionListener);
+                rejoinRoom = false;
+                try {
+                    joinRoom();
+                } catch (Exception e) {
+                    // the next message tries again
+                    rejoinRoom = true;
+                    throw e;
                 }
-                chat.join(mucc.build());
                 LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
             }
         } finally {
@@ -163,8 +225,10 @@ public class XmppGroupChatProducer extends DefaultProducer {
             }
         } finally {
             chat = null;
+            rejoinRoom = false;
             // also when leaving failed: the connection is down, or Smack no longer has us in the room
             if (connection != null) {
+                connection.removeConnectionListener(connectionListener);
                 // the connection is shared with the other consumers and producers of the account
                 endpoint.releaseConnection(this);
             }

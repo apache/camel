@@ -103,6 +103,7 @@ public class PostgresLocalContainerInfraService implements PostgresInfraService,
     @Override
     public void initialize() {
         LOG.info("Trying to start the Postgres container");
+        ContainerEnvironmentUtil.configureContainerStartup(container, PostgresProperties.POSTGRES_CONTAINER_STARTUP, 3);
         container.start();
 
         registerProperties();

@@ -179,7 +179,10 @@ public class NettyHttpComponent extends NettyComponent
 
         String addressUri = URISupport.createRemainingURI(u, parameters).toString();
 
-        NettyHttpEndpoint answer = new NettyHttpEndpoint(addressUri, this, config);
+        // the endpoint uri is the full uri with the endpoint options, so endpoints that differ only in their options
+        // are not equal, and the address uri is the http address to call
+        NettyHttpEndpoint answer = new NettyHttpEndpoint(uri, this, config);
+        answer.setAddressUri(addressUri);
         answer.getConfiguration().setMuteException(muteException);
         setProperties(answer, parameters);
 

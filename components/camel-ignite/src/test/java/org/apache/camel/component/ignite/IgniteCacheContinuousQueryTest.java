@@ -123,6 +123,27 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
     }
 
     @Test
+    void testContinuousQueryFireExistingEntriesSendsTheValueWithTheKey() throws Exception {
+        getMockEndpoint("mock:test2").expectedMessageCount(50);
+
+        Map<Integer, Person> persons = createPersons(1, 100);
+        IgniteCache<Integer, Person> cache = ignite().getOrCreateCache("testcontinuous1");
+        cache.putAll(persons);
+
+        context.getRouteController().startRoute("continuousQuery.fireExistingEntries");
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        // the existing entries arrive like the events: the value as the body, and the key in a header
+        for (Exchange exchange : getMockEndpoint("mock:test2").getExchanges()) {
+            Integer key = exchange.getIn().getHeader(IgniteConstants.IGNITE_CACHE_KEY, Integer.class);
+            Assertions.assertThat(key).isNotNull().isGreaterThan(50);
+            Assertions.assertThat(exchange.getIn().getBody()).isEqualTo(persons.get(key));
+            Assertions.assertThat(exchange.getIn().getHeader(IgniteConstants.IGNITE_CACHE_NAME)).isEqualTo("testcontinuous1");
+        }
+    }
+
+    @Test
     public void testContinuousQueryFireExistingEntriesWithQueryAndRemoteFilter() throws Exception {
         getMockEndpoint("mock:test3").expectedMessageCount(50);
 

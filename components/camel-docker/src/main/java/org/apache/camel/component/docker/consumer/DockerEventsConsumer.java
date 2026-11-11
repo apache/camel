@@ -76,7 +76,8 @@ public class DockerEventsConsumer extends DefaultConsumer {
     }
 
     /**
-     * Determine the point in time to begin streaming events
+     * Determine the point in time to begin streaming events, in seconds since the epoch as the Docker API expects. The
+     * initial range is in milliseconds.
      */
     private long processInitialEvent() {
         long currentTime = System.currentTimeMillis();
@@ -86,7 +87,7 @@ public class DockerEventsConsumer extends DefaultConsumer {
             currentTime = currentTime - initialRange;
         }
 
-        return currentTime;
+        return TimeUnit.MILLISECONDS.toSeconds(currentTime);
     }
 
     @Override
@@ -238,8 +239,10 @@ public class DockerEventsConsumer extends DefaultConsumer {
                 LOG.warn("The Docker event stream of {} failed, subscribing again in {} ms: {}", endpoint, delay,
                         throwable.getMessage(), throwable);
             } else {
+                // repeats for every attempt while the daemon is down, so one line, and the stack trace at DEBUG
                 LOG.warn("Failed to subscribe to the Docker events of {}, trying again in {} ms: {}", endpoint, delay,
                         throwable.getMessage());
+                LOG.debug("Failed to subscribe to the Docker events of {}", endpoint, throwable);
             }
             subscribeAgain(delay);
         }

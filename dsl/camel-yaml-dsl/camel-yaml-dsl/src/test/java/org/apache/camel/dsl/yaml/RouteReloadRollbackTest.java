@@ -24,27 +24,33 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * CAMEL-24860: a reload that fails (a route file saved with a mistake) restores the routes that ran before, instead of
  * leaving the application without routes until the next successful save. CAMEL-24899: a project whose routes are all in
- * one file goes back to the content that last loaded, which is kept in memory.
+ * one file goes back to the content that last loaded, which is kept in memory. CAMEL-26444: the content loaded at
+ * startup is kept too, so the first broken save after start goes back to it; and a failed reload with nothing to go
+ * back to leaves none of the routes it loaded running.
  * <p>
- * The mistake the tests save is always the same one, and it is a real one (CAMEL-24850): the endpoint of pollEnrich is
- * an expression, so {@code pollEnrich: {uri: "file:./order.json"}} has no uri property to bind and the loader rejects
- * the file with "pollEnrich: unsupported field: uri". It is the right kind of mistake here because it fails while the
+ * The mistake the tests save is the same one, and it is a real one (CAMEL-24850): the endpoint of pollEnrich is an
+ * expression, so {@code pollEnrich: {uri: "file:./order.json"}} has no uri property to bind and the loader rejects the
+ * file with "pollEnrich: unsupported field: uri". It is the right kind of mistake here because it fails while the
  * routes are built, not while the YAML is parsed, which is what a reload has to survive. The form that works is
- * {@code pollEnrich: {expression: {constant: {expression: "file:./order.json"}}}}.
+ * {@code pollEnrich: {expression: {constant: {expression: "file:./order.json"}}}}. Only the file that must fail after
+ * its first route was added has another mistake: an option its endpoint does not have.
  */
 class RouteReloadRollbackTest extends YamlTestSupport {
 
@@ -136,10 +142,11 @@ class RouteReloadRollbackTest extends YamlTestSupport {
                 failure = e;
             }
 
-            // the reload fails, and the route of the other file runs again
+            // the reload fails, the route of the other file runs again, and the failed file runs the version loaded at
+            // startup
             assertThat(failure).isNotNull();
             assertThat(context.getRouteController().getRouteStatus("good")).isEqualTo(ServiceStatus.Started);
-            assertThat(context.getRoute("bad")).isNull();
+            assertThat(context.getRouteController().getRouteStatus("bad")).isEqualTo(ServiceStatus.Started);
 
             // the file is fixed
             Files.writeString(bad, """
@@ -187,9 +194,6 @@ class RouteReloadRollbackTest extends YamlTestSupport {
             strategy.setPattern("*.yaml");
             strategy.doStart();
             try {
-                // one successful reload, so the content that runs is remembered
-                strategy.getResourceReload().onReload(only.toString(),
-                        ResourceHelper.resolveResource(context2, "file:" + only));
                 assertThat(context2.getRouteController().getRouteStatus("only")).isEqualTo(ServiceStatus.Started);
 
                 // the only route file is saved with a mistake (pollEnrich takes an expression, not a uri)
@@ -305,6 +309,198 @@ class RouteReloadRollbackTest extends YamlTestSupport {
             ctx.stop();
             deleteRecursively(gone);
         }
+    }
+
+    @Test
+    void theFirstBrokenSaveAfterStartGoesBackToTheVersionLoadedAtStartup() throws Exception {
+        Path solo = Files.createTempDirectory("camel-reload-startup");
+        Path only = Files.writeString(solo.resolve("only.camel.yaml"), route("only", "mock:only"));
+        RouteWatcherReloadStrategy strategy = new RouteWatcherReloadStrategy(solo.toString());
+        strategy.setPattern("*.yaml");
+        // no watcher thread: the test saves the file and reloads it
+        strategy.setScheduler(false);
+        CamelContext ctx = startWithRoutes(strategy, false, only);
+        try {
+            // the first save after start is broken (pollEnrich takes an expression, not a uri)
+            Files.writeString(only, brokenRoute("only"));
+            assertThatThrownBy(() -> reload(strategy, ctx, only)).hasMessageContaining("pollEnrich");
+
+            // the version loaded at startup still runs
+            assertThat(ctx.getRouteController().getRouteStatus("only")).isEqualTo(ServiceStatus.Started);
+            assertRunsTo(ctx, "direct:only", "mock:only");
+
+            // the file is fixed, and the fixed version runs
+            Files.writeString(only, route("only", "mock:fixed"));
+            reload(strategy, ctx, only);
+            assertRunsTo(ctx, "direct:only", "mock:fixed");
+
+            // the next broken save goes back to the fixed version, which loaded last, not to the one loaded at startup
+            Files.writeString(only, brokenRoute("only"));
+            assertThatThrownBy(() -> reload(strategy, ctx, only)).hasMessageContaining("pollEnrich");
+            assertRunsTo(ctx, "direct:only", "mock:fixed");
+        } finally {
+            ctx.stop();
+            deleteRecursively(solo);
+        }
+    }
+
+    @Test
+    void theFirstBrokenSaveUnderSrcMainResourcesGoesBackToTheVersionLoadedFromTargetClasses() throws Exception {
+        // the Camel Main defaults: the routes load from the classpath, target/classes, and the reload watches
+        // src/main/resources, so the file that loaded and the file that is saved have different locations
+        Path project = Files.createTempDirectory("camel-reload-layout");
+        Path classes = Files.createDirectories(project.resolve("target/classes/camel"));
+        Path resources = Files.createDirectories(project.resolve("src/main/resources/camel"));
+        Path loaded = Files.writeString(classes.resolve("only.camel.yaml"), route("only", "mock:only"));
+        Path saved = Files.writeString(resources.resolve("only.camel.yaml"), route("only", "mock:only"));
+        RouteWatcherReloadStrategy strategy = new RouteWatcherReloadStrategy(resources.toString());
+        strategy.setPattern("*.yaml");
+        strategy.setScheduler(false);
+        CamelContext ctx = startWithRoutes(strategy, false, loaded);
+        try {
+            Files.writeString(saved, brokenRoute("only"));
+            assertThatThrownBy(() -> reload(strategy, ctx, saved)).hasMessageContaining("pollEnrich");
+
+            // the version loaded at startup still runs
+            assertThat(ctx.getRouteController().getRouteStatus("only")).isEqualTo(ServiceStatus.Started);
+            assertRunsTo(ctx, "direct:only", "mock:only");
+        } finally {
+            ctx.stop();
+            deleteRecursively(project);
+        }
+    }
+
+    @Test
+    void theFirstFailedOnDemandReloadAfterStartGoesBackToEveryFileLoadedAtStartup() throws Exception {
+        Path source = Files.createTempDirectory("camel-reload-on-demand");
+        Path a = Files.writeString(source.resolve("a.camel.yaml"), route("a", "mock:a"));
+        Path b = Files.writeString(source.resolve("b.camel.yaml"), route("b", "mock:b"));
+        // as camel run --source-dir sets it up: every file is reloaded as changed
+        RouteOnDemandReloadStrategy strategy = new RouteOnDemandReloadStrategy(source.toString(), true);
+        strategy.setPattern("*");
+        // the supervising route controller starts the routes after the context, and the strategy with the first of
+        // them: the content of the other routes is remembered too
+        CamelContext ctx = startWithRoutes(strategy, true, a, b);
+        try {
+            assertThat(ctx.getRouteController().getRouteStatus("a")).isEqualTo(ServiceStatus.Started);
+            assertThat(ctx.getRouteController().getRouteStatus("b")).isEqualTo(ServiceStatus.Started);
+
+            // the first reload after start fails on one file (pollEnrich takes an expression, not a uri)
+            Files.writeString(b, brokenRoute("b"));
+            strategy.onReload("test");
+            assertThat(strategy.getFailedCounter()).isEqualTo(1);
+
+            // both files run the version loaded at startup, the broken one from memory
+            assertThat(ctx.getRouteController().getRouteStatus("a")).isEqualTo(ServiceStatus.Started);
+            assertThat(ctx.getRouteController().getRouteStatus("b")).isEqualTo(ServiceStatus.Started);
+            assertRunsTo(ctx, "direct:a", "mock:a");
+            assertRunsTo(ctx, "direct:b", "mock:b");
+
+            // the file is fixed, and the fixed version runs
+            Files.writeString(b, route("b", "mock:fixed"));
+            strategy.onReload("test");
+            assertThat(strategy.getReloadCounter()).isEqualTo(1);
+            assertRunsTo(ctx, "direct:b", "mock:fixed");
+        } finally {
+            ctx.stop();
+            deleteRecursively(source);
+        }
+    }
+
+    @Test
+    void aFailedReloadWithNothingToGoBackToLeavesNoneOfItsRoutesRunning() throws Exception {
+        Path source = Files.createTempDirectory("camel-reload-halfway");
+        RouteOnDemandReloadStrategy strategy = new RouteOnDemandReloadStrategy(source.toString(), true);
+        strategy.setPattern("*");
+        // no routes at startup: the supervising route controller starts the strategy with the first route the reload
+        // adds, in the middle of the reload
+        CamelContext ctx = startWithRoutes(strategy, true);
+        try {
+            // the first route file: its second route has an option its endpoint does not have, which fails after the
+            // first route was added
+            Files.writeString(source.resolve("multi.camel.yaml"), """
+                    - route:
+                        id: m1
+                        from:
+                          uri: direct:m1
+                          steps:
+                            - to:
+                                uri: mock:m1
+                    - route:
+                        id: m2
+                        from:
+                          uri: direct:m2?noSuchOption=1
+                          steps:
+                            - to:
+                                uri: mock:m2
+                    """);
+            strategy.onReload("test");
+            assertThat(strategy.getFailedCounter()).isEqualTo(1);
+
+            // nothing ran before the reload, and nothing of the failed file runs after it
+            assertThat(ctx.getRoutes()).isEmpty();
+        } finally {
+            ctx.stop();
+            deleteRecursively(source);
+        }
+    }
+
+    /**
+     * A context that loads the routes of the files and then starts, with the reload strategy added as a service, the
+     * way Camel Main adds it: the context starts the strategy together with the routes.
+     */
+    private static CamelContext startWithRoutes(RouteWatcherReloadStrategy strategy, boolean supervising, Path... files)
+            throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
+        if (supervising) {
+            ctx.getRouteController().supervising();
+        }
+        for (Path file : files) {
+            PluginHelper.getRoutesLoader(ctx).loadRoutes(ResourceHelper.resolveResource(ctx, "file:" + file));
+        }
+        ctx.addService(strategy);
+        ctx.start();
+        return ctx;
+    }
+
+    // reloads the saved file as the file watcher does
+    private static void reload(RouteWatcherReloadStrategy strategy, CamelContext ctx, Path file) throws Exception {
+        strategy.getResourceReload().onReload(file.toString(), ResourceHelper.resolveResource(ctx, "file:" + file));
+    }
+
+    // a message sent to the route arrives at the target of the version that runs
+    private static void assertRunsTo(CamelContext ctx, String from, String to) throws InterruptedException {
+        MockEndpoint mock = ctx.getEndpoint(to, MockEndpoint.class);
+        mock.reset();
+        mock.expectedMessageCount(1);
+        ctx.createProducerTemplate().sendBody(from, "x");
+        MockEndpoint.assertIsSatisfied(ctx);
+    }
+
+    private static String route(String id, String to) {
+        return """
+                - route:
+                    id: %s
+                    from:
+                      uri: direct:%s
+                      steps:
+                        - to:
+                            uri: %s
+                """.formatted(id, id, to);
+    }
+
+    // pollEnrich takes an expression, not a uri
+    private static String brokenRoute(String id) {
+        return """
+                - route:
+                    id: %s
+                    from:
+                      uri: direct:%s
+                      steps:
+                        - pollEnrich:
+                            uri: file:./order.json
+                """.formatted(id, id);
     }
 
     private static void deleteRecursively(Path path) throws IOException {

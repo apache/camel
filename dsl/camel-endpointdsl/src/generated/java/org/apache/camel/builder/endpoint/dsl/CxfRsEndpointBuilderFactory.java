@@ -94,7 +94,7 @@ public interface CxfRsEndpointBuilderFactory {
         }
         /**
          * Set custom JAX-RS provider(s) list to the CxfRs endpoint. You can
-         * specify a string with a list of providers to lookup in the registy
+         * specify a string with a list of providers to lookup in the registry
          * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -266,7 +266,7 @@ public interface CxfRsEndpointBuilderFactory {
         }
         /**
          * This option can override the endpointUrl that published from the WADL
-         * which can be accessed with resource address url plus _wadl.
+         * which can be accessed with resource address url plus ?_wadl.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -816,7 +816,7 @@ public interface CxfRsEndpointBuilderFactory {
         }
         /**
          * Set custom JAX-RS provider(s) list to the CxfRs endpoint. You can
-         * specify a string with a list of providers to lookup in the registy
+         * specify a string with a list of providers to lookup in the registry
          * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1631,7 +1631,7 @@ public interface CxfRsEndpointBuilderFactory {
         }
         /**
          * Set custom JAX-RS provider(s) list to the CxfRs endpoint. You can
-         * specify a string with a list of providers to lookup in the registy
+         * specify a string with a list of providers to lookup in the registry
          * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.

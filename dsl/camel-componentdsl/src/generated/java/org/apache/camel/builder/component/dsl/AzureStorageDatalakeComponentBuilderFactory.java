@@ -316,8 +316,8 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
         }
     
         /**
-         * This parameter allows the caller to upload data in parallel and
-         * control the order in which it is appended to the file.
+         * The final length of the file, including previously committed data,
+         * used by flushToFile.
          * 
          * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 

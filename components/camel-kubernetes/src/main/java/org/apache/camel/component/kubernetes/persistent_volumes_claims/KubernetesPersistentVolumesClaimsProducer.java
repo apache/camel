@@ -36,6 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kubernetes.KubernetesHelper.extractNamespace;
 import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
@@ -87,7 +88,7 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         PersistentVolumeClaimList pvcList;
 
         if (ObjectHelper.isEmpty(namespace)) {
@@ -100,7 +101,7 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
     }
 
     protected void doListPersistentVolumesClaimsByLabels(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS, Map.class);
         PersistentVolumeClaimList pvcList;
@@ -122,7 +123,7 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
 
     protected void doGetPersistentVolumeClaim(Exchange exchange) {
         String pvcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(pvcName)) {
             LOG.error("Get a specific Persistent Volume Claim require specify a Persistent Volume Claim name");
             throw new IllegalArgumentException(
@@ -150,7 +151,7 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
             Exchange exchange, String operationName,
             Function<Resource<PersistentVolumeClaim>, PersistentVolumeClaim> operation) {
         String pvcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         PersistentVolumeClaimSpec pvcSpec = exchange.getIn()
                 .getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_SPEC, PersistentVolumeClaimSpec.class);
         if (ObjectHelper.isEmpty(pvcName)) {
@@ -184,7 +185,7 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
 
     protected void doDeletePersistentVolumeClaim(Exchange exchange) {
         String pvcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(pvcName)) {
             LOG.error("Delete a specific Persistent Volume Claim require specify a Persistent Volume Claim name");
             throw new IllegalArgumentException(

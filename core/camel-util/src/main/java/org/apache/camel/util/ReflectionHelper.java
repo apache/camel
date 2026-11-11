@@ -23,7 +23,7 @@ import java.util.Arrays;
 
 /**
  * Helper for working with reflection on classes.
- * <p/>
+ * <p>
  * This code is based on org.apache.camel.spring.util.ReflectionUtils class.
  */
 public final class ReflectionHelper {
@@ -118,7 +118,7 @@ public final class ReflectionHelper {
     /**
      * Perform the given callback operation on all matching methods of the given class and superclasses (or given
      * interface and super-interfaces).
-     * <p/>
+     * <p>
      * <b>Important:</b> This method does not take the {@link java.lang.reflect.Method#isBridge() bridge methods} into
      * account.
      *

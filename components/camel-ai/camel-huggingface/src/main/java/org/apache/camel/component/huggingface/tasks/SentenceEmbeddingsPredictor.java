@@ -21,12 +21,13 @@ import java.util.List;
 
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Predictor for the SENTENCE_EMBEDDINGS task, generating vector embeddings from input text.
@@ -86,7 +87,7 @@ import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
  */
 public class SentenceEmbeddingsPredictor extends AbstractTaskPredictor {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
     public SentenceEmbeddingsPredictor(HuggingFaceEndpoint endpoint) {
         super(endpoint);
@@ -131,12 +132,9 @@ public class SentenceEmbeddingsPredictor extends AbstractTaskPredictor {
     protected void processOutput(Exchange exchange, Output output) throws Exception {
         String resultJson = output.getAsString("data");
 
-        if (resultJson.contains("\"error\"")) {
-            throw new RuntimeCamelException("Python inference failed: " + resultJson);
-        }
-
         // Parse JSON (list of lists)
         JsonNode node = objectMapper.readTree(resultJson);
+        failOnPythonError(node);
 
         // Convert to float[][] (batch × embedding_dim)
         float[][] embeddings = objectMapper.convertValue(node, float[][].class);

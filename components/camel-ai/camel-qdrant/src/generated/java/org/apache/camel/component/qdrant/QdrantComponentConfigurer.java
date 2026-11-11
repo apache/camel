@@ -2,6 +2,7 @@
 package org.apache.camel.component.qdrant;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class QdrantComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         QdrantComponent target = (QdrantComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, org.apache.camel.component.qdrant.QdrantAction.class, value)); return true;
         case "apikey":
         case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -56,7 +57,7 @@ public class QdrantComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return org.apache.camel.component.qdrant.QdrantAction.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
@@ -79,7 +80,7 @@ public class QdrantComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         QdrantComponent target = (QdrantComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return getOrCreateConfiguration(target).getAction();
         case "apikey":
         case "apiKey": return getOrCreateConfiguration(target).getApiKey();

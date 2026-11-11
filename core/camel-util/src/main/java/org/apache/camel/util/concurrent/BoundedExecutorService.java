@@ -44,6 +44,12 @@ import java.util.concurrent.atomic.LongAdder;
  * <li><b>Block</b>: blocks indefinitely until a permit becomes available. No timeout, no rejection.</li>
  * </ul>
  * <p>
+ * A task of this executor that submits more work, such as a parallel split that submits its items, can hold the permit
+ * it would wait for. So when no permit is available it runs the work itself at once, whatever the policy, or in a new
+ * task when that gets too deep, which is also outside the concurrency limit. Waiting would only delay the work while
+ * the task holds a permit, so a parallel split would run one item fewer at a time, or, with {@code Abort} and a single
+ * permit, be rejected after the timeout. The policies only apply to a submitter that is not a task of this executor.
+ * <p>
  * <b>Caller thread blocking:</b> while waiting for a permit, the calling thread is blocked. When callers are virtual
  * threads this is inexpensive (the carrier thread is released). When callers are platform threads (e.g., HTTP server
  * threads) the blocked thread is unavailable for other work — this is standard backpressure behavior but worth noting
@@ -52,11 +58,17 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class BoundedExecutorService extends AbstractExecutorService {
 
+    // Bounds the stack of tasks running inline. Past it, the work goes to a new task of the delegate. That is the escape
+    // hatch against the deadlock, accepted at the cost of the concurrency limit, as the inline runs are also outside it.
+    private static final int MAX_INLINE_DEPTH = 64;
+
     private final ExecutorService delegate;
     private final Semaphore semaphore;
     private final int maxConcurrent;
     private final long timeoutNanos;
     private final ThreadPoolRejectedPolicy rejectedPolicy;
+    // how deep tasks are running inline in a task of this executor, and null in any other thread
+    private final ThreadLocal<Integer> inlineDepth = new ThreadLocal<>();
     private final LongAdder callerRunsCount = new LongAdder();
     private final LongAdder rejectedCount = new LongAdder();
     private final LongAdder delegatedTaskCount = new LongAdder();
@@ -86,9 +98,14 @@ public class BoundedExecutorService extends AbstractExecutorService {
             throw new RejectedExecutionException("Executor has been shut down");
         }
 
+        // a task of this executor can hold the permit it would wait for, so it must not wait, whatever the policy
+        Integer depth = inlineDepth.get();
+        boolean runInline = depth != null;
         boolean acquired = false;
         try {
-            if (rejectedPolicy == ThreadPoolRejectedPolicy.Block) {
+            if (runInline) {
+                acquired = semaphore.tryAcquire();
+            } else if (rejectedPolicy == ThreadPoolRejectedPolicy.Block) {
                 semaphore.acquire();
                 acquired = true;
             } else {
@@ -96,6 +113,10 @@ public class BoundedExecutorService extends AbstractExecutorService {
             }
 
             if (!acquired) {
+                if (runInline) {
+                    runNested(command, depth);
+                    return;
+                }
                 if (rejectedPolicy == ThreadPoolRejectedPolicy.CallerRuns) {
                     callerRunsCount.increment();
                     command.run();
@@ -109,9 +130,8 @@ public class BoundedExecutorService extends AbstractExecutorService {
             try {
                 delegate.execute(() -> {
                     try {
-                        command.run();
+                        runTask(command);
                     } finally {
-                        delegatedTaskCount.increment();
                         semaphore.release();
                     }
                 });
@@ -124,6 +144,41 @@ public class BoundedExecutorService extends AbstractExecutorService {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RejectedExecutionException("Interrupted while waiting for permit", e);
+        }
+    }
+
+    private void runTask(Runnable command) {
+        // a delegate can run the task on the calling thread, which can be a task of this executor itself
+        Integer previous = inlineDepth.get();
+        inlineDepth.set(0);
+        try {
+            command.run();
+        } finally {
+            if (previous == null) {
+                inlineDepth.remove();
+            } else {
+                inlineDepth.set(previous);
+            }
+            delegatedTaskCount.increment();
+        }
+    }
+
+    /**
+     * Runs a task submitted by a task of this executor when no permit is available. It must not wait, as it can hold
+     * that permit itself, and it must not wait for a queue to run later either, as it could be waiting for this task.
+     */
+    private void runNested(Runnable command, int depth) {
+        if (depth >= MAX_INLINE_DEPTH) {
+            // a task that submits itself again, as a parallel split does for each item, must not overflow the stack
+            delegate.execute(() -> runTask(command));
+            return;
+        }
+        callerRunsCount.increment();
+        inlineDepth.set(depth + 1);
+        try {
+            command.run();
+        } finally {
+            inlineDepth.set(depth);
         }
     }
 
@@ -159,7 +214,8 @@ public class BoundedExecutorService extends AbstractExecutorService {
     }
 
     /**
-     * The number of times the timeout expired and a task fell back to running on the caller's thread.
+     * The number of times a task ran on the caller's thread, because the timeout expired or a task of this executor
+     * submitted it when no permit was available and the inline depth limit was not reached.
      */
     public long getCallerRunsCount() {
         return callerRunsCount.sum();

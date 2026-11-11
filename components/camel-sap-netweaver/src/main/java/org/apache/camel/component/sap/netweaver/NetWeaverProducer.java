@@ -18,7 +18,6 @@ package org.apache.camel.component.sap.netweaver;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -28,6 +27,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class NetWeaverProducer extends DefaultProducer {
 
@@ -61,7 +62,7 @@ public class NetWeaverProducer extends DefaultProducer {
 
         if (data != null && getEndpoint().isJsonAsMap() && getEndpoint().isJson()) {
             // map json string to json map
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
             Map<?, ?> map = mapper.readValue(data, Map.class);
 
             // if we only have one entry in the map, then put that as root (as it tends to return a single instance "d"
@@ -78,14 +79,27 @@ public class NetWeaverProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        String url = getEndpoint().getUrl() + "?authUsername=" + getEndpoint().getUsername() + "&authPassword="
-                     + getEndpoint().getPassword() + "&authMethod=Basic";
+        String url = getEndpoint().getUrl();
+        // the url may already have query parameters, and the credentials use RAW so characters such as & and + are kept
+        url += (url.indexOf('?') != -1 ? "&" : "?")
+               + "authUsername=" + raw(getEndpoint().getUsername()) + "&authPassword=" + raw(getEndpoint().getPassword())
+               + "&authMethod=Basic";
         if (LOG.isInfoEnabled()) {
             LOG.info("Creating NetWeaverProducer using url: {}", URISupport.sanitizeUri(url));
         }
 
         http = getEndpoint().getCamelContext().getEndpoint(url).createProducer();
         ServiceHelper.startService(http);
+    }
+
+    private static String raw(String value) {
+        // RAW(...) ends at a ) followed by &, so a value with a ) uses the RAW{...} form instead
+        // a value with both a ) followed by & and a } fits neither RAW form (a limit of the RAW syntax),
+        // and is cut short at the )&
+        if (value != null && value.indexOf(')') != -1 && value.indexOf('}') == -1) {
+            return "RAW{" + value + "}";
+        }
+        return "RAW(" + value + ")";
     }
 
     @Override

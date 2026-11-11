@@ -39,6 +39,7 @@ detail panel shows:
 - `Up/Down` — select property
 - `Enter` — view property detail / documentation
 - `Tab` — switch focus between the table and the detail panel
+- Mouse — a click or the wheel gives the panel under the mouse the focus; the wheel scrolls it
 - `PgUp/PgDn` — scroll the detail panel
 - `s` — cycle sort column
 - `S` — reverse sort order

@@ -36,6 +36,9 @@ import java.util.List;
  * @param websiteUrl                 optional documentation or home page URL advertised in {@code serverInfo}
  * @param instructions               optional top-level instructions returned to MCP clients on initialize
  * @param icons                      optional icons advertised in {@code serverInfo}
+ * @param allowedOrigins             origins allowed to call the MCP endpoint (exact, or {@code scheme://host:*} for any
+ *                                   port); {@code null} allows loopback origins only. A request without an
+ *                                   {@code Origin} header is not affected. Since 4.24.
  *
  * @since                            4.22
  */
@@ -49,19 +52,28 @@ public record McpServerInfo(
         String description,
         String websiteUrl,
         String instructions,
-        List<McpServerIcon> icons) {
+        List<McpServerIcon> icons,
+        List<String> allowedOrigins) {
 
     public McpServerInfo(String serverName, String version, String path) {
         this(serverName, version, path,
              McpServerConstants.DEFAULT_SESSION_KEEP_ALIVE_INTERVAL,
              McpServerConstants.DEFAULT_SESSION_IDLE_TTL,
-             null, null, null, null, null);
+             null, null, null, null, null, null);
     }
 
     public McpServerInfo(String serverName, String version, String path,
                          long sessionKeepAliveIntervalMs, long sessionIdleTtlMs) {
         this(serverName, version, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs,
-             null, null, null, null, null);
+             null, null, null, null, null, null);
+    }
+
+    public McpServerInfo(String serverName, String version, String path,
+                         long sessionKeepAliveIntervalMs, long sessionIdleTtlMs,
+                         String title, String description, String websiteUrl, String instructions,
+                         List<McpServerIcon> icons) {
+        this(serverName, version, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs,
+             title, description, websiteUrl, instructions, icons, null);
     }
 
     public McpServerInfo {
@@ -73,6 +85,9 @@ public record McpServerInfo(
         }
         if (icons != null) {
             icons = List.copyOf(icons);
+        }
+        if (allowedOrigins != null) {
+            allowedOrigins = List.copyOf(allowedOrigins);
         }
     }
 }

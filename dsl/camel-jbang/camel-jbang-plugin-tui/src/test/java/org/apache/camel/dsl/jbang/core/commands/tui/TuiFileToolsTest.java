@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * The file tools write to the source directory of an integration, after the user confirmed the change, also when the
@@ -97,6 +98,40 @@ class TuiFileToolsTest {
         assertThat(result.getString("error")).contains("is not the source directory");
         assertThat(bridge.asked).isZero();
         assertThat(elsewhere.resolve("demo.camel.yaml")).doesNotExist();
+    }
+
+    @Test
+    void anAbsoluteFileInsideTheIntegrationsDirectoryIsWrittenAfterTheUserConfirms() throws Exception {
+        // CAMEL-26398: an absolute path inside the source directory is taken relative to it
+        Path project = project();
+        McpFacadeWriteFileTest.ConfirmingBridge bridge = new McpFacadeWriteFileTest.ConfirmingBridge(true);
+        TuiToolRegistry registry = new TuiToolRegistry(McpFacadeWriteFileTest.facade(project, false, bridge));
+
+        JsonObject result = call(registry, "camel_write_file",
+                Map.of("name", "demo", "file", project.resolve("demo.camel.yaml").toString(), "content", NEW));
+
+        assertThat(result.getString("status")).isEqualTo("overwritten");
+        assertThat(bridge.asked).isEqualTo(1);
+        assertThat(Files.readString(project.resolve("demo.camel.yaml"))).isEqualTo(NEW);
+    }
+
+    @Test
+    void anAbsoluteFileOutsideTheIntegrationsDirectoryIsNotWritten() throws Exception {
+        Path project = project();
+        Path elsewhere = Files.createDirectories(tempDir.resolve("elsewhere")).resolve("demo.camel.yaml");
+        McpFacadeWriteFileTest.ConfirmingBridge bridge = new McpFacadeWriteFileTest.ConfirmingBridge(true);
+        TuiToolRegistry registry = new TuiToolRegistry(McpFacadeWriteFileTest.facade(project, false, bridge));
+
+        JsonObject result = call(registry, "camel_write_file",
+                Map.of("name", "demo", "file", elsewhere.toString(), "content", NEW));
+        assertThat(result.getString("status")).isEqualTo("error");
+        assertThat(result.getString("error")).contains("is not inside the directory");
+        // nor with no integration named: an absolute file never names the directory
+        assertThatThrownBy(() -> registry.executeSharedWithTuiExtras("camel_write_file",
+                Map.of("file", elsewhere.toString(), "content", NEW))).hasMessageStartingWith("directory is required");
+
+        assertThat(bridge.asked).isZero();
+        assertThat(elsewhere).doesNotExist();
     }
 
     private Path project() throws Exception {

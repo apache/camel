@@ -16,13 +16,21 @@
  */
 package org.apache.camel.component.wordpress;
 
+import java.util.Map;
+
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.wordpress.api.model.User;
+import org.apache.camel.component.wordpress.api.test.WordpressServerHttpRequestHandler;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WordpressUserOperationTest extends WordpressComponentTestSupport {
 
@@ -89,6 +97,44 @@ public class WordpressUserOperationTest extends WordpressComponentTestSupport {
         final User response = (User) template.requestBody("direct:deleteUser", "");
         assertThat(response.getId(), is(4));
         assertThat(response.getUsername(), is("bmarsh"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInsertUserFromJsonText() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:resultInsert");
+        mock.expectedMessageCount(1);
+
+        final User response = (User) template.requestBody("direct:insertUser",
+                "{\"username\": \"bdenbrough\", \"email\": \"bill.denbrough@derry.com\", \"first_name\": \"Bill\"}");
+        assertThat(response.getId(), is(3));
+        assertThat(WordpressServerHttpRequestHandler.getLastRequestBody(), containsString("\"first_name\":\"Bill\""));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testUpdateUserFromMap() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:resultUpdate");
+        mock.expectedMessageCount(1);
+
+        final User response = (User) template.requestBody("direct:updateUser",
+                Map.of("email", "admin@email.com", "last_name", "Denbrough"));
+        assertThat(response.getId(), is(1));
+        assertThat(WordpressServerHttpRequestHandler.getLastRequestBody(), containsString("\"last_name\":\"Denbrough\""));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testUpdateUserWithInvalidBody() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:resultUpdate");
+        mock.expectedMessageCount(0);
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:updateUser", 123));
+        assertThat(e.getCause(), instanceOf(InvalidPayloadException.class));
 
         MockEndpoint.assertIsSatisfied(context);
     }

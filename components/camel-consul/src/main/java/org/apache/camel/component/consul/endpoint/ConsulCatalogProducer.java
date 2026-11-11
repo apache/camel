@@ -35,13 +35,13 @@ public final class ConsulCatalogProducer extends AbstractConsulProducer<CatalogC
     @InvokeOnHeader(ConsulCatalogActions.REGISTER)
     protected void register(Message message) throws Exception {
         getClient().register(message.getMandatoryBody(CatalogRegistration.class));
-        setBodyAndResult(message, null);
+        setBodyAndResult(message, null, true);
     }
 
     @InvokeOnHeader(ConsulCatalogActions.DEREGISTER)
     protected void deregister(Message message) throws Exception {
         getClient().deregister(message.getMandatoryBody(CatalogDeregistration.class));
-        setBodyAndResult(message, null);
+        setBodyAndResult(message, null, true);
     }
 
     @InvokeOnHeader(ConsulCatalogActions.LIST_DATACENTERS)

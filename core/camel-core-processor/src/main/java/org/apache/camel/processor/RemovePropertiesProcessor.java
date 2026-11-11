@@ -24,7 +24,7 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.StepIdAware;
 
 /**
- * A processor which removes one ore more properties from the exchange
+ * A processor which removes one or more properties from the exchange
  */
 public class RemovePropertiesProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
     private String id;

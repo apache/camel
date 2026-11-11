@@ -34,11 +34,11 @@ public final class OgnlHelper {
 
     /**
      * Tests whether or not the given String is a Camel OGNL expression.
-     * <p/>
+     * <p>
      * An expression is considered an OGNL expression when it contains either one of the following chars: . or [
      *
      * @param  expression the String
-     * @return            <tt>true</tt> if a Camel OGNL expression, otherwise <tt>false</tt>.
+     * @return            <code>true</code> if a Camel OGNL expression, otherwise <code>false</code>.
      */
     public static boolean isValidOgnlExpression(String expression) {
         if (expression == null || expression.isEmpty()) {
@@ -108,7 +108,7 @@ public final class OgnlHelper {
      * Tests whether or not the given Camel OGNL expression is using the null safe operator or not.
      *
      * @param  ognlExpression the Camel OGNL expression
-     * @return                <tt>true</tt> if the null safe operator is used, otherwise <tt>false</tt>.
+     * @return                <code>true</code> if the null safe operator is used, otherwise <code>false</code>.
      */
     public static boolean isNullSafeOperator(String ognlExpression) {
         return ognlExpression.startsWith("?");
@@ -116,7 +116,7 @@ public final class OgnlHelper {
 
     /**
      * Removes any leading operators from the Camel OGNL expression.
-     * <p/>
+     * <p>
      * Will remove any leading of the following chars: ? or .
      *
      * @param  ognlExpression the Camel OGNL expression

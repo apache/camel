@@ -59,9 +59,12 @@ entity bean (that is a POJO with an
 https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/entity[@Entity]
 annotation on it) or a collection or array of entity beans.
 
-If the body is a List of entities, make sure to use
-*entityType=java.util.List* as a configuration passed to the
-producer endpoint.
+If the body is a List or an array of entities, use `java.util.List` (or
+`java.lang.Object`) as the entity class name of the endpoint
+(`jpa:java.util.List`). With the class of the entity
+(`jpa:com.example.Customer`), the producer converts the body to that
+class, and a List or an array of entities fails with an
+`InvalidPayloadRuntimeException`.
 
 If the body does not contain one of the previous listed types, put a
 Message Translator in front of the
@@ -103,6 +106,14 @@ You can use `@PreConsumed` (org.apache.camel.component.jpa.PreConsumed)
 which will be invoked on your entity bean before it has been processed
 (before routing).
 
+A query that selects values instead of entities, such as a column
+(`select x.address from Customer x`), or a native query without
+`resultClass`, gives one message per row (a NULL column gives a message
+with a null body). Such a value is not locked, and it cannot be deleted or
+marked with `@Consumed`, so each poll delivers the same rows again: set
+`consumeDelete=false` and make the query exclude the rows already handled,
+or select the entity instead.
+
 If you are consuming a lot of rows (100K+) and experience `OutOfMemory`
 problems, you should set the `maximumResults` to a sensible value.
 
@@ -134,20 +145,20 @@ log a WARN.
 The `TransactionStrategy` is a vendor neutral abstraction that allows `camel-jpa`
 to easily plug in and work with Spring `TransactionManager` or Quarkus Transaction API.
 
-The `JpaComponent` looks up automatically the
-`TransactionStrategy` from the Registry. If Camel
-cannot find any `TransactionStrategy` instance registered, it will also
-look up for the `TransactionTemplate` and try to
-extract `TransactionStrategy` from it.
+When no `TransactionStrategy` is configured, the `JpaComponent` and `JpaEndpoint`
+use the `TransactionStrategy` from the Registry, if there is exactly one and autowiring is enabled.
+Otherwise, they create the Spring based `org.apache.camel.component.jpa.DefaultTransactionStrategy`,
+which uses the single `PlatformTransactionManager` (or `TransactionTemplate`) from the Registry,
+or else creates a `JpaTransactionManager` for the `EntityManagerFactory`.
 
-If none `TransactionTemplate` is available in the registry,
-`JpaEndpoint` will auto create a default instance (`org.apache.camel.component.jpa.DefaultTransactionStrategy`)
-of `TransactionStrategy` which most often is not what you want.
+The `TransactionStrategy` from the Registry is used whatever the `EntityManagerFactory` is.
+If it is bound to one `EntityManagerFactory`, configure the `transactionStrategy` option explicitly
+on a JPA component that uses another one.
 
-If more than single instance of the `TransactionStrategy` is found, Camel
-will log a WARN. In such cases you might want to instantiate and
+If there is more than one `TransactionStrategy` in the Registry, none of them is used, and Camel logs a WARN.
+In such cases you might want to instantiate and
 explicitly configure a JPA component that references the
-`myTransactionManager` transaction manager, as follows:
+`myTransactionStrategy` transaction strategy, as follows:
 
 [source,xml]
 ----

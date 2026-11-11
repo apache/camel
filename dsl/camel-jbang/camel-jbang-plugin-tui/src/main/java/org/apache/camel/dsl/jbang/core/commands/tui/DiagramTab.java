@@ -38,6 +38,7 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -53,6 +54,9 @@ class DiagramTab extends AbstractDiagramTab {
     }
 
     private int infoPanelWidth = 30;
+    // a route to open drilled down once the diagram has loaded (Enter on About), and until when to wait for it
+    private volatile String pendingRoute;
+    private long pendingRouteUntil;
     private final DragSplit hSplit = new DragSplit();
 
     private final ArchitectureView architecture
@@ -77,6 +81,11 @@ class DiagramTab extends AbstractDiagramTab {
 
         // Source view scrolling (takes priority when active)
         if (sourceViewer.handleKeyEvent(ke)) {
+            return true;
+        }
+
+        // !: the known chaos rules for the selected node (or route)
+        if (diagram.isShowDiagram() && ke.isChar('!') && handleChaosKey(ke)) {
             return true;
         }
 
@@ -572,6 +581,9 @@ class DiagramTab extends AbstractDiagramTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        if (pendingRoute != null && isDiagramShown()) {
+            openPendingRoute();
+        }
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
@@ -676,9 +688,26 @@ class DiagramTab extends AbstractDiagramTab {
                                 "Loading diagram...",
                                 Style.EMPTY.dim()))))
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(ctx.paneBorder(true))
                                 .title(" Diagram ").build())
                         .build(),
                 area);
+    }
+
+    /** {@code !} on the diagram: the selected node of a route, or the selected route of the topology. */
+    private boolean handleChaosKey(KeyEvent ke) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (!ChaosHere.available(info)) {
+            return false;
+        }
+        RouteDiagramWidget.EipNodeBox box = topologyMode ? null : diagram.getSelectedEipNodeBox();
+        // the endpoint of a to, from the model of the route
+        String uri = box != null && box.layoutNode() != null && box.layoutNode().treeNode != null
+                ? box.layoutNode().treeNode.info.uri : null;
+        ChaosHere.Target target = ChaosHere.forDiagramNode(
+                box != null ? box.nodeId() : null, box != null ? box.type() : null, uri, diagram.getSelectedRouteId(),
+                info);
+        return ChaosHere.handleKey(ke, ctx, info, target);
     }
 
     @Override
@@ -716,6 +745,7 @@ class DiagramTab extends AbstractDiagramTab {
             } else {
                 diagram.renderFooterHints(spans);
             }
+            ChaosHere.hint(spans, ctx.findSelectedIntegration());
         }
     }
 
@@ -745,6 +775,23 @@ class DiagramTab extends AbstractDiagramTab {
     /** Whether the diagram has loaded and is drawn: a route or node not found then is not there. */
     boolean isDiagramShown() {
         return !diagram.isLoading() && !diagram.getNodeBoxes().isEmpty();
+    }
+
+    /**
+     * Opens the route drilled down, as Enter on it does (from About): now, or once the diagram has loaded, for up to 10
+     * seconds.
+     */
+    void openRoute(String routeId) {
+        pendingRoute = routeId;
+        pendingRouteUntil = System.currentTimeMillis() + 10_000;
+        openPendingRoute();
+    }
+
+    private void openPendingRoute() {
+        String routeId = pendingRoute;
+        if (routeId != null && (selectNode(routeId, null) || System.currentTimeMillis() > pendingRouteUntil)) {
+            pendingRoute = null;
+        }
     }
 
     boolean selectRoute(String routeId) {

@@ -29,14 +29,14 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completePartialRelativePath;
+import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completeRelativePathInDirectory;
 
 public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(FtpDefaultMoveExistingFileStrategy.class);
 
     /**
-     * Moves any existing file due fileExists=Move is in use.
+     * Moves any existing file due fileExist=Move is in use.
      */
     @Override
     public boolean moveExistingFile(GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
@@ -51,7 +51,11 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
         //any leading separator
         String parent = FileUtil.stripLeadingSeparator(FileUtil.onlyPath(fileName));
         String onlyName = FileUtil.stripPath(fileName);
-        dummy.getIn().setHeader(FtpConstants.FILE_NAME, fileName);
+        // the file name is the name in the directory of the file, as when the producer has changed into that
+        // directory (stepwise=true); a relative result is completed with that directory below. Without stepwise,
+        // with a tempFileName, and in mina-sftp, the given name has the path from the login directory, and with
+        // it ${file:name} would put that path again below the directory of the file
+        dummy.getIn().setHeader(FtpConstants.FILE_NAME, onlyName);
         dummy.getIn().setHeader(FtpConstants.FILE_NAME_ONLY, onlyName);
         dummy.getIn().setHeader(FtpConstants.FILE_PARENT, parent);
 
@@ -66,7 +70,7 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
                     "moveExisting evaluated as empty String, cannot move existing file: " + fileName);
         }
 
-        to = completePartialRelativePath(to, onlyName, parent);
+        to = completeRelativePathInDirectory(to, onlyName, parent);
 
         // normalize accordingly to configuration
         to = ((FtpEndpoint<FTPFile>) endpoint).getConfiguration().normalizePath(to);

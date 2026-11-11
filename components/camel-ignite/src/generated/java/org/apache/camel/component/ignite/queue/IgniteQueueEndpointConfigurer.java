@@ -2,6 +2,7 @@
 package org.apache.camel.component.ignite.queue;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class IgniteQueueEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IgniteQueueEndpoint target = (IgniteQueueEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "capacity": target.setCapacity(property(camelContext, int.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.ignite.configuration.CollectionConfiguration.class, value)); return true;
         case "lazystartproducer":
@@ -40,7 +41,7 @@ public class IgniteQueueEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "capacity": return int.class;
         case "configuration": return org.apache.ignite.configuration.CollectionConfiguration.class;
         case "lazystartproducer":
@@ -59,7 +60,7 @@ public class IgniteQueueEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         IgniteQueueEndpoint target = (IgniteQueueEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "capacity": return target.getCapacity();
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":

@@ -391,62 +391,12 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 option.setDisplayName("Jsonb instance");
                 option.setDescription("Lookup and use the existing Jsonb instance with the given id.");
             }
-            // Override descriptions for Jackson 3.x (tools.jackson package) vs Jackson 2.x (com.fasterxml.jackson package)
-            if ("jackson3".equals(name) && "camel-jackson3".equals(project.getArtifactId())) {
-                if ("moduleClassNames".equals(option.getName())) {
-                    option.setDescription(
-                            "To use custom Jackson modules tools.jackson.databind.JacksonModule specified as a String with FQN class names. Multiple classes can be separated by comma.");
-                }
-                if ("enableFeatures".equals(option.getName())) {
-                    option.setDescription(
-                            "Set of features to enable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
-                }
-                if ("disableFeatures".equals(option.getName())) {
-                    option.setDescription(
-                            "Set of features to disable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
-                }
-            }
-            if ("jacksonXml".equals(name) && "camel-jackson3xml".equals(project.getArtifactId())) {
-                if ("moduleClassNames".equals(option.getName())) {
-                    option.setDescription(
-                            "To use custom Jackson modules tools.jackson.databind.JacksonModule specified as a String with FQN class names. Multiple classes can be separated by comma.");
-                }
-                if ("enableFeatures".equals(option.getName())) {
-                    option.setDescription(
-                            "Set of features to enable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
-                }
-                if ("disableFeatures".equals(option.getName())) {
-                    option.setDescription(
-                            "Set of features to disable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
-                }
-            }
-            if ("avroJackson".equals(name) && "camel-jackson3-avro".equals(project.getArtifactId())) {
-                if ("moduleClassNames".equals(option.getName())) {
-                    option.setDescription(
-                            "To use custom Jackson modules tools.jackson.databind.JacksonModule specified as a String with FQN class names. Multiple classes can be separated by comma.");
-                }
-                if ("enableFeatures".equals(option.getName())) {
-                    option.setDescription(
-                            "Set of features to enable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
-                }
-                if ("disableFeatures".equals(option.getName())) {
-                    option.setDescription(
-                            "Set of features to disable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
-                }
-            }
-            if ("protobufJackson".equals(name) && "camel-jackson3-protobuf".equals(project.getArtifactId())) {
-                if ("moduleClassNames".equals(option.getName())) {
-                    option.setDescription(
-                            "To use custom Jackson modules tools.jackson.databind.JacksonModule specified as a String with FQN class names. Multiple classes can be separated by comma.");
-                }
-                if ("enableFeatures".equals(option.getName())) {
-                    option.setDescription(
-                            "Set of features to enable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
-                }
-                if ("disableFeatures".equals(option.getName())) {
-                    option.setDescription(
-                            "Set of features to disable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
-                }
+            // The Jackson 2.x and 3.x lines share the model (JsonDataFormat, JacksonXMLDataFormat, AvroDataFormat,
+            // ProtobufDataFormat); the Jackson 3.x artifacts drop the "When using Jackson 3" qualifier
+            if (isJacksonFamily(name) && "3".equals(jacksonFamilySuffix(project.getArtifactId()))
+                    && option.getDescription() != null) {
+                option.setDescription(option.getDescription()
+                        .replace(" When using Jackson 3, a feature can be qualified", " A feature can be qualified"));
             }
             if ("library".equals(option.getName()) && "json".equals(model.getModelName())) {
                 switch (name) {
@@ -585,6 +535,14 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
      */
     static String jacksonFamilySuffix(String artifactId) {
         return artifactId != null && artifactId.contains("jackson3") ? "3" : "2";
+    }
+
+    /**
+     * Whether the data format name is one of the Jackson family names that both the Jackson 2.x and 3.x lines register.
+     */
+    static boolean isJacksonFamily(String name) {
+        return "jackson".equals(name) || "jacksonXml".equals(name) || "avroJackson".equals(name)
+                || "protobufJackson".equals(name);
     }
 
     private static String schemaSubDirectory(String javaType) {

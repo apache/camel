@@ -39,7 +39,7 @@ public final class MojoHelper {
         switch (dir.getFileName().toString()) {
             case "camel-ai":
                 return Arrays.asList(dir.resolve("camel-a2a"), dir.resolve("camel-ai-observability"),
-                        dir.resolve("camel-ai-resource"), dir.resolve("camel-ai-tool"),
+                        dir.resolve("camel-ai-prompt"), dir.resolve("camel-ai-resource"), dir.resolve("camel-ai-tool"),
                         dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
                         dir.resolve("camel-huggingface"),
                         dir.resolve("camel-semantic"), dir.resolve("camel-semantic-openai"),
@@ -153,6 +153,7 @@ public final class MojoHelper {
             case "camel-vertx":
                 return Arrays.asList(dir.resolve("camel-vertx"),
                         dir.resolve("camel-vertx-http"),
+                        dir.resolve("camel-vertx-mqtt"),
                         dir.resolve("camel-vertx-websocket"));
             case "camel-alibaba":
                 return Arrays.asList(dir.resolve("camel-alibaba-oss"),

@@ -138,7 +138,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     private String keyEncapsulationAlgorithm = "MLKEM";
     private String symmetricKeyAlgorithm = "AES";
-    private int symmetricKeyLength = 128;
+    private int symmetricKeyLength = 256;
     private KeyPair keyPair;
     private String provider;
     private KeyGenerator keyGenerator;
@@ -266,7 +266,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         // Fail fast if the configured symmetric algorithm cannot provide authenticated encryption. Per-message
         // overrides via the CamelPQCSymmetricAlgorithm header are validated at marshal/unmarshal time.
         if (symmetricKeyAlgorithm != null) {
-            checkAeadSupported(toJceAlgorithm(symmetricKeyAlgorithm));
+            checkAeadSupported(PQCSymmetricAlgorithms.toJceName(symmetricKeyAlgorithm));
         }
 
         if (keyEncapsulationAlgorithm != null && keyGenerator == null) {
@@ -335,21 +335,9 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     private String getSymmetricAlgorithm(Exchange exchange) {
         String alg = exchange.getIn().getHeader(SYMMETRIC_ALGORITHM, String.class);
         if (alg != null) {
-            return toJceAlgorithm(alg);
+            return PQCSymmetricAlgorithms.toJceName(alg);
         }
-        return toJceAlgorithm(this.symmetricKeyAlgorithm);
-    }
-
-    /**
-     * Maps a {@link PQCSymmetricAlgorithms} enum name to its JCE algorithm name, returning the input unchanged when it
-     * is not an enum constant (e.g. it is already a JCE name).
-     */
-    private static String toJceAlgorithm(String algorithm) {
-        try {
-            return PQCSymmetricAlgorithms.valueOf(algorithm).getAlgorithm();
-        } catch (IllegalArgumentException e) {
-            return algorithm;
-        }
+        return PQCSymmetricAlgorithms.toJceName(this.symmetricKeyAlgorithm);
     }
 
     /**
@@ -410,7 +398,8 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Sets the length (in bits) of the symmetric key. Default is 128.
+     * Sets the length (in bits) of the symmetric key. Default is 256. SEED and SM4 only accept 128; GOST3412-2015 and
+     * CHACHA7539 only accept 256.
      */
     public void setSymmetricKeyLength(int symmetricKeyLength) {
         this.symmetricKeyLength = symmetricKeyLength;

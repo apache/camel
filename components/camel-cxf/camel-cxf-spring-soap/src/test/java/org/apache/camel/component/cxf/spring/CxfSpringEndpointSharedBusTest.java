@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.cxf.spring;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.Bus;
 import org.apache.cxf.Bus.BusState;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,9 +33,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class CxfSpringEndpointSharedBusTest extends AbstractSpringBeanTestSupport {
 
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+
+    @BeforeAll
+    static void allocateCxfSpringEndpointSharedBusTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointBeansRouter.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointBeansRouter.port2", PORT2.toString());
+    }
+
+    @AfterAll
+    static void releaseCxfSpringEndpointSharedBusTestPorts() {
+        System.clearProperty("CxfEndpointBeansRouter.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("CxfEndpointBeansRouter.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+    }
+
     @Override
     protected String[] getApplicationContextFiles() {
-        CXFTestSupport.getPort1();
         return new String[] { "org/apache/camel/component/cxf/spring/CxfEndpointBeansRouter.xml" };
     }
 

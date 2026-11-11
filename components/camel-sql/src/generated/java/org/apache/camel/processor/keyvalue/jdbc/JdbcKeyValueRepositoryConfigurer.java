@@ -2,6 +2,7 @@
 package org.apache.camel.processor.keyvalue.jdbc;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.keyvalue.jdbc.JdbcKeyValueRepository target = (org.apache.camel.processor.keyvalue.jdbc.JdbcKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clearstring":
         case "clearString": target.setClearString(property(camelContext, java.lang.String.class, value)); return true;
         case "createstring":
@@ -31,6 +32,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "createTableIfNotExists": target.setCreateTableIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "deleteexpiredstring":
         case "deleteExpiredString": target.setDeleteExpiredString(property(camelContext, java.lang.String.class, value)); return true;
+        case "deleteifexpiredstring":
+        case "deleteIfExpiredString": target.setDeleteIfExpiredString(property(camelContext, java.lang.String.class, value)); return true;
         case "deleteifvaluestring":
         case "deleteIfValueString": target.setDeleteIfValueString(property(camelContext, java.lang.String.class, value)); return true;
         case "deletestring":
@@ -59,7 +62,7 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clearstring":
         case "clearString": return java.lang.String.class;
         case "createstring":
@@ -68,6 +71,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "createTableIfNotExists": return boolean.class;
         case "deleteexpiredstring":
         case "deleteExpiredString": return java.lang.String.class;
+        case "deleteifexpiredstring":
+        case "deleteIfExpiredString": return java.lang.String.class;
         case "deleteifvaluestring":
         case "deleteIfValueString": return java.lang.String.class;
         case "deletestring":
@@ -97,7 +102,7 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.keyvalue.jdbc.JdbcKeyValueRepository target = (org.apache.camel.processor.keyvalue.jdbc.JdbcKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clearstring":
         case "clearString": return target.getClearString();
         case "createstring":
@@ -106,6 +111,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "createTableIfNotExists": return target.isCreateTableIfNotExists();
         case "deleteexpiredstring":
         case "deleteExpiredString": return target.getDeleteExpiredString();
+        case "deleteifexpiredstring":
+        case "deleteIfExpiredString": return target.getDeleteIfExpiredString();
         case "deleteifvaluestring":
         case "deleteIfValueString": return target.getDeleteIfValueString();
         case "deletestring":

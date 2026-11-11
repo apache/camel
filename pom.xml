@@ -137,7 +137,7 @@
         <maven-assembly-plugin-version>3.8.0</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.16.0</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.11.0</maven-dependency-plugin-version>
-        <maven-enforcer-plugin-version>3.6.3</maven-enforcer-plugin-version>
+        <maven-enforcer-plugin-version>3.7.0</maven-enforcer-plugin-version>
         <maven-invoker-plugin-version>3.10.1</maven-invoker-plugin-version>
         <maven-javadoc-plugin-version>3.12.0</maven-javadoc-plugin-version>
         <maven-release-plugin-version>3.3.1</maven-release-plugin-version>
@@ -376,6 +376,7 @@
                                     <exclude>**/*.lock</exclude>
                                     <exclude>.claude/**</exclude>
                                     <exclude>.omc/**</exclude>
+                                    <exclude>.bob/**</exclude>
                                     <exclude>.mvn/**</exclude>
                                     <exclude>.sdkmanrc</exclude>
                                     <exclude>KEYS</exclude>
@@ -410,9 +411,11 @@
                             <Jenkinsfile.jbangtest>SLASHSTAR_STYLE</Jenkinsfile.jbangtest>
                             <Jenkinsfile.jdk26>SLASHSTAR_STYLE</Jenkinsfile.jdk26>
                             <Jenkinsfile.jdk27>SLASHSTAR_STYLE</Jenkinsfile.jdk27>
+                            <Jenkinsfile.occupier>SLASHSTAR_STYLE</Jenkinsfile.occupier>
                             <atom>XML_STYLE</atom>
                             <bpmn>XML_STYLE</bpmn>
                             <camel-eclipse-pmd>XML_STYLE</camel-eclipse-pmd>
+                            <chaos>SCRIPT_STYLE</chaos>
                             <cql>DOUBLEDASHES_STYLE</cql>
                             <ds>SLASHSTAR_STYLE</ds>
                             <gdsl>SLASHSTAR_STYLE</gdsl>
@@ -603,6 +606,7 @@
                             <!-- Claude Code / OMC worktrees -->
                             <exclude>.claude/**/*</exclude>
                             <exclude>.omc/**/*</exclude>
+                            <exclude>.bob/**/*</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                             <exclude>**/maven-wrapper/*</exclude>

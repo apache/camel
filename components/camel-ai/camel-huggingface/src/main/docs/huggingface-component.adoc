@@ -106,10 +106,18 @@ The component supports the following tasks:
 
 | text-to-speech | String (text prompt) | _ai.djl.modality.audio.Audio_ | revision, device | TTS-tuned models (e.g., facebook/mms-tts-eng for English TTS, microsoft/speecht5_tts for multi-speaker)
 
-| chat | String (user message) | String (LLM response) | revision, device, maxTokens, temperature, systemPrompt, userRole, memoryIdHeader | Instruct-tuned/chat models (e.g., mistralai/Mistral-7B-Instruct-v0.2 for conversational, microsoft/Phi-3-mini-4k-instruct for efficient chat)
+| chat | String (user message) | String (LLM response) | revision, device, maxTokens, temperature, systemPrompt, userRole, memoryIdHeader, maxChatHistories, maxHistoryMessages | Instruct-tuned/chat models (e.g., mistralai/Mistral-7B-Instruct-v0.2 for conversational, microsoft/Phi-3-mini-4k-instruct for efficient chat)
 
 | custom | TBD | TBD | predictorBean (required), revision, device | Any HF model compatible with the custom predictor bean (e.g., Helsinki-NLP/opus-mt-en-fr for translation, distilgpt2 for custom generation)
 |===
+
+A task fails with a `RuntimeCamelException` when its Python handler reports an error, which the handler does by
+returning a JSON object with the single field `error`. Any other output is the result, also a text or a JSON that has
+the word `error` in it. A task with no output fails too. A custom predictor (the `predictorBean` option) fails on the
+error payload only when its `processOutput` calls `failOnPythonError`, as shown in the custom task example below.
+
+The text-to-speech task gives the waveform as a DJL `Audio`, not as encoded audio bytes, so it removes the
+`Content-Type` header from the message.
 
 // component-configure options: START
 // component-configure options: END
@@ -263,6 +271,18 @@ YAML::
 ====
 Send multiple messages to "direct:start-chat" — history is maintained automatically.
 
+The chat task keeps the history of each conversation in memory, keyed by the `CamelChatMemoryId` header (the header
+named by the `memoryIdHeader` option), or `default` when the header is not set. It keeps at most `maxChatHistories`
+histories (1000 by default); when there are more, the history that was updated least recently is evicted first. The
+`maxHistoryMessages` option limits the messages of each history (50 by default, `0` for no limit, and at least 2
+otherwise): the oldest messages are dropped first, the system prompt is kept, and the kept messages start with a user
+message, so an odd value keeps one message less. For long-running conversations, keep `maxHistoryMessages` within what
+the context of the model can take: a history that outgrows it makes every message of that conversation fail until the
+history is cleared. Set the `CamelChatClearHistory` header to `true` to clear the history of the conversation before
+the message is sent. The messages of one conversation are processed one at a time, so each message sees the history
+of the message before it, also when a concurrent consumer receives them; messages of different conversations are not
+held up by each other.
+
 .Custom Task
 For a custom task (e.g., _translation_):
 Define a custom predictor bean in your application or test:
@@ -272,6 +292,14 @@ Define a custom predictor bean in your application or test:
 ----
 public class TranslationPredictor extends AbstractTaskPredictor {
     // Implement
+
+    @Override
+    protected void processOutput(Exchange exchange, Output output) throws Exception {
+        String result = output.getAsString("data");
+        // fails on the error payload of the Python handler, or when there is no output
+        failOnPythonError(result);
+        exchange.getMessage().setBody(result);
+    }
 }
 
 @Bean

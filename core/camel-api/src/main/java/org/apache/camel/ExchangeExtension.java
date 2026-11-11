@@ -70,6 +70,23 @@ public interface ExchangeExtension {
     void setUnitOfWork(@Nullable UnitOfWork unitOfWork);
 
     /**
+     * Sets the unit of work of a parent exchange, which this exchange shares (the shareUnitOfWork option of the Split,
+     * Multicast and Recipient List EIPs).
+     * <p>
+     * The exchange uses that unit of work, but when it hands over its on completions (such as when it is sent to an
+     * asynchronous endpoint like seda) it only hands over the on completions it added with
+     * {@link #addOnCompletion(Synchronization)}. The other on completions of the shared unit of work (such as the
+     * commit or rollback of the consumer of the parent exchange, or those added to the unit of work directly) stay with
+     * the parent exchange.
+     *
+     * @param unitOfWork the unit of work of the parent exchange
+     * @since            4.24
+     */
+    default void setSharedUnitOfWork(@Nullable UnitOfWork unitOfWork) {
+        setUnitOfWork(unitOfWork);
+    }
+
+    /**
      * Is stream caching disabled on the given exchange
      */
     boolean isStreamCacheDisabled();

@@ -413,10 +413,13 @@ public interface FileEndpointBuilderFactory {
         /**
          * Allows for controlling whether the limit from maxMessagesPerPoll is
          * eager or not. If eager then the limit is during the scanning of
-         * files. Where as false would scan all files, and then perform sorting.
-         * Setting this option to false allows for sorting all files first, and
-         * then limit the poll. Mind that this requires a higher memory usage as
-         * all file details are in memory to perform the sorting.
+         * files, and the file, sftp, mina-sftp and smb consumers stop reading
+         * the directory once the limit is hit, unless preSort or doneFileName
+         * is used, as they need the whole directory. Where as false would scan
+         * all files, and then perform sorting. Setting this option to false
+         * allows for sorting all files first, and then limit the poll. Mind
+         * that this requires a higher memory usage as all file details are in
+         * memory to perform the sorting.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -433,10 +436,13 @@ public interface FileEndpointBuilderFactory {
         /**
          * Allows for controlling whether the limit from maxMessagesPerPoll is
          * eager or not. If eager then the limit is during the scanning of
-         * files. Where as false would scan all files, and then perform sorting.
-         * Setting this option to false allows for sorting all files first, and
-         * then limit the poll. Mind that this requires a higher memory usage as
-         * all file details are in memory to perform the sorting.
+         * files, and the file, sftp, mina-sftp and smb consumers stop reading
+         * the directory once the limit is hit, unless preSort or doneFileName
+         * is used, as they need the whole directory. Where as false would scan
+         * all files, and then perform sorting. Setting this option to false
+         * allows for sorting all files first, and then limit the poll. Mind
+         * that this requires a higher memory usage as all file details are in
+         * memory to perform the sorting.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2151,7 +2157,7 @@ public interface FileEndpointBuilderFactory {
         /**
          * To define which file attributes of interest. Like
          * posix:permissions,posix:owner,basic:lastAccessTime, it supports basic
-         * wildcard like posix:, basic:lastAccessTime.
+         * wildcard like posix:*, basic:lastAccessTime.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3193,18 +3199,17 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * Whether or not to eagerly delete any existing target file. This
-         * option only applies when you use fileExists=Override and the
+         * option only applies when you use fileExist=Override and the
          * tempFileName option as well. You can use this to disable (set it to
          * false) deleting the target file before the temp file is written. For
-         * example you may write big files and want the target file to exists
-         * during the temp file is being written. This ensure the target file is
-         * only deleted until the very last moment, just before the temp file is
-         * being renamed to the target filename. This option is also used to
+         * example you may write big files and want the target file to exist
+         * during the temp file is being written. This ensures the target file
+         * is only deleted until the very last moment, just before the temp file
+         * is being renamed to the target filename. This option is also used to
          * control whether to delete any existing files when fileExist=Move is
-         * enabled, and an existing file exists. If this option
-         * copyAndDeleteOnRenameFails false, then an exception will be thrown if
-         * an existing file existed, if its true, then the existing file is
-         * deleted before the move operation.
+         * enabled, and an existing file exists. If this option is false, then
+         * an exception will be thrown if an existing file existed, if it's
+         * true, then the existing file is deleted before the move operation.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3220,18 +3225,17 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * Whether or not to eagerly delete any existing target file. This
-         * option only applies when you use fileExists=Override and the
+         * option only applies when you use fileExist=Override and the
          * tempFileName option as well. You can use this to disable (set it to
          * false) deleting the target file before the temp file is written. For
-         * example you may write big files and want the target file to exists
-         * during the temp file is being written. This ensure the target file is
-         * only deleted until the very last moment, just before the temp file is
-         * being renamed to the target filename. This option is also used to
+         * example you may write big files and want the target file to exist
+         * during the temp file is being written. This ensures the target file
+         * is only deleted until the very last moment, just before the temp file
+         * is being renamed to the target filename. This option is also used to
          * control whether to delete any existing files when fileExist=Move is
-         * enabled, and an existing file exists. If this option
-         * copyAndDeleteOnRenameFails false, then an exception will be thrown if
-         * an existing file existed, if its true, then the existing file is
-         * deleted before the move operation.
+         * enabled, and an existing file exists. If this option is false, then
+         * an exception will be thrown if an existing file existed, if it's
+         * true, then the existing file is deleted before the move operation.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4262,8 +4266,8 @@ public interface FileEndpointBuilderFactory {
             return "CamelFileParent";
         }
         /**
-         * The actual absolute filepath (path name) for the output file that was
-         * written. This header is set by Camel and its purpose is providing
+         * The actual absolute filepath (path + name) for the output file that
+         * was written. This header is set by Camel and its purpose is providing
          * end-users with the name of the file that was written.
          * 
          * The option is a: {@code String} type.

@@ -25,11 +25,13 @@ camel cmd send [options]
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--header` | Message header (key=value) |  | List
 | `--infra` | Send to infrastructure service (e.g., nats, kafka) |  | String
+| `--interval` | The pause between two messages with --repeat or a folder body, in millis or as a duration such as 200ms or 1s, or a range such as 100..500 or 100ms..2s to draw each pause at random (at most 60s) |  | String
 | `--logging-color` | Use colored logging | true | boolean
 | `--poll` | Poll instead of sending a message. This can be used to receive latest message from a Kafka topic or JMS queue. |  | boolean
 | `--pretty` | Pretty print response message body (InOut) when using JSon or XML format |  | boolean
-| `--prop,--property` | Additional properties; override existing (only applicable when NOT using an existing running Camel) |  | String
+| `--prop,--property` | Additional properties; override existing (only applicable when NOT using an existing running Camel) |  | String[]
 | `--properties` | comma separated list of properties file (only applicable when NOT using an existing running Camel) (ex. /path/to/file.properties,/path/to/other.properties |  | String
+| `--repeat` | Send the message this many times (going round the files of a folder body), and print a summary instead of each reply (at most 10000) |  | int
 | `--reply` | Whether to expect a reply message (InOut vs InOut messaging style) |  | boolean
 | `--reply-file` | Saves reply message to the file with the given name (override if exists) |  | String
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String

@@ -2,6 +2,7 @@
 package org.apache.camel.component.jackson3.protobuf;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;

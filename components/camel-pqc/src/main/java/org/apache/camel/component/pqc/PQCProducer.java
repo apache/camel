@@ -30,6 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.crypto.KeyAgreement;
@@ -126,11 +128,22 @@ public class PQCProducer extends DefaultProducer {
 
     private Signature signer;
     private KeyGenerator keyGenerator;
-    private KeyPair keyPair;
+    private volatile KeyPair keyPair;
 
     // Each keeps its warning to one line per producer instead of one per exchange
     private final AtomicBoolean usageRecordFailureWarned = new AtomicBoolean();
     private final AtomicBoolean keyUsageNotRecordedWarned = new AtomicBoolean();
+
+    // The claim is on the key material of this producer, so it is taken once, under the name the first exchange
+    // gives the key, and released when the producer stops
+    private final Object statefulClaimLock = new Object();
+    private volatile boolean statefulKeyClaimed;
+    private String claimedStatefulKeyId;
+    private PublicKey claimedStatefulPublicKey;
+    // The stored key is re-read once per name it is signed under: the mapping function runs once, so concurrent
+    // first-time signers under the same name wait for it
+    private final ConcurrentMap<String, Boolean> statefulKeyAdoptions = new ConcurrentHashMap<>();
+    private final AtomicBoolean sharedStatefulKeyWarned = new AtomicBoolean();
 
     // Set only when this producer created the Signature itself, so it knows how to create another one.
     // Left null when the user configured an instance, which then has to be shared and locked instead.
@@ -572,13 +585,39 @@ public class PQCProducer extends DefaultProducer {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
+        releaseClaimedStatefulKeys();
         metrics.close();
         metrics = PQCMetrics.NOOP;
         super.doStop();
     }
 
+    /**
+     * Gives back the stateful keys this producer claimed, so another process can take them over once this one is
+     * stopped. A claim that cannot be released is logged rather than failing the stop: the operating system releases it
+     * with the process anyway.
+     */
+    private void releaseClaimedStatefulKeys() {
+        KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
+        synchronized (statefulClaimLock) {
+            if (statefulKeyClaimed && klm != null) {
+                try {
+                    klm.releaseStatefulKey(claimedStatefulKeyId, claimedStatefulPublicKey);
+                } catch (Exception e) {
+                    LOG.warn("Could not release the claim on the stateful key {}: {}",
+                            statefulKeyLabel(claimedStatefulKeyId), e.getMessage(), e);
+                }
+            }
+            statefulKeyClaimed = false;
+            claimedStatefulKeyId = null;
+            claimedStatefulPublicKey = null;
+        }
+        statefulKeyAdoptions.clear();
+    }
+
     private void signature(Exchange exchange)
             throws Exception {
+        // the claim first: it may adopt the stored key, and that is the key the exhaustion check must look at
+        claimStatefulKeyBeforeSign(exchange);
         checkStatefulKeyBeforeSign();
 
         Signature signerForExchange = signerForExchange();
@@ -877,6 +916,8 @@ public class PQCProducer extends DefaultProducer {
     private void hybridSignature(Exchange exchange)
             throws InvalidPayloadException, InvalidKeyException, SignatureException, IOException,
             NoSuchAlgorithmException, NoSuchProviderException {
+        // the claim first: it may adopt the stored key, and that is the key the exhaustion check must look at
+        claimStatefulKeyBeforeSign(exchange);
         checkStatefulKeyBeforeSign();
 
         byte[] data = bodyToByteArray(exchange.getMessage());
@@ -1242,6 +1283,175 @@ public class PQCProducer extends DefaultProducer {
         // never deleted is the worst available outcome: the caller believes the exhausted or compromised state is
         // gone and may reuse the key.
         getRequiredKeyLifecycleManager().deleteKey(keyId);
+    }
+
+    /**
+     * Claims a stateful signature key for this process before it is used.
+     * <p/>
+     * XMSS, XMSSMT, LMS and HSS are one-time-signature schemes, and a store several processes read from - a shared
+     * directory, a vault - hands each of them the same key at the same index. The in-process ordering of
+     * {@link #recordKeyUsageAfterSign(Exchange)} does nothing about that, so the key is claimed from the
+     * {@link KeyLifecycleManager} the first time it is signed with, and held until this producer stops.
+     * <p/>
+     * The claim is on the key material, identified by its public key: it is taken once per producer, whatever name the
+     * exchanges give the key through the {@code CamelPQCKeyId} header, and also when they give none. The name is what
+     * the store knows the key by, so the stored copy is re-read once per name, after the claim.
+     */
+    private void claimStatefulKeyBeforeSign(Exchange exchange) {
+        if (keyPair == null || keyPair.getPrivate() == null
+                || getStatefulKeyRemaining(keyPair.getPrivate()) < 0) {
+            return;
+        }
+
+        KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
+        if (klm == null) {
+            // There is no store to claim from. recordKeyUsageAfterSign already warns that the index of this
+            // signature is not being persisted at all, which is the larger problem of the two.
+            return;
+        }
+
+        String keyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
+        if (ObjectHelper.isEmpty(keyId)) {
+            keyId = null;
+        }
+        PublicKey publicKey = keyPair.getPublic();
+        if (keyId == null && KeyLifecycleManager.fingerprint(publicKey) == null) {
+            // Nothing identifies the key: the exchange names none and the public key gives no encoding to
+            // fingerprint. recordKeyUsageAfterSign warns that the index is not persisted in this case.
+            return;
+        }
+
+        if (!statefulKeyClaimed) {
+            synchronized (statefulClaimLock) {
+                if (!statefulKeyClaimed) {
+                    doClaimStatefulKey(klm, keyId, publicKey);
+                    // The first re-read happens before the claim is published, so no concurrent exchange, under
+                    // another name or none, signs from the key loaded at startup while the stored one is read
+                    if (keyId != null) {
+                        adoptStoredStatefulKeyIfAhead(klm, keyId);
+                        statefulKeyAdoptions.put(keyId, Boolean.TRUE);
+                    }
+                    claimedStatefulKeyId = keyId;
+                    claimedStatefulPublicKey = publicKey;
+                    statefulKeyClaimed = true;
+                }
+            }
+        }
+
+        if (keyId != null) {
+            // computeIfAbsent rather than a contains/read/add sequence, so two concurrent first-time signers under
+            // the same name cannot both re-read the stored key
+            statefulKeyAdoptions.computeIfAbsent(keyId, id -> {
+                adoptStoredStatefulKeyIfAhead(klm, id);
+                return Boolean.TRUE;
+            });
+        }
+    }
+
+    private void doClaimStatefulKey(KeyLifecycleManager klm, String keyId, PublicKey publicKey) {
+        boolean claimed;
+        try {
+            claimed = klm.claimStatefulKey(keyId, publicKey);
+        } catch (Exception e) {
+            throw new IllegalStateException(
+                    "Cannot claim the stateful key " + statefulKeyLabel(keyId) + ": " + e.getMessage(), e);
+        }
+
+        if (!claimed) {
+            if (getConfiguration().isAllowSharedStatefulKey()) {
+                if (sharedStatefulKeyWarned.compareAndSet(false, true)) {
+                    LOG.warn("Signing with the stateful key {}, which {} cannot claim for this process alone,"
+                             + " because allowSharedStatefulKey is enabled. If a second process signs with the same"
+                             + " key, both hand out the same one-time index and the key is broken.",
+                            statefulKeyLabel(keyId), klm.getClass().getSimpleName());
+                }
+            } else {
+                throw new IllegalStateException(
+                        "The stateful key " + statefulKeyLabel(keyId) + " cannot be claimed for this process: "
+                                                + klm.getClass().getSimpleName()
+                                                + " cannot guarantee that no other process holds it. "
+                                                + keyPair.getPrivate().getAlgorithm()
+                                                + " is a one-time-signature scheme, and two processes signing from the"
+                                                + " same index break the key. Use a KeyLifecycleManager that can claim"
+                                                + " a key, such as FileBasedKeyLifecycleManager, or set"
+                                                + " allowSharedStatefulKey=true if a single signer is guaranteed"
+                                                + " elsewhere.");
+            }
+        }
+    }
+
+    /**
+     * How the stateful key of this producer is referred to in messages: by the name the exchange gave it, or as the key
+     * of this endpoint when the exchange gave none.
+     */
+    private static String statefulKeyLabel(String keyId) {
+        return keyId != null ? "'" + keyId + "'" : "of this endpoint (no CamelPQCKeyId header)";
+    }
+
+    /**
+     * Re-reads the stored key once the claim is granted, and adopts it when its index has moved past the one this
+     * producer loaded.
+     * <p/>
+     * Without this the claim does not stop what it is meant to stop. {@code keyPair} is read once in
+     * {@link #doStart()}, so in a rolling update the arriving instance loads the key at some index, waits for the claim
+     * while the leaving instance keeps signing, and then starts from its own stale index - handing out every index the
+     * other instance already used. The claim only serialises the signers; it is this read that makes the second one
+     * resume where the first stopped.
+     */
+    private void adoptStoredStatefulKeyIfAhead(KeyLifecycleManager klm, String keyId) {
+        KeyPair stored;
+        try {
+            stored = klm.getKey(keyId);
+        } catch (Exception e) {
+            LOG.warn("Claimed the stateful key '{}' but could not re-read it from the store, so this producer keeps"
+                     + " the key it loaded at startup. If another process advanced that key meanwhile, signing now"
+                     + " reuses a one-time index.",
+                    keyId, e);
+            return;
+        }
+
+        if (stored == null || stored.getPrivate() == null) {
+            return;
+        }
+
+        if (isAnotherKey(stored.getPublic(), keyPair.getPublic())) {
+            LOG.warn("Claimed the stateful key '{}' but the stored public key is not the one loaded at startup, so"
+                     + " this producer keeps the key it loaded. The store holds another key under that id: a rotated"
+                     + " key, or a key directory that is shared by mistake.",
+                    keyId);
+            return;
+        }
+
+        long storedRemaining = getStatefulKeyRemaining(stored.getPrivate());
+        long loadedRemaining = getStatefulKeyRemaining(keyPair.getPrivate());
+        if (storedRemaining < 0) {
+            return;
+        }
+
+        // Fewer remaining signatures means the stored key has been used more than the one held here
+        if (storedRemaining < loadedRemaining) {
+            LOG.warn("The stored stateful key '{}' has {} signatures left while the one loaded at startup has {}."
+                     + " Another process advanced it. Adopting the stored key so this producer resumes from its"
+                     + " index instead of reusing indices that have already been handed out.",
+                    keyId, storedRemaining, loadedRemaining);
+            keyPair = stored;
+        }
+    }
+
+    /**
+     * Whether two public keys are known to be different keys. Keys whose encoding the provider does not give, or that
+     * are missing, cannot be told apart and are not reported as different.
+     */
+    private static boolean isAnotherKey(PublicKey stored, PublicKey loaded) {
+        if (stored == null || loaded == null) {
+            return false;
+        }
+        byte[] storedEncoded = stored.getEncoded();
+        byte[] loadedEncoded = loaded.getEncoded();
+        if (storedEncoded == null || loadedEncoded == null) {
+            return false;
+        }
+        return !MessageDigest.isEqual(storedEncoded, loadedEncoded);
     }
 
     /**

@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.smooks;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +31,7 @@ public class SmooksDataFormatConfigurer extends org.apache.camel.support.compone
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SmooksDataFormat target = (SmooksDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowexternalentities":
         case "allowExternalEntities": target.setAllowExternalEntities(property(camelContext, boolean.class, value)); return true;
         case "smooksconfig":
@@ -46,7 +47,7 @@ public class SmooksDataFormatConfigurer extends org.apache.camel.support.compone
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowexternalentities":
         case "allowExternalEntities": return boolean.class;
         case "smooksconfig":
@@ -58,7 +59,7 @@ public class SmooksDataFormatConfigurer extends org.apache.camel.support.compone
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SmooksDataFormat target = (SmooksDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowexternalentities":
         case "allowExternalEntities": return target.isAllowExternalEntities();
         case "smooksconfig":

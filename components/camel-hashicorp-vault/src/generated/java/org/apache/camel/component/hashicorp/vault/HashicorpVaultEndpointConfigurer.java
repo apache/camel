@@ -2,6 +2,7 @@
 package org.apache.camel.component.hashicorp.vault;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,18 +23,37 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HashicorpVaultEndpoint target = (HashicorpVaultEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "authmountpath":
+        case "authMountPath": target.getConfiguration().setAuthMountPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "authentication": target.getConfiguration().setAuthentication(property(camelContext, java.lang.String.class, value)); return true;
         case "cloud": target.getConfiguration().setCloud(property(camelContext, boolean.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwt": target.getConfiguration().setJwt(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtfile":
+        case "jwtFile": target.getConfiguration().setJwtFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystore":
+        case "keyStore": target.getConfiguration().setKeyStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystorepassword":
+        case "keyStorePassword": target.getConfiguration().setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "namespace": target.getConfiguration().setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.hashicorp.vault.HashicorpVaultOperation.class, value)); return true;
         case "port": target.getConfiguration().setPort(property(camelContext, java.lang.String.class, value)); return true;
+        case "role": target.getConfiguration().setRole(property(camelContext, java.lang.String.class, value)); return true;
+        case "roleid":
+        case "roleId": target.getConfiguration().setRoleId(property(camelContext, java.lang.String.class, value)); return true;
         case "scheme": target.getConfiguration().setScheme(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretid":
+        case "secretId": target.getConfiguration().setSecretId(property(camelContext, java.lang.String.class, value)); return true;
         case "secretpath":
         case "secretPath": target.getConfiguration().setSecretPath(property(camelContext, java.lang.String.class, value)); return true;
         case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "truststore":
+        case "trustStore": target.getConfiguration().setTrustStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "truststorepassword":
+        case "trustStorePassword": target.getConfiguration().setTrustStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "vaulttemplate":
         case "vaultTemplate": target.getConfiguration().setVaultTemplate(property(camelContext, org.springframework.vault.core.VaultTemplate.class, value)); return true;
         default: return false;
@@ -47,18 +67,37 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "authmountpath":
+        case "authMountPath": return java.lang.String.class;
+        case "authentication": return java.lang.String.class;
         case "cloud": return boolean.class;
         case "host": return java.lang.String.class;
+        case "jwt": return java.lang.String.class;
+        case "jwtfile":
+        case "jwtFile": return java.lang.String.class;
+        case "keystore":
+        case "keyStore": return java.lang.String.class;
+        case "keystorepassword":
+        case "keyStorePassword": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "namespace": return java.lang.String.class;
         case "operation": return org.apache.camel.component.hashicorp.vault.HashicorpVaultOperation.class;
         case "port": return java.lang.String.class;
+        case "role": return java.lang.String.class;
+        case "roleid":
+        case "roleId": return java.lang.String.class;
         case "scheme": return java.lang.String.class;
+        case "secretid":
+        case "secretId": return java.lang.String.class;
         case "secretpath":
         case "secretPath": return java.lang.String.class;
         case "token": return java.lang.String.class;
+        case "truststore":
+        case "trustStore": return java.lang.String.class;
+        case "truststorepassword":
+        case "trustStorePassword": return java.lang.String.class;
         case "vaulttemplate":
         case "vaultTemplate": return org.springframework.vault.core.VaultTemplate.class;
         default: return null;
@@ -68,18 +107,37 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HashicorpVaultEndpoint target = (HashicorpVaultEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "authmountpath":
+        case "authMountPath": return target.getConfiguration().getAuthMountPath();
+        case "authentication": return target.getConfiguration().getAuthentication();
         case "cloud": return target.getConfiguration().isCloud();
         case "host": return target.getConfiguration().getHost();
+        case "jwt": return target.getConfiguration().getJwt();
+        case "jwtfile":
+        case "jwtFile": return target.getConfiguration().getJwtFile();
+        case "keystore":
+        case "keyStore": return target.getConfiguration().getKeyStore();
+        case "keystorepassword":
+        case "keyStorePassword": return target.getConfiguration().getKeyStorePassword();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "namespace": return target.getConfiguration().getNamespace();
         case "operation": return target.getConfiguration().getOperation();
         case "port": return target.getConfiguration().getPort();
+        case "role": return target.getConfiguration().getRole();
+        case "roleid":
+        case "roleId": return target.getConfiguration().getRoleId();
         case "scheme": return target.getConfiguration().getScheme();
+        case "secretid":
+        case "secretId": return target.getConfiguration().getSecretId();
         case "secretpath":
         case "secretPath": return target.getConfiguration().getSecretPath();
         case "token": return target.getConfiguration().getToken();
+        case "truststore":
+        case "trustStore": return target.getConfiguration().getTrustStore();
+        case "truststorepassword":
+        case "trustStorePassword": return target.getConfiguration().getTrustStorePassword();
         case "vaulttemplate":
         case "vaultTemplate": return target.getConfiguration().getVaultTemplate();
         default: return null;

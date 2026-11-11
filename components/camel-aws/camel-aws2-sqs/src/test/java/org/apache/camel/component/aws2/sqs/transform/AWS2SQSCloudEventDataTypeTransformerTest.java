@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class AWS2SQSCloudEventDataTypeTransformerTest {
@@ -48,7 +49,8 @@ public class AWS2SQSCloudEventDataTypeTransformerTest {
     void shouldMapToCloudEvent() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
-        exchange.getMessage().setHeader(Sqs2Constants.RECEIPT_HANDLE, "myQueue");
+        exchange.getMessage().setHeader(Sqs2Constants.QUEUE_NAME, "myQueue");
+        exchange.getMessage().setHeader(Sqs2Constants.RECEIPT_HANDLE, "AQEBwJnKyrHigUMZj6rYigCgxlaS3SLy0a");
         exchange.getMessage().setHeader(Sqs2Constants.MESSAGE_ID, "1234");
         exchange.getMessage().setBody(new ByteArrayInputStream("Test1".getBytes(StandardCharsets.UTF_8)));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
@@ -59,6 +61,18 @@ public class AWS2SQSCloudEventDataTypeTransformerTest {
                 exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
         assertEquals("1234", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
         assertEquals("aws.sqs.queue.myQueue", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+    }
+
+    @Test
+    void theSourceIsNotTheReceiptHandle() throws Exception {
+        // CAMEL-26300: the receipt handle changes each time a message is received, so it names no source
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(Sqs2Constants.RECEIPT_HANDLE, "AQEBwJnKyrHigUMZj6rYigCgxlaS3SLy0a");
+        exchange.getMessage().setHeader(Sqs2Constants.MESSAGE_ID, "1234");
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+        assertEquals("1234", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
     }
 
     @Test

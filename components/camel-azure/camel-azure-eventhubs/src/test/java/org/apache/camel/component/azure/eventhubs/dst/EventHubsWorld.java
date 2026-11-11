@@ -45,6 +45,7 @@ import org.apache.camel.test.dst.Dst;
 import org.apache.camel.test.dst.DstCamel;
 import org.apache.camel.test.dst.DstExecutor;
 import org.apache.camel.test.dst.DstLedger;
+import org.apache.camel.test.dst.DstWorld;
 import org.apache.camel.test.dst.Invariant;
 import org.apache.camel.test.dst.Invariants;
 import org.mockito.MockedStatic;
@@ -60,6 +61,17 @@ import static org.mockito.ArgumentMatchers.any;
  * checkpoint store whose answers are delayed, slow or failing. The consumer, the route and Camel's scheduler are real;
  * every thread pool runs on the DST loop.
  */
+@DstWorld(component = "azure-eventhubs",
+          fake = "a mocked EventHubsClientFactory that delivers the events per partition, and a fake CheckpointStore",
+          covers = {
+                  "checkpointing by checkpointBatchSize and checkpointBatchTimeout",
+                  "one or two partitions with bursts and quiet periods of events",
+                  "an asynchronous downstream step" },
+          faults = {
+                  "the downstream step answers slowly", "the downstream step fails",
+                  "the checkpoint store answers slowly", "the checkpoint store fails" },
+          invariants = "every completed message is acknowledged when the partition goes quiet",
+          issues = { "CAMEL-25683", "CAMEL-25738", "CAMEL-25781" })
 final class EventHubsWorld {
 
     static final String ROUTE = "eh";

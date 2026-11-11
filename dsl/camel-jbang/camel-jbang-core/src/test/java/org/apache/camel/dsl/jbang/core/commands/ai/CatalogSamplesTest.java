@@ -498,6 +498,38 @@ public class CatalogSamplesTest {
         assertThat(o.getString("note")).contains("the sample shows it in place");
     }
 
+    /** r24 jms step 3: the error handler answers say that only an exception reaches them, and what to do with a no. */
+    @Test
+    void theErrorHandlerSaysItActsOnlyOnAnException() {
+        for (String name : List.of("errorHandler", "deadLetterChannel", "onException")) {
+            assertThat(CatalogSamples.sample(name, 1).getString("trigger")).as(name)
+                    .contains("only when a step fails with an exception").contains("\"not enough\"")
+                    .contains("throwException");
+        }
+        assertThat(CatalogSamples.sample("split", 1).get("trigger")).isNull();
+    }
+
+    /**
+     * r25: the sample of noErrorHandler is the errorHandler sample, and it got the note; noErrorHandler handles
+     * nothing.
+     */
+    @Test
+    void noErrorHandlerHasNoTriggerNote() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        for (String name : List.of("noErrorHandler", "no-error-handler", "NoErrorHandler")) {
+            JsonObject o = CatalogSamples.sample(catalog, "eip", name, 1);
+            assertThat(o.getString("name")).as(name).isEqualTo("errorHandler");
+            assertThat(o.get("trigger")).as(name).isNull();
+            assertThat(CatalogSamples.sample(name, 1).get("trigger")).as(name).isNull();
+        }
+        // the kinds that handle, and the parts of onException, still get it
+        for (String name : List.of("errorHandler", "deadLetterChannel", "defaultErrorHandler", "onException",
+                "redeliveryPolicy")) {
+            assertThat(CatalogSamples.sample(catalog, "eip", name, 1).getString("trigger")).as(name)
+                    .contains("only when a step fails with an exception");
+        }
+    }
+
     /** CAMEL-25370: a kind the samples do not show is not said to be shown; where it goes and its options are. */
     @Test
     void anErrorHandlerKindTheSamplesDoNotShow() {

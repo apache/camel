@@ -2,6 +2,7 @@
 package org.apache.camel.component.dummy;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DummyEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DummyEndpoint target = (DummyEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "amount": target.setAmount(property(camelContext, int.class, value)); return true;
         case "celebrity": target.setCelebrity(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -33,7 +34,7 @@ public class DummyEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "amount": return int.class;
         case "celebrity": return boolean.class;
         case "lazystartproducer":
@@ -45,7 +46,7 @@ public class DummyEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DummyEndpoint target = (DummyEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "amount": return target.getAmount();
         case "celebrity": return target.isCelebrity();
         case "lazystartproducer":

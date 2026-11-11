@@ -51,6 +51,10 @@
         <!-- camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-run</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-dataweave</artifactId>
         </dependency>
         <dependency>
@@ -68,6 +72,17 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-kamelet-main</artifactId>
+        </dependency>
+        <!-- Maven version ranges, to select the plugin release built for the Camel CLI -->
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-api</artifactId>
+            <version>${maven-resolver-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-util</artifactId>
+            <version>${maven-resolver-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -225,6 +240,39 @@
             <artifactId>camel-mcp-server</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- languages camel_eval_expression evaluates locally with headers, variables and a resultType; on the
+             classpath of the tests, so they are not downloaded -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xpath</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-groovy</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jq</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- the JsonPath a jsonpath expression of a route is compiled with (the CLI has it from camel-jsonpath,
+             downloaded as for an evaluation) -->
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${json-path-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- the test schema a Citrus test is checked against; on the classpath of the tests, so it is not downloaded
+             (the test plugin brings it to the CLI) -->
+        <dependency>
+            <groupId>org.citrusframework</groupId>
+            <artifactId>citrus-catalog-schema</artifactId>
+            <version>${citrus-version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.modelcontextprotocol.sdk</groupId>
             <artifactId>mcp-core</artifactId>
@@ -237,6 +285,10 @@
             <version>${mcp-java-sdk-version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
         <!-- the YAML DSL validator (source validation for the AI authoring tools) and the MCP SDK schema validation
              in the tests need networknt 2.0.1 (Dialects); wiremock transitively pulls 1.5.x -->
         <dependency>
@@ -248,6 +300,22 @@
 
     <build>
         <plugins>
+            <!-- the tests jar has only the helpers the tests of the plugins use too -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>org/apache/camel/dsl/jbang/core/common/CommandLineTestHelper*</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
@@ -259,6 +327,11 @@
                             <goal>prepare-jbang-doc</goal>
                         </goals>
                         <phase>generate-resources</phase>
+                        <configuration>
+                            <!-- where the Camel CLI configuration is, also for a camel-package-maven-plugin of a
+                                 snapshot built before camel-jbang-export was renamed to camel-jbang-run -->
+                            <configurationDir>${project.basedir}/../camel-jbang-run/src/main/java/org/apache/camel/dsl/jbang/run/common</configurationDir>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>prepare-jbang-commands</id>
@@ -474,7 +547,10 @@
                                             }
                                             files.findAll { it.directory }.each { it.deleteDir() }
                                             catalog.findAll { it.bundled }.each { ex ->
-                                                ex.files.each { f ->
+                                                // the files it runs with, and its Citrus test (test/<name>.citrus.it.yaml), which the catalog does not list
+                                                def leaf = ex.name.substring(ex.name.lastIndexOf('/') + 1)
+                                                def fetched = ex.files + (ex.hasCitrusTests ? ['test/' + leaf + '.citrus.it.yaml'] : [])
+                                                fetched.each { f ->
                                                     def target = new File(dest, ex.name + '/' + f)
                                                     target.parentFile.mkdirs()
                                                     try {

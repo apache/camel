@@ -19,13 +19,14 @@ package org.apache.camel.component.cxf.converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.non_wrapper.Person;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -35,14 +36,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PayLoadConvertToPOJOTest extends CamelSpringTestSupport {
 
+    private static AvailablePortFinder.Port PORT1;
+
+    private static void allocatePayLoadConvertToPOJOTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("PayLoadConvertToPOJOTest.port1", PORT1.toString());
+    }
+
+    @AfterAll
+    static void releasePayLoadConvertToPOJOTestPorts() {
+        System.clearProperty("PayLoadConvertToPOJOTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
     @BeforeAll
     public static void setUpSystemProperty() {
-        // just force the CXFTestSupport to load before running the test
-        getPort1();
+        allocatePayLoadConvertToPOJOTestPorts();
     }
 
     public static int getPort1() {
-        return CXFTestSupport.getPort1();
+        return PORT1.getPort();
     }
 
     @Override

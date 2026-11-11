@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Kinesis2Endpoint target = (Kinesis2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonkinesisasyncclient":
@@ -59,6 +60,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "iteratorType": target.getConfiguration().setIteratorType(property(camelContext, software.amazon.awssdk.services.kinesis.model.ShardIteratorType.class, value)); return true;
         case "kcldisablecloudwatchmetricsexport":
         case "kclDisableCloudwatchMetricsExport": target.getConfiguration().setKclDisableCloudwatchMetricsExport(property(camelContext, boolean.class, value)); return true;
+        case "kclstopcheckpointonfailure":
+        case "kclStopCheckpointOnFailure": target.getConfiguration().setKclStopCheckpointOnFailure(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresultsperrequest":
@@ -130,7 +133,7 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazonkinesisasyncclient":
@@ -167,6 +170,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "iteratorType": return software.amazon.awssdk.services.kinesis.model.ShardIteratorType.class;
         case "kcldisablecloudwatchmetricsexport":
         case "kclDisableCloudwatchMetricsExport": return boolean.class;
+        case "kclstopcheckpointonfailure":
+        case "kclStopCheckpointOnFailure": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxresultsperrequest":
@@ -234,7 +239,7 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Kinesis2Endpoint target = (Kinesis2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonkinesisasyncclient":
@@ -271,6 +276,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "iteratorType": return target.getConfiguration().getIteratorType();
         case "kcldisablecloudwatchmetricsexport":
         case "kclDisableCloudwatchMetricsExport": return target.getConfiguration().isKclDisableCloudwatchMetricsExport();
+        case "kclstopcheckpointonfailure":
+        case "kclStopCheckpointOnFailure": return target.getConfiguration().isKclStopCheckpointOnFailure();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresultsperrequest":
@@ -337,7 +344,7 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

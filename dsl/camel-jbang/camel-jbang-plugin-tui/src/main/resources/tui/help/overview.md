@@ -1,7 +1,85 @@
 # Overview
 
-The Overview tab shows all running Camel integrations at a glance.
-Select an integration to monitor it in detail on the other tabs.
+What a running integration does and what has happened to it (**About**),
+or all running Camel integrations at a glance (**Integrations**). Select
+an integration to monitor it in detail on the other tabs.
+
+## About and Integrations
+
+The Overview has two views, switched with **v**: **About**, shown when
+one integration runs, and **Integrations**, the table of all running
+integrations below, shown when several run.
+
+## About
+
+What an integration you have not seen before does, and what has
+happened to it, with no AI:
+
+- **The header** — the Camel version, runtime, files, routes and uptime,
+  and its purpose: the comment at the top of a route file (a YAML `#`
+  comment, a Javadoc or `//` comment in Java, an XML comment), else the
+  first paragraph of its README, else the descriptions of its routes,
+  else the overview an AI wrote in its `camel-summary.md`. A timer or a
+  cron of In shows the period or schedule it runs with, from its
+  properties with its profile applied.
+- **In, Routes, Out** — what starts it (timers, HTTP, consumers, the
+  operations of an OpenAPI contract the REST DSL serves), its
+  routes (a route called with `direct:` sits under its caller with `↳`,
+  one handed off with `seda:` or a `wireTap` with `⇢`; for a running
+  integration as its route topology has it, so a queue or topic between
+  its own routes is `↳` for a request-reply, `⇢` for a hand-off, and
+  `on failure` for a dead letter queue, and is no In or Out, unless
+  messages came from outside too: `+5 from outside`) and what it talks to, from its
+  sources. Each line has the exchanges since it started (for an
+  endpoint, the sends to it), and In and Out a sparkline of the last 5
+  minutes with the rate now, or `idle`. Out also has the systems the
+  integration sent to that its sources do not name, as a `toD` or a
+  recipient list computes the endpoint: the URIs one route built for one
+  service are one line (`http://localhost:8080/stock/…`).
+- **Last 5m** — the exchanges and how they ended, the cause that
+  happened most and when (a chaos rule marked 🎲), and the exchanges
+  since it started. An exchange counts once, not once for every route it
+  passes: a route called with `direct:` is part of its caller's
+  exchange, and of one handed off with `seda:` only what went wrong
+  there counts.
+- **Watch** — the errors that happened, the kinds that happened most and
+  when the last one did, routes not started, exchanges in flight. Errors
+  that stopped more than a minute ago are history: the line says there
+  were none in the last minute, with the earlier ones dimmed (Last 5m and
+  What happened still show them). An integration that wrote no status
+  for 15 seconds says since when instead, and what its CPU says: busy
+  when its heap is full and the garbage collector runs all the time,
+  idle when a debugger holds it. Its numbers are of then, and a stop
+  may not reach it; `F10` kills it.
+- **Next** — the keys that lead deeper: **4** the Timeline, **5** the
+  Diagram, **2** the source, **r** the README, **s** the summary.
+- **What happened** — a strip per route over the last 5 minutes (as wide
+  as the screen allows, and up to two rows high on a tall one), coloured
+  as on the Timeline: green completed, yellow recovered by redelivery,
+  orange handled by the error handler, red failed, a red `░` a second a
+  chaos rule had the route down, a `▒` a second a circuit breaker of the
+  route was open. At the right: the exchanges, the worst that happened
+  and when (for a recovery, the failure it recovered from), and
+  `⚡ open 10s` for a circuit breaker.
+
+Keys of About:
+
+- **Up/Down** — Select a line of In, Routes or Out, or click it
+- **Enter** — Open the selected line: a route drilled down on the
+  Diagram, an endpoint a route sends to with its details on the Endpoint
+  tab
+- **+/-** — Zoom What happened between 5, 2 and 1 minutes; zooming in
+  centres on the last trouble, so you see what the other routes did at
+  that moment
+- **Left/Right** — Move a zoomed window back and forward
+- **r** — Read the README of the project
+- **s** — The summary of the project: what an AI wrote about it in
+  `camel-summary.md`, and what its sources say
+- **v** — All integrations
+
+`camel get about` shows the same from the command line. An AI reads it
+with `tui_get_table` on the Overview while About shows, and the selected
+line with `tui_get_state`.
 
 ## Integration List
 
@@ -10,7 +88,7 @@ Each row represents one running Camel integration:
 - **PID** — Process ID of the JVM running this integration
 - **NAME** — Name of the integration (from the route file or application configuration). Example: `camel-demo`, `my-app`
 - **VERSION** — Camel version the integration is running on (e.g., `4.21.0`)
-- **STATUS** — Current lifecycle state: `Running` (processing messages), `Started` (ready), or `Stopped`
+- **STATUS** — Current lifecycle state: `Running` (processing messages), `Started` (ready), or `Stopped`; `No status` when it wrote no status for 15 seconds while its process runs (its MSG/S is then `-`)
 - **AGE** — How long the integration has been running (e.g., `2m30s`, `1h15m`)
 - **MSG/S** or **MSG/M** — Messages processed per second or per minute (current throughput). The rate unit can be configured in settings. This is the overall rate across all routes
 - **TOTAL** — Total number of exchanges (messages) processed since the integration started

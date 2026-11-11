@@ -26,6 +26,7 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -126,6 +127,10 @@ public class GridFsProducer extends DefaultProducer {
                 count = endpoint.getFilesCollection().countDocuments(eq(GRIDFS_FILE_KEY_FILENAME, filename));
             }
             exchange.getIn().setBody(count, Long.class);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported operation: " + operation + ". The supported operations are: create, remove, findOne,"
+                                               + " listAll and count");
         }
     }
 
@@ -148,8 +153,23 @@ public class GridFsProducer extends DefaultProducer {
             }
             while (cursor.hasNext() && current.length() < 4000) {
                 GridFSFile file = cursor.next();
-                current.append(file.getFilename()).append("\t").append(file.getId()).append("\n");
+                current.append(file.getFilename()).append("\t").append(idOf(file)).append("\n");
             }
+        }
+
+        /**
+         * The id of the file as text: the hex string of an ObjectId (the id GridFS gives a file), the text of a String
+         * id, and the BSON value of another custom id.
+         */
+        private static String idOf(GridFSFile file) {
+            BsonValue id = file.getId();
+            if (id.isObjectId()) {
+                return id.asObjectId().getValue().toHexString();
+            }
+            if (id.isString()) {
+                return id.asString().getValue();
+            }
+            return String.valueOf(id);
         }
 
         @Override

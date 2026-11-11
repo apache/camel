@@ -52,7 +52,8 @@ public interface RocketmqComponentBuilderFactory {
     
         
         /**
-         * Access channel of RocketMQ cluster. LOCAL or CLOUD, LOCAL by default.
+         * Access channel of RocketMQ cluster. LOCAL or CLOUD, [LOCAL] by
+         * default.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -177,7 +178,7 @@ public interface RocketmqComponentBuilderFactory {
     
         
         /**
-         * Message Selector Type, TAG or SQL TAG by default.
+         * Message Selector Type, TAG or SQL [TAG] by default.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -212,8 +213,8 @@ public interface RocketmqComponentBuilderFactory {
     
         
         /**
-         * Subscribe tags of consumer. Multiple tags could be split by , such as
-         * TagATagB.
+         * Subscribe tags of consumer. Multiple tags could be split by ||, such
+         * as TagA||TagB.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -300,11 +301,15 @@ public interface RocketmqComponentBuilderFactory {
     
         
         /**
-         * Whether waiting for send result before routing to next endpoint.
+         * Whether waiting for send result before routing to next endpoint. When
+         * true, a failed send fails the exchange. When false, an InOnly
+         * exchange continues as soon as the message is handed to the RocketMQ
+         * client, and a failed send is only logged. An InOut exchange always
+         * waits for its reply.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: producer
          * 
          * @param waitForSendResult the value to set

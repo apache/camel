@@ -17,7 +17,9 @@
 package org.apache.camel.component.google.pubsub.consumer;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import com.google.cloud.pubsub.v1.stub.SubscriberStub;
@@ -26,8 +28,12 @@ import com.google.pubsub.v1.ModifyAckDeadlineRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AcknowledgeSync implements GooglePubsubAcknowledge {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AcknowledgeSync.class);
 
     //Supplier cannot be used because of thrown exception (Callback used instead)
     private final Callable<SubscriberStub> subscriberStubSupplier;
@@ -40,8 +46,16 @@ public class AcknowledgeSync implements GooglePubsubAcknowledge {
 
     @Override
     public void ack(Exchange exchange) {
+        List<String> ackIds = getAckIdList(exchange);
+        if (ackIds.isEmpty()) {
+            // the API requires at least one ack id; this may run in an on completion callback, so do not throw
+            LOG.warn("No {} header on exchange {} nor on its grouped exchanges: no message is acknowledged,"
+                     + " so Pub/Sub delivers the messages again after their ack deadline",
+                    GooglePubsubConstants.ACK_ID, exchange.getExchangeId());
+            return;
+        }
         AcknowledgeRequest ackRequest = AcknowledgeRequest.newBuilder()
-                .addAllAckIds(getAckIdList(exchange))
+                .addAllAckIds(ackIds)
                 .setSubscription(subscriptionName).build();
         try (SubscriberStub subscriber = subscriberStubSupplier.call()) {
             subscriber.acknowledgeCallable().call(ackRequest);
@@ -54,8 +68,15 @@ public class AcknowledgeSync implements GooglePubsubAcknowledge {
     public void nack(Exchange exchange) {
         // There is no explicit nack on the subscriber client. Using modifyAckDeadline with 0 seconds
         // is the recommended way to nack a message. https://github.com/googleapis/python-pubsub/pull/123
+        List<String> ackIds = getAckIdList(exchange);
+        if (ackIds.isEmpty()) {
+            LOG.warn("No {} header on exchange {} nor on its grouped exchanges: no message is negatively acknowledged,"
+                     + " so Pub/Sub delivers the messages again after their ack deadline",
+                    GooglePubsubConstants.ACK_ID, exchange.getExchangeId());
+            return;
+        }
         ModifyAckDeadlineRequest nackRequest = ModifyAckDeadlineRequest.newBuilder()
-                .addAllAckIds(getAckIdList(exchange))
+                .addAllAckIds(ackIds)
                 .setSubscription(subscriptionName)
                 .setAckDeadlineSeconds(0).build();
 
@@ -67,24 +88,27 @@ public class AcknowledgeSync implements GooglePubsubAcknowledge {
     }
 
     private List<String> getAckIdList(Exchange exchange) {
-        List<String> ackList = new ArrayList<>();
+        // an aggregated exchange (e.g. from GroupedExchangeAggregationStrategy) carries the grouped exchanges as its
+        // body: each one holds the ack id of its own message, and the aggregated exchange may be one of them
+        Set<String> ackIds = new LinkedHashSet<>();
 
-        if (exchange.getIn().getBody() instanceof List) {
-            for (Object body : exchange.getIn().getBody(List.class)) {
-                if (body instanceof Exchange) {
-                    String ackId = exchange.getIn().getHeader(GooglePubsubConstants.ACK_ID, String.class);
-                    if (null != ackId) {
-                        ackList.add(ackId);
-                    }
+        if (exchange.getIn().getBody() instanceof List<?> grouped) {
+            for (Object body : grouped) {
+                if (body instanceof Exchange groupedExchange) {
+                    addAckId(ackIds, groupedExchange);
                 }
             }
         }
 
+        addAckId(ackIds, exchange);
+
+        return new ArrayList<>(ackIds);
+    }
+
+    private static void addAckId(Set<String> ackIds, Exchange exchange) {
         String ackId = exchange.getIn().getHeader(GooglePubsubConstants.ACK_ID, String.class);
         if (null != ackId) {
-            ackList.add(ackId);
+            ackIds.add(ackId);
         }
-
-        return ackList;
     }
 }

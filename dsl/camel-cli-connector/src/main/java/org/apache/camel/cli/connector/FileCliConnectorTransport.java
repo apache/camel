@@ -18,6 +18,8 @@ package org.apache.camel.cli.connector;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -62,6 +64,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private CliSnapshotProducer snapshots;
     private Runnable shutdown;
     private ScheduledExecutorService executor;
+    private volatile Thread pollThread;
     private ScheduledFuture<?> scheduledFuture;
     private int delay = 1000;
     private long counter;
@@ -69,6 +72,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
 
     // an action file this young that cannot be read may still be written: the Camel CLI before 4.24 writes it in place
     private static final long UNREADABLE_GRACE_MS = 2000;
+    // how long a stop waits for the poll in flight before it removes the files
+    private static final long STOP_POLL_TIMEOUT_MS = 5000;
 
     private record PendingAction(File output, boolean replyAlways, CompletableFuture<CliActionOutcome> outcome) {
     }
@@ -85,7 +90,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private File errorFile;
     private File receiveFile;
     private long receiveFilePos; // keep track of receive offset
-    private File activityFile;
+    private File timelineFile;
 
     @Override
     public void configure(
@@ -108,6 +113,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             String threadName = ThreadHelper.resolveThreadName(null, "LocalCliConnector");
             Thread thread = new Thread(r, threadName);
             thread.setDaemon(true);
+            pollThread = thread;
             return thread;
         });
 
@@ -126,8 +132,9 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             errorFile = createLockFile(lockFile.getName() + "-error.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             receiveFile = createLockFile(lockFile.getName() + "-receive.json");
-            activityFile = createLockFile(lockFile.getName() + "-activity.json");
-            scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
+            timelineFile = createLockFile(lockFile.getName() + "-timeline.json");
+            scheduledFuture = executor.scheduleWithFixedDelay(() -> ConnectorTasks.safely(this::task), 0, delay,
+                    TimeUnit.MILLISECONDS);
             LOG.info("Camel CLI connector enabled");
         } else {
             LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel CLI connector.", getPid());
@@ -149,7 +156,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         boolean done = scheduledFuture == null || scheduledFuture.isDone();
         if (done) {
             this.delay = delay;
-            scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
+            scheduledFuture = executor.scheduleWithFixedDelay(() -> ConnectorTasks.safely(this::task), 0, delay,
+                    TimeUnit.MILLISECONDS);
         }
     }
 
@@ -318,7 +326,11 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             // even during termination then collect status as we want to see status changes during stopping
             JsonObject root = snapshots.status();
             LOG.trace("Updating status file: {}", statusFile);
-            IOHelper.writeText(root.toJson(), statusFile);
+            // written aside and moved in place: a reader must never find half a status
+            File temporary = new File(statusFile.getPath() + ".tmp");
+            IOHelper.writeText(root.toJson(), temporary);
+            Files.move(temporary.toPath(), statusFile.toPath(), StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
             // ignore
             LOG.trace("Error updating status file: {} due to: {}. This exception is ignored.",
@@ -416,16 +428,16 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
                     receiveFile, e.getMessage(), e);
         }
         try {
-            JsonObject json = snapshots.activity();
+            JsonObject json = snapshots.timeline();
             if (json != null) {
-                LOG.trace("Updating activity file: {}", activityFile);
+                LOG.trace("Updating timeline file: {}", timelineFile);
                 String data = json.toJson() + System.lineSeparator();
-                IOHelper.writeText(data, activityFile);
+                IOHelper.writeText(data, timelineFile);
             }
         } catch (Exception e) {
             // ignore
-            LOG.trace("Error updating activity file: {} due to: {}. This exception is ignored.",
-                    activityFile, e.getMessage(), e);
+            LOG.trace("Error updating timeline file: {} due to: {}. This exception is ignored.",
+                    timelineFile, e.getMessage(), e);
         }
     }
 
@@ -436,6 +448,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         if (scheduledFuture != null) {
             scheduledFuture.cancel(false);
         }
+        awaitPoll();
         synchronized (this) {
             pending.forEach((request, action) -> {
                 action.outcome().cancel(true);
@@ -449,6 +462,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         }
         if (statusFile != null) {
             FileUtil.deleteFile(statusFile);
+            FileUtil.deleteFile(new File(statusFile.getPath() + ".tmp"));
         }
         if (actionFile != null) {
             FileUtil.deleteFile(actionFile);
@@ -471,12 +485,35 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         if (receiveFile != null) {
             FileUtil.deleteFile(receiveFile);
         }
-        if (activityFile != null) {
-            FileUtil.deleteFile(activityFile);
+        if (timelineFile != null) {
+            FileUtil.deleteFile(timelineFile);
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);
             executor = null;
+        }
+    }
+
+    /**
+     * Waits a little for the poll in flight: a status written after the files are removed would stay behind, and the
+     * Camel CLI would list this process as a running integration after its Camel has stopped (CAMEL-26396). Not when
+     * the poll itself stops the transport, which would wait for itself.
+     */
+    private void awaitPoll() {
+        if (executor == null) {
+            return;
+        }
+        // the poll is cancelled, so the thread ends once the poll in flight is done
+        executor.shutdown();
+        if (Thread.currentThread() == pollThread) {
+            return;
+        }
+        try {
+            if (!executor.awaitTermination(STOP_POLL_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
+                LOG.debug("The poll of the Camel CLI connector has not finished within {} millis", STOP_POLL_TIMEOUT_MS);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 

@@ -170,11 +170,13 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of records that will be fetched in each poll.
+         * Maximum number of records fetched from each shard in each poll: the
+         * Limit of the GetRecords request, from 1 to 10000. Not used by the KCL
+         * consumer (useKclConsumers).
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 1
+         * Default: 1000
          * Group: consumer
          * 
          * @param maxResultsPerRequest the value to set
@@ -185,11 +187,13 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of records that will be fetched in each poll.
+         * Maximum number of records fetched from each shard in each poll: the
+         * Limit of the GetRecords request, from 1 to 10000. Not used by the KCL
+         * consumer (useKclConsumers).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 1
+         * Default: 1000
          * Group: consumer
          * 
          * @param maxResultsPerRequest the value to set
@@ -1165,6 +1169,50 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default AdvancedKinesis2EndpointConsumerBuilder exchangePattern(String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * If we want to use a KCL Consumer and keep the checkpoint of a shard
+         * before the first record whose exchange fails, so the next holder of
+         * the lease of the shard (the route started again, or another worker)
+         * consumes the records from that one on again. The consumer goes on
+         * routing the shard, so these records can be routed twice and out of
+         * order. By default a failed record is reported to the exception
+         * handler and checkpointed with its batch. See the KCL consumer section
+         * of the docs.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param kclStopCheckpointOnFailure the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder kclStopCheckpointOnFailure(boolean kclStopCheckpointOnFailure) {
+            doSetProperty("kclStopCheckpointOnFailure", kclStopCheckpointOnFailure);
+            return this;
+        }
+        /**
+         * If we want to use a KCL Consumer and keep the checkpoint of a shard
+         * before the first record whose exchange fails, so the next holder of
+         * the lease of the shard (the route started again, or another worker)
+         * consumes the records from that one on again. The consumer goes on
+         * routing the shard, so these records can be routed twice and out of
+         * order. By default a failed record is reported to the exception
+         * handler and checkpointed with its batch. See the KCL consumer section
+         * of the docs.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param kclStopCheckpointOnFailure the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder kclStopCheckpointOnFailure(String kclStopCheckpointOnFailure) {
+            doSetProperty("kclStopCheckpointOnFailure", kclStopCheckpointOnFailure);
             return this;
         }
         /**
@@ -2817,7 +2865,7 @@ public interface Kinesis2EndpointBuilderFactory {
 
         /**
          * The sequence number of the record, as defined in
-         * http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#API_PutRecord_ResponseSyntaxResponse Syntax.
+         * http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#API_PutRecord_ResponseSyntax[Response Syntax].
          * 
          * The option is a: {@code String} type.
          * 

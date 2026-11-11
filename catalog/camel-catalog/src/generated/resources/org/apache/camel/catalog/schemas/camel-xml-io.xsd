@@ -5096,7 +5096,7 @@ Disables redelivery (same as setting maximum redeliveries to 0). Default value: 
             <xs:documentation xml:lang="en">
 <![CDATA[
 Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a
-redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10 use 30s).
+redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10+ use 30s).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5923,7 +5923,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:documentation xml:lang="en">
 <![CDATA[
 Name of the Kamelet (templateId/routeId) to call. Options for the kamelet can be specified using uri syntax, eg
-mynamecount=4&type=gold.
+myname?count=4&type=gold.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6608,8 +6608,7 @@ To unmarshal to a List of Map or a List of Pojo. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple
-classes can be separated by comma.
+To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6627,8 +6626,7 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated
-by comma.
+Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6637,8 +6635,7 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be
-separated by comma.
+Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6704,7 +6701,7 @@ When not disabled, the SchemaResolver will be looked up into the registry. Defau
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes
+Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12+ validates classes
 resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.
 ]]>
             </xs:documentation>
@@ -6783,7 +6780,7 @@ The line separators to use. By default \r\n is used.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Instead of emitting and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding
+Instead of emitting + and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding
 seamlessly handles both modes. Default value: false
 ]]>
             </xs:documentation>
@@ -8054,8 +8051,7 @@ Jackson. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple
-classes can be separated by comma.
+To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8073,11 +8069,11 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature,
-JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be
-separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
-SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
+Set of features to enable on the Jackson ObjectMapper. The features should be a name that matches a enum from
+SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature,
+StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma.
+When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to
+tell apart features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8086,11 +8082,11 @@ SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name
-that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature,
-JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be
-separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
-SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
+Set of features to disable on the Jackson ObjectMapper. The features should be a name that matches a enum from
+SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature,
+StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma.
+When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to
+tell apart features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8438,8 +8434,7 @@ To unmarshal to a List of Map or a List of Pojo. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple
-classes can be separated by comma.
+To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8457,9 +8452,9 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated
-by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
-SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
+Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma. When using Jackson
+3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart
+features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8468,9 +8463,9 @@ SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be
-separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
-SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
+Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma. When using Jackson
+3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart
+features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8941,7 +8936,8 @@ CHACHA7539 with ChaCha20-Poly1305. Default value: AES
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The length (in bits) of the symmetric key. Default value: 128
+The length (in bits) of the symmetric key. SEED and SM4 only accept 128; GOST3412_2015 and CHACHA7539 only accept 256.
+Default value: 256
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9087,8 +9083,7 @@ To unmarshal to a List of Map or a List of Pojo. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple
-classes can be separated by comma.
+To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9106,8 +9101,7 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated
-by comma.
+Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9116,8 +9110,7 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be
-separated by comma.
+Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9763,7 +9756,7 @@ A String used as passPhrase to encrypt/decrypt content.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-A byte used as passPhrase to encrypt/decrypt content.
+A byte[] used as passPhrase to encrypt/decrypt content.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11324,7 +11317,7 @@ Name of header to remove.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with ), and regular
+Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with *), and regular
 expression (all case-insensitive).
 ]]>
             </xs:documentation>
@@ -11350,7 +11343,7 @@ Name or pattern of headers to not remove. You can use comma to separate multiple
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name or pattern of properties to remove. Supports exact match, wildcard (ending with ), and regular expression (all
+Name or pattern of properties to remove. Supports exact match, wildcard (ending with *), and regular expression (all
 case-insensitive).
 ]]>
             </xs:documentation>
@@ -14442,7 +14435,10 @@ camel-servlet where the deployed web application is deployed using a context-pat
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a leading context-path the REST API will be using.
+The path, such as /api-doc, where the REST DSL serves the API documentation of the REST services, as an OpenAPI
+document. The API documentation is only served when this option is set. This requires camel-openapi-java on the
+classpath. The document is JSON by default, or YAML when the request path ends with .yaml. The path is relative to
+contextPath, when that option is set.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -14815,6 +14811,17 @@ unmatched request handler (camel). Default value: platform
 <![CDATA[
 Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple
 patterns can be specified separated by comma. Default value: classpath:camel-mock/**
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="externalReferences" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows references to
+the classpath and the file system only, and none allows only references inside the document. A reference the option does
+not allow fails the start. Default value: all
 ]]>
             </xs:documentation>
           </xs:annotation>

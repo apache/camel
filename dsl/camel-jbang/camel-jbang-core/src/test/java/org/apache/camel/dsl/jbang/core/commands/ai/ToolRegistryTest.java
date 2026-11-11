@@ -312,4 +312,94 @@ class ToolRegistryTest {
         assertEquals(3, step.get("bodySize"));
         assertNull(step.get("message"), "no bodies, headers or properties in the summary");
     }
+
+    @Test
+    void theChaosToolsHaveTheMarksOfTheMcpTools() {
+        // the same marks as camel_runtime_chaos_* (design/chaos.adoc, "Control")
+        for (String name : List.of("chaos_list", "chaos_report", "chaos_check", "chaos_suggest")) {
+            ToolDescriptor t = ToolRegistry.findTool(name);
+            assertTrue(t.isReadOnly(), name);
+            assertFalse(t.isDestructive(), name);
+        }
+        for (String name : List.of("chaos_add", "chaos_change", "chaos_load", "chaos_experiment")) {
+            ToolDescriptor t = ToolRegistry.findTool(name);
+            assertFalse(t.isReadOnly(), name);
+            assertTrue(t.isDestructive(), name);
+        }
+        for (String name : List.of("chaos_remove", "chaos_clear", "chaos_explore_start", "chaos_explore_finish")) {
+            ToolDescriptor t = ToolRegistry.findTool(name);
+            assertFalse(t.isReadOnly(), name);
+            assertFalse(t.isDestructive(), name);
+        }
+    }
+
+    @Test
+    void theChaosToolsCheckTheirArgumentsBeforeTheyReachAnIntegration() {
+        // nothing is selected: an argument that is missing is said first
+        assertEquals("rule is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_add", new ToolContext(), Map.of())).getMessage());
+        assertEquals("id is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_change", new ToolContext(), Map.of("rule", "endpoint=* drop")))
+                .getMessage());
+        assertEquals("rule is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_change", new ToolContext(), Map.of("id", "r1", "rule", " ")))
+                .getMessage());
+        assertEquals("id is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_remove", new ToolContext(), Map.of())).getMessage());
+        assertEquals("scenario is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_load", new ToolContext(), Map.of("scenarioName", "outage")))
+                .getMessage());
+        assertEquals("rule is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_experiment", new ToolContext(), Map.of("feed", "orders")))
+                .getMessage());
+        assertEquals("The wait must be at most 10m, was: 1h", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_experiment", new ToolContext(),
+                        Map.of("rule", "route=orders error expect=orders:failed<=0", "wait", "1h")))
+                .getMessage());
+        assertTrue(assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_experiment", new ToolContext(),
+                        Map.of("rule", "route=orders error expect=orders:failed<=0", "interval", "500..100")))
+                .getMessage().contains("from the shortest to the longest"));
+    }
+
+    @Test
+    void theChaosListAndReportReadTheChaosConsoleOfTheStatus() throws Exception {
+        JsonObject[] status = new JsonObject[1];
+        ToolContext ctx = new ToolContext() {
+            @Override
+            public JsonObject readFullStatus() {
+                return status[0];
+            }
+        };
+        ctx.selectProcess(4711);
+
+        status[0] = (JsonObject) Jsoner.deserialize("{\"context\":{\"name\":\"shop\"}}");
+        assertTrue(assertThrows(ToolExecutionException.class, () -> ToolRegistry.chaosSection(ctx, "rules"))
+                .getMessage().startsWith("camel-chaos is not on the classpath of the integration with pid 4711"));
+
+        status[0] = (JsonObject) Jsoner.deserialize("{\"chaos\":{\"enabled\":false,\"reason\":\"Chaos is off\"}}");
+        assertEquals("{\"enabled\":false,\"reason\":\"Chaos is off\"}", ToolRegistry.chaosSection(ctx, "report").toJson());
+
+        status[0] = (JsonObject) Jsoner.deserialize(
+                "{\"chaos\":{\"enabled\":true,\"rules\":[{\"id\":\"r1\"}],\"report\":{\"verdict\":\"PASS\"}}}");
+        assertEquals("{\"enabled\":true,\"rules\":[{\"id\":\"r1\"}]}", ToolRegistry.chaosSection(ctx, "rules").toJson());
+        assertEquals("{\"enabled\":true,\"report\":{\"verdict\":\"PASS\"}}",
+                ToolRegistry.chaosSection(ctx, "report").toJson());
+
+        status[0] = null;
+        assertTrue(assertThrows(ToolExecutionException.class, () -> ToolRegistry.chaosSection(ctx, "rules"))
+                .getMessage().startsWith("No status from the integration with pid 4711"));
+    }
+
+    @Test
+    void overHttpChaosOnlyListsAndReports() {
+        List<String> http = ToolRegistry.httpTools().stream().map(ToolDescriptor::name).toList();
+        List<String> all = ToolRegistry.allTools().stream().map(ToolDescriptor::name).toList();
+        List<String> left = all.stream().filter(n -> !http.contains(n)).toList();
+        // only the chaos tools that change the rules, the check (the integration parses the rule) and what to try (an
+        // action of the CLI connector) stay off HTTP; the other tools keep what they offered
+        assertEquals(List.of("chaos_add", "chaos_check", "chaos_suggest", "chaos_load", "chaos_change", "chaos_remove",
+                "chaos_clear", "chaos_explore_start", "chaos_experiment", "chaos_explore_finish"), left);
+        assertTrue(http.containsAll(List.of("chaos_list", "chaos_report", "stop_route", "execute_sql")));
+    }
 }

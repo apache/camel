@@ -19,7 +19,7 @@ package org.apache.camel.support.cache;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.SendHelper;
 import org.apache.camel.util.StopWatch;
 
 /**
@@ -36,20 +36,12 @@ class EventNotifierCallback implements AsyncCallback {
         this.originalCallback = originalCallback;
         this.exchange = exchange;
         this.endpoint = endpoint;
-        final boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
-        if (sending) {
-            this.watch = new StopWatch();
-        } else {
-            this.watch = null;
-        }
+        this.watch = SendHelper.notifySending(exchange, endpoint);
     }
 
     @Override
     public void done(boolean doneSync) {
-        if (watch != null) {
-            long timeTaken = watch.taken();
-            EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
-        }
+        SendHelper.notifySent(exchange, endpoint, watch);
         originalCallback.done(doneSync);
     }
 }

@@ -149,7 +149,7 @@ public interface KnativeComponentBuilderFactory {
         }
     
         /**
-         * The path ot the environment definition.
+         * The path of the environment definition.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

@@ -1294,6 +1294,7 @@ class ActionsPopup {
         } else {
             runOptionsForm.open(displayName, displayName, false, true);
         }
+        runOptionsForm.setChaosScenarios(RunOptionsForm.chaosScenarios(Path.of(folder)));
     }
 
     private void launchFromFolder() {
@@ -1321,6 +1322,9 @@ class ActionsPopup {
             runOptionsForm.open(displayName, displayName, false, false, lockedRuntime);
         } else {
             runOptionsForm.open(displayName, displayName, false, true);
+        }
+        if (phantom.sourceDir != null) {
+            runOptionsForm.setChaosScenarios(RunOptionsForm.chaosScenarios(Path.of(phantom.sourceDir)));
         }
     }
 
@@ -1356,6 +1360,8 @@ class ActionsPopup {
         String baseName = TuiHelper.stripCategory(example.getStringOrDefault("name", ""));
         String autoName = generateUniqueName(baseName);
         runOptionsForm.open(autoName, baseName, ExampleHelper.isBundled(example));
+        // the example runs in a folder of its own, with its files: --chaos=test/chaos/<name>.chaos
+        runOptionsForm.setChaosScenarios(RunOptionsForm.chaosScenarios(ExampleHelper.getFiles(example)));
     }
 
     private String generateUniqueName(String baseName) {
@@ -1419,7 +1425,7 @@ class ActionsPopup {
             setNotification("Failed: " + name + " (no output)", true);
             return;
         }
-        docViewerPopup.showFailureLog(name, logFile);
+        docViewerPopup.showFailureLog(name, logFile, ctx != null ? ctx.data.get() : List.of());
     }
 
     /**

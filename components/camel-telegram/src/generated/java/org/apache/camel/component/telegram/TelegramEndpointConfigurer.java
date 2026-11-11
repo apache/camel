@@ -2,6 +2,7 @@
 package org.apache.camel.component.telegram;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TelegramEndpoint target = (TelegramEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authorizationtoken":
         case "authorizationToken": target.getConfiguration().setAuthorizationToken(property(camelContext, java.lang.String.class, value)); return true;
         case "backofferrorthreshold":
@@ -87,7 +88,7 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authorizationtoken":
         case "authorizationToken": return java.lang.String.class;
         case "backofferrorthreshold":
@@ -153,7 +154,7 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         TelegramEndpoint target = (TelegramEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authorizationtoken":
         case "authorizationToken": return target.getConfiguration().getAuthorizationToken();
         case "backofferrorthreshold":
@@ -218,7 +219,7 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

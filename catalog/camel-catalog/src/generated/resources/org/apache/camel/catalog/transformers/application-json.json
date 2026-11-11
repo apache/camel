@@ -3,21 +3,25 @@
     "kind": "transformer",
     "name": "application-json",
     "title": "Application Json",
-    "description": "Transforms from JSon to binary (byte array) using Jackson",
+    "description": "Transforms from JSon to binary (byte array) using Jackson 3",
     "deprecated": false,
-    "javaType": "org.apache.camel.component.jackson.transform.JsonDataTypeTransformer",
+    "javaType": "org.apache.camel.component.jackson3.transform.JsonDataTypeTransformer",
     "groupId": "org.apache.camel",
-    "artifactId": "camel-jackson",
+    "artifactId": "camel-jackson3",
     "version": "4.24.0-SNAPSHOT"
   },
   "bodyTypes": {
     "transformerIn": {
       "carriers": [
         "text",
+        "bytes",
+        "stream",
+        "map",
+        "list",
         "pojo",
         "null"
       ],
-      "description": "A Json object or array as text, a JsonNode or a POJO, of the class of the X-Content-Class exchange property when set: other text, bytes, a stream, a Map or a List fail, and a null body becomes null"
+      "description": "A Json object or array as text, bytes or a stream, a Map, a List, a JsonNode or a POJO; other text, also a Json number, boolean, null or quoted string, becomes a Json string; bytes and a stream are read as text with the exchange charset, so a payload that is not text must be encoded first, such as in Base64, or given a content class; with the X-Content-Class exchange property only a Json object or array as text or a body of that class; a null body becomes null"
     },
     "transformerOut": {
       "carriers": [

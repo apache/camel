@@ -94,6 +94,10 @@ YAML::
 
 If the node does not exist yet, the consumer waits for it to be created before reading it.
 
+The consumer reads the data of the node (or its list of children with `listChildren=true`) once, and does not
+follow later changes. To receive each change as well, set `repeat=true`, for example
+`zookeeper://localhost:39913/somepath/somenode?repeat=true`.
+
 === Reading from a _znode_
 
 When data is read due to a `WatchedEvent` received from the ZooKeeper
@@ -150,7 +154,8 @@ not to `/somepath/somenode` but to the path from the header
 `/somepath/someothernode`.
 
 WARNING: the `testPayload` must be convertible
-to `byte[]` as the data stored in ZooKeeper is byte-based.
+to `byte[]` as the data stored in ZooKeeper is byte-based. A body that cannot be converted, such as a `Map`, a POJO
+or a number, fails the exchange with an `InvalidPayloadException`. A null body stores no data in the _znode_.
 
 ._Java-only: ProducerTemplate with dynamic znode header_
 [source,java]
@@ -197,8 +202,14 @@ YAML::
 ----
 ====
 
+The producer waits for ZooKeeper to confirm the write, for an InOnly exchange too, and a failed write fails the
+exchange: for example a _znode_ that does not exist without the `create` option, or a `CamelZooKeeperVersion` header
+that is not the current version of the _znode_. An InOnly exchange keeps its body; an InOut exchange gets the result
+of the write as its body.
+
 It is also possible to *delete* a node using the
-header `CamelZookeeperOperation` by setting it to `DELETE`:
+header `CamelZookeeperOperation` by setting it to `DELETE`. A delete of a _znode_ that does not exist fails the
+exchange with a `NoNodeException`; the `create` option does not apply to a delete:
 
 [tabs]
 ====
@@ -301,5 +312,5 @@ ZooKeeper is byte-based.
 [source,java]
 ----
 Object testPayload = ...
-template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPayload, "CamelZooKeeperCreateMode", "PERSISTENT");
+template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPayload, "CamelZookeeperCreateMode", "PERSISTENT");
 ----

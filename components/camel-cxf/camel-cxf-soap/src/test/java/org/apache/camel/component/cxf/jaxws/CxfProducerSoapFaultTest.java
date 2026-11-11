@@ -25,11 +25,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hello_world_soap_http.BadRecordLitFault;
 import org.apache.hello_world_soap_http.GreeterImpl;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,16 +41,30 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfProducerSoapFaultTest {
-    private static final String JAXWS_SERVER_ADDRESS
-            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerSoapFaultTest/test";
-    private static final String JAXWS_ENDPOINT_URI
-            = "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
+    private static AvailablePortFinder.Port PORT;
+
+    private static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        JAXWS_SERVER_ADDRESS = "http://localhost:" + PORT.getPort() + "/CxfProducerSoapFaultTest/test";
+        JAXWS_ENDPOINT_URI = "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
+    private static String JAXWS_SERVER_ADDRESS;
+    private static String JAXWS_ENDPOINT_URI;
 
     protected CamelContext camelContext;
     protected ProducerTemplate template;
 
     @BeforeAll
     public static void startService() throws Exception {
+        allocatePorts();
         GreeterImpl greeterImpl = new GreeterImpl();
         Endpoint.publish(JAXWS_SERVER_ADDRESS, greeterImpl);
     }

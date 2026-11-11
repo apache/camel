@@ -139,6 +139,10 @@ If `batch` is set to `true`, then the interpretation of the inbound
 message body changes slightly – instead of an iterator of parameters,
 the component expects an iterator that contains the parameter iterators;
 the size of the outer iterator determines the batch size.
+A single `Map` body (named parameters) is one batch item.
+The `CamelSqlUpdateCount` header holds the sum of the update counts of the batch items.
+A JDBC driver may not know the update count of an item and return `Statement.SUCCESS_NO_INFO` instead;
+such an item is not counted, so the header can be lower than the number of rows updated, or `0`.
 
 You can use the option `useMessageBodyForSql` that
 allows to use the message body as the SQL statement, and then the SQL
@@ -715,7 +719,7 @@ your needs:
 |`tableExistsString` |`SELECT 1 FROM CAMEL_MESSAGEPROCESSED WHERE 1 = 0` |This query is used to figure out whether the table already exists or
 not. It must throw an exception to indicate the table doesn't exist.
 
-|`createString` |`CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255),messageId VARCHAR(100), createdAt TIMESTAMP)` |The statement which is used to create the table.
+|`createString` |`CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255), messageId VARCHAR(100), createdAt TIMESTAMP, PRIMARY KEY (processorName, messageId))` |The statement which is used to create the table.
 
 |`queryString` |`SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?` |The query which is used to figure out whether the message already exists
 in the repository (the result is not equals to '0'). It takes two
@@ -731,6 +735,9 @@ repository.
 |`deleteString` |`DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?` |The statement which is used to delete the entry from the database.
 It takes two parameters. This first one is the processor name (`String`) and
 the second one is the message id (`String`).
+
+|`clearString` |`DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?` |The statement which is used to delete all the entries of the
+processor name from the database. It takes one parameter, the processor name (`String`).
 |===
 
 The option `tableName` can be used to use the default SQL queries but with a different table name.
@@ -743,9 +750,9 @@ One of the limitations of `org.apache.camel.processor.idempotent.jdbc.JdbcMessag
 
 * lock entry does not exist then the lock is provided using the base implementation of `JdbcMessageIdRepository`.
 
-* lock already exists and the `createdAt` < `System.currentTimeMillis() - lockMaxAgeMillis`. In this case, it is assumed that an active instance has the lock and the lock is not provided to the new instance requesting the lock
+* lock already exists and the `createdAt` >= `System.currentTimeMillis() - lockMaxAgeMillis`. In this case, it is assumed that an active instance has the lock and the lock is not provided to the new instance requesting the lock
 
-* lock already exists and the `createdAt` > = `System.currentTimeMillis() - lockMaxAgeMillis`. In this case, it is assumed that there is no active instance which has the lock and the lock is provided to the requesting instance. The reason behind is that if the original instance which had the lock, if it was still running, it would have updated the Timestamp on createdAt using its keepAlive mechanism
+* lock already exists and the `createdAt` < `System.currentTimeMillis() - lockMaxAgeMillis`. In this case, it is assumed that there is no active instance which has the lock and the lock is provided to the requesting instance. The reason behind is that if the original instance which had the lock, if it was still running, it would have updated the Timestamp on createdAt using its keepAlive mechanism
 
 This repository has two additional configuration parameters
 
@@ -767,6 +774,15 @@ checked first before passing through to the original implementation.
 
 As with all cache implementations, there are considerations that should
 be made with regard to stale data and your specific usage.
+
+In a transaction, a key is added to the cache only once the transaction
+that inserted its row commits, so a rolled-back add is never cached. A
+second add of the same key on the same node, made while the first is still
+uncommitted, therefore does not hit the cache: it reaches the primary key,
+gets a duplicate key error, and its transaction is marked rollback-only, so
+that exchange is rolled back once before its redelivery is filtered as a
+duplicate. The `JdbcMessageIdRepository`, and several nodes sharing the
+table, behave the same way.
 
 === Using the JDBC based aggregation repository
 
@@ -1020,7 +1036,7 @@ You may use `ClusteredJdbcAggregationRepository` that provides a limited support
 recovery mechanism is dealt separately by members of the cluster,
 i.e., a member may only recover exchanges that it completed itself.
 
-To enable this behavior, property `recoverByInstance` must be set to true, and `instanceId` property must be defined using a unique identifier (a string) for each member of the cluster.
+To enable this behavior, property `recoveryByInstance` must be set to true, and `instanceId` property must be defined using a unique identifier (a string) for each member of the cluster.
 
 Besides, completed table must have a `instance_id VARCHAR(255)` column.
 

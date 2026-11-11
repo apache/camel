@@ -51,6 +51,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 To create a node in a database named `test`, define the body as a string containing the JSON body. Use the operation `CREATE_NODE`.
 The URI endpoint should contain also specify the label and the alias.
+A message without a body fails with an `InvalidPayloadException`.
 
 .Example:
 
@@ -227,6 +228,10 @@ To retrieve or update nodes with Cypher Query in a database named `test`, set th
 
 The operation is the same as `ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY`, except that it returns a list of retrieved or updated nodes represented as `Map<String, Object>`.
 
+When the first column that the query returns is a node, each `Map` holds the properties of that node.
+Otherwise, such as for `MATCH (u:User) RETURN u.name AS name, u.age AS age` or a `count(*)`, each `Map` holds the columns of one record by name, such as `{name=Ethan, age=41}`.
+The `CamelNeo4jQueryResultListNeo4jNodes` header has the records of the Neo4j driver, with all their columns.
+
 .Example updating a node:
 
 ._Java-only: ProducerTemplate test API with string concatenation_
@@ -302,6 +307,12 @@ Exchange result = fluentTemplate.to("neo4j:test?vectorIndexName=myIndex&label=Te
 To perform a similarity search using vectors in a database named `test`, use the operation `VECTOR_SIMILARITY_SEARCH`.
 The URI endpoint should also specify the label, the alias and the vector index name.
 
+The body is the vector to search for: a `Neo4jEmbedding`, a `float[]`, or a `List` or an array of numbers, such as a `List<Double>`.
+Another body, such as text, or a message without a body, fails with an `InvalidPayloadException`.
+
+The result is a List of `Map<String, Object>`: the properties of each node found, and its similarity score as a `Double` under the `score` key (it replaces a property of the node named `score`).
+The `CamelNeo4jQueryResultListNeo4jNodes` header has the records of the Neo4j driver, with the `node` and `score` columns.
+
 .Example:
 
 ._Java-only: ProducerTemplate test API with `List.of()` vector_
@@ -316,6 +327,9 @@ Exchange result = fluentTemplate.to("neo4j:test?vectorIndexName=myIndex&label=Te
 == Generate Embeddings with Langchain4j-embeddings
 You can generate embeddings with an Embedding Models using the camel Lancghain4j Embeddings components. Camel Neo4j introduces a DataType `neo4j:embeddings` that automates the transformations of the Lancghain4j embeddings to Neo4j vectors.
 
+The `label` option sets the label of the nodes that `CREATE_VECTOR` creates (`Embedding` when it is not set).
+The deprecated `CamelNeo4jLabel` header is not used.
+
 .Example of a camel Route that create embeddings with Camel Langchain4j Embeddings, and ingest them into Neo4j database.
 
 [tabs]
@@ -327,7 +341,6 @@ Java::
 from("direct:in")
     .to("langchain4j-embeddings:test")
     .setHeader("CamelNeo4jOperation").constant(Neo4Operation.CREATE_VECTOR)
-    .setHeader("CamelNeo4jLabel").constant("Test")
     .transformDataType(new DataType("neo4j:embeddings"))
     .to("neo4j:neo4j?vectorIndexName=myIndex&label=Test");
 ----
@@ -347,11 +360,6 @@ YAML::
             expression:
               constant:
                 expression: CREATE_VECTOR
-        - setHeader:
-            name: CamelNeo4jLabel
-            expression:
-              constant:
-                expression: Test
         - transformDataType:
             toType: neo4j:embeddings
         - to:
@@ -368,6 +376,7 @@ You can enhance the Camel LangChain4j chat RAG experience by integrating Neo4j s
 To achieve this, use the `neo4j:embeddings` DataType to generate embeddings from the prompt. These embeddings will then be utilized for the similarity search operation.
 
 Next, use the `neo4j:rag` DataType to convert the retrieved embeddings into a List<String> for RAG. This list can be directly used with the `LangChain4jRagAggregatorStrategy` from the LangChain4j chat component.
+Each element is the `text` property of a node: a value of another type, such as a number, is converted to a String, and a node without the property gives an empty String.
 
 NOTE: The retrieved embeddings must be ingested in Neo4j as LangChain4j embeddings.
 

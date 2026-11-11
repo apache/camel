@@ -81,18 +81,20 @@ public class RunCommandITCase extends JBangTestSupport {
     }
 
     @Test
-    @Tag("container-only")
+    @DisabledOnOs(WINDOWS)
     public void runRoutesFromMultipleFilesUsingWildcardTest() {
+        final String dir1 = mountPoint() + "/tmp-one";
+        final String dir2 = mountPoint() + "/tmp-two";
         try {
-            execute("init one.yaml --directory=/tmp/one");
-            execute("init two.xml --directory=/tmp/two");
-            copyInternallyToDataFolder("/tmp/one/one.yaml");
-            copyInternallyToDataFolder("/tmp/two/two.xml");
+            execute("init one.yaml --directory=" + dir1);
+            execute("init two.xml --directory=" + dir2);
+            copyInternallyToDataFolder(dir1 + "/one.yaml");
+            copyInternallyToDataFolder(dir2 + "/two.xml");
             executeBackground(String.format("run %s/* ", mountPoint()));
             checkLogContains(DEFAULT_MSG);
             checkLogContains(DEFAULT_MSG);
         } finally {
-            execInContainer("rm -rf /tmp/one /tmp/two");
+            execInContainer("rm -rf " + dir1 + " " + dir2);
         }
     }
 
@@ -132,10 +134,10 @@ public class RunCommandITCase extends JBangTestSupport {
     }
 
     @Test
-    @Tag("container-only")
     public void runDownloadedFromGithubTest() {
         execute("init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection");
-        Assertions.assertThat(containerService.listDirectory(DEFAULT_ROUTE_FOLDER))
+        Assertions
+                .assertThat(containerService.listDirectory(containerService.getCommandWorkDir()))
                 .as("default route directory")
                 .contains("Echo.java", "Hello.java", "README.adoc", "application.properties");
         executeBackground("run *");

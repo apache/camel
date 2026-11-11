@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.jackson.transform;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.jackson.SchemaHelper;
 import org.apache.camel.spi.BodyType;
@@ -34,14 +39,20 @@ import org.apache.camel.spi.Transformer;
 
 /**
  * Data type uses Jackson data format to marshal given Exchange payload to a Json (binary byte array representation).
- * Requires Exchange payload as JsonNode representation.
+ * Json text is kept, other text becomes a Json string, and a Map, a List, a JsonNode or a POJO is written as Json.
+ * Bytes and a stream are read as text with the charset of the exchange.
  */
 @DataTypeTransformer(name = "application-json",
                      description = "Transforms from JSon to binary (byte array) using Jackson")
-@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO, Carrier.NULL },
-                                     description = "A Json object or array as text, a JsonNode or a POJO, of the class of"
-                                                   + " the X-Content-Class exchange property when set: other text, bytes, a"
-                                                   + " stream, a Map or a List fail, and a null body becomes null"),
+@BodyTypes(transformerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL },
+                                     description = "A Json object or array as text, bytes or a stream, a Map, a List, a"
+                                                   + " JsonNode or a POJO; other text, also a Json number, boolean, null or"
+                                                   + " quoted string, becomes a Json string; bytes and a stream are read as"
+                                                   + " text with the exchange charset, so a payload that is not text must be"
+                                                   + " encoded first, such as in Base64, or given a content class; with the"
+                                                   + " X-Content-Class exchange property only a Json object or array as text"
+                                                   + " or a body of that class; a null body becomes null"),
            transformerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "json"))
 public class JsonDataTypeTransformer extends Transformer {
 
@@ -49,14 +60,24 @@ public class JsonDataTypeTransformer extends Transformer {
     public void transform(Message message, DataType fromType, DataType toType) {
         try {
             byte[] marshalled;
-            if (message.getBody() instanceof String jsonString && Json.isJson(jsonString)) {
+            Object body = message.getBody();
+            boolean hasContentClass = message.getExchange().getProperty(SchemaHelper.CONTENT_CLASS, String.class) != null;
+            if (body instanceof String jsonString && Json.isJson(jsonString)) {
                 marshalled = jsonString.getBytes(StandardCharsets.UTF_8);
+            } else if (!hasContentClass && (body instanceof Map || body instanceof Collection)) {
+                // a Map or a List has no class to write it as: it becomes a Json object or array
+                marshalled = Json.mapper().writeValueAsBytes(body);
+            } else if (!hasContentClass && isText(body)) {
+                // read as text with the exchange charset: a Json object or array is kept, and any other text, also a
+                // Json number, boolean, null or quoted string, becomes a Json string
+                String text = message.getMandatoryBody(String.class);
+                marshalled = Json.isJson(text) ? text.getBytes(StandardCharsets.UTF_8) : Json.mapper().writeValueAsBytes(text);
             } else {
                 String contentClass = SchemaHelper.resolveContentClass(message.getExchange(), JsonNode.class.getName());
                 Class<?> contentType
                         = message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
 
-                marshalled = Json.mapper().writer().forType(contentType).writeValueAsBytes(message.getBody());
+                marshalled = Json.mapper().writer().forType(contentType).writeValueAsBytes(body);
             }
             message.setBody(marshalled);
 
@@ -66,8 +87,15 @@ public class JsonDataTypeTransformer extends Transformer {
             if (contentSchema != null) {
                 message.setHeader(SchemaHelper.CONTENT_SCHEMA, contentSchema);
             }
-        } catch (JsonProcessingException | ClassNotFoundException e) {
+        } catch (InvalidPayloadException | JsonProcessingException | ClassNotFoundException e) {
             throw new CamelExecutionException("Failed to apply Json output data type on exchange", message.getExchange(), e);
         }
+    }
+
+    /**
+     * Text, bytes or a stream, which hold Json as text.
+     */
+    private static boolean isText(Object body) {
+        return body instanceof String || body instanceof byte[] || body instanceof InputStream || body instanceof Reader;
     }
 }

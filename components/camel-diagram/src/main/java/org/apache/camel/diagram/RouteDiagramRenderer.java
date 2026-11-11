@@ -17,6 +17,7 @@
 package org.apache.camel.diagram;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,43 +67,60 @@ public class RouteDiagramRenderer {
     private final int nodeWidth;
     private final int fontSizeNode;
     private final int fontSizeLabel;
-    private final int nodeTextPadding;
     private final boolean metrics;
 
+    // the steps are cards (card, cardBorder, cardText for the kind, cardDetail for the detail) with an icon in a
+    // circle of the color of the kind of step (from, to, eip, ...); text is the text in the nodes of the topology;
+    // warning, warningBg and warningText are the colors of the body types of a step reached with more than one kind,
+    // and of the problems of a step; badgeText is the mark in the warning circle of a problem
     private static final String DARK_COLORS
             = "bg=#0d1117:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
-              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a";
+              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
+              + ":card=#151b23:cardBorder=#3d444d:cardText=#f0f6fc:cardDetail=#9198a1"
+              + ":warning=#d29922:warningBg=#272115:warningText=#e3b341:badgeText=#1f2328";
     private static final String LIGHT_COLORS
             = "bg=#f6f8fa:text=#f0f6fc:arrow=#59636e:label=#1f2328:from=#238636:to=#1f6feb:eip=#8957e5"
-              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a";
+              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
+              + ":card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e"
+              + ":warning=#d4a72c:warningBg=#fff8c5:warningText=#7d4e00:badgeText=#1f2328";
+    // white cards, readable on any background
     private static final String TRANSPARENT_COLORS
             = "bg=:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
-              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a";
+              + ":choice=#d29922:default=#3d444d:transform=#1b7c83:processor=#bf4b8a"
+              + ":card=#ffffff:cardBorder=#d0d7de:cardText=#1f2328:cardDetail=#59636e"
+              + ":warning=#d4a72c:warningBg=#fff8c5:warningText=#7d4e00:badgeText=#1f2328";
 
     private static final Map<String, String> COLOR_PRESETS = Map.of(
             "dark", DARK_COLORS,
             "light", LIGHT_COLORS,
             "transparent", TRANSPARENT_COLORS);
 
+    /** The size of the icon inside its circle on a card. */
+    private static final int CARD_ICON_GLYPH = 14 * SCALE;
+    private static final float CARD_ICON_STROKE_WIDTH = 1.4f * SCALE;
+    private static final Color CARD_SHADOW = new Color(0, 0, 0, 22);
+    private static final Color CARD_SHADOW_SOFT = new Color(0, 0, 0, 10);
+
     public RouteDiagramRenderer() {
-        this(RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * SCALE,
-             RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * SCALE,
-             new RouteDiagramLayoutEngine().getNodeTextPadding(),
+        this(RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * SCALE, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * SCALE,
              false);
     }
 
     public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, boolean metrics) {
-        this(nodeWidth, fontSizeScaled, new RouteDiagramLayoutEngine(
-                nodeWidth / SCALE, fontSizeScaled / SCALE).getNodeTextPadding(),
-             metrics);
-    }
-
-    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding, boolean metrics) {
         this.nodeWidth = nodeWidth;
         this.fontSizeNode = fontSizeScaled;
         this.fontSizeLabel = fontSizeScaled + SCALE;
-        this.nodeTextPadding = nodeTextPadding;
         this.metrics = metrics;
+    }
+
+    /**
+     * @param      nodeTextPadding not used: the text of a card starts after its icon
+     *                             ({@link RouteDiagramLayoutEngine#CARD_TEXT_INSET})
+     * @deprecated                 use {@link #RouteDiagramRenderer(int, int, boolean)}
+     */
+    @Deprecated(since = "4.24.0")
+    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding, boolean metrics) {
+        this(nodeWidth, fontSizeScaled, metrics);
     }
 
     public static class DiagramColors {
@@ -120,9 +138,22 @@ public class RouteDiagramRenderer {
         private Color nodeTransform;
         private Color nodeProcessor;
         private Color nodeExternal;
+        private Color cardBg;
+        private Color cardBorder;
+        private Color cardText;
+        private Color cardDetail;
+        private Color warning;
+        private Color warningBg;
+        private Color warningText;
+        private Color badgeText;
 
+        /**
+         * The colors of a theme: a preset (dark, light, transparent) or a spec of {@code key=color} pairs separated by
+         * colons, on top of the dark theme.
+         */
         public static DiagramColors parse(String spec) {
-            String resolved = COLOR_PRESETS.getOrDefault(spec, spec);
+            // no spec is the dark theme (the presets are an immutable map, which cannot look up null)
+            String resolved = spec == null ? DARK_COLORS : COLOR_PRESETS.getOrDefault(spec, spec);
             Map<String, String> map = new HashMap<>();
             for (String entry : DARK_COLORS.split(":")) {
                 int eq = entry.indexOf('=');
@@ -151,6 +182,14 @@ public class RouteDiagramRenderer {
             c.nodeTransform = parseColor(map.getOrDefault("transform", "#00838f"));
             c.nodeProcessor = parseColor(map.getOrDefault("processor", "#d84315"));
             c.nodeExternal = parseColor(map.getOrDefault("external", "#0277bd"));
+            c.cardBg = parseColor(map.getOrDefault("card", "#151b23"));
+            c.cardBorder = parseColor(map.getOrDefault("cardBorder", "#3d444d"));
+            c.cardText = parseColor(map.getOrDefault("cardText", "#f0f6fc"));
+            c.cardDetail = parseColor(map.getOrDefault("cardDetail", "#9198a1"));
+            c.warning = parseColor(map.getOrDefault("warning", "#d29922"));
+            c.warningBg = parseColor(map.getOrDefault("warningBg", "#272115"));
+            c.warningText = parseColor(map.getOrDefault("warningText", "#e3b341"));
+            c.badgeText = parseColor(map.getOrDefault("badgeText", "#1f2328"));
             return c;
         }
 
@@ -226,6 +265,38 @@ public class RouteDiagramRenderer {
 
         public Color getNodeExternal() {
             return nodeExternal;
+        }
+
+        public Color getCardBg() {
+            return cardBg;
+        }
+
+        public Color getCardBorder() {
+            return cardBorder;
+        }
+
+        public Color getCardText() {
+            return cardText;
+        }
+
+        public Color getCardDetail() {
+            return cardDetail;
+        }
+
+        public Color getWarning() {
+            return warning;
+        }
+
+        public Color getWarningBg() {
+            return warningBg;
+        }
+
+        public Color getWarningText() {
+            return warningText;
+        }
+
+        public Color getBadgeText() {
+            return badgeText;
         }
     }
 
@@ -390,6 +461,12 @@ public class RouteDiagramRenderer {
             }
         }
 
+        if (lr.bodyTypes) {
+            for (LayoutNode ln : lr.nodes) {
+                drawBodyTypes(g, ln, colors);
+            }
+        }
+
         // find the last highlighted node (for FAIL mode box highlighting)
         LayoutNode lastHighlightedNode = null;
         if (highlightedNodeIds != null && highlightStyle == RouteDiagramHelper.HighlightStyle.FAIL) {
@@ -403,6 +480,76 @@ public class RouteDiagramRenderer {
         for (LayoutNode ln : lr.nodes) {
             drawNode(g, ln, colors, ln == lastHighlightedNode);
         }
+
+        for (RouteDiagramLayoutEngine.Callout c : lr.callouts) {
+            drawProblems(g, c, colors, lr.problemList, c.node == lastHighlightedNode);
+        }
+    }
+
+    /**
+     * The problems of a step ({@link RouteDiagramLayoutEngine#setProblems}): a warning border and a badge on its card,
+     * and their text in a callout beside the route, pointed at the card, or in an entry of the numbered list below the
+     * route, with the number of the badge.
+     */
+    private void drawProblems(
+            Graphics2D g, RouteDiagramLayoutEngine.Callout c, DiagramColors colors, boolean list,
+            boolean highlightFail) {
+        LayoutNode node = c.node;
+        if (!highlightFail) {
+            g.setColor(colors.getWarning());
+            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
+            g.drawRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
+        }
+        String mark = list ? Integer.toString(c.number) : "!";
+        drawBadge(g, node.x + nodeWidth - 2 * SCALE, node.y + 2 * SCALE, mark, colors);
+
+        Font font = new Font("SansSerif", Font.PLAIN, fontSizeNode);
+        FontMetrics fm = g.getFontMetrics(font);
+        int pad = RouteDiagramLayoutEngine.CALLOUT_PAD;
+        int textX;
+        int textWidth;
+        int baseline;
+        if (list) {
+            drawBadge(g, c.x + RouteDiagramLayoutEngine.PROBLEM_NUMBER_WIDTH / 2, c.y + fm.getHeight() / 2, mark, colors);
+            textX = c.x + RouteDiagramLayoutEngine.PROBLEM_NUMBER_WIDTH;
+            textWidth = c.width - RouteDiagramLayoutEngine.PROBLEM_NUMBER_WIDTH;
+            baseline = c.y + fm.getAscent();
+            g.setColor(colors.getRouteLabel());
+        } else {
+            // the pointer from the card to its callout
+            int cardY = node.y + node.height / 2;
+            int pointY = Math.max(c.y + pad, Math.min(cardY, c.y + c.height - pad));
+            g.setColor(colors.getWarning());
+            g.setStroke(new BasicStroke(STROKE_WIDTH));
+            g.drawLine(node.x + nodeWidth, cardY, c.x, pointY);
+            g.setColor(colors.getWarningBg());
+            g.fillRoundRect(c.x, c.y, c.width, c.height, ARC, ARC);
+            g.setColor(colors.getWarning());
+            g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
+            g.drawRoundRect(c.x, c.y, c.width, c.height, ARC, ARC);
+            textX = c.x + pad;
+            textWidth = c.width - 2 * pad;
+            baseline = c.y + pad + fm.getAscent();
+            g.setColor(colors.getWarningText());
+        }
+        g.setFont(font);
+        for (String line : c.lines) {
+            g.drawString(fit(fm, line, textWidth), textX, baseline);
+            baseline += fm.getHeight();
+        }
+        g.setStroke(new BasicStroke(STROKE_WIDTH));
+    }
+
+    /** A badge of a problem: a circle of the warning color with a mark ("!" or the number of the problem). */
+    private void drawBadge(Graphics2D g, int cx, int cy, String mark, DiagramColors colors) {
+        int d = 18 * SCALE;
+        g.setColor(colors.getWarning());
+        g.fillOval(cx - d / 2, cy - d / 2, d, d);
+        Font font = new Font("SansSerif", Font.BOLD, fontSizeNode - SCALE);
+        FontMetrics fm = g.getFontMetrics(font);
+        g.setFont(font);
+        g.setColor(colors.getBadgeText());
+        g.drawString(mark, cx - fm.stringWidth(mark) / 2, cy - fm.getHeight() / 2 + fm.getAscent());
     }
 
     private void drawRoute(Graphics2D g, LayoutRoute lr, DiagramColors colors) {
@@ -420,23 +567,43 @@ public class RouteDiagramRenderer {
     }
 
     private void drawScopeBox(Graphics2D g, LayoutNode scopeNode, DiagramColors colors) {
-        TreeNode tn = scopeNode.treeNode;
-        Bounds bounds = new Bounds(
-                scopeNode.x, scopeNode.y,
-                scopeNode.x + nodeWidth, scopeNode.y + scopeNode.height);
-        for (TreeNode child : tn.children) {
-            RouteDiagramLayoutEngine.expandBoundsForBox(child, bounds, nodeWidth);
-        }
-
-        int boxX = bounds.minX - SCOPE_BOX_PAD;
-        int boxY = bounds.minY - SCOPE_BOX_PAD;
-        int boxW = bounds.maxX - bounds.minX + 2 * SCOPE_BOX_PAD;
-        int boxH = bounds.maxY - bounds.minY + 2 * SCOPE_BOX_PAD;
-
+        Bounds box = scopeBox(scopeNode);
         Color c = colors.getArrow();
         g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 140));
         g.setStroke(DASHED_STROKE);
-        g.drawRoundRect(boxX, boxY, boxW, boxH, ARC, ARC);
+        g.drawRoundRect(box.minX, box.minY, box.maxX - box.minX, box.maxY - box.minY, ARC, ARC);
+    }
+
+    /** The dashed box around a step with a scope (such as a split) and its steps. */
+    private Bounds scopeBox(LayoutNode scopeNode) {
+        Bounds bounds = new Bounds(
+                scopeNode.x, scopeNode.y,
+                scopeNode.x + nodeWidth, scopeNode.y + scopeNode.height);
+        for (TreeNode child : scopeNode.treeNode.children) {
+            RouteDiagramLayoutEngine.expandBoundsForBox(child, bounds, nodeWidth);
+        }
+        return new Bounds(
+                bounds.minX - SCOPE_BOX_PAD, bounds.minY - SCOPE_BOX_PAD,
+                bounds.maxX + SCOPE_BOX_PAD, bounds.maxY + SCOPE_BOX_PAD);
+    }
+
+    /**
+     * The widest the label of the body types of a step can be: wider than a step, and inside the dashed box the step is
+     * in, as the overhang is only made room for at the sides of the route.
+     */
+    private int bodyTypesLabelWidth(LayoutNode node) {
+        int maxWidth = RouteDiagramLayoutEngine.bodyTypesLabelWidth(nodeWidth);
+        TreeNode scope = node.treeNode.parent;
+        while (scope != null && !RouteDiagramLayoutEngine.hasScope(scope)) {
+            scope = scope.parent;
+        }
+        if (scope != null && scope.layoutNode != null) {
+            Bounds box = scopeBox(scope.layoutNode);
+            int cx = node.x + nodeWidth / 2;
+            int room = 2 * (Math.min(cx - box.minX, box.maxX - cx) - 4 * SCALE);
+            maxWidth = Math.min(maxWidth, room);
+        }
+        return maxWidth;
     }
 
     private int getTopY(LayoutNode node) {
@@ -472,7 +639,7 @@ public class RouteDiagramRenderer {
         if (mergeCx == toCx) {
             g.drawLine(mergeCx, mergeY, toCx, toTy - ARROW_SIZE / 2);
         } else {
-            int midY = mergeY + (toTy - mergeY) / 2;
+            int midY = mergeY + V_GAP / 2;
             g.drawLine(mergeCx, mergeY, mergeCx, midY);
             g.drawLine(mergeCx, midY, toCx, midY);
             g.drawLine(toCx, midY, toCx, toTy - ARROW_SIZE / 2);
@@ -494,42 +661,125 @@ public class RouteDiagramRenderer {
         drawArrowFromMerge(g, to, colors, false, null);
     }
 
+    /**
+     * A step as a card: a card with a soft shadow, the icon of its kind in a circle of the color of the kind, its title
+     * in bold and its detail below (laid out by {@link RouteDiagramLayoutEngine#setCardStyle}).
+     */
     private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors, boolean highlightFail) {
-        Color color = getNodeColor(node.type, colors);
+        int x = node.x;
+        int y = node.y;
+        int h = node.height;
 
-        g.setColor(color);
-        g.fillRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
+        g.setColor(CARD_SHADOW_SOFT);
+        g.fillRoundRect(x - SCALE, y + SCALE, nodeWidth + 2 * SCALE, h + 2 * SCALE, ARC + 2 * SCALE, ARC + 2 * SCALE);
+        g.setColor(CARD_SHADOW);
+        g.fillRoundRect(x, y + SCALE, nodeWidth, h, ARC, ARC);
 
+        g.setColor(colors.getCardBg());
+        g.fillRoundRect(x, y, nodeWidth, h, ARC, ARC);
         if (highlightFail) {
             g.setColor(HIGHLIGHT_FAIL_COLOR);
             g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
         } else {
-            g.setColor(color.brighter());
+            g.setColor(colors.getCardBorder());
             g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
         }
-        g.drawRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
+        g.drawRoundRect(x, y, nodeWidth, h, ARC, ARC);
 
-        g.setColor(colors.getText());
-        g.setFont(new Font("SansSerif", Font.PLAIN, fontSizeNode));
-        FontMetrics fm = g.getFontMetrics();
+        // the icon of the kind of step, in a circle of its color
+        int d = RouteDiagramLayoutEngine.CARD_ICON_SIZE;
+        int circleX = x + RouteDiagramLayoutEngine.CARD_PAD;
+        int circleY = y + (h - d) / 2;
+        g.setColor(getNodeColor(node.type, colors));
+        g.fillOval(circleX, circleY, d, d);
+        double scale = (double) CARD_ICON_GLYPH / RouteDiagramIcons.GRID;
+        AffineTransform at = new AffineTransform();
+        at.translate(circleX + (d - CARD_ICON_GLYPH) / 2.0, circleY + (d - CARD_ICON_GLYPH) / 2.0);
+        at.scale(scale, scale);
+        g.setColor(Color.WHITE);
+        g.setStroke(new BasicStroke(CARD_ICON_STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g.draw(at.createTransformedShape(RouteDiagramIcons.iconFor(node.type)));
+        g.setStroke(new BasicStroke(STROKE_WIDTH));
 
+        // the title, and the detail below it, centered in the height of the card
         List<String> lines = node.wrappedLines;
-
-        int lineHeight = fm.getHeight();
-        int totalTextHeight = lines.size() * lineHeight;
-        int startY = node.y + (node.height - totalTextHeight) / 2 + fm.getAscent();
-
-        for (int i = 0; i < lines.size(); i++) {
-            String text = lines.get(i);
-            if (fm.stringWidth(text) > nodeWidth - nodeTextPadding) {
-                while (text.length() > 1 && fm.stringWidth(text + "…") > nodeWidth - nodeTextPadding) {
-                    text = text.substring(0, text.length() - 1);
-                }
-                text = text + "…";
-            }
-            int textX = node.x + (nodeWidth - fm.stringWidth(text)) / 2;
-            g.drawString(text, textX, startY + i * lineHeight);
+        int textX = x + RouteDiagramLayoutEngine.CARD_TEXT_INSET;
+        int maxWidth = nodeWidth - RouteDiagramLayoutEngine.CARD_TEXT_INSET - RouteDiagramLayoutEngine.CARD_PAD;
+        g.setFont(RouteDiagramLayoutEngine.cardTitleFont(fontSizeNode));
+        FontMetrics titleFm = g.getFontMetrics();
+        Font detailFont = new Font("SansSerif", Font.PLAIN, fontSizeNode);
+        FontMetrics detailFm = g.getFontMetrics(detailFont);
+        int textHeight = titleFm.getHeight() + (lines.size() - 1) * detailFm.getHeight();
+        int baseline = y + (h - textHeight) / 2 + titleFm.getAscent();
+        g.setColor(colors.getCardText());
+        g.drawString(fit(titleFm, lines.get(0), maxWidth), textX, baseline);
+        g.setFont(detailFont);
+        g.setColor(colors.getCardDetail());
+        baseline += titleFm.getDescent() + detailFm.getAscent();
+        for (int i = 1; i < lines.size(); i++) {
+            g.drawString(fit(detailFm, lines.get(i), maxWidth), textX, baseline);
+            baseline += detailFm.getHeight();
         }
+    }
+
+    /**
+     * The body types the step has been reached with, as a label on the arrow into it, below the bend of the arrow and
+     * above the counters of the metrics ({@link RouteDiagramLayoutEngine#setBodyTypes}), and inside the dashed box the
+     * step is in ({@link #bodyTypesLabelWidth(LayoutNode)}). A step reached with bodies of more than one kind has a
+     * warning label: the warning icon, the types and their kinds.
+     */
+    private void drawBodyTypes(Graphics2D g, LayoutNode node, DiagramColors colors) {
+        if (node.parentNode == null || node.tableRow || node.treeNode == null
+                || node.treeNode.info.bodyTypes.isEmpty()) {
+            return;
+        }
+        List<String> types = node.treeNode.info.bodyTypes;
+        List<String> kinds = node.treeNode.info.bodyKinds;
+        boolean mixed = RouteDiagramBodyTypes.mixed(kinds);
+
+        Font font = RouteDiagramLayoutEngine.bodyTypesFont(fontSizeNode);
+        FontMetrics fm = g.getFontMetrics(font);
+        int padX = 8 * SCALE;
+        int icon = mixed ? fm.getAscent() : 0;
+        int iconGap = mixed ? 4 * SCALE : 0;
+        int maxWidth = bodyTypesLabelWidth(node);
+        String text = RouteDiagramBodyTypes.fit(types, kinds, fm, maxWidth - 2 * padX - icon - iconGap);
+        int w = 2 * padX + icon + iconGap + fm.stringWidth(text);
+        int h = RouteDiagramLayoutEngine.bodyTypesLabelHeight(fm);
+        int startY = node.connectFromMerge ? node.mergeY : node.parentNode.y + node.parentNode.height;
+        int x = node.x + nodeWidth / 2 - w / 2;
+        int y = startY + RouteDiagramLayoutEngine.bodyTypesLabelOffset();
+
+        g.setColor(mixed ? colors.getWarningBg() : colors.getCardBg());
+        g.fillRoundRect(x, y, w, h, h, h);
+        g.setColor(mixed ? colors.getWarning() : colors.getCardBorder());
+        g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
+        g.drawRoundRect(x, y, w, h, h, h);
+        int textX = x + padX;
+        if (mixed) {
+            double scale = (double) icon / RouteDiagramIcons.GRID;
+            AffineTransform at = new AffineTransform();
+            at.translate(textX, y + (h - icon) / 2.0);
+            at.scale(scale, scale);
+            g.setStroke(new BasicStroke(CARD_ICON_STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g.draw(at.createTransformedShape(RouteDiagramIcons.icon("alert-triangle")));
+            textX += icon + iconGap;
+        }
+        g.setFont(font);
+        g.setColor(mixed ? colors.getWarningText() : colors.getCardDetail());
+        g.drawString(text, textX, y + (h - fm.getHeight()) / 2 + fm.getAscent());
+        g.setStroke(new BasicStroke(STROKE_WIDTH));
+    }
+
+    /** The text cut with an ellipsis when it is wider than the given width. */
+    private static String fit(FontMetrics fm, String text, int maxWidth) {
+        if (fm.stringWidth(text) <= maxWidth) {
+            return text;
+        }
+        while (text.length() > 1 && fm.stringWidth(text + "…") > maxWidth) {
+            text = text.substring(0, text.length() - 1);
+        }
+        return text + "…";
     }
 
     private void drawArrow(

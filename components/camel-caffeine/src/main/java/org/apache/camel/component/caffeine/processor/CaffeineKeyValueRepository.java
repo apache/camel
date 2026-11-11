@@ -114,7 +114,7 @@ public class CaffeineKeyValueRepository extends ServiceSupport implements KeyVal
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
     public Object put(String key, Object value, Duration ttl) {
-        long ttlNanos = hasPositiveTtl(ttl) ? ttl.toNanos() : Long.MAX_VALUE;
+        long ttlNanos = toTtlNanos(ttl);
         TtlValue previous = cache.asMap().put(key, new TtlValue(value, ttlNanos));
         return previous != null ? previous.value() : null;
     }
@@ -146,7 +146,7 @@ public class CaffeineKeyValueRepository extends ServiceSupport implements KeyVal
 
     @Override
     public Object putIfAbsent(String key, Object value, Duration ttl) {
-        long ttlNanos = hasPositiveTtl(ttl) ? ttl.toNanos() : Long.MAX_VALUE;
+        long ttlNanos = toTtlNanos(ttl);
         ConcurrentMap<String, TtlValue> map = cache.asMap();
         TtlValue newEntry = new TtlValue(value, ttlNanos);
         TtlValue existing = map.putIfAbsent(key, newEntry);
@@ -155,7 +155,7 @@ public class CaffeineKeyValueRepository extends ServiceSupport implements KeyVal
 
     @Override
     public boolean replace(String key, Object expectedOldValue, Object newValue, Duration ttl) {
-        long ttlNanos = hasPositiveTtl(ttl) ? ttl.toNanos() : Long.MAX_VALUE;
+        long ttlNanos = toTtlNanos(ttl);
         boolean[] replaced = { false };
         cache.asMap().computeIfPresent(key, (k, current) -> {
             if (Objects.equals(current.value(), expectedOldValue)) {
@@ -187,8 +187,16 @@ public class CaffeineKeyValueRepository extends ServiceSupport implements KeyVal
         return (int) cache.estimatedSize();
     }
 
-    private static boolean hasPositiveTtl(Duration ttl) {
-        return ttl != null && !ttl.isZero() && !ttl.isNegative();
+    private static long toTtlNanos(Duration ttl) {
+        if (ttl == null || ttl.isZero() || ttl.isNegative()) {
+            return Long.MAX_VALUE;
+        }
+        try {
+            return ttl.toNanos();
+        } catch (ArithmeticException e) {
+            // a TTL of about 292 years or more does not fit in a long of nanoseconds: the entry does not expire
+            return Long.MAX_VALUE;
+        }
     }
 
     @Override

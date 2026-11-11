@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.keycloak;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.Endpoint;
@@ -63,6 +66,7 @@ import org.keycloak.representations.idm.authorization.Permission;
 import org.keycloak.representations.idm.authorization.PolicyRepresentation;
 import org.keycloak.representations.idm.authorization.ResourcePermissionRepresentation;
 import org.keycloak.representations.idm.authorization.ResourceRepresentation;
+import org.keycloak.util.JsonSerialization;
 
 /**
  * A Producer which sends messages to Keycloak Admin API
@@ -96,7 +100,9 @@ public class KeycloakProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         KeycloakOperations operation = determineOperation(exchange);
         if (operation == null) {
-            throw new IllegalArgumentException("Operation must be provided");
+            throw new IllegalArgumentException(
+                    "Operation must be provided: set the operation option, or allowOperationHeader=true to take it from"
+                                               + " the CamelKeycloakOperation header");
         }
 
         switch (operation) {
@@ -418,11 +424,14 @@ public class KeycloakProducer extends DefaultProducer {
     }
 
     private KeycloakOperations determineOperation(Exchange exchange) {
-        KeycloakOperations operation = exchange.getIn().getHeader(KeycloakConstants.OPERATION, KeycloakOperations.class);
-        if (operation == null) {
-            operation = getConfiguration().getOperation();
+        KeycloakOperations configured = getConfiguration().getOperation();
+        if (!getConfiguration().isAllowOperationHeader()) {
+            // the operation decides what the admin client of the endpoint does, so the message only picks it when the
+            // route allows it
+            return configured;
         }
-        return operation;
+        KeycloakOperations operation = exchange.getIn().getHeader(KeycloakConstants.OPERATION, KeycloakOperations.class);
+        return operation != null ? operation : configured;
     }
 
     protected KeycloakConfiguration getConfiguration() {
@@ -442,14 +451,107 @@ public class KeycloakProducer extends DefaultProducer {
         return (KeycloakEndpoint) super.getEndpoint();
     }
 
+    /**
+     * The body of a pojoRequest operation as the given Keycloak representation. Another type is converted: by a type
+     * converter, or from a Map (such as unmarshalled JSON) or JSON text. A body that does not convert fails.
+     */
+    private static <T> T getPojoRequest(Exchange exchange, Class<T> type) throws InvalidPayloadException {
+        Message in = exchange.getIn();
+        Object body = in.getMandatoryBody();
+        T answer;
+        try {
+            answer = toRepresentation(exchange, body, type);
+        } catch (IOException | IllegalArgumentException e) {
+            throw new InvalidPayloadException(exchange, type, in, e);
+        }
+        if (answer == null) {
+            throw new InvalidPayloadException(exchange, type, in);
+        }
+        return answer;
+    }
+
+    /**
+     * Converts each element of a List body or header to the given Keycloak representation, the same way as
+     * {@link #getPojoRequest(Exchange, Class)}. An element that does not convert fails before any call to Keycloak.
+     */
+    private static <T> List<T> toRepresentations(Exchange exchange, List<?> list, Class<T> type) {
+        List<T> answer = new ArrayList<>(list.size());
+        for (int i = 0; i < list.size(); i++) {
+            Object element = list.get(i);
+            T value = null;
+            if (element != null) {
+                try {
+                    value = toRepresentation(exchange, element, type);
+                } catch (IOException | IllegalArgumentException e) {
+                    throw new IllegalArgumentException(
+                            "Element " + i + " of the list cannot be converted to " + type.getSimpleName() + ": "
+                                                       + e.getMessage(),
+                            e);
+                }
+            }
+            if (value == null) {
+                throw new IllegalArgumentException(
+                        "Element " + i + " of the list must be a " + type.getSimpleName() + ", a Map or JSON text, but was: "
+                                                   + (element != null ? element.getClass().getName() : "null"));
+            }
+            answer.add(value);
+        }
+        return answer;
+    }
+
+    private static <T> T toRepresentation(Exchange exchange, Object value, Class<T> type) throws IOException {
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        }
+        T answer = exchange.getContext().getTypeConverter().tryConvertTo(type, exchange, value);
+        if (answer != null) {
+            return answer;
+        }
+        if (value instanceof Map) {
+            return JsonSerialization.mapper.convertValue(value, type);
+        }
+        if (value instanceof CharSequence || value instanceof byte[] || value instanceof InputStream) {
+            String json = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+            if (json != null) {
+                return JsonSerialization.readValue(json, type);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Fails on a non-2xx status of a Response that Keycloak returned, and closes it. The closed Response is returned:
+     * its status and headers, such as the Location of a created resource, can still be read.
+     */
+    private static Response checkResponse(Response response, String operation) {
+        try {
+            int status = response.getStatus();
+            if (status < 200 || status >= 300) {
+                String error = null;
+                try {
+                    if (response.hasEntity()) {
+                        error = response.readEntity(String.class);
+                    }
+                } catch (Exception e) {
+                    // ignore, the status is enough
+                }
+                throw new WebApplicationException(
+                        "Keycloak " + operation + " failed with status " + status
+                                                  + (ObjectHelper.isNotEmpty(error) ? ": " + error : ""),
+                        response);
+            }
+        } finally {
+            response.close();
+        }
+        return response;
+    }
+
     private void createRealm(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RealmRepresentation rr) {
-                keycloakClient.realms().create(rr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Realm created successfully");
-            }
+            RealmRepresentation rr = getPojoRequest(exchange, RealmRepresentation.class);
+            keycloakClient.realms().create(rr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Realm created successfully");
         } else {
             RealmRepresentation realm = new RealmRepresentation();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KeycloakConstants.REALM_NAME))) {
@@ -494,12 +596,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RealmRepresentation rr) {
-                keycloakClient.realm(realmName).update(rr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Realm updated successfully");
-            }
+            RealmRepresentation rr = getPojoRequest(exchange, RealmRepresentation.class);
+            keycloakClient.realm(realmName).update(rr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Realm updated successfully");
         } else {
             throw new IllegalArgumentException("Update realm requires POJO request with RealmRepresentation");
         }
@@ -512,12 +612,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof UserRepresentation ur) {
-                Response response = keycloakClient.realm(realmName).users().create(ur);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(response);
-            }
+            UserRepresentation ur = getPojoRequest(exchange, UserRepresentation.class);
+            Response response = keycloakClient.realm(realmName).users().create(ur);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(checkResponse(response, "createUser"));
         } else {
             UserRepresentation user = new UserRepresentation();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KeycloakConstants.USERNAME))) {
@@ -539,7 +637,7 @@ public class KeycloakProducer extends DefaultProducer {
             }
             Response response = keycloakClient.realm(realmName).users().create(user);
             Message message = getMessageForResponse(exchange);
-            message.setBody(response);
+            message.setBody(checkResponse(response, "createUser"));
         }
     }
 
@@ -556,7 +654,7 @@ public class KeycloakProducer extends DefaultProducer {
 
         Response response = keycloakClient.realm(realmName).users().delete(userId);
         Message message = getMessageForResponse(exchange);
-        message.setBody(response);
+        message.setBody(checkResponse(response, "deleteUser"));
     }
 
     private void getUser(Keycloak keycloakClient, Exchange exchange) {
@@ -587,12 +685,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof UserRepresentation ur) {
-                keycloakClient.realm(realmName).users().get(userId).update(ur);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("User updated successfully");
-            }
+            UserRepresentation ur = getPojoRequest(exchange, UserRepresentation.class);
+            keycloakClient.realm(realmName).users().get(userId).update(ur);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("User updated successfully");
         } else {
             throw new IllegalArgumentException("Update user requires POJO request with UserRepresentation");
         }
@@ -616,12 +712,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RoleRepresentation rr) {
-                keycloakClient.realm(realmName).roles().create(rr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Role created successfully");
-            }
+            RoleRepresentation rr = getPojoRequest(exchange, RoleRepresentation.class);
+            keycloakClient.realm(realmName).roles().create(rr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Role created successfully");
         } else {
             RoleRepresentation role = new RoleRepresentation();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KeycloakConstants.ROLE_NAME))) {
@@ -684,12 +778,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RoleRepresentation rr) {
-                keycloakClient.realm(realmName).roles().get(roleName).update(rr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Role updated successfully");
-            }
+            RoleRepresentation rr = getPojoRequest(exchange, RoleRepresentation.class);
+            keycloakClient.realm(realmName).roles().get(roleName).update(rr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Role updated successfully");
         } else {
             throw new IllegalArgumentException("Update role requires POJO request with RoleRepresentation");
         }
@@ -757,12 +849,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GroupRepresentation gr) {
-                Response response = keycloakClient.realm(realmName).groups().add(gr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(response);
-            }
+            GroupRepresentation gr = getPojoRequest(exchange, GroupRepresentation.class);
+            Response response = keycloakClient.realm(realmName).groups().add(gr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(checkResponse(response, "createGroup"));
         } else {
             GroupRepresentation group = new GroupRepresentation();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KeycloakConstants.GROUP_NAME))) {
@@ -773,7 +863,7 @@ public class KeycloakProducer extends DefaultProducer {
             }
             Response response = keycloakClient.realm(realmName).groups().add(group);
             Message message = getMessageForResponse(exchange);
-            message.setBody(response);
+            message.setBody(checkResponse(response, "createGroup"));
         }
     }
 
@@ -821,12 +911,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GroupRepresentation gr) {
-                keycloakClient.realm(realmName).groups().group(groupId).update(gr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Group updated successfully");
-            }
+            GroupRepresentation gr = getPojoRequest(exchange, GroupRepresentation.class);
+            keycloakClient.realm(realmName).groups().group(groupId).update(gr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Group updated successfully");
         } else {
             throw new IllegalArgumentException("Update group requires POJO request with GroupRepresentation");
         }
@@ -908,12 +996,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ClientRepresentation cr) {
-                Response response = keycloakClient.realm(realmName).clients().create(cr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(response);
-            }
+            ClientRepresentation cr = getPojoRequest(exchange, ClientRepresentation.class);
+            Response response = keycloakClient.realm(realmName).clients().create(cr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(checkResponse(response, "createClient"));
         } else {
             ClientRepresentation client = new ClientRepresentation();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KeycloakConstants.CLIENT_ID))) {
@@ -925,7 +1011,7 @@ public class KeycloakProducer extends DefaultProducer {
             }
             Response response = keycloakClient.realm(realmName).clients().create(client);
             Message message = getMessageForResponse(exchange);
-            message.setBody(response);
+            message.setBody(checkResponse(response, "createClient"));
         }
     }
 
@@ -973,12 +1059,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ClientRepresentation cr) {
-                keycloakClient.realm(realmName).clients().get(clientUuid).update(cr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Client updated successfully");
-            }
+            ClientRepresentation cr = getPojoRequest(exchange, ClientRepresentation.class);
+            keycloakClient.realm(realmName).clients().get(clientUuid).update(cr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Client updated successfully");
         } else {
             throw new IllegalArgumentException("Update client requires POJO request with ClientRepresentation");
         }
@@ -1052,12 +1136,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RoleRepresentation rr) {
-                keycloakClient.realm(realmName).clients().get(clientUuid).roles().create(rr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Client role created successfully");
-            }
+            RoleRepresentation rr = getPojoRequest(exchange, RoleRepresentation.class);
+            keycloakClient.realm(realmName).clients().get(clientUuid).roles().create(rr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Client role created successfully");
         } else {
             RoleRepresentation role = new RoleRepresentation();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KeycloakConstants.ROLE_NAME))) {
@@ -1136,13 +1218,11 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RoleRepresentation rr) {
-                keycloakClient.realm(realmName).clients().get(clientUuid).roles().get(roleName)
-                        .update(rr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Client role updated successfully");
-            }
+            RoleRepresentation rr = getPojoRequest(exchange, RoleRepresentation.class);
+            keycloakClient.realm(realmName).clients().get(clientUuid).roles().get(roleName)
+                    .update(rr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Client role updated successfully");
         } else {
             throw new IllegalArgumentException("Update client role requires POJO request with RoleRepresentation");
         }
@@ -1407,12 +1487,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ClientScopeRepresentation csr) {
-                Response response = keycloakClient.realm(realmName).clientScopes().create(csr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(response);
-            }
+            ClientScopeRepresentation csr = getPojoRequest(exchange, ClientScopeRepresentation.class);
+            Response response = keycloakClient.realm(realmName).clientScopes().create(csr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(checkResponse(response, "createClientScope"));
         } else {
             ClientScopeRepresentation clientScope = new ClientScopeRepresentation();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KeycloakConstants.CLIENT_SCOPE_NAME))) {
@@ -1423,7 +1501,7 @@ public class KeycloakProducer extends DefaultProducer {
             }
             Response response = keycloakClient.realm(realmName).clientScopes().create(clientScope);
             Message message = getMessageForResponse(exchange);
-            message.setBody(response);
+            message.setBody(checkResponse(response, "createClientScope"));
         }
     }
 
@@ -1472,12 +1550,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ClientScopeRepresentation csr) {
-                keycloakClient.realm(realmName).clientScopes().get(clientScopeId).update(csr);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Client scope updated successfully");
-            }
+            ClientScopeRepresentation csr = getPojoRequest(exchange, ClientScopeRepresentation.class);
+            keycloakClient.realm(realmName).clientScopes().get(clientScopeId).update(csr);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Client scope updated successfully");
         } else {
             throw new IllegalArgumentException("Update client scope requires POJO request with ClientScopeRepresentation");
         }
@@ -1502,13 +1578,11 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof IdentityProviderRepresentation idpRepresentation) {
-                Response response
-                        = keycloakClient.realm(realmName).identityProviders().create(idpRepresentation);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(response);
-            }
+            IdentityProviderRepresentation idpRepresentation = getPojoRequest(exchange, IdentityProviderRepresentation.class);
+            Response response
+                    = keycloakClient.realm(realmName).identityProviders().create(idpRepresentation);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(checkResponse(response, "createIdentityProvider"));
         } else {
             throw new IllegalArgumentException(
                     "Create identity provider requires POJO request with IdentityProviderRepresentation");
@@ -1560,13 +1634,11 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof IdentityProviderRepresentation idpRepresentation) {
-                keycloakClient.realm(realmName).identityProviders().get(idpAlias)
-                        .update(idpRepresentation);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Identity provider updated successfully");
-            }
+            IdentityProviderRepresentation idpRepresentation = getPojoRequest(exchange, IdentityProviderRepresentation.class);
+            keycloakClient.realm(realmName).identityProviders().get(idpAlias)
+                    .update(idpRepresentation);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Identity provider updated successfully");
         } else {
             throw new IllegalArgumentException(
                     "Update identity provider requires POJO request with IdentityProviderRepresentation");
@@ -1597,13 +1669,11 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ResourceRepresentation resourceRepresentation) {
-                Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources()
-                        .create(resourceRepresentation);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(response);
-            }
+            ResourceRepresentation resourceRepresentation = getPojoRequest(exchange, ResourceRepresentation.class);
+            Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources()
+                    .create(resourceRepresentation);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(checkResponse(response, "createResource"));
         } else {
             throw new IllegalArgumentException("Create resource requires POJO request with ResourceRepresentation");
         }
@@ -1670,13 +1740,11 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ResourceRepresentation resourceRepresentation) {
-                keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources().resource(resourceId)
-                        .update(resourceRepresentation);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Resource updated successfully");
-            }
+            ResourceRepresentation resourceRepresentation = getPojoRequest(exchange, ResourceRepresentation.class);
+            keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources().resource(resourceId)
+                    .update(resourceRepresentation);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Resource updated successfully");
         } else {
             throw new IllegalArgumentException("Update resource requires POJO request with ResourceRepresentation");
         }
@@ -1711,13 +1779,11 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PolicyRepresentation policyRepresentation) {
-                Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies()
-                        .create(policyRepresentation);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(response);
-            }
+            PolicyRepresentation policyRepresentation = getPojoRequest(exchange, PolicyRepresentation.class);
+            Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies()
+                    .create(policyRepresentation);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(checkResponse(response, "createResourcePolicy"));
         } else {
             throw new IllegalArgumentException("Create policy requires POJO request with PolicyRepresentation");
         }
@@ -1784,13 +1850,11 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PolicyRepresentation policyRepresentation) {
-                keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(policyId)
-                        .update(policyRepresentation);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Policy updated successfully");
-            }
+            PolicyRepresentation policyRepresentation = getPojoRequest(exchange, PolicyRepresentation.class);
+            keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(policyId)
+                    .update(policyRepresentation);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Policy updated successfully");
         } else {
             throw new IllegalArgumentException("Update policy requires POJO request with PolicyRepresentation");
         }
@@ -1825,13 +1889,12 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ResourcePermissionRepresentation permissionRepresentation) {
-                Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().permissions()
-                        .resource().create(permissionRepresentation);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(response);
-            }
+            ResourcePermissionRepresentation permissionRepresentation
+                    = getPojoRequest(exchange, ResourcePermissionRepresentation.class);
+            Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().permissions()
+                    .resource().create(permissionRepresentation);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(checkResponse(response, "createResourcePermission"));
         } else {
             throw new IllegalArgumentException("Create permission requires POJO request with ResourcePermissionRepresentation");
         }
@@ -1900,14 +1963,12 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PolicyRepresentation policyRepresentation) {
-                // Use policy endpoint for permissions
-                keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(permissionId)
-                        .update(policyRepresentation);
-                Message message = getMessageForResponse(exchange);
-                message.setBody("Permission updated successfully");
-            }
+            PolicyRepresentation policyRepresentation = getPojoRequest(exchange, PolicyRepresentation.class);
+            // Use policy endpoint for permissions
+            keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(permissionId)
+                    .update(policyRepresentation);
+            Message message = getMessageForResponse(exchange);
+            message.setBody("Permission updated successfully");
         } else {
             throw new IllegalArgumentException("Update permission requires POJO request with PolicyRepresentation");
         }
@@ -2330,16 +2391,18 @@ public class KeycloakProducer extends DefaultProducer {
             throw new IllegalArgumentException(MISSING_REALM_NAME);
         }
 
-        List<UserRepresentation> users = exchange.getIn().getHeader(KeycloakConstants.USERS, List.class);
-        if (users == null || users.isEmpty()) {
+        List<?> list = exchange.getIn().getHeader(KeycloakConstants.USERS, List.class);
+        if (list == null || list.isEmpty()) {
             // Try to get from body
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof List) {
-                users = CastUtils.cast((List<?>) payload);
+            if (payload instanceof List<?> l) {
+                list = l;
             } else {
                 throw new IllegalArgumentException("Users list must be provided via header or body");
             }
         }
+        // the elements can be Maps (such as unmarshalled JSON) or JSON text as well
+        List<UserRepresentation> users = toRepresentations(exchange, list, UserRepresentation.class);
 
         boolean continueOnError
                 = exchange.getIn().getHeader(KeycloakConstants.CONTINUE_ON_ERROR, Boolean.FALSE, Boolean.class);
@@ -2350,13 +2413,16 @@ public class KeycloakProducer extends DefaultProducer {
         for (UserRepresentation user : users) {
             Map<String, Object> result = new HashMap<>();
             result.put("username", user.getUsername());
-            try (Response response = keycloakClient.realm(realmName).users().create(user)) {
+            try {
+                Response response = checkResponse(keycloakClient.realm(realmName).users().create(user), "createUser");
                 result.put("status", "success");
                 result.put("statusCode", response.getStatus());
                 successCount++;
-                response.close();
             } catch (Exception e) {
                 result.put("status", "failed");
+                if (e instanceof WebApplicationException wae) {
+                    result.put("statusCode", wae.getResponse().getStatus());
+                }
                 result.put("error", e.getMessage());
                 failureCount++;
                 if (!continueOnError) {
@@ -2417,13 +2483,15 @@ public class KeycloakProducer extends DefaultProducer {
             Map<String, Object> result = new HashMap<>();
             result.put("userId", userId);
             try {
-                Response response = keycloakClient.realm(realmName).users().delete(userId);
+                Response response = checkResponse(keycloakClient.realm(realmName).users().delete(userId), "deleteUser");
                 result.put("status", "success");
                 result.put("statusCode", response.getStatus());
                 successCount++;
-                response.close();
             } catch (Exception e) {
                 result.put("status", "failed");
+                if (e instanceof WebApplicationException wae) {
+                    result.put("statusCode", wae.getResponse().getStatus());
+                }
                 result.put("error", e.getMessage());
                 failureCount++;
                 if (!continueOnError) {
@@ -2597,16 +2665,18 @@ public class KeycloakProducer extends DefaultProducer {
             throw new IllegalArgumentException(MISSING_REALM_NAME);
         }
 
-        List<UserRepresentation> users = exchange.getIn().getHeader(KeycloakConstants.USERS, List.class);
-        if (users == null || users.isEmpty()) {
+        List<?> list = exchange.getIn().getHeader(KeycloakConstants.USERS, List.class);
+        if (list == null || list.isEmpty()) {
             // Try to get from body
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof List) {
-                users = CastUtils.cast((List<?>) payload);
+            if (payload instanceof List<?> l) {
+                list = l;
             } else {
                 throw new IllegalArgumentException("Users list must be provided via header or body");
             }
         }
+        // the elements can be Maps (such as unmarshalled JSON) or JSON text as well
+        List<UserRepresentation> users = toRepresentations(exchange, list, UserRepresentation.class);
 
         boolean continueOnError
                 = exchange.getIn().getHeader(KeycloakConstants.CONTINUE_ON_ERROR, Boolean.FALSE, Boolean.class);
@@ -2654,12 +2724,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof OrganizationRepresentation orgRepresentation) {
-                Response response = keycloakClient.realm(realmName).organizations().create(orgRepresentation);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(response);
-            }
+            OrganizationRepresentation orgRepresentation = getPojoRequest(exchange, OrganizationRepresentation.class);
+            Response response = keycloakClient.realm(realmName).organizations().create(orgRepresentation);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(checkResponse(response, "createOrganization"));
         } else {
             String orgName = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_NAME, String.class);
             if (ObjectHelper.isEmpty(orgName)) {
@@ -2690,7 +2758,7 @@ public class KeycloakProducer extends DefaultProducer {
 
             Response response = keycloakClient.realm(realmName).organizations().create(org);
             Message message = getMessageForResponse(exchange);
-            message.setBody(response);
+            message.setBody(checkResponse(response, "createOrganization"));
         }
     }
 
@@ -2706,12 +2774,10 @@ public class KeycloakProducer extends DefaultProducer {
         }
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof OrganizationRepresentation orgRepresentation) {
-                Response response = keycloakClient.realm(realmName).organizations().get(orgId).update(orgRepresentation);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(response);
-            }
+            OrganizationRepresentation orgRepresentation = getPojoRequest(exchange, OrganizationRepresentation.class);
+            Response response = keycloakClient.realm(realmName).organizations().get(orgId).update(orgRepresentation);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(checkResponse(response, "updateOrganization"));
         } else {
             throw new IllegalArgumentException("Update organization requires POJO request with OrganizationRepresentation");
         }
@@ -2728,7 +2794,7 @@ public class KeycloakProducer extends DefaultProducer {
             throw new IllegalArgumentException(MISSING_ORGANIZATION_ID);
         }
 
-        keycloakClient.realm(realmName).organizations().get(orgId).delete();
+        checkResponse(keycloakClient.realm(realmName).organizations().get(orgId).delete(), "deleteOrganization");
         Message message = getMessageForResponse(exchange);
         message.setBody("Organization deleted successfully");
     }
@@ -2811,7 +2877,7 @@ public class KeycloakProducer extends DefaultProducer {
 
         Response response = keycloakClient.realm(realmName).organizations().get(orgId).members().addMember(userId);
         Message message = getMessageForResponse(exchange);
-        message.setBody(response);
+        message.setBody(checkResponse(response, "addOrganizationMember"));
     }
 
     private void removeOrganizationMember(Keycloak keycloakClient, Exchange exchange) {
@@ -2830,7 +2896,8 @@ public class KeycloakProducer extends DefaultProducer {
             throw new IllegalArgumentException(MISSING_ORGANIZATION_MEMBER_ID);
         }
 
-        keycloakClient.realm(realmName).organizations().get(orgId).members().member(userId).delete();
+        checkResponse(keycloakClient.realm(realmName).organizations().get(orgId).members().member(userId).delete(),
+                "removeOrganizationMember");
         Message message = getMessageForResponse(exchange);
         message.setBody("Organization member removed successfully");
     }
@@ -2878,7 +2945,7 @@ public class KeycloakProducer extends DefaultProducer {
         Response response
                 = keycloakClient.realm(realmName).organizations().get(orgId).identityProviders().addIdentityProvider(idpAlias);
         Message message = getMessageForResponse(exchange);
-        message.setBody(response);
+        message.setBody(checkResponse(response, "linkOrganizationIdentityProvider"));
     }
 
     private void unlinkOrganizationIdentityProvider(Keycloak keycloakClient, Exchange exchange) {
@@ -2897,7 +2964,8 @@ public class KeycloakProducer extends DefaultProducer {
             throw new IllegalArgumentException(MISSING_ORGANIZATION_IDP_ALIAS);
         }
 
-        keycloakClient.realm(realmName).organizations().get(orgId).identityProviders().get(idpAlias).delete();
+        checkResponse(keycloakClient.realm(realmName).organizations().get(orgId).identityProviders().get(idpAlias).delete(),
+                "unlinkOrganizationIdentityProvider");
         Message message = getMessageForResponse(exchange);
         message.setBody("Organization identity provider unlinked successfully");
     }

@@ -26,6 +26,7 @@ import io.reactivex.disposables.Disposable;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.junit.jupiter.api.Test;
 
@@ -120,6 +121,33 @@ public class BasicPublisherTest extends BaseReactiveTest {
 
         assertThrows(FailedToStartRouteException.class,
                 () -> context.start());
+    }
+
+    @Test
+    public void testProducerRemovesCallbackHeader() throws Exception {
+
+        new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .to("reactive-streams:callback")
+                        .to("mock:result");
+            }
+        }.addRoutesToCamelContext(context);
+
+        Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("callback", String.class))
+                .subscribe();
+
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello");
+        // the dispatch callback must not stay on the message after the producer
+        mock.message(0).header(ReactiveStreamsConstants.REACTIVE_STREAMS_CALLBACK).isNull();
+
+        template.sendBody("direct:start", "Hello");
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

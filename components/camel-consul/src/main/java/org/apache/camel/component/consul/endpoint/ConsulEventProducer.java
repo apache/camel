@@ -34,11 +34,16 @@ public final class ConsulEventProducer extends AbstractConsulProducer<EventClien
 
     @InvokeOnHeader(ConsulEventActions.FIRE)
     protected void fire(Message message) throws Exception {
-        setBodyAndResult(message,
-                getClient().fireEvent(
-                        getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
-                        message.getHeader(ConsulConstants.CONSUL_OPTIONS, EventOptions.BLANK, EventOptions.class),
-                        message.getBody(String.class)));
+        String name = getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class);
+        EventOptions options = message.getHeader(ConsulConstants.CONSUL_OPTIONS, EventOptions.BLANK, EventOptions.class);
+        String payload = message.getBody(String.class);
+
+        // the event has no payload when the message has no body
+        if (payload == null) {
+            setBodyAndResult(message, getClient().fireEvent(name, options));
+        } else {
+            setBodyAndResult(message, getClient().fireEvent(name, options, payload));
+        }
     }
 
     @InvokeOnHeader(ConsulEventActions.LIST)

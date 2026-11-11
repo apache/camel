@@ -2651,7 +2651,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "keyEncapsulationAlgorithm", def.getKeyEncapsulationAlgorithm(), "MLKEM");
         doWriteAttribute(jo, "symmetricKeyAlgorithm", def.getSymmetricKeyAlgorithm(), "AES");
-        doWriteAttribute(jo, "symmetricKeyLength", def.getSymmetricKeyLength(), "128");
+        doWriteAttribute(jo, "symmetricKeyLength", def.getSymmetricKeyLength(), "256");
         doWriteAttribute(jo, "keyPair", def.getKeyPair(), null);
         doWriteAttribute(jo, "provider", def.getProvider(), null);
         doWriteAttribute(jo, "keyGenerator", def.getKeyGenerator(), null);
@@ -3291,6 +3291,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "missingOperation", def.getMissingOperation(), "fail");
         doWriteAttribute(jo, "unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute(jo, "mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
+        doWriteAttribute(jo, "externalReferences", def.getExternalReferences(), "all");
         return jo;
     }
     protected JsonObject doWriteOpenIdConnectDefinition(OpenIdConnectDefinition def) {

@@ -158,7 +158,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite</code> type.
          * 
-         * Default: Lax
+         * Default: LAX
          * Group: consumer
          * 
          * @param cookieSameSite the value to set
@@ -175,7 +175,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.platform.http.cookie.CookieConfiguration.CookieSameSite</code> type.
          * 
-         * Default: Lax
+         * Default: LAX
          * Group: consumer
          * 
          * @param cookieSameSite the value to set
@@ -744,7 +744,7 @@ public interface PlatformHttpEndpointBuilderFactory {
         /**
          * A comma or whitespace separated list of file extensions. Uploads
          * having these extensions will be stored locally. Null value or
-         * asterisk () will allow all files.
+         * asterisk (*) will allow all files.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

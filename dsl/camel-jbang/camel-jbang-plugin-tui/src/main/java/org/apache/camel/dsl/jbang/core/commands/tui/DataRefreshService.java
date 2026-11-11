@@ -80,6 +80,8 @@ class DataRefreshService {
     // Sparkline/chart history for all metric families
     private final MetricsCollector metrics = new MetricsCollector();
     private final RateEstimator rates = new RateEstimator();
+    // the WARN and ERROR lines of the logs per second, for the Timeline
+    private final TimelineLog timelineLog = new TimelineLog();
 
     // Cached PID list -- full process scan throttled to every 2 seconds (1 second in burst mode)
     private volatile List<Long> cachedPids = Collections.emptyList();
@@ -322,22 +324,33 @@ class DataRefreshService {
                 }
                 IntegrationInfo info = StatusParser.parseIntegration(ph, root);
                 if (info != null) {
+                    info.statusWrittenAt = writtenAt(pid);
+                }
+                if (info != null && ctx != null) {
+                    ctx.chaosMarks.record(info);
+                    ctx.timeline.record(info, info.statusWrittenAt);
+                    mergeTimelineFile(pid);
+                    timelineLog.read(info.pid, logFile(info), ctx.timeline);
+                }
+                if (info != null) {
                     IntegrationInfo prev = previousByPid.get(info.pid);
                     if (prev != null) {
-                        info.activity = prev.activity;
                         info.errors = prev.errors;
                     }
+                    StatusAge.observeCpu(info, prev, ph, now);
                     rates.fill(info, now);
                     infos.add(info);
-                    metrics.updateThroughputHistory(info);
-                    metrics.updateEndpointHistory(info);
-                    metrics.updateServiceHistory(info);
-                    metrics.updateCbHistory(info);
-                    metrics.updateHeapHistory(info);
+                    recordHistories(info);
                     metrics.updateLoadMetrics(ph, info);
                     detectReload(info);
                 }
             }
+        }
+        if (ctx != null) {
+            Set<String> live = pids.stream().map(String::valueOf).collect(Collectors.toSet());
+            ctx.chaosMarks.retain(live);
+            ctx.timeline.retain(live);
+            timelineLog.retain(live);
         }
         if (!fullScan && ctx.selectedPid != null && !overviewTab) {
             boolean checkLiveness = now - lastLivenessCheckTime >= LIVENESS_CHECK_INTERVAL_MS;
@@ -387,6 +400,9 @@ class DataRefreshService {
                 boolean wasExplicitStop = stoppingPids.remove(prev.pid);
                 if (wasExplicitStop) {
                     metrics.removeVanished(prev.pid);
+                    if (ctx != null) {
+                        ctx.healthHistory.remove(prev.pid);
+                    }
                 } else {
                     vanishing.put(prev.pid, new VanishingInfo(prev, MonotonicClock.millis()));
                 }
@@ -468,6 +484,15 @@ class DataRefreshService {
         return null;
     }
 
+    /**
+     * Whether the integration is the one launched: an example is launched by its catalog name
+     * (fail-well/circuit-breaker) and names itself without the category (circuit-breaker).
+     */
+    static boolean isLaunched(String launched, String name) {
+        return name != null
+                && (name.equalsIgnoreCase(launched) || name.equalsIgnoreCase(TuiHelper.stripCategory(launched)));
+    }
+
     private void mergePhantoms(List<IntegrationInfo> infos) {
         mergePhantoms(infos, ctx.phantomIntegrations, ctx);
     }
@@ -487,7 +512,7 @@ class DataRefreshService {
         String autoSelect = refreshCtx.getPendingAutoSelect();
         if (autoSelect != null) {
             for (IntegrationInfo info : infos) {
-                if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
+                if (!info.vanishing && isLaunched(autoSelect, info.name)) {
                     ctx.selectedPid = info.pid;
                     ctx.lastSelectedName = null;
                     refreshCtx.clearPendingAutoSelect();
@@ -796,28 +821,52 @@ class DataRefreshService {
         return allEntries;
     }
 
-    void refreshActivityData(List<Long> pids) {
+    /**
+     * Reads the timeline of the integrations once in full (the timeline action): the last seconds come with each
+     * refresh ({@link #mergeTimelineFile(long)}).
+     */
+    void refreshTimelineData(List<Long> pids) {
         for (Long pid : pids) {
-            IntegrationInfo sel = ctx.data.get().stream()
-                    .filter(i -> String.valueOf(pid).equals(i.pid) && !i.vanishing)
-                    .findFirst().orElse(null);
-            if (sel == null) {
+            String id = String.valueOf(pid);
+            if (ctx.timeline.isFull(id)) {
                 continue;
             }
             try {
-                Path activityFile = CommandLineHelper.getCamelDir().resolve(pid + "-activity.json");
-                if (!Files.exists(activityFile)) {
-                    continue;
-                }
-                String content = Files.readString(activityFile);
-                if (content != null && !content.isBlank()) {
-                    JsonObject json = (JsonObject) Jsoner.deserialize(content);
-                    List<ActivityEntry> parsed = StatusParser.parseActivityEntries(json);
-                    sel.activity = List.copyOf(parsed);
-                }
+                JsonObject action = new JsonObject();
+                action.put("action", "timeline");
+                action.put("seconds", String.valueOf(Timeline.SECONDS));
+                ctx.timeline.merge(id, ctx.executeAction(id, action, 3000), true);
             } catch (Exception e) {
                 // ignore
             }
+        }
+    }
+
+    /** The log file of the integration: by its pid, else by its name (as Quarkus names it). */
+    private static Path logFile(IntegrationInfo info) {
+        Path dir = CommandLineHelper.getCamelDir();
+        Path byPid = dir.resolve(info.pid + ".log");
+        if (!Files.exists(byPid) && info.name != null) {
+            Path byName = dir.resolve(info.name + ".log");
+            if (Files.exists(byName)) {
+                return byName;
+            }
+        }
+        return byPid;
+    }
+
+    /** The last seconds of the timeline, which the integration writes each second. */
+    private void mergeTimelineFile(long pid) {
+        try {
+            Path file = CommandLineHelper.getCamelDir().resolve(pid + "-timeline.json");
+            if (Files.exists(file)) {
+                String content = Files.readString(file);
+                if (content != null && !content.isBlank()) {
+                    ctx.timeline.merge(String.valueOf(pid), (JsonObject) Jsoner.deserialize(content), false);
+                }
+            }
+        } catch (Exception e) {
+            // ignore
         }
     }
 
@@ -859,12 +908,46 @@ class DataRefreshService {
         return msg;
     }
 
+    /**
+     * The charts and strips of the integration go on by a second: from a status of late only, as one of then would draw
+     * its last rate on and on.
+     */
+    void recordHistories(IntegrationInfo info) {
+        if (StatusAge.stale(info)) {
+            return;
+        }
+        metrics.updateThroughputHistory(info);
+        metrics.updateEndpointHistory(info);
+        metrics.updateServiceHistory(info);
+        metrics.updateCbHistory(info);
+        metrics.updateHeapHistory(info);
+        if (ctx != null) {
+            ctx.healthHistory.record(info, System.currentTimeMillis() / 1000);
+        }
+    }
+
     private List<Long> findPids(String name) {
         return TuiHelper.findPids(name, statusFileResolver);
     }
 
     private JsonObject loadStatus(long pid) {
         return TuiHelper.loadStatus(pid, statusFileResolver);
+    }
+
+    /**
+     * When the integration wrote its status file: the timeline puts each status at the second it was written, so a read
+     * that sees the same status again adds no second, and the seconds follow the clock of the integration.
+     */
+    private long writtenAt(long pid) {
+        try {
+            Path f = statusFileResolver.apply(Long.toString(pid));
+            if (f != null) {
+                return Files.getLastModifiedTime(f).toMillis();
+            }
+        } catch (Exception e) {
+            // the time of the read then
+        }
+        return System.currentTimeMillis();
     }
 
     private JsonObject loadErrorFile(long pid) {

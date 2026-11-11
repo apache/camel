@@ -34,8 +34,6 @@ import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
@@ -47,6 +45,8 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -402,7 +402,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
 
                 if (response.getStatus() == 200) {
                     String jwksJson = response.readEntity(String.class);
-                    ObjectMapper mapper = new ObjectMapper();
+                    JsonMapper mapper = new JsonMapper();
                     JsonNode jwks = mapper.readTree(jwksJson);
                     JsonNode keys = jwks.get("keys");
 
@@ -411,9 +411,9 @@ public class KeycloakSecurityIT extends CamelTestSupport {
 
                         // First try to find a key with "sig" usage
                         for (JsonNode key : keys) {
-                            if ("RSA".equals(key.path("kty").asText())) {
+                            if ("RSA".equals(key.path("kty").asString())) {
                                 JsonNode use = key.path("use");
-                                if (!use.isMissingNode() && "sig".equals(use.asText())) {
+                                if (!use.isMissingNode() && "sig".equals(use.asString())) {
                                     selectedKey = key;
                                     break;
                                 }
@@ -423,7 +423,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
                         // If no "sig" key found, use the first RSA key
                         if (selectedKey == null) {
                             for (JsonNode key : keys) {
-                                if ("RSA".equals(key.path("kty").asText())) {
+                                if ("RSA".equals(key.path("kty").asString())) {
                                     selectedKey = key;
                                     break;
                                 }
@@ -431,8 +431,8 @@ public class KeycloakSecurityIT extends CamelTestSupport {
                         }
 
                         if (selectedKey != null) {
-                            String modulus = selectedKey.get("n").asText();
-                            String exponent = selectedKey.get("e").asText();
+                            String modulus = selectedKey.get("n").asString();
+                            String exponent = selectedKey.get("e").asString();
 
                             byte[] modulusBytes = Base64.getUrlDecoder().decode(modulus);
                             byte[] exponentBytes = Base64.getUrlDecoder().decode(exponent);

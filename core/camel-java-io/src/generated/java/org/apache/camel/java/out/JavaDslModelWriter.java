@@ -3282,7 +3282,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "keyEncapsulationAlgorithm", def.getKeyEncapsulationAlgorithm(), "MLKEM");
         doWriteAttribute(sb, "symmetricKeyAlgorithm", def.getSymmetricKeyAlgorithm(), "AES");
-        doWriteAttribute(sb, "symmetricKeyLength", def.getSymmetricKeyLength(), "128");
+        doWriteAttribute(sb, "symmetricKeyLength", def.getSymmetricKeyLength(), "256");
         doWriteAttribute(sb, "keyPair", def.getKeyPair(), null);
         doWriteAttribute(sb, "provider", def.getProvider(), null);
         doWriteAttribute(sb, "keyGenerator", def.getKeyGenerator(), null);
@@ -3774,6 +3774,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "missingOperation", def.getMissingOperation(), "fail");
         doWriteAttribute(sb, "unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute(sb, "mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
+        doWriteAttribute(sb, "externalReferences", def.getExternalReferences(), "all");
     }
     protected void doWriteOpenIdConnectDefinition(StringBuilder sb, OpenIdConnectDefinition def) {
         doWriteRestSecurityDefinitionAttributes(sb, def);

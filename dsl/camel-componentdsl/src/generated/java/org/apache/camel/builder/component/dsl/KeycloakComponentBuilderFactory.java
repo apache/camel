@@ -606,6 +606,28 @@ public interface KeycloakComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        
+        /**
+         * Whether the CamelKeycloakOperation header may override the configured
+         * operation. Disabled by default: the operation decides what the
+         * endpoint does with its admin client, from reading a user to deleting
+         * a realm, so a message that can set the header can run any operation
+         * that the credentials of the endpoint allow. Enable it only on routes
+         * whose input is trusted.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowOperationHeader the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder allowOperationHeader(boolean allowOperationHeader) {
+            doSetProperty("allowOperationHeader", allowOperationHeader);
+            return this;
+        }
     }
 
     class KeycloakComponentBuilderImpl
@@ -660,6 +682,7 @@ public interface KeycloakComponentBuilderFactory {
             case "bridgeErrorHandler": ((KeycloakComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((KeycloakComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((KeycloakComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "allowOperationHeader": getOrCreateConfiguration((KeycloakComponent) component).setAllowOperationHeader((boolean) value); return true;
             default: return false;
             }
         }

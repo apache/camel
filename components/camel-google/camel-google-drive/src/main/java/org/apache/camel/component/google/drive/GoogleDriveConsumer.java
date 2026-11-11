@@ -16,16 +16,20 @@
  */
 package org.apache.camel.component.google.drive;
 
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.component.AbstractApiConsumer;
+import org.apache.camel.util.IOHelper;
 
 /**
  * The GoogleDrive consumer.
@@ -37,16 +41,30 @@ public class GoogleDriveConsumer extends AbstractApiConsumer<GoogleDriveApiName,
 
     @Override
     protected Object doInvokeMethod(Map<String, Object> properties) throws RuntimeCamelException {
-        AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(properties);
+        AbstractGoogleClientRequest<?> request = (AbstractGoogleClientRequest<?>) super.doInvokeMethod(properties);
         try {
             BeanIntrospection beanIntrospection
                     = PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
             for (Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }
-            return request.execute();
+            return GoogleDriveRequestHelper.execute(request);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
+        }
+    }
+
+    @Override
+    public void interceptResult(Object result, Exchange resultExchange) {
+        if (result instanceof InputStream content) {
+            // the content of a media request, such as drive-files/export, holds the connection: close it when the
+            // exchange is done, whether the route read it or not
+            resultExchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange exchange) {
+                    IOHelper.close(content);
+                }
+            });
         }
     }
 

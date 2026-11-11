@@ -234,4 +234,25 @@ class AiPanelToolGroupsTest {
         assertEquals(toolNames(plain), toolNames(panel));
         assertTrue(toolNames(panel).contains("tui_update_row"));
     }
+
+    @Test
+    void theChaosGroupAddsTheRuleToolsWhenChaosIsOn() {
+        // its model learns that faults may be injected on purpose, and checks, adds and changes rules (CAMEL-26721)
+        TuiToolGroups.Selection on = TuiToolGroups.select(
+                AppFeatures.fromStatus(new JsonObject(Map.of("chaos", Map.of("enabled", true)))));
+        assertEquals(List.of(ToolGroup.CHAOS), on.groups());
+        assertEquals(List.of("tui_chaos_check", "tui_chaos_add", "tui_chaos_change"), on.tools());
+        assertEquals(List.of("Chaos: camel-chaos is on, so some failures and delays may be injected on purpose;"
+                             + " tui_get_status section 'chaos' has the rules, tui_get_table tab 'Chaos' their live"
+                             + " state and effect; tui_chaos_check checks rules, tui_chaos_add and tui_chaos_change add"
+                             + " and change them after the user confirms."),
+                on.guidance());
+
+        // with chaos off a rule can only be refused: no tools
+        TuiToolGroups.Selection off = TuiToolGroups.select(
+                AppFeatures.fromStatus(new JsonObject(Map.of("chaos", Map.of("enabled", false)))));
+        assertTrue(off.tools().isEmpty(), off.tools().toString());
+        assertEquals(List.of("Chaos: camel-chaos is in the integration but off, so it injects no faults."),
+                off.guidance());
+    }
 }

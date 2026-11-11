@@ -267,6 +267,13 @@ public final class LogWriter implements AutoCloseable {
             final TransactionLog.EntryContainer container = transactionLog.update(layerInfo, state);
 
             if (container != null) {
+                if (container.position < 0) {
+                    // the entry was never written, so there is nothing to update in the file. Defensive: the layer
+                    // information of an entry whose append failed is not given to a caller
+                    LOG.warn("Not updating the state of a record that was not written to the transaction log: {}",
+                            layerInfo);
+                    return;
+                }
                 // not the position of the entry info: a roll-over may have written the entry again elsewhere
                 persist(layerInfo, container.logEntry, container.position);
             }

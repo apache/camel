@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.google.pubsub.integration;
 
-import java.util.List;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -31,8 +29,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GroupedExchangeRoundtripIT extends PubsubTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GroupedExchangeRoundtripIT.class);
@@ -100,6 +96,7 @@ public class GroupedExchangeRoundtripIT extends PubsubTestSupport {
 
         receiveResult.expectedMessageCount(2);
         receiveResult.expectedBodiesReceivedInAnyOrder(body1, body2);
+        sendResult.expectedMessageCount(1);
 
         exchange1.getIn().setBody(body1);
         exchange2.getIn().setBody(body2);
@@ -107,10 +104,8 @@ public class GroupedExchangeRoundtripIT extends PubsubTestSupport {
         producer.send(exchange1);
         producer.send(exchange2);
 
-        receiveResult.assertIsSatisfied(3000);
-
-        // Send result section
-        List<Exchange> results = sendResult.getExchanges();
-        assertEquals(1, results.size(), "Received exchanges");
+        // Waits for all mock endpoints: the received messages and the aggregated send result
+        // (the publish completes asynchronously, so the aggregated exchange may arrive late)
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

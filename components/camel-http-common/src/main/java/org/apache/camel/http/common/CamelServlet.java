@@ -508,8 +508,11 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
     @Override
     public void disconnect(HttpConsumer consumer) {
         log.debug("Disconnecting consumer: {}", consumer);
-        consumers.remove(consumer.getEndpoint().getEndpointUri());
-        RestConsumerContextPathMatcher.unRegister(consumer.getPath());
+        // only a consumer this servlet connected has registered its path: a registry shared by servlets of other
+        // names disconnects a consumer from every servlet, and a connect refused as a duplicate did not register
+        if (consumers.remove(consumer.getEndpoint().getEndpointUri(), consumer)) {
+            RestConsumerContextPathMatcher.unRegister(consumer.getPath());
+        }
     }
 
     @Override

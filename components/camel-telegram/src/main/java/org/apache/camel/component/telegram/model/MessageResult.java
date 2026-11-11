@@ -21,9 +21,9 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MessageResult implements Serializable {
@@ -83,12 +83,12 @@ public class MessageResult implements Serializable {
     }
 
     @JsonSetter("result")
-    public void setResult(JsonNode result) throws JsonProcessingException {
+    public void setResult(JsonNode result) {
         if (result != null) {
             if (result.isBoolean()) {
                 this.result = result.asBoolean();
             } else if (result.isObject()) {
-                ObjectMapper objectMapper = new ObjectMapper();
+                ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
                 this.message = objectMapper.treeToValue(result, IncomingMessage.class);
             }
         }

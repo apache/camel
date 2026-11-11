@@ -51,11 +51,12 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        IgniteCacheOperation operation = cacheOperationFor(exchange);
         Message in = exchange.getIn();
         Message out = exchange.getOut();
         MessageHelper.copyHeaders(exchange.getIn(), out, true);
 
-        switch (cacheOperationFor(exchange)) {
+        switch (operation) {
 
             case GET:
                 doGet(in, out);
@@ -110,19 +111,23 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
 
     @SuppressWarnings("unchecked")
     private void doPut(Message in, Message out) {
-        Map<Object, Object> map = in.getBody(Map.class);
-
-        if (map != null) {
-            cache.putAll(map);
-            return;
-        }
-
         Object cacheKey = in.getHeader(IgniteConstants.IGNITE_CACHE_KEY);
+
+        // a Map is put as its entries only without a key, and when collections are not cache objects:
+        // otherwise it is stored as one value, like any other body
+        if (cacheKey == null && !endpoint.isTreatCollectionsAsCacheObjects()) {
+            Map<Object, Object> map = in.getBody(Map.class);
+            if (map != null) {
+                cache.putAll(map);
+                IgniteHelper.maybePropagateIncomingBody(endpoint, in, out);
+                return;
+            }
+        }
 
         if (cacheKey == null) {
             throw new RuntimeCamelException(
                     "Cache PUT operation requires the cache key in the CamelIgniteCacheKey header, "
-                                            + "or a payload of type Map.");
+                                            + "or a payload of type Map when treatCollectionsAsCacheObjects is false.");
         }
 
         cache.put(cacheKey, in.getBody());
@@ -227,8 +232,14 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
     }
 
     private IgniteCacheOperation cacheOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_CACHE_OPERATION, endpoint.getOperation(),
-                IgniteCacheOperation.class);
+        IgniteCacheOperation operation = exchange.getIn().getHeader(IgniteConstants.IGNITE_CACHE_OPERATION,
+                endpoint.getOperation(), IgniteCacheOperation.class);
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "No operation specified. Set the operation via the operation option of the endpoint or the header "
+                                               + IgniteConstants.IGNITE_CACHE_OPERATION);
+        }
+        return operation;
     }
 
 }

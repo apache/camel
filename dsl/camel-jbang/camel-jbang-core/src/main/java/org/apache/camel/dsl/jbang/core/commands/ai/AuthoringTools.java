@@ -22,6 +22,7 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -34,6 +35,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -47,8 +49,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.PreviousRun;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.run.common.LogFileReader;
+import org.apache.camel.dsl.jbang.run.common.PreviousRun;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -63,10 +66,10 @@ import static org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor.tool;
  * an expression and diagnosing an error.
  * <p>
  * The tools are self-contained: a file tool takes the project {@code directory} as an argument (a server that has a
- * selected integration fills it in through {@link ToolContext#setDefaultDirectory}), and a runtime tool takes the
- * integration {@code name} (or uses the selected or the only running one). Writing a file is validated first and
- * refused when the content is invalid; confirming a write with a human is the job of the client or of the TUI, not of
- * these tools.
+ * selected integration fills it in through {@link ToolContext#setDefaultDirectory}, see {@link #fileTarget}), and a
+ * runtime tool takes the integration {@code name} (or uses the selected or the only running one). Writing a file is
+ * validated first and refused when the content is invalid; confirming a write with a human is the job of the client or
+ * of the TUI, not of these tools.
  */
 public final class AuthoringTools {
 
@@ -77,6 +80,12 @@ public final class AuthoringTools {
               + " half done, e.g. a to: direct:x and the route from direct:x:"
               + " [{\"find\": \"...\", \"replace\": \"...\"}, {\"find\": \"...\", \"replace\": \"...\"}]";
     static final String DIRECTORY_DESC = "Project directory with the source files (default: the selected integration's)";
+    // the arguments of camel_eval_expression for the message it is evaluated against, and how (CAMEL-26400)
+    public static final String EVAL_HEADERS_DESC = "Message headers: a JSON object, or key=value lines";
+    public static final String EVAL_VARIABLES_DESC = "Exchange variables: a JSON object, or key=value lines";
+    public static final String EVAL_PREDICATE_DESC = "Evaluate as a predicate (default: guessed for simple, else false)";
+    public static final String EVAL_RESULT_TYPE_DESC
+            = "Result class as resultType in a route, e.g. java.lang.String for an XPath string() or local-name()";
 
     /** Files listed and read by the file tools; more than that and a directory is not an integration's sources. */
     static final String FILE_PATH_DESC = "File path relative to the directory, e.g. src/main/resources/camel/foo.camel.yaml";
@@ -193,17 +202,18 @@ public final class AuthoringTools {
                     String file = required(args, "file");
                     String content = args.get("content");
                     String directory = args.get("directory");
-                    // the directory is needed to read the file, and used for the bean reference check when given
-                    Path dir = content == null || (directory != null && !directory.isBlank())
-                            ? ctx.resolveDirectory(directory) : null;
                     if (content == null) {
-                        Path path = resolveFile(dir, file);
-                        if (!Files.isRegularFile(path)) {
-                            throw new ToolExecutionException("No such file in the directory: " + file);
+                        FileTarget target = fileTarget(ctx, directory, file, FileAccess.VALIDATE);
+                        if (!Files.isRegularFile(target.path())) {
+                            throw new ToolExecutionException(
+                                    "No such file in the directory " + target.directory() + ": " + target.file()
+                                                             + elsewhere(target, "; "));
                         }
-                        content = read(path);
-                        return validate(ctx, dir, file, content).toJson();
+                        return validate(ctx, target.directory(), target.file(), read(target.path())).toJson();
                     }
+                    checkFileName(file, FileAccess.VALIDATE);
+                    // the content is checked on its own, and with the other files of the directory when one is given
+                    Path dir = directory != null && !directory.isBlank() ? ctx.resolveDirectory(directory) : null;
                     JsonObject result = validate(ctx, dir, file, content);
                     if (sameAsOnDisk(ctx, directory, file, content)) {
                         // a model that meant to change the file validates the old version: say so (CAMEL-25371)
@@ -223,11 +233,12 @@ public final class AuthoringTools {
                 .param("file", "string", FILE_PATH_DESC + " to read; omitted lists the files", false)
                 .core(true)
                 .executor((ctx, args) -> {
-                    Path dir = ctx.resolveDirectory(args.get("directory"));
                     String file = args.get("file");
                     if (file != null && !file.isBlank()) {
-                        return readFile(dir, file).toJson();
+                        FileTarget target = fileTarget(ctx, args.get("directory"), file, FileAccess.READ);
+                        return readFile(target.directory(), target.file()).toJson();
                     }
+                    Path dir = ctx.resolveDirectory(args.get("directory"));
                     JsonObject result = listFiles(dir);
                     if (ctx.hasProcess()) {
                         // the selected integration's routes, when they come from this directory
@@ -254,9 +265,9 @@ public final class AuthoringTools {
                 .core(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
-                    Path dir = ctx.resolveDirectory(args.get("directory"));
+                    FileTarget target = fileTarget(ctx, args.get("directory"), required(args, "file"), FileAccess.WRITE);
                     // always validated: a model given a switch turns it off (CAMEL-24897)
-                    return writeFile(ctx, dir, required(args, "file"), required(args, "content"), true).toJson();
+                    return writeFile(ctx, target.directory(), target.file(), required(args, "content"), true).toJson();
                 }));
 
         registry.accept(tool("camel_edit_file",
@@ -277,15 +288,16 @@ public final class AuthoringTools {
                 .core(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
-                    Path dir = ctx.resolveDirectory(args.get("directory"));
-                    return editFile(ctx, dir, required(args, "file"), args.get("find"),
+                    FileTarget target = fileTarget(ctx, args.get("directory"), required(args, "file"), FileAccess.EDIT);
+                    return editFile(ctx, target.directory(), target.file(), args.get("find"),
                             args.get("replace") == null ? "" : args.get("replace"), args.get("edits")).toJson();
                 }));
 
         registry.accept(tool("camel_run",
                 "Starts an integration with camel run in a separate process, in dev mode by default (a changed or added file is reloaded). Returns the pid and log file; camel_get_log and camel_control follow it.")
                 .param("directory", "string", "Project directory to run in", true)
-                .param("files", "string", "Source files to run, comma-separated (default: the whole directory)",
+                .param("files", "string", "Source files to run, comma-separated (default: the whole directory); not a"
+                                          + " Citrus test, which camel test run runs",
                         false)
                 .param("name", "string", "Integration name (default: from the first file)", false)
                 .param("dev", "boolean", "Dev mode with reload on file change (default true)", false)
@@ -394,16 +406,31 @@ public final class AuthoringTools {
                 .param("language", "string", "simple (default), jsonpath, xpath, jq", false)
                 .param("body", "string", "Message body", false)
                 .param("name", "string", NAME_DESC, false)
+                .param("headers", "string", EVAL_HEADERS_DESC, false)
+                .param("variables", "string", EVAL_VARIABLES_DESC, false)
+                .param("predicate", "boolean", EVAL_PREDICATE_DESC, false)
+                .param("resultType", "string", EVAL_RESULT_TYPE_DESC, false)
                 .core(true)
+                // the same expression on the same message gets the same answer, unless it reads the clock, a random
+                // value or the integration: a model that evaluates it again and again is stuck
+                .deterministicIf(ExpressionEvaluator::sameAnswer)
+                .repeatHint("The same expression on the same message gives the same result: change the expression or"
+                            + " the message (body, headers, variables) to learn something new.")
                 .executor((ctx, args) -> {
+                    String expression = required(args, "expression");
+                    Map<String, Object> headers = ExpressionEvaluator.parseValues("headers", args.get("headers"));
+                    Map<String, Object> variables = ExpressionEvaluator.parseValues("variables", args.get("variables"));
+                    Boolean predicate = booleanArgument("predicate", args.get("predicate"));
                     String name = args.get("name");
                     if (name != null && !name.isBlank()) {
                         ctx.selectProcess(name);
                     } else {
                         ctx.selectSingleProcessIfNone();
                     }
-                    return ExpressionEvaluator.evaluate(ctx, args.get("language"), required(args, "expression"),
-                            args.get("body")).toJson();
+                    return ExpressionEvaluator.evaluate(ctx, new ExpressionEvaluator.Request(
+                            args.get("language"),
+                            expression, args.get("body"), headers, variables, predicate,
+                            args.get("resultType"))).toJson();
                 }));
 
         registry.accept(tool("camel_dependency_for_class",
@@ -440,7 +467,8 @@ public final class AuthoringTools {
         registry.accept(tool("camel_project_overview",
                 "Overview of a project's integrations from its route sources, no running integration needed: "
                                                        + "routes, entry points, links between routes, external systems, "
-                                                       + "findings, and the AI-assisted parts of its "
+                                                       + "findings, its purpose, what happened when it runs (running), "
+                                                       + "and the AI-assisted parts of its "
                                                        + IntegrationSummary.FILE_NAME + " (fields starting with ai).")
                 .param("directory", "string", DIRECTORY_DESC, false)
                 .param("camelVersion", "string", VERSION_DESC, false)
@@ -450,6 +478,16 @@ public final class AuthoringTools {
                     ProjectOverview.Overview overview = ProjectOverview.analyze(dir, ctx.catalog());
                     IntegrationSummary.Summary summary = IntegrationSummary.read(dir);
                     JsonObject result = ProjectOverview.toJson(overview, summary);
+                    // what it does in the words of its author, and what has happened when it runs (CAMEL-26700)
+                    About.Model about = About.of(dir, overview);
+                    if (about.purpose() != null) {
+                        result.put("purpose", about.purpose());
+                        result.put("purposeFrom", about.purposeFrom());
+                    }
+                    JsonObject running = AboutReport.running(dir, about);
+                    if (running != null) {
+                        result.put("running", running);
+                    }
                     if (summary == null || !overview.fingerprint().equals(summary.fingerprint())) {
                         result.put("hint", "To explain the project, write the overview, capabilities, the missing"
                                            + " descriptions and labels for the decisions with camel_save_project_summary");
@@ -639,10 +677,41 @@ public final class AuthoringTools {
                 result.put("notChecked", notChecked);
             }
         }
-        result.put("message", errors.isEmpty()
-                ? "The source is valid"
-                : errors.size() + " problem(s) found; fix them before writing the file");
+        String start = startNote(dir, file, content);
+        if (!errors.isEmpty()) {
+            result.put("message", errors.size() + " problem(s) found; fix them before writing the file"
+                                  + (start.isEmpty() ? "" : "." + start));
+        } else if (SourceValidator.isCitrusTest(file)) {
+            result.put("message", (CitrusTestChecks.hasSchema() ? "The test is valid. " : "The YAML is valid. ")
+                                  + citrusTestNote(file) + start);
+        } else {
+            result.put("message", "The source is valid");
+        }
         return result;
+    }
+
+    /**
+     * What is said of a Citrus test that calls the integration but does not start it, with a space before it, or
+     * nothing: no test a local model wrote for test-citrus-orders of the local-model benchmark started the integration,
+     * and camel test run runs only the test.
+     */
+    private static String startNote(Path dir, String file, String content) {
+        String note = SourceValidator.isCitrusTest(file) ? CitrusTestChecks.startNote(content, dir, file) : "";
+        return note.isEmpty() ? "" : " " + note;
+    }
+
+    /**
+     * What the tools say of a Citrus test: it is not a route, so it is checked against the test schema of Citrus (or
+     * for its YAML syntax only, when the schema cannot be had), and there is no reload to wait for or to report (camel
+     * run --dev --source-dir loads no routes from it); camel test run runs it.
+     */
+    static String citrusTestNote(String file) {
+        String checked = CitrusTestChecks.hasSchema()
+                ? "it is checked against the test schema of Citrus " + CitrusTestChecks.version()
+                : "only its YAML syntax is checked, as the test schema of Citrus " + CitrusTestChecks.version()
+                  + " could not be loaded (" + CitrusTestChecks.schemaProblem() + ")";
+        return "A Citrus test is not a route: " + checked + ", and no integration loads it. Run it with camel test run "
+               + file + " in the project directory.";
     }
 
     /** The line of a validation message, "Line N: ...", or 0. */
@@ -702,9 +771,11 @@ public final class AuthoringTools {
         }
         if ("unchanged".equals(result.getString("status"))) {
             result.put("message", "The edit leaves the file as it is (the replacement gives the text the file already"
-                                  + " has), so nothing was written and nothing reloads. To change what the route does,"
-                                  + " change the text; camel_get_log and camel_get_errors show what the current version"
-                                  + " does.");
+                                  + " has), so nothing was written and nothing reloads. "
+                                  + (SourceValidator.isCitrusTest(file)
+                                          ? citrusTestNote(file)
+                                          : "To change what the route does, change the text; camel_get_log and"
+                                            + " camel_get_errors show what the current version does."));
         } else if (!"invalid".equals(result.getString("status"))) {
             result.put("status", "edited");
             if (edit.get("matchedLines") instanceof JsonArray matched) {
@@ -727,7 +798,11 @@ public final class AuthoringTools {
                                   + " Change what the errors say; where an error shows the lines to write, copy them.");
         } else {
             result.put("message", "The file was not changed: the result has validation errors. Fix them and call"
-                                  + " camel_edit_file again.");
+                                  + " camel_edit_file again." + startNote(dir, file, content));
+        }
+        if ("invalid".equals(result.getString("status")) && result.get("repairable") instanceof JsonArray repairable) {
+            result.put("message", result.getString("message") + " "
+                                  + repairableNote(repairable.stream().map(String::valueOf).toList()));
         }
         return result;
     }
@@ -760,7 +835,12 @@ public final class AuthoringTools {
     static JsonObject editedContent(Path dir, String file, String find, String replace, String edits, boolean closest) {
         Path path = resolveFile(dir, file);
         if (!Files.isRegularFile(path)) {
-            throw new ToolExecutionException(file + " does not exist: write the whole file with camel_write_file");
+            String elsewhere = elsewhere(dir, path, "");
+            // a file of that name in a subdirectory is the one to change: a whole new file would be a second copy
+            throw new ToolExecutionException(
+                    file + " does not exist" + (!elsewhere.isEmpty()
+                            ? ", but " + elsewhere + " (camel_write_file writes a new file)"
+                            : ": write the whole file with camel_write_file"));
         }
         List<String[]> all = new ArrayList<>();
         if (find != null && !find.isEmpty()) {
@@ -1479,7 +1559,8 @@ public final class AuthoringTools {
     /**
      * What a file does that works but is not right, which does not refuse a write: a camel: dependency a Kamelet's
      * template does not use (CAMEL-25403), a {expression} in the text of an XSLT element, a JMS reply header set by
-     * hand in a route that sends nothing InOut.
+     * hand in a route that sends nothing InOut, a to: that copies each file its file consumer then moves to .camel, a
+     * request-reply over JMS whose reply replaces the message that was sent.
      */
     private static void putFileNotes(JsonObject result, String file, String content) {
         String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
@@ -1494,9 +1575,12 @@ public final class AuthoringTools {
             if (!notes.isEmpty()) {
                 result.put("notes", new JsonArray(notes));
             }
-        } else if (name.endsWith(".yaml") || name.endsWith(".yml")) {
-            // a JMS reply header set by hand, with nothing sent InOut
-            List<String> notes = HeaderChecks.replyHeaderNotes(content);
+        } else if ((name.endsWith(".yaml") || name.endsWith(".yml")) && !SourceValidator.isCitrusTest(name)) {
+            // a JMS reply header set by hand, with nothing sent InOut; a to: that copies the file a consumer moves; a
+            // JMS reply that replaces the message that was sent
+            List<String> notes = new ArrayList<>(HeaderChecks.replyHeaderNotes(content));
+            notes.addAll(WriteNotes.fileCopyNotes(content));
+            notes.addAll(WriteNotes.requestReplyNotes(content));
             if (!notes.isEmpty()) {
                 result.put("notes", new JsonArray(notes));
             }
@@ -1648,6 +1732,10 @@ public final class AuthoringTools {
         }
         List<String> problemsBefore = List.of();
         List<String> repaired = List.of();
+        List<String> repairable = List.of();
+        boolean refusalsFixed = false;
+        // a Citrus test is not a route: none of the repairs, notes and reloads of a route apply to it
+        boolean citrusTest = SourceValidator.isCitrusTest(file);
         if (validate && SourceValidator.isValidatableFile(file)) {
             // a missing consumer of a direct: endpoint does not refuse the write: it is often a file not written yet
             List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator(), dir,
@@ -1662,15 +1750,33 @@ public final class AuthoringTools {
                 errors = newProblems(before, errors, stillThere);
                 problemsBefore = stillThere;
             }
-            if (!errors.isEmpty()) {
+            if (!errors.isEmpty() && !citrusTest) {
                 // CAMEL-25532: the shapes with one reading are repaired, and the write goes ahead when that leaves no
                 // new problem; the answer says what was repaired
                 Repaired r = repair(ctx, dir, file, content, errors, before, exists);
-                if (r != null) {
+                List<String> hidden = hiddenProblems(r, errors);
+                if (r != null && r.left().isEmpty()) {
                     content = r.content();
                     repaired = r.applied();
                     problemsBefore = r.stillThere();
                     errors = List.of();
+                } else if (hidden != null) {
+                    // the write repairs the shape itself: the problems to fix are the ones the shape hid
+                    errors = hidden;
+                    repairable = markShapeLeft(r);
+                }
+            }
+            int times = errors.isEmpty() ? 0 : refusedAgain(path, content);
+            if (times >= SAME_REFUSALS_FIXED && !citrusTest) {
+                // CAMEL-26758: the same refused content a third time, also when the refusals gave the lines to write;
+                // the write makes the fixes they gave as exact text, and goes ahead when that leaves no new problem
+                Repaired given = refusalFixes(ctx, dir, file, content, errors, before, exists);
+                if (given != null) {
+                    content = given.content();
+                    repaired = given.applied();
+                    problemsBefore = given.stillThere();
+                    errors = List.of();
+                    refusalsFixed = true;
                 }
             }
             if (!errors.isEmpty()) {
@@ -1679,8 +1785,7 @@ public final class AuthoringTools {
                 result.put("file", file);
                 result.put("errors", new JsonArray(errors));
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
-                                      + " call camel_write_file again.");
-                int times = refusedAgain(path, content);
+                                      + " call camel_write_file again." + startNote(dir, file, content));
                 if (times > 1) {
                     // the same content again: a model that does not see the problem in its own lines writes them
                     // again and again, sixteen times in a row in the benchmark; say so, and what to do instead
@@ -1689,6 +1794,10 @@ public final class AuthoringTools {
                     result.put("message", "The file was not written: the content is the same as your last write of"
                                           + " it, refused " + times + " times now for the same problems. Change what"
                                           + " the errors say; where an error shows the lines to write, copy them.");
+                }
+                if (!repairable.isEmpty()) {
+                    result.put("repairable", new JsonArray(repairable));
+                    result.put("message", result.getString("message") + " " + repairableNote(repairable));
                 }
                 putKameletGuide(result, file, errors);
                 return result;
@@ -1703,8 +1812,10 @@ public final class AuthoringTools {
             result.put("file", file);
             result.put("directory", dir.toString());
             result.put("message", "The file already has exactly this content, so nothing was written and nothing"
-                                  + " reloads. To change what the route does, change the content; camel_get_log and"
-                                  + " camel_get_errors show what the current version does.");
+                                  + " reloads. " + (citrusTest
+                                          ? citrusTestNote(file)
+                                          : "To change what the route does, change the content; camel_get_log and"
+                                            + " camel_get_errors show what the current version does."));
             return result;
         }
         // a client that asks before each write (camel ask, CAMEL-25676) shows the change first; the others write as
@@ -1718,7 +1829,9 @@ public final class AuthoringTools {
         String processName = null;
         String sinceKey = null;
         long watchPid = -1;
-        if (SourceValidator.isValidatableFile(file) || reloadsWithRoutes(file)) {
+        // not for a Citrus test: dev mode with --source-dir reloads the routes when it changes, but loads no route from
+        // it, and the answer said the integration reloaded a file that it does not load (test-citrus-orders)
+        if (!citrusTest && (SourceValidator.isValidatableFile(file) || reloadsWithRoutes(file))) {
             if (ctx.hasProcess()) {
                 watchPid = ctx.pid();
                 RuntimeHelper.ProcessInfo p = RuntimeHelper.findProcess(Long.toString(ctx.pid()));
@@ -1745,6 +1858,8 @@ public final class AuthoringTools {
         if (watch) {
             sinceKey = ReloadOutcome.latestReloadKey(ReloadOutcome.records(watchPid, processName));
         }
+        // the content the write replaces: a placeholder it no longer has is said in a note
+        String before = exists && validate && SourceValidator.isValidatableFile(file) ? read(path) : null;
         try {
             Files.createDirectories(path.getParent());
             Files.writeString(path, content, StandardCharsets.UTF_8);
@@ -1764,11 +1879,24 @@ public final class AuthoringTools {
         }
         UnconsumedDirect waiting = null;
         boolean replyByHand = false;
-        if (validate) {
+        boolean copies = false;
+        boolean replyReplaces = false;
+        List<WriteNotes.UnusedProperty> unusedProperties = List.of();
+        if (validate && !citrusTest) {
             putFileNotes(result, file, content);
             String lower = file.toLowerCase(Locale.ROOT);
-            replyByHand = (lower.endsWith(".yaml") || lower.endsWith(".yml"))
-                    && !HeaderChecks.replyHeaderNotes(content).isEmpty();
+            boolean yaml = lower.endsWith(".yaml") || lower.endsWith(".yml");
+            boolean kamelet = lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml");
+            replyByHand = yaml && !HeaderChecks.replyHeaderNotes(content).isEmpty();
+            copies = yaml && !kamelet && !WriteNotes.fileCopyNotes(content).isEmpty();
+            replyReplaces = yaml && !kamelet && !WriteNotes.requestReplyNotes(content).isEmpty();
+            // a literal written over a {{key}} that leaves the key of application.properties unused
+            unusedProperties = WriteNotes.unusedProperties(dir, file, before, content);
+            if (!unusedProperties.isEmpty()) {
+                JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();
+                unusedProperties.forEach(u -> notes.add(u.note()));
+                result.put("notes", notes);
+            }
             waiting = unconsumedDirect(dir, file, content, ctx.catalog());
             if (waiting != null) {
                 JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();
@@ -1807,6 +1935,8 @@ public final class AuthoringTools {
                                  + " content and write again (see reload.message).";
                 default -> "Written; " + reload.getString("message");
             });
+        } else if (citrusTest) {
+            result.put("message", citrusTestNote(file) + startNote(dir, file, content));
         } else if (notWatchedBy >= 0) {
             result.put("message", "The running integration (pid " + notWatchedBy + ") was started with its own files"
                                   + " and does not reload when this file changes; camel_control restart picks up the"
@@ -1822,10 +1952,31 @@ public final class AuthoringTools {
             result.put("message", result.getString("message") + " Note: a JMS reply header is set by hand, and nothing"
                                   + " is sent with pattern: InOut (see notes).");
         }
+        if (copies) {
+            result.put("message", result.getString("message") + " Note: a to: writes a copy of each file, while the file"
+                                  + " consumer still moves the file to .camel (see notes).");
+        }
+        if (replyReplaces) {
+            result.put("message", result.getString("message") + " Note: after a request-reply (InOut) the body is the"
+                                  + " reply, not the message that was sent; variableReceive on the to: keeps the"
+                                  + " message (see notes).");
+        }
         if (!repaired.isEmpty()) {
             result.put("repaired", new JsonArray(repaired));
             result.put("message", "Written with these repairs of the YAML (the file has them now): "
-                                  + String.join("; ", repaired) + ". " + result.getString("message"));
+                                  + String.join("; ", repaired) + ". "
+                                  + (refusalsFixed
+                                          ? "The same content came a third time, so the write made the fixes the"
+                                            + " refusals gave: the file is not the text you sent, read it before you"
+                                            + " edit it. "
+                                          : "")
+                                  + result.getString("message"));
+        }
+        if (!unusedProperties.isEmpty()) {
+            // what to do next, first in the answer: "Use {{report.schedule}} again on line 7, and set
+            // report.schedule=0 0 2 * * ? in application.properties"
+            result.put("message", String.join(" ", unusedProperties.stream().map(WriteNotes.UnusedProperty::instruction)
+                    .toList()) + " " + result.getString("message"));
         }
         return result;
     }
@@ -1860,12 +2011,17 @@ public final class AuthoringTools {
     /** How many times the repairs are applied and the content validated again (a repair can reveal the next one). */
     private static final int REPAIR_ROUNDS = 8;
 
-    private record Repaired(String content, List<String> applied, List<String> stillThere) {
+    /**
+     * The content with the shapes that have one reading repaired; left has the problems it still has (none: the write
+     * goes ahead with the repairs), and moved says an entry moved to other lines.
+     */
+    private record Repaired(
+            String content, List<String> applied, List<String> stillThere, List<String> left, boolean moved) {
     }
 
     /**
-     * The content with the shapes that have one reading repaired, when that leaves no problem the file did not have;
-     * null otherwise (the write is refused as it was, with the problems of the content as written).
+     * The content with the shapes that have one reading repaired, with the problems it still has once repaired; null
+     * when nothing could be repaired (the write is refused with the problems of the content as written).
      */
     private static Repaired repair(
             ToolContext ctx, Path dir, String file, String content, List<String> errors, List<String> before,
@@ -1874,20 +2030,157 @@ public final class AuthoringTools {
         List<String> applied = new ArrayList<>();
         List<String> left = errors;
         List<String> stillThere = new ArrayList<>();
+        boolean moved = false;
         for (int round = 0; round < REPAIR_ROUNDS && !left.isEmpty(); round++) {
             LenientRepairs.Result r = LenientRepairs.repair(current, left);
             if (r == null) {
-                return null;
+                break;
             }
             current = r.content();
             applied.addAll(r.applied());
+            moved |= r.moved();
             left = SourceValidator.validate(file, current, ctx.catalog(), ctx.propertyLineValidator(), dir, null, false);
             stillThere = new ArrayList<>();
             if (!left.isEmpty() && exists) {
                 left = newProblems(before, left, stillThere);
             }
         }
-        return left.isEmpty() ? new Repaired(current, applied, stillThere) : null;
+        return applied.isEmpty() ? null : new Repaired(current, applied, stillThere, left, moved);
+    }
+
+    /**
+     * How many times in a row the same content of a file is refused before the write makes the fixes the refusals gave
+     * (CAMEL-26758): twice the model had the choice of its own fix. In the benchmark, of the loops that stopped at the
+     * third refusal most passed after it, while 13 of the 14 that went on to a fourth failed.
+     */
+    private static final int SAME_REFUSALS_FIXED = 3;
+
+    /**
+     * CAMEL-26758: the content with the fixes the refusals gave as exact text ({@link RefusalFixes}), and then the
+     * shapes with one reading repaired; null when no problem gives exact text, or a problem is still left after the
+     * fixes (a problem without text often came from a line a fix rewrote, and goes with it).
+     */
+    private static Repaired refusalFixes(
+            ToolContext ctx, Path dir, String file, String content, List<String> errors, List<String> before,
+            boolean exists) {
+        LenientRepairs.Result given = RefusalFixes.apply(content, errors);
+        if (given == null) {
+            return null;
+        }
+        List<String> applied = new ArrayList<>(given.applied());
+        String fixed = given.content();
+        List<String> left = SourceValidator.validate(file, fixed, ctx.catalog(), ctx.propertyLineValidator(), dir, null,
+                false);
+        List<String> stillThere = new ArrayList<>();
+        if (!left.isEmpty() && exists) {
+            left = newProblems(before, left, stillThere);
+        }
+        if (!left.isEmpty()) {
+            // a fix can leave a shape with one reading, such as a list item one column off
+            Repaired r = repair(ctx, dir, file, fixed, left, before, exists);
+            if (r == null || !r.left().isEmpty()) {
+                return null;
+            }
+            fixed = r.content();
+            applied.addAll(r.applied());
+            stillThere = r.stillThere();
+        }
+        return new Repaired(fixed, applied, stillThere, List.of(), given.moved());
+    }
+
+    /**
+     * The problems a repairable shape hid: the YAML parser stops at a list item two columns off, so the checks of the
+     * content never ran. Told only of the column, a local model sent the same lines up to 22 times in a row (r23 and
+     * r24 of the benchmark), while with the column repaired the validator had the real problem: a steps: at the route
+     * level, a field read on a variable that holds a file. Null when a problem of the content as written is still there
+     * (the write cannot repair it), or the repairs moved lines, so the line numbers would not be the model's.
+     */
+    private static List<String> hiddenProblems(Repaired r, List<String> errors) {
+        if (r == null || r.left().isEmpty() || r.moved()) {
+            return null;
+        }
+        Set<String> written = new HashSet<>();
+        errors.forEach(e -> written.add(withoutLine(e)));
+        return r.left().stream().anyMatch(e -> written.contains(withoutLine(e))) ? null : r.left();
+    }
+
+    /**
+     * A schema problem of the shape of the YAML: a key where none goes, two EIPs in one step, a node of another type.
+     */
+    private static final Pattern SHAPE_PROBLEM = Pattern.compile(
+            "is not defined in the schema|must have at most \\d+ propert|found, \\w+ expected|starts in column"
+                                                                 + "|required property");
+
+    /**
+     * The line a repair or a problem names: "line 101: otherwise: its steps put under steps:", "Line 102: ...", or the
+     * lines: "lines 45-46: the two characters \n after the value of expression written as a line break".
+     */
+    private static final Pattern NAMED_LINE = Pattern.compile("^[Ll]ines? (\\d+)(?:-(\\d+))?\\b");
+
+    /** What a repair says when a problem of the shape is left in the lines it changed. */
+    static final String SHAPE_LEFT = " (these lines still have errors)";
+
+    /**
+     * The repairs of a refused write, each marked with {@link #SHAPE_LEFT} when a problem of the shape is left in the
+     * lines it changed: then the YAML shape does need a change there. r27l-4 connect-http-client step 3: the items of
+     * an otherwise: list were conditions, which the repair put under steps:, where they were still not steps; told that
+     * the shape needed no change from it, the model sent the same lines 16 times.
+     */
+    private static List<String> markShapeLeft(Repaired r) {
+        String[] lines = r.content().split("\n", -1);
+        List<Integer> shapeLines = new ArrayList<>();
+        for (String problem : r.left()) {
+            Matcher m = NAMED_LINE.matcher(problem);
+            if (m.find() && SHAPE_PROBLEM.matcher(problem).find()) {
+                shapeLines.add(Integer.parseInt(m.group(1)));
+            }
+        }
+        List<String> answer = new ArrayList<>();
+        for (String applied : r.applied()) {
+            Matcher m = NAMED_LINE.matcher(applied);
+            boolean left = false;
+            if (m.find()) {
+                int start = Integer.parseInt(m.group(1));
+                // a line split in two has its second line beside the first, not in its block
+                int end = Math.max(blockEnd(lines, start), m.group(2) != null ? Integer.parseInt(m.group(2)) : start);
+                left = shapeLines.stream().anyMatch(l -> l >= start && l <= end);
+            }
+            answer.add(left ? applied + SHAPE_LEFT : applied);
+        }
+        return answer;
+    }
+
+    /** The last line (1-based) of the block of a line: the lines after it that are indented more, or blank. */
+    private static int blockEnd(String[] lines, int line) {
+        if (line < 1 || line > lines.length) {
+            return line;
+        }
+        int indent = YamlLines.countLeadingSpaces(lines[line - 1]);
+        int end = line;
+        for (int i = line; i < lines.length; i++) {
+            if (lines[i].isBlank()) {
+                continue;
+            }
+            if (YamlLines.countLeadingSpaces(lines[i]) <= indent) {
+                break;
+            }
+            end = i + 1;
+        }
+        return end;
+    }
+
+    /**
+     * What the write repairs by itself, said with the problems it still refuses: not that the shape needs no change
+     * when the lines of a repair still have a problem of their shape.
+     */
+    static String repairableNote(List<String> repairable) {
+        if (repairable.stream().anyMatch(r -> r.endsWith(SHAPE_LEFT))) {
+            return "The write repairs part of the YAML shape by itself (" + String.join("; ", repairable) + "), and the"
+                   + " lines marked still have errors of their shape: change them as the errors say. The errors are what"
+                   + " the content has with that repaired.";
+        }
+        return "The YAML shape needs no change from you: the write repairs it by itself (" + String.join("; ", repairable)
+               + "). The errors are what the content has with that repaired.";
     }
 
     private static final Pattern UNCONSUMED_DIRECT = Pattern.compile("sends to (direct:[^,\\s]+), and no route consumes it");
@@ -2006,9 +2299,13 @@ public final class AuthoringTools {
     public static JsonObject readFile(Path dir, String file) {
         Path path = resolveFile(dir, file);
         if (!Files.isRegularFile(path)) {
+            String elsewhere = elsewhere(dir, path, "; ");
             throw new ToolExecutionException(
                     "No such file: " + file + " in " + dir
-                                             + "; call camel_get_files without file to list them (routeFiles names the routes)");
+                                             + (!elsewhere.isEmpty()
+                                                     ? elsewhere
+                                                     : "; call camel_get_files without file to list them (routeFiles"
+                                                       + " names the routes)"));
         }
         JsonObject result = new JsonObject();
         result.put("file", file);
@@ -2211,26 +2508,223 @@ public final class AuthoringTools {
     }
 
     /**
-     * A file path relative to the directory (subdirectories allowed, as {@code camel_get_files} lists them); an
-     * absolute path or one that escapes the directory is refused.
+     * What a file tool does with its file, which decides whether a missing directory is created, and which argument the
+     * source goes in.
+     */
+    public enum FileAccess {
+        /** Reads the file ({@code camel_get_files}). */
+        READ(null),
+        /** Reads the file, or validates the content given for it ({@code camel_validate_source}). */
+        VALIDATE("content"),
+        /** Changes the file ({@code camel_edit_file}). */
+        EDIT(null),
+        /** Writes the file ({@code camel_write_file}): the only one to create a missing directory. */
+        WRITE("content");
+
+        private final String sourceArgument;
+
+        FileAccess(String sourceArgument) {
+            this.sourceArgument = sourceArgument;
+        }
+    }
+
+    /**
+     * The file of a file tool call: the project directory it is in, the path relative to it as the answers name it, and
+     * the path itself.
+     */
+    public record FileTarget(Path directory, String file, Path path) {
+    }
+
+    /**
+     * Where the file of a file tool call is, the same way for {@code camel_validate_source}, {@code camel_get_files},
+     * {@code camel_edit_file} and {@code camel_write_file} (CAMEL-26398):
+     * <ul>
+     * <li>the directory is the {@code directory} argument, else the default directory (the TUI's selection,
+     * {@code camel ask}'s project), else the root directory (the only root of an MCP client); without any of them the
+     * answer says what to pass;</li>
+     * <li>the file is a path relative to the directory, or an absolute path inside it, which is made relative;</li>
+     * <li>only {@code camel_write_file} creates a missing {@code directory}, and only inside the default or root
+     * directory; elsewhere the answer names the existing directory to pass, with the subdirectory in the file.</li>
+     * </ul>
+     * The file always stays inside the directory, with symbolic links resolved: an absolute path, or a link in the
+     * project, is never a way to read or write another file of the disk, and an absolute file never names the
+     * directory.
+     *
+     * @throws ToolExecutionException when the call does not say where the file is, or the file is not inside the
+     *                                directory
+     */
+    public static FileTarget fileTarget(ToolContext ctx, String directory, String file, FileAccess access) {
+        Path given = checkFileName(file, access);
+        Path dir;
+        if (directory != null && !directory.isBlank()) {
+            try {
+                dir = Path.of(directory).toAbsolutePath().normalize();
+            } catch (InvalidPathException e) {
+                throw new ToolExecutionException("Not a valid directory: " + directory);
+            }
+            if (!Files.isDirectory(dir)) {
+                missingDirectory(ctx, dir, file, access);
+            }
+        } else {
+            Path project = ctx.projectDirectory();
+            if (project == null) {
+                throw new ToolExecutionException(
+                        "directory is required: pass directory, the absolute project directory with the source files,"
+                                                 + " and file relative to it"
+                                                 + (given.isAbsolute() ? " (an absolute file must be inside it)" : ""));
+            }
+            dir = project.toAbsolutePath().normalize();
+            if (!Files.isDirectory(dir)) {
+                throw new ToolExecutionException("No such directory: " + dir);
+            }
+        }
+        Path path = resolveFile(dir, file);
+        return new FileTarget(dir, relativePath(dir, path), path);
+    }
+
+    /**
+     * The file name of a call, refused when it is missing, not a path, or the source itself: a model that put the YAML
+     * of a route in {@code file} was answered with the whole YAML as a file it could not find.
+     */
+    static Path checkFileName(String file, FileAccess access) {
+        if (file == null || file.isBlank()) {
+            throw new ToolExecutionException("file is required");
+        }
+        if (file.indexOf('\n') >= 0) {
+            throw new ToolExecutionException(
+                    "file has several lines, so it is not a file name: file names the file, e.g. routes.camel.yaml"
+                                             + (access.sourceArgument != null
+                                                     ? ", and the source goes in " + access.sourceArgument : ""));
+        }
+        try {
+            return Path.of(file);
+        } catch (InvalidPathException e) {
+            throw new ToolExecutionException("Not a valid file path: " + file);
+        }
+    }
+
+    /**
+     * Checks a directory the call names that is not there: a write creates it when it is inside the default or root
+     * directory, an existing project directory. Otherwise it is refused, and a write is told the existing directory to
+     * pass, with the subdirectory in the file, whose directories the write creates.
+     */
+    private static void missingDirectory(ToolContext ctx, Path dir, String file, FileAccess access) {
+        if (Files.exists(dir, LinkOption.NOFOLLOW_LINKS)) {
+            throw new ToolExecutionException(dir + " is not a directory");
+        }
+        if (access == FileAccess.WRITE) {
+            Path project = ctx.projectDirectory();
+            Path realProject = project != null && Files.isDirectory(project)
+                    ? realPath(project.toAbsolutePath().normalize()) : null;
+            Path realDir = realPath(dir);
+            if (realProject != null && realDir != null && realDir.startsWith(realProject)) {
+                return;
+            }
+            // the nearest directory that is there, not a link that may lead out of the project
+            Path existing = dir.getParent();
+            while (existing != null && !Files.isDirectory(existing, LinkOption.NOFOLLOW_LINKS)) {
+                existing = existing.getParent();
+            }
+            Path target = existing != null ? dir.resolve(file).normalize() : null;
+            if (target != null && target.startsWith(existing) && !target.equals(existing)) {
+                // the arguments of the call to make, as the model writes them (no escaped slashes)
+                throw new ToolExecutionException(
+                        "No such directory: " + dir + "; pass the existing project directory as directory and the"
+                                                 + " subdirectory in file, which is created: {\"directory\":\""
+                                                 + existing.toString().replace('\\', '/') + "\",\"file\":\""
+                                                 + relativePath(existing, target) + "\"}");
+            }
+        }
+        throw new ToolExecutionException("No such directory: " + dir);
+    }
+
+    /** As {@link #elsewhere(Path, Path, String)} for the file of a call. */
+    private static String elsewhere(FileTarget target, String prefix) {
+        return elsewhere(target.directory(), target.path(), prefix);
+    }
+
+    /**
+     * Where a file that is not at the path is under the directory: the files of that name in its subdirectories, as
+     * {@code camel/order-intake.yaml exists: pass file camel/order-intake.yaml} after the prefix, or an empty string
+     * when there is none. A model that knew the name passed it relative to the wrong directory.
+     */
+    static String elsewhere(Path dir, Path path, String prefix) {
+        if (path == null || path.getFileName() == null || !Files.isDirectory(dir)) {
+            return "";
+        }
+        String name = path.getFileName().toString();
+        List<String> found;
+        try {
+            // the walk of the listing: bounded, without build output, VCS and hidden directories, and links not followed
+            found = projectFiles(dir).stream().filter(p -> p.getFileName().toString().equals(name) && !p.equals(path))
+                    .map(p -> relativePath(dir, p)).limit(3).toList();
+        } catch (ToolExecutionException e) {
+            return "";
+        }
+        if (found.isEmpty()) {
+            return "";
+        }
+        return prefix + (found.size() == 1
+                ? found.get(0) + " exists: pass file " + found.get(0)
+                : String.join(", ", found) + " exist: pass file as the one you mean");
+    }
+
+    /**
+     * A file path relative to the directory (subdirectories allowed, as {@code camel_get_files} lists them), or an
+     * absolute path inside the directory. The file must stay inside the directory with symbolic links resolved: a path
+     * that leaves it, or that a link in it leads out of, is refused (CAMEL-26398).
      */
     public static Path resolveFile(Path dir, String file) {
         if (file == null || file.isBlank()) {
             throw new ToolExecutionException("file is required");
         }
-        Path path;
+        Path base = dir.toAbsolutePath().normalize();
+        Path given;
         try {
-            if (Path.of(file).isAbsolute()) {
-                throw new ToolExecutionException("file must be a path relative to the directory " + dir + ", not " + file);
-            }
-            path = dir.resolve(file).normalize();
+            given = Path.of(file);
         } catch (InvalidPathException e) {
             throw new ToolExecutionException("Not a valid file path: " + file);
         }
-        if (!path.startsWith(dir) || path.equals(dir)) {
-            throw new ToolExecutionException("file must stay inside the directory " + dir + ": " + file);
+        Path path = base.resolve(given).normalize();
+        boolean lexicallyInside = path.startsWith(base) && !path.equals(base);
+        if (!given.isAbsolute() && !lexicallyInside) {
+            throw new ToolExecutionException("file must stay inside the directory " + base + ": " + file);
+        }
+        Path realBase = realPath(base);
+        Path realFile = realPath(path);
+        if (realBase == null || realFile == null || !realFile.startsWith(realBase) || realFile.equals(realBase)) {
+            throw new ToolExecutionException(
+                    given.isAbsolute()
+                            ? "file " + file + " is not inside the directory " + base
+                              + ": pass file relative to the directory, or the absolute path of a file inside it"
+                            : "file must stay inside the directory " + base + ": " + file
+                              + " (a symbolic link leads out of it)");
+        }
+        if (!lexicallyInside) {
+            // inside only through a link of the path: on macOS /tmp is /private/tmp, and a client may name either
+            path = base.resolve(realBase.relativize(realFile));
         }
         return path;
+    }
+
+    /**
+     * The path with its symbolic links resolved; for a path that is not there yet (a file or directory a write
+     * creates), the real path of its nearest existing parent with the rest of the path. Null when it cannot be
+     * resolved, such as a link to nothing, which a write would follow out of the directory.
+     */
+    static Path realPath(Path path) {
+        Path existing = path;
+        while (existing != null && !Files.exists(existing, LinkOption.NOFOLLOW_LINKS)) {
+            existing = existing.getParent();
+        }
+        if (existing == null) {
+            return null;
+        }
+        try {
+            return existing.toRealPath().resolve(existing.relativize(path)).normalize();
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     private static String read(Path path) {
@@ -2390,7 +2884,7 @@ public final class AuthoringTools {
         return null;
     }
 
-    private static String required(Map<String, String> args, String key) {
+    static String required(Map<String, String> args, String key) {
         String value = args.get(key);
         if (value == null || value.isBlank()) {
             throw new ToolExecutionException(key + " is required");
@@ -2401,6 +2895,21 @@ public final class AuthoringTools {
     static boolean bool(Map<String, String> args, String key, boolean defaultValue) {
         String value = args.get(key);
         return value == null || value.isBlank() ? defaultValue : Boolean.parseBoolean(value.trim());
+    }
+
+    /**
+     * A boolean argument that may be left out: null when it is, and refused when it is not true or false, where
+     * {@link Boolean#valueOf(String)} would take {@code yes} for false without a word.
+     */
+    static Boolean booleanArgument(String key, String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String text = value.strip();
+        if ("true".equalsIgnoreCase(text) || "false".equalsIgnoreCase(text)) {
+            return Boolean.valueOf(text);
+        }
+        throw new ToolExecutionException(key + " is true or false, not " + text);
     }
 
     static int integer(Map<String, String> args, String key, int defaultValue) {
@@ -2606,7 +3115,7 @@ public final class AuthoringTools {
     /** Whether the content is exactly the file's content on disk; false when there is no such file. */
     static boolean sameAsOnDisk(ToolContext ctx, String directory, String file, String content) {
         try {
-            Path path = resolveFile(ctx.resolveDirectory(directory), file);
+            Path path = fileTarget(ctx, directory, file, FileAccess.VALIDATE).path();
             return Files.isRegularFile(path) && read(path).strip().equals(content.strip());
         } catch (Exception e) {
             return false;

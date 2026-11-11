@@ -136,9 +136,8 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Gets the maximum number of messages as a limit to poll at each
-         * polling. Gets the maximum number of messages as a limit to poll at
-         * each polling. The default value is 10. Use 0 or a negative number to
-         * set it as unlimited.
+         * polling. The default value is 10. Use 0 or a negative number to set
+         * it as unlimited.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -154,9 +153,8 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Gets the maximum number of messages as a limit to poll at each
-         * polling. Gets the maximum number of messages as a limit to poll at
-         * each polling. The default value is 10. Use 0 or a negative number to
-         * set it as unlimited.
+         * polling. The default value is 10. Use 0 or a negative number to set
+         * it as unlimited.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -729,7 +727,11 @@ public interface CouchDbEndpointBuilderFactory {
             return "CamelCouchDbRev";
         }
         /**
-         * The method (delete / update).
+         * The method. The consumer sets UPDATE for an insert or an update, and
+         * DELETE for a delete. The producer saves the document of the body
+         * without this header or with UPDATE, deletes it with DELETE, reads the
+         * document of the CamelCouchDbId header with GET, and fails with any
+         * other method.
          * 
          * The option is a: {@code String} type.
          * 

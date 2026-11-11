@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.buffer.Buffer;
@@ -27,6 +28,8 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -94,8 +97,8 @@ class ErrorsTabRenderTest {
     @Test
     void renderErrorRouteIdInCyan() {
         addError("ID-001", "my-route", "to1", "Exception", "fail", false);
-        // a second row: the first is selected, and the selection highlight hides its colors
-        addError("ID-002", "my-route", "to1", "Exception", "fail", false);
+        // a second row (another kind of error): the first is selected, and the selection highlight hides its colors
+        addError("ID-002", "my-route", "to2", "Exception", "fail", false);
 
         ErrorsTab tab = new ErrorsTab(ctx);
 
@@ -111,7 +114,7 @@ class ErrorsTabRenderTest {
     @Test
     void renderHandledTrueUsesGreenColor() {
         addError("ID-001", "route1", "to1", "Exception", "handled", true);
-        addError("ID-002", "route1", "to1", "Exception", "handled", true);
+        addError("ID-002", "route1", "to2", "Exception", "handled", true);
 
         ErrorsTab tab = new ErrorsTab(ctx);
 
@@ -127,7 +130,7 @@ class ErrorsTabRenderTest {
     @Test
     void renderHandledFalseUsesRedColor() {
         addError("ID-001", "route1", "to1", "Exception", "unhandled", false);
-        addError("ID-002", "route1", "to1", "Exception", "unhandled", false);
+        addError("ID-002", "route1", "to2", "Exception", "unhandled", false);
 
         ErrorsTab tab = new ErrorsTab(ctx);
 
@@ -146,7 +149,51 @@ class ErrorsTabRenderTest {
         ErrorsTab tab = new ErrorsTab(ctx);
         String rendered = renderToString(tab, 160, 30);
         assertEquals(0, tab.tableState.selected());
-        assertTrue(rendered.contains(ActivityTab.shortExchangeId("ID-001")), rendered);
+        assertTrue(rendered.contains(ErrorsTab.shortExchangeId("ID-001")), rendered);
+    }
+
+    @Test
+    void theWheelScrollsThePanelUnderTheMouse() {
+        for (int i = 1; i <= 3; i++) {
+            // another node each, so each is a kind of error, and a row, of its own
+            addError("ID-00" + i, "route1", "to" + i, "java.io.IOException", "fail " + i, false);
+        }
+        StringBuilder trace = new StringBuilder("java.io.IOException: fail 1");
+        for (int i = 0; i < 60; i++) {
+            trace.append("\n\tat org.example.Frame").append(i).append(".call(Frame.java:").append(i).append(')');
+        }
+        info.errors.get(0).stackTrace = trace.toString();
+        ErrorsTab tab = new ErrorsTab(ctx);
+        Rect area = new Rect(0, 0, 160, 40);
+        String before = renderToString(tab, 160, 40);
+        int detail = row(before, " Detail ");
+        assertTrue(detail > 0, before);
+
+        // over the detail: its lines scroll, the error stays selected
+        tab.handleMouseEvent(MouseEvent.scrollDown(40, detail + 5), area);
+        tab.handleMouseEvent(MouseEvent.scrollDown(40, detail + 5), area);
+        String scrolled = renderToString(tab, 160, 40);
+        assertEquals(0, tab.tableState.selected());
+        assertFalse(scrolled.contains("Exchange: ID-001"), scrolled);
+
+        // over the table: the next error
+        tab.handleMouseEvent(MouseEvent.scrollDown(40, 6), area);
+        assertEquals(1, tab.tableState.selected());
+
+        // a click on a row selects it, and its detail starts at the top
+        String rows = renderToString(tab, 160, 40);
+        tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 40, row(rows, ErrorsTab.shortExchangeId("ID-003"))), area);
+        assertEquals(2, tab.tableState.selected());
+    }
+
+    private static int row(String rendered, String text) {
+        String[] lines = rendered.split("\n");
+        for (int y = 0; y < lines.length; y++) {
+            if (lines[y].contains(text)) {
+                return y;
+            }
+        }
+        return -1;
     }
 
     @Test
@@ -157,8 +204,8 @@ class ErrorsTabRenderTest {
         ErrorsTab tab = new ErrorsTab(ctx);
         String rendered = renderToString(tab, 160, 30);
 
-        assertTrue(rendered.contains(ActivityTab.shortExchangeId("ID-AAA")), "Should render first error");
-        assertTrue(rendered.contains(ActivityTab.shortExchangeId("ID-BBB")), "Should render second error");
+        assertTrue(rendered.contains(ErrorsTab.shortExchangeId("ID-AAA")), "Should render first error");
+        assertTrue(rendered.contains(ErrorsTab.shortExchangeId("ID-BBB")), "Should render second error");
         assertTrue(rendered.contains("IOException"), "Should render first exception type");
         assertTrue(rendered.contains("NullPointerException"), "Should render second exception type");
     }
@@ -195,6 +242,70 @@ class ErrorsTabRenderTest {
         String rendered = renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("Errors [2]"), "Title should show error count");
+        assertFalse(rendered.contains("happened"), "No more errors happened than are listed");
+    }
+
+    @Test
+    void theCountIsOnTheNewestEntryOfAKindAndTheTitleSaysHowManyHappened() {
+        // the registry keeps the newest 3 of each kind: 3 of 3 connection failures, and the 8th to 10th rejection
+        for (int i = 1; i <= 3; i++) {
+            addError("ID-00" + i, "supplier", "throwException1", "ConnectException", "supplier unreachable", true);
+            info.errors.get(info.errors.size() - 1).repeatCount = i;
+        }
+        for (int i = 8; i <= 10; i++) {
+            addError("ID-01" + i, "stock-check", "setBody1", "CallNotPermittedException", "OPEN", true);
+            info.errors.get(info.errors.size() - 1).repeatCount = i;
+        }
+        info.errorCount = 13;
+
+        assertEquals(Set.copyOf(List.of(info.errors.get(2), info.errors.get(5))),
+                Set.copyOf(ErrorsTab.newestOfEachKind(info.errors)));
+
+        String rendered = renderToString(new ErrorsTab(ctx), 160, 30);
+        assertTrue(rendered.contains("Errors [2] 13 happened, a row per kind"), rendered);
+        assertFalse(rendered.contains("ID-018"), "a row per kind: the older entries are not listed");
+        assertTrue(rendered.contains("10"));
+    }
+
+    @Test
+    void aKindOfErrorIsOneRowAndTheDetailStepsThroughItsKeptExchanges() {
+        // the chaos storm of the timer-log example: the registry keeps the newest 3 of 23
+        for (int i = 21; i <= 23; i++) {
+            addError("ID-0" + i, "timer-log", "setBody1", "ChaosException", "Chaos error of rule r1", false);
+            ErrorInfo ei = info.errors.get(info.errors.size() - 1);
+            ei.repeatCount = i;
+            ei.timestamp = System.currentTimeMillis() - (23 - i) * 1000L;
+        }
+        info.errorCount = 23;
+        ErrorsTab tab = new ErrorsTab(ctx);
+        tab.onTabSelected();
+
+        String rendered = renderToString(tab, 160, 30);
+        assertTrue(rendered.contains("Errors [1] 23 happened, a row per kind"), rendered);
+        assertTrue(rendered.contains("ID-023"), rendered);
+        assertFalse(rendered.contains("ID-021"), "the older exchanges of the kind have no row of their own");
+        assertTrue(rendered.contains("Repeated: 23 times"), rendered);
+        assertTrue(rendered.contains("exchange 3 of 3 (the newest)"), rendered);
+
+        // [ goes to the older exchanges; the count stays the count of the kind
+        tab.handleKeyEvent(KeyEvent.ofChar('[', KeyModifiers.NONE));
+        rendered = renderToString(tab, 160, 30);
+        assertTrue(rendered.contains("exchange 2 of 3"), rendered);
+        assertTrue(rendered.contains("Exchange: ID-022"), rendered);
+        assertTrue(rendered.contains("Repeated: 23 times"), rendered);
+
+        tab.handleKeyEvent(KeyEvent.ofChar('[', KeyModifiers.NONE));
+        tab.handleKeyEvent(KeyEvent.ofChar('[', KeyModifiers.NONE));
+        rendered = renderToString(tab, 160, 30);
+        assertTrue(rendered.contains("exchange 1 of 3 (the oldest)"), "stops at the oldest: " + rendered);
+
+        tab.handleKeyEvent(KeyEvent.ofChar(']', KeyModifiers.NONE));
+        rendered = renderToString(tab, 160, 30);
+        assertTrue(rendered.contains("exchange 2 of 3"), rendered);
+
+        List<Span> footer = new ArrayList<>();
+        tab.renderFooter(footer);
+        assertTrue(footer.stream().anyMatch(sp -> sp.content().contains("older/newer")));
     }
 
     @Test
@@ -240,14 +351,14 @@ class ErrorsTabRenderTest {
 
         // Default shows all
         String all = renderToString(tab, 160, 30);
-        assertTrue(all.contains(ActivityTab.shortExchangeId("ID-001")), "All filter should show unhandled errors");
-        assertTrue(all.contains(ActivityTab.shortExchangeId("ID-002")), "All filter should show handled errors");
+        assertTrue(all.contains(ErrorsTab.shortExchangeId("ID-001")), "All filter should show unhandled errors");
+        assertTrue(all.contains(ErrorsTab.shortExchangeId("ID-002")), "All filter should show handled errors");
 
         // Press 'f' to filter to handled=true
         tab.handleKeyEvent(KeyEvent.ofChar('f', KeyModifiers.NONE));
         String handledOnly = renderToString(tab, 160, 30);
-        assertTrue(handledOnly.contains(ActivityTab.shortExchangeId("ID-002")), "handled filter should show handled error");
-        assertFalse(handledOnly.contains(ActivityTab.shortExchangeId("ID-001")), "handled filter should hide unhandled error");
+        assertTrue(handledOnly.contains(ErrorsTab.shortExchangeId("ID-002")), "handled filter should show handled error");
+        assertFalse(handledOnly.contains(ErrorsTab.shortExchangeId("ID-001")), "handled filter should hide unhandled error");
     }
 
     @Test

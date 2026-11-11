@@ -63,10 +63,19 @@ public class SecretsDevConsole extends AbstractDevConsole {
             sb.append(String.format("%n    Host: %s", hashicorp.getHost()));
             sb.append(String.format("%n    Port: %s", hashicorp.getPort()));
             sb.append(String.format("%n    Scheme: %s", hashicorp.getScheme()));
-            sb.append("\n    Login: OAuth Token");
+            sb.append(String.format("%n    Login: %s", login(hashicorp)));
         }
 
         return sb.toString();
+    }
+
+    private static String login(HashicorpVaultConfiguration hashicorp) {
+        try {
+            return HashicorpVaultAuthentication.of(hashicorp.getAuthentication()).displayName();
+        } catch (IllegalArgumentException e) {
+            // not a login: show what is configured
+            return hashicorp.getAuthentication();
+        }
     }
 
     @Override
@@ -81,7 +90,7 @@ public class SecretsDevConsole extends AbstractDevConsole {
             host = hashicorp.getHost();
             port = hashicorp.getPort();
             scheme = hashicorp.getScheme();
-            login = "OAuth Token";
+            login = login(hashicorp);
         }
 
         Response response = new Response(host, port, scheme, login);

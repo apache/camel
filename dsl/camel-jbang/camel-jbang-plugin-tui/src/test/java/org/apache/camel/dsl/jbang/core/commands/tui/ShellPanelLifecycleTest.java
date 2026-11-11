@@ -23,10 +23,11 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import picocli.CommandLine;
 
 import static org.awaitility.Awaitility.await;
@@ -40,7 +41,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * panel, and other code (AiCliCommandExecutorTest) points the static command line at another main in the meantime,
  * whose printer was taken and never given back, which made that test flaky.
  */
+@ResourceLock(ShellPanelLifecycleTest.CLI_COMMAND_LINE)
 class ShellPanelLifecycleTest {
+
+    /**
+     * The lock of the tests that point the static command line of the Camel CLI at a main of their own, or start a
+     * shell that takes it: the test classes run in parallel.
+     */
+    static final String CLI_COMMAND_LINE = "CamelJBangMain.commandLine";
 
     private Field commandLineField;
     private Object previous;

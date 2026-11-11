@@ -25,9 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.util.CxfUtils;
+import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,14 +47,35 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class CxfRsProducerHeaderTest {
-    static int port2 = CXFTestSupport.getPort2();
-    static int port3 = CXFTestSupport.getPort("CxfRsProducerHeaderTest.1");
+    private static AvailablePortFinder.Port port2;
+    private static AvailablePortFinder.Port port3;
 
     private static final Object RESPONSE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                                            + "<Customer><id>123</id><name>John</name></Customer>";
 
     @Autowired
     protected CamelContext camelContext;
+
+    // allocated as late as possible, before the Spring context is created
+    @BeforeAll
+    public static void allocatePorts() {
+        port2 = AvailablePortFinder.find();
+        System.setProperty("CxfRsProducerHeaderTest.port2", port2.toString());
+        port3 = AvailablePortFinder.find();
+        System.setProperty("CxfRsProducerHeaderTest.port3", port3.toString());
+    }
+
+    @AfterAll
+    public static void releasePorts() {
+        System.clearProperty("CxfRsProducerHeaderTest.port2");
+        System.clearProperty("CxfRsProducerHeaderTest.port3");
+        if (port2 != null) {
+            port2.release();
+        }
+        if (port3 != null) {
+            port3.release();
+        }
+    }
 
     @Test
     public void testInvokeThatDoesNotInvolveHeaders() throws Exception {

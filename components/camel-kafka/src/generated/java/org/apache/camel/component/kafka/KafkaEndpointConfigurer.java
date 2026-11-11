@@ -2,6 +2,7 @@
 package org.apache.camel.component.kafka;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KafkaEndpoint target = (KafkaEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "allowmanualcommit":
@@ -63,6 +64,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "deliveryTimeoutMs": target.getConfiguration().setDeliveryTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "enableidempotence":
         case "enableIdempotence": target.getConfiguration().setEnableIdempotence(property(camelContext, boolean.class, value)); return true;
+        case "exactlyonce":
+        case "exactlyOnce": target.getConfiguration().setExactlyOnce(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -262,7 +265,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return java.util.Map.class;
         case "allowmanualcommit":
@@ -303,6 +306,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "deliveryTimeoutMs": return java.lang.Integer.class;
         case "enableidempotence":
         case "enableIdempotence": return boolean.class;
+        case "exactlyonce":
+        case "exactlyOnce": return boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -503,7 +508,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KafkaEndpoint target = (KafkaEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
         case "allowmanualcommit":
@@ -544,6 +549,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "deliveryTimeoutMs": return target.getConfiguration().getDeliveryTimeoutMs();
         case "enableidempotence":
         case "enableIdempotence": return target.getConfiguration().isEnableIdempotence();
+        case "exactlyonce":
+        case "exactlyOnce": return target.getConfiguration().isExactlyOnce();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -743,7 +750,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return java.lang.Object.class;
         case "offsetrepository":

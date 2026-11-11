@@ -132,6 +132,40 @@ All producer operations follow the same pattern: set the operation name in the U
 template.sendBodyAndHeaders("keycloak:admin?operation=<operationName>", null, headers);
 ----
 
+=== Choosing the operation with a header
+
+The endpoint runs its `operation`. The `CamelKeycloakOperation` header is ignored unless the endpoint sets
+`allowOperationHeader=true` (disabled by default). With that option, the header takes the place of the `operation` of
+the endpoint for one message, so the message chooses what the endpoint does with its admin client, such as
+`deleteRealm` on an endpoint configured for `getUser`. Enable it only on routes that set the header themselves or whose
+messages come from a trusted source. The option can also be set on the component, for all its endpoints.
+
+When the messages come from an untrusted producer through a consumer that does not filter out `Camel*` headers,
+remove these headers with `removeHeaders("CamelKeycloak*")` before the `keycloak` endpoint.
+
+=== Representation bodies
+
+With `pojoRequest=true`, the create and update operations take the Keycloak representation as the body, such as a
+`UserRepresentation` for `createUser` and `updateUser`. A body of another type is converted: a `Map` (such as
+unmarshalled JSON) or JSON text is mapped to the representation. A body that does not convert fails the exchange
+with an `InvalidPayloadException`.
+
+The elements of the `List` of `bulkCreateUsers` and `bulkUpdateUsers` are converted the same way; an element that
+does not convert fails the exchange before any user is created or updated.
+
+=== Results of create and delete operations
+
+`createUser`, `deleteUser`, `createGroup`, `createClient`, `createClientScope`, `createIdentityProvider`,
+`createResource`, `createResourcePolicy`, `createResourcePermission`, `createOrganization`, `updateOrganization`,
+`addOrganizationMember` and `linkOrganizationIdentityProvider` give the JAX-RS `Response` of Keycloak as the body.
+The Response is closed, but its status and headers can still be read, such as the `Location` header with the URL
+(ending with the id) of the created resource.
+
+When Keycloak answers with a status other than 2xx, such as 409 (already exists) or 404 (not found), the exchange
+fails with a `jakarta.ws.rs.WebApplicationException`, whose `getResponse()` gives the status. The same goes for
+`deleteOrganization`, `removeOrganizationMember` and `unlinkOrganizationIdentityProvider`. The bulk operations
+record such a status as a failed item.
+
 == User Operations
 
 [tabs]
@@ -155,7 +189,7 @@ Map<String, Object> passwordHeaders = new HashMap<>();
 passwordHeaders.put("CamelKeycloakRealmName", "my-realm");
 passwordHeaders.put("CamelKeycloakUsername", "john.doe");
 passwordHeaders.put("CamelKeycloakUserPassword", "secure-password");
-passwordHeaders.put("CamelKeycloakUserPasswordTemporary", false);
+passwordHeaders.put("CamelKeycloakPasswordTemporary", false);
 
 template.sendBodyAndHeaders("keycloak:admin?operation=resetUserPassword", null, passwordHeaders);
 
@@ -672,7 +706,8 @@ All bulk operations return a consistent response format:
     {
       "username": "user2",
       "status": "failed",
-      "error": "User already exists"
+      "statusCode": 409,
+      "error": "Keycloak createUser failed with status 409: {\"errorMessage\":\"User exists with same username\"}"
     }
   ]
 }

@@ -48,4 +48,27 @@ public enum PQCSymmetricAlgorithms {
         return algorithm;
     }
 
+    /**
+     * Maps a configured symmetric algorithm name to the JCE name a {@link javax.crypto.Cipher} resolves.
+     * <p/>
+     * Two constants spell the two differently - {@code GOST3412_2015} is {@code GOST3412-2015} and {@code DESEDE} is
+     * {@code DESede} - so a key labelled with the constant name cannot be handed to {@code Cipher.getInstance}. A name
+     * that is not one of the constants, which includes a JCE name that has already been mapped, is answered unchanged
+     * rather than rejected, so this is safe to apply to a value of unknown provenance.
+     *
+     * @param  name the configured name, or a JCE name
+     * @return      the JCE name, or {@code name} when it is not one of the constants
+     */
+    public static String toJceName(String name) {
+        if (name == null) {
+            return null;
+        }
+        for (PQCSymmetricAlgorithms candidate : values()) {
+            if (candidate.name().equals(name)) {
+                return candidate.getAlgorithm();
+            }
+        }
+        return name;
+    }
+
 }

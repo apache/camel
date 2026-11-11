@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.camel.cli.connector.RepeatedSend;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -61,10 +64,13 @@ public final class RuntimeHelper {
     /**
      * Discovers all running Camel processes by scanning {@code ~/.camel/} for {@code {pid}-status.json} files and
      * verifying each PID is still alive.
+     * <p>
+     * This process is never one of them: it runs the tools (camel ask, the TUI, the MCP server), and a status file of
+     * its own comes from a CamelContext it ran for itself, not from an integration (CAMEL-26396).
      */
     public static List<ProcessInfo> discoverProcesses() {
         List<ProcessInfo> result = new ArrayList<>();
-        for (ProcessFinder.CamelProcess p : ProcessFinder.findAll()) {
+        for (ProcessFinder.CamelProcess p : others(ProcessFinder.findAll())) {
             result.add(new ProcessInfo(p.pid(), p.name(), p.contextName()));
         }
         return result;
@@ -73,18 +79,35 @@ public final class RuntimeHelper {
     /**
      * Finds a single Camel process matching the given name or PID. Returns {@code null} if no match is found or if
      * multiple processes match. When {@code nameOrPid} is {@code null} and exactly one process is running, returns that
-     * process.
+     * process. This process never matches, also not by its pid (see {@link #discoverProcesses()}).
      *
      * @param nameOrPid a process name (with optional wildcard), a numeric PID string, or {@code null} for auto-detect
      */
     public static ProcessInfo findProcess(String nameOrPid) {
-        List<ProcessFinder.CamelProcess> found = nameOrPid != null && !nameOrPid.isBlank()
-                ? ProcessFinder.find(nameOrPid) : ProcessFinder.findAll();
+        List<ProcessFinder.CamelProcess> found = others(nameOrPid != null && !nameOrPid.isBlank()
+                ? ProcessFinder.find(nameOrPid) : ProcessFinder.findAll());
         if (found.size() == 1) {
             ProcessFinder.CamelProcess p = found.get(0);
             return new ProcessInfo(p.pid(), p.name(), p.contextName());
         }
         return null;
+    }
+
+    /**
+     * Whether the name or pid is the pid of this process, which {@link #findProcess(String)} never finds.
+     *
+     * @since 4.24
+     */
+    public static boolean isThisProcess(String nameOrPid) {
+        if (nameOrPid == null || !nameOrPid.matches("\\d{1,18}")) {
+            return false;
+        }
+        return Long.parseLong(nameOrPid) == ProcessHandle.current().pid();
+    }
+
+    private static List<ProcessFinder.CamelProcess> others(List<ProcessFinder.CamelProcess> processes) {
+        long self = ProcessHandle.current().pid();
+        return processes.stream().filter(p -> p.pid() != self).toList();
     }
 
     /**
@@ -202,16 +225,56 @@ public final class RuntimeHelper {
      * @throws IllegalArgumentException when a header is not a key=value pair
      */
     public static JsonObject sendMessage(long pid, String endpoint, String body, String headers) {
+        return sendMessage(pid, endpoint, body, headers, 0, null);
+    }
+
+    /**
+     * Sends a message, and with reply, waits for the answer of the route (InOut) and has it under message in the
+     * result. A request-reply over a broker (jms:, kafka:) waits for a reply that may not come: a reply suits direct:.
+     */
+    public static JsonObject sendMessage(long pid, String endpoint, String body, String headers, boolean reply) {
+        return sendMessage(pid, endpoint, body, headers, 0, null, reply);
+    }
+
+    /**
+     * Sends a message, or with a repeat or a body of {@code file:<folder>} several messages, with a pause between them;
+     * the answer is then a summary (sent, failed and the errors) rather than the reply.
+     *
+     * @param repeat   how many messages to send in all, going round the files of a folder; 0 to send once (each file of
+     *                 a folder once)
+     * @param interval the pause between two messages: millis, a duration such as 200ms, or a range such as 100..500 to
+     *                 draw each pause at random
+     */
+    public static JsonObject sendMessage(
+            long pid, String endpoint, String body, String headers, int repeat, String interval) {
+        return sendMessage(pid, endpoint, body, headers, repeat, interval, false);
+    }
+
+    private static JsonObject sendMessage(
+            long pid, String endpoint, String body, String headers, int repeat, String interval, boolean reply) {
         JsonArray headerList = headers != null ? parseHeaders(headers) : null;
+        long[] pause = RepeatedSend.interval(interval);
         String result = executeAction(pid, "send", root -> {
             root.put("endpoint", endpoint);
+            if (reply) {
+                root.put("exchangePattern", "InOut");
+            }
             if (body != null) {
                 root.put("body", body);
             }
             if (headerList != null) {
                 root.put("headers", headerList);
             }
-        });
+            if (repeat > 0) {
+                root.put("repeat", repeat);
+            }
+            if (pause[1] > 0) {
+                root.put("interval", pause[0]);
+                if (pause[1] > pause[0]) {
+                    root.put("intervalMax", pause[1]);
+                }
+            }
+        }, sendTimeout(body, repeat, pause[1]));
         try {
             return (JsonObject) Jsoner.deserialize(result);
         } catch (Exception e) {
@@ -222,22 +285,49 @@ public final class RuntimeHelper {
     }
 
     /**
+     * How long to wait for the answer of a send: for more messages also the pauses between them and a second for each.
+     * The files of a folder are counted when the folder is here (the integration reads it, relative to its working
+     * directory), else 100 are assumed.
+     */
+    static long sendTimeout(String body, int repeat, long interval) {
+        long count = repeat;
+        if (count <= 1 && body != null && body.startsWith("file:")) {
+            File folder = new File(body.substring(5));
+            String[] files = folder.list((d, n) -> !n.startsWith(".") && !n.endsWith(".properties"));
+            count = files != null ? files.length : folder.isFile() ? 1 : 100;
+        }
+        return count <= 1 ? ACTION_TIMEOUT_MS : ACTION_TIMEOUT_MS + count * (interval + 1000);
+    }
+
+    /**
      * The headers as the send action of the CLI connector reads them: a key and a value for each header.
      */
     static JsonArray parseHeaders(String headers) {
+        return parseKeyValues(headers, "Header");
+    }
+
+    /**
+     * Lines of {@code key=value} as the actions of the CLI connector read them (the headers of the send action, the
+     * headers and variables of the eval action): a key and a value for each line.
+     *
+     * @param  text                     the lines
+     * @param  what                     what a line holds, for the error, such as Header
+     * @throws IllegalArgumentException when a line is not in the {@code key=value} form
+     */
+    public static JsonArray parseKeyValues(String text, String what) {
         JsonArray list = new JsonArray();
-        for (String line : headers.split("\\R")) {
-            String header = line.strip();
-            if (header.isEmpty()) {
+        for (String line : text.split("\\R")) {
+            String entry = line.strip();
+            if (entry.isEmpty()) {
                 continue;
             }
-            int pos = header.indexOf('=');
+            int pos = entry.indexOf('=');
             if (pos <= 0) {
-                throw new IllegalArgumentException("Header must be in key=value format, was: " + header);
+                throw new IllegalArgumentException(what + " must be in key=value format, was: " + entry);
             }
             JsonObject jo = new JsonObject();
-            jo.put("key", header.substring(0, pos).strip());
-            jo.put("value", header.substring(pos + 1));
+            jo.put("key", entry.substring(0, pos).strip());
+            jo.put("value", entry.substring(pos + 1));
             list.add(jo);
         }
         return list;

@@ -149,7 +149,13 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
-         * Operation to use.
+         * Operation to use. The producer needs an operation, set with this
+         * option or the CamelWeb3jOperation header. The consumer needs one of
+         * the observable operations: ETH_LOG_OBSERVABLE,
+         * ETH_BLOCK_HASH_OBSERVABLE, ETH_PENDING_TRANSACTION_HASH_OBSERVABLE,
+         * TRANSACTION_OBSERVABLE, PENDING_TRANSACTION_OBSERVABLE,
+         * BLOCK_OBSERVABLE, REPLAY_BLOCKS_OBSERVABLE or
+         * REPLAY_TRANSACTIONS_OBSERVABLE.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -528,7 +534,13 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
-         * Operation to use.
+         * Operation to use. The producer needs an operation, set with this
+         * option or the CamelWeb3jOperation header. The consumer needs one of
+         * the observable operations: ETH_LOG_OBSERVABLE,
+         * ETH_BLOCK_HASH_OBSERVABLE, ETH_PENDING_TRANSACTION_HASH_OBSERVABLE,
+         * TRANSACTION_OBSERVABLE, PENDING_TRANSACTION_OBSERVABLE,
+         * BLOCK_OBSERVABLE, REPLAY_BLOCKS_OBSERVABLE or
+         * REPLAY_TRANSACTIONS_OBSERVABLE.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -909,7 +921,7 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
-         * The transaction index position withing a block.
+         * The transaction index position within a block.
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
@@ -923,7 +935,7 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
-         * The transaction index position withing a block.
+         * The transaction index position within a block.
          * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
@@ -1256,7 +1268,13 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
-         * Operation to use.
+         * Operation to use. The producer needs an operation, set with this
+         * option or the CamelWeb3jOperation header. The consumer needs one of
+         * the observable operations: ETH_LOG_OBSERVABLE,
+         * ETH_BLOCK_HASH_OBSERVABLE, ETH_PENDING_TRANSACTION_HASH_OBSERVABLE,
+         * TRANSACTION_OBSERVABLE, PENDING_TRANSACTION_OBSERVABLE,
+         * BLOCK_OBSERVABLE, REPLAY_BLOCKS_OBSERVABLE or
+         * REPLAY_TRANSACTIONS_OBSERVABLE.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1568,7 +1586,7 @@ public interface Web3jEndpointBuilderFactory {
             return "CamelWeb3jToAddress";
         }
         /**
-         * The transaction index position withing a block.
+         * The transaction index position within a block.
          * 
          * The option is a: {@code String} type.
          * 

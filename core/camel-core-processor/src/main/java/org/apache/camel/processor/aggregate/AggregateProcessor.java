@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -108,6 +109,9 @@ public class AggregateProcessor extends BaseProcessorSupport
     public static final String COMPLETED_BY_FORCE = "force";
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregateProcessor.class);
+    // set by doOnCompletion on the aggregated exchange of a group that was never stored (completed by its first
+    // exchange), and removed by onSubmitCompletion
+    private static final String NOT_STORED = "CamelAggregatedNotStored";
     private volatile Lock lock;
     private final AtomicBoolean aggregateRepositoryWarned = new AtomicBoolean();
     private final CamelContext camelContext;
@@ -507,7 +511,7 @@ public class AggregateProcessor extends BaseProcessorSupport
             // we are completed so submit to completion outside the lock. This must also be done when the aggregation
             // failed, or must be retried due to optimistic locking, after a group was completed (such as a group
             // completed by pre-completion), as that group has already been removed from the repository
-            aggregated.forEach(agg -> onSubmitCompletion(key, agg));
+            submitCompletions(key, aggregated);
         }
 
         // check for the special header to force completion of all groups (inclusive of the message)
@@ -964,6 +968,9 @@ public class AggregateProcessor extends BaseProcessorSupport
             if (spooled != null) {
                 aggregated.getExchangeExtension().addOnCompletion(spooled);
             }
+        } else if (isRecoverableRepository()) {
+            // the group was never added, so the repository has no completed exchange to confirm for it
+            aggregated.setProperty(NOT_STORED, Boolean.TRUE);
         }
 
         // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
@@ -1095,8 +1102,31 @@ public class AggregateProcessor extends BaseProcessorSupport
         return false;
     }
 
+    /**
+     * Sends the aggregated exchanges (more than one when the batch consumer completes all its groups). None of them is
+     * in the repository any more, so when one of them fails to be submitted (the thread pool rejects it, or the
+     * aggregation strategy throws an exception on completion), the others are still sent (or failed too), and then the
+     * first failure is thrown.
+     */
+    private void submitCompletions(String key, List<Exchange> aggregated) {
+        RuntimeException failure = null;
+        for (Exchange agg : aggregated) {
+            try {
+                onSubmitCompletion(key, agg);
+            } catch (RuntimeException e) {
+                if (failure == null) {
+                    failure = e;
+                }
+            }
+        }
+        if (failure != null) {
+            throw failure;
+        }
+    }
+
     private void onSubmitCompletion(final String key, final Exchange exchange) {
         LOG.debug("Aggregation complete for correlation key {} sending aggregated exchange: {}", key, exchange);
+        final boolean stored = exchange.removeProperty(NOT_STORED) == null;
 
         // add this as in progress before we submit the task
         inProgressCount.increment();
@@ -1107,7 +1137,15 @@ public class AggregateProcessor extends BaseProcessorSupport
         // registered as in progress, so no longer needs to be marked as being completed
         unmarkCompleting(exchange.getExchangeId());
         // invoke the on completion callback
-        aggregationStrategy.onCompletion(exchange);
+        try {
+            aggregationStrategy.onCompletion(exchange);
+        } catch (Throwable e) {
+            // it must not throw, but the exchange is in progress already: fail it as when the thread pool rejects it
+            exchange.getExchangeExtension().addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId(), stored));
+            failCompletion(exchange, e, "Error processing aggregated exchange: AggregationStrategy onCompletion failed");
+            // and let the caller fail as before
+            throw e;
+        }
 
         if (getStatistics().isStatisticsEnabled()) {
             totalCompleted.incrementAndGet();
@@ -1118,36 +1156,55 @@ public class AggregateProcessor extends BaseProcessorSupport
         LOG.debug("Processing aggregated exchange: {}", exchange);
 
         // add on completion task so we remember to update the inProgressCompleteExchanges
-        exchange.getExchangeExtension().addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
+        exchange.getExchangeExtension().addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId(), stored));
 
         // send this exchange
-        executorService.execute(() -> {
-            ExchangeHelper.prepareOutToIn(exchange);
+        try {
+            executorService.execute(() -> {
+                ExchangeHelper.prepareOutToIn(exchange);
 
-            AsyncCallback completionCallback = done -> {
-                // log exception if there was a problem
-                if (exchange.getException() != null) {
-                    // if there was an exception then let the exception handler handle it
-                    getExceptionHandler().handleException("Error processing aggregated exchange", exchange,
-                            exchange.getException());
-                } else {
-                    LOG.trace("Processing aggregated exchange: {} complete.", exchange);
-                }
-            };
+                AsyncCallback completionCallback = done -> {
+                    // log exception if there was a problem
+                    if (exchange.getException() != null) {
+                        // if there was an exception then let the exception handler handle it
+                        getExceptionHandler().handleException("Error processing aggregated exchange", exchange,
+                                exchange.getException());
+                    } else {
+                        LOG.trace("Processing aggregated exchange: {} complete.", exchange);
+                    }
+                };
 
-            if (executorService instanceof SynchronousExecutorService) {
-                // CAMEL-23281: process inline to avoid deadlock with transacted exchanges
-                processor.process(exchange, completionCallback);
-            } else {
-                Runnable task = () -> processor.process(exchange, completionCallback);
-                // execute the task using this thread sync (similar to multicast eip in parallel mode)
-                if (exchange.isTransacted()) {
-                    reactiveExecutor.scheduleQueue(task);
+                if (executorService instanceof SynchronousExecutorService) {
+                    // CAMEL-23281: process inline to avoid deadlock with transacted exchanges
+                    processor.process(exchange, completionCallback);
                 } else {
-                    reactiveExecutor.scheduleSync(task);
+                    Runnable task = () -> processor.process(exchange, completionCallback);
+                    // execute the task using this thread sync (similar to multicast eip in parallel mode)
+                    if (exchange.isTransacted()) {
+                        reactiveExecutor.scheduleQueue(task);
+                    } else {
+                        reactiveExecutor.scheduleSync(task);
+                    }
                 }
-            }
-        });
+            });
+        } catch (RejectedExecutionException e) {
+            failCompletion(exchange, e, "Error processing aggregated exchange: the thread pool rejected it");
+            // and let the caller fail as before (such as the exchange that completed the group)
+            throw e;
+        }
+    }
+
+    /**
+     * The aggregated exchange cannot be sent: the thread pool rejected the task that sends it, or the aggregation
+     * strategy failed on completion. The group has already been removed from the aggregation repository, so the
+     * aggregated exchange fails as if its processing had failed: its on completions run (the aggregator then no longer
+     * counts it as in progress, and does not confirm it, so a recoverable repository recovers it), and it is passed to
+     * the exception handler.
+     */
+    private void failCompletion(Exchange exchange, Throwable cause, String message) {
+        exchange.setException(cause);
+        UnitOfWorkHelper.doneSynchronizations(exchange, exchange.getExchangeExtension().handoverCompletions());
+        getExceptionHandler().handleException(message, exchange, cause);
     }
 
     private void aggregateCompletionCounter(Exchange exchange) {
@@ -1503,10 +1560,12 @@ public class AggregateProcessor extends BaseProcessorSupport
      */
     private final class AggregateOnCompletion implements Synchronization {
         private final String exchangeId;
+        private final boolean stored;
 
-        private AggregateOnCompletion(String exchangeId) {
+        private AggregateOnCompletion(String exchangeId, boolean stored) {
             // must use the original exchange id as it could potentially change if send over SEDA etc.
             this.exchangeId = exchangeId;
+            this.stored = stored;
         }
 
         @Override
@@ -1526,7 +1585,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             // only confirm if we processed without a problem
             try {
                 boolean confirmed;
-                if (isRecoverableRepository()) {
+                if (!stored) {
+                    // completed by its first exchange: the group was never stored, so there is nothing to confirm (a
+                    // recoverable repository would not find it, and it would be kept as unconfirmed for good)
+                    confirmed = true;
+                } else if (isRecoverableRepository()) {
                     confirmed = ((RecoverableAggregationRepository) aggregationRepository)
                             .confirmWithResult(exchange.getContext(), exchangeId);
                 } else {
@@ -1750,10 +1813,15 @@ public class AggregateProcessor extends BaseProcessorSupport
                 LOG.trace("Recover check cannot start due CamelContext({}) has not been started yet", camelContext.getName());
                 return;
             }
+            // a recover check of an earlier start may still run (a stop does not wait for it): two checks must not run
+            // at the same time, as they share the exchanges in progress
             LOG.trace("Starting recover check");
+            if (!recoveryInProgress.compareAndSet(false, true)) {
+                LOG.debug("Skipping recover check as the previous recover check is still running");
+                return;
+            }
             try {
                 // copy the current in progress before doing scan
-                recoveryInProgress.set(true);
                 inProgressCompleteExchangesForRecoveryTask.clear();
                 inProgressCompleteExchangesForRecoveryTask.addAll(inProgressCompleteExchanges);
                 // These are delivered but still in complete repository!
@@ -1766,7 +1834,9 @@ public class AggregateProcessor extends BaseProcessorSupport
                         LOG.info("We are shutting down so stop recovering");
                         return;
                     }
-                    lock.lock();
+                    // a start creates a new lock, so unlock the lock that was locked
+                    final Lock recoverLock = lock;
+                    recoverLock.lock();
                     try {
                         // consider in progress if it was in progress before we did the scan, or currently after we did the scan
                         // (or is being completed and not yet registered as in progress)
@@ -1840,12 +1910,18 @@ public class AggregateProcessor extends BaseProcessorSupport
                                             data.redeliveryCounter, exchangeId);
 
                                     // not exhaust so resubmit the recovered exchange
-                                    onSubmitCompletion(key, exchange);
+                                    try {
+                                        onSubmitCompletion(key, exchange);
+                                    } catch (RuntimeException e) {
+                                        // it has been failed and passed to the exception handler, and is recovered
+                                        // again on a later run, so go on with the other exchanges
+                                        LOG.debug("Error resubmitting recovered exchange with id: {}", exchangeId, e);
+                                    }
                                 }
                             }
                         }
                     } finally {
-                        lock.unlock();
+                        recoverLock.unlock();
                     }
                 }
             } catch (Exception e) {
@@ -2045,6 +2121,10 @@ public class AggregateProcessor extends BaseProcessorSupport
 
     @Override
     public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        if (suspendOnly) {
+            // only complete the groups when stopping (not when suspending)
+            return;
+        }
         // we are shutting down, so force completion if this option was enabled
         // but only do this when forced=false, as that is when we have chance to
         // send out new messages to be routed by Camel. When forced=true, then
@@ -2058,6 +2138,12 @@ public class AggregateProcessor extends BaseProcessorSupport
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
         // not in use
         return true;
+    }
+
+    @Override
+    public int getPendingExchangesSize(boolean suspendOnly) {
+        // a suspend keeps the groups (they are not completed), so there is nothing to wait for
+        return suspendOnly ? 0 : getPendingExchangesSize();
     }
 
     @Override

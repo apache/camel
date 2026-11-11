@@ -79,7 +79,7 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
     private int maxChars = 50000;
     @Metadata(description = "If true, mask sensitive information like password or passphrase in the log")
     private Boolean logMask;
-    @Metadata(defaultValue = "true", description = "If enabled then each information is outputted as separate LOG events")
+    @Metadata(defaultValue = "false", description = "If enabled then each information is outputted as separate LOG events")
     private boolean multiline;
     @Metadata(defaultValue = "true",
               description = "If enabled then the source location of where the log endpoint is used in Camel routes, would be used as logger name, instead"

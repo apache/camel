@@ -21,12 +21,12 @@ import java.nio.charset.StandardCharsets;
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
 import ai.djl.modality.audio.Audio;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Predictor for the AUTOMATIC_SPEECH_RECOGNITION task, transcribing spoken audio to text.
@@ -84,7 +84,7 @@ import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
  */
 public class AutomaticSpeechRecognitionPredictor extends AbstractTaskPredictor {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
     public AutomaticSpeechRecognitionPredictor(HuggingFaceEndpoint endpoint) {
         super(endpoint);
@@ -136,13 +136,10 @@ public class AutomaticSpeechRecognitionPredictor extends AbstractTaskPredictor {
     protected void processOutput(Exchange exchange, Output output) throws Exception {
         String resultJson = output.getAsString("data");
 
-        if (resultJson.contains("\"error\"")) {
-            throw new RuntimeCamelException("Python inference error: " + resultJson);
-        }
-
         // Extract the transcript string
         JsonNode node = objectMapper.readTree(resultJson);
-        String transcript = node.get("text").asText();
+        failOnPythonError(node);
+        String transcript = node.get("text").asString();
 
         exchange.getMessage().setBody(transcript);
         exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, transcript);

@@ -20,7 +20,10 @@ import org.apache.camel.spi.Metadata;
 
 public final class KeycloakConstants {
 
-    @Metadata(description = "The operation to perform", javaType = "org.apache.camel.component.keycloak.KeycloakOperations")
+    @Metadata(description = "The operation to perform, in place of the operation of the endpoint. Ignored unless the"
+                            + " endpoint sets allowOperationHeader=true, because the operation decides what the endpoint"
+                            + " does with its admin client, such as deleting a realm.",
+              javaType = "org.apache.camel.component.keycloak.KeycloakOperations")
     public static final String OPERATION = "CamelKeycloakOperation";
 
     @Metadata(description = "The realm name", javaType = "String")

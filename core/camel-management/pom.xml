@@ -93,6 +93,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- the exchange sanitizer together with JMX, the tracer, the debugger and a step hook -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-sanitizer</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito-version}</version>

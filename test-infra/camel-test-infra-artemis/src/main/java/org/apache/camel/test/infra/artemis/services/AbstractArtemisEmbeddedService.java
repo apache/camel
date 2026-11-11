@@ -29,6 +29,7 @@ import org.apache.activemq.artemis.api.core.management.QueueControl;
 import org.apache.activemq.artemis.api.core.management.ResourceNames;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
+import org.apache.activemq.artemis.core.server.ActiveMQServer;
 import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.camel.test.AvailablePortFinder;
@@ -44,8 +45,8 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractArtemisEmbeddedService.class);
     private static final AtomicInteger BROKER_COUNT = new AtomicInteger();
 
-    protected final EmbeddedActiveMQ embeddedBrokerService;
-    private final Configuration artemisConfiguration;
+    protected volatile EmbeddedActiveMQ embeddedBrokerService;
+    private Configuration artemisConfiguration;
     private Consumer<Configuration> customConfigurator;
     private final int port;
 
@@ -157,14 +158,32 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
     }
 
     @Override
-    public void restart() {
-
+    public synchronized void restart() {
+        try {
+            ActiveMQServer server = getEmbeddedBrokerService().getActiveMQServer();
+            server.stop(false);
+            server.start();
+            if (!server.waitForActivation(20, TimeUnit.SECONDS)) {
+                LOG.warn("Artemis broker did not activate within 20 seconds, proceeding anyway");
+            }
+        } catch (Exception e) {
+            LOG.error("Failed to restart Artemis ActiveMQ server!", e);
+            throw new ArtemisRunException("Artemis ActiveMQ server cannot be restarted", e);
+        }
     }
 
     @Override
     public synchronized void initialize() {
         try {
-            if (embeddedBrokerService.getActiveMQServer() == null || !embeddedBrokerService.getActiveMQServer().isStarted()) {
+            ActiveMQServer existingServer = embeddedBrokerService.getActiveMQServer();
+            if (existingServer == null || !existingServer.isStarted()) {
+                if (existingServer != null) {
+                    // The service was already started and then stopped (e.g. when the tests are re-run after a failure).
+                    // EmbeddedActiveMQ would reuse the stopped server with its previous configuration, which does not
+                    // match the new broker id/address computed by configure(), so start from a clean state.
+                    embeddedBrokerService = new EmbeddedActiveMQ();
+                    artemisConfiguration = new ConfigurationImpl();
+                }
                 embeddedBrokerService.setConfiguration(configure(port));
 
                 embeddedBrokerService.start();

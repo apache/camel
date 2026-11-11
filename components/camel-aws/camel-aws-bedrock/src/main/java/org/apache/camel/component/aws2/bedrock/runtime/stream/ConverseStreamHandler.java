@@ -23,7 +23,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamResponseHandler;
-import software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailTraceAssessment;
 import software.amazon.awssdk.services.bedrockruntime.model.TokenUsage;
 
 /**
@@ -61,6 +61,10 @@ public final class ConverseStreamHandler {
                         .onMetadata(metadataEvent -> {
                             if (ObjectHelper.isNotEmpty(metadataEvent.usage())) {
                                 metadata.setUsage(metadataEvent.usage());
+                            }
+                            if (ObjectHelper.isNotEmpty(metadataEvent.trace())
+                                    && ObjectHelper.isNotEmpty(metadataEvent.trace().guardrail())) {
+                                metadata.setGuardrailTrace(metadataEvent.trace().guardrail());
                             }
                         })
                         .onMessageStop(stop -> {
@@ -107,6 +111,10 @@ public final class ConverseStreamHandler {
                             if (ObjectHelper.isNotEmpty(metadataEvent.usage())) {
                                 metadata.setUsage(metadataEvent.usage());
                             }
+                            if (ObjectHelper.isNotEmpty(metadataEvent.trace())
+                                    && ObjectHelper.isNotEmpty(metadataEvent.trace().guardrail())) {
+                                metadata.setGuardrailTrace(metadataEvent.trace().guardrail());
+                            }
                         })
                         .onMessageStop(stop -> {
                             if (ObjectHelper.isNotEmpty(stop.stopReason())) {
@@ -130,7 +138,7 @@ public final class ConverseStreamHandler {
         private String stopReason;
         private TokenUsage usage;
         private int chunkCount;
-        private GuardrailTrace guardrailTrace;
+        private GuardrailTraceAssessment guardrailTrace;
 
         public String getFullText() {
             return fullText;
@@ -172,11 +180,11 @@ public final class ConverseStreamHandler {
             this.chunkCount = chunkCount;
         }
 
-        public GuardrailTrace getGuardrailTrace() {
+        public GuardrailTraceAssessment getGuardrailTrace() {
             return guardrailTrace;
         }
 
-        public void setGuardrailTrace(GuardrailTrace guardrailTrace) {
+        public void setGuardrailTrace(GuardrailTraceAssessment guardrailTrace) {
             this.guardrailTrace = guardrailTrace;
         }
     }

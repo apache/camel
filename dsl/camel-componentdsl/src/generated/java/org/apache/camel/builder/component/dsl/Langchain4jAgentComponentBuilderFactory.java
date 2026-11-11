@@ -438,7 +438,7 @@ public interface Langchain4jAgentComponentBuilderFactory {
         /**
          * The LangChain4j provider of the chat model that drives the agent, to
          * create the model from the options here (modelName, baseUrl, apiKey,
-         * temperature, timeout, and provider-specific model. properties)
+         * temperature, timeout, and provider-specific model.* properties)
          * instead of a AgentConfiguration bean. The LangChain4j module of the
          * provider (dev.langchain4j:langchain4j-ollama, ...) must be on the
          * classpath; Camel JBang downloads it. Ignored when a

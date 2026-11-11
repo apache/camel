@@ -2,6 +2,7 @@
 package org.apache.camel.component.debezium.db2;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DebeziumDb2Component target = (DebeziumDb2Component) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": getOrCreateConfiguration(target).setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "autowiredenabled":
@@ -56,12 +57,18 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "customSanitizePattern": getOrCreateConfiguration(target).setCustomSanitizePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "databasedbname":
         case "databaseDbname": getOrCreateConfiguration(target).setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseexcludelist":
+        case "databaseExcludeList": getOrCreateConfiguration(target).setDatabaseExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": getOrCreateConfiguration(target).setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseincludelist":
+        case "databaseIncludeList": getOrCreateConfiguration(target).setDatabaseIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databasepassword":
         case "databasePassword": getOrCreateConfiguration(target).setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseport":
         case "databasePort": getOrCreateConfiguration(target).setDatabasePort(property(camelContext, int.class, value)); return true;
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": getOrCreateConfiguration(target).setDatabaseQueryTimeoutMs(property(camelContext, int.class, value)); return true;
         case "databaseuser":
         case "databaseUser": getOrCreateConfiguration(target).setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
         case "datatypepropagatesourcetype":
@@ -72,12 +79,16 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "decimalHandlingMode": getOrCreateConfiguration(target).setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "errorsmaxretries":
         case "errorsMaxRetries": getOrCreateConfiguration(target).setErrorsMaxRetries(property(camelContext, int.class, value)); return true;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": getOrCreateConfiguration(target).setEventConvertingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": getOrCreateConfiguration(target).setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": getOrCreateConfiguration(target).setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": getOrCreateConfiguration(target).setFieldNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": getOrCreateConfiguration(target).setGuardrailCollectionsLimitAction(property(camelContext, java.lang.String.class, value)); return true;
         case "guardrailcollectionsmax":
@@ -112,6 +123,14 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "messageKeyColumns": getOrCreateConfiguration(target).setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": getOrCreateConfiguration(target).setNotificationEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": getOrCreateConfiguration(target).setNotificationHttpAllowPrivateNetworks(property(camelContext, boolean.class, value)); return true;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": getOrCreateConfiguration(target).setNotificationHttpRetries(property(camelContext, int.class, value)); return true;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": getOrCreateConfiguration(target).setNotificationHttpTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": getOrCreateConfiguration(target).setNotificationHttpUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": getOrCreateConfiguration(target).setNotificationSinkTopicName(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
@@ -158,6 +177,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "schemaHistoryInternal": getOrCreateConfiguration(target).setSchemaHistoryInternal(property(camelContext, java.lang.String.class, value)); return true;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": getOrCreateConfiguration(target).setSchemaHistoryInternalFileFilename(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": getOrCreateConfiguration(target).setSchemaHistoryInternalMemoryOptimization(property(camelContext, java.lang.String.class, value)); return true;
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": getOrCreateConfiguration(target).setSchemaHistoryInternalSkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -168,10 +189,16 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "schemaNameAdjustmentMode": getOrCreateConfiguration(target).setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": getOrCreateConfiguration(target).setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": getOrCreateConfiguration(target).setSignalEmitFailureBackoffMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": getOrCreateConfiguration(target).setSignalEmitFailureMaxRetries(property(camelContext, int.class, value)); return true;
         case "signalenabledchannels":
         case "signalEnabledChannels": getOrCreateConfiguration(target).setSignalEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
         case "signalpollintervalms":
         case "signalPollIntervalMs": getOrCreateConfiguration(target).setSignalPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": getOrCreateConfiguration(target).setSkipMessagesWithoutChange(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": getOrCreateConfiguration(target).setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
@@ -180,8 +207,12 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "snapshotFetchSize": getOrCreateConfiguration(target).setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
         case "snapshotincludecollectionlist":
         case "snapshotIncludeCollectionList": getOrCreateConfiguration(target).setSnapshotIncludeCollectionList(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": getOrCreateConfiguration(target).setSnapshotIsolationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": getOrCreateConfiguration(target).setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "snapshotlockingmode":
+        case "snapshotLockingMode": getOrCreateConfiguration(target).setSnapshotLockingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotmaxthreadsmultiplier":
         case "snapshotMaxThreadsMultiplier": getOrCreateConfiguration(target).setSnapshotMaxThreadsMultiplier(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
@@ -208,6 +239,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "statisticsMetricsEnabled": getOrCreateConfiguration(target).setStatisticsMetricsEnabled(property(camelContext, boolean.class, value)); return true;
         case "streamingdelayms":
         case "streamingDelayMs": getOrCreateConfiguration(target).setStreamingDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "streamingquerytimespanseconds":
+        case "streamingQueryTimespanSeconds": getOrCreateConfiguration(target).setStreamingQueryTimespanSeconds(property(camelContext, int.class, value)); return true;
         case "tableexcludelist":
         case "tableExcludeList": getOrCreateConfiguration(target).setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
@@ -224,13 +257,29 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "topicPrefix": getOrCreateConfiguration(target).setTopicPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "transactionmetadatafactory":
         case "transactionMetadataFactory": getOrCreateConfiguration(target).setTransactionMetadataFactory(property(camelContext, java.lang.String.class, value)); return true;
+        case "updatecapturetablepruneapplyqual":
+        case "updateCaptureTablePruneApplyQual": getOrCreateConfiguration(target).setUpdateCaptureTablePruneApplyQual(property(camelContext, java.lang.String.class, value)); return true;
+        case "updatecapturetablepruneind":
+        case "updateCaptureTablePruneInd": getOrCreateConfiguration(target).setUpdateCaptureTablePruneInd(property(camelContext, boolean.class, value)); return true;
+        case "updatecapturetableprunelsndecrement":
+        case "updateCaptureTablePruneLsnDecrement": getOrCreateConfiguration(target).setUpdateCaptureTablePruneLsnDecrement(property(camelContext, boolean.class, value)); return true;
+        case "updatecapturetablepruneminintervalms":
+        case "updateCaptureTablePruneMinIntervalMs": getOrCreateConfiguration(target).setUpdateCaptureTablePruneMinIntervalMs(property(camelContext, int.class, value)); return true;
+        case "updatecapturetablepruneprocedureoverridename":
+        case "updateCaptureTablePruneProcedureOverrideName": getOrCreateConfiguration(target).setUpdateCaptureTablePruneProcedureOverrideName(property(camelContext, java.lang.String.class, value)); return true;
+        case "updatecapturetableprunesetname":
+        case "updateCaptureTablePruneSetName": getOrCreateConfiguration(target).setUpdateCaptureTablePruneSetName(property(camelContext, java.lang.String.class, value)); return true;
+        case "updatecapturetableprunetargetserver":
+        case "updateCaptureTablePruneTargetServer": getOrCreateConfiguration(target).setUpdateCaptureTablePruneTargetServer(property(camelContext, java.lang.String.class, value)); return true;
+        case "zstoplsnignore":
+        case "zStopLsnIgnore": getOrCreateConfiguration(target).setZStopLsnIgnore(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return java.util.Map.class;
         case "autowiredenabled":
@@ -257,12 +306,18 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "customSanitizePattern": return java.lang.String.class;
         case "databasedbname":
         case "databaseDbname": return java.lang.String.class;
+        case "databaseexcludelist":
+        case "databaseExcludeList": return java.lang.String.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
+        case "databaseincludelist":
+        case "databaseIncludeList": return java.lang.String.class;
         case "databasepassword":
         case "databasePassword": return java.lang.String.class;
         case "databaseport":
         case "databasePort": return int.class;
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": return int.class;
         case "databaseuser":
         case "databaseUser": return java.lang.String.class;
         case "datatypepropagatesourcetype":
@@ -273,12 +328,16 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "decimalHandlingMode": return java.lang.String.class;
         case "errorsmaxretries":
         case "errorsMaxRetries": return int.class;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return long.class;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return boolean.class;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return java.lang.String.class;
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": return java.lang.String.class;
         case "guardrailcollectionsmax":
@@ -313,6 +372,14 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "messageKeyColumns": return java.lang.String.class;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return java.lang.String.class;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return boolean.class;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return int.class;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return int.class;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return java.lang.String.class;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return java.lang.String.class;
         case "offsetcommitpolicy":
@@ -359,6 +426,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "schemaHistoryInternal": return java.lang.String.class;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return java.lang.String.class;
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": return java.lang.String.class;
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": return boolean.class;
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -369,10 +438,16 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return long.class;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return int.class;
         case "signalenabledchannels":
         case "signalEnabledChannels": return java.lang.String.class;
         case "signalpollintervalms":
         case "signalPollIntervalMs": return long.class;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return boolean.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotdelayms":
@@ -381,8 +456,12 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "snapshotFetchSize": return int.class;
         case "snapshotincludecollectionlist":
         case "snapshotIncludeCollectionList": return java.lang.String.class;
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": return java.lang.String.class;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return long.class;
+        case "snapshotlockingmode":
+        case "snapshotLockingMode": return java.lang.String.class;
         case "snapshotmaxthreadsmultiplier":
         case "snapshotMaxThreadsMultiplier": return int.class;
         case "snapshotmode":
@@ -409,6 +488,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "statisticsMetricsEnabled": return boolean.class;
         case "streamingdelayms":
         case "streamingDelayMs": return long.class;
+        case "streamingquerytimespanseconds":
+        case "streamingQueryTimespanSeconds": return int.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableignorebuiltin":
@@ -425,6 +506,22 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "topicPrefix": return java.lang.String.class;
         case "transactionmetadatafactory":
         case "transactionMetadataFactory": return java.lang.String.class;
+        case "updatecapturetablepruneapplyqual":
+        case "updateCaptureTablePruneApplyQual": return java.lang.String.class;
+        case "updatecapturetablepruneind":
+        case "updateCaptureTablePruneInd": return boolean.class;
+        case "updatecapturetableprunelsndecrement":
+        case "updateCaptureTablePruneLsnDecrement": return boolean.class;
+        case "updatecapturetablepruneminintervalms":
+        case "updateCaptureTablePruneMinIntervalMs": return int.class;
+        case "updatecapturetablepruneprocedureoverridename":
+        case "updateCaptureTablePruneProcedureOverrideName": return java.lang.String.class;
+        case "updatecapturetableprunesetname":
+        case "updateCaptureTablePruneSetName": return java.lang.String.class;
+        case "updatecapturetableprunetargetserver":
+        case "updateCaptureTablePruneTargetServer": return java.lang.String.class;
+        case "zstoplsnignore":
+        case "zStopLsnIgnore": return boolean.class;
         default: return null;
         }
     }
@@ -432,7 +529,7 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DebeziumDb2Component target = (DebeziumDb2Component) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return getOrCreateConfiguration(target).getAdditionalProperties();
         case "autowiredenabled":
@@ -459,12 +556,18 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "customSanitizePattern": return getOrCreateConfiguration(target).getCustomSanitizePattern();
         case "databasedbname":
         case "databaseDbname": return getOrCreateConfiguration(target).getDatabaseDbname();
+        case "databaseexcludelist":
+        case "databaseExcludeList": return getOrCreateConfiguration(target).getDatabaseExcludeList();
         case "databasehostname":
         case "databaseHostname": return getOrCreateConfiguration(target).getDatabaseHostname();
+        case "databaseincludelist":
+        case "databaseIncludeList": return getOrCreateConfiguration(target).getDatabaseIncludeList();
         case "databasepassword":
         case "databasePassword": return getOrCreateConfiguration(target).getDatabasePassword();
         case "databaseport":
         case "databasePort": return getOrCreateConfiguration(target).getDatabasePort();
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": return getOrCreateConfiguration(target).getDatabaseQueryTimeoutMs();
         case "databaseuser":
         case "databaseUser": return getOrCreateConfiguration(target).getDatabaseUser();
         case "datatypepropagatesourcetype":
@@ -475,12 +578,16 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "decimalHandlingMode": return getOrCreateConfiguration(target).getDecimalHandlingMode();
         case "errorsmaxretries":
         case "errorsMaxRetries": return getOrCreateConfiguration(target).getErrorsMaxRetries();
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return getOrCreateConfiguration(target).getEventConvertingFailureHandlingMode();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return getOrCreateConfiguration(target).getExecutorShutdownTimeoutMs();
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return getOrCreateConfiguration(target).isExtendedHeadersEnabled();
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return getOrCreateConfiguration(target).getFieldNameAdjustmentMode();
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": return getOrCreateConfiguration(target).getGuardrailCollectionsLimitAction();
         case "guardrailcollectionsmax":
@@ -515,6 +622,14 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "messageKeyColumns": return getOrCreateConfiguration(target).getMessageKeyColumns();
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return getOrCreateConfiguration(target).getNotificationEnabledChannels();
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return getOrCreateConfiguration(target).isNotificationHttpAllowPrivateNetworks();
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return getOrCreateConfiguration(target).getNotificationHttpRetries();
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return getOrCreateConfiguration(target).getNotificationHttpTimeoutMs();
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return getOrCreateConfiguration(target).getNotificationHttpUrl();
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return getOrCreateConfiguration(target).getNotificationSinkTopicName();
         case "offsetcommitpolicy":
@@ -561,6 +676,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "schemaHistoryInternal": return getOrCreateConfiguration(target).getSchemaHistoryInternal();
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return getOrCreateConfiguration(target).getSchemaHistoryInternalFileFilename();
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": return getOrCreateConfiguration(target).getSchemaHistoryInternalMemoryOptimization();
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": return getOrCreateConfiguration(target).isSchemaHistoryInternalSkipUnparseableDdl();
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -571,10 +688,16 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "schemaNameAdjustmentMode": return getOrCreateConfiguration(target).getSchemaNameAdjustmentMode();
         case "signaldatacollection":
         case "signalDataCollection": return getOrCreateConfiguration(target).getSignalDataCollection();
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return getOrCreateConfiguration(target).getSignalEmitFailureBackoffMs();
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return getOrCreateConfiguration(target).getSignalEmitFailureMaxRetries();
         case "signalenabledchannels":
         case "signalEnabledChannels": return getOrCreateConfiguration(target).getSignalEnabledChannels();
         case "signalpollintervalms":
         case "signalPollIntervalMs": return getOrCreateConfiguration(target).getSignalPollIntervalMs();
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return getOrCreateConfiguration(target).isSkipMessagesWithoutChange();
         case "skippedoperations":
         case "skippedOperations": return getOrCreateConfiguration(target).getSkippedOperations();
         case "snapshotdelayms":
@@ -583,8 +706,12 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "snapshotFetchSize": return getOrCreateConfiguration(target).getSnapshotFetchSize();
         case "snapshotincludecollectionlist":
         case "snapshotIncludeCollectionList": return getOrCreateConfiguration(target).getSnapshotIncludeCollectionList();
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": return getOrCreateConfiguration(target).getSnapshotIsolationMode();
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return getOrCreateConfiguration(target).getSnapshotLockTimeoutMs();
+        case "snapshotlockingmode":
+        case "snapshotLockingMode": return getOrCreateConfiguration(target).getSnapshotLockingMode();
         case "snapshotmaxthreadsmultiplier":
         case "snapshotMaxThreadsMultiplier": return getOrCreateConfiguration(target).getSnapshotMaxThreadsMultiplier();
         case "snapshotmode":
@@ -611,6 +738,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "statisticsMetricsEnabled": return getOrCreateConfiguration(target).isStatisticsMetricsEnabled();
         case "streamingdelayms":
         case "streamingDelayMs": return getOrCreateConfiguration(target).getStreamingDelayMs();
+        case "streamingquerytimespanseconds":
+        case "streamingQueryTimespanSeconds": return getOrCreateConfiguration(target).getStreamingQueryTimespanSeconds();
         case "tableexcludelist":
         case "tableExcludeList": return getOrCreateConfiguration(target).getTableExcludeList();
         case "tableignorebuiltin":
@@ -627,13 +756,29 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "topicPrefix": return getOrCreateConfiguration(target).getTopicPrefix();
         case "transactionmetadatafactory":
         case "transactionMetadataFactory": return getOrCreateConfiguration(target).getTransactionMetadataFactory();
+        case "updatecapturetablepruneapplyqual":
+        case "updateCaptureTablePruneApplyQual": return getOrCreateConfiguration(target).getUpdateCaptureTablePruneApplyQual();
+        case "updatecapturetablepruneind":
+        case "updateCaptureTablePruneInd": return getOrCreateConfiguration(target).isUpdateCaptureTablePruneInd();
+        case "updatecapturetableprunelsndecrement":
+        case "updateCaptureTablePruneLsnDecrement": return getOrCreateConfiguration(target).isUpdateCaptureTablePruneLsnDecrement();
+        case "updatecapturetablepruneminintervalms":
+        case "updateCaptureTablePruneMinIntervalMs": return getOrCreateConfiguration(target).getUpdateCaptureTablePruneMinIntervalMs();
+        case "updatecapturetablepruneprocedureoverridename":
+        case "updateCaptureTablePruneProcedureOverrideName": return getOrCreateConfiguration(target).getUpdateCaptureTablePruneProcedureOverrideName();
+        case "updatecapturetableprunesetname":
+        case "updateCaptureTablePruneSetName": return getOrCreateConfiguration(target).getUpdateCaptureTablePruneSetName();
+        case "updatecapturetableprunetargetserver":
+        case "updateCaptureTablePruneTargetServer": return getOrCreateConfiguration(target).getUpdateCaptureTablePruneTargetServer();
+        case "zstoplsnignore":
+        case "zStopLsnIgnore": return getOrCreateConfiguration(target).isZStopLsnIgnore();
         default: return null;
         }
     }
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return java.lang.Object.class;
         default: return null;

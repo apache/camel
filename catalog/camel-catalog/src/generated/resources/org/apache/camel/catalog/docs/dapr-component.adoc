@@ -33,6 +33,10 @@ include::partial$component-endpoint-headers.adoc[]
 
 Camel Dapr component provides a wide range of operations on the producer side:
 
+The producer keeps the headers of the message, and adds the headers of the Dapr response, such as `CamelDaprRawConfigResponse` for the configuration operation.
+
+The `invokeService`, `pubSub`, `invokeBinding` and `state` `save` operations send the message body as the data: a text or stream body is converted to bytes and sent as it is, bytes are sent as they are, and other bodies, such as a `Map` or a POJO, are serialized as JSON. For `pubSub`, set the content type of the data with the `contentType` option or the `CamelDaprContentType` header.
+
 === 1. *invokeService*:
 Using service invocation, your application can reliably and securely communicate with other applications using the standard HTTP protocol. For this operation `serviceToInvoke` and `methodToInvoke` are mandatory.
 
@@ -59,6 +63,8 @@ Dapr’s bindings building block allows interaction with external systems via in
 
 === 4. *secret*:
 Dapr’s secret management building block enables secure retrieval of secrets from external secret stores. The secret operation fetches a secret from the specified secret store. If a key is provided, the operation retrieves the corresponding secret; if no key is specified, a bulk retrieval of all secrets from the store is performed. This operation requires the secretStore name, and optionally the key.
+
+The secret operation takes the secret store, the key and the metadata from the `secretStore`, `key` and `metadata` options of the endpoint, unless the endpoint sets `allowSecretStoreAndKeyFromHeaders=true`: only then do the `CamelDaprSecretStore`, `CamelDaprKey` and `CamelDaprMetadata` headers take their place. An endpoint without a key fails, instead of reading all the secrets of the store, when the message has a `CamelDaprKey` header that it ignores.
 
 === 5. *configuration*:
 Dapr’s configuration building block allows applications to retrieve dynamic configuration values from external configuration stores. The configuration operation fetches values associated with keys specified in configKeys. This operation requires the configStore name, and the configKeys.
@@ -91,6 +97,16 @@ Dapr Workflows enable developers to write long-running, persistent, and reliable
 |`waitForInstanceCompletion` |Waits for a workflow instance to complete. Requires `workflowInstanceId` and a `timeout`.
 |`raiseEvent` |Sends an event to a running workflow instance that is waiting for it. Requires `workflowInstanceId` and `eventName`. The message body is used as the event payload.
 |===
+
+=== Headers that override the endpoint
+
+The producer headers, such as `CamelDaprServiceToInvoke`, `CamelDaprStateStore`, `CamelDaprKey`, `CamelDaprMetadata`, `CamelDaprPubSubName`, `CamelDaprTopic`, `CamelDaprBindingName`, `CamelDaprStoreName` or `CamelDaprWorkflowInstanceId`, take the place of the endpoint option of the same name for one message.
+
+The metadata that an operation sends to the Dapr building block is set on the endpoint with `metadata.` options, such as `metadata.ttlInSeconds=60` for `pubSub`, or for one message with the `CamelDaprMetadata` header (a `Map<String, String>`).
+
+For the `secret` operation, the `CamelDaprSecretStore`, `CamelDaprKey` and `CamelDaprMetadata` headers are ignored unless the endpoint sets `allowSecretStoreAndKeyFromHeaders=true`. With that option, they take the place of the secret store, the key and the metadata of the endpoint for one message, so the message chooses the secret that the operation reads.
+
+As the producer keeps the headers of the message, a `CamelDapr*` header also applies to the next `dapr` call of the route. When the messages come from an untrusted producer through a consumer that does not filter out `Camel*` headers, or when a `dapr` call must use only the options of its endpoint, remove these headers with `removeHeaders("CamelDapr*")` before the `dapr` endpoint.
 
 === Dapr Consumer operations
 
@@ -431,7 +447,7 @@ Java::
 ----
 from("direct:start")
   .to("dapr:secret?secretStore=myStore&key=mySecret")
-  .log("Received secret from Dapr: ${body}")
+  .log("Received secret mySecret from Dapr")
   .to("mock:result");
 ----
 
@@ -442,7 +458,7 @@ XML::
 <route>
   <from uri="direct:start"/>
   <to uri="dapr:secret?secretStore=myStore&amp;key=mySecret"/>
-  <log message="Received secret from Dapr: ${body}"/>
+  <log message="Received secret mySecret from Dapr"/>
   <to uri="mock:result"/>
 </route>
 ----
@@ -460,7 +476,7 @@ YAML::
             parameters:
               secretStore: myStore
               key: mySecret
-        - log: "Received secret from Dapr: ${body}"
+        - log: "Received secret mySecret from Dapr"
         - to:
             uri: mock:result
 ----
@@ -477,7 +493,7 @@ Java::
 from("direct:start")
   // when no secret key is passed, bulk retrieval is performed on secret store
   .to("dapr:secret?secretStore=myStore")
-  .log("Received bulk secrets from Dapr: ${body}")
+  .log("Received ${body.size()} secrets from Dapr")
   .to("mock:result");
 ----
 
@@ -488,7 +504,7 @@ XML::
 <route>
   <from uri="direct:start"/>
   <to uri="dapr:secret?secretStore=myStore"/>
-  <log message="Received bulk secrets from Dapr: ${body}"/>
+  <log message="Received ${body.size()} secrets from Dapr"/>
   <to uri="mock:result"/>
 </route>
 ----
@@ -505,7 +521,7 @@ YAML::
             uri: dapr:secret
             parameters:
               secretStore: myStore
-        - log: "Received bulk secrets from Dapr: ${body}"
+        - log: "Received ${body.size()} secrets from Dapr"
         - to:
             uri: mock:result
 ----

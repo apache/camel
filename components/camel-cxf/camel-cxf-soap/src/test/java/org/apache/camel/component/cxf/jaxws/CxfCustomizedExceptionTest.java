@@ -32,9 +32,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.Bus;
@@ -43,6 +43,8 @@ import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.interceptor.Fault;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,6 +52,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfCustomizedExceptionTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port port1;
+
+    @BeforeAll
+    static void allocatePorts() {
+        port1 = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (port1 != null) {
+            port1.release();
+        }
+    }
 
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
@@ -66,7 +81,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
         // END SNIPPET: FaultDefine
     }
 
-    protected String routerAddress = "http://localhost:" + CXFTestSupport.getPort1()
+    protected String routerAddress = "http://localhost:" + port1.getPort()
                                      + "/" + getClass().getSimpleName() + "/router";
     protected String routerEndpointURI = "cxf://" + routerAddress + "?" + SERVICE_CLASS;
     protected String serviceURI = "cxf://" + routerAddress + "?" + SERVICE_CLASS;

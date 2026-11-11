@@ -182,6 +182,39 @@ Dead Letter Channel
 See xref:exception-clause.adoc[Exception Clause] documentation for
 additional documentation of the features above.
 
+== An Error thrown by a processor
+
+A plain `Processor` (in `process(...)`, in `bean(...)` for a bean that is a `Processor`, or a producer that is not an
+`AsyncProcessor`) may throw an `Error` instead of an exception:
+
+[cols="2,4",options="header"]
+|===
+|Thrown by the processor |What happens
+
+|An `Error` that is not a `VirtualMachineError`, such as `AssertionError`, `LinkageError`
+(`NoClassDefFoundError`, `ExceptionInInitializerError`) or a custom `Error`
+|The exchange fails with it (wrapped in a `CamelExecutionException`), and the error handler handles it as any other
+failure: redelivery, `onException`, `doCatch` and a dead letter channel get it. `onException(Exception.class)` and
+`doCatch(Exception.class)` also match it; to treat it differently, match it on its class, such as
+`onException(AssertionError.class)`
+
+|A `VirtualMachineError`, such as `OutOfMemoryError`, `StackOverflowError` or `InternalError`
+|Camel's error handling does not get it (the JVM may no longer be in a consistent state, so the application should not
+handle it). It is not set on the exchange, but thrown on after the processor's
+callback was called. Depending on the error handler, the `Error` reaches the caller (and the exchange may stay
+inflight), or it is only logged and the route continues as if the processor had succeeded
+|===
+
+An application with strict reliability needs should not rely on Camel to react to a `VirtualMachineError`. For an
+`OutOfMemoryError` that the JVM raises, it can let the JVM stop with `-XX:+ExitOnOutOfMemoryError` or
+`-XX:+CrashOnOutOfMemoryError` (these options do not cover a `StackOverflowError`, or an `OutOfMemoryError` that code
+throws itself).
+
+`template.send(...)`, `template.request(...)` and `template.asyncSend(...)` return the failed exchange (or its future)
+without throwing the exception; `sendBody(...)` and `requestBody(...)` throw a `CamelExecutionException` that holds the
+`Error`, unless the failure was handled (such as by a dead letter channel, `onException(...).handled(true)` or
+`doCatch`).
+
 == Scopes
 
 The error handler is scoped as either:
@@ -224,6 +257,125 @@ RouteBuilder builder = new RouteBuilder() {
     }
 };
 ----
+
+== Error handling across routes
+
+When a route calls another route, such as with xref:components::direct-component.adoc[Direct], a failure in the
+called route is dealt with by the error handler of the called route, the route where it happened: its redeliveries,
+its `onException` clauses and its dead letter channel. Once that error handler is done with the failure, the error
+handlers of the calling routes do not deal with it again: they do not redeliver, and their `onException` clauses do
+not run for it. This also applies when the called route has only the default error handler, without any
+`onException`.
+
+An `onException` defined for all the routes of a `RouteBuilder`, or in a
+xref:route-configuration.adoc[route configuration], is part of the error handler of each route it applies to. When it
+applies to the called route, it runs there, once, and not again in the calling route. When the called route is in
+another `RouteBuilder`, the `onException` of the calling route's `RouteBuilder` does not run for its failure.
+
+What the calling route sees depends on what the error handler of the called route did with the failure:
+
+* not handled (the default error handler, or an `onException` that does not handle it): the calling route fails with
+  the exception, and its next steps do not run. An exception thrown from an `onException` of the called route is no
+  different: the calling route fails with it, and its `onException` clauses do not run for it.
+* handled (a dead letter channel, or an `onException` with `handled(true)`): the calling route does not fail, and its
+  next steps do not run either. The reply is the message as the called route left it.
+* continued (an `onException` with `continued(true)`): the calling route continues with its next steps.
+
+The same applies with xref:components::seda-component.adoc[SEDA] when the calling route waits for the called route to
+complete (`InOut`).
+
+To deal with the failure in the calling route instead, either:
+
+* Turn off the error handler of the called route with `errorHandler(noErrorHandler())`. The failure then goes to the
+  error handler of the calling route, as if it happened there, so its `onException` clauses run. The called route has
+  no redeliveries and no `onException` of its own then, and a redelivery of the calling route sends the message to
+  the called route again, so the whole called route runs again, as shown in
+  <<_how_do_i_retry_processing_a_message_from_a_certain_point_back_or_an_entire_route,retrying an entire route>>.
+* Call the route from a xref:try-catch-finally.adoc[doTry ... doCatch] in the calling route. The `doCatch` catches
+  the exception that the called route fails with, once the error handler of the called route is done with it.
+
+In the example below, the error handler of the `direct:inventory` route redelivers a failure up to 3 times. When the
+last attempt fails too, the `doCatch` of the `direct:order` route catches the exception and sets the reply:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:order")
+    .doTry()
+        .to("direct:inventory")
+    .doCatch(IOException.class)
+        .setBody(constant("Inventory not available"))
+    .end();
+
+from("direct:inventory")
+    .errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(1000))
+    .bean("inventory", "reserve");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:order"/>
+    <doTry>
+        <to uri="direct:inventory"/>
+        <doCatch>
+            <exception>java.io.IOException</exception>
+            <setBody>
+                <constant>Inventory not available</constant>
+            </setBody>
+        </doCatch>
+    </doTry>
+</route>
+
+<route>
+    <errorHandler>
+        <defaultErrorHandler>
+            <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="1000"/>
+        </defaultErrorHandler>
+    </errorHandler>
+    <from uri="direct:inventory"/>
+    <bean ref="inventory" method="reserve"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - doTry:
+            steps:
+              - to:
+                  uri: direct:inventory
+              - doCatch:
+                  exception:
+                    - java.io.IOException
+                  steps:
+                    - setBody:
+                        constant: Inventory not available
+- route:
+    errorHandler:
+      defaultErrorHandler:
+        redeliveryPolicy:
+          maximumRedeliveries: 3
+          redeliveryDelay: 1000
+    from:
+      uri: direct:inventory
+      steps:
+        - bean:
+            ref: inventory
+            method: reserve
+----
+====
 
 == XML and YAML based configuration
 

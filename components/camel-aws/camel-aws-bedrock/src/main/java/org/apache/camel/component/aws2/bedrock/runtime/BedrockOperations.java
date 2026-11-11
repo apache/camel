@@ -26,8 +26,18 @@ public enum BedrockOperations {
 
     invokeTextModelStreaming,
 
+    /**
+     * @deprecated the image generation models do not stream their response, use {@link #invokeImageModel} instead. With
+     *             a text model, this operation is the same as {@link #invokeTextModelStreaming}.
+     */
+    @Deprecated(since = "4.24")
     invokeImageModelStreaming,
 
+    /**
+     * @deprecated the embedding models do not stream their response, use {@link #invokeEmbeddingsModel} instead. With a
+     *             text model, this operation is the same as {@link #invokeTextModelStreaming}.
+     */
+    @Deprecated(since = "4.24")
     invokeEmbeddingsModelStreaming,
 
     converse,

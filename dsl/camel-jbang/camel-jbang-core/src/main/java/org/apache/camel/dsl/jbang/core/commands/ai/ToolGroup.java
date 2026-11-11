@@ -31,7 +31,9 @@ public enum ToolGroup {
     /** The HTTP endpoints the integration serves, and a request to them (CAMEL-25307). */
     HTTP("http"),
     /** Retained semantic evaluation and route-decision evidence. */
-    SEMANTIC("semantic");
+    SEMANTIC("semantic"),
+    /** The rules and the report of camel-chaos, for an integration that has it (development only). */
+    CHAOS("chaos");
 
     private final String id;
 

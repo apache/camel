@@ -92,7 +92,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
 
     @Override
     protected void doSuspend() throws Exception {
-        getEndpoint().onStopped(this);
+        getEndpoint().onSuspended(this);
     }
 
     @Override
@@ -135,6 +135,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
     private Exchange prepareExchange(final Exchange exchange) {
         // send a new copied exchange with new camel context
         // don't copy handovers as they are handled by the Disruptor Event Handlers
+        // (with several consumers the exchange is a snapshot, as another consumer may fail and change the original)
         final Exchange newExchange = ExchangeHelper.copyExchangeWithProperties(exchange, endpoint.getCamelContext());
         // the flag is only for this consumer, and must not be routed (or copied back to the caller)
         newExchange.removeProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE);
@@ -154,7 +155,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
             }
 
             // send a new copied exchange with new camel context
-            final Exchange result = prepareExchange(exchange);
+            final Exchange result = prepareExchange(synchronizedExchange.getExchangeToCopy());
 
             // We need to be notified when the exchange processing is complete to synchronize the original exchange
             // This is however, the last part of the processing of this exchange and as such can't be done

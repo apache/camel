@@ -44,6 +44,12 @@
             <artifactId>watson-x-data</artifactId>
             <version>${ibm-watsonx-data-sdk-version}</version>
         </dependency>
+        <!-- the IBM SDK core at the version managed in camel-ibm-parent, declared here so that applications
+             get it too, instead of the older one of the watsonx.data SDK that fails with Gson 2.13 or later -->
+        <dependency>
+            <groupId>com.ibm.cloud</groupId>
+            <artifactId>sdk-core</artifactId>
+        </dependency>
 
         <!-- for testing -->
         <dependency>

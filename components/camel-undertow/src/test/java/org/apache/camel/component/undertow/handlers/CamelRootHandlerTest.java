@@ -20,6 +20,7 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.RedirectHandler;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -77,4 +78,77 @@ public class CamelRootHandlerTest {
 
     }
 
+    @Test
+    public void removeTemplateKeepsTheStaticPath() {
+        // whichever comes first: the static path keeps the server's root handler from being empty, and nothing is left
+        // once both are removed
+        for (boolean templateFirst : new boolean[] { true, false }) {
+            final CamelRootHandler root = new CamelRootHandler(DEFAULT_HANDLER);
+            if (templateFirst) {
+                root.add("/orders/{id}", null, false, new RedirectHandler("http://template"));
+                root.add("/orders", null, false, new RedirectHandler("http://static"));
+            } else {
+                root.add("/orders", null, false, new RedirectHandler("http://static"));
+                root.add("/orders/{id}", null, false, new RedirectHandler("http://template"));
+            }
+            root.remove("/orders/{id}", null, false);
+            assertFalse(root.isEmpty(), "templateFirst=" + templateFirst + " " + root);
+            root.remove("/orders", null, false);
+            assertTrue(root.isEmpty(), "templateFirst=" + templateFirst + " " + root);
+        }
+    }
+
+    @Test
+    public void removeStaticPathThenTemplate() {
+        for (boolean templateFirst : new boolean[] { true, false }) {
+            final CamelRootHandler root = new CamelRootHandler(DEFAULT_HANDLER);
+            if (templateFirst) {
+                root.add("/orders/{id}", null, false, new RedirectHandler("http://template"));
+                root.add("/orders", null, false, new RedirectHandler("http://static"));
+            } else {
+                root.add("/orders", null, false, new RedirectHandler("http://static"));
+                root.add("/orders/{id}", null, false, new RedirectHandler("http://template"));
+            }
+            root.remove("/orders", null, false);
+            assertFalse(root.isEmpty(), "templateFirst=" + templateFirst + " " + root);
+            root.remove("/orders/{id}", null, false);
+            assertTrue(root.isEmpty(), "templateFirst=" + templateFirst + " " + root);
+        }
+    }
+
+    @Test
+    public void removeTemplateKeepsThePrefixPath() {
+        final CamelRootHandler root = new CamelRootHandler(DEFAULT_HANDLER);
+        root.add("/items", null, true, new RedirectHandler("http://prefix"));
+        root.add("/items/{id}", null, false, new RedirectHandler("http://template"));
+        root.remove("/items/{id}", null, false);
+        assertFalse(root.isEmpty(), root.toString());
+        root.remove("/items", null, true);
+        assertTrue(root.isEmpty(), root.toString());
+    }
+
+    @Test
+    public void removeTemplateThatIsNotRegistered() {
+        final CamelRootHandler root = new CamelRootHandler(DEFAULT_HANDLER);
+        root.add("/orders", null, false, new RedirectHandler("http://static"));
+        // the base path has only a static path: nothing to remove
+        root.remove("/orders/{id}", null, false);
+        assertFalse(root.isEmpty(), root.toString());
+        root.remove("/orders", null, false);
+        assertTrue(root.isEmpty(), root.toString());
+    }
+
+    @Test
+    public void removeExactAndPrefixPathsThatShareAHandler() {
+        // an exact and a prefix route of one path share the handler of the first one: whichever is removed last removes
+        // its registration
+        final CamelRootHandler root = new CamelRootHandler(DEFAULT_HANDLER);
+        root.add("/p", "GET", false, new RedirectHandler("http://exact"));
+        root.add("/p", "POST", true, new RedirectHandler("http://prefix"));
+        root.remove("/p", "GET", false);
+        assertFalse(root.isEmpty(), root.toString());
+        root.remove("/p", "POST", true);
+        assertTrue(root.isEmpty(), root.toString());
+        assertEquals("CamelPathHandler[exact={}, prefix={}]", root.toString());
+    }
 }

@@ -21,6 +21,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -142,13 +143,27 @@ public class GroovyExpression extends ExpressionSupport {
                        + "'), or call it from the route with"
                        + " - bean: {ref: " + name + "}";
             } else {
-                hint = "the script variables are " + SCRIPT_VARIABLES_HINT;
+                // JsonOutput.toJson(body) with no import: a class Groovy reads as a variable (r27 of the local-model
+                // benchmark wrote such classes without their import)
+                List<String> classes = GroovyLanguage.notImported(name, script.getClass().getClassLoader());
+                hint = !classes.isEmpty()
+                        ? name + " is the class " + classes.get(0) + ", which the script does not import: add import "
+                          + classes.get(0) + " at the top of the script, or write " + classes.get(0)
+                        : "the script variables are " + SCRIPT_VARIABLES_HINT;
             }
             throw new groovy.lang.MissingPropertyException(
                     e.getMessageWithoutLocationText() + " (" + hint + ")", name, e.getType());
+        } catch (groovy.lang.MissingMethodException e) {
+            // new JsonSlurper().parseText(body) on a body of bytes: parseText takes text (r26 of the local-model
+            // benchmark, a JMS message read as JSON in connect-service-jms-request-reply step 3)
+            String hint = bytesToParseTextHint(exchange, e);
+            if (hint == null) {
+                throw e;
+            }
+            throw new HintedMissingMethodException(e, hint);
         }
 
-        return exchange.getContext().getTypeConverter().convertTo(type, value);
+        return exchange.getContext().getTypeConverter().convertTo(type, GroovyLanguage.scriptResult(value));
     }
 
     @SuppressWarnings("unchecked")
@@ -179,7 +194,7 @@ public class GroovyExpression extends ExpressionSupport {
                     return name != null
                             ? shell.getClassLoader().parseClass(text, name) : shell.getClassLoader().parseClass(text);
                 } catch (CompilationFailedException e) {
-                    throw GroovyLanguage.compileFailure(e);
+                    throw GroovyLanguage.compileFailure(e, shell.getClassLoader());
                 }
             });
             c = new CompiledScript(r.context, r.language, generation, fileName, scriptClass, constructor(scriptClass));
@@ -381,6 +396,52 @@ public class GroovyExpression extends ExpressionSupport {
                 default:
                     return null;
             }
+        }
+    }
+
+    /**
+     * The hint for parseText of a JsonSlurper called with bytes: parseText takes text, and JsonSlurper.parse reads the
+     * bytes. For the body, also what it is and the unmarshal that parses it. Null for any other missing method.
+     */
+    private static String bytesToParseTextHint(Exchange exchange, groovy.lang.MissingMethodException e) {
+        Object[] args = e.getArguments();
+        if (!"parseText".equals(e.getMethod()) || e.getType() == null
+                || !e.getType().getName().startsWith("groovy.json.") || args == null || args.length != 1
+                || !(args[0] instanceof byte[])) {
+            return null;
+        }
+        if (args[0] == exchange.getMessage().getBody()) {
+            String unmarshal = BodyFacts.hint(exchange, BodyFacts.Need.DATA);
+            return BodyFacts.describe(exchange) + ": parseText takes text, so parse the bytes with"
+                   + " new groovy.json.JsonSlurper().parse(body)" + (unmarshal != null ? ", or " + unmarshal : "");
+        }
+        return "the value is bytes (a byte[]), and parseText takes text: parse the bytes with"
+               + " new groovy.json.JsonSlurper().parse(...)";
+    }
+
+    /**
+     * A MissingMethodException with a hint at the end of the first line of its message, the line a log shows. It keeps
+     * the type, so an onException for it still applies.
+     */
+    static final class HintedMissingMethodException extends groovy.lang.MissingMethodException {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String hint;
+
+        HintedMissingMethodException(groovy.lang.MissingMethodException cause, String hint) {
+            super(cause.getMethod(), cause.getType(), cause.getArguments(), cause.isStatic());
+            this.hint = hint;
+            setStackTrace(cause.getStackTrace());
+        }
+
+        @Override
+        public String getMessage() {
+            String message = super.getMessage();
+            int eol = message.indexOf('\n');
+            return eol < 0
+                    ? message + " (" + hint + ")"
+                    : message.substring(0, eol) + " (" + hint + ")" + message.substring(eol);
         }
     }
 

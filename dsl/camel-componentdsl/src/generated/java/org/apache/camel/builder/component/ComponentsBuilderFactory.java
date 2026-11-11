@@ -87,6 +87,19 @@ public interface ComponentsBuilderFactory {
         return Activemq6ComponentBuilderFactory.activemq6();
     }
     /**
+     * AI Prompt (camel-ai-prompt)
+     * Consumer endpoint that registers a Camel route as an MCP prompt.
+     * 
+     * Category: ai
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-ai-prompt
+     * 
+     * @return the dsl builder
+     */
+    static AiPromptComponentBuilderFactory.AiPromptComponentBuilder aiPrompt() {
+        return AiPromptComponentBuilderFactory.aiPrompt();
+    }
+    /**
      * AI Resource (camel-ai-resource)
      * Framework-agnostic consumer endpoint that registers a Camel route as a
      * read-only AI resource in the shared AiResourceRegistry.
@@ -231,6 +244,19 @@ public interface ComponentsBuilderFactory {
      */
     static AmqpComponentBuilderFactory.AmqpComponentBuilder amqp() {
         return AmqpComponentBuilderFactory.amqp();
+    }
+    /**
+     * Apicurio Registry (camel-apicurio-registry)
+     * Manage artifacts, versions, and groups in Apicurio Registry v3.
+     * 
+     * Category: cloud,api
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-apicurio-registry
+     * 
+     * @return the dsl builder
+     */
+    static ApicurioRegistryComponentBuilderFactory.ApicurioRegistryComponentBuilder apicurioRegistry() {
+        return ApicurioRegistryComponentBuilderFactory.apicurioRegistry();
     }
     /**
      * ArangoDb (camel-arangodb)
@@ -1264,7 +1290,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Couchbase (camel-couchbase)
-     * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
+     * Query Couchbase databases using SQL++ (N1QL) queries or MapReduce Views
      * with a poll strategy and/or perform various operations against Couchbase
      * databases.
      * 
@@ -1294,7 +1320,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Cassandra CQL (camel-cassandraql)
-     * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
+     * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
      * Based on Cassandra Java Driver provided by DataStax.
      * 
      * Category: database,bigdata
@@ -3748,6 +3774,21 @@ public interface ComponentsBuilderFactory {
         return MongodbGridfsComponentBuilderFactory.mongodbGridfs();
     }
     /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * @return the dsl builder
+     */
+    static MtconnectComponentBuilderFactory.MtconnectComponentBuilder mtconnect() {
+        return MtconnectComponentBuilderFactory.mtconnect();
+    }
+    /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
      * 
@@ -5311,6 +5352,20 @@ public interface ComponentsBuilderFactory {
      */
     static VertxHttpComponentBuilderFactory.VertxHttpComponentBuilder vertxHttp() {
         return VertxHttpComponentBuilderFactory.vertxHttp();
+    }
+    /**
+     * Vert.x MQTT (camel-vertx-mqtt)
+     * Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5,
+     * with the Vert.x MQTT client.
+     * 
+     * Category: messaging,iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-vertx-mqtt
+     * 
+     * @return the dsl builder
+     */
+    static VertxMqttComponentBuilderFactory.VertxMqttComponentBuilder vertxMqtt() {
+        return VertxMqttComponentBuilderFactory.vertxMqtt();
     }
     /**
      * Vert.x WebSocket (camel-vertx-websocket)

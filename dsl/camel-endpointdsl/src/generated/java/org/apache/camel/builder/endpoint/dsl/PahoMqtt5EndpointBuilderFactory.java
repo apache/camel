@@ -806,7 +806,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * use. For example /mydir/etc/key.p12 com.ibm.ssl.keyStorePassword The
          * password for the KeyStore object that you want the KeyManager to use.
          * The password can either be in plain-text, or may be obfuscated using
-         * the static method: com.ibm.micro.security.Password.obfuscate(char
+         * the static method: com.ibm.micro.security.Password.obfuscate(char[]
          * password). This obfuscates the password using a simple and insecure
          * XOR and Base64 encoding mechanism. Note that this is only a simple
          * scrambler to obfuscate clear-text passwords. com.ibm.ssl.keyStoreType
@@ -817,7 +817,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * com.ibm.ssl.trustStorePassword The password for the TrustStore object
          * that you want the TrustManager to use. The password can either be in
          * plain-text, or may be obfuscated using the static method:
-         * com.ibm.micro.security.Password.obfuscate(char password). This
+         * com.ibm.micro.security.Password.obfuscate(char[] password). This
          * obfuscates the password using a simple and insecure XOR and Base64
          * encoding mechanism. Note that this is only a simple scrambler to
          * obfuscate clear-text passwords. com.ibm.ssl.trustStoreType The type
@@ -858,7 +858,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * use. For example /mydir/etc/key.p12 com.ibm.ssl.keyStorePassword The
          * password for the KeyStore object that you want the KeyManager to use.
          * The password can either be in plain-text, or may be obfuscated using
-         * the static method: com.ibm.micro.security.Password.obfuscate(char
+         * the static method: com.ibm.micro.security.Password.obfuscate(char[]
          * password). This obfuscates the password using a simple and insecure
          * XOR and Base64 encoding mechanism. Note that this is only a simple
          * scrambler to obfuscate clear-text passwords. com.ibm.ssl.keyStoreType
@@ -869,7 +869,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * com.ibm.ssl.trustStorePassword The password for the TrustStore object
          * that you want the TrustManager to use. The password can either be in
          * plain-text, or may be obfuscated using the static method:
-         * com.ibm.micro.security.Password.obfuscate(char password). This
+         * com.ibm.micro.security.Password.obfuscate(char[] password). This
          * obfuscates the password using a simple and insecure XOR and Base64
          * encoding mechanism. Note that this is only a simple scrambler to
          * obfuscate clear-text passwords. com.ibm.ssl.trustStoreType The type
@@ -1894,7 +1894,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * use. For example /mydir/etc/key.p12 com.ibm.ssl.keyStorePassword The
          * password for the KeyStore object that you want the KeyManager to use.
          * The password can either be in plain-text, or may be obfuscated using
-         * the static method: com.ibm.micro.security.Password.obfuscate(char
+         * the static method: com.ibm.micro.security.Password.obfuscate(char[]
          * password). This obfuscates the password using a simple and insecure
          * XOR and Base64 encoding mechanism. Note that this is only a simple
          * scrambler to obfuscate clear-text passwords. com.ibm.ssl.keyStoreType
@@ -1905,7 +1905,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * com.ibm.ssl.trustStorePassword The password for the TrustStore object
          * that you want the TrustManager to use. The password can either be in
          * plain-text, or may be obfuscated using the static method:
-         * com.ibm.micro.security.Password.obfuscate(char password). This
+         * com.ibm.micro.security.Password.obfuscate(char[] password). This
          * obfuscates the password using a simple and insecure XOR and Base64
          * encoding mechanism. Note that this is only a simple scrambler to
          * obfuscate clear-text passwords. com.ibm.ssl.trustStoreType The type
@@ -1946,7 +1946,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * use. For example /mydir/etc/key.p12 com.ibm.ssl.keyStorePassword The
          * password for the KeyStore object that you want the KeyManager to use.
          * The password can either be in plain-text, or may be obfuscated using
-         * the static method: com.ibm.micro.security.Password.obfuscate(char
+         * the static method: com.ibm.micro.security.Password.obfuscate(char[]
          * password). This obfuscates the password using a simple and insecure
          * XOR and Base64 encoding mechanism. Note that this is only a simple
          * scrambler to obfuscate clear-text passwords. com.ibm.ssl.keyStoreType
@@ -1957,7 +1957,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * com.ibm.ssl.trustStorePassword The password for the TrustStore object
          * that you want the TrustManager to use. The password can either be in
          * plain-text, or may be obfuscated using the static method:
-         * com.ibm.micro.security.Password.obfuscate(char password). This
+         * com.ibm.micro.security.Password.obfuscate(char[] password). This
          * obfuscates the password using a simple and insecure XOR and Base64
          * encoding mechanism. Note that this is only a simple scrambler to
          * obfuscate clear-text passwords. com.ibm.ssl.trustStoreType The type
@@ -2911,7 +2911,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * use. For example /mydir/etc/key.p12 com.ibm.ssl.keyStorePassword The
          * password for the KeyStore object that you want the KeyManager to use.
          * The password can either be in plain-text, or may be obfuscated using
-         * the static method: com.ibm.micro.security.Password.obfuscate(char
+         * the static method: com.ibm.micro.security.Password.obfuscate(char[]
          * password). This obfuscates the password using a simple and insecure
          * XOR and Base64 encoding mechanism. Note that this is only a simple
          * scrambler to obfuscate clear-text passwords. com.ibm.ssl.keyStoreType
@@ -2922,7 +2922,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * com.ibm.ssl.trustStorePassword The password for the TrustStore object
          * that you want the TrustManager to use. The password can either be in
          * plain-text, or may be obfuscated using the static method:
-         * com.ibm.micro.security.Password.obfuscate(char password). This
+         * com.ibm.micro.security.Password.obfuscate(char[] password). This
          * obfuscates the password using a simple and insecure XOR and Base64
          * encoding mechanism. Note that this is only a simple scrambler to
          * obfuscate clear-text passwords. com.ibm.ssl.trustStoreType The type
@@ -2963,7 +2963,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * use. For example /mydir/etc/key.p12 com.ibm.ssl.keyStorePassword The
          * password for the KeyStore object that you want the KeyManager to use.
          * The password can either be in plain-text, or may be obfuscated using
-         * the static method: com.ibm.micro.security.Password.obfuscate(char
+         * the static method: com.ibm.micro.security.Password.obfuscate(char[]
          * password). This obfuscates the password using a simple and insecure
          * XOR and Base64 encoding mechanism. Note that this is only a simple
          * scrambler to obfuscate clear-text passwords. com.ibm.ssl.keyStoreType
@@ -2974,7 +2974,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * com.ibm.ssl.trustStorePassword The password for the TrustStore object
          * that you want the TrustManager to use. The password can either be in
          * plain-text, or may be obfuscated using the static method:
-         * com.ibm.micro.security.Password.obfuscate(char password). This
+         * com.ibm.micro.security.Password.obfuscate(char[] password). This
          * obfuscates the password using a simple and insecure XOR and Base64
          * encoding mechanism. Note that this is only a simple scrambler to
          * obfuscate clear-text passwords. com.ibm.ssl.trustStoreType The type
@@ -3295,7 +3295,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
         }
         /**
          * Consumer: The properties set on the incoming message. Producer: The
-         * properties to be set on the outgoing message.
+         * publish properties (not the topic alias, which the client assigns)
+         * copied into each published message.
          * 
          * The option is a: {@code
          * org.eclipse.paho.mqttv5.common.packet.MqttProperties} type.

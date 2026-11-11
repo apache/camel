@@ -45,10 +45,11 @@ import org.apache.camel.support.DefaultEndpoint;
                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
                                           @BodyType.When(option = "operation", value = "decrypt", carriers = Carrier.TEXT) },
                                   description = "encrypt encrypts the body unless the plaintext option or header is set: text"
-                                                + " and bytes as they are, a stream or a file read as text, which corrupts"
-                                                + " binary data, and a Map or a POJO as its toString(), so marshal it first."
-                                                + " decrypt takes the ciphertext blob as text, unless the ciphertextBlob option"
-                                                + " or header is set. No body fails both; generateDataKey does not use the body"),
+                                                + " in UTF-8, bytes as they are, and a stream or a file as its bytes, so binary"
+                                                + " data is kept. A Map or a POJO fails, as it does not convert to bytes, so"
+                                                + " marshal it first. decrypt takes the ciphertext blob as text, unless the"
+                                                + " ciphertextBlob option or header is set. No body fails both; generateDataKey"
+                                                + " does not use the body"),
            producerOut = @BodyType(value = Carrier.MAP, javaType = "java.util.Map",
                                    description = "A Map with the statusCode and the fields of the response: the ciphertextBlob"
                                                  + " and keyId of encrypt, the plaintext of decrypt, which is Base64 when this"

@@ -18,29 +18,32 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.dsl.jbang.core.commands.action.EvalExpressionCommand;
 import org.apache.camel.dsl.jbang.core.commands.action.TransformMessageAction;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
- * A command called wrong exits with 2 (usage error), and a file or name that does not exist exits with 3 (not found).
- * Either way the command prints one ERROR line on stderr, nothing on stdout, and stops before it does any work.
+ * A command called wrong exits with 2 (usage error), a file that does not exist exits with 66 (file not found), and a
+ * name that does not exist exits with 3 (not found). Either way the command prints one ERROR line on stderr, nothing on
+ * stdout, and stops before it does any work.
  */
 class CommandInputErrorsTest {
 
@@ -68,7 +71,7 @@ class CommandInputErrorsTest {
     void explainChecksTheFilesBeforeTheLlm() throws Exception {
         Path missing = dir.resolve("missing.yaml");
 
-        assertThat(call(new Explain(main), missing.toString())).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new Explain(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: File not found: " + missing);
         assertThat(printer.getStdout()).isEmpty();
     }
@@ -77,7 +80,7 @@ class CommandInputErrorsTest {
     void hardenChecksTheFilesBeforeTheLlm() throws Exception {
         Path missing = dir.resolve("missing.yaml");
 
-        assertThat(call(new Harden(main), missing.toString())).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new Harden(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: File not found: " + missing);
         assertThat(printer.getStdout()).isEmpty();
     }
@@ -93,7 +96,7 @@ class CommandInputErrorsTest {
     void evalExpressionWithAMissingTemplateFile() throws Exception {
         Path missing = dir.resolve("missing.txt");
 
-        assertThat(call(new EvalExpressionCommand(main), "--template=file:" + missing)).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new EvalExpressionCommand(main), "--template=file:" + missing)).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Template file does not exist: " + missing);
     }
 
@@ -109,7 +112,7 @@ class CommandInputErrorsTest {
         Path missing = dir.resolve("missing.yaml");
 
         assertThat(call(new TransformMessageAction(main), "--body=Hello", "--source=file:" + missing))
-                .isEqualTo(CliExitCode.NOT_FOUND);
+                .isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Source file does not exist: " + missing);
     }
 
@@ -126,7 +129,7 @@ class CommandInputErrorsTest {
     void dependencyUpdateWithAMissingFile() throws Exception {
         Path missing = dir.resolve("missing/pom.xml");
 
-        assertThat(call(new DependencyUpdate(main), missing.toString())).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new DependencyUpdate(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Source file does not exist: " + missing);
     }
 
@@ -152,6 +155,51 @@ class CommandInputErrorsTest {
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
     }
 
+    @Test
+    void debugSpringBootInTheBackground() throws Exception {
+        // Spring Boot registers stopOnExit hooks that kill the child when this JVM exits; --background exits
+        // immediately and would stop the integration before it starts
+        Path pom = Files.writeString(dir.resolve("pom.xml"),
+                "<project><dependencyManagement><dependencies>"
+                                                             + "<dependency><groupId>org.apache.camel.springboot</groupId>"
+                                                             + "<artifactId>camel-spring-boot-bom</artifactId><version>4.9.0</version>"
+                                                             + "<type>pom</type><scope>import</scope></dependency>"
+                                                             + "</dependencies></dependencyManagement></project>");
+
+        assertThatThrownBy(() -> call(new Debug(main), "--background", pom.toString()))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Debug Camel Spring Boot with --background is not supported")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+    }
+
+    @Test
+    void debugInTheBackgroundSkipsTtyCheck() throws Exception {
+        // --background makes camel debug run without an interactive terminal:
+        // the TTY check that guards the interactive path must be bypassed
+        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
+        assumeFalse(EnvironmentHelper.isInteractiveTerminal(), "needs a non-interactive terminal");
+        // Override runBackgroundProcess so the test does not actually spawn a child JVM,
+        // and record the kind string to verify the background branch was taken
+        AtomicReference<String> capturedKind = new AtomicReference<>();
+        Debug debug = new Debug(main) {
+            @Override
+            protected int runBackgroundProcess(ProcessBuilder pb, String kind) {
+                capturedKind.set(kind);
+                return 0;
+            }
+        };
+        assertThat(call(debug, "--background", file.toString())).isZero();
+        assertThat(capturedKind.get()).isEqualTo("Camel Debug");
+    }
+
+    @Test
+    void debugBackgroundAndRemoteAttachAreMutuallyExclusive() {
+        assertThatThrownBy(() -> call(new Debug(main), "--background", "--remote-attach"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("--background and --remote-attach are mutually exclusive")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = { "missing.yaml", "missing.xml", "missing.java", "file:missing.camel.yaml" })
     void runAFileThatDoesNotExist(String file) {
@@ -159,7 +207,31 @@ class CommandInputErrorsTest {
         assertThatThrownBy(() -> call(new Run(main), file))
                 .isInstanceOf(CliException.class)
                 .hasMessage("File does not exist: " + file.replace("file:", ""))
-                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
+        assertThat(printer.getOutput()).isEmpty();
+    }
+
+    @Test
+    void runNothingButCitrusTests() throws Exception {
+        Path test = Files.createDirectories(dir.resolve("test")).resolve("orders.citrus.it.yaml");
+        Files.writeString(test, "name: orders-test\nactions:\n  - echo:\n      message: hi\n");
+        String message = test + " is a Citrus test, not a route: run it with camel test run " + test;
+
+        // a Citrus test is not a route: camel test run runs it, and nothing is prepared or printed
+        for (String file : List.of(test.toString(), "file:" + test)) {
+            assertThatThrownBy(() -> call(new Run(main), file))
+                    .isInstanceOf(CliException.class)
+                    .hasMessage(message)
+                    .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        }
+        // the same for a folder that holds only Citrus tests, also with camel dev
+        String folder = test.getParent().toString();
+        assertThatThrownBy(() -> call(new Run(main), folder))
+                .isInstanceOf(CliException.class).hasMessage(message)
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        assertThatThrownBy(() -> call(new Dev(main), "--source-dir=" + folder))
+                .isInstanceOf(CliException.class).hasMessage(message)
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
         assertThat(printer.getOutput()).isEmpty();
     }
 
@@ -214,7 +286,7 @@ class CommandInputErrorsTest {
     }
 
     private static int call(CamelCommand command, String... args) throws Exception {
-        CommandLine.populateCommand(command, args);
+        CommandLineTestHelper.parse(command, args);
         return command.doCall();
     }
 }

@@ -93,6 +93,9 @@ class JfrTab extends AbstractTab {
     private final TableState processorTableState = new TableState();
     private final ScrollbarState processorScrollState = new ScrollbarState();
     private Rect lastTableArea;
+    // where the names of the views are on the screen, for a click: the row, and the columns of each name
+    private int viewsRow = -1;
+    private final int[] viewColumns = new int[View.values().length];
     private int topPanelHeight = -1;
 
     // sort state per view
@@ -228,6 +231,16 @@ class JfrTab extends AbstractTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.isClick() && me.y() == viewsRow) {
+            // a click on the name of a view shows it, as Space does
+            View[] views = View.values();
+            for (int i = 0; i < views.length; i++) {
+                if (me.x() >= viewColumns[i] && me.x() < viewColumns[i] + views[i].label.length()) {
+                    switchView(views[i]);
+                    return true;
+                }
+            }
+        }
         return handleTableClick(me, lastTableArea, activeTableState(), getRowCount());
     }
 
@@ -258,6 +271,7 @@ class JfrTab extends AbstractTab {
     public void render(Frame frame, Rect area) {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
+            viewsRow = -1;
             renderNoSelection(frame, area);
             return;
         }
@@ -304,10 +318,16 @@ class JfrTab extends AbstractTab {
         lines.add(Line.from(line1));
 
         List<Span> line2 = new ArrayList<>();
+        // the second line inside the border
+        viewsRow = area.y() + 2;
+        int x = area.x() + 1;
         for (View v : View.values()) {
             if (v.ordinal() > 0) {
                 line2.add(Span.styled(" | ", LABEL));
+                x += 3;
             }
+            viewColumns[v.ordinal()] = x;
+            x += v.label.length();
             boolean active = v == activeView;
             line2.add(Span.styled(v.label, active ? VALUE : LABEL));
         }
@@ -319,6 +339,7 @@ class JfrTab extends AbstractTab {
         frame.renderWidget(
                 Paragraph.builder().text(Text.from(lines))
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(ctx.paneBorder(false))
                                 .title(" JFR ").build())
                         .build(),
                 area);
@@ -329,10 +350,22 @@ class JfrTab extends AbstractTab {
             String msg = loading.get()
                     ? "  Loading..."
                     : "  Press F5 to refresh JFR snapshot data";
+            List<Line> lines = new ArrayList<>();
+            lines.add(Line.from(Span.styled(msg, LABEL)));
+            if (statusLoaded && recordings.isEmpty() && !loading.get()) {
+                // a snapshot needs a recording: say how to start one
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line
+                        .from(Span.styled("  No JFR recording is active. Run the integration with Java Flight Recorder (JFR)"
+                                          + " checked in its run options (F2 → Open Project...),",
+                                LABEL)));
+                lines.add(Line.from(Span.styled("  or start one with: jcmd " + ctx.selectedPid + " JFR.start", LABEL)));
+            }
             frame.renderWidget(
                     Paragraph.builder()
-                            .text(Text.from(Line.from(Span.styled(msg, LABEL))))
+                            .text(Text.from(lines))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(ctx.paneBorder(true))
                                     .title(" " + activeView.label + " ").build())
                             .build(),
                     area);
@@ -397,7 +430,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
                         .title(" Routes (" + data.size() + ") ").build())
                 .build();
         lastTableArea = chunks.get(0);
@@ -415,6 +448,7 @@ class JfrTab extends AbstractTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled("No routes", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(ctx.paneBorder(false))
                                     .title(" Processors ").build())
                             .build(),
                     chunks.get(1));
@@ -467,7 +501,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
                         .title(" Processors [" + routeId + "] (" + data.size() + ") ").build())
                 .build();
         frame.renderStatefulWidget(table, area, processorTableState);
@@ -521,7 +555,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
                         .title(" Processors (" + data.size() + ") ").build())
                 .build();
         lastTableArea = area;
@@ -572,7 +606,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
                         .title(" Endpoints (" + data.size() + ") ").build())
                 .build();
         lastTableArea = area;
@@ -608,7 +642,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(28), Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
                         .title(" Failures (" + failureData.size() + ") ").build())
                 .build();
         lastTableArea = area;
@@ -641,7 +675,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(8), Constraint.length(8))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
                         .title(" Redeliveries (" + redeliveryData.size() + ") ").build())
                 .build();
         lastTableArea = area;

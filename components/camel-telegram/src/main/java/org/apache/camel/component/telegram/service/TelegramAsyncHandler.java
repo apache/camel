@@ -26,7 +26,6 @@ import java.net.URI;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.model.MessageResult;
@@ -34,6 +33,8 @@ import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public class TelegramAsyncHandler {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramAsyncHandler.class);
@@ -120,7 +121,7 @@ public class TelegramAsyncHandler {
             }
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException(ex);
-        } catch (IOException ex) {
+        } catch (IOException | JacksonException ex) {
             throw new RuntimeCamelException("Could not parse the response from " + request, ex);
         }
 

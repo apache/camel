@@ -334,6 +334,28 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Specify how binary (blob, binary, etc.) columns should be represented
+         * in change events, including: 'bytes' represents binary data as byte
+         * array (default); 'base64' represents binary data as base64-encoded
+         * string; 'base64-url-safe' represents binary data as
+         * base64-url-safe-encoded string; 'hex' represents binary data as
+         * hex-encoded (base16) string.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: bytes
+         * Group: mysql
+         * 
+         * @param binaryHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder binaryHandlingMode(java.lang.String binaryHandlingMode) {
+            doSetProperty("binaryHandlingMode", binaryHandlingMode);
+            return this;
+        }
+    
         /**
          * The size of a look-ahead buffer used by the binlog reader to decide
          * whether the transaction in progress is going to be committed or
@@ -490,6 +512,25 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * Number of consecutive attempts the keep alive thread makes to restore
+         * a lost binlog connection before the connector fails. A connection
+         * that can never be restored otherwise leaves the connector running
+         * without emitting any change events. Defaults to 0, meaning the keep
+         * alive thread retries indefinitely.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param connectKeepAliveMaxReconnectAttempts the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder connectKeepAliveMaxReconnectAttempts(int connectKeepAliveMaxReconnectAttempts) {
+            doSetProperty("connectKeepAliveMaxReconnectAttempts", connectKeepAliveMaxReconnectAttempts);
+            return this;
+        }
+    
         
         /**
          * Maximum time to wait after trying to connect to the database before
@@ -527,11 +568,9 @@ public interface DebeziumMysqlComponentBuilderFactory {
         }
     
         /**
-         * The custom metric tags will accept key-value pairs to customize the
-         * MBean object name which should be appended the end of regular name,
-         * each key would represent a tag for the MBean object name, and the
-         * corresponding value would be the value of that tag the key is. For
-         * example: k1=v1,k2=v2.
+         * A comma-separated list of key-value pairs that are appended to the
+         * MBean object name. Keys must be valid JMX ObjectName property keys.
+         * For example: k1=v1,k2=v2.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -883,7 +922,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * Specifies which ANTLR grammar to use for parsing MySQL DDL
          * statements. 'default' uses the Oracle MySQL grammar, which is
-         * actively maintained and supports MySQL 8.0 features. 'legacy' uses
+         * actively maintained and supports MySQL 8.0+ features. 'legacy' uses
          * the Positive Technologies grammar for backward compatibility with
          * existing deployments.
          * 
@@ -959,6 +998,30 @@ public interface DebeziumMysqlComponentBuilderFactory {
          */
         default DebeziumMysqlComponentBuilder errorsMaxRetries(int errorsMaxRetries) {
             doSetProperty("errorsMaxRetries", errorsMaxRetries);
+            return this;
+        }
+    
+        
+        /**
+         * Specify how failures during converting of event should be handled,
+         * including: 'fail' throw an exception that the column of event
+         * conversion is failed with unmatched schema type, causing the
+         * connector to be stopped. it could need schema recovery to covert
+         * successfully; 'warn' (the default) the value of column of event that
+         * conversion failed will be null and be logged with warn level; 'skip'
+         * the value of column of event that conversion failed will be null and
+         * be logged with debug level.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: warn
+         * Group: mysql
+         * 
+         * @param eventConvertingFailureHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder eventConvertingFailureHandlingMode(java.lang.String eventConvertingFailureHandlingMode) {
+            doSetProperty("eventConvertingFailureHandlingMode", eventConvertingFailureHandlingMode);
             return this;
         }
     
@@ -1041,6 +1104,29 @@ public interface DebeziumMysqlComponentBuilderFactory {
          */
         default DebeziumMysqlComponentBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
             doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * Specify how field names should be adjusted for compatibility with the
+         * message converter used by the connector, including: 'avro' replaces
+         * the characters that cannot be used in the Avro type name with
+         * underscore; 'avro_unicode' replaces the underscore or characters that
+         * cannot be used in the Avro type name with corresponding unicode like
+         * _uxxxx. Note: _ is an escape sequence like backslash in Java;'none'
+         * does not apply any adjustment (default).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: mysql
+         * 
+         * @param fieldNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder fieldNameAdjustmentMode(java.lang.String fieldNameAdjustmentMode) {
+            doSetProperty("fieldNameAdjustmentMode", fieldNameAdjustmentMode);
             return this;
         }
     
@@ -1531,6 +1617,78 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder notificationHttpAllowPrivateNetworks(boolean notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+    
+        
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: mysql
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder notificationHttpRetries(int notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+    
+        
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: mysql
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder notificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+    
+        /**
+         * The URL to which notifications are POSTed as JSON. Required when
+         * 'http' is in the list of enabled channels.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param notificationHttpUrl the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder notificationHttpUrl(java.lang.String notificationHttpUrl) {
+            doSetProperty("notificationHttpUrl", notificationHttpUrl);
+            return this;
+        }
+    
         /**
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
@@ -1666,7 +1824,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
         
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1732,6 +1891,26 @@ public interface DebeziumMysqlComponentBuilderFactory {
     
         
         /**
+         * When a CREATE TABLE ... LIKE statement reference a table whose schema
+         * is not in the internal cache(e.g., excluded by table filters),
+         * automatically fetch the reference table's schema via SHOW CREATE
+         * TABLE and retry DDL parsing. Default: false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param resolveCreateTableLikeSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder resolveCreateTableLikeSchema(boolean resolveCreateTableLikeSchema) {
+            doSetProperty("resolveCreateTableLikeSchema", resolveCreateTableLikeSchema);
+            return this;
+        }
+    
+        
+        /**
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
@@ -1780,6 +1959,24 @@ public interface DebeziumMysqlComponentBuilderFactory {
          */
         default DebeziumMysqlComponentBuilder schemaHistoryInternalFileFilename(java.lang.String schemaHistoryInternalFileFilename) {
             doSetProperty("schemaHistoryInternalFileFilename", schemaHistoryInternalFileFilename);
+            return this;
+        }
+    
+        
+        /**
+         * Controls how Debezium deduplicates identical schema objects (tables,
+         * columns, attributes) in memory using an interner.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: off
+         * Group: mysql
+         * 
+         * @param schemaHistoryInternalMemoryOptimization the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder schemaHistoryInternalMemoryOptimization(java.lang.String schemaHistoryInternalMemoryOptimization) {
+            doSetProperty("schemaHistoryInternalMemoryOptimization", schemaHistoryInternalMemoryOptimization);
             return this;
         }
     
@@ -1889,6 +2086,41 @@ public interface DebeziumMysqlComponentBuilderFactory {
     
         
         /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: mysql
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder signalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+    
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder signalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+    
+        
+        /**
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
@@ -1920,6 +2152,27 @@ public interface DebeziumMysqlComponentBuilderFactory {
          */
         default DebeziumMysqlComponentBuilder signalPollIntervalMs(long signalPollIntervalMs) {
             doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
+            return this;
+        }
+    
+        
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder skipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
             return this;
         }
     
@@ -2069,7 +2322,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * compute the number of rows per chunks. This may not be ideal for
          * larger tables, and using the multiplier, the formula is adjusted to
          * increase the number of chunks by using
-         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 'row_count/(snapshot.max.threads * snapshot.max.threads.multiplier).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -2275,8 +2528,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * the specific connectors. Select statements for the individual tables
          * are specified in further configuration properties, one for each
          * table, identified by the id
-         * 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or
-         * 'snapshot.select.statement.overrides.SCHEMA_NAME.TABLE_NAME',
+         * 'snapshot.select.statement.overrides.[DB_NAME].[TABLE_NAME]' or
+         * 'snapshot.select.statement.overrides.[SCHEMA_NAME].[TABLE_NAME]',
          * respectively. The value of those properties is the select statement
          * to use when retrieving data from the specific table during
          * snapshotting. A possible use case for large append-only tables is
@@ -2427,7 +2680,11 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * but time fields always use microseconds precision; 'connect': always
          * represents time, date and timestamp values using Kafka Connect's
          * built-in representations for Time, Date, and Timestamp, which uses
-         * millisecond precision regardless of the database columns' precision.
+         * millisecond precision regardless of the database columns' precision;
+         * 'isostring': represents time, date, and datetime values as ISO-8601
+         * formatted strings at the UTC time zone; 'structured': represents
+         * time, date, timestamp, and datetime values as Kafka Connect structs
+         * with separate calendar and clock components.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2573,6 +2830,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "autowiredEnabled": ((DebeziumMySqlComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "bigintUnsignedHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBigintUnsignedHandlingMode((java.lang.String) value); return true;
+            case "binaryHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinaryHandlingMode((java.lang.String) value); return true;
             case "binlogBufferSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinlogBufferSize((int) value); return true;
             case "binlogNetReadTimeout": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinlogNetReadTimeout((long) value); return true;
             case "binlogNetWriteTimeout": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinlogNetWriteTimeout((long) value); return true;
@@ -2582,6 +2840,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "connectionValidationTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectionValidationTimeoutMs((long) value); return true;
             case "connectKeepAlive": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectKeepAlive((boolean) value); return true;
             case "connectKeepAliveIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectKeepAliveIntervalMs((long) value); return true;
+            case "connectKeepAliveMaxReconnectAttempts": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectKeepAliveMaxReconnectAttempts((int) value); return true;
             case "connectTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectTimeoutMs((int) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConverters((java.lang.String) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumMySqlComponent) component).setCustomMetricTags((java.lang.String) value); return true;
@@ -2608,10 +2867,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "enableTimeAdjuster": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEnableTimeAdjuster((boolean) value); return true;
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumMySqlComponent) component).setErrorsMaxRetries((int) value); return true;
+            case "eventConvertingFailureHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEventConvertingFailureHandlingMode((java.lang.String) value); return true;
             case "eventDeserializationFailureHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEventDeserializationFailureHandlingMode((java.lang.String) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumMySqlComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
+            case "fieldNameAdjustmentMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setFieldNameAdjustmentMode((java.lang.String) value); return true;
             case "gtidIgnoreOnRecovery": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidIgnoreOnRecovery((boolean) value); return true;
             case "gtidSourceExcludes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceExcludes((java.lang.String) value); return true;
             case "gtidSourceFilterDmlEvents": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceFilterDmlEvents((boolean) value); return true;
@@ -2637,6 +2898,10 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "minRowCountToStreamResults": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMinRowCountToStreamResults((int) value); return true;
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
+            case "notificationHttpAllowPrivateNetworks": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationHttpAllowPrivateNetworks((boolean) value); return true;
+            case "notificationHttpRetries": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationHttpRetries((int) value); return true;
+            case "notificationHttpTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationHttpTimeoutMs((int) value); return true;
+            case "notificationHttpUrl": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationHttpUrl((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
             case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOpenlineageIntegrationDatasetKafkaBootstrapServers((java.lang.String) value); return true;
@@ -2649,16 +2914,21 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "postProcessors": getOrCreateConfiguration((DebeziumMySqlComponent) component).setPostProcessors((java.lang.String) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumMySqlComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "queryFetchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setQueryFetchSize((int) value); return true;
+            case "resolveCreateTableLikeSchema": getOrCreateConfiguration((DebeziumMySqlComponent) component).setResolveCreateTableLikeSchema((boolean) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "schemaHistoryInternal": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSchemaHistoryInternal((java.lang.String) value); return true;
             case "schemaHistoryInternalFileFilename": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSchemaHistoryInternalFileFilename((java.lang.String) value); return true;
+            case "schemaHistoryInternalMemoryOptimization": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSchemaHistoryInternalMemoryOptimization((java.lang.String) value); return true;
             case "schemaHistoryInternalSkipUnparseableDdl": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSchemaHistoryInternalSkipUnparseableDdl((boolean) value); return true;
             case "schemaHistoryInternalStoreOnlyCapturedDatabasesDdl": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl((boolean) value); return true;
             case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSchemaHistoryInternalStoreOnlyCapturedTablesDdl((boolean) value); return true;
             case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSignalDataCollection((java.lang.String) value); return true;
+            case "signalEmitFailureBackoffMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSignalEmitFailureBackoffMs((long) value); return true;
+            case "signalEmitFailureMaxRetries": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSignalEmitFailureMaxRetries((int) value); return true;
             case "signalEnabledChannels": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSignalEnabledChannels((java.lang.String) value); return true;
             case "signalPollIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSignalPollIntervalMs((long) value); return true;
+            case "skipMessagesWithoutChange": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSkipMessagesWithoutChange((boolean) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotFetchSize((int) value); return true;

@@ -39,6 +39,11 @@ import org.apache.camel.component.ibm.watsonx.ai.support.FileInput;
  */
 public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHandler {
 
+    /** The object key header set by camel-aws2-s3 ({@code AWS2S3Constants.KEY}). */
+    static final String AWS_S3_KEY_HEADER = "CamelAwsS3Key";
+    /** The blob name header set by camel-azure-storage-blob ({@code BlobConstants.BLOB_NAME}). */
+    static final String AZURE_BLOB_NAME_HEADER = "CamelAzureStorageBlobBlobName";
+
     protected final WatsonxAiEndpoint endpoint;
 
     protected AbstractWatsonxAiHandler(WatsonxAiEndpoint endpoint) {
@@ -86,9 +91,12 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             Object body = in.getBody();
             if (body instanceof List) {
                 inputs = (List<String>) body;
-            } else if (body instanceof String bodyString) {
-                // Single string input
-                inputs = List.of(bodyString);
+            } else if (body != null) {
+                // Single input, read as text (as textGeneration does), so a byte[] or InputStream body works too
+                String text = in.getBody(String.class);
+                if (text != null) {
+                    inputs = List.of(text);
+                }
             }
         }
 
@@ -103,31 +111,35 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
     /**
      * Extracts chat messages from exchange headers or body.
      */
-    @SuppressWarnings("unchecked")
     protected List<ChatMessage> getMessages(Exchange exchange) {
         Message in = exchange.getIn();
 
         // Try MESSAGES header first
-        List<ChatMessage> messages = in.getHeader(WatsonxAiConstants.MESSAGES, List.class);
+        List<ChatMessage> messages
+                = toChatMessages(in.getHeader(WatsonxAiConstants.MESSAGES, List.class),
+                        "header '" + WatsonxAiConstants.MESSAGES + "'");
 
         // If MESSAGES not set, try to build from SYSTEM_MESSAGE/USER_MESSAGE headers
-        if (messages == null || messages.isEmpty()) {
+        if (messages.isEmpty()) {
             String systemMessage = in.getHeader(WatsonxAiConstants.SYSTEM_MESSAGE, String.class);
             String userMessage = in.getHeader(WatsonxAiConstants.USER_MESSAGE, String.class);
 
             // If no USER_MESSAGE header, try body
             if (userMessage == null) {
                 Object body = in.getBody();
-                if (body instanceof String bodyString) {
-                    userMessage = bodyString;
-                } else if (body instanceof List) {
+                if (body instanceof List<?> list) {
                     // Body is a list of messages
-                    return (List<ChatMessage>) body;
+                    messages = toChatMessages(list, "message body");
+                } else if (body instanceof ChatMessage chatMessage) {
+                    messages = List.of(chatMessage);
+                } else if (body != null) {
+                    // The user message, read as text (as textGeneration does), so a byte[] or InputStream body works too
+                    userMessage = in.getBody(String.class);
                 }
             }
 
             // Build messages from headers
-            if (systemMessage != null || userMessage != null) {
+            if (messages.isEmpty() && (systemMessage != null || userMessage != null)) {
                 messages = new ArrayList<>();
                 if (systemMessage != null) {
                     messages.add(SystemMessage.of(systemMessage));
@@ -138,13 +150,37 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             }
         }
 
-        if (messages == null || messages.isEmpty()) {
+        if (messages.isEmpty()) {
             throw new IllegalArgumentException(
                     "Chat messages must be provided via message body, header '" + WatsonxAiConstants.MESSAGES
                                                + "', or headers '" + WatsonxAiConstants.SYSTEM_MESSAGE + "'/'"
                                                + WatsonxAiConstants.USER_MESSAGE + "'");
         }
 
+        return messages;
+    }
+
+    /**
+     * Checks the elements of a list of chat messages: a ChatMessage is used as it is, and a String is a user message.
+     * Any other element fails, instead of a ClassCastException when the request is built.
+     */
+    private static List<ChatMessage> toChatMessages(List<?> list, String source) {
+        if (list == null || list.isEmpty()) {
+            return List.of();
+        }
+        List<ChatMessage> messages = new ArrayList<>(list.size());
+        for (Object element : list) {
+            if (element instanceof ChatMessage chatMessage) {
+                messages.add(chatMessage);
+            } else if (element instanceof String text) {
+                messages.add(UserMessage.text(text));
+            } else {
+                throw new IllegalArgumentException(
+                        "The chat messages in the " + source + " must be ChatMessage objects or Strings (user messages),"
+                                                   + " but an element is "
+                                                   + (element == null ? "null" : element.getClass().getName()));
+            }
+        }
         return messages;
     }
 
@@ -210,12 +246,12 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             return extractFileName(fileName);
         }
 
-        fileName = in.getHeader("CamelAwsS3Key", String.class);
+        fileName = in.getHeader(AWS_S3_KEY_HEADER, String.class);
         if (fileName != null) {
             return extractFileName(fileName);
         }
 
-        fileName = in.getHeader("CamelAzureStorageBlobName", String.class);
+        fileName = in.getHeader(AZURE_BLOB_NAME_HEADER, String.class);
         if (fileName != null) {
             return extractFileName(fileName);
         }

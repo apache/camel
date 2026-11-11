@@ -2,6 +2,7 @@
 package org.apache.camel.component.statestore;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,13 +23,14 @@ public class StateStoreComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         StateStoreComponent target = (StateStoreComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "backendfactory":
         case "backendFactory": target.setBackendFactory(property(camelContext, org.apache.camel.component.statestore.StateStoreBackendFactory.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "namespaced": target.setNamespaced(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -40,13 +42,14 @@ public class StateStoreComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "backendfactory":
         case "backendFactory": return org.apache.camel.component.statestore.StateStoreBackendFactory.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "namespaced": return boolean.class;
         default: return null;
         }
     }
@@ -54,13 +57,14 @@ public class StateStoreComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         StateStoreComponent target = (StateStoreComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "backendfactory":
         case "backendFactory": return target.getBackendFactory();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "namespaced": return target.isNamespaced();
         default: return null;
         }
     }

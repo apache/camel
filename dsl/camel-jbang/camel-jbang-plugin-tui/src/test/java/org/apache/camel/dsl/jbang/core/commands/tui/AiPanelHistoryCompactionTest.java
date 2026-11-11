@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
+import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -144,6 +145,13 @@ class AiPanelHistoryCompactionTest {
 
         assertTrue(truncated.startsWith("y".repeat(AiPanel.MAX_TOOL_RESULT_CHARS)));
         assertTrue(truncated.contains("[truncated, 1234 more characters"));
+    }
+
+    @Test
+    void keepsTheLongestCatalogAnswerWhole() {
+        // the end of a long catalog answer names the options and headers it leaves out (16_000 cut it off)
+        String longest = "z".repeat(CatalogDocs.MAX_ANSWER_LENGTH);
+        assertSame(longest, AiPanel.truncateToolResult(longest));
     }
 
     @Test

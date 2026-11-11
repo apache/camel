@@ -17,11 +17,15 @@
 package org.apache.camel.impl.engine;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -51,6 +55,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     private final CamelContext camelContext;
     private volatile ProducerCache producerCache;
     private volatile ExecutorService executor;
+    // async send tasks handed to the executor that have not started yet (completed exceptionally on stop)
+    private final Set<AsyncSendTask> pendingAsyncTasks = ConcurrentHashMap.newKeySet();
     private Endpoint defaultEndpoint;
     private int maximumCacheSize;
     private boolean eventNotifierEnabled = true;
@@ -742,8 +748,20 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor,
             Exchange inExchange) {
         CompletableFuture<Exchange> exchangeFuture = new CompletableFuture<>();
-        getExecutorService().submit(() -> getProducerCache().asyncSendExchange(endpoint, pattern, processor,
-                resultProcessor, inExchange, exchangeFuture));
+        AsyncSendTask task = new AsyncSendTask(endpoint, pattern, processor, resultProcessor, inExchange, exchangeFuture);
+        ExecutorService executorService = getExecutorService();
+        pendingAsyncTasks.add(task);
+        try {
+            executorService.execute(task);
+        } catch (RuntimeException e) {
+            pendingAsyncTasks.remove(task);
+            throw e;
+        }
+        if (!isStarted() || executorService.isShutdown()) {
+            // stopped while the task was handed over, so doStop may have missed it, or the executor may have
+            // discarded it (such as the caller runs policy of a pool that is shut down)
+            task.reject();
+        }
         return exchangeFuture;
     }
 
@@ -804,11 +822,62 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             camelContext.getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
+        // the executor dropped these tasks (or runs them after the stop), so complete their futures
+        for (AsyncSendTask task : pendingAsyncTasks) {
+            task.reject();
+        }
     }
 
     @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(producerCache);
         producerCache = null;
+    }
+
+    /**
+     * Sends the exchange of an async request. When sending throws (such as the template is no longer started), the
+     * future is completed exceptionally with that exception. When the template stops before the task was run, the
+     * future is completed exceptionally by {@link #reject()}, and the task does not send when it runs later.
+     */
+    private final class AsyncSendTask implements Runnable {
+        private final AtomicBoolean claimed = new AtomicBoolean();
+        private final Endpoint endpoint;
+        private final ExchangePattern pattern;
+        private final Processor processor;
+        private final Processor resultProcessor;
+        private final Exchange inExchange;
+        private final CompletableFuture<Exchange> future;
+
+        AsyncSendTask(Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor,
+                      Exchange inExchange, CompletableFuture<Exchange> future) {
+            this.endpoint = endpoint;
+            this.pattern = pattern;
+            this.processor = processor;
+            this.resultProcessor = resultProcessor;
+            this.inExchange = inExchange;
+            this.future = future;
+        }
+
+        @Override
+        public void run() {
+            if (!claimed.compareAndSet(false, true)) {
+                // already rejected by stop
+                return;
+            }
+            pendingAsyncTasks.remove(this);
+            try {
+                getProducerCache().asyncSendExchange(endpoint, pattern, processor, resultProcessor, inExchange, future);
+            } catch (Throwable e) {
+                future.completeExceptionally(e);
+            }
+        }
+
+        void reject() {
+            pendingAsyncTasks.remove(this);
+            if (claimed.compareAndSet(false, true)) {
+                future.completeExceptionally(
+                        new RejectedExecutionException("ProducerTemplate is not started, so the exchange was not sent"));
+            }
+        }
     }
 }

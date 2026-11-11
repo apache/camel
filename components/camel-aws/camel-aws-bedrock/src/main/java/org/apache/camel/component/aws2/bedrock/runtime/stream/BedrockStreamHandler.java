@@ -19,11 +19,11 @@ package org.apache.camel.component.aws2.bedrock.runtime.stream;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelWithResponseStreamResponseHandler;
+import tools.jackson.core.JacksonException;
 
 /**
  * Utility class for handling streaming responses from Bedrock models
@@ -44,8 +44,7 @@ public final class BedrockStreamHandler {
      * and Cohere report them on their final chunk. Every chunk is therefore inspected and whatever is present is kept;
      * the parsers return {@code null} for chunks that do not carry the values.
      */
-    static void applyChunkMetadata(StreamResponseParser parser, String chunkJson, StreamMetadata metadata)
-            throws JsonProcessingException {
+    static void applyChunkMetadata(StreamResponseParser parser, String chunkJson, StreamMetadata metadata) {
         String completionReason = parser.extractCompletionReason(chunkJson);
         if (ObjectHelper.isNotEmpty(completionReason)) {
             metadata.setCompletionReason(completionReason);
@@ -85,7 +84,7 @@ public final class BedrockStreamHandler {
 
                                 applyChunkMetadata(parser, chunkJson, metadata);
                                 chunkCount[0]++;
-                            } catch (JsonProcessingException e) {
+                            } catch (JacksonException e) {
                                 LOG.warn("Error parsing streaming chunk: {}", e.getMessage(), e);
                             }
                         })
@@ -131,7 +130,7 @@ public final class BedrockStreamHandler {
 
                                 applyChunkMetadata(parser, chunkJson, metadata);
                                 chunkCount[0]++;
-                            } catch (JsonProcessingException e) {
+                            } catch (JacksonException e) {
                                 LOG.warn("Error parsing streaming chunk: {}", e.getMessage(), e);
                             }
                         })

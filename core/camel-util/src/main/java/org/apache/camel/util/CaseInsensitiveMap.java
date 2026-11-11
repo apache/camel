@@ -33,11 +33,11 @@ import java.util.Set;
 
 /**
  * A map that uses case insensitive keys, but preserves the original key cases.
- * <p/>
+ * <p>
  * The map uses a custom hash table with case-insensitive hashing and comparison, providing O(1) for {@code get},
  * {@code put}, {@code containsKey} and {@code remove} operations without allocating temporary strings. Entries are
  * stored in insertion order.
- * <p/>
+ * <p>
  * This map is <b>not</b> designed to be thread safe as concurrent access to it is not supposed to be performed by the
  * Camel routing engine.
  */
@@ -60,7 +60,7 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
      * one of these strings, the canonical reference from this set is stored instead of the caller's string, reducing
      * memory when many map instances carry the same headers (e.g. deserialized exchanges). A key that only differs in
      * case is stored as given, as the map preserves the original key cases.
-     * <p/>
+     * <p>
      * This method is intended to be called once during framework startup.
      */
     public static void registerKnownKeys(Collection<String> keys) {
@@ -141,14 +141,22 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
         return Math.max(DEFAULT_CAPACITY, n + 1);
     }
 
+    /**
+     * Hash consistent with {@link String#equalsIgnoreCase(String)} for keys without unpaired surrogates: as
+     * equalsIgnoreCase, it folds a surrogate pair as one supplementary code point (such as U+10400 and U+10428), not as
+     * two separate chars.
+     */
     static int caseInsensitiveHash(String key) {
         int h = 0;
         for (int i = 0, len = key.length(); i < len; i++) {
-            char c = key.charAt(i);
+            int c = key.charAt(i);
             if (c >= 'A' && c <= 'Z') {
                 c += 32; // fast ASCII upper-to-lower
             } else if (c >= 128) {
-                // full Unicode two-step fold for non-ASCII
+                if (Character.isHighSurrogate((char) c) && i + 1 < len && Character.isLowSurrogate(key.charAt(i + 1))) {
+                    c = Character.toCodePoint((char) c, key.charAt(++i));
+                }
+                // full Unicode two-step fold for non-ASCII, as String.equalsIgnoreCase does
                 c = Character.toLowerCase(Character.toUpperCase(c));
             }
             h = 31 * h + c;

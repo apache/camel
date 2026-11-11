@@ -25,12 +25,13 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchema;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.module.jsonSchema.jakarta.JsonSchema;
 
 public class SchemaExecution extends AbstractSalesforceExecution {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaExecution.class.getName());
@@ -65,7 +66,7 @@ public class SchemaExecution extends AbstractSalesforceExecution {
             }
             try {
                 allSchemas.addAll(JsonUtils.getSObjectJsonSchema(schemaObjectMapper, description, jsonSchemaId, true));
-            } catch (final IOException e) {
+            } catch (final JacksonException e) {
                 throw new RuntimeException("Unable to generate JSON Schema types for: " + description.getName(), e);
             }
         }
@@ -75,7 +76,7 @@ public class SchemaExecution extends AbstractSalesforceExecution {
             Files.write(schemaFilePath,
                     JsonUtils.getJsonSchemaString(schemaObjectMapper, allSchemas, jsonSchemaId)
                             .getBytes(StandardCharsets.UTF_8));
-        } catch (final IOException e) {
+        } catch (final IOException | JacksonException e) {
             throw new RuntimeException("Unable to generate JSON Schema source file: " + schemaFilePath, e);
         }
 

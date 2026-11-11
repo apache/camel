@@ -361,7 +361,7 @@ public interface PgVectorEndpointBuilderFactory {
         /**
          * Filter condition for similarity search. Applied as a SQL WHERE clause
          * on the text_content and metadata columns. Supports parameterized
-         * queries using placeholders with values provided via the
+         * queries using ? placeholders with values provided via the
          * CamelPgVectorFilterParams header. WARNING: When not using
          * parameterized queries, the filter value is appended directly as SQL.
          * Never use untrusted input as the filter value without
@@ -377,9 +377,9 @@ public interface PgVectorEndpointBuilderFactory {
             return "CamelPgVectorFilter";
         }
         /**
-         * Parameter values for parameterized filter queries. Use with
+         * Parameter values for parameterized filter queries. Use with ?
          * placeholders in the CamelPgVectorFilter header. Example: filter =
-         * 'text_content LIKE AND metadata::jsonb-'category' = ' with
+         * 'text_content LIKE ? AND metadata::jsonb-'category' = ?' with
          * filterParams = List.of(%hello%, science).
          * 
          * The option is a: {@code java.util.List} type.

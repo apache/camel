@@ -65,20 +65,19 @@ public class DataLakeFileOperations {
 
     public DataLakeOperationResponse getFile(final Exchange exchange) throws IOException {
         final Message message = DataLakeUtils.getInMessage(exchange);
-        final OutputStream outputStream;
-        if (ObjectHelper.isEmpty(message)) {
-            outputStream = null;
-        } else {
-            outputStream = message.getBody(OutputStream.class);
-        }
+        // only an OutputStream body is written to, not a body that converts to one (such as a File, which would be emptied)
+        final OutputStream outputStream
+                = message != null && message.getBody() instanceof OutputStream os ? os : null;
 
         final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
+        final FileRange fileRange = configurationProxy.getFileRange(exchange);
         if (outputStream == null) {
-            InputStream fileInputStream = fileClientWrapper.openInputStream();
+            final DataLakeRequestConditions requestConditions = configurationProxy.getDataLakeRequestConditions(exchange);
+            InputStream fileInputStream = fileRange == null && requestConditions == null
+                    ? fileClientWrapper.openInputStream() : fileClientWrapper.openInputStream(fileRange, requestConditions);
             return new DataLakeOperationResponse(fileInputStream);
         }
 
-        final FileRange fileRange = configurationProxy.getFileRange(exchange);
         final FileCommonRequestOptions fileCommonRequestOptions = getCommonRequestOptions(exchange);
 
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
@@ -188,7 +187,7 @@ public class DataLakeFileOperations {
         final Boolean retainUncommitedData = configurationProxy.retainUnCommitedData(exchange);
         final Boolean close = configurationProxy.getClose(exchange);
         final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
-        final long flushPosition = (position != null ? position : 0L) + fileClientWrapper.getFileSize();
+        final long flushPosition = position != null ? position : fileClientWrapper.getFileSize();
         final Response<PathInfo> response
                 = fileClientWrapper.flushWithResponse(flushPosition, retainUncommitedData, close,
                         commonRequestOptions.getPathHttpHeaders(), commonRequestOptions.getRequestConditions(),

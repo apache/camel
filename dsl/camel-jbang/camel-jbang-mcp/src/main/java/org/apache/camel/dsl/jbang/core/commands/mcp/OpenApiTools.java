@@ -29,6 +29,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -67,6 +68,7 @@ public class OpenApiTools {
               + " against it. Secure the HTTP layer (for a Bearer token, the rest-openapi oauthProfile option)"
               + " or check the credential in the route.";
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Validate an OpenAPI specification for use with Camel's contract-first REST support. "
                         + "Reports operations without operationId (with the id Camel routes them to), "
@@ -143,6 +145,7 @@ public class OpenApiTools {
         return new ValidateResult(valid, errors, warnings, info, operationCount);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Generate Camel YAML scaffold for contract-first OpenAPI integration. "
                         + "Produces a rest:openApi configuration block and a direct:<operationId> route stub for "

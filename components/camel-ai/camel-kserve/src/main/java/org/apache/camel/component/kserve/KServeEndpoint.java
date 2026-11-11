@@ -41,17 +41,23 @@ import org.apache.camel.support.DefaultEndpoint;
              category = { Category.AI }, headersClass = KServeConstants.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.POJO,
                                   byOption = {
-                                          @BodyType.When(option = "api", value = "model/ready", carriers = Carrier.ANY),
-                                          @BodyType.When(option = "api", value = "model/metadata", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "api", value = "model/ready",
+                                                         carriers = { Carrier.NULL, Carrier.POJO }),
+                                          @BodyType.When(option = "api", value = "model/metadata",
+                                                         carriers = { Carrier.NULL, Carrier.POJO }),
                                           @BodyType.When(option = "api", value = "server/ready", carriers = Carrier.ANY),
                                           @BodyType.When(option = "api", value = "server/live", carriers = Carrier.ANY),
                                           @BodyType.When(option = "api", value = "server/metadata",
                                                          carriers = Carrier.ANY) },
-                                  description = "infer takes the protobuf ModelInferRequest with the input tensors, or its"
-                                                + " Builder; another body, such as text, JSON or bytes, is not read and a"
-                                                + " request without inputs is sent. model/ready and model/metadata need no"
-                                                + " body, and read a ModelReadyRequest or ModelMetadataRequest when it is"
-                                                + " one; the server apis do not use the body. The model comes from the"
+                                  description = "infer takes the protobuf ModelInferRequest with the input tensors, or"
+                                                + " its Builder. Another body that is not empty, such as text, JSON,"
+                                                + " bytes or a Map, is not parsed and fails the exchange with an"
+                                                + " InvalidPayloadException that names the request of the api: build the"
+                                                + " protobuf request before the endpoint. No body, a blank String or an"
+                                                + " empty byte array builds the request from the options and headers"
+                                                + " only, which is all model/ready and model/metadata need; they read a"
+                                                + " ModelReadyRequest or ModelMetadataRequest when the body is one. The"
+                                                + " server apis do not use the body. The model comes from the"
                                                 + " CamelKServeModelName header, or else the modelName option"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    byOption = {

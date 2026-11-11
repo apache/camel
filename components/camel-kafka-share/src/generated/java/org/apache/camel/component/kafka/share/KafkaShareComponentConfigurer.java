@@ -2,6 +2,7 @@
 package org.apache.camel.component.kafka.share;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class KafkaShareComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KafkaShareComponent target = (KafkaShareComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acquiremode":
         case "acquireMode": getOrCreateConfiguration(target).setAcquireMode(property(camelContext, java.lang.String.class, value)); return true;
         case "additionalproperties":
@@ -197,7 +198,7 @@ public class KafkaShareComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acquiremode":
         case "acquireMode": return java.lang.String.class;
         case "additionalproperties":
@@ -361,7 +362,7 @@ public class KafkaShareComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KafkaShareComponent target = (KafkaShareComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acquiremode":
         case "acquireMode": return getOrCreateConfiguration(target).getAcquireMode();
         case "additionalproperties":
@@ -524,7 +525,7 @@ public class KafkaShareComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return java.lang.Object.class;
         default: return null;

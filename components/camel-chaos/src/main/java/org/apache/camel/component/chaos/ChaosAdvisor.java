@@ -1,0 +1,1011 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.chaos;
+
+import java.io.File;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.model.CircuitBreakerDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
+import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * What to try (CAMEL-26727): chaos rules suggested per route from what the route does, ranked, each a known rule of the
+ * chaos model ({@link ChaosModel#recipeList()}) with its target filled in and a line that says why. The facts come from
+ * the running routes: their sends, their circuit breakers, their dead letter channel, their input, and the hand-offs
+ * between them.
+ */
+final class ChaosAdvisor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ChaosAdvisor.class);
+
+    /** The most suggestions in all, so a big integration does not flood a tool. */
+    static final int MAX = 40;
+
+    // the inputs that can deliver a message again (at least once), so a call out may be made twice
+    private static final Set<String> AT_LEAST_ONCE = Set.of(
+            "kafka", "jms", "activemq", "activemq6", "amqp", "sjms", "sjms2", "aws2-sqs", "google-pubsub",
+            "spring-rabbitmq", "rabbitmq", "nats", "paho", "paho-mqtt5", "azure-servicebus", "ibm-mq");
+    // a hand-off to another route of the same application, which does not wait for it
+    private static final Set<String> HAND_OFF = Set.of("seda", "vm", "disruptor", "disruptor-vm");
+    // the endpoints that write to the local file system: remote to Camel, but with no connection to refuse
+    private static final Set<String> LOCAL_FILES = Set.of("file");
+    // the inputs that feed their route by themselves
+    private static final Set<String> SELF_FEEDING = Set.of("timer", "scheduler", "cron", "quartz");
+    // the HTTP servers, which are fed with an HTTP request: platform-http and rest with the port of the HTTP server of
+    // Camel, the others with the address in their URI
+    private static final Set<String> HTTP_SERVERS = Set.of("platform-http", "rest");
+    private static final Set<String> HTTP_SERVERS_WITH_ADDRESS
+            = Set.of("jetty", "netty-http", "undertow", "servlet", "vertx-http");
+
+    /** The kinds of faults, which the report also uses for what has been tried. */
+    enum Kind {
+        ERRORS("errors"),
+        SLOW("slow"),
+        LOST("lost"),
+        CORRUPT("corrupt"),
+        DUPLICATE("duplicate"),
+        CONSUMER("consumer"),
+        LIFECYCLE("lifecycle"),
+        DEAD_LETTER("dead letter channel"),
+        // two faults at once (CAMEL-26772): its rules are tried as their own kinds
+        COMBINED("combined");
+
+        final String key;
+
+        Kind(String key) {
+            this.key = key;
+        }
+    }
+
+    /**
+     * A rule to try.
+     *
+     * @param route  the route it is about
+     * @param kind   the kind of fault
+     * @param recipe the id of the known rule it comes from (null for one of its own)
+     * @param title  the known rule in plain words, such as "Returns an error (HTTP status)"
+     * @param rule   the rule, ready to add
+     * @param why    why it is worth trying for this route
+     * @param rank   higher is tried first
+     * @param routes the routes a rule of its kind tries it in: the route, and the other routes of a dead letter channel
+     *               they share, which is suggested once
+     * @param with   the other rules to add with the rule, for two faults at once (CAMEL-26772); empty for one fault
+     */
+    record Suggestion(String route, Kind kind, String recipe, String title, String rule, String why, int rank,
+            List<String> routes, List<String> with) {
+
+        Suggestion(String route, Kind kind, String recipe, String title, String rule, String why, int rank) {
+            this(route, kind, recipe, title, rule, why, rank, List.of(route), List.of());
+        }
+
+        Suggestion(String route, Kind kind, String recipe, String title, String rule, String why, int rank,
+                   List<String> routes) {
+            this(route, kind, recipe, title, rule, why, rank, routes, List.of());
+        }
+
+        /** The rules to add: the rule, and the rules to add with it. */
+        List<String> rules() {
+            if (with.isEmpty()) {
+                return List.of(rule);
+            }
+            List<String> answer = new ArrayList<>();
+            answer.add(rule);
+            answer.addAll(with);
+            return List.copyOf(answer);
+        }
+    }
+
+    /**
+     * How to feed a route with messages (CAMEL-26771), so a rule can be tried on it.
+     *
+     * @param kind   {@code self} (the route feeds itself), {@code http}, {@code file} or {@code send}
+     * @param hint   how, such as the command to run
+     * @param real   whether the messages go to the real system the route reads, rather than a stub of it
+     *               ({@code camel run --stub=remote})
+     * @param replay the folder the route moved the files it took to, when it holds some: the chaos command replay puts
+     *               them back, so the route takes the same files again (CAMEL-26817); null otherwise
+     * @param files  how many files the replay puts back
+     */
+    record Feed(String kind, String hint, boolean real, String replay, int files) {
+
+        Feed(String kind, String hint, boolean real) {
+            this(kind, hint, real, null, 0);
+        }
+    }
+
+    /**
+     * A kind of fault tried in a route (CAMEL-26728): by which rules, how often they fired there, how the exchanges
+     * they faulted came out (counted per rule, so a rule that fired in more routes counts in each), and the outcomes of
+     * their expectations.
+     */
+    record KindTried(Kind kind, List<String> rules, long fired, long recovered, long handled, long failed,
+            List<String> expectations) {
+    }
+
+    /** What has been tried in a route, and the kinds that the suggestions offer for it and no rule tried yet. */
+    record RouteTried(String route, List<KindTried> tried, List<Kind> notTried) {
+    }
+
+    /** The kind of fault of a rule. */
+    static Kind kindOf(ChaosRule rule) {
+        if (rule.lifecycle != null || rule.fault == ChaosRule.Fault.LIFECYCLE) {
+            return Kind.LIFECYCLE;
+        }
+        if (rule.hooks.size() == 1 && rule.hooks.contains(ChaosRule.Hook.DLQ)) {
+            return Kind.DEAD_LETTER;
+        }
+        boolean consumer = rule.hooks.stream().allMatch(h -> h == ChaosRule.Hook.POLL || h == ChaosRule.Hook.ENTRY);
+        return switch (rule.fault) {
+            case DELAY -> Kind.SLOW;
+            case DROP -> consumer ? Kind.CONSUMER : Kind.LOST;
+            case CORRUPT -> Kind.CORRUPT;
+            case DUPLICATE -> Kind.DUPLICATE;
+            // an error that waits first (after=) is a call that times out, which the suggestions offer as slow
+            default -> consumer ? Kind.CONSUMER : rule.after > 0 ? Kind.SLOW : Kind.ERRORS;
+        };
+    }
+
+    /**
+     * What has been tried per route: the kinds of fault of the rules (current and removed) that fired in it, and the
+     * kinds the suggestions offer for it that none tried. The routes in the order of the suggestions, then the others.
+     */
+    static List<RouteTried> tried(List<ChaosRule> rules, Map<String, Map<Kind, List<String>>> suggested, long now) {
+        // route -> kind -> the rules of that kind that fired in the route
+        Map<String, Map<Kind, List<ChaosRule>>> byRoute = new LinkedHashMap<>();
+        suggested.keySet().forEach(route -> byRoute.put(route, new LinkedHashMap<>()));
+        for (ChaosRule rule : rules) {
+            boolean fired = false;
+            for (Map.Entry<String, ChaosRule.InRoute> e : rule.inRoute.entrySet()) {
+                if (e.getValue().fired.sum() > 0) {
+                    fired = true;
+                    byRoute.computeIfAbsent(e.getKey(), k -> new LinkedHashMap<>())
+                            .computeIfAbsent(kindOf(rule), k -> new ArrayList<>()).add(rule);
+                }
+            }
+            // a rule that expects no message lost between two routes (orders->shipping:lost<=0) tries what a hand-off
+            // loses for the first route, wherever its faults are: the hand-off suggestion fails the next route
+            if (fired && rule.expectation != null && rule.expectation.toRoute != null) {
+                List<ChaosRule> lost = byRoute.computeIfAbsent(rule.expectation.route, k -> new LinkedHashMap<>())
+                        .computeIfAbsent(Kind.LOST, k -> new ArrayList<>());
+                if (!lost.contains(rule)) {
+                    lost.add(rule);
+                }
+            }
+        }
+        List<RouteTried> answer = new ArrayList<>();
+        for (Map.Entry<String, Map<Kind, List<ChaosRule>>> entry : byRoute.entrySet()) {
+            String route = entry.getKey();
+            List<KindTried> tried = new ArrayList<>();
+            for (Map.Entry<Kind, List<ChaosRule>> k : entry.getValue().entrySet()) {
+                List<String> ids = new ArrayList<>();
+                List<String> expectations = new ArrayList<>();
+                long fired = 0;
+                long recovered = 0;
+                long handled = 0;
+                long failed = 0;
+                for (ChaosRule rule : k.getValue()) {
+                    String id = rule.version > 1 ? rule.id + " v" + rule.version : rule.id;
+                    if (!ids.contains(id)) {
+                        ids.add(id);
+                    }
+                    // the outcomes of the exchanges the rule faulted in this route, not in all of them; a rule that
+                    // tries a hand-off for this route (by its expectation) faulted the next route: all of them
+                    ChaosRule.InRoute in = rule.inRoute.get(route);
+                    for (ChaosRule.InRoute r : in != null ? List.of(in) : List.copyOf(rule.inRoute.values())) {
+                        fired += r.fired.sum();
+                        recovered += r.effect.count(ChaosRule.Effect.Outcome.RECOVERED);
+                        handled += r.effect.count(ChaosRule.Effect.Outcome.HANDLED);
+                        failed += r.effect.count(ChaosRule.Effect.Outcome.FAILED);
+                    }
+                    if (rule.expectation != null) {
+                        expectations.add(rule.expectation.spec() + " " + rule.expectation.read(now).outcome().key);
+                    }
+                }
+                tried.add(new KindTried(k.getKey(), ids, fired, recovered, handled, failed, expectations));
+            }
+            List<Kind> notTried = new ArrayList<>();
+            Map<Kind, List<String>> kinds = suggested.getOrDefault(route, Map.of());
+            for (Kind kind : Kind.values()) {
+                // a kind suggested for several routes (a dead letter channel they share) is tried in any of them
+                if (kinds.containsKey(kind) && kinds.get(kind).stream()
+                        .noneMatch(r -> byRoute.getOrDefault(r, Map.of()).containsKey(kind))) {
+                    notTried.add(kind);
+                }
+            }
+            if (!tried.isEmpty() || !notTried.isEmpty()) {
+                answer.add(new RouteTried(route, tried, notTried));
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The kinds of fault the suggestions offer per route, in the order of the routes, each with the routes a rule of
+     * that kind tries it in.
+     */
+    static Map<String, Map<Kind, List<String>>> suggestedKinds(List<Suggestion> suggestions) {
+        Map<String, Map<Kind, List<String>>> answer = new LinkedHashMap<>();
+        for (Suggestion s : suggestions) {
+            if (s.kind() == Kind.COMBINED) {
+                // its rules are tried as their own kinds, which the single suggestions offer
+                continue;
+            }
+            answer.computeIfAbsent(s.route(), k -> new LinkedHashMap<>()).putIfAbsent(s.kind(), s.routes());
+        }
+        return answer;
+    }
+
+    private ChaosAdvisor() {
+    }
+
+    /** How to feed the route with messages, or null when it has no input. */
+    static Feed feed(Route route) {
+        Endpoint from = route.getEndpoint();
+        if (from == null) {
+            return null;
+        }
+        String uri = from.getEndpointUri();
+        String scheme = ChaosPatterns.scheme(uri);
+        if (SELF_FEEDING.contains(scheme)) {
+            return new Feed("self", "the route feeds itself (" + scheme + ")", false);
+        }
+        if (HTTP_SERVERS.contains(scheme)) {
+            return new Feed(
+                    "http", "curl -X " + httpMethod(uri) + " http://localhost:" + serverPort(route.getCamelContext())
+                            + httpPath(uri) + " -d @<message>",
+                    false);
+        }
+        if (HTTP_SERVERS_WITH_ADDRESS.contains(scheme)) {
+            String address = ChaosPatterns.withoutSlashes(uri(from)).substring(scheme.length() + 1);
+            return new Feed("http", "curl -X POST " + address + " -d @<message>", false);
+        }
+        if (LOCAL_FILES.contains(scheme)) {
+            String folder = ChaosPatterns.withoutSlashes(uri(from)).substring(scheme.length() + 1);
+            File done = doneFolder(from);
+            List<File> taken = done != null ? takenFiles(done) : List.of();
+            if (!taken.isEmpty()) {
+                return new Feed(
+                        "file", "the " + taken.size() + (taken.size() == 1 ? " file" : " files") + " the route took, in "
+                                + done + ", put back into " + folder + ": an experiment with --feed=" + route.getRouteId()
+                                + " --body=replay:",
+                        false, done.getAbsolutePath(), taken.size());
+            }
+            return new Feed("file", "write a file into " + folder, false);
+        }
+        // the route id as the endpoint: the send console sends to the input of the route, with all its options
+        String name = route.getCamelContext().getName();
+        return new Feed(
+                "send", "camel cmd send " + name + " --endpoint=" + route.getRouteId()
+                        + " --body=<message> --repeat=20 --interval=200ms",
+                from.isRemote());
+    }
+
+    /**
+     * The folder a file input moves the files it took to (CAMEL-26817): {@code .camel} in its folder, or the folder of
+     * its {@code move} option. Null when it leaves them (noop, which also never takes a file of the same name again),
+     * deletes them, or moves them to a name made by an expression other than the file name.
+     */
+    static File doneFolder(Endpoint from) {
+        String uri = from.getEndpointUri();
+        if (!"file".equals(ChaosPatterns.scheme(uri))) {
+            return null;
+        }
+        Map<String, Object> options;
+        try {
+            options = URISupport.parseQuery(URISupport.extractQuery(uri));
+        } catch (Exception e) {
+            return null;
+        }
+        if ("true".equals(String.valueOf(options.get("noop"))) || "true".equals(String.valueOf(options.get("delete")))) {
+            return null;
+        }
+        String move = ".camel";
+        if (options.get("move") != null) {
+            try {
+                // as the endpoint URI has it, %24%7B for ${; a + stays a +
+                move = URLDecoder.decode(options.get("move").toString().replace("+", "%2B"), StandardCharsets.UTF_8);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+        for (String name : List.of("${file:name}", "${file:onlyname}")) {
+            if (move.endsWith(name)) {
+                move = move.substring(0, move.length() - name.length());
+            }
+        }
+        if (move.isEmpty() || move.contains("${") || move.contains("$simple{")) {
+            return null;
+        }
+        File done = new File(move);
+        return done.isAbsolute() ? done : new File(inputFolder(from), move);
+    }
+
+    /** The folder a file input takes its files from, as its URI names it. */
+    static File inputFolder(Endpoint from) {
+        return new File(ChaosPatterns.withoutSlashes(uri(from)).substring("file:".length()));
+    }
+
+    /** The files in the folder a file input moved them to, by name: not the hidden ones, which it does not take. */
+    static List<File> takenFiles(File folder) {
+        File[] files = folder.listFiles(f -> f.isFile() && !f.getName().startsWith("."));
+        if (files == null) {
+            return List.of();
+        }
+        Arrays.sort(files, Comparator.comparing(File::getName));
+        return List.of(files);
+    }
+
+    /**
+     * The route of the integration that receives a send: the route that consumes the endpoint (direct, seda), or for an
+     * HTTP call to this machine (http, netty-http, undertow, vertx-http) the HTTP server route of its path, on its port
+     * when the server route names one (platform-http serves on the port of the integration); null when it is another
+     * system.
+     */
+    static String receiver(String uri, Map<String, String> consumers) {
+        String route = consumers.get(uri);
+        if (route != null) {
+            return route;
+        }
+        String[] call = httpAddress(uri);
+        if (call == null || !LOCAL_HOSTS.contains(call[0])) {
+            return null;
+        }
+        for (Map.Entry<String, String> e : consumers.entrySet()) {
+            String consumer = e.getKey();
+            if (consumer.startsWith("platform-http:")) {
+                if (call[2].equals(httpPath(consumer))) {
+                    return e.getValue();
+                }
+            } else {
+                String[] served = httpAddress(consumer);
+                if (served != null && call[2].equals(served[2]) && (served[1].isEmpty() || served[1].equals(call[1]))) {
+                    return e.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    private static final Set<String> LOCAL_HOSTS = Set.of("localhost", "127.0.0.1", "0.0.0.0");
+
+    /**
+     * The host, port (empty when not given) and path of an HTTP endpoint (http:, or a component that takes an HTTP URL
+     * such as netty-http:http://host:port/path), or null when it is not one.
+     */
+    private static String[] httpAddress(String uri) {
+        String scheme = ChaosPatterns.scheme(uri);
+        if (scheme == null || !ChaosRuleParser.HTTP_SCHEMES.contains(scheme) && !HTTP_SERVER_SCHEMES.contains(scheme)) {
+            return null;
+        }
+        int at = Math.max(uri.lastIndexOf("http://"), uri.lastIndexOf("https://"));
+        String rest = at >= 0 ? uri.substring(uri.indexOf("//", at) + 2) : uri.substring(uri.indexOf(':') + 1);
+        while (rest.startsWith("/")) {
+            rest = rest.substring(1);
+        }
+        int slash = rest.indexOf('/');
+        String hostPort = slash >= 0 ? rest.substring(0, slash) : rest;
+        String path = slash >= 0 ? rest.substring(slash) : "/";
+        int colon = hostPort.lastIndexOf(':');
+        String host = colon >= 0 ? hostPort.substring(0, colon) : hostPort;
+        String port = colon >= 0 ? hostPort.substring(colon + 1) : "";
+        return new String[] { host.toLowerCase(Locale.ROOT), port, path };
+    }
+
+    // the HTTP servers that take an HTTP URL to listen on
+    private static final Set<String> HTTP_SERVER_SCHEMES = Set.of("netty-http", "undertow", "jetty", "vertx-http");
+
+    /** The method of a platform-http or rest input: the one it restricts to, else POST. */
+    static String httpMethod(String uri) {
+        if (uri.startsWith("rest:")) {
+            String[] parts = uri.split(":", 3);
+            return parts.length == 3 ? parts[1].toUpperCase(Locale.ROOT) : "POST";
+        }
+        try {
+            Object method = URISupport.parseQuery(URISupport.extractQuery(uri)).get("httpMethodRestrict");
+            if (method != null) {
+                return method.toString().split(",")[0].trim().toUpperCase(Locale.ROOT);
+            }
+        } catch (Exception e) {
+            // no options to read: the default method
+        }
+        return "POST";
+    }
+
+    /** The path of a platform-http or rest input, such as /orders. */
+    static String httpPath(String uri) {
+        String path;
+        if (uri.startsWith("rest:")) {
+            String[] parts = uri.split(":", 3);
+            path = parts.length == 3 ? parts[2] : "";
+        } else {
+            path = uri.substring(uri.indexOf(':') + 1);
+        }
+        int query = path.indexOf('?');
+        if (query >= 0) {
+            path = path.substring(0, query);
+        }
+        while (path.startsWith("//")) {
+            path = path.substring(1);
+        }
+        return path.startsWith("/") ? path : "/" + path;
+    }
+
+    /** The port of the HTTP server of Camel (camel.server.port), 8080 by default. */
+    private static String serverPort(CamelContext context) {
+        try {
+            return context.resolvePropertyPlaceholders("{{camel.server.port:8080}}");
+        } catch (Exception e) {
+            return "8080";
+        }
+    }
+
+    /** The rules to try for the routes of the context, the most worth trying first, at most {@link #MAX}. */
+    static List<Suggestion> suggest(CamelContext camelContext) {
+        Map<String, ChaosModel.Recipe> recipes = new LinkedHashMap<>();
+        for (ChaosModel.Recipe recipe : ChaosModel.recipeList()) {
+            recipes.put(recipe.id(), recipe);
+        }
+        List<Route> routes = camelContext.getRoutes();
+        // the routes that consume an endpoint, for the hand-offs
+        Map<String, String> consumers = new LinkedHashMap<>();
+        for (Route route : routes) {
+            if (route.getEndpoint() != null) {
+                consumers.put(uri(route.getEndpoint()), route.getRouteId());
+            }
+        }
+        // the routes of each dead letter channel, which is suggested once, not for the route that consumes it
+        Map<String, List<String>> deadLetters = new LinkedHashMap<>();
+        for (Route route : routes) {
+            try {
+                String dead = deadLetterUri(route);
+                if (dead != null && !route.getRouteId().equals(consumers.get(URISupport.normalizeUri(dead)))) {
+                    deadLetters.computeIfAbsent(dead, k -> new ArrayList<>()).add(route.getRouteId());
+                }
+            } catch (Exception e) {
+                LOG.debug("No dead letter channel for route {}: {}", route.getRouteId(), e.getMessage(), e);
+            }
+        }
+        List<Suggestion> answer = new ArrayList<>();
+        for (Route route : routes) {
+            try {
+                suggest(route, recipes, consumers, deadLetters, answer);
+            } catch (RuntimeException e) {
+                // the route changed while it was read (such as a reload): nothing to say for it now
+                LOG.debug("No chaos suggestions for route {}: {}", route.getRouteId(), e.getMessage(), e);
+            }
+        }
+        Map<String, String> callers = callers(routes, consumers);
+        answer.replaceAll(s -> withExpectation(s, callers));
+        answer.sort(Comparator.comparingInt(Suggestion::rank).reversed());
+        return answer.size() > MAX ? List.copyOf(answer.subList(0, MAX)) : answer;
+    }
+
+    /**
+     * The suggestion with what should hold despite its faults, when none of its rules says (CAMEL-26817): every
+     * exchange the faults hit in its route is recovered by redelivery or handled by the error handler, and none fails
+     * ({@code expect=orders:failed<=0}). An experiment needs an expectation, and a rule added without one passes
+     * whatever happens. For two faults at once the first rule has it. A fault that fails or stalls the route itself,
+     * when another route of the integration calls it, expects of the caller: the route fails where the fault is, and
+     * what should hold is that the caller copes.
+     *
+     * @param callers per route, a route of the integration that calls it
+     */
+    static Suggestion withExpectation(Suggestion s, Map<String, String> callers) {
+        if (s.rules().stream().anyMatch(r -> r.contains(" expect="))) {
+            return s;
+        }
+        String route = s.route();
+        if ((s.kind() == Kind.CONSUMER || s.kind() == Kind.LIFECYCLE) && s.rule().startsWith("route=")
+                && callers.containsKey(route)) {
+            route = callers.get(route);
+        }
+        return new Suggestion(
+                s.route(), s.kind(), s.recipe(), s.title(), s.rule() + " expect=" + route + ":failed<=0", s.why(),
+                s.rank(), s.routes(), s.with());
+    }
+
+    /**
+     * Per route, the first route of the integration that calls it by a static send: over direct or seda, or with an
+     * HTTP call to its server.
+     */
+    static Map<String, String> callers(List<Route> routes, Map<String, String> consumers) {
+        Map<String, String> answer = new HashMap<>();
+        for (Route route : routes) {
+            try {
+                for (Processor processor : route.filter("*")) {
+                    if (processor instanceof EndpointAware aware && aware.getEndpoint() != null) {
+                        String called = receiver(uri(aware.getEndpoint()), consumers);
+                        if (called != null && !called.equals(route.getRouteId())) {
+                            answer.putIfAbsent(called, route.getRouteId());
+                        }
+                    }
+                }
+            } catch (RuntimeException e) {
+                // the route changed while it was read: no callers from it now
+                LOG.debug("No callers from route {}: {}", route.getRouteId(), e.getMessage(), e);
+            }
+        }
+        return answer;
+    }
+
+    private static void suggest(
+            Route route, Map<String, ChaosModel.Recipe> recipes, Map<String, String> consumers,
+            Map<String, List<String>> deadLetters, List<Suggestion> answer) {
+        String id = route.getRouteId();
+        Endpoint from = route.getEndpoint();
+        boolean breaker = route.getRoute() instanceof RouteDefinition definition
+                && !ProcessorDefinitionHelper.filterTypeInOutputs(definition.getOutputs(), CircuitBreakerDefinition.class)
+                        .isEmpty();
+        boolean atLeastOnce = from != null
+                && (AT_LEAST_ONCE.contains(ChaosPatterns.scheme(from.getEndpointUri())) || ChaosConsumers.keepsFailed(from));
+
+        // the sends: each endpoint once
+        Set<String> seen = new LinkedHashSet<>();
+        // the first call to a remote system (not a local file), for the faults to try two at a time
+        String call = null;
+        boolean httpCall = false;
+        for (Processor processor : route.filter("*")) {
+            if (!(processor instanceof EndpointAware aware) || aware.getEndpoint() == null) {
+                continue;
+            }
+            Endpoint to = aware.getEndpoint();
+            String uri = uri(to);
+            if (!seen.add(uri)) {
+                continue;
+            }
+            String scheme = ChaosPatterns.scheme(uri);
+            if (HAND_OFF.contains(scheme) && consumers.containsKey(uri) && !id.equals(consumers.get(uri))) {
+                String next = consumers.get(uri);
+                answer.add(new Suggestion(
+                        id, Kind.LOST, "route-error", "The route after a hand-off fails",
+                        "route=" + next + " error rate=0.2 until=2m expect=" + id + "->" + next + ":lost<=0 within=3m",
+                        "route " + id + " hands the message to route " + next + " over " + scheme + " and does not wait:"
+                                                                                                                        + " when "
+                                                                                                                        + next
+                                                                                                                        + " fails, is the message lost?",
+                        85));
+                continue;
+            }
+            if (breaker && "direct".equals(scheme) && consumers.containsKey(uri) && !id.equals(consumers.get(uri))) {
+                // a call to another route of the integration in a route with a circuit breaker (CAMEL-26817): that
+                // route stands for the service the breaker guards
+                String next = consumers.get(uri);
+                add(answer, recipes, "outage", id, Kind.ERRORS, Map.of("endpoint", uri),
+                        "route " + id + " calls route " + next + " in a circuit breaker: when " + next
+                                                                                         + " is down for a while, does the breaker open, and does the fallback answer?",
+                        70);
+                add(answer, recipes, "connection-refused", id, Kind.ERRORS, Map.of("endpoint", uri, "rate", "0.5"),
+                        "route " + id + " calls route " + next + " in a circuit breaker: when half of the calls fail,"
+                                                                                                                    + " does the breaker open at its failure rate, and close again?",
+                        62);
+                continue;
+            }
+            if (!ChaosStubs.isRemote(to)) {
+                continue;
+            }
+            if (call == null && !LOCAL_FILES.contains(scheme)) {
+                call = uri;
+                httpCall = ChaosRuleParser.HTTP_SCHEMES.contains(scheme);
+            }
+            if (LOCAL_FILES.contains(scheme)) {
+                // a local file system: nothing connects, but the write can fail
+                add(answer, recipes, "write-error", id, Kind.ERRORS, Map.of("endpoint", uri),
+                        "a write to " + uri + ": what does the route do when the file cannot be written?", 60);
+            } else if (ChaosRuleParser.HTTP_SCHEMES.contains(scheme)) {
+                if (breaker) {
+                    add(answer, recipes, "outage", id, Kind.ERRORS, Map.of("endpoint", uri),
+                            "a call to " + uri + " in a route with a circuit breaker: when the service is down for a"
+                                                                                             + " while, does the breaker open, and does the fallback answer?",
+                            70);
+                } else {
+                    add(answer, recipes, "http-error", id, Kind.ERRORS, Map.of("endpoint", uri),
+                            "an HTTP call to " + uri + " without a circuit breaker: what does the route do when the"
+                                                                                                 + " service answers 503?",
+                            90);
+                }
+                add(answer, recipes, "timeout", id, Kind.SLOW, Map.of("endpoint", uri),
+                        "a call to " + uri + " that may not answer in time: does the route give up, and retry?", 65);
+            } else {
+                add(answer, recipes, "connection-refused", id, Kind.ERRORS, Map.of("endpoint", uri),
+                        "a call to " + uri + ": what does the route do when the system is not there?", 75);
+                add(answer, recipes, "slow", id, Kind.SLOW, Map.of("endpoint", uri),
+                        "a call to " + uri + ": what does a slow answer do to the route and its input?", 50);
+            }
+            if (atLeastOnce) {
+                int before = answer.size();
+                add(answer, recipes, "duplicate", id, Kind.DUPLICATE, Map.of("endpoint", uri),
+                        "the input of route " + id + " can deliver a message again: is the call to " + uri
+                                                                                               + " safe to make twice?",
+                        80);
+                // a route of the integration receives the call: the expectation tells whether it did the work twice
+                // (CAMEL-26791)
+                String receiver = receiver(uri, consumers);
+                if (receiver != null && answer.size() > before) {
+                    Suggestion d = answer.remove(answer.size() - 1);
+                    answer.add(new Suggestion(
+                            d.route(), d.kind(), d.recipe(), d.title(), d.rule() + " expect=" + receiver + ":duplicates<=0",
+                            d.why() + " Route " + receiver + " receives it, and the expectation counts what it does twice",
+                            d.rank(), d.routes(), d.with()));
+                }
+            }
+        }
+
+        // the HTTP calls known only when they send (toD), by the address before the first expression (CAMEL-26817)
+        for (String pattern : dynamicHttpCalls(route)) {
+            if (!seen.add(pattern)) {
+                continue;
+            }
+            if (breaker) {
+                add(answer, recipes, "outage", id, Kind.ERRORS, Map.of("endpoint", pattern),
+                        "the HTTP calls to " + pattern + " in a route with a circuit breaker: when the service is down"
+                                                                                             + " for a while, does the breaker open, and does the fallback answer?",
+                        70);
+            } else {
+                add(answer, recipes, "http-error", id, Kind.ERRORS, Map.of("endpoint", pattern),
+                        "the HTTP calls to " + pattern + " without a circuit breaker: what does the route do when the"
+                                                                                                 + " service answers 503?",
+                        88);
+            }
+            add(answer, recipes, "http-error", id, Kind.ERRORS, Map.of("endpoint", pattern, "status", "404"),
+                    "the HTTP calls to " + pattern + " ask for a resource per message: what does the route do when it"
+                                                                                                              + " is not there (404)?",
+                    72);
+        }
+
+        // the dead letter channel of the route: once for the routes that share it, with the first of them
+        String dead = deadLetterUri(route);
+        List<String> shared = dead != null ? deadLetters.getOrDefault(dead, List.of()) : List.of();
+        if (!shared.isEmpty() && id.equals(shared.get(0))) {
+            String who = shared.size() == 1 ? "route " + id + " sends" : "routes " + names(shared) + " send";
+            add(answer, recipes, "dlq-unreachable", id, Kind.DEAD_LETTER, Map.of("endpoint", dead),
+                    who + " what fails to the dead letter channel " + dead
+                                                                                                    + ": when that fails too, is the message lost? Add it with a rule that fails a route",
+                    78, shared);
+        }
+
+        // two faults at once, after the single ones: most bugs that lose messages need two failures that meet
+        if (call != null) {
+            String fails = httpCall ? "error status=503" : "error exception=java.net.ConnectException";
+            if (dead != null) {
+                answer.add(new Suggestion(
+                        id, Kind.COMBINED, null, "An outage while the dead letter channel fails",
+                        "endpoint=" + call + " " + fails + " until=1m", "route " + id + " sends what fails to the dead"
+                                                                        + " letter channel " + dead + ": when " + call
+                                                                        + " is down for a minute and the dead letter channel"
+                                                                        + " fails too, are messages lost? The report counts"
+                                                                        + " what the dead letter channel did not take as lost",
+                        52, List.of(id), List.of("endpoint=" + dead + " error at=dlq until=1m")));
+            }
+            answer.add(new Suggestion(
+                    id, Kind.COMBINED, null, "A slow service that also fails",
+                    "endpoint=" + call + " delay duration=1s..3s rate=0.5 until=2m",
+                    "a call to " + call + " that is slow and fails now and then: do the redeliveries pile up, and how"
+                                                                                     + " long does an exchange take? An expectation such as expect="
+                                                                                     + id
+                                                                                     + ":maxTime<=30s says how long is too long",
+                    45, List.of(id), List.of("endpoint=" + call + " " + fails + " rate=0.2 until=2m")));
+        }
+
+        // the input of the route
+        if (from != null && ChaosStubs.isRemote(from)) {
+            if (route.getConsumer() instanceof ScheduledPollConsumer) {
+                add(answer, recipes, "poll-error", id, Kind.CONSUMER, Map.of("endpoint", uri(from)),
+                        "route " + id + " polls " + uri(from)
+                                                                                                     + ": does it poll again after a failed poll?",
+                        55);
+            } else {
+                add(answer, recipes, "route-error", id, Kind.CONSUMER, Map.of("route", id),
+                        "route " + id + " is called from outside (" + ChaosPatterns.scheme(from.getEndpointUri())
+                                                                                            + "): what does the sender see when it fails, a rollback, a retry"
+                                                                                            + " or an error?",
+                        60);
+            }
+            add(answer, recipes, "stall", id, Kind.LIFECYCLE, Map.of("route", id),
+                    "route " + id + " stops taking messages for a while: does the sender wait, retry or lose them?", 30);
+        }
+    }
+
+    /**
+     * The HTTP calls of the route that are known only when they send (toD), each as a pattern of its address up to the
+     * first expression, such as {@code http://localhost:8080/stock/*} for
+     * {@code http://localhost:8080/stock/${variable.sku}}. A call whose address starts with an expression says nothing
+     * of where it goes, and is left out.
+     */
+    static List<String> dynamicHttpCalls(Route route) {
+        if (!(route.getRoute() instanceof RouteDefinition definition)) {
+            return List.of();
+        }
+        List<String> uris = new ArrayList<>();
+        for (ToDynamicDefinition to : ProcessorDefinitionHelper.filterTypeInOutputs(definition.getOutputs(),
+                ToDynamicDefinition.class)) {
+            if (to.getUri() != null) {
+                uris.add(to.getUri());
+            }
+        }
+        List<String> answer = new ArrayList<>();
+        for (String uri : uris) {
+            try {
+                uri = route.getCamelContext().resolvePropertyPlaceholders(uri);
+            } catch (Exception e) {
+                // a placeholder that does not resolve now: the address up to it
+            }
+            int query = uri.indexOf('?');
+            String address = query > 0 ? uri.substring(0, query) : uri;
+            int cut = address.length();
+            for (String start : List.of("${", "$simple{", "{{")) {
+                int at = address.indexOf(start);
+                if (at >= 0) {
+                    cut = Math.min(cut, at);
+                }
+            }
+            String scheme = ChaosPatterns.scheme(address);
+            if (cut == address.length() || scheme == null || !ChaosRuleParser.HTTP_SCHEMES.contains(scheme)) {
+                continue;
+            }
+            String prefix = address.substring(0, cut);
+            // the host must be known: a call to ${header.host} could go anywhere
+            if (ChaosPatterns.withoutSlashes(prefix).length() <= scheme.length() + 1) {
+                continue;
+            }
+            String pattern = prefix + "*";
+            if (!answer.contains(pattern)) {
+                answer.add(pattern);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The URI of an endpoint as a rule targets it, without its query: the options say nothing of which endpoint it is,
+     * and may hold a secret.
+     */
+    private static String uri(Endpoint endpoint) {
+        String uri = ChaosPatterns.endpointUri(endpoint);
+        int query = uri.indexOf('?');
+        return query > 0 ? uri.substring(0, query) : uri;
+    }
+
+    /**
+     * Why an expectation of the messages lost between two routes ({@code orders->shipping:lost<=0}) says nothing, or
+     * null when it does (CAMEL-26797). Lost counts what the first route completed and the next did not, which tells
+     * only when the first hands the message off to the next (over seda, a broker or a wireTap) and goes on: a route
+     * that calls the next over direct waits for it and fails with it, and a route that does not send to it at all (such
+     * as an HTTP call to a platform-http route) loses nothing that lost counts, while its own failures are not counted.
+     * The routes reached through a send that is known only when it sends (toD, wireTap, recipientList...) are not
+     * known, so then it says nothing.
+     */
+    static String lostWithoutHandOff(CamelContext camelContext, ChaosRule.Expectation expectation) {
+        if (expectation == null || expectation.toRoute == null || camelContext.getRoute(expectation.route) == null
+                || camelContext.getRoute(expectation.toRoute) == null) {
+            return null;
+        }
+        Map<String, Boolean> reached = reach(camelContext, List.of(expectation.route), false);
+        if (reached == null) {
+            return null;
+        }
+        Boolean handedOff = reached.get(expectation.toRoute);
+        if (handedOff == null) {
+            return "expects messages lost between routes " + expectation.route + " and " + expectation.toRoute
+                   + ", but " + expectation.route + " does not hand messages to " + expectation.toRoute
+                   + " (over seda, a broker or a wireTap), so lost counts nothing of what fails in " + expectation.route
+                   + ": expect=" + expectation.route + ":failed<=0 counts it";
+        }
+        if (!handedOff) {
+            return "expects messages lost between routes " + expectation.route + " and " + expectation.toRoute
+                   + ", but " + expectation.route + " calls " + expectation.toRoute
+                   + " over direct and waits for it, so a failure there fails " + expectation.route
+                   + " and nothing is lost between them: expect=" + expectation.route + ":failed<=0 counts it";
+        }
+        return null;
+    }
+
+    /**
+     * The routes the given routes reach by the static sends of their steps (a send to an endpoint a route consumes, and
+     * with {@code http} an HTTP call to a platform-http route of the integration), with whether a hand-off (a send that
+     * is not direct or HTTP: seda, a broker...) was on the way (one that was wins). The given routes are in it, without
+     * a hand-off. Null when a route on the way has a send that is known only when it sends (toD, wireTap,
+     * recipientList...), as then where it goes is not known.
+     */
+    static Map<String, Boolean> reach(CamelContext camelContext, List<String> from, boolean http) {
+        Map<String, String> consumers = new HashMap<>();
+        for (Route route : camelContext.getRoutes()) {
+            if (route.getEndpoint() != null) {
+                consumers.put(uri(route.getEndpoint()), route.getRouteId());
+            }
+        }
+        Map<String, Boolean> reached = new HashMap<>();
+        Deque<String> todo = new ArrayDeque<>();
+        for (String id : from) {
+            reached.put(id, false);
+            todo.add(id);
+        }
+        while (!todo.isEmpty()) {
+            String id = todo.poll();
+            Route route = camelContext.getRoute(id);
+            if (route == null) {
+                continue;
+            }
+            if (route.getRoute() instanceof RouteDefinition definition) {
+                List<String> dynamic = new ArrayList<>();
+                ChaosTargets.dynamicSends(definition.getOutputs(), dynamic);
+                if (!dynamic.isEmpty()) {
+                    return null;
+                }
+            }
+            for (Processor processor : route.filter("*")) {
+                if (!(processor instanceof EndpointAware aware) || aware.getEndpoint() == null) {
+                    continue;
+                }
+                String uri = uri(aware.getEndpoint());
+                String next = http ? receiver(uri, consumers) : consumers.get(uri);
+                if (next == null) {
+                    continue;
+                }
+                String scheme = ChaosPatterns.scheme(uri);
+                boolean handedOff = reached.get(id) || scheme != null && !"direct".equals(scheme) && !scheme.startsWith("http");
+                Boolean before = reached.get(next);
+                if (before == null || (!before && handedOff)) {
+                    reached.put(next, handedOff);
+                    todo.add(next);
+                }
+            }
+        }
+        return reached;
+    }
+
+    /** The routes that make their own messages: a timer, a scheduler. */
+    private static List<String> selfFeeding(CamelContext camelContext) {
+        List<String> self = new ArrayList<>();
+        for (Route route : camelContext.getRoutes()) {
+            if (route.getEndpoint() != null
+                    && SELF_FEEDING.contains(ChaosPatterns.scheme(route.getEndpoint().getEndpointUri()))) {
+                self.add(route.getRouteId());
+            }
+        }
+        return self;
+    }
+
+    /**
+     * The routes that get messages without a feed (CAMEL-26817): the routes that make their own (a timer, a scheduler),
+     * and the routes they send to, also over HTTP to the integration's own server. Null when that is not known, as a
+     * route on the way has a send known only when it sends.
+     */
+    static Set<String> fedRoutes(CamelContext camelContext) {
+        Map<String, Boolean> reached = reach(camelContext, selfFeeding(camelContext), true);
+        return reached != null ? reached.keySet() : null;
+    }
+
+    /**
+     * Per route, the file route whose files, put back, reach it (CAMEL-26817): a file route that took files reaches
+     * itself, and the routes it sends to, also over HTTP to the integration's own server. A route reached through a
+     * send known only when it sends is left out.
+     */
+    static Map<String, String> replayVia(CamelContext camelContext) {
+        Map<String, String> answer = new HashMap<>();
+        for (Route route : camelContext.getRoutes()) {
+            Endpoint from = route.getEndpoint();
+            File done = from != null ? doneFolder(from) : null;
+            if (done == null || takenFiles(done).isEmpty()) {
+                continue;
+            }
+            answer.putIfAbsent(route.getRouteId(), route.getRouteId());
+            Map<String, Boolean> reached = reach(camelContext, List.of(route.getRouteId()), true);
+            if (reached != null) {
+                reached.keySet().forEach(r -> answer.putIfAbsent(r, route.getRouteId()));
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Why an experiment says nothing because its feed does not reach the routes of its expectations (CAMEL-26803), or
+     * null when it reaches one, or that is not known. A route of an expectation gets messages when the route the feed
+     * reaches sends to it, or a route that makes its own messages (a timer, a scheduler) does; a route reached through
+     * a send known only when it sends is not known, so then it says nothing.
+     */
+    static String feedMisses(CamelContext camelContext, String feedRoute, List<String> expected) {
+        if (feedRoute == null || camelContext.getRoute(feedRoute) == null || expected.isEmpty()) {
+            return null;
+        }
+        Map<String, Boolean> fed = reach(camelContext, List.of(feedRoute), true);
+        Map<String, Boolean> others = reach(camelContext, selfFeeding(camelContext), true);
+        if (fed == null || others == null) {
+            return null;
+        }
+        for (String route : expected) {
+            if (fed.containsKey(route) || others.containsKey(route) || camelContext.getRoute(route) == null) {
+                return null;
+            }
+        }
+        List<String> reached = fed.keySet().stream().sorted().toList();
+        String missed = String.join(", ", expected.stream().distinct().sorted().toList());
+        return "The feed goes to route " + feedRoute + (reached.size() > 1
+                ? ", which sends to " + String.join(", ", reached.stream().filter(r -> !r.equals(feedRoute)).toList())
+                : "")
+               + ", but not to " + (expected.stream().distinct().count() == 1 ? "route " : "routes ") + missed
+               + " of the expectations, so the experiment would say nothing: feed " + expected.get(0)
+               + " instead (its id as the feed)";
+    }
+
+    /** The dead letter channel of the route, without its options, or null when its error handler has none. */
+    static String deadLetterUri(Route route) {
+        if (route.getErrorHandlerFactory() instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
+            String uri = dlc.getDeadLetterUri();
+            return uri.indexOf('?') > 0 ? uri.substring(0, uri.indexOf('?')) : uri;
+        }
+        return null;
+    }
+
+    /** The first three routes and how many more: orders, inventory, stock and 2 more. */
+    private static String names(List<String> routes) {
+        if (routes.size() <= 3) {
+            return String.join(routes.size() == 2 ? " and " : ", ", routes);
+        }
+        return String.join(", ", routes.subList(0, 3)) + " and " + (routes.size() - 3) + " more";
+    }
+
+    /** A suggestion from a known rule, with its placeholders filled in: the given values, else their defaults. */
+    private static void add(
+            List<Suggestion> answer, Map<String, ChaosModel.Recipe> recipes, String recipeId, String route, Kind kind,
+            Map<String, String> values, String why, int rank) {
+        add(answer, recipes, recipeId, route, kind, values, why, rank, List.of(route));
+    }
+
+    private static void add(
+            List<Suggestion> answer, Map<String, ChaosModel.Recipe> recipes, String recipeId, String route, Kind kind,
+            Map<String, String> values, String why, int rank, List<String> routes) {
+        ChaosModel.Recipe recipe = recipes.get(recipeId);
+        if (recipe == null) {
+            return;
+        }
+        String rule = recipe.rule();
+        for (ChaosModel.Placeholder p : recipe.placeholders()) {
+            String value = values.getOrDefault(p.name(), p.defaultValue());
+            if (value == null) {
+                // a placeholder without a value, such as the header to remove: not a rule to add as it is
+                return;
+            }
+            rule = rule.replace("${" + p.name() + "}", value);
+        }
+        answer.add(new Suggestion(route, kind, recipe.id(), recipe.title(), rule, why, rank, routes));
+    }
+}

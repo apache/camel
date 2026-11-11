@@ -40,6 +40,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+The `operation` option must be set, on the endpoint or on the component configuration: there is no default
+operation, and a route that sends to an arangodb endpoint without it fails to start.
+
 == Examples
 
 === Producer Examples
@@ -89,6 +92,9 @@ BaseDocument myObject = new BaseDocument();
 myObject.addAttribute("a", "Foo");
 myObject.addAttribute("b", 42);
 ----
+
+A `Collection` body, such as a `List` of documents, saves each of them as a document, with or without the
+`CamelArangoDbMultiInsert` header, and the body after the operation is a `MultiDocumentEntity`.
 
 ==== Query a collection
 

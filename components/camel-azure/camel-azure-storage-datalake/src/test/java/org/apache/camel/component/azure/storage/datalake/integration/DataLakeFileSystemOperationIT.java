@@ -28,11 +28,9 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
 public class DataLakeFileSystemOperationIT extends Base {
 
     private DataLakeServiceClientWrapper serviceClientWrapper;

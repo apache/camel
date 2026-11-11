@@ -109,7 +109,8 @@ questions that no tool answers and that agents otherwise go hunting for:
   source that passes the schema can still fail at runtime, so run it and read the log.
 * Which tool answers which question, by tool name: `camel_catalog_doc`, `camel_catalog_find`,
   `camel_catalog_sample`, `camel_catalog_examples`, `camel_dependency_for_class`, `camel_validate_source`,
-  `camel_run`, `camel_get_log`, `camel_get_errors` and `camel_project_overview`.
+  `camel_run`, `camel_get_log`, `camel_get_errors` and `camel_project_overview`; and that a Citrus test runs with
+  `camel test run` in the project directory, not with `camel_run`.
 
 The first line is self-contained, as some hosts show only that line.
 
@@ -272,6 +273,8 @@ Start a route with `camel run my-route.yaml`, then ask:
 * _"Send a test message to direct:start"_ — uses `camel_runtime_send`
 * _"Which processors are the slowest?"_ — uses `camel_runtime_top`
 * _"Browse messages in seda:numbers"_ — uses `camel_runtime_browse`
+* _"Fail one in ten sends to kafka for five minutes, then tell me what broke"_ — uses `camel_runtime_chaos_add` and
+  `camel_runtime_chaos_report` (needs `camel run --chaos`)
 
 === Prompts (structured workflows)
 
@@ -293,6 +296,24 @@ The tools an agent needs to build and edit an integration are defined once, in t
 under the same `camel_` names by this server and by `camel tui --mcp` (see xref:camel-jbang-tui.adoc[]),
 so an agent gets the same Camel through either door. The tools are self-contained: the file tools take the
 project `directory` as an argument, the runtime tools take the integration `name` (or use the only one running).
+
+The file tools (`camel_validate_source`, `camel_get_files`, `camel_edit_file` and `camel_write_file`) work in the
+project `directory` the call passes. A call without `directory` works in the client's root when the client
+declares exactly one `file:` root (the MCP roots: asked for only by such a call and only of a client that declares
+them, waiting at most 2 seconds); otherwise it is refused, and the answer says to pass `directory`, the absolute
+project directory.
+
+The `file` is a path relative to that directory, or an absolute path inside it, which is taken relative to it. The
+file always stays inside the directory, with symbolic links resolved: a path with `..` that leaves it, an absolute
+path outside it, or a link in the project that leads out of it is refused. An absolute `file` never stands for the
+directory, so a call cannot read or write another file of the disk through it.
+
+`camel_write_file` creates the subdirectories of `file`, and a missing `directory` only when it is inside the
+client's root. Without a root, the answer names the existing directory to pass, with the subdirectory in `file`:
+`{"directory":"/workspace","file":"camel/application.properties"}`. A file that is not found is named when the
+directory has a file of that name in a subdirectory, as in
+`camel/order-intake.yaml exists: pass file camel/order-intake.yaml`, and a `file` of several lines, the source
+passed as the file name, is answered with the argument the source goes in.
 
 [cols="1,3",options="header"]
 |===
@@ -377,6 +398,12 @@ project `directory` as an argument, the runtime tools take the integration `name
   Takes the content, or reads the file from the project directory. With `camelVersion` (or the version of the
   selected integration in the TUI) the catalog and the YAML DSL schema of that Camel version answer, the schema
   read from its `camel-yaml-dsl` jar; without it the CLI's own, with nothing to download.
+  A Citrus test (`test/<name>.citrus.it.yaml`, run with `camel test run`) is not a route: it is checked against the
+  test schema of the Citrus catalog, `org.citrusframework:citrus-catalog-schema` of the Citrus version of the CLI.
+  The server has the catalog, so the check works offline. An action Citrus does not have, such as `log`, and a key an
+  action does not take are errors with their line, and `camel_write_file` and `camel_edit_file` refuse such a test
+  as they refuse an invalid route. Where the schema cannot be had, the test is checked for its YAML syntax only, and
+  the answer says so.
 
 | `camel_get_files`
 | The source files of a project directory, subdirectories included (`target`, `.git` and the like skipped). The
@@ -393,7 +420,8 @@ project `directory` as an argument, the runtime tools take the integration `name
   first; invalid content is not written and the errors are returned. A YAML shape that a model often gets wrong but
   that has only one reading, such as `steps:` at the column of its EIP or an option at the column of the EIP it
   belongs to, is repaired instead: the file is written with the repairs, and `repaired` in the answer lists them.
-  Only a plain file name in the directory is accepted. Nobody is asked before the write: the MCP client (Claude Code,
+  The file stays inside the directory, and the subdirectories of the file are created (see above). Nobody is
+  asked before the write: the MCP client (Claude Code,
   Cursor and the others ask before a tool that is not read-only runs) is where the human sits, and the
   `read-only` access level of the security layer hides the tool altogether.
   With the security layer on, content longer than `camel.mcp.security.max-argument-length` is rejected, never cut,
@@ -431,6 +459,10 @@ project `directory` as an argument, the runtime tools take the integration `name
   lines (also a message over several lines, such as the diagnostics of a Java class that does not compile) and
   the first line of the user's code, without the stack frames. A failed `camel_control restart` answers the
   same way.
+  A Citrus test, such as `test/orders.citrus.it.yaml`, is not a route. With nothing but Citrus tests to run (the
+  files, or a directory that holds only Citrus tests) nothing is started, and the error says to run them with
+  `camel test run` in the project directory. Citrus tests given with routes are skipped: the routes start, and
+  `skipped` in the answer lists the tests.
 
 | `camel_control`
 | Controls a running integration: `stop`, `kill`, `restart` (picks up edited files without dev mode),
@@ -459,7 +491,18 @@ project `directory` as an argument, the runtime tools take the integration `name
   and returns the value (true/false for a predicate) or the syntax error with the position where it breaks,
   so an agent can check an expression before writing it into a route. Any language works: one that is not on
   the server's own classpath, `jsonpath`, `jq`, `xpath`, `groovy`, has its component downloaded on first use
-  and the answer says so in `downloaded`.
+  and the answer says so in `downloaded`. The message can carry what an earlier step of the route sets:
+  `headers` and `variables`, as a JSON object (its values keep their JSON type, such as the rows of a query for
+  a groovy `headers.rows[0].total`) or as `key=value` lines. `predicate=true` evaluates a predicate in any
+  language (for simple it is guessed from an operator), and `resultType` is the `resultType` option of the
+  language, as in a route: `java.lang.String` for an XPath function such as `string()` or `local-name()`,
+  which the `xpath` language otherwise evaluates as nodes. An XPath that fails that way
+  (`Can not convert #STRING to a NodeList`) gets a hint with the argument to pass. An integration before
+  Camel 4.24 ignores `resultType`, which the answer notes.
+  A null value is answered with `nullResult: true` and a note, since the
+  answer leaves out null fields; an elvis operator without a space on both sides inside `${...}` (`${header.limit ?:10}`
+  reads a header named `limit ?:10`), or inside `${...}` for an integration older than Camel 4.24, gets a note with
+  the expression rewritten.
 
 | `camel_dependency_for_class`
 | Which Maven dependency provides a class, and how to declare it. Local first: the known dependencies
@@ -516,6 +559,44 @@ in full, so re-reading a file after an edit or polling a log keeps working.
 
 A session is an MCP connection of `camel mcp`, and for `camel tui --mcp` the time from one `initialize` of the
 client to the next.
+
+==== Argument names
+
+Models carry the argument names of one tool over to the next: `camel_catalog_doc` takes `name`, so a model calls
+`camel_catalog_find` with `name` or `query` instead of `term`. `camel mcp` takes these names for the ones the tool
+declares:
+
+[cols="1,1,2",options="header"]
+|===
+| Tool | Argument | Also accepted
+
+| `camel_catalog_find` | `term` | `query`, `name`
+| `camel_catalog_example_file` | `example` | `name`
+| `camel_validate_source` | `file` | `path`, `filename`, `name`
+| `camel_validate_source` | `content` | `source`
+|===
+
+Another name is taken only when the call does not give the argument itself, and never when the tool has an argument
+of that name (the `name` of `camel_catalog_doc` stays its `name`). When a call gives several, the first one listed
+wins. A `path` is passed on as the `file`, as it is. The tool listing names the declared arguments only, and a JSON
+answer says which name to use the next time in its first field, `argumentNote`:
+
+[source,json]
+----
+{"argumentNote": "term is the argument name (got query)", "term": "activemq", "matches": [...]}
+----
+
+The note also names an argument the tool does not take, which is ignored, with the arguments the tool takes:
+`ignored: bogus; camel_catalog_find takes term (required), kind, limit, camelVersion`.
+
+A call of any tool that misses a required argument is answered, as a tool error, with the arguments of the tool in
+the order it declares them and the ones the call gave, rather than with the name of the missing one only:
+
+----
+camel_catalog_find takes term (required), kind, limit, camelVersion; got q
+----
+
+`camel ask` (see xref:camel-jbang-ai.adoc[]) takes the same names, and adds the same note to its JSON answers.
 
 === Catalog Exploration
 
@@ -812,7 +893,8 @@ help validate and scaffold that workflow, following the rules of the `rest-opena
 NOTE: Runtime tools require a running Camel application started via `camel run`. They communicate with the
 application through the file-based IPC protocol in `~/.camel/`. All tools accept an optional `nameOrPid`
 parameter; when omitted, the server auto-discovers the running Camel process (this works when exactly one
-process is running).
+process is running). The MCP server itself is never one of them: it is not listed, not selected when no name is
+given, and a call that names its pid is refused.
 
 ==== Process Discovery
 
@@ -887,6 +969,14 @@ process is running).
 | `camel_runtime_top`
 | Show top processor statistics: which processors are slowest and most active.
 
+| `camel_runtime_timeline`
+| What happened per second in the last minutes (up to 5): per route the exchanges completed, recovered by a
+  redelivery, handled by the error handler and failed, with their mean, p95 and max time and the redelivery attempts;
+  the errors per second by route and exception; with camel-chaos, the faults per second of each chaos rule and the
+  seconds a rule had a route down; the seconds a circuit breaker was open; and per second the failed, handled and
+  recovered exchanges and the 3 slowest with the remote
+  calls they made. It is recorded by the `timeline` dev console, which `camel run` (dev profile) turns on.
+
 | `camel_runtime_memory`
 | Show JVM memory usage (heap/non-heap), garbage collection stats, and thread counts.
 
@@ -938,7 +1028,8 @@ process is running).
   is refused, and redirects are not followed. `timeoutSeconds` bounds the wait (default 30, at most 120).
 
 | `camel_runtime_tool_groups`
-| Which runtime tool groups (`sql`, `tracing`, `resilience`, `http`) the application needs, from what its status shows.
+| Which runtime tool groups (`sql`, `tracing`, `resilience`, `http`, `chaos`) the application needs, from what its
+  status shows.
   See <<_tool_groups_for_local_models>>.
 
 | `camel_runtime_datasources`
@@ -970,6 +1061,100 @@ process is running).
 | Compares the running route definitions with the source files to detect configuration drift.
 |===
 
+==== Chaos
+
+With `camel-chaos` in the application (`camel run --chaos`) and chaos switched on (profile `dev`, the default of
+`camel run`, or `camel.chaos.enabled=true`; never profile `prod`), these tools add faults while it runs and read what
+they did, the same as `camel cmd chaos-add`, `chaos-change`, `chaos-remove`, `chaos-clear` and `camel get chaos`. A
+rule is one line in the form of `camel.chaos.rules`, such as `endpoint=kafka:orders* error rate=0.1 until=5m`; see
+xref:next@components:others:chaos.adoc[Chaos]. Adding, changing, removing and clearing go through the `chaos` action of the
+CLI connector: a rule that is not valid is refused with the reason of the rule parser, and with chaos off every tool
+that changes rules is refused. The list and the report read the chaos console from the status of the application.
+
+[cols="2,1,1,3",options="header"]
+|===
+| Tool | `readOnlyHint` | `destructiveHint` | Description
+
+| `camel_runtime_chaos_list`
+| `true` | `false`
+| The current rules: id, version, the rule, state, where it fires, matches, faults fired, time left, the
+  expectation and the live state (observed rate next to the rate of the rule, when it last fired, faults per second over
+  the last minute, and the effect of its faults on the exchanges); or why chaos is off. Read from the status, which the
+  application writes every second.
+
+| `camel_runtime_chaos_report`
+| `true` | `false`
+| The report: the verdict and whether it is final, the seed, every version of every rule with its live state, the
+  expectations, the counts per route and the last 20 faults.
+
+| `camel_runtime_chaos_suggest`
+| `true` | `false`
+| What to try, as `camel cmd chaos-suggest` does: rules suggested per route from what the routes do, the most worth
+  trying first (such as an HTTP call without a circuit breaker, a dead letter channel or a hand-off over `seda`), each
+  with the route, the kind of fault, the `rule`, `why`, and `tried=true` when a rule of that kind has already faulted
+  the route. Nothing is added.
+
+| `camel_runtime_chaos_check`
+| `true` | `false`
+| Checks a rule (`rule`), or several separated by `;`, without adding it, as `camel cmd chaos-add --dry-run` does:
+  each in plain words, where it can fire, `warnings`, and what it would hit now (`hits`: the sends, polls, routes or
+  steps, each with its route). A rule that is not valid is refused with the reason.
+
+| `camel_runtime_chaos_add`
+| `false` | `true`
+| Adds a rule (`rule`), or several separated by `;` (all or none), and returns the ids (`r1`, `r2`, ...), with
+  `warnings` for a rule that matches nothing in the application now (often a typo).
+
+| `camel_runtime_chaos_change`
+| `false` | `true`
+| Gives the rule with the `id` the new `rule` and one more version; the report keeps the version it replaces. Returns
+  `warnings` when the new rule matches nothing in the application now.
+
+| `camel_runtime_chaos_remove`
+| `false` | `false`
+| Removes the rule with the `id`; the report keeps what it did.
+
+| `camel_runtime_chaos_clear`
+| `false` | `false`
+| Removes all rules, and returns how many. With `reset=true` the report starts again (no rules, route counts or
+  verdict), for a new experiment, as `camel cmd chaos-clear --reset` does.
+
+| `camel_runtime_chaos_load`
+| `false` | `true`
+| Loads a scenario (`scenario`, the text of a `.chaos` file, and optionally its name `scenarioName`), as
+  `camel cmd chaos-load` does: the rules there are now are removed and the report starts again, then the rules of the
+  scenario are added, all or none. Returns the ids, each rule in plain words, and `warnings`.
+
+| `camel_runtime_chaos_explore_start`
+| `false` | `false`
+| Starts an exploration, as `camel cmd chaos-explore-start` does: a time to try rules in (`budget`, 10 minutes by
+  default and at most 2 hours, and an optional `focus`). While it runs a rule ends at the deadline at the latest, and at
+  the deadline the rules are removed, whatever the client does.
+
+| `camel_runtime_chaos_experiment`
+| `false` | `true`
+| Runs one experiment in the exploration in one call, as `camel cmd chaos-experiment` does: adds the rules (`rule`,
+  one of them with `expect=`), sends the messages of `feed` (with `body`, `headers`, `repeat` and `interval`), waits until
+  the expectations are decided (at most `wait`, 2 minutes by default), and ends it. Returns the `verdict` (`FAIL`,
+  `PASS` or `INCONCLUSIVE`), the expectations, the faults per rule, what the routes did, the `traffic` and `timeLeft`.
+
+| `camel_runtime_chaos_explore_finish`
+| `false` | `false`
+| Finishes the exploration before its deadline, as `camel cmd chaos-explore-finish` does, and returns its journal: the
+  rules tried and the experiments with their verdicts.
+|===
+
+Adding and changing a rule, loading a scenario, and an experiment are marked destructive: a rule makes messages fail, wait or get lost, and its
+`exception=` can name any exception class. So a client that honours `destructiveHint` asks before it runs them, and
+the `read-write` access level of the security layer (`camel.mcp.security.access-level`) does not offer them, as it does
+not offer `camel_runtime_route_control` or `camel_runtime_sql`; `read-only` offers the list, the report, what to try and the check. Removing
+and clearing only take faults away, and the report keeps the removed rules, so they are not destructive. `camel ask`
+has the same tools (`chaos_add` and the others), and asks the user before it adds or changes a rule or loads a scenario (showing the rules of the scenario). It asks
+once for an exploration (`chaos_explore_start`), and not again for the experiments in it, as camel-chaos removes their
+rules at its deadline; the messages of an experiment are asked as `send_message` asks them. The
+development MCP tools that `camel run --mcp` serves over HTTP have only the list and the report: a rule is never added,
+changed, removed, checked, suggested or loaded over the HTTP server of the application.
+
 ==== Tool groups for local models
 
 A client that drives a small local model pays for every tool schema on every request. Rather than listing every
@@ -995,13 +1180,17 @@ runtime tool, it can offer the core tools plus the groups the selected applicati
 | `http`
 | Rest DSL services or platform-http endpoints, or a `platform-http`, `rest` or `rest-openapi` consumer
 | `camel_runtime_http_endpoints`, `camel_runtime_http_request`
+
+| `chaos`
+| `camel-chaos` (its console in the status), switched on or off; the guidance line says which
+| the six tools of <<_chaos>>; with chaos off only the list and the report
 |===
 
 The answer names the application and its pid, lists the `core` tools (the shared `camel_*` tools a small model
 should always get), each loaded group with its tools and one line of guidance for the system prompt (for example
 `SQL: datasource(s) orders (HikariCP), used by sql endpoints. Table names come from the SQL trace
 (camel_runtime_sql_trace); don't guess a schema.`), and the `signals` in the status that loaded each group. Its
-`fingerprint` stays the same as long as the groups, the datasources and the HTTP base URL do,
+`fingerprint` stays the same as long as the groups, the datasources, the HTTP base URL and chaos on or off do,
 so a client calls the tool when the user selects an application or the application reloads, and rebuilds its
 tool list and prompt only when the fingerprint changes; the prompt then stays the same and a local model keeps
 its prompt cache. A status written by an older Camel version may lack some of the keys, which just loads fewer
@@ -1109,4 +1298,12 @@ instructions and executes each step by calling the referenced tools.
 | `routeId` (optional), `goal` (optional)
 | Guided workflow to optimize a Camel application's performance: analyze throughput, identify bottlenecks,
   review resource usage, and produce prioritized optimization recommendations.
+
+| `camel_chaos_explore`
+| `budget` (optional), `focus` (optional), `name` (optional)
+| Let there be chaos: the AI explores by itself how a running application with camel-chaos copes with faults, for the
+  `budget` (10 minutes by default). It starts an exploration, runs one experiment per call
+  (`camel_runtime_chaos_experiment`) from the suggestions, reads each verdict, and finishes with a report: what held,
+  what broke with the evidence and a hint, and what was not tried. It asks nothing on the way and never changes the
+  routes; camel-chaos removes the rules at the deadline. The same playbook as `camel cmd chaos-explore`.
 |===

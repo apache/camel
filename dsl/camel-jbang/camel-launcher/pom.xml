@@ -58,10 +58,10 @@
         <javax-inject-version>1</javax-inject-version>
         <httpclient-version>4.5.14</httpclient-version>
         <httpcore-version>4.4.16</httpcore-version>
-        <commons-codec-version>1.22.1</commons-codec-version>
+        <commons-codec-version>1.23.0</commons-codec-version>
         <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
-        <commonmark-version>0.30.1</commonmark-version>
-        <jreleaser-plugin-version>1.26.0</jreleaser-plugin-version>
+        <commonmark-version>0.31.0</commonmark-version>
+        <jreleaser-plugin-version>1.27.0</jreleaser-plugin-version>
     </properties>
 
     <dependencyManagement>
@@ -304,6 +304,19 @@
 
     <build>
         <plugins>
+            <!-- the repackaged self-executing JAR keeps this manifest -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <!-- JLine uses the FFM API for the terminal (JEP 472: Java 24+ warns without it) -->
+                            <Enable-Native-Access>ALL-UNNAMED</Enable-Native-Access>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <!-- Create self-executing JAR using Spring Boot loader tools -->
             <plugin>
                 <groupId>org.apache.camel</groupId>
@@ -332,6 +345,33 @@
                     <tarLongFileMode>posix</tarLongFileMode>
                 </configuration>
                 <executions>
+                    <!-- before the distributions, which put it in lib/ -->
+                    <execution>
+                        <id>launcher-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors combine.self="override">
+                                <descriptor>src/main/assembly/launcher-jar.xml</descriptor>
+                            </descriptors>
+                            <attach>false</attach>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.apache.camel.dsl.jbang.launcher.CamelLauncher</mainClass>
+                                    <addClasspath>true</addClasspath>
+                                    <!-- the names of the JARs in lib/ (see launcher-content.xml) -->
+                                    <useUniqueVersions>false</useUniqueVersions>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                                <manifestEntries>
+                                    <!-- JLine uses the FFM API for the terminal (JEP 472: Java 24+ warns without it) -->
+                                    <Enable-Native-Access>ALL-UNNAMED</Enable-Native-Access>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
+                    </execution>
                     <execution>
                         <phase>package</phase>
                         <goals>
@@ -526,9 +566,32 @@
                             </execution>
                         </executions>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--
+            The integration tests of the distributions (*IT), which need the native exe files and
+            only run with -Dcamel.exe.build=true (they are disabled otherwise). Not with -Dquickly,
+            as the root POM does for the unit tests, so a snapshot deploy does not run them.
+        -->
+        <profile>
+            <id>launcher-its</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <!-- the classes, not the JAR: the JAR is repackaged with the Spring Boot layout, where
+                                 the classes are under BOOT-INF/classes -->
+                            <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>

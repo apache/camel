@@ -13,12 +13,49 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.2 to 4.22.3
 
+=== camel-aws2-sns - string array message attributes
+
+String values in list-valued message headers are now JSON-escaped when mapped to SNS
+`String.Array` message attributes. Quotes, backslashes and control characters are preserved
+as string data. Routes should supply the original strings rather than pre-escaping them.
+Other member types, such as enums, characters, UUIDs and dates, are serialized as JSON strings.
+Non-finite floating-point values (`NaN` and infinities) are also serialized as strings; finite numbers,
+booleans and null remain JSON primitives.
+The JSON utility also escapes forward slashes and some Unicode characters, so raw `String.Array`
+attribute text may differ even when its decoded string values are unchanged.
+
 === camel-ai-tool - required arguments with reserved names reject the call
 
 Required tool arguments whose names start with `camel` or `org.apache.camel.` (case-insensitive)
 now reject the invocation before the tool route runs. Previously, these arguments could pass the
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
+
+=== camel-as2 - server/listen - signature and MIC over the message as received
+
+The signature of a `multipart/signed` message is now verified over the signed part exactly as it was received, its
+MIME headers and its body in the transfer encoding the sender used (RFC 1847, section 2.1), and the `Received-Content-MIC`
+of the MDN is computed over the same bytes (RFC 4130, section 7.1). Previously both were computed over a
+re-serialisation of the parsed part, which matches the sender's bytes only when the part is `binary`, `7bit` or
+`8bit` and its headers are formatted the way camel-as2 writes them: a `base64` or `quoted-printable` part from another
+AS2 implementation, encoded with a different line length or escaping, or a part with folded headers or no space after
+the colon, was refused with `authentication-failed` although correctly signed, and the MDN carried a MIC the sender
+could not match. Messages from camel-as2's own client are not affected. `MultipartSignedEntity.getSignedDataRaw()`
+returns the part as received, `getSignedDataContent()` the bytes a signature is verified against.
+
+The text of a body part now ends exactly where the boundary delimiter begins: the line break before the delimiter
+line is removed as the sender wrote it, CRLF or a bare LF. Before, two characters were always removed, so a part
+framed with bare line feeds (as `openssl cms -sign` writes them without `-crlfeol`) lost its last byte.
+
+=== camel-as2 - the asynchronous MDN allow-list matches the host and port
+
+The `asyncMdnAllowedHosts` option now matches the full authority - host and port - of the asynchronous MDN delivery
+address, rather than the host alone. Each entry is a host with an optional port in `host:port` form (IPv6 literals use
+bracket notation, for example `[::1]` or `[::1]:8080`). A bare-host entry (for example `partner.example`) now matches
+only the default port of `http` (80); to deliver to another port, list it explicitly (for example
+`partner.example:8080`).
+
+A deployment that lists a bare host and receives asynchronous MDNs on a non-default port must add the port to the entry.
 
 === camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
 
@@ -32,6 +69,17 @@ The `CamelAzureEventHubsCheckpointUpdatedBy` header can now be `timeout`. An eve
 scheduled time of its window, but before the (late) timer has run, joins that window and gets `timeout`; its offset is
 checkpointed by that timer. Before, such an event always started a new window, so `timeout` was practically never
 set. Routes that read this header can now see `timeout` as well as `size`.
+
+=== camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
+
+A `hazelcast-seda` consumer now restores the headers and exchange properties of an exchange that a producer with
+`transferExchange=true` put on the queue only when the consumer has `transferExchange=true` as well. A consumer without
+the option, the default, now takes only the body of such an exchange, as it does for any other item of the queue, and
+logs a warning the first time. Before, the consumer restored the headers and exchange properties whatever its
+`transferExchange` option said.
+
+Set `transferExchange=true` on both the producer and the consumer endpoints to keep transferring the headers and
+exchange properties.
 
 === camel-milo - the OPC UA client validates the server certificate
 
@@ -57,6 +105,13 @@ as `Failed to connect, because a certificate or security check failed`. To resto
 
 The certificate that the user name and password are encrypted with is checked by the same validator. Endpoints that
 use the security policy `None` are not affected.
+
+=== camel-google-calendar-stream
+
+With `syncFlow=false` and `considerLastUpdate=true`, the consumer now follows all result pages in each poll.
+Previously it only read the first page, which could prevent later events from ever being delivered.
+In this mode, `maxResults` controls the API page size; a poll can now deliver more events than this value.
+Non-sync polling with `considerLastUpdate=false` continues to read only one page per poll.
 
 === camel-google-mail, camel-google-drive, camel-google-calendar, camel-google-sheets - one API client per endpoint
 
@@ -88,6 +143,27 @@ Camel now fails to start when the management server shares the port and one of t
 that lists them. Set `camel.management.port` to another port, so that the management server runs a server of its own
 and applies them. To keep a single port, remove them and configure the HTTP server instead: for example,
 authentication configured on the HTTP server for `/*` also applies to the management endpoints.
+
+=== camel-platform-http-vertx - the HTTP server fails to start when it cannot listen on its port
+
+The Vert.x HTTP server of platform-http now fails to start when it cannot listen on its port, for example because
+another process already uses the port, and so Camel fails to start, with the bind error as the cause. This also applies
+to the HTTP server and the HTTP management server of camel-platform-http-main (`camel.server.*` and
+`camel.management.*`), which `camel run` uses: a second `camel run` with the same `--port` now fails to start. Before,
+the failure was only logged at WARN, and Camel started, with its platform-http routes reported as started, although
+nothing listened on the port.
+
+=== camel-whatsapp - webhook events are verified by default
+
+In webhook mode (`webhook:whatsapp:...`), the `X-Hub-Signature-256` signature of every event that WhatsApp posts is now
+verified with the `webhookSecret` option, the app secret from the Meta app dashboard. Before, the signature was only
+verified when `webhookSecret` was set. A webhook route without `webhookSecret` now fails to start. Set `webhookSecret`
+to the app secret, or set the new `webhookVerification` option to `false` to accept the events without verifying their
+signature, for example in development. An event without a valid signature is answered with HTTP 403 and does not reach
+the route. A client that posts events to the webhook endpoint directly, for example in a test, must sign them too.
+
+An event that reaches the route is now answered with HTTP 200 and an empty body. Before, the reply carried the event
+back to the caller. The reply to the verification request (`GET`) is still the `hub.challenge`.
 
 === camel-elasticsearch - the credentials are only sent to the nodes of the cluster
 
@@ -123,6 +199,34 @@ exception of the route. With an encoder that accepts any object, the serialised 
 message, cause or stack trace of the exception of the route. Set `muteException=false` to write the exception as before.
 `transferExchange=true` is not affected.
 
+=== camel-netty - with transferExchange the consumer keeps its own connection headers
+
+With `transferExchange=true` the connection headers `CamelNettyRemoteAddress`, `CamelNettyLocalAddress`,
+`CamelNettyChannelHandlerContext`, `CamelNettySSLSession` and the `CamelNettySSLClientCert*` headers (and the
+`CamelNettyRemoteAddress` and `CamelNettyChannel` exchange properties) are now always the ones of the receiving side:
+the connection it accepted is the source of truth. Before, the headers of the transferred exchange replaced them. Such
+a header in the transferred exchange is no longer used, also when the receiving side has no value for it (for example
+the `CamelNettySSLClientCert*` headers on a connection without a client certificate). This also applies to the reply
+the producer receives. Send any such value of the sender under a header name of your own.
+
+=== camel-netty - transferExchange requires explicit endpoint configuration
+
+`NettyPayloadHelper` now checks `transferExchange=true` on the endpoint configuration before reconstructing exchange data from a `DefaultExchangeHolder` payload.
+
+Before, a receiver with an object decoder silently reconstructed the exchange even when `transferExchange=false`. Now, when `transferExchange` is disabled (the default), the incoming `DefaultExchangeHolder` is left as an opaque body (both on the consumer side and for the producer's reply via `setOut`).
+
+In addition, the legacy two-argument methods `NettyPayloadHelper.setIn(Exchange, Object)` and `setOut(Exchange, Object)` are deprecated and no longer unmarshal `DefaultExchangeHolder` payloads. Callers should migrate to the three-argument overloads passing the `NettyEndpoint`.
+
+=== camel-mina - the producer closes its session when a request times out
+
+A synchronous `mina` producer (`sync=true`) now always closes its session when a request times out while waiting for a
+reply. Because a synchronous producer is pooled and reused for later exchanges, a session kept open after a timeout
+could receive the late reply to the timed-out exchange and hand it to the next exchange that reused the same producer.
+The producer now discards that session, so the next exchange opens a fresh one.
+
+The default behaviour is unchanged: `disconnectOnNoReply` defaults to `true`, which already closed the session on a
+timeout. Setting `disconnectOnNoReply=false` no longer keeps the producer session open after a timeout.
+
 === camel-elasticsearch-rest-client - the credentials are only sent to the nodes of the cluster
 
 The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddressesList` and,
@@ -151,6 +255,15 @@ expanded, and the declaration itself is not passed on to Smooks.
 
 Set `allowExternalEntities=true` on the endpoint or on the data format for documents that rely on external entities or
 an external DTD.
+
+=== camel-flowable - xml inbound channels parse the event with the Camel XML settings
+
+The `flowable` producer now parses the event of an inbound channel of type `camel` with `deserializerType` set to
+`xml` with the XML parser settings that Camel uses, which are also the settings of Flowable 8: external DTDs are not
+loaded, external general and parameter entities are not included, entity references are kept as entity reference
+nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed the event with the JDK defaults.
+An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
+`deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
 
 === camel-ssh - known_hosts entries are matched as in OpenSSH
 
@@ -321,6 +434,28 @@ first consumer's settings. Such a consumer now fails to start with an `IllegalAr
 port. Give every consumer on a host and port the same `SSLContextParameters` instance (for example the same bean
 reference, or the global SSL context parameters), or move consumers that need other settings to another port.
 
+=== camel-aws - the HTTP client is no longer looked up on the classpath
+
+The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
+client (`software.amazon.awssdk:apache5-client`) for synchronous clients, and the Netty client
+(`software.amazon.awssdk:netty-nio-client`) for asynchronous clients. These are the clients the AWS SDK selects itself
+with the Camel dependencies. Before, unless a proxy or `trustAllCertificates` was configured, the AWS SDK looked the
+HTTP client up on the classpath. That lookup fails with `java.util.ServiceConfigurationError` (`... not a subtype`) when
+the classpath registers an HTTP client from another copy of the AWS SDK, as on a Kafka Connect worker.
+
+If you replaced these dependencies to use another HTTP client implementation, name it with the AWS SDK system property
+`software.amazon.awssdk.http.service.impl` (synchronous clients) or `software.amazon.awssdk.http.async.service.impl`
+(asynchronous clients): Camel then leaves the choice of the HTTP client to the AWS SDK.
+
+=== camel-aws-bedrock - retrieval pagination
+
+The `retrieve` operation of `aws-bedrock-agent-runtime` now removes the
+`CamelAwsBedrockAgentRuntimeNextToken` header when the response has no continuation token.
+Previously, an incoming token could remain on the final page. Pagination loops should stop
+when this header is absent.
+The `CamelAwsBedrockAgentRuntimeRetrieveGuardrailAction` header is also removed when the response
+has no guardrail action, so an action from an earlier page cannot survive.
+
 === camel-wordpress - requests and responses are no longer logged
 
 The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
@@ -335,6 +470,170 @@ followed by `coordinatorContextPath`) or under one of the `allowedCoordinatorUrl
 URLs under another base URL, for example behind a proxy, starting a saga now fails until that base URL is added to
 `allowedCoordinatorUrls` (`camel.lra.allowedCoordinatorUrls`). Before, the saga was started, and only a nested saga
 route that looked the LRA up again failed.
+
+=== camel-oauth - session identifier logging and session rotation on login
+
+`InMemorySessionStore` no longer logs session identifiers. Additionally, `OAuthCodeFlowCallback` rotates the session
+identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
+and emitting an updated session cookie. The default `rotateSession` method of `OAuthSessionStore` keeps the session
+unchanged, so a custom `OAuthSessionStore` must override it to rotate the session identifier on login.
+
+The Jakarta servlet backend (`ServletOAuth`) now validates the `aud` (audience) claim of access tokens evaluated by
+`UserProfile` and `OAuthBearerTokenProcessor`. Tokens are validated against configured expected audiences on
+`JWTOptions` (via `config.getJWTOptions().addAudience(String)` or `config.getJWTOptions().setAudience(List<String>)`),
+falling back to the configured `camel.oauth.client-id` when no custom audience is configured. Tokens whose audience does
+not match or tokens without an audience claim are rejected with `OAuthException`.
+
+For OpenID Connect / Keycloak login flows, Keycloak access tokens commonly carry `aud=account` by default unless an
+audience protocol mapper is configured on the client. Applications upgrading that use Keycloak for authorization code
+login flows should configure an audience mapper on the client in Keycloak or configure the expected audience on `JWTOptions`
+(for example, `config.getJWTOptions().addAudience("account")`).
+
+=== camel-jbang - camel plugin add selects the plugin release built for the CLI
+
+`camel plugin add <name>` no longer registers a community plugin (such as `forage` or `kit`) with the Maven `LATEST`
+version when no version is given. It selects the newest release of the plugin built for the version of the CLI, from
+the `camel.jbang.plugin.camel-versions` property in the POM of the plugin, or else from the version of its
+`camel-jbang-core` dependency. The exact version is stored in `~/.camel-jbang-plugins.json`, so the plugin no longer
+moves to newer releases on its own: run `camel plugin add <name>` again to select the newest matching release.
+When the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
+version, with a warning. When the CLI is newer than all the releases, or the releases cannot be read, it warns and uses
+`LATEST` as before.
+
+`--version` and `--gav` are used as given, with a warning when the release is built for another Camel version. Plugins
+registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_versions[Plugin versions].
+
+=== camel-google-storage - object names are checked, and an expression in downloadFileName is confined
+
+The remote object name is untrusted input, so the consumer now also checks it whatever `downloadFileName`
+looks like. An absolute object name (one starting with `/` or `\`, or with a drive letter such as `C:`) and
+an object name with a `..` path segment are rejected, even when the name would normalize back inside the
+download directory (for example `a/../b.txt`). When the consumer lists the bucket, a rejected object is skipped
+and reported to the consumer's exception handler, which logs a warning by default, and the other objects of the
+poll are consumed as usual. The rejected object stays in the bucket, so it is reported again on every poll until it
+is removed or renamed. With `objectName`, which consumes a single object, the poll fails instead, and the failure is
+reported on every poll.
+
+The containment check is now also applied when `downloadFileName` is configured as a directory followed
+by an expression, such as `downloadFileName=/tmp/downloads/${file:name}`: the destination must stay within
+the static directory prefix configured before the first expression token (`/tmp/downloads` in the example).
+When `downloadFileName` is fully dynamic and has no static directory prefix (for example
+`downloadFileName=${file:name}`), a relative destination must stay within the working directory. An absolute
+destination that comes from the route's own expression is not confined.
+
+=== camel-xslt-saxon - external resource access is restricted for a Source message body
+
+`XsltSaxonAggregationStrategy` now configures its Saxon `TransformerFactory` the same way the `xslt-saxon`
+endpoint configures the factory it creates: `FEATURE_SECURE_PROCESSING` is enabled and `ACCESS_EXTERNAL_DTD`
+and `ACCESS_EXTERNAL_STYLESHEET` are set to an empty string. Previously the strategy used the Saxon defaults,
+so the same stylesheet ran with different settings depending on whether it was used from the endpoint or from
+the strategy. On Saxon PE/EE, `FEATURE_SECURE_PROCESSING` also disables reflexive Java extension functions in the
+stylesheet.
+
+In addition, both the strategy and the `xslt-saxon` endpoint now parse a message body that is already a
+`javax.xml.transform.Source` still to be parsed, for example a `StreamSource` or the body after a
+`convertBodyTo(Source.class)`, with a reader that does not resolve references to external resources declared
+in the document. A `DOMSource`, a `StAXSource`, or a `Source` that already carries its own reader is left
+unchanged, and a declaration internal to the document is still applied. The other body types (`String`,
+`byte[]`, `InputStream`) are unaffected, as they already reach the transformer through Camel's StAX/SAX
+conversion.
+
+On the `xslt-saxon` endpoint, `secureProcessing` now controls both: setting `secureProcessing=false` (for example so
+a Saxon PE/EE stylesheet can call Java extension functions) also restores the previous, unrestricted parsing of a
+`Source` body. The option is marked as a security knob (`security=insecure:dev`, `insecureValue=false`), so
+`camel.main.profile=prod` reports it when it is turned off. `XsltSaxonAggregationStrategy` has no switch for the
+`Source` parsing: `setTransformerFactory(...)` replaces the factory, but the strategy's `XsltSaxonBuilder` keeps
+`secureProcessing=true`, so the body is still parsed with the restricted reader.
+
+=== camel-openstack - the remaining Swift header constants follow the Camel naming convention
+
+The four remaining Exchange header constants of `SwiftConstants` have been renamed to follow the Camel naming
+convention used by the rest of the component, completing the rename done in 4.21. The Java field names are
+unchanged; only the header string values have changed.
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `SwiftConstants.CONTAINER_METADATA_PREFIX` | `X-Container-Meta-` | `CamelOpenstackSwiftContainerMetadata`
+| `SwiftConstants.VERSIONS_LOCATION` | `X-Versions-Location` | `CamelOpenstackSwiftVersionsLocation`
+| `SwiftConstants.CONTAINER_READ` | `X-Container-Read` | `CamelOpenstackSwiftContainerRead`
+| `SwiftConstants.CONTAINER_WRITE` | `X-Container-Write` | `CamelOpenstackSwiftContainerWrite`
+|===
+
+The previous values were kept in 4.21 on the understanding that they were part of the Swift HTTP contract. They are
+not: the container producer passes the values to the openstack4j `CreateUpdateContainerOptions`, which builds the
+`X-Container-Meta-`, `X-Versions-Location`, `X-Container-Read` and `X-Container-Write` names of the Swift request
+itself. The request Camel sends to Swift is therefore unchanged by this rename.
+
+Routes that reference the constants symbolically (for example `setHeader(SwiftConstants.CONTAINER_READ, ...)`)
+continue to work without changes. Routes that set one of these headers by its literal string value (for example
+`setHeader("X-Container-Read", ...)` in an XML or YAML route) must be updated to the new value
+(`setHeader("CamelOpenstackSwiftContainerRead", ...)`); the previous names are no longer read.
+
+The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are renamed accordingly
+(`xContainerMeta()` -> `openstackSwiftContainerMetadata()`, `xVersionsLocation()` ->
+`openstackSwiftVersionsLocation()`, `xContainerRead()` -> `openstackSwiftContainerRead()`, `xContainerWrite()` ->
+`openstackSwiftContainerWrite()`).
+
+=== camel-telemetry, camel-tracing - the http.url, url.path and server.address span attributes are presented like camel.uri
+
+This applies to `camel-opentelemetry2`, `camel-micrometer-observability`, `camel-telemetry-dev`, `camel-opentelemetry`
+and `camel-observation`. The `http.url`, `url.path` and `server.address` attributes of a span are now presented the same
+way as the `camel.uri` attribute, which shows the endpoint URI as `Endpoint.toString()` does:
+
+* `http.url`, when the message has neither a `CamelHttpUrl` nor a `CamelHttpUri` header, is now the HTTP address the
+  endpoint sends to, with the query parameters it sends but without the Camel endpoint options. Before, it was the
+  endpoint URI from the last `http:` onwards, with all the endpoint options. A `camel-http` endpoint with an `https`
+  address now sets the attribute as well, and for a `camel-vertx-http` endpoint with an `https` address the value no
+  longer starts with `http://https://`.
+* `url.path` no longer includes the user info in front of the host of the endpoint URI.
+* `server.address`, and `http.url` taken from the `CamelHttpUrl` or `CamelHttpUri` header, are presented as `camel.uri`
+  is.
+
+Dashboards or queries that use the old values may need a change.
+
+=== camel-netty-http - endpoints that differ only in their options are distinct endpoints
+
+Two `netty-http` endpoints whose URIs differ only in their endpoint options, for example
+`netty-http:http://localhost:8080/foo` and `netty-http:http://localhost:8080/foo?throwExceptionOnFailure=false`, are no
+longer equal. Each of them now gets its own producer when a `ProducerTemplate`, `toD` or another EIP with a dynamic URI
+sends to them. Before, these endpoints used the producer of the endpoint that was used first, with the options of that
+endpoint.
+
+The endpoint URI does not change: it is still the HTTP address, such as `http://localhost:8080/foo`, so JMX names,
+auto-mock names, tracing and metrics are the same as before.
+
+Two routes that consume from the same address with different endpoint options are no longer rejected at startup as
+"Multiple consumers for the same endpoint is not allowed". Use one consumer per address.
+
+=== camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
+
+The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the
+attributes of the `CamelMetricsAttributes` header as given. Before, their keys and values were evaluated as Simple
+expressions, in the same way as the `tags` and `attributes` URI options. The URI options are still evaluated per
+exchange, and a tag or attribute from the header still overrides one from the URI with the same key.
+
+A route that relied on a Simple expression in a header tag or attribute should use the `tags` / `attributes` URI
+option instead (for example `tags.customer=${header.customerId}`), or compute the value in the route before
+setting the header.
+
+=== camel-jsch - the scp producer refuses a file name with a line feed or a NUL character
+
+The `scp` producer now refuses a file name with a line feed or a NUL character, in the file name or in one of its
+directories, with a `GenericFileOperationFailedException`. It does so before it starts scp on the remote host, so
+nothing is written there. Any other character, such as a carriage return or a tab, is sent as before.
+
+scp sends each name on a protocol line that ends with a line feed. Before, a line feed in the file name ended that
+line early: the remote scp wrote a file named after the part of the name before the line feed, with the rest of the
+name at the start of its content, and the exchange did not fail. A line feed in a directory failed the exchange, but
+left a directory named after the part before it. A NUL character failed the exchange on the remote host, or, with an
+OpenSSH server before 10.6, cut the name short there. Remove or replace these characters in the `CamelFileName` header
+or in the `fileName` option before the message reaches the producer.
+
+=== camel-azure-storage-blob - copyBlob validates the source account and container name
+
+`copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`
+and `CamelAzureStorageBlobSourceBlobContainerName`) with an `IllegalArgumentException`.
 
 == Upgrading from 4.22.1 to 4.22.2
 

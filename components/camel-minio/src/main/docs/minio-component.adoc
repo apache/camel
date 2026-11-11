@@ -650,8 +650,8 @@ Otherwise, the file will always be overwritten on the same original bucket.
 === MoveAfterRead consumer option
 
 In addition to `deleteAfterRead`, it has been added another option, `moveAfterRead`.
-With this option enabled, the consumed object will be moved to a target `destinationBucket` instead of being only deleted.
-This will require specifying the destinationBucket option. As example:
+With this option enabled, the consumed object will be moved to a target `destinationBucketName` instead of being only deleted.
+This will require specifying the destinationBucketName option. As example:
 
 [tabs]
 ====

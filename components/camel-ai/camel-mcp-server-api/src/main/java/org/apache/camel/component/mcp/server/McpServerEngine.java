@@ -35,8 +35,9 @@ import org.apache.camel.Service;
  * <p>
  * Resources follow the same lifecycle through {@link #resourceAdded(McpServerResource)} and
  * {@link #resourceRemoved(String)}, driven by {@code ai-resource} routes. Both default to no-ops so an engine that
- * serves tools only keeps working unchanged; such an engine reports {@link #supportsResources()} as false and the
- * bridge then warns when resources are configured but cannot be served.
+ * serves tools only keeps working unchanged; such an engine reports {@link #supportsResources()} as false. Prompts
+ * follow the same opt-in lifecycle through {@link #promptAdded(McpServerPrompt)} and {@link #promptRemoved(String)},
+ * driven by {@code ai-prompt} routes.
  *
  * @since 4.22
  */
@@ -49,27 +50,37 @@ public interface McpServerEngine extends Service, CamelContextAware {
     void initialize(McpServerInfo info);
 
     /**
-     * Publishes a tool. Called for the initial set and whenever a matching {@code ai-tool} route starts or resumes.
+     * Publishes a tool. Called for the initial set and whenever a matching {@code ai-tool} route starts or resumes. The
+     * bridge tracks the tool as published only when this method returns normally: an engine that throws must leave
+     * nothing registered, as {@link #toolRemoved(String)} is never called for the tool.
+     *
+     * @throws McpServerRefusedException to refuse the tool, e.g. when the runtime already serves a tool with this name
      */
     void toolAdded(McpServerTool tool);
 
     /**
-     * Removes a tool by name. Called whenever a matching {@code ai-tool} route stops or suspends.
+     * Removes a tool by name. Called whenever a matching {@code ai-tool} route stops or suspends, only for a tool
+     * {@link #toolAdded(McpServerTool)} accepted.
      */
     void toolRemoved(String toolName);
 
     /**
      * Publishes a resource. Called for the initial set and whenever a matching {@code ai-resource} route starts or
-     * resumes. Defaults to a no-op for engines that serve tools only.
+     * resumes. The bridge tracks the resource as published only when this method returns normally: an engine that
+     * throws must leave nothing registered, as {@link #resourceRemoved(String)} is never called for the resource.
+     * Defaults to a no-op for engines that serve tools only.
      *
-     * @since 4.23
+     * @throws McpServerRefusedException to refuse the resource, e.g. when the runtime already serves a resource with
+     *                                   this uri
+     * @since                            4.23
      */
     default void resourceAdded(McpServerResource resource) {
     }
 
     /**
-     * Removes a resource by uri. Called whenever a matching {@code ai-resource} route stops or suspends. Defaults to a
-     * no-op for engines that serve tools only.
+     * Removes a resource by uri. Called whenever a matching {@code ai-resource} route stops or suspends, only for a
+     * resource {@link #resourceAdded(McpServerResource)} accepted. Defaults to a no-op for engines that serve tools
+     * only.
      *
      * @since 4.23
      */
@@ -84,6 +95,35 @@ public interface McpServerEngine extends Service, CamelContextAware {
      * @since 4.23
      */
     default boolean supportsResources() {
+        return false;
+    }
+
+    /**
+     * Publishes a prompt. Called for the initial set and whenever a matching {@code ai-prompt} route starts or resumes.
+     * The bridge tracks the prompt as published only when this method returns normally: an engine that throws must
+     * leave nothing registered, as {@link #promptRemoved(String)} is not called for the prompt.
+     *
+     * @throws McpServerRefusedException to refuse the prompt, e.g. when the runtime already serves a prompt with this
+     *                                   name.
+     * @since                            4.24
+     */
+    default void promptAdded(McpServerPrompt prompt) {
+    }
+
+    /**
+     * Removes a prompt by name.
+     *
+     * @since 4.24
+     */
+    default void promptRemoved(String promptName) {
+    }
+
+    /**
+     * Whether this engine serves MCP prompts. Engines returning false ignore prompt callbacks.
+     *
+     * @since 4.24
+     */
+    default boolean supportsPrompts() {
         return false;
     }
 

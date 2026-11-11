@@ -31,32 +31,49 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.HashicorpVaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.vault.authentication.TokenAuthentication;
-import org.springframework.vault.client.VaultEndpoint;
 import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.support.VaultResponse;
 
 /**
  * A {@link PropertiesFunction} that lookup the property value from Hashicorp Vault instance.
  * <p/>
- * The credentials to access Hashicorp Vault is defined using five environment variables representing the static
- * credentials and service location:
+ * The location of Hashicorp Vault, and how to log in to it, is defined using environment variables:
  * <ul>
- * <li><tt>CAMEL_HASHICORP_VAULT_TOKEN_ENV</tt></li>
- * <li><tt>CAMEL_HASHICORP_VAULT_HOST_ENV</tt></li>
- * <li><tt>CAMEL_HASHICORP_VAULT_PORT_ENV</tt></li>
- * <li><tt>CAMEL_HASHICORP_VAULT_SCHEME_ENV</tt></li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_HOST</tt></li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_PORT</tt></li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_SCHEME</tt></li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_AUTHENTICATION</tt>: token (the default), approle, kubernetes, jwt or cert</li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_TOKEN</tt>, for the token login</li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_ROLE_ID</tt> and <tt>CAMEL_HASHICORP_VAULT_SECRET_ID</tt>, for the approle login</li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_ROLE</tt>, <tt>CAMEL_HASHICORP_VAULT_JWT</tt> and
+ * <tt>CAMEL_HASHICORP_VAULT_JWT_FILE</tt>, for the kubernetes and jwt logins</li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_AUTH_MOUNT_PATH</tt>, when the login method is not at its default path</li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_TRUST_STORE</tt> and <tt>CAMEL_HASHICORP_VAULT_TRUST_STORE_PASSWORD</tt>, the
+ * certificates to trust for TLS</li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_KEY_STORE</tt> and <tt>CAMEL_HASHICORP_VAULT_KEY_STORE_PASSWORD</tt>, the TLS client
+ * certificate, for the cert login</li>
  * </ul>
  * <p/>
  *
- * Otherwise it is possible to specify the credentials and service location as properties:
+ * Otherwise it is possible to specify them as properties:
  *
  * <ul>
- * <li><tt>camel.vault.hashicorp.token</tt></li>
  * <li><tt>camel.vault.hashicorp.host</tt></li>
  * <li><tt>camel.vault.hashicorp.port</tt></li>
  * <li><tt>camel.vault.hashicorp.scheme</tt></li>
+ * <li><tt>camel.vault.hashicorp.authentication</tt></li>
+ * <li><tt>camel.vault.hashicorp.token</tt></li>
+ * <li><tt>camel.vault.hashicorp.roleId</tt> and <tt>camel.vault.hashicorp.secretId</tt></li>
+ * <li><tt>camel.vault.hashicorp.role</tt>, <tt>camel.vault.hashicorp.jwt</tt> and
+ * <tt>camel.vault.hashicorp.jwtFile</tt></li>
+ * <li><tt>camel.vault.hashicorp.authMountPath</tt></li>
+ * <li><tt>camel.vault.hashicorp.trustStore</tt> and <tt>camel.vault.hashicorp.trustStorePassword</tt></li>
+ * <li><tt>camel.vault.hashicorp.keyStore</tt> and <tt>camel.vault.hashicorp.keyStorePassword</tt></li>
  * </ul>
+ * <p/>
+ *
+ * The function renews its token before it expires, and logs in again when the token can no longer be renewed. A
+ * {@link VaultTemplate} given to the function is used as it is.
  * <p/>
  *
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
@@ -78,19 +95,11 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
 
     private static final Logger LOG = LoggerFactory.getLogger(HashicorpVaultPropertiesFunction.class);
 
-    private static final String CAMEL_HASHICORP_VAULT_TOKEN_ENV = "CAMEL_HASHICORP_VAULT_TOKEN";
-    private static final String CAMEL_HASHICORP_VAULT_HOST_ENV = "CAMEL_HASHICORP_VAULT_HOST";
-    private static final String CAMEL_HASHICORP_VAULT_PORT_ENV
-            = "CAMEL_HASHICORP_VAULT_PORT";
-    private static final String CAMEL_HASHICORP_VAULT_SCHEME_ENV
-            = "CAMEL_HASHICORP_VAULT_SCHEME";
-    private static final String CAMEL_HASHICORP_VAULT_CLOUD_ENV
-            = "CAMEL_HASHICORP_VAULT_CLOUD";
-    private static final String CAMEL_HASHICORP_VAULT_NAMESPACE_ENV
-            = "CAMEL_HASHICORP_VAULT_NAMESPACE";
     private static final String DEFAULT_ENGINE = "secret";
     private CamelContext camelContext;
-    private VaultTemplate client;
+    private volatile VaultTemplate client;
+    // the client the function created, which it closes on stop (a client given to the function is not closed)
+    private HashicorpVaultClient vaultClient;
     private final Set<String> secrets = ConcurrentHashMap.newKeySet();
     private final Map<String, Integer> secretVersions = new ConcurrentHashMap<>();
 
@@ -106,45 +115,41 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         this.client = client;
     }
 
+    HashicorpVaultPropertiesFunction(VaultTemplate client, boolean cloud, String namespace) {
+        this(client);
+        this.cloud = cloud;
+        this.namespace = namespace;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        String token = System.getenv(CAMEL_HASHICORP_VAULT_TOKEN_ENV);
-        String host = System.getenv(CAMEL_HASHICORP_VAULT_HOST_ENV);
-        String port = System.getenv(CAMEL_HASHICORP_VAULT_PORT_ENV);
-        String scheme = System.getenv(CAMEL_HASHICORP_VAULT_SCHEME_ENV);
-        if (System.getenv(CAMEL_HASHICORP_VAULT_CLOUD_ENV) != null) {
-            cloud = Boolean.parseBoolean(System.getenv(CAMEL_HASHICORP_VAULT_CLOUD_ENV));
-        }
-        namespace = System.getenv(CAMEL_HASHICORP_VAULT_NAMESPACE_ENV);
-        if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(host)
-                && ObjectHelper.isEmpty(port) && ObjectHelper.isEmpty(scheme) && ObjectHelper.isEmpty(namespace)) {
-            HashicorpVaultConfiguration hashicorpVaultConfiguration = getCamelContext().getVaultConfiguration().hashicorp();
-            if (ObjectHelper.isNotEmpty(hashicorpVaultConfiguration)) {
-                token = hashicorpVaultConfiguration.getToken();
-                host = hashicorpVaultConfiguration.getHost();
-                port = hashicorpVaultConfiguration.getPort();
-                scheme = hashicorpVaultConfiguration.getScheme();
-                cloud = hashicorpVaultConfiguration.isCloud();
-                if (hashicorpVaultConfiguration.isCloud()) {
-                    namespace = hashicorpVaultConfiguration.getNamespace();
-                }
+        HashicorpVaultConfiguration hashicorpVaultConfiguration
+                = getCamelContext().getVaultConfiguration().getHashicorpVaultConfiguration();
+        HashicorpVaultClientSettings settings
+                = HashicorpVaultClientSettings.fromEnvironmentOrConfiguration(hashicorpVaultConfiguration);
+        cloud = settings.isCloud();
+        namespace = settings.getNamespace();
+        if (client == null) {
+            // log in as configured, unless the function was given the client to use
+            try {
+                vaultClient = HashicorpVaultClient.create(getCamelContext(), this, settings);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeCamelException("Cannot use the Hashicorp Properties Function: " + e.getMessage(), e);
             }
+            client = vaultClient.getVaultTemplate();
         }
-        if (ObjectHelper.isNotEmpty(token) && ObjectHelper.isNotEmpty(host)
-                && ObjectHelper.isNotEmpty(port) && ObjectHelper.isNotEmpty(scheme)) {
-            VaultEndpoint vaultEndpoint = new VaultEndpoint();
-            vaultEndpoint.setHost(host);
-            vaultEndpoint.setPort(Integer.parseInt(port));
-            vaultEndpoint.setScheme(scheme);
+    }
 
-            client = new VaultTemplate(
-                    vaultEndpoint,
-                    new TokenAuthentication(token));
-        } else {
-            throw new RuntimeCamelException(
-                    "Using the Hashicorp Properties Function requires setting Token, Host, port and scheme properties");
+    @Override
+    protected void doStop() throws Exception {
+        if (vaultClient != null) {
+            // stop renewing the token, and revoke the token of the login
+            vaultClient.close();
+            vaultClient = null;
+            client = null;
         }
+        super.doStop();
     }
 
     @Override
@@ -238,13 +243,10 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
 
         String returnValue = null;
         try {
-            String completePath = "";
-            if (!cloud) {
-                completePath = engine + "/" + "data" + "/" + key;
-            } else {
-                if (ObjectHelper.isNotEmpty(namespace)) {
-                    completePath = namespace + "/" + engine + "/" + "data" + "/" + key;
-                }
+            String completePath = engine + "/" + "data" + "/" + key;
+            if (cloud && ObjectHelper.isNotEmpty(namespace)) {
+                // without a namespace the engine itself, as the secret refresh task does
+                completePath = namespace + "/" + completePath;
             }
             if (ObjectHelper.isNotEmpty(version)) {
                 completePath = completePath + "?version=" + version;

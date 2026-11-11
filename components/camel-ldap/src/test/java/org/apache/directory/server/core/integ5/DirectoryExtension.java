@@ -20,20 +20,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-import org.apache.directory.api.ldap.model.entry.DefaultModification;
-import org.apache.directory.api.ldap.model.entry.Entry;
-import org.apache.directory.api.ldap.model.entry.Modification;
-import org.apache.directory.api.ldap.model.entry.ModificationOperation;
-import org.apache.directory.api.ldap.model.exception.LdapException;
-import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.api.util.FileUtils;
-import org.apache.directory.server.constants.ServerDNConstants;
 import org.apache.directory.server.core.api.DirectoryService;
 import org.apache.directory.server.core.api.changelog.ChangeLog;
 import org.apache.directory.server.core.factory.DefaultDirectoryServiceFactory;
 import org.apache.directory.server.core.factory.DirectoryServiceFactory;
 import org.apache.directory.server.core.factory.PartitionFactory;
-import org.apache.directory.server.core.security.TlsKeyGenerator;
 import org.apache.directory.server.ldap.LdapServer;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -96,7 +88,6 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
             }
             // Apply the class LDIFs
             DSAnnotationProcessor.applyLdifs(description, classDirectoryService);
-            updateTlsKey(classDirectoryService);
 
             // check if it has a LdapServerBuilder, then use the DS created above
             classLdapServer = ServerAnnotationProcessor.createLdapServer(description, classDirectoryService);
@@ -117,7 +108,6 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
             if (methodDirectoryService != null) {
                 // Apply all the LDIFs
                 DSAnnotationProcessor.applyLdifs(classDescription, methodDirectoryService);
-                updateTlsKey(methodDirectoryService);
                 directoryService = methodDirectoryService;
             } else if (classDirectoryService != null) {
                 directoryService = classDirectoryService;
@@ -201,25 +191,6 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
                 LOG.debug("Revert revision {}", revision);
                 dirService.revert(revision);
             }
-        }
-
-        private void updateTlsKey(DirectoryService ds) throws LdapException {
-            // Update TLS key for tests. Newer Java 8 releases consider RSA keys
-            // with less than 1024 bits as insecure and such are disabled by default, see
-            // http://www.oracle.com/technetwork/java/javase/8-compatibility-guide-2156366.html
-            Entry adminEntry = ds.getAdminSession().lookup(new Dn(ServerDNConstants.ADMIN_SYSTEM_DN));
-            TlsKeyGenerator.addKeyPair(adminEntry, TlsKeyGenerator.CERTIFICATE_PRINCIPAL_DN,
-                    TlsKeyGenerator.CERTIFICATE_PRINCIPAL_DN, "RSA", 1024);
-            Modification mod1 = new DefaultModification(
-                    ModificationOperation.REPLACE_ATTRIBUTE,
-                    adminEntry.get(TlsKeyGenerator.PRIVATE_KEY_AT));
-            Modification mod2 = new DefaultModification(
-                    ModificationOperation.REPLACE_ATTRIBUTE,
-                    adminEntry.get(TlsKeyGenerator.PUBLIC_KEY_AT));
-            Modification mod3 = new DefaultModification(
-                    ModificationOperation.REPLACE_ATTRIBUTE,
-                    adminEntry.get(TlsKeyGenerator.USER_CERTIFICATE_AT));
-            ds.getAdminSession().modify(adminEntry.getDn(), mod1, mod2, mod3);
         }
     }
 

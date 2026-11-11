@@ -17,10 +17,12 @@
 package org.apache.camel.component.es.converter;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.file.Path;
 import java.util.Map;
 
 import co.elastic.clients.elasticsearch._types.WaitForActiveShards;
@@ -30,6 +32,7 @@ import co.elastic.clients.elasticsearch.core.DeleteRequest;
 import co.elastic.clients.elasticsearch.core.GetRequest;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.MgetRequest;
+import co.elastic.clients.elasticsearch.core.MsearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.UpdateRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
@@ -43,6 +46,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.es.ElasticsearchConstants;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -92,6 +96,11 @@ public final class ElasticsearchActionRequestConverter {
             }
             return indexReqBuilder;
         }
+        if (document instanceof IndexRequest<?> indexRequest) {
+            // a built request is sent as it is, as a builder body is: the producer gets a builder body without
+            // converting it, so the header rules of the builder above do not apply to it either
+            return indexRequest.rebuild();
+        }
         IndexRequest.Builder<Object> builder = new IndexRequest.Builder<>();
         if (document instanceof byte[] byteArray) {
             builder.withJson(new ByteArrayInputStream(byteArray));
@@ -104,6 +113,10 @@ public final class ElasticsearchActionRequestConverter {
         } else if (document instanceof Map) {
             ObjectMapper objectMapper = new ObjectMapper();
             builder.withJson(new StringReader(objectMapper.writeValueAsString(document)));
+        } else if (isFile(document)) {
+            try (InputStream inputStream = readFile(document, exchange)) {
+                builder.withJson(inputStream);
+            }
         } else {
             builder.document(document);
         }
@@ -127,6 +140,10 @@ public final class ElasticsearchActionRequestConverter {
             }
             return updateReqBuilder;
         }
+        if (document instanceof UpdateRequest<?, ?> updateRequest) {
+            // a built request is sent as it is, as a builder body is
+            return updateRequest.rebuild();
+        }
         UpdateRequest.Builder<?, Object> builder = new UpdateRequest.Builder<>();
         Boolean enableDocumentOnlyMode
                 = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.FALSE, Boolean.class);
@@ -142,6 +159,10 @@ public final class ElasticsearchActionRequestConverter {
         } else if (document instanceof Map) {
             ObjectMapper objectMapper = new ObjectMapper();
             mode.addDocToUpdateRequestBuilder(builder, new StringReader(objectMapper.writeValueAsString(document)));
+        } else if (isFile(document)) {
+            try (InputStream inputStream = readFile(document, exchange)) {
+                mode.addDocToUpdateRequestBuilder(builder, inputStream);
+            }
         } else {
             builder.doc(document);
         }
@@ -161,6 +182,10 @@ public final class ElasticsearchActionRequestConverter {
         if (document instanceof GetRequest.Builder getReqBuilder) {
             return getReqBuilder;
         }
+        if (document instanceof GetRequest getRequest) {
+            // a built request is sent as it is, as a builder body is
+            return getRequest.rebuild();
+        }
         if (document instanceof String string) {
             return new GetRequest.Builder()
                     .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
@@ -173,6 +198,10 @@ public final class ElasticsearchActionRequestConverter {
     public static DeleteRequest.Builder toDeleteRequestBuilder(Object document, Exchange exchange) {
         if (document instanceof DeleteRequest.Builder deleteReqBuilder) {
             return deleteReqBuilder;
+        }
+        if (document instanceof DeleteRequest deleteRequest) {
+            // a built request is sent as it is, as a builder body is
+            return deleteRequest.rebuild();
         }
         if (document instanceof String string) {
             return new DeleteRequest.Builder()
@@ -187,9 +216,22 @@ public final class ElasticsearchActionRequestConverter {
         if (document instanceof DeleteIndexRequest.Builder deleteIdxReqBuilder) {
             return deleteIdxReqBuilder;
         }
-        if (document instanceof String) {
-            return new DeleteIndexRequest.Builder()
-                    .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
+        if (document instanceof DeleteIndexRequest deleteIndexRequest) {
+            // a built request is sent as it is, as a builder body is
+            return deleteIndexRequest.rebuild();
+        }
+        if (document instanceof String string) {
+            // the index of the header or of the indexName option, else the one named by the body
+            String indexName = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
+            if (ObjectHelper.isEmpty(indexName)) {
+                indexName = string;
+            }
+            DeleteIndexRequest.Builder builder = new DeleteIndexRequest.Builder();
+            if (ObjectHelper.isNotEmpty(indexName)) {
+                builder.index(indexName);
+            }
+            // with no name at all, the request fails when it is built, as the index is required
+            return builder;
         }
         return null;
     }
@@ -198,6 +240,10 @@ public final class ElasticsearchActionRequestConverter {
     public static MgetRequest.Builder toMgetRequestBuilder(Object documents, Exchange exchange) {
         if (documents instanceof MgetRequest.Builder mgetReqBuilder) {
             return mgetReqBuilder;
+        }
+        if (documents instanceof MgetRequest mgetRequest) {
+            // a built request is sent as it is, as a builder body is
+            return mgetRequest.rebuild();
         }
         if (documents instanceof Iterable<?> documentIterable) {
             MgetRequest.Builder builder = new MgetRequest.Builder();
@@ -222,10 +268,17 @@ public final class ElasticsearchActionRequestConverter {
         String indexName = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
 
         if (queryObject instanceof SearchRequest.Builder searchReqBuilder) {
-            if (searchReqBuilder.build().index().isEmpty()) {
-                searchReqBuilder.index(indexName);
+            // a builder can be built only once, so return a fresh one
+            SearchRequest built = searchReqBuilder.build();
+            SearchRequest.Builder builder = built.rebuild();
+            if (built.index().isEmpty()) {
+                builder.index(indexName);
             }
-            return searchReqBuilder;
+            return builder;
+        }
+        if (queryObject instanceof SearchRequest searchRequest) {
+            // a built request is sent as it is, as a builder body is
+            return searchRequest.rebuild();
         }
         SearchRequest.Builder builder = new SearchRequest.Builder();
 
@@ -239,23 +292,18 @@ public final class ElasticsearchActionRequestConverter {
         }
 
         String queryText;
+        boolean queryAlone;
 
         if (queryObject instanceof Map<?, ?> mapQuery) {
-            // Remove 'query' prefix from the query object for backward
-            // compatibility
-            if (mapQuery.containsKey(ES_QUERY_DSL_PREFIX)) {
-                mapQuery = (Map<?, ?>) mapQuery.get(ES_QUERY_DSL_PREFIX);
-            }
             ObjectMapper objectMapper = new ObjectMapper();
             queryText = objectMapper.writeValueAsString(mapQuery);
+            queryAlone = mapQuery.size() == 1 && !mapQuery.containsKey(ES_QUERY_DSL_PREFIX);
         } else if (queryObject instanceof String queryString) {
             queryText = queryString;
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonTextObject = mapper.readValue(queryText, JsonNode.class);
-            JsonNode parentJsonNode = jsonTextObject.get(ES_QUERY_DSL_PREFIX);
-            if (parentJsonNode != null) {
-                queryText = parentJsonNode.toString();
-            }
+            queryAlone = jsonTextObject != null && jsonTextObject.isObject() && jsonTextObject.size() == 1
+                    && !jsonTextObject.has(ES_QUERY_DSL_PREFIX);
         } else {
             // Cannot convert the queryObject into SearchRequest
             LOG.warn(
@@ -263,21 +311,44 @@ public final class ElasticsearchActionRequestConverter {
                     queryObject == null ? "null" : queryObject.getClass().getName());
             return null;
         }
+        if (queryAlone) {
+            // a query alone, such as {"match": {...}}: an object with a single member, other than query
+            builder.query(new Query.Builder().withJson(new StringReader(queryText)).build());
+        } else {
+            // the body of a search request: its query, size, from, sort, aggregations, _source and the rest
+            builder.withJson(new StringReader(queryText));
+        }
+        // the size and from of the headers or of the options, when set, override those of the body
         if (size != null) {
             builder.size(size);
         }
         if (from != null) {
             builder.from(from);
         }
-        builder.query(new Query.Builder().withJson(new StringReader(queryText)).build());
 
         return builder;
+    }
+
+    @Converter
+    public static MsearchRequest.Builder toMsearchRequestBuilder(Object queryObject, Exchange exchange) {
+        if (queryObject instanceof MsearchRequest.Builder msearchReqBuilder) {
+            return msearchReqBuilder;
+        }
+        if (queryObject instanceof MsearchRequest msearchRequest) {
+            // a built request is sent as it is, as a builder body is
+            return msearchRequest.rebuild();
+        }
+        return null;
     }
 
     @Converter
     public static BulkRequest.Builder toBulkRequestBuilder(Object documents, Exchange exchange) throws IOException {
         if (documents instanceof BulkRequest.Builder bulkReqBuilder) {
             return bulkReqBuilder;
+        }
+        if (documents instanceof BulkRequest bulkRequest) {
+            // a built request is sent as it is, as a builder body is
+            return bulkRequest.rebuild();
         }
         if (documents instanceof Iterable<?> documentIterable) {
             BulkRequest.Builder builder = new BulkRequest.Builder();
@@ -300,6 +371,26 @@ public final class ElasticsearchActionRequestConverter {
             return builder;
         }
         return null;
+    }
+
+    /**
+     * Whether the document is a file, a java.io.File, a Path or the file of the file component, whose content is the
+     * JSON of the document.
+     */
+    private static boolean isFile(Object document) {
+        return document instanceof File || document instanceof Path || document instanceof WrappedFile;
+    }
+
+    /**
+     * Opens the content of the file, to read as JSON.
+     */
+    private static InputStream readFile(Object file, Exchange exchange) {
+        InputStream inputStream = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, file);
+        if (inputStream == null) {
+            throw new IllegalArgumentException(
+                    "Cannot read the file of type " + file.getClass().getName() + " as the JSON of the document");
+        }
+        return inputStream;
     }
 
     enum Mode {

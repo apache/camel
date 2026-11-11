@@ -23,6 +23,7 @@ import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 @DisabledOnOs(OS.AIX)
+@Isolated
 public class SpringManagedSedaEndpointTest extends SpringTestSupport {
 
     @Override

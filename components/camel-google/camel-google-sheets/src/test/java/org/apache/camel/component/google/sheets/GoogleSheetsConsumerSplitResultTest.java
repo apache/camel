@@ -17,14 +17,21 @@
 package org.apache.camel.component.google.sheets;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.Json;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.ValueRange;
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,6 +53,36 @@ class GoogleSheetsConsumerSplitResultTest {
         try (CamelContext context = createContext()) {
             GoogleSheetsConsumer consumer = createConsumer(context, URI + "&splitResult=false");
             assertFalse(consumer.isSplitResult());
+        }
+    }
+
+    @Test
+    void shouldSendTheResultAsOneMessageAlthoughSplitResultIsOn() throws Exception {
+        // no method returns a list: the ValueRange of data/get is one message with all the rows
+        MockLowLevelHttpResponse response = new MockLowLevelHttpResponse().setContentType(Json.MEDIA_TYPE)
+                .setContent("{\"range\":\"Sheet1!A1:A3\",\"values\":[[\"a\"],[\"b\"],[\"c\"]]}");
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.getComponent("google-sheets", GoogleSheetsComponent.class)
+                    .setClientFactory(new MockGoogleSheetsClientFactory(response));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("google-sheets://data/get?spreadsheetId=abc&range=Sheet1!A1:A3&repeatCount=1"
+                         + "&clientId=id&clientSecret=secret&refreshToken=token")
+                            .to("mock:result");
+                }
+            });
+            MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
+            mock.expectedMessageCount(1);
+            // a split result would send the other rows right after the first one
+            mock.setAssertPeriod(500);
+
+            context.start();
+
+            mock.assertIsSatisfied();
+
+            ValueRange body = mock.getReceivedExchanges().get(0).getIn().getBody(ValueRange.class);
+            assertEquals(List.of(List.of("a"), List.of("b"), List.of("c")), body.getValues());
         }
     }
 

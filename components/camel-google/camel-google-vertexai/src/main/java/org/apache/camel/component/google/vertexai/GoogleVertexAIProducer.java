@@ -16,41 +16,52 @@
  */
 package org.apache.camel.component.google.vertexai;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.HttpBody;
 import com.google.api.gax.rpc.ServerStream;
 import com.google.cloud.aiplatform.v1.PredictionServiceClient;
 import com.google.cloud.aiplatform.v1.StreamRawPredictRequest;
 import com.google.genai.Client;
 import com.google.genai.ResponseStream;
+import com.google.genai.types.Candidate;
 import com.google.genai.types.Content;
 import com.google.genai.types.ContentEmbedding;
 import com.google.genai.types.EmbedContentConfig;
 import com.google.genai.types.EmbedContentResponse;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
+import com.google.genai.types.GenerateContentResponsePromptFeedback;
 import com.google.genai.types.GenerateImagesConfig;
 import com.google.genai.types.GenerateImagesResponse;
 import com.google.genai.types.Image;
 import com.google.genai.types.Part;
+import com.google.genai.types.SafetySetting;
 import com.google.protobuf.ByteString;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.BodyTypeRegistry;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class GoogleVertexAIProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleVertexAIProducer.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private static final String CHUNKS_OUTPUT_MODE = "chunks";
     private static final String JSON_MIME_TYPE = "application/json";
 
@@ -289,42 +300,7 @@ public class GoogleVertexAIProducer extends DefaultProducer {
 
         LOG.debug("Generating multimodal content with model: {}", modelId);
 
-        List<Part> parts = new ArrayList<>();
-
-        // Add text prompt as a part
-        String prompt = exchange.getIn().getHeader(GoogleVertexAIConstants.PROMPT, String.class);
-        if (prompt != null) {
-            parts.add(Part.fromText(prompt));
-        }
-
-        // Add inline media data from header if provided
-        byte[] mediaData = exchange.getIn().getHeader(GoogleVertexAIConstants.MEDIA_DATA, byte[].class);
-        String mediaMimeType = exchange.getIn().getHeader(GoogleVertexAIConstants.MEDIA_MIME_TYPE, String.class);
-        if (mediaData != null && mediaMimeType != null) {
-            parts.add(Part.fromBytes(mediaData, mediaMimeType));
-        }
-
-        // Add GCS URI media from header if provided
-        String gcsUri = exchange.getIn().getHeader(GoogleVertexAIConstants.MEDIA_GCS_URI, String.class);
-        if (gcsUri != null) {
-            String mimeType = mediaMimeType != null ? mediaMimeType : "application/octet-stream";
-            parts.add(Part.fromUri(gcsUri, mimeType));
-        }
-
-        // Fall back to body content when no media headers are set
-        if (mediaData == null && gcsUri == null) {
-            Object body = exchange.getIn().getBody();
-            if (body instanceof byte[] bodyBytes && mediaMimeType != null) {
-                parts.add(Part.fromBytes(bodyBytes, mediaMimeType));
-            } else if (body instanceof String bodyStr && prompt == null) {
-                parts.add(Part.fromText(bodyStr));
-            }
-        }
-
-        if (parts.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Multimodal generation requires at least one input part (text prompt, media data, or GCS URI)");
-        }
+        List<Part> parts = buildMultimodalParts(exchange);
 
         Content content = Content.fromParts(parts.toArray(new Part[0]));
         GenerateContentResponse response = client.models.generateContent(modelId, content, config);
@@ -335,6 +311,94 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         message.setBody(responseText);
 
         setMetadataHeaders(exchange, response);
+    }
+
+    /**
+     * The parts of a multimodal request: the text prompt, and the media of the headers or, when they have none, of the
+     * body.
+     */
+    private static List<Part> buildMultimodalParts(Exchange exchange) throws InvalidPayloadException {
+        Message in = exchange.getIn();
+        List<Part> parts = new ArrayList<>();
+
+        // Add text prompt as a part
+        String prompt = in.getHeader(GoogleVertexAIConstants.PROMPT, String.class);
+        if (prompt != null) {
+            parts.add(Part.fromText(prompt));
+        }
+
+        // Add inline media data from header if provided
+        byte[] mediaData = in.getHeader(GoogleVertexAIConstants.MEDIA_DATA, byte[].class);
+        String mediaMimeType = in.getHeader(GoogleVertexAIConstants.MEDIA_MIME_TYPE, String.class);
+        if (mediaData != null) {
+            if (mediaMimeType == null) {
+                throw new IllegalArgumentException(
+                        "The media of the " + GoogleVertexAIConstants.MEDIA_DATA + " header needs its MIME type in the "
+                                                   + GoogleVertexAIConstants.MEDIA_MIME_TYPE + " header");
+            }
+            parts.add(Part.fromBytes(mediaData, mediaMimeType));
+        }
+
+        // Add GCS URI media from header if provided
+        String gcsUri = in.getHeader(GoogleVertexAIConstants.MEDIA_GCS_URI, String.class);
+        if (gcsUri != null) {
+            String mimeType = mediaMimeType != null ? mediaMimeType : "application/octet-stream";
+            parts.add(Part.fromUri(gcsUri, mimeType));
+        }
+
+        // Fall back to body content when no media headers are set
+        if (mediaData == null && gcsUri == null) {
+            Object body = in.getBody();
+            if (body instanceof String bodyStr && prompt == null) {
+                // a text body is the prompt
+                parts.add(Part.fromText(bodyStr));
+            } else if (body != null && !isEmptyMedia(body)) {
+                // any other body, unless empty, is the media: bytes, a stream or a file, read with the type converter
+                String mimeType = mediaMimeType != null ? mediaMimeType : mimeTypeOfFile(in, body);
+                if (mimeType == null) {
+                    String textHint = body instanceof String
+                            ? " (a text body is the prompt only when the " + GoogleVertexAIConstants.PROMPT
+                              + " header is not set)"
+                            : "";
+                    throw new IllegalArgumentException(
+                            "generateMultimodal sends the body (" + body.getClass().getName() + ") as media, which needs"
+                                                       + " its MIME type: set the " + GoogleVertexAIConstants.MEDIA_MIME_TYPE
+                                                       + " header, such as image/png" + textHint);
+                }
+                parts.add(Part.fromBytes(in.getMandatoryBody(byte[].class), mimeType));
+            }
+        }
+
+        if (parts.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Multimodal generation requires at least one input part (text prompt, media data, or GCS URI)");
+        }
+        return parts;
+    }
+
+    /**
+     * An empty or blank text, or an empty byte array, such as a body an earlier step left: it is no media, so the
+     * request has the prompt only.
+     */
+    private static boolean isEmptyMedia(Object body) {
+        return body instanceof String text && text.isBlank() || body instanceof byte[] bytes && bytes.length == 0;
+    }
+
+    /**
+     * The MIME type of a file body from the extension of its name, or null when the body is not a file or the extension
+     * is not known.
+     */
+    private static String mimeTypeOfFile(Message in, Object body) {
+        String fileName = null;
+        if (body instanceof File file) {
+            fileName = file.getName();
+        } else if (body instanceof Path path && path.getFileName() != null) {
+            fileName = path.getFileName().toString();
+        } else if (body instanceof WrappedFile<?>) {
+            // the file consumers (file, ftp, sftp...) give the name of the file in this header
+            fileName = in.getHeader(Exchange.FILE_NAME, String.class);
+        }
+        return fileName != null ? MimeTypeHelper.probeMimeType(fileName) : null;
     }
 
     /**
@@ -491,47 +555,61 @@ public class GoogleVertexAIProducer extends DefaultProducer {
     private String buildRawPredictRequestBody(Exchange exchange, GoogleVertexAIConfiguration config) throws Exception {
         Object body = exchange.getIn().getBody();
         String publisher = config.getPublisher();
-
-        // If body is already a JSON string, use it as-is (but add anthropic_version if needed)
-        if (body instanceof String bodyStr) {
-            if (bodyStr.trim().startsWith("{")) {
-                // It's JSON - add anthropic_version if Anthropic publisher and not already present
-                if ("anthropic".equals(publisher) && !bodyStr.contains("anthropic_version")) {
-                    Map<String, Object> jsonMap = OBJECT_MAPPER.readValue(bodyStr, Map.class);
-                    jsonMap.put("anthropic_version", config.getAnthropicVersion());
-                    return OBJECT_MAPPER.writeValueAsString(jsonMap);
-                }
-                return bodyStr;
-            } else {
-                // It's a plain text prompt - wrap it appropriately
-                return buildPromptRequest(bodyStr, config, publisher);
-            }
-        }
+        String anthropicVersion = getAnthropicVersion(exchange, config);
 
         // If body is a Map, convert to JSON (adding anthropic_version if needed)
         if (body instanceof Map) {
             Map<String, Object> bodyMap = new HashMap<>((Map<String, Object>) body);
             if ("anthropic".equals(publisher) && !bodyMap.containsKey("anthropic_version")) {
-                bodyMap.put("anthropic_version", config.getAnthropicVersion());
+                bodyMap.put("anthropic_version", anthropicVersion);
             }
             return OBJECT_MAPPER.writeValueAsString(bodyMap);
         }
 
-        throw new IllegalArgumentException(
-                "Request body must be a JSON String, Map, or plain text prompt. Got: "
-                                           + (body == null ? "no body" : body.getClass().getName()));
+        // Text, bytes, a stream or a file is read as text with the type converter. Another object, such as a POJO or
+        // a List, is not converted: its toString() is not a request
+        if (BodyFacts.kindOf(body) != BodyTypeRegistry.Kind.PAYLOAD) {
+            throw new IllegalArgumentException(
+                    "Request body must be a JSON request or a plain text prompt, as a String, bytes, a stream or a file,"
+                                               + " or a Map. Got: "
+                                               + (body == null ? "no body" : body.getClass().getName()));
+        }
+        String bodyStr = exchange.getIn().getMandatoryBody(String.class);
+
+        // If body is already a JSON string, use it as-is (but add anthropic_version if needed)
+        if (bodyStr.trim().startsWith("{")) {
+            // It's JSON - add anthropic_version if Anthropic publisher and not already present
+            if ("anthropic".equals(publisher) && !bodyStr.contains("anthropic_version")) {
+                Map<String, Object> jsonMap = OBJECT_MAPPER.readValue(bodyStr, Map.class);
+                jsonMap.put("anthropic_version", anthropicVersion);
+                return OBJECT_MAPPER.writeValueAsString(jsonMap);
+            }
+            return bodyStr;
+        } else {
+            // It's a plain text prompt - wrap it appropriately
+            return buildPromptRequest(bodyStr, config, publisher, anthropicVersion);
+        }
+    }
+
+    /**
+     * The Anthropic API version of the header, or else of the anthropicVersion option.
+     */
+    private static String getAnthropicVersion(Exchange exchange, GoogleVertexAIConfiguration config) {
+        String anthropicVersion = exchange.getIn().getHeader(GoogleVertexAIConstants.ANTHROPIC_VERSION, String.class);
+        return anthropicVersion != null ? anthropicVersion : config.getAnthropicVersion();
     }
 
     /**
      * Builds a request body from a plain text prompt based on the publisher format.
      */
-    private String buildPromptRequest(String prompt, GoogleVertexAIConfiguration config, String publisher)
+    private String buildPromptRequest(
+            String prompt, GoogleVertexAIConfiguration config, String publisher, String anthropicVersion)
             throws Exception {
         Map<String, Object> request = new HashMap<>();
 
         if ("anthropic".equals(publisher)) {
             // Anthropic Claude format
-            request.put("anthropic_version", config.getAnthropicVersion());
+            request.put("anthropic_version", anthropicVersion);
             request.put("max_tokens", config.getMaxOutputTokens());
             request.put("messages", new Object[] {
                     Map.of("role", "user", "content", prompt)
@@ -694,7 +772,44 @@ public class GoogleVertexAIProducer extends DefaultProducer {
             configBuilder.responseMimeType(JSON_MIME_TYPE);
         }
 
+        String systemInstruction = exchange.getIn().getHeader(GoogleVertexAIConstants.SYSTEM_INSTRUCTION, String.class);
+        if (systemInstruction != null) {
+            configBuilder.systemInstruction(Content.fromParts(Part.fromText(systemInstruction)));
+        }
+
+        List<SafetySetting> safetySettings = getSafetySettings(exchange);
+        if (safetySettings != null) {
+            configBuilder.safetySettings(safetySettings);
+        }
+
         return configBuilder.build();
+    }
+
+    /**
+     * The safety settings of the header: a List of the SafetySetting of the Google GenAI SDK, which the generate
+     * operations use.
+     */
+    private static List<SafetySetting> getSafetySettings(Exchange exchange) {
+        Object value = exchange.getIn().getHeader(GoogleVertexAIConstants.SAFETY_SETTINGS);
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof List<?> list) {
+            List<SafetySetting> answer = new ArrayList<>(list.size());
+            for (Object item : list) {
+                if (!(item instanceof SafetySetting safetySetting)) {
+                    throw new IllegalArgumentException(
+                            "The " + GoogleVertexAIConstants.SAFETY_SETTINGS + " header must be a List of "
+                                                       + SafetySetting.class.getName() + ", but it has a "
+                                                       + (item == null ? "null" : item.getClass().getName()));
+                }
+                answer.add(safetySetting);
+            }
+            return answer;
+        }
+        throw new IllegalArgumentException(
+                "The " + GoogleVertexAIConstants.SAFETY_SETTINGS + " header must be a List of "
+                                           + SafetySetting.class.getName() + ", but it is a " + value.getClass().getName());
     }
 
     private void setMetadataHeaders(Exchange exchange, GenerateContentResponse response) {
@@ -710,13 +825,27 @@ public class GoogleVertexAIProducer extends DefaultProducer {
                     count -> message.setHeader(GoogleVertexAIConstants.TOTAL_TOKEN_COUNT, count));
         });
 
-        // Set finish reason if available from first candidate
+        // Set finish reason and safety ratings if available from first candidate
         response.candidates().ifPresent(candidates -> {
             if (!candidates.isEmpty()) {
-                candidates.get(0).finishReason().ifPresent(
+                Candidate candidate = candidates.get(0);
+                candidate.finishReason().ifPresent(
                         reason -> message.setHeader(GoogleVertexAIConstants.FINISH_REASON, reason.toString()));
+                candidate.safetyRatings().ifPresent(
+                        ratings -> message.setHeader(GoogleVertexAIConstants.SAFETY_RATINGS, ratings));
             }
         });
+
+        // A blocked prompt gives no candidate and no text, so the body is null: the prompt feedback says why. (A
+        // candidate stopped by a safety filter does not get here: the text of the response fails for it.)
+        GenerateContentResponsePromptFeedback blockedPrompt = response.promptFeedback()
+                .filter(feedback -> feedback.blockReason().isPresent())
+                .orElse(null);
+        message.setHeader(GoogleVertexAIConstants.CONTENT_BLOCKED, blockedPrompt != null);
+        if (blockedPrompt != null) {
+            blockedPrompt.safetyRatings().ifPresent(
+                    ratings -> message.setHeader(GoogleVertexAIConstants.SAFETY_RATINGS, ratings));
+        }
     }
 
     private Message getMessageForResponse(final Exchange exchange) {

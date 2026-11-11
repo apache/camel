@@ -386,7 +386,7 @@ public interface SedaEndpointBuilderFactory {
         /**
          * If enabled, spawns a new virtual thread for each message instead of
          * using a fixed pool of consumer threads. This model is optimized for
-         * virtual threads (JDK 21) and I/O-bound workloads where creating
+         * virtual threads (JDK 21+) and I/O-bound workloads where creating
          * threads is cheap. The concurrentConsumers option becomes a limit on
          * max concurrent tasks (0 = unlimited). Requires virtual threads to be
          * enabled via camel.threads.virtual.enabled=true.
@@ -406,7 +406,7 @@ public interface SedaEndpointBuilderFactory {
         /**
          * If enabled, spawns a new virtual thread for each message instead of
          * using a fixed pool of consumer threads. This model is optimized for
-         * virtual threads (JDK 21) and I/O-bound workloads where creating
+         * virtual threads (JDK 21+) and I/O-bound workloads where creating
          * threads is cheap. The concurrentConsumers option becomes a limit on
          * max concurrent tasks (0 = unlimited). Requires virtual threads to be
          * enabled via camel.threads.virtual.enabled=true.
@@ -812,8 +812,8 @@ public interface SedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Offer timeout can be added to the block case when queue is full. You
-         * can disable timeout by using 0 or a negative value.
+         * Offer timeout used when blockWhenFull is enabled and the queue is
+         * full. The default 0 blocks without a timeout.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -827,8 +827,8 @@ public interface SedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Offer timeout can be added to the block case when queue is full. You
-         * can disable timeout by using 0 or a negative value.
+         * Offer timeout used when blockWhenFull is enabled and the queue is
+         * full. The default 0 blocks without a timeout.
          * 
          * The option will be converted to a <code>long</code> type.
          * 

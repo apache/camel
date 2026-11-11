@@ -75,8 +75,10 @@ public class DataStreamFlinkProducer extends DefaultProducer {
 
     protected void collectResults(Exchange exchange, Object result) {
         if (result instanceof DataStream) {
-            if (getEndpoint().isCollect()) {
-                throw new IllegalArgumentException("collect mode not supported for Flink DataStreams.");
+            // collect defaults to true for the DataSet API; a DataStream is only rejected when collect was asked for
+            if (getEndpoint().isCollect() && getEndpoint().isCollectExplicit()) {
+                throw new IllegalArgumentException(
+                        "collect mode not supported for Flink DataStreams. Set collect=false to return the DataStream.");
             } else {
                 exchange.getIn().setBody(result);
                 exchange.getIn().setHeader(FlinkConstants.FLINK_DATASTREAM_HEADER, result);

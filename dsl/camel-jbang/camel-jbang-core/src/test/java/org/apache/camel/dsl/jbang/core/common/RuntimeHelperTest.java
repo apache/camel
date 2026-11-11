@@ -115,6 +115,30 @@ class RuntimeHelperTest {
     }
 
     @Test
+    void aSendWithReplyAsksForTheAnswerOfTheRoute() throws Exception {
+        // showcase/tui-hello-world: direct:greet answers Hello and the name
+        var result = executor.submit(() -> RuntimeHelper.sendMessage(123, "direct:greet", "Claus", null, true));
+        Path action = requestFile();
+        JsonObject request = (JsonObject) Jsoner.deserialize(Files.readString(action));
+        assertEquals("send", request.get("action"));
+        assertEquals("InOut", request.get("exchangePattern"));
+        Files.writeString(outputFile(action), "{\"status\":\"success\",\"message\":{\"body\":{\"value\":\"Hello Claus!\"}}}");
+        JsonObject message = (JsonObject) result.get(5, TimeUnit.SECONDS).get("message");
+        assertEquals("Hello Claus!", ((JsonObject) message.get("body")).get("value"));
+    }
+
+    @Test
+    void aSendWithoutReplyDoesNotWaitForAnAnswer() throws Exception {
+        var result = executor.submit(() -> RuntimeHelper.sendMessage(123, "kafka:orders", "x", null));
+        Path action = requestFile();
+        JsonObject request = (JsonObject) Jsoner.deserialize(Files.readString(action));
+        // over a broker InOut is request-reply, waiting for a reply that may not come
+        assertNull(request.get("exchangePattern"));
+        Files.writeString(outputFile(action), "{\"status\":\"success\"}");
+        assertEquals("success", result.get(5, TimeUnit.SECONDS).getString("status"));
+    }
+
+    @Test
     void jsonApiPropagatesPublicationFailureWhileTextApiKeepsItsDiagnostic() {
         CommandLineHelper.useHomeDir(home.resolve("missing").toString());
         assertThrows(IOException.class, () -> RuntimeHelper.executeAction(123, new JsonObject(), 100));
@@ -141,5 +165,22 @@ class RuntimeHelperTest {
         try (var files = Files.list(CommandLineHelper.getCamelDir())) {
             assertEquals(0, files.count());
         }
+    }
+
+    @Test
+    void sendTimeoutCountsTheMessages() throws IOException {
+        // one message: the time of an action
+        assertEquals(10_000, RuntimeHelper.sendTimeout("hello", 0, 0));
+        assertEquals(10_000, RuntimeHelper.sendTimeout("hello", 1, 500));
+        // a repeat: the pauses between the messages, and a second for each
+        assertEquals(10_000 + 50 * 1200, RuntimeHelper.sendTimeout("hello", 50, 200));
+        // the files of a folder that is here, leaving out the headers of a message
+        Path feed = Files.createDirectories(home.resolve("feed"));
+        Files.writeString(feed.resolve("001.json"), "{}");
+        Files.writeString(feed.resolve("001.properties"), "country=ES");
+        Files.writeString(feed.resolve("002.json"), "{}");
+        assertEquals(10_000 + 2 * 1000, RuntimeHelper.sendTimeout("file:" + feed, 0, 0));
+        // a folder of the integration that is not here: 100 messages assumed
+        assertEquals(10_000 + 100 * 1000, RuntimeHelper.sendTimeout("file:" + feed.resolve("elsewhere"), 0, 0));
     }
 }

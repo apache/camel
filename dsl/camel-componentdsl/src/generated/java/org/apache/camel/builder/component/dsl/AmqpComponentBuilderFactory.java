@@ -66,6 +66,29 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether the producers send over one shared connection to the broker,
+         * when the component creates the connection factory: from brokerUrl,
+         * from the host, port, username, password and useSsl options, or with
+         * the amqpComponent factory methods. Turn it off to open and close a
+         * connection for every message sent. The consumers keep their own
+         * connections. A connectionFactory that you set yourself, on the
+         * component or on the endpoint, is used as it is.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param cacheConnection the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder cacheConnection(boolean cacheConnection) {
+            doSetProperty("cacheConnection", cacheConnection);
+            return this;
+        }
+    
         /**
          * Sets the JMS client ID to use. Note that this value, if specified,
          * must be unique and can only be used by a single JMS connection
@@ -1147,7 +1170,7 @@ public interface AmqpComponentBuilderFactory {
          * message systems, such as WMQ, do this with header names using prefix
          * JMS_IBM_MQMD_ containing values with byte array or other invalid
          * types. You can specify multiple header names separated by comma, and
-         * use as suffix for wildcard matching.
+         * use * as suffix for wildcard matching.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2266,9 +2289,9 @@ public interface AmqpComponentBuilderFactory {
          * provider's ObjectInputStream; to block such attacks, also configure
          * the JMS provider's own deserialization filter and/or the JVM-wide
          * -Djdk.serialFilter. When this option is not set and no JVM-wide
-         * filter is configured, a conservative default filter denying java.net.
-         * and otherwise allowing java., javax. and org.apache.camel. is
-         * applied.
+         * filter is configured, a conservative default filter denying
+         * java.net.** and otherwise allowing java.**, javax.** and
+         * org.apache.camel.** is applied.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2482,6 +2505,7 @@ public interface AmqpComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "brokerUrl": ((AMQPComponent) component).setBrokerUrl((java.lang.String) value); return true;
+            case "cacheConnection": ((AMQPComponent) component).setCacheConnection((boolean) value); return true;
             case "clientId": getOrCreateConfiguration((AMQPComponent) component).setClientId((java.lang.String) value); return true;
             case "connectionFactory": getOrCreateConfiguration((AMQPComponent) component).setConnectionFactory((jakarta.jms.ConnectionFactory) value); return true;
             case "disableReplyTo": getOrCreateConfiguration((AMQPComponent) component).setDisableReplyTo((boolean) value); return true;

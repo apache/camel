@@ -69,7 +69,7 @@ public class DaprStateHandler implements DaprOperationHandler {
     }
 
     private DaprOperationResponse saveState(Exchange exchange, DaprClient client) {
-        Object payload = exchange.getIn().getBody();
+        Object payload = DaprOperationHandler.getPayload(exchange);
         String stateStore = configurationOptionsProxy.getStateStore(exchange);
         String key = configurationOptionsProxy.getKey(exchange);
         String eTag = configurationOptionsProxy.getETag(exchange);

@@ -52,6 +52,14 @@ public final class LangChain4jAgentConverterLoader implements TypeConverterLoade
                 }
                 return answer;
             });
+        addTypeConverter(registry, org.apache.camel.component.langchain4j.agent.api.AiAgentBody.class, java.io.File.class, false,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.langchain4j.agent.LangChain4jAgentConverter.fileToAiAgentBody((java.io.File) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.camel.component.langchain4j.agent.api.AiAgentBody.class, java.io.InputStream.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.langchain4j.agent.LangChain4jAgentConverter.inputStreamToAiAgentBody((java.io.InputStream) value, exchange);
@@ -63,6 +71,14 @@ public final class LangChain4jAgentConverterLoader implements TypeConverterLoade
         addTypeConverter(registry, org.apache.camel.component.langchain4j.agent.api.AiAgentBody.class, java.lang.String.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.langchain4j.agent.LangChain4jAgentConverter.textToAiAgentBody((java.lang.String) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
+        addTypeConverter(registry, org.apache.camel.component.langchain4j.agent.api.AiAgentBody.class, java.nio.file.Path.class, false,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.langchain4j.agent.LangChain4jAgentConverter.pathToAiAgentBody((java.nio.file.Path) value, exchange);
                 if (false && answer == null) {
                     answer = Void.class;
                 }

@@ -24,24 +24,36 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRecipientListWithUrlParamsTest extends CamelSpringTestSupport {
+    private static AvailablePortFinder.Port port1;
+    private static AvailablePortFinder.Port port2;
 
-    @RegisterExtension
-    static AvailablePortFinder.Port port1 = AvailablePortFinder.find();
-    @RegisterExtension
-    static AvailablePortFinder.Port port2 = AvailablePortFinder.find();
-    static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
-        System.setProperty("CxfRecipientListWithUrlParams.port1", Integer.toString(port1.getPort()));
-        System.setProperty("CxfRecipientListWithUrlParams.port2", Integer.toString(port2.getPort()));
+    @BeforeAll
+    static void allocatePorts() {
+        port1 = AvailablePortFinder.find();
+        System.setProperty("CxfRecipientListWithUrlParams.port1", port1.toString());
+        port2 = AvailablePortFinder.find();
+        System.setProperty("CxfRecipientListWithUrlParams.port2", port2.toString());
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        System.clearProperty("CxfRecipientListWithUrlParams.port1");
+        if (port1 != null) {
+            port1.release();
+        }
+        System.clearProperty("CxfRecipientListWithUrlParams.port2");
+        if (port2 != null) {
+            port2.release();
+        }
     }
 
     @EndpointInject("mock:reply")

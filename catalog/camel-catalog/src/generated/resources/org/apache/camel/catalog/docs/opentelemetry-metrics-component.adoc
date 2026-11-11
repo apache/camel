@@ -90,6 +90,11 @@ from("direct:in")
 
 will update a counter with name `new.name` (instead of `name.not.used`) using the attribute `dynamic-key` with value `dynamic-value` in addition to the attribute `key` with value `value`.
 
+The attributes from the `CamelMetricsAttributes` header are used as given: unlike the `attributes` URI parameters,
+their keys and values are not evaluated as `Simple` expressions. An attribute from the header overrides an attribute
+from the URI with the same key. To add an attribute with a value from the message, use an `attributes` URI parameter
+such as `attributes.customer=${header.customerId}`, or compute the value in the route before setting the header.
+
 All Metrics specific headers are removed from the message once the OpenTelemetry endpoint finishes processing the exchange. While processing the exchange
 the OpenTelemetry endpoint will catch all exceptions and write log entry using level `warn`.
 
@@ -111,6 +116,8 @@ opentelemetry-metrics:counter:name[?options]
 
 If neither `increment` or `decrement` is defined then value of the counter will be incremented by one.
 If `increment` and `decrement` are both defined only the increment operation is called.
+If `increment` or `decrement` is defined, but neither of them gives a number (for example `+increment=${body}+` with
+a `Map`, a POJO or a `null` body), the exchange fails with an `IllegalArgumentException`, and the counter is not updated.
 
 [tabs]
 ====

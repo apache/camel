@@ -171,6 +171,11 @@ public class KafkaFetchRecords implements Runnable {
                     recordProcessorFacade = createRecordProcessor();
                     // a new Kafka consumer is not paused: pause it again if the consumer is suspended
                     state.compareAndSet(State.PAUSED, State.PAUSE_REQUESTED);
+                    if (state.get() == State.PAUSE_REQUESTED) {
+                        // partitions assigned without a rebalance (assign() in a custom SubscribeAdapter) are not
+                        // paused by the rebalance listener: pause them before the first poll
+                        consumer.pause(consumer.assignment());
+                    }
                 }
 
                 if (isConnected()) {
@@ -376,8 +381,9 @@ public class KafkaFetchRecords implements Runnable {
                     }
                     updateTaskState();
 
-                    // when breakOnFirstError we want to unsubscribe from Kafka
-                    if (result != null && result.isBreakOnErrorHit() && !this.state.get().equals(State.PAUSED)) {
+                    // when breakOnFirstError we want to unsubscribe from Kafka, also when the consumer was just paused
+                    // (the new Kafka consumer is paused again)
+                    if (result != null && result.isBreakOnErrorHit()) {
                         LOG.debug("We hit an error ... setting flags to force reconnect");
                         // force re-connect
                         setReconnect(true);

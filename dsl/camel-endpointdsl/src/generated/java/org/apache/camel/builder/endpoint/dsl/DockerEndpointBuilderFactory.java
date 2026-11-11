@@ -58,7 +58,11 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Docker host.
+         * Docker host. In socket mode (socket=true), the path of the unix
+         * socket of the Docker daemon, where the default localhost means
+         * /var/run/docker.sock. A host with a tcp:// or unix:// scheme (such as
+         * tcp://myhost:2376 or unix:///var/run/docker.sock) is used as is, and
+         * then the port and socket options are not used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -548,11 +552,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -563,11 +570,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -604,7 +614,11 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Docker host.
+         * Docker host. In socket mode (socket=true), the path of the unix
+         * socket of the Docker daemon, where the default localhost means
+         * /var/run/docker.sock. A host with a tcp:// or unix:// scheme (such as
+         * tcp://myhost:2376 or unix:///var/run/docker.sock) is used as is, and
+         * then the port and socket options are not used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -677,6 +691,52 @@ public interface DockerEndpointBuilderFactory {
          */
         default DockerEndpointProducerBuilder requestTimeout(String requestTimeout) {
             doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * Whether to allow overriding the connection and credential settings of
+         * the endpoint with the CamelDockerHost, CamelDockerPort,
+         * CamelDockerSocketEnabled, CamelDockerSecure, CamelDockerTlsVerify,
+         * CamelDockerCertPath, CamelDockerCmdExecFactory, CamelDockerUsername,
+         * CamelDockerPassword and CamelDockerServerAddress headers. Disabled by
+         * default; enable it only when the header source is trusted, since it
+         * lets a message choose the Docker daemon that the client connects to
+         * and how, and the registry that receives the username and password of
+         * the endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowConnectionAndCredentialsFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default DockerEndpointProducerBuilder allowConnectionAndCredentialsFromHeaders(boolean allowConnectionAndCredentialsFromHeaders) {
+            doSetProperty("allowConnectionAndCredentialsFromHeaders", allowConnectionAndCredentialsFromHeaders);
+            return this;
+        }
+        /**
+         * Whether to allow overriding the connection and credential settings of
+         * the endpoint with the CamelDockerHost, CamelDockerPort,
+         * CamelDockerSocketEnabled, CamelDockerSecure, CamelDockerTlsVerify,
+         * CamelDockerCertPath, CamelDockerCmdExecFactory, CamelDockerUsername,
+         * CamelDockerPassword and CamelDockerServerAddress headers. Disabled by
+         * default; enable it only when the header source is trusted, since it
+         * lets a message choose the Docker daemon that the client connects to
+         * and how, and the registry that receives the username and password of
+         * the endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowConnectionAndCredentialsFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default DockerEndpointProducerBuilder allowConnectionAndCredentialsFromHeaders(String allowConnectionAndCredentialsFromHeaders) {
+            doSetProperty("allowConnectionAndCredentialsFromHeaders", allowConnectionAndCredentialsFromHeaders);
             return this;
         }
         /**
@@ -1022,11 +1082,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -1037,11 +1100,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -1079,7 +1145,11 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Docker host.
+         * Docker host. In socket mode (socket=true), the path of the unix
+         * socket of the Docker daemon, where the default localhost means
+         * /var/run/docker.sock. A host with a tcp:// or unix:// scheme (such as
+         * tcp://myhost:2376 or unix:///var/run/docker.sock) is used as is, and
+         * then the port and socket options are not used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1454,11 +1524,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -1469,11 +1542,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -1582,7 +1658,9 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerRequestTimeout";
         }
         /**
-         * The location containing the SSL certificate chain.
+         * The location containing the SSL certificate chain. This header is
+         * ignored unless the endpoint enables
+         * allowConnectionAndCredentialsFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1594,7 +1672,8 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerCertPath";
         }
         /**
-         * The docker host.
+         * The docker host. This header is ignored unless the endpoint enables
+         * allowConnectionAndCredentialsFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1606,7 +1685,8 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerHost";
         }
         /**
-         * The docker port.
+         * The docker port. This header is ignored unless the endpoint enables
+         * allowConnectionAndCredentialsFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code Integer} type.
          * 
@@ -1642,7 +1722,9 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerMaxTotalConnections";
         }
         /**
-         * Use HTTPS communication.
+         * Use HTTPS communication. This header is ignored unless the endpoint
+         * enables allowConnectionAndCredentialsFromHeaders=true (disabled by
+         * default).
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -1655,7 +1737,8 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerSecure";
         }
         /**
-         * Check TLS.
+         * Check TLS. This header is ignored unless the endpoint enables
+         * allowConnectionAndCredentialsFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -1668,11 +1751,15 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerTlsVerify";
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode: connect to the unix socket of the Docker
+         * daemon, whose path is given by the host (the default localhost means
+         * /var/run/docker.sock). This header is ignored unless the endpoint
+         * enables allowConnectionAndCredentialsFromHeaders=true (disabled by
+         * default).
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @return the name of the header {@code DockerSocketEnabled}.
@@ -1682,7 +1769,9 @@ public interface DockerEndpointBuilderFactory {
         }
         /**
          * The fully qualified class name of the DockerCmdExecFactory
-         * implementation to use.
+         * implementation to use. This header is ignored unless the endpoint
+         * enables allowConnectionAndCredentialsFromHeaders=true (disabled by
+         * default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1754,7 +1843,9 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerEmail";
         }
         /**
-         * The password to authenticate with.
+         * The password to authenticate with. This header is ignored unless the
+         * endpoint enables allowConnectionAndCredentialsFromHeaders=true
+         * (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1766,7 +1857,9 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerPassword";
         }
         /**
-         * The server address for docker registry.
+         * The server address for docker registry. This header is ignored unless
+         * the endpoint enables allowConnectionAndCredentialsFromHeaders=true
+         * (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1778,7 +1871,9 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerServerAddress";
         }
         /**
-         * The user name to authenticate with.
+         * The user name to authenticate with. This header is ignored unless the
+         * endpoint enables allowConnectionAndCredentialsFromHeaders=true
+         * (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1874,7 +1969,8 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerNoPrune";
         }
         /**
-         * The initial range.
+         * The time in milliseconds before the start of the events consumer from
+         * which it also receives the past events.
          * 
          * The option is a: {@code Long} type.
          * 

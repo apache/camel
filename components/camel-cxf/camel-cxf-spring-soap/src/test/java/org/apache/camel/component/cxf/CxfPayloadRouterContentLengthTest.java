@@ -23,7 +23,6 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HttpString;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -35,8 +34,9 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -47,6 +47,28 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
+    private static AvailablePortFinder.Port UNDERTOW_PORT;
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocatePorts() {
+        UNDERTOW_PORT = AvailablePortFinder.find();
+        System.setProperty("CxfPayloadRouterContentLengthTest.undertowPort", UNDERTOW_PORT.toString());
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfPayloadRouterContentLengthTest.port1", PORT1.toString());
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        System.clearProperty("CxfPayloadRouterContentLengthTest.undertowPort");
+        System.clearProperty("CxfPayloadRouterContentLengthTest.port1");
+        if (UNDERTOW_PORT != null) {
+            UNDERTOW_PORT.release();
+        }
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfPayloadRouterContentLengthTest.class);
 
@@ -69,15 +91,7 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
                                                   + "<ns0:payload xmlns:ns0=\"http://schema.apache.org/test\"><ns0:request>foo</ns0:request></ns0:payload>"
                                                   + "</s:Body></s:Envelope>";
 
-    // The Camel-Test with CXF will re-use undertow instances, so the ports1 to 6 are already blocked
-    @RegisterExtension
-    static AvailablePortFinder.Port UNDERTOW_PORT = AvailablePortFinder.find();
-
     private Undertow server;
-
-    static {
-        System.setProperty("CXFTestSupport.undertowPort", Integer.toString(UNDERTOW_PORT.getPort()));
-    }
 
     @Override
     public void setupResources() {
@@ -106,7 +120,7 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
 
         server.start();
         // Load the CXF endpoints for the route
-        LOG.info("Start Routing Scenario at port {}", CXFTestSupport.getPort1());
+        LOG.info("Start Routing Scenario at port {}", PORT1.getPort());
     }
 
     @Override
@@ -137,7 +151,7 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
         long contentLength = 0;
         boolean isChunked = false;
         String receivedContent = null;
-        HttpPost httppost = new HttpPost("http://localhost:" + CXFTestSupport.getPort1() + "/TEST/PROXY");
+        HttpPost httppost = new HttpPost("http://localhost:" + PORT1.getPort() + "/TEST/PROXY");
         StringEntity reqEntity = new StringEntity(REQUEST_MESSAGE, ContentType.TEXT_XML, false);
         httppost.setEntity(reqEntity);
         try (httpclient; CloseableHttpResponse response = httpclient.execute(httppost)) {

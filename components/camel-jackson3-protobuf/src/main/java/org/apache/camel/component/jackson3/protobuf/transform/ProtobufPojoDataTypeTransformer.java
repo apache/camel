@@ -39,8 +39,8 @@ import tools.jackson.databind.JsonNode;
 @DataTypeTransformer(name = "protobuf-x-java-object",
                      description = "Transforms from JSon to Java object using Jackson Protobuf (supports content schema)")
 @BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
-                                     description = "Json text, or Protobuf binary with the Protobuf schema in the"
-                                                   + " X-Content-Schema exchange property, read into the class of the"
+                                     description = "Json text or a JsonNode, or Protobuf binary with the Protobuf schema"
+                                                   + " in the X-Content-Schema exchange property, read into the class of the"
                                                    + " X-Content-Class exchange property, which a body other than a POJO"
                                                    + " needs: a POJO of that class, or any POJO without it, is kept, and a"
                                                    + " Map or a null body fail"),

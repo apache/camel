@@ -87,31 +87,17 @@ jobs:
       - name: Fetch base branch for Scalpel change detection
         if: ${{ !inputs.skip_full_build }}
         run: |
-          # Scalpel needs the merge base between HEAD and the base branch.
-          # The checkout is depth=1; progressively deepen: 50 → 200 → 1000 → full.
-          # Scalpel is observational — fetch failures must not break the build.
-          BASE_REF="${GITHUB_BASE_REF:-main}"
-          for depth in 50 200 1000; do
-            git fetch --no-tags --deepen=$depth origin ${BASE_REF} 2>/dev/null || true
-            git fetch --no-tags --depth=$depth origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null || true
-            if git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
-              echo "Merge base reachable at depth $depth"
-              break
-            fi
-            echo "Merge base not reachable at depth $depth, deepening..."
-          done
-          # If still not reachable, fetch full history as last resort
-          if ! git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
-            echo "Merge base still not reachable, fetching full history"
-            git fetch --no-tags --unshallow origin ${BASE_REF} 2>/dev/null || true
-            git fetch --no-tags origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null || true
-          fi
+          # Scalpel and the PR diff fallback (when the GitHub API refuses the
+          # diff) need the merge base between HEAD and the base branch.
+          # Fetch failures must not break the build: the diff fallback fetches again.
+          source .github/actions/incremental-build/pr_diff.sh
+          fetchBaseBranch "${GITHUB_BASE_REF:-main}"
       - id: install-packages
         uses: ./.github/actions/install-packages
       - id: install-mvnd
         uses: ./.github/actions/install-mvnd
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -267,27 +253,14 @@ jobs:
       - name: Fetch base branch for Scalpel change detection
         if: ${{ !inputs.skip_full_build }}
         run: |
-          BASE_REF="${GITHUB_BASE_REF:-main}"
-          for depth in 50 200 1000; do
-            git fetch --no-tags --deepen=$depth origin ${BASE_REF} 2>/dev/null || true
-            git fetch --no-tags --depth=$depth origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null || true
-            if git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
-              echo "Merge base reachable at depth $depth"
-              break
-            fi
-            echo "Merge base not reachable at depth $depth, deepening..."
-          done
-          if ! git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
-            echo "Merge base still not reachable, fetching full history"
-            git fetch --no-tags --unshallow origin ${BASE_REF} 2>/dev/null || true
-            git fetch --no-tags origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null || true
-          fi
+          source .github/actions/incremental-build/pr_diff.sh
+          fetchBaseBranch "${GITHUB_BASE_REF:-main}"
       - id: install-packages
         uses: ./.github/actions/install-packages
       - id: install-mvnd
         uses: ./.github/actions/install-mvnd
       - name: Set up JDK 25
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
         with:
           distribution: 'temurin'
           java-version: '25'

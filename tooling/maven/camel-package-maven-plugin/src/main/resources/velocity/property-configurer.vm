@@ -18,6 +18,7 @@
 package ${package};
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -42,18 +43,18 @@ public class ${className} extends ${psn} implements GeneratedPropertyConfigurer,
     #if ( $model )
         #if ( $component )
             #foreach ( $option in $model.componentOptions )
-                #set( $ucOptionName = $option.name.substring(0, 1).toUpperCase() + $option.name.substring(1) )
+                #set( $ucOptionName = $option.name.substring(0, 1).toUpperCase($rootLocale) + $option.name.substring(1) )
         map.put("${ucOptionName}", ${mojo.canonicalClassName($option.javaType)}.class);
             #end
         #else
             #foreach ( $option in $model.endpointOptions )
-                #set( $ucOptionName = $option.name.substring(0, 1).toUpperCase() + $option.name.substring(1) )
+                #set( $ucOptionName = $option.name.substring(0, 1).toUpperCase($rootLocale) + $option.name.substring(1) )
         map.put("${ucOptionName}", ${mojo.canonicalClassName($option.javaType)}.class);
             #end
         #end
     #else
         #foreach ( $option in $options )
-                #set( $ucOptionName = $option.name.substring(0, 1).toUpperCase() + $option.name.substring(1) )
+                #set( $ucOptionName = $option.name.substring(0, 1).toUpperCase($rootLocale) + $option.name.substring(1) )
         map.put("${ucOptionName}", ${mojo.canonicalClassName($option.javaType)}.class);
         #end
     #end
@@ -73,7 +74,7 @@ public class ${className} extends ${psn} implements GeneratedPropertyConfigurer,
 #elseif( !$options.empty || !$hasSuper )
     #if ( $component )
         #foreach ( $bo in $mojo.findConfigurations($options) )
-            #set ( $propName = $bo.configurationField.substring(0, 1).toUpperCase() + $bo.configurationField.substring(1) )
+            #set ( $propName = $bo.configurationField.substring(0, 1).toUpperCase($rootLocale) + $bo.configurationField.substring(1) )
 
     private ${bo.configurationClass} getOrCreate${propName}(${type} target) {
         if (target.get${propName}() == null) {
@@ -88,9 +89,9 @@ public class ${className} extends ${psn} implements GeneratedPropertyConfigurer,
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
     #if ( !$options.empty )
         ${type} target = (${type}) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         #foreach ( $option in $options )
-            #set ( $getOrSet = $option.name.substring(0, 1).toUpperCase() + $option.name.substring(1) )
+            #set ( $getOrSet = $option.name.substring(0, 1).toUpperCase($rootLocale) + $option.name.substring(1) )
             #set ( $setterMethod = $option.setterMethod )
             #set ( $configurationField = $option.configurationField )
             #set ( $optionKind = $option.type )
@@ -102,7 +103,7 @@ public class ${className} extends ${psn} implements GeneratedPropertyConfigurer,
                 #set ( $prefix = "set" )
             #end
             #if ( $configurationField )
-                #set ( $upConfigField = $configurationField.substring(0, 1).toUpperCase() + $configurationField.substring(1) )
+                #set ( $upConfigField = $configurationField.substring(0, 1).toUpperCase($rootLocale) + $configurationField.substring(1) )
                 #if ( $component )
                     #set ( $getOrSet = "getOrCreate${upConfigField}(target).${prefix}${getOrSet}" )
                 #else
@@ -119,8 +120,8 @@ public class ${className} extends ${psn} implements GeneratedPropertyConfigurer,
             #if ( $setterMethod )
                 #set ( $rv = $mojo.format($setterMethod, $rv) )
             #end
-            #if ( ! $option.name.toLowerCase().equals($option.name) )
-        case "${option.name.toLowerCase()}":
+            #if ( ! $option.name.toLowerCase($rootLocale).equals($option.name) )
+        case "${option.name.toLowerCase($rootLocale)}":
             #end
         case "${option.name}": ${getOrSet}(${rv}); return true;
         #end
@@ -176,9 +177,9 @@ public class ${className} extends ${psn} implements GeneratedPropertyConfigurer,
     #if ( $options.empty )
         return null;
     #else
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         #foreach ( $option in $options )
-            #set ( $lower = $option.name.toLowerCase() )
+            #set ( $lower = $option.name.toLowerCase($rootLocale) )
             #if ( $lower != $option.name )
         case "${lower}":
             #end
@@ -199,9 +200,9 @@ public class ${className} extends ${psn} implements GeneratedPropertyConfigurer,
         return null;
     #else
         ${type} target = (${type}) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         #foreach ( $option in $options )
-            #set ( $getOrSet = $option.name.substring(0, 1).toUpperCase() + $option.name.substring(1) )
+            #set ( $getOrSet = $option.name.substring(0, 1).toUpperCase($rootLocale) + $option.name.substring(1) )
             #set ( $ptype = $option.javaType )
             #set ( $getterMethod = $option.getterMethod )
             #set ( $configurationField = $option.configurationField )
@@ -216,7 +217,7 @@ public class ${className} extends ${psn} implements GeneratedPropertyConfigurer,
                 #set ( $getOrSet = $getterMethod )
             #end
             #if ( $configurationField )
-                #set ( $upConfigField = $configurationField.substring(0, 1).toUpperCase() + $configurationField.substring(1) )
+                #set ( $upConfigField = $configurationField.substring(0, 1).toUpperCase($rootLocale) + $configurationField.substring(1) )
                 #if ( $component )
                     #set ( $getOrSet = "getOrCreate${upConfigField}(target).${prefix}${getOrSet}()" )
                 #else
@@ -225,7 +226,7 @@ public class ${className} extends ${psn} implements GeneratedPropertyConfigurer,
             #else
                 #set ( $getOrSet = "target.${prefix}${getOrSet}()" )
             #end
-            #set ( $lower = $option.name.toLowerCase() )
+            #set ( $lower = $option.name.toLowerCase($rootLocale) )
             #if ( $lower != $option.name )
         case "${lower}":
             #end
@@ -249,9 +250,9 @@ public class ${className} extends ${psn} implements GeneratedPropertyConfigurer,
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         #foreach ( $option in $nested )
-            #set ( $lower = $option.name.toLowerCase() )
+            #set ( $lower = $option.name.toLowerCase($rootLocale) )
             #if ( $lower != $option.name )
         case "${lower}":
             #end

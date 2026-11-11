@@ -26,8 +26,30 @@ import org.jspecify.annotations.Nullable;
  */
 public class HashicorpVaultConfiguration extends VaultConfiguration {
 
-    @Metadata(required = true, security = "secret")
+    @Metadata(defaultValue = "token", enums = "token,approle,kubernetes,jwt,cert")
+    private @Nullable String authentication = "token";
+    @Metadata(security = "secret")
     private @Nullable String token;
+    @Metadata(security = "secret")
+    private @Nullable String roleId;
+    @Metadata(security = "secret")
+    private @Nullable String secretId;
+    @Metadata
+    private @Nullable String role;
+    @Metadata(security = "secret")
+    private @Nullable String jwt;
+    @Metadata
+    private @Nullable String jwtFile;
+    @Metadata
+    private @Nullable String authMountPath;
+    @Metadata
+    private @Nullable String trustStore;
+    @Metadata(security = "secret")
+    private @Nullable String trustStorePassword;
+    @Metadata
+    private @Nullable String keyStore;
+    @Metadata(security = "secret")
+    private @Nullable String keyStorePassword;
     @Metadata(required = true)
     private @Nullable String host;
     @Metadata(required = true)
@@ -50,10 +72,197 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
     }
 
     /**
-     * Token to access hashicorp vault
+     * Token to access hashicorp vault, for the token login
      */
     public void setToken(@Nullable String token) {
         this.token = token;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getAuthentication() {
+        return authentication;
+    }
+
+    /**
+     * How to log in to hashicorp vault: token (a fixed token), approle (a role ID and a secret ID), kubernetes (the
+     * service account token of the pod), jwt (a JWT, such as a workload identity token) or cert (the TLS client
+     * certificate of the keyStore). Camel renews the token before it expires, and logs in again when the token can no
+     * longer be renewed.
+     *
+     * @since 4.24
+     */
+    public void setAuthentication(@Nullable String authentication) {
+        this.authentication = authentication;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getRoleId() {
+        return roleId;
+    }
+
+    /**
+     * The role ID of the AppRole, for the approle login
+     *
+     * @since 4.24
+     */
+    public void setRoleId(@Nullable String roleId) {
+        this.roleId = roleId;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getSecretId() {
+        return secretId;
+    }
+
+    /**
+     * The secret ID of the AppRole, for the approle login
+     *
+     * @since 4.24
+     */
+    public void setSecretId(@Nullable String secretId) {
+        this.secretId = secretId;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getRole() {
+        return role;
+    }
+
+    /**
+     * The hashicorp vault role to log in as, for the kubernetes and jwt logins. The jwt login can leave it out when the
+     * login method has a default role.
+     *
+     * @since 4.24
+     */
+    public void setRole(@Nullable String role) {
+        this.role = role;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getJwt() {
+        return jwt;
+    }
+
+    /**
+     * The JWT to log in with, for the jwt and kubernetes logins. For a JWT that is replaced over time, such as a
+     * projected service account token, use jwtFile instead.
+     *
+     * @since 4.24
+     */
+    public void setJwt(@Nullable String jwt) {
+        this.jwt = jwt;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getJwtFile() {
+        return jwtFile;
+    }
+
+    /**
+     * The file to read the JWT from at every login, for the jwt and kubernetes logins. The kubernetes login reads
+     * /var/run/secrets/kubernetes.io/serviceaccount/token when neither jwt nor jwtFile is set.
+     *
+     * @since 4.24
+     */
+    public void setJwtFile(@Nullable String jwtFile) {
+        this.jwtFile = jwtFile;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getAuthMountPath() {
+        return authMountPath;
+    }
+
+    /**
+     * The path the login method is mounted at in hashicorp vault (without auth/), when it is not the default path of
+     * the login method: approle, kubernetes or jwt
+     *
+     * @since 4.24
+     */
+    public void setAuthMountPath(@Nullable String authMountPath) {
+        this.authMountPath = authMountPath;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getTrustStore() {
+        return trustStore;
+    }
+
+    /**
+     * The file with the certificates to trust for the TLS connection to hashicorp vault, such as the CA certificate of
+     * a private CA: a PKCS12 or JKS trust store, or PEM certificates. When not set, the JVM trusts the certificate as
+     * for any other TLS connection.
+     *
+     * @since 4.24
+     */
+    public void setTrustStore(@Nullable String trustStore) {
+        this.trustStore = trustStore;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getTrustStorePassword() {
+        return trustStorePassword;
+    }
+
+    /**
+     * The password of the trust store, when it is a PKCS12 or JKS trust store
+     *
+     * @since 4.24
+     */
+    public void setTrustStorePassword(@Nullable String trustStorePassword) {
+        this.trustStorePassword = trustStorePassword;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getKeyStore() {
+        return keyStore;
+    }
+
+    /**
+     * The file with the TLS client certificate and its private key, which Camel presents to hashicorp vault: for the
+     * cert login, or for a Vault that requires client certificates. A PKCS12 or JKS key store, or PEM with the
+     * certificate and the PKCS#8 private key.
+     *
+     * @since 4.24
+     */
+    public void setKeyStore(@Nullable String keyStore) {
+        this.keyStore = keyStore;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getKeyStorePassword() {
+        return keyStorePassword;
+    }
+
+    /**
+     * The password of the key store and of its private key, when it is a PKCS12 or JKS key store
+     *
+     * @since 4.24
+     */
+    public void setKeyStorePassword(@Nullable String keyStorePassword) {
+        this.keyStorePassword = keyStorePassword;
     }
 
     public @Nullable String getHost() {

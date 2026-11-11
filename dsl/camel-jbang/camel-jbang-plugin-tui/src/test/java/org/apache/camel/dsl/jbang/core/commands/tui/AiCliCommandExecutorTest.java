@@ -26,8 +26,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -135,6 +136,9 @@ class AiCliCommandExecutorTest {
     }
 
     @Test
+    // points the static command line of the Camel CLI at its own main: a shell panel that another test class starts
+    // meanwhile (the classes run in parallel) would take the printer of this main
+    @ResourceLock(ShellPanelLifecycleTest.CLI_COMMAND_LINE)
     void productionInvokerRestoresPrinterAndDoesNotQuitMain() throws Exception {
         // a command runs on new instances of the commands, so the test command is added the way plugins add theirs
         CamelJBangMain main = new CamelJBangMain() {

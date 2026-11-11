@@ -373,7 +373,8 @@ YAML::
 |collect
 |Boolean
 |true
-|Whether to collect results (not applicable for unbounded streams).
+|Whether to collect the DataSet returned by a dataset callback into a List. A DataStream returned by a datastream callback is
+not collected: it is the message body and the `CamelFlinkDataStream` header, and an explicit `collect=true` fails.
 |===
 
 

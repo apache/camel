@@ -141,6 +141,31 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Enables Kafka read-process-write exactly-once mode. On the source
+         * endpoint, also configure allowManualCommit=true,
+         * autoCommitEnable=false, breakOnFirstError=true and an explicit,
+         * non-blank groupId. On the destination endpoint, configure an explicit
+         * transactionalId base that is unique to this Camel runtime instance
+         * and stable across restarts. Camel appends the owning route id so
+         * producers in different routes do not share a Kafka transactional id.
+         * transacted=true without an explicit transactional id is not
+         * sufficient for exactly-once mode.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder exactlyOnce(boolean exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+    
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
@@ -480,7 +505,7 @@ public interface KafkaComponentBuilderFactory {
          * the trigger is not exact at the given interval, as this can only
          * happen between kafka polls (see pollTimeoutMs option). So for example
          * setting this to 10000, then the trigger happens in the interval 10000
-         * pollTimeoutMs. The default value for pollTimeoutMs is 5000, so this
+         * + pollTimeoutMs. The default value for pollTimeoutMs is 5000, so this
          * would mean a trigger interval at about every 15 seconds.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -832,7 +857,7 @@ public interface KafkaComponentBuilderFactory {
         
         /**
          * The maximum amount of data per-partition the server will return. The
-         * maximum total memory used for a request will be #partitions
+         * maximum total memory used for a request will be #partitions *
          * max.partition.fetch.bytes. This size must be at least as large as the
          * maximum message size the server allows or else it is possible for the
          * producer to send messages larger than the consumer can fetch. If that
@@ -2640,6 +2665,7 @@ public interface KafkaComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((KafkaComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((KafkaComponent) component).setConfiguration((org.apache.camel.component.kafka.KafkaConfiguration) value); return true;
             case "connectionMaxIdleMs": getOrCreateConfiguration((KafkaComponent) component).setConnectionMaxIdleMs((java.lang.Integer) value); return true;
+            case "exactlyOnce": getOrCreateConfiguration((KafkaComponent) component).setExactlyOnce((boolean) value); return true;
             case "headerFilterStrategy": getOrCreateConfiguration((KafkaComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "metadataMaxAgeMs": getOrCreateConfiguration((KafkaComponent) component).setMetadataMaxAgeMs((java.lang.Integer) value); return true;
             case "metricReporters": getOrCreateConfiguration((KafkaComponent) component).setMetricReporters((java.lang.String) value); return true;

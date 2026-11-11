@@ -434,8 +434,8 @@ For a server started with `--authn-method preshared`, set `apiToken`. For one be
 TLS. A SPIFFE X.509-SVID obtained through `camel-spiffe` works here, which closes the
 loop: the workload authenticates to the authorization decision point as itself.
 
-NOTE: `useGlobalSslContextParameters` on the component has no effect on `OpenFgaSecurityPolicy`. The policy is a
-standalone bean and is not bound to a component instance, so set `sslContextParameters` on it explicitly.
+NOTE: `useGlobalSslContextParameters` on the component does not reach `OpenFgaSecurityPolicy`, which is a bean rather
+than an endpoint of the component. Set `useGlobalSslContextParameters`, or `sslContextParameters`, on the policy itself.
 
 === Timeouts
 
@@ -520,6 +520,80 @@ other than what was written. Pre-compute such a value into an exchange property 
 resolved from the registry — `conditionContext=#myContext`. A map rather than an expression on purpose: OpenFGA types
 every condition parameter in the authorization model (`int`, `bool`, `timestamp`, `ipaddress`), and a map lets you
 supply the right Java type instead of a string the server would reject.
+
+YAML, like a properties file, hands every value over as a string, the entries of a map included. OpenFGA converts a
+string for an `int`, `uint`, `double`, `duration`, `timestamp` or `ipaddress` parameter, so those can be written as
+they are, but it rejects one for a `bool` parameter: give that as `#valueAs(boolean):true`. A `list` or `map` parameter
+cannot be written inline at all; declare it as a bean of its own and refer to it with `#bean:`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+------------------------------------------------------------
+Map<String, Object> networkContext = Map.of(
+        "trusted", true,
+        "allowed_regions", List.of("eu", "us"));
+context.getRegistry().bind("networkContext", networkContext);
+
+from("direct:checkFromTrustedNetwork")
+    .to("openfga:check?storeId={{fga.store}}&relation=reader"
+        + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}"
+        + "&object=document:${header.documentId}&conditionContext=#networkContext");
+------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: allowedRegions
+      type: java.util.ArrayList
+      properties:
+        "0": eu
+        "1": us
+    - name: networkContext
+      type: java.util.LinkedHashMap
+      properties:
+        # a bool parameter needs a boolean: the string "true" is rejected
+        trusted: "#valueAs(boolean):true"
+        # a list parameter needs a list
+        allowed_regions: "#bean:allowedRegions"
+- route:
+    from:
+      uri: direct:checkFromTrustedNetwork
+      steps:
+        - to:
+            uri: openfga:check
+            parameters:
+              storeId: "{{fga.store}}"
+              relation: reader
+              user: "user:${exchangeProperty.CamelKeycloakTokenSubject}"
+              object: "document:${header.documentId}"
+              conditionContext: "#networkContext"
+----
+====
+
+`OpenFgaSecurityPolicy` also takes the map inline, under the same rules:
+
+[source,yaml]
+----
+- beans:
+    - name: documentReaders
+      type: org.apache.camel.component.openfga.security.OpenFgaSecurityPolicy
+      properties:
+        storeId: "{{fga.store}}"
+        relation: reader
+        user: "user:${exchangeProperty.CamelKeycloakTokenSubject}"
+        object: "document:${header.documentId}"
+        conditionContext:
+          trusted: "#valueAs(boolean):true"
+          max_amount: 100
+----
+
+A value of the wrong type fails the check with an HTTP 400 from OpenFGA, naming the parameter it could not convert.
+That is an answer rather than an unavailable decision point, so the exchange is refused even when `failOpen` is set.
 
 [IMPORTANT]
 .A contextual tuple grants

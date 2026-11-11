@@ -761,7 +761,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets .json file with credentials for Service account.
+         * Sets *.json file with credentials for Service account.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1044,7 +1044,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
             return "CamelGoogleMailStreamCc";
         }
         /**
-         * The blind carbon cpoy of the message.
+         * The blind carbon copy of the message.
          * 
          * The option is a: {@code String} type.
          * 

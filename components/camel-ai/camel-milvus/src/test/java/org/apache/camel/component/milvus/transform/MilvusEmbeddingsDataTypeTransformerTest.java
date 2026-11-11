@@ -67,10 +67,30 @@ class MilvusEmbeddingsDataTypeTransformerTest {
         }
     }
 
+    @Test
+    void aMessageWithoutTheEmbeddingFailsWithAClearMessage() throws Exception {
+        // CAMEL-26300: an IllegalArgumentException that names the missing header, as pgvector:embeddings gives, instead of
+        // a NullPointerException
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            for (MilvusAction action : new MilvusAction[] { MilvusAction.INSERT, MilvusAction.UPSERT }) {
+                assertThatThrownBy(() -> transform(context, TextSegment.from("hello"), action, null))
+                        .as(action.name())
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessageContaining("CamelLangChain4jEmbeddingsVector");
+            }
+        }
+    }
+
     private Object transform(DefaultCamelContext context, Object body, MilvusAction action) throws Exception {
+        return transform(context, body, action, new Embedding(new float[] { 0.1f, 0.2f, 0.3f }));
+    }
+
+    private Object transform(DefaultCamelContext context, Object body, MilvusAction action, Embedding embedding)
+            throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
-                new Embedding(new float[] { 0.1f, 0.2f, 0.3f }));
+        exchange.getMessage().setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, embedding);
         exchange.getMessage().setHeader(MilvusHeaders.ACTION, action);
         exchange.getMessage().setBody(body);
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);

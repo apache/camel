@@ -17,6 +17,7 @@
 package org.apache.camel.component.crypto.processor;
 
 import java.io.InputStream;
+import java.io.Reader;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -25,6 +26,7 @@ import java.security.Signature;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.crypto.DigitalSignatureConfiguration;
 import org.apache.camel.component.crypto.DigitalSignatureConstants;
 import org.apache.camel.support.ExchangeHelper;
@@ -41,6 +43,19 @@ public abstract class DigitalSignatureProcessor implements Processor {
     public void calculateSignature(Exchange exchange, Signature signer) throws Exception {
         Object payload = exchange.getIn().getBody();
         if (payload != null) {
+            StreamCache cache = payload instanceof StreamCache sc ? sc : null;
+            if (cache == null && (payload instanceof InputStream || payload instanceof Reader)) {
+                // a stream can be read only once: cache it so the next step of the route still gets the body
+                cache = exchange.getContext().getTypeConverter().convertTo(StreamCache.class, exchange, payload);
+                if (cache != null) {
+                    exchange.getIn().setBody(cache);
+                    payload = cache;
+                }
+            }
+            if (cache != null) {
+                // sign or verify the whole payload, also when the cache has been read before
+                cache.reset();
+            }
             InputStream payloadStream = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, payload);
             try {
                 byte[] buffer = new byte[config.getBufferSize()];
@@ -49,7 +64,13 @@ public abstract class DigitalSignatureProcessor implements Processor {
                     signer.update(buffer, 0, read);
                 }
             } finally {
-                IOHelper.close(payloadStream);
+                if (payloadStream != cache) {
+                    IOHelper.close(payloadStream);
+                }
+                if (cache != null) {
+                    // keep the cached body readable for the next step of the route
+                    cache.reset();
+                }
             }
         }
     }

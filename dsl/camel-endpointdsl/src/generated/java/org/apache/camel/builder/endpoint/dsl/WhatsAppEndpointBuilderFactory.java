@@ -62,9 +62,9 @@ public interface WhatsAppEndpointBuilderFactory {
         /**
          * The app secret used to verify the X-Hub-Signature-256 signature of
          * inbound webhook event payloads (from the Meta/WhatsApp app
-         * dashboard). When set, event callbacks with a missing or invalid
-         * signature are rejected with HTTP 403; when not set, no signature
-         * verification is performed.
+         * dashboard). An event callback with a missing or invalid signature is
+         * rejected with HTTP 403. Required in webhook mode, unless
+         * webhookVerification is false.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -75,6 +75,44 @@ public interface WhatsAppEndpointBuilderFactory {
          */
         default WhatsAppEndpointConsumerBuilder webhookSecret(String webhookSecret) {
             doSetProperty("webhookSecret", webhookSecret);
+            return this;
+        }
+        /**
+         * Whether, in webhook mode, the X-Hub-Signature-256 signature of every
+         * event callback is verified with webhookSecret. When true, the webhook
+         * route fails to start without webhookSecret. Set it to false to accept
+         * event callbacks without verifying their signature, for example in
+         * development.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param webhookVerification the value to set
+         * @return the dsl builder
+         */
+        default WhatsAppEndpointConsumerBuilder webhookVerification(boolean webhookVerification) {
+            doSetProperty("webhookVerification", webhookVerification);
+            return this;
+        }
+        /**
+         * Whether, in webhook mode, the X-Hub-Signature-256 signature of every
+         * event callback is verified with webhookSecret. When true, the webhook
+         * route fails to start without webhookSecret. Set it to false to accept
+         * event callbacks without verifying their signature, for example in
+         * development.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param webhookVerification the value to set
+         * @return the dsl builder
+         */
+        default WhatsAppEndpointConsumerBuilder webhookVerification(String webhookVerification) {
+            doSetProperty("webhookVerification", webhookVerification);
             return this;
         }
         /**
@@ -282,7 +320,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: webhook
+         * Default: camel-whatsapp/webhook
          * Group: advanced
          * 
          * @param webhookPath the value to set
@@ -355,9 +393,9 @@ public interface WhatsAppEndpointBuilderFactory {
         /**
          * The app secret used to verify the X-Hub-Signature-256 signature of
          * inbound webhook event payloads (from the Meta/WhatsApp app
-         * dashboard). When set, event callbacks with a missing or invalid
-         * signature are rejected with HTTP 403; when not set, no signature
-         * verification is performed.
+         * dashboard). An event callback with a missing or invalid signature is
+         * rejected with HTTP 403. Required in webhook mode, unless
+         * webhookVerification is false.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -368,6 +406,44 @@ public interface WhatsAppEndpointBuilderFactory {
          */
         default WhatsAppEndpointProducerBuilder webhookSecret(String webhookSecret) {
             doSetProperty("webhookSecret", webhookSecret);
+            return this;
+        }
+        /**
+         * Whether, in webhook mode, the X-Hub-Signature-256 signature of every
+         * event callback is verified with webhookSecret. When true, the webhook
+         * route fails to start without webhookSecret. Set it to false to accept
+         * event callbacks without verifying their signature, for example in
+         * development.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param webhookVerification the value to set
+         * @return the dsl builder
+         */
+        default WhatsAppEndpointProducerBuilder webhookVerification(boolean webhookVerification) {
+            doSetProperty("webhookVerification", webhookVerification);
+            return this;
+        }
+        /**
+         * Whether, in webhook mode, the X-Hub-Signature-256 signature of every
+         * event callback is verified with webhookSecret. When true, the webhook
+         * route fails to start without webhookSecret. Set it to false to accept
+         * event callbacks without verifying their signature, for example in
+         * development.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param webhookVerification the value to set
+         * @return the dsl builder
+         */
+        default WhatsAppEndpointProducerBuilder webhookVerification(String webhookVerification) {
+            doSetProperty("webhookVerification", webhookVerification);
             return this;
         }
         /**
@@ -503,7 +579,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: webhook
+         * Default: camel-whatsapp/webhook
          * Group: advanced
          * 
          * @param webhookPath the value to set
@@ -577,9 +653,9 @@ public interface WhatsAppEndpointBuilderFactory {
         /**
          * The app secret used to verify the X-Hub-Signature-256 signature of
          * inbound webhook event payloads (from the Meta/WhatsApp app
-         * dashboard). When set, event callbacks with a missing or invalid
-         * signature are rejected with HTTP 403; when not set, no signature
-         * verification is performed.
+         * dashboard). An event callback with a missing or invalid signature is
+         * rejected with HTTP 403. Required in webhook mode, unless
+         * webhookVerification is false.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -590,6 +666,44 @@ public interface WhatsAppEndpointBuilderFactory {
          */
         default WhatsAppEndpointBuilder webhookSecret(String webhookSecret) {
             doSetProperty("webhookSecret", webhookSecret);
+            return this;
+        }
+        /**
+         * Whether, in webhook mode, the X-Hub-Signature-256 signature of every
+         * event callback is verified with webhookSecret. When true, the webhook
+         * route fails to start without webhookSecret. Set it to false to accept
+         * event callbacks without verifying their signature, for example in
+         * development.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param webhookVerification the value to set
+         * @return the dsl builder
+         */
+        default WhatsAppEndpointBuilder webhookVerification(boolean webhookVerification) {
+            doSetProperty("webhookVerification", webhookVerification);
+            return this;
+        }
+        /**
+         * Whether, in webhook mode, the X-Hub-Signature-256 signature of every
+         * event callback is verified with webhookSecret. When true, the webhook
+         * route fails to start without webhookSecret. Set it to false to accept
+         * event callbacks without verifying their signature, for example in
+         * development.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param webhookVerification the value to set
+         * @return the dsl builder
+         */
+        default WhatsAppEndpointBuilder webhookVerification(String webhookVerification) {
+            doSetProperty("webhookVerification", webhookVerification);
             return this;
         }
         /**
@@ -682,7 +796,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: webhook
+         * Default: camel-whatsapp/webhook
          * Group: advanced
          * 
          * @param webhookPath the value to set

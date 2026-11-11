@@ -2,6 +2,7 @@
 package org.apache.camel.component.clickhouse;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,9 @@ public class ClickHouseEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ClickHouseEndpoint target = (ClickHouseEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowdatabaseandtablefromheaders":
+        case "allowDatabaseAndTableFromHeaders": target.setAllowDatabaseAndTableFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "asyncinsert":
         case "asyncInsert": target.setAsyncInsert(property(camelContext, boolean.class, value)); return true;
         case "batchsize":
@@ -46,7 +49,9 @@ public class ClickHouseEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowdatabaseandtablefromheaders":
+        case "allowDatabaseAndTableFromHeaders": return boolean.class;
         case "asyncinsert":
         case "asyncInsert": return boolean.class;
         case "batchsize":
@@ -71,7 +76,9 @@ public class ClickHouseEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ClickHouseEndpoint target = (ClickHouseEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowdatabaseandtablefromheaders":
+        case "allowDatabaseAndTableFromHeaders": return target.isAllowDatabaseAndTableFromHeaders();
         case "asyncinsert":
         case "asyncInsert": return target.isAsyncInsert();
         case "batchsize":

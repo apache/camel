@@ -50,6 +50,11 @@ class SensitiveUtilsTest {
         assertThat(SensitiveUtils.containsSensitive("client-secret")).isTrue();
         assertThat(SensitiveUtils.containsSensitive("authorization-token")).isTrue();
         assertThat(SensitiveUtils.containsSensitive("foo.bar.accessKey")).isTrue();
+        // the login secrets of camel.vault.hashicorp
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.hashicorp.token")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.hashicorp.roleId")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.hashicorp.secretId")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.hashicorp.jwt")).isTrue();
 
         assertThat(SensitiveUtils.containsSensitive("foo.bar.accessKey.")).isFalse();
         assertThat(SensitiveUtils.containsSensitive("foo")).isFalse();

@@ -2,6 +2,7 @@
 package org.apache.camel.component.openstack.keystone;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class KeystoneEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KeystoneEndpoint target = (KeystoneEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "config": target.setConfig(property(camelContext, org.openstack4j.core.transport.Config.class, value)); return true;
         case "domain": target.setDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -38,7 +39,7 @@ public class KeystoneEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "config": return org.openstack4j.core.transport.Config.class;
         case "domain": return java.lang.String.class;
         case "lazystartproducer":
@@ -55,7 +56,7 @@ public class KeystoneEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KeystoneEndpoint target = (KeystoneEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "config": return target.getConfig();
         case "domain": return target.getDomain();
         case "lazystartproducer":

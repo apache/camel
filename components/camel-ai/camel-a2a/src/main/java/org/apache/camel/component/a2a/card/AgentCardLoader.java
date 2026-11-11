@@ -26,11 +26,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.a2a.A2AConstants;
 import org.apache.camel.component.a2a.model.AgentCard;
 import org.apache.camel.component.a2a.util.A2AJsonMapper;
 import org.apache.camel.component.a2a.util.BoundedInputStreamReader;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Loads agent cards from multiple sources: classpath, file, or HTTP(S) URL.

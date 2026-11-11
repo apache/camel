@@ -31,7 +31,7 @@
     <errorHandler id="dlc" deadLetterUri="mock:dead" type="DeadLetterChannel"/>
     <route errorHandlerRef="dlc">
       <from uri="seda:a"/>
-      <throttle>
+      <throttle mode="ConcurrentRequests">
         <header>max</header>
         <correlationExpression>
           <constant>1</constant>
@@ -43,7 +43,7 @@
     
     <route errorHandlerRef="dlc">
       <from uri="seda:b"/>
-      <throttle>
+      <throttle mode="ConcurrentRequests">
         <header>max</header>
         <correlationExpression>
           <constant>2</constant>
@@ -55,7 +55,7 @@
     
     <route errorHandlerRef="dlc">
       <from uri="seda:c"/>
-      <throttle>
+      <throttle mode="ConcurrentRequests">
         <header>max</header>
         <correlationExpression>
           <header>key</header>
@@ -68,7 +68,7 @@
     <route errorHandlerRef="dlc">
       <from uri="direct:ga"/>
       <!-- throttle max of 5 concurrent messages -->
-      <throttle>
+      <throttle mode="ConcurrentRequests">
         <constant>2</constant>
         <correlationExpression>
           <header>key</header>
@@ -85,7 +85,7 @@
     
     <route errorHandlerRef="dlc">
       <from uri="direct:gexpressionHeader"/>
-      <throttle>
+      <throttle mode="ConcurrentRequests">
         <!-- use a header to determine the max number of concurrent requests to set on the throttle-->
         <header>throttleValue</header>
         <correlationExpression>

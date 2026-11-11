@@ -19,16 +19,12 @@ package org.apache.camel.component.camunda.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProcessDeploymentResponse extends DeploymentResponse {
-    @JsonProperty("bpmn_process_id")
     private String bpmnProcessId;
     private int version;
-    @JsonProperty("process_definition_key")
     private long processDefinitionKey;
-    @JsonProperty("resource_name")
     private String resourceName;
 
     public String getBpmnProcessId() {

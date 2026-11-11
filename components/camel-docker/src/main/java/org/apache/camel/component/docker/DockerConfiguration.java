@@ -36,7 +36,7 @@ public class DockerConfiguration implements Cloneable {
     private DockerOperation operation;
     @UriParam(defaultValue = "localhost")
     @Metadata(required = true)
-    private String host = "localhost";
+    private String host = DockerConstants.DEFAULT_HOST;
     @UriParam(defaultValue = "2375")
     private Integer port = 2375;
     @UriParam(label = "security", security = "secret")
@@ -63,10 +63,12 @@ public class DockerConfiguration implements Cloneable {
     private boolean followRedirectFilter;
     @UriParam(label = "security", defaultValue = "false")
     private boolean tlsVerify;
-    @UriParam(label = "advanced", defaultValue = "true")
+    @UriParam(label = "producer,security", defaultValue = "false", security = "insecure:dev", insecureValue = "true")
+    private boolean allowConnectionAndCredentialsFromHeaders;
+    @UriParam(label = "advanced", defaultValue = "false")
     private boolean socket;
     @UriParam(label = "advanced", defaultValue = "com.github.dockerjava.netty.NettyDockerCmdExecFactory")
-    private String cmdExecFactory = "com.github.dockerjava.netty.NettyDockerCmdExecFactory";
+    private String cmdExecFactory = DockerConstants.DEFAULT_CMD_EXEC_FACTORY;
     @UriParam(label = "advanced")
     private Map<String, Object> parameters = new HashMap<>();
 
@@ -75,7 +77,9 @@ public class DockerConfiguration implements Cloneable {
     }
 
     /**
-     * Docker host
+     * Docker host. In socket mode (socket=true), the path of the unix socket of the Docker daemon, where the default
+     * localhost means /var/run/docker.sock. A host with a tcp:// or unix:// scheme (such as tcp://myhost:2376 or
+     * unix:///var/run/docker.sock) is used as is, and then the port and socket options are not used.
      */
     public void setHost(String host) {
         this.host = host;
@@ -246,12 +250,30 @@ public class DockerConfiguration implements Cloneable {
         this.tlsVerify = tlsVerify;
     }
 
+    public boolean isAllowConnectionAndCredentialsFromHeaders() {
+        return allowConnectionAndCredentialsFromHeaders;
+    }
+
+    /**
+     * Whether to allow overriding the connection and credential settings of the endpoint with the CamelDockerHost,
+     * CamelDockerPort, CamelDockerSocketEnabled, CamelDockerSecure, CamelDockerTlsVerify, CamelDockerCertPath,
+     * CamelDockerCmdExecFactory, CamelDockerUsername, CamelDockerPassword and CamelDockerServerAddress headers.
+     * Disabled by default; enable it only when the header source is trusted, since it lets a message choose the Docker
+     * daemon that the client connects to and how, and the registry that receives the username and password of the
+     * endpoint.
+     */
+    public void setAllowConnectionAndCredentialsFromHeaders(boolean allowConnectionAndCredentialsFromHeaders) {
+        this.allowConnectionAndCredentialsFromHeaders = allowConnectionAndCredentialsFromHeaders;
+    }
+
     public boolean isSocket() {
         return socket;
     }
 
     /**
-     * Socket connection mode
+     * Socket connection mode. When enabled, connects to the unix socket of the Docker daemon, whose path is given by
+     * the host option (the default localhost means /var/run/docker.sock), and the port is not used. When disabled,
+     * connects over TCP to the host and port.
      */
     public void setSocket(boolean socket) {
         this.socket = socket;

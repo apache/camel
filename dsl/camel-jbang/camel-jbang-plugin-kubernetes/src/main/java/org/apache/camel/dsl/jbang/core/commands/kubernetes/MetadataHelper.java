@@ -37,10 +37,9 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubComponent
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubDataFormatResolver;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubLanguageResolver;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubTransformerResolver;
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.Source;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.Source;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultModelReifierFactory;
 import org.apache.camel.java.in.LwJavaParser;
@@ -69,7 +68,6 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.TransformerResolver;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -91,9 +89,6 @@ public class MetadataHelper {
      * stubbed CamelContext did.
      */
     private static final Set<String> PRODUCERS = Set.of("to", "wireTap");
-
-    /** The Quarkus platform version of the stubbed context, looked up once. */
-    private static volatile String quarkusVersion;
 
     static {
         // the core CircuitBreaker reifier fails as it depends on a specific implementation provided by
@@ -229,7 +224,7 @@ public class MetadataHelper {
         PluginHelper.getPackageScanResourceResolver(context).addClassLoader(cl);
 
         ClassResolver classResolver = new DependencyDownloaderClassResolver(
-                context, new KnownDependenciesResolver(context, RuntimeType.SPRING_BOOT_VERSION, quarkusVersion()),
+                context, new KnownDependenciesResolver(context, RuntimeType.SPRING_BOOT_VERSION, null),
                 true);
         context.setClassResolver(classResolver);
         // re-create factory finder with download class-resolver
@@ -255,31 +250,6 @@ public class MetadataHelper {
         context.build();
 
         return context;
-    }
-
-    /** The Quarkus platform version for the known dependencies of the stubbed context: a lookup, done once. */
-    private static String quarkusVersion() throws Exception {
-        String answer = quarkusVersion;
-        if (answer == null) {
-            synchronized (MetadataHelper.class) {
-                answer = quarkusVersion;
-                if (answer == null) {
-                    try (MavenDownloaderImpl d = new MavenDownloaderImpl()) {
-                        d.build();
-                        answer = QuarkusHelper
-                                .findQuarkusPlatformBom(
-                                        RuntimeType.main.version(),
-                                        d::resolveArtifact,
-                                        true,
-                                        RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL,
-                                        false)
-                                .version();
-                    }
-                    quarkusVersion = answer;
-                }
-            }
-        }
-        return answer;
     }
 
     public static boolean exposesHttpServices(CamelCatalog catalog, SourceMetadata sourceMetadata) {

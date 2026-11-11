@@ -469,7 +469,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
             snapshot(c, "debug", true);
             snapshot(c, "history", true);
             snapshot(c, "error", true);
-            snapshot(c, "activity", true);
+            snapshot(c, "timeline", true);
         }
     }
 
@@ -482,7 +482,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
                 case "debug" -> snapshots.debug();
                 case "history" -> snapshots.messageHistory();
                 case "error" -> snapshots.errors();
-                default -> snapshots.activity();
+                default -> snapshots.timeline();
             };
             if (data == null || data.isEmpty()) {
                 return;
@@ -653,11 +653,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     // ---- helpers ----
 
     private static void safely(Runnable task) {
-        try {
-            task.run();
-        } catch (Exception e) {
-            LOG.debug("Error in Camel CLI connector task due to: {}. This exception is ignored.", e.getMessage(), e);
-        }
+        ConnectorTasks.safely(task);
     }
 
     private void execute(Runnable task) {

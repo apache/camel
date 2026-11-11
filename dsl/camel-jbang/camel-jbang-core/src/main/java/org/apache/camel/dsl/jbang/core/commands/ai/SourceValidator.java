@@ -17,10 +17,12 @@
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -35,11 +37,18 @@ import java.util.regex.Pattern;
 import com.networknt.schema.Error;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.run.common.CatalogLoader;
 import org.apache.camel.dsl.yaml.validator.ProjectFacts;
 import org.apache.camel.dsl.yaml.validator.YamlPointerLines;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.snakeyaml.engine.v2.nodes.Node;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.error.Mark;
+import org.yaml.snakeyaml.error.MarkedYAMLException;
+import org.yaml.snakeyaml.error.YAMLException;
+import org.yaml.snakeyaml.events.Event;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.JAVA_CLASS_PATTERN;
 import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.JAVA_PACKAGE_PATTERN;
@@ -69,9 +78,21 @@ public final class SourceValidator {
                 || name.endsWith(".java") || name.endsWith(".xsl") || name.endsWith(".xslt") || name.endsWith(".xml");
     }
 
+    /** The names Citrus runs as a YAML test: name.citrus.yaml, name.citrus.it.yaml, name.citrus-test.yaml... */
+    private static final Pattern CITRUS_TEST = Pattern.compile(".+\\.citrus(?:[.-][^/\\\\]+)?\\.ya?ml");
+
     /**
-     * Validates source by file type: Camel YAML DSL for .yaml/.yml files, Camel options for .properties files. Other
-     * file types have no validation and yield no messages.
+     * Whether the file is a Citrus test, such as test/orders.citrus.it.yaml: camel test run runs it, and no integration
+     * loads it. It is YAML of its own, not a Camel route, so it is checked against the test schema of Citrus
+     * ({@link CitrusTestChecks}).
+     */
+    public static boolean isCitrusTest(String fileName) {
+        return fileName != null && CITRUS_TEST.matcher(fileName.toLowerCase(Locale.ROOT)).matches();
+    }
+
+    /**
+     * Validates source by file type: Camel YAML DSL for .yaml/.yml files (a Citrus test against the test schema of
+     * Citrus), Camel options for .properties files. Other file types have no validation and yield no messages.
      *
      * @param  fileName          the file name; its extension picks the checks
      * @param  content           the source
@@ -117,13 +138,21 @@ public final class SourceValidator {
             Path directory, YamlValidator schemaValidator, boolean checkConsumers) {
         Objects.requireNonNull(catalog, "catalog");
         String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
+        if (isCitrusTest(name)) {
+            // a Citrus test is not a route: checked as one, a new test was refused ("a Camel YAML file is a list of
+            // entries"), and a local model then wrote a route in its place (test-citrus-orders of the benchmark).
+            // Checked for its YAML syntax only, a test with actions Citrus does not have was written, and camel test
+            // run then failed on it: so the test schema of Citrus checks it too
+            List<String> syntax = validateYamlSyntax(content);
+            return syntax.isEmpty() ? CitrusTestChecks.validate(content, directory, fileName) : syntax;
+        }
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
             // a rest binding to an OpenAPI specification hides the verb, and the specification is a file beside the
             // route: read it, so that a GET operation is known to carry no body (CAMEL-24844), and with the REST binding
             // mode of the properties, whether a Map sent or returned over REST is written for the route (CAMEL-25762);
             // and what a running integration of the file saw at the endpoints of its routes (CAMEL-25750)
-            List<String> msgs = validateCamelYaml(content, catalog, schemaValidator,
-                    ValidatorFacts.read(fileName, content, directory));
+            ProjectFacts facts = ValidatorFacts.read(fileName, content, directory);
+            List<String> msgs = validateCamelYaml(content, catalog, schemaValidator, facts);
             if (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml")) {
                 // the shape of a Kamelet file, which the schema of a route file does not know
                 List<String> shape = KameletChecks.validateKameletFile(content);
@@ -154,12 +183,18 @@ public final class SourceValidator {
                 }
             }
             if (msgs.isEmpty()) {
-                // a header read where the route keeps the name in an exchange property, or the reverse (CAMEL-25516)
-                msgs = new ArrayList<>(HeaderPropertyMixups.validate(content));
+                // a header read where the route keeps the name in an exchange property, or the reverse (CAMEL-25516),
+                // and a header copied to itself that nothing sets
+                msgs = new ArrayList<>(HeaderPropertyMixups.validate(content, facts));
+                // an sftp or ftp endpoint without a login, next to one of the same server with one
+                msgs.addAll(RemoteFileLogins.validate(content, catalog, directory, fileName));
             }
             // an option at the column of its EIP: the lines to write, which a model copies (the words it does not,
             // CAMEL-25556)
             msgs = IndentLines.withLines(msgs, content);
+            // a constant with ${...}: the lines with simple: in its place, which the write tool can also apply when the
+            // same content comes a third time (CAMEL-26825)
+            msgs = ConstantLines.withLines(msgs, content);
             return KameletChecks.withTemplateHints(name, content, msgs);
         }
         if (name.endsWith(".properties")) {
@@ -615,6 +650,36 @@ public final class SourceValidator {
     /** Checks that the XML is well formed (an input file, a Camel XML DSL file or any other XML). */
     public static List<String> validateXml(String content) {
         return XmlChecks.validateXml(content);
+    }
+
+    /**
+     * The YAML syntax error of a YAML file that is not a route, such as a Citrus test, with its line: the parser stops
+     * at the first one. Empty when the content parses.
+     */
+    static List<String> validateYamlSyntax(String content) {
+        if (content == null || content.isBlank()) {
+            return List.of();
+        }
+        try {
+            Iterator<Event> events = new Yaml(new SafeConstructor(new LoaderOptions())).parse(new StringReader(content))
+                    .iterator();
+            while (events.hasNext()) {
+                events.next();
+            }
+            return List.of();
+        } catch (MarkedYAMLException e) {
+            Mark at = e.getProblemMark();
+            Mark from = e.getContextMark();
+            // where the parser was reading from, such as the line that opened a quote that never closes
+            String context = e.getContext() != null && from != null
+                    ? " (" + e.getContext() + " that starts at line " + (from.getLine() + 1) + ")" : "";
+            return List.of(at != null
+                    ? "Line " + (at.getLine() + 1) + ": the YAML does not parse at column " + (at.getColumn() + 1) + ": "
+                      + e.getProblem() + context
+                    : "The YAML does not parse: " + e.getProblem() + context);
+        } catch (YAMLException e) {
+            return List.of("The YAML does not parse: " + e.getMessage());
+        }
     }
 
     /**

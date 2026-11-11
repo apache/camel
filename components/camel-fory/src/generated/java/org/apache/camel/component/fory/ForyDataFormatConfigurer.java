@@ -2,6 +2,7 @@
 package org.apache.camel.component.fory;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -32,7 +33,7 @@ public class ForyDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ForyDataFormat target = (ForyDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowautowiredfory":
         case "allowAutoWiredFory": target.setAllowAutoWiredFory(property(camelContext, boolean.class, value)); return true;
         case "requireclassregistration":
@@ -52,7 +53,7 @@ public class ForyDataFormatConfigurer extends org.apache.camel.support.component
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowautowiredfory":
         case "allowAutoWiredFory": return boolean.class;
         case "requireclassregistration":
@@ -68,7 +69,7 @@ public class ForyDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ForyDataFormat target = (ForyDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowautowiredfory":
         case "allowAutoWiredFory": return target.isAllowAutoWiredFory();
         case "requireclassregistration":

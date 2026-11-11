@@ -80,7 +80,6 @@ class EndpointsTab extends AbstractTableTab {
     private int panelMode = PANEL_CHART;
     private int detailScroll;
     private boolean detailFocused;
-    private Rect lastDetailArea;
     private int chartPanelHeight = 16;
     private final DragSplit vSplit = new DragSplit();
     private int flowPanelWidth = 38;
@@ -119,6 +118,10 @@ class EndpointsTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (ke.isChar('!') && ChaosHere.handleKey(ke, ctx, info, ChaosHere.forEndpoint(selectedEndpoint(info), info))) {
+            return true;
+        }
         if (ke.isKey(KeyCode.TAB) && panelMode == PANEL_DETAIL) {
             detailFocused = !detailFocused;
             return true;
@@ -362,14 +365,9 @@ class EndpointsTab extends AbstractTableTab {
             if (chartMode == CHART_SINGLE && selectedUri != null) {
                 renderSingleEndpointChart(frame, chunks.get(1), selectedUri, info);
             } else {
-                long inTotal = info.endpoints.stream()
-                        .filter(ep -> "in".equals(ep.direction) && matchesFilter(ep))
-                        .mapToLong(ep -> ep.hits)
-                        .sum();
-                long outTotal = info.endpoints.stream()
-                        .filter(ep -> "out".equals(ep.direction) && matchesFilter(ep))
-                        .mapToLong(ep -> ep.hits)
-                        .sum();
+                // what comes in and goes out: a hand-off between its routes (direct, seda) is neither
+                long inTotal = EndpointFlow.total(info, "in", this::matchesFilter);
+                long outTotal = EndpointFlow.total(info, "out", this::matchesFilter);
 
                 if (hasSizeHistory) {
                     // three-column layout: flow panel (fixed) | throughput chart | payload chart
@@ -418,6 +416,47 @@ class EndpointsTab extends AbstractTableTab {
         if (panelMode == PANEL_DETAIL) {
             hint(spans, "Tab", detailFocused ? "table" : "detail");
         }
+        ChaosHere.hint(spans, ctx.findSelectedIntegration());
+    }
+
+    /**
+     * Selects the endpoint a route sends to (from About, where the URI is as the sources have it), with its details;
+     * the filter is cleared when it hides the endpoint.
+     */
+    void selectEndpoint(String uri, String routeId) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return;
+        }
+        String base = AboutView.baseUri(uri);
+        for (int attempt = 0; attempt < 2; attempt++) {
+            List<EndpointInfo> sorted = new ArrayList<>(info.endpoints);
+            sorted.removeIf(ep -> !matchesFilter(ep));
+            sorted.sort(this::sortEndpoint);
+            for (int i = 0; i < sorted.size(); i++) {
+                EndpointInfo ep = sorted.get(i);
+                if ("out".equals(ep.direction) && (routeId == null || routeId.equals(ep.routeId))
+                        && base.equals(AboutView.baseUri(ep.uri))) {
+                    tableState.select(i);
+                    panelMode = PANEL_DETAIL;
+                    detailScroll = 0;
+                    return;
+                }
+            }
+            filter = 0;
+        }
+    }
+
+    /** The endpoint selected in the table, as filtered and sorted. */
+    private EndpointInfo selectedEndpoint(IntegrationInfo info) {
+        Integer sel = tableState.selected();
+        if (info == null || sel == null) {
+            return null;
+        }
+        List<EndpointInfo> sorted = new ArrayList<>(info.endpoints);
+        sorted.removeIf(ep -> !matchesFilter(ep));
+        sorted.sort(this::sortEndpoint);
+        return sel >= 0 && sel < sorted.size() ? sorted.get(sel) : null;
     }
 
     int getFilter() {

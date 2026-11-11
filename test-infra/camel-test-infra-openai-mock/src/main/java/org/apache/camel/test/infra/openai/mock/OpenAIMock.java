@@ -24,13 +24,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Main mock server for OpenAI API testing. Implements JUnit 5 extension lifecycle methods.
@@ -64,7 +65,7 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
         this.imageGenerationExpectations = new ArrayList<>();
         this.imageEditExpectations = new ArrayList<>();
         this.batchExpectations = new ArrayList<>();
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JsonMapper.builderWithJackson2Defaults().build();
         this.builder = new OpenAIMockBuilder(
                 this, this.expectations, this.embeddingExpectations,
                 this.audioTranscriptionExpectations, this.audioTranslationExpectations,

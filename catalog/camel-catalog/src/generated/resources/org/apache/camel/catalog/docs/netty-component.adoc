@@ -160,18 +160,24 @@ exception thrown by the route, so the reply carries neither its class name nor i
 client receives the line `java.lang.Exception: Exchange processing failed`. Set `muteException=false` to write the
 exception of the route, as in earlier versions.
 
+The default codec (no `textline`, no custom `encoders` or `decoders`) only writes text. The consumer therefore converts
+a reply that is not a `String` (or a `ByteBuf`), such as bytes, a stream, a file, a `Map` or the exception of a failed
+exchange, to a `String` before writing it, as it does with the textline codec. If no reply can be written, the
+consumer closes the TCP channel, so the client does not wait for a reply that never comes.
+
+With `useByteBuf=true` a body that cannot be converted to a `ByteBuf` fails the exchange instead of sending nothing.
+
+With `sync=false` the producer continues routing as soon as the request is written, and ignores any message the remote
+server sends back. The message of the exchange stays as it was, also for an `InOut` exchange.
+
 ==== Using Multiple Codecs
 
 In certain cases, it may be necessary to add chains of encoders and
 decoders to the netty pipeline.
 To add multiple codecs to a Camel netty endpoint, the `encoders` and
 `decoders` uri parameters should be used.
-Like the `encoder` and `decoder` parameters they are used to supply
-references (lists of `ChannelUpstreamHandlers` and
+They are used to supply references (lists of `ChannelUpstreamHandlers` and
 `ChannelDownstreamHandlers`) that should be added to the pipeline.
-
-Note that if encoders are specified, then the encoder param will be ignored,
-similarly for decoders and the decoder param.
 
 [NOTE]
 ====

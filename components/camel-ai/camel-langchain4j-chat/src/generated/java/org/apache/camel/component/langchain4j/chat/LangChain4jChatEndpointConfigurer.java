@@ -2,6 +2,7 @@
 package org.apache.camel.component.langchain4j.chat;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class LangChain4jChatEndpointConfigurer extends PropertyConfigurerSupport
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jChatEndpoint target = (LangChain4jChatEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "baseurl":
@@ -53,7 +54,7 @@ public class LangChain4jChatEndpointConfigurer extends PropertyConfigurerSupport
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "baseurl":
@@ -80,7 +81,7 @@ public class LangChain4jChatEndpointConfigurer extends PropertyConfigurerSupport
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jChatEndpoint target = (LangChain4jChatEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
         case "baseurl":
@@ -106,7 +107,7 @@ public class LangChain4jChatEndpointConfigurer extends PropertyConfigurerSupport
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "modelproperties":
         case "modelProperties": return java.lang.Object.class;
         default: return null;

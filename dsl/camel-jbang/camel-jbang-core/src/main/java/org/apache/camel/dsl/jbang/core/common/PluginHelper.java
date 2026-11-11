@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.JarURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -34,6 +37,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -42,6 +46,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.run.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.main.download.DependencyDownloader;
@@ -71,6 +77,9 @@ public final class PluginHelper {
      * even if the target name is registered as a built-in subcommand.
      */
     private static final Set<String> PLUGIN_CONSUMING_BUILTINS = Set.of("shell", "run", "export", "cmd");
+
+    // the plugins warned about by compatibilityCheck, to warn once
+    private static final Set<String> COMPATIBILITY_WARNED = ConcurrentHashMap.newKeySet();
 
     private static final FactoryFinder FACTORY_FINDER
             = new DefaultFactoryFinder(new DefaultClassResolver(), FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/");
@@ -106,6 +115,42 @@ public final class PluginHelper {
         }
         // target is a built-in (and not a plugin-consuming one) → no plugin needed
         return !commandLine.getSubcommands().containsKey(target);
+    }
+
+    /**
+     * Whether the command of the CLI uses the plugins, so they are loaded when it runs (see
+     * {@link #shouldDiscoverPlugins(CommandLine, String...)}).
+     *
+     * @param  command the name of the command
+     * @return         {@code true} for shell, run, export and cmd
+     */
+    public static boolean isPluginConsumingCommand(String command) {
+        return PLUGIN_CONSUMING_BUILTINS.contains(command);
+    }
+
+    /**
+     * Whether the command is the command of a plugin: of a plugin of Camel (which is installed on first use), of a
+     * plugin in the plugin configuration, or of a plugin embedded in the classpath.
+     *
+     * @param  command the name of the command
+     * @return         {@code true} when a plugin adds the command
+     */
+    public static boolean isPluginCommand(String command) {
+        if (Arrays.stream(PluginType.values()).anyMatch(p -> p.getCommand().equals(command))) {
+            return true;
+        }
+        JsonObject config = getPluginConfig();
+        if (config != null) {
+            JsonObject plugins = config.getMap("plugins");
+            for (String pluginKey : plugins.keySet()) {
+                JsonObject properties = plugins.getMap(pluginKey);
+                String name = properties.getOrDefault("name", pluginKey).toString();
+                if (command.equals(properties.getOrDefault("command", name).toString())) {
+                    return true;
+                }
+            }
+        }
+        return PluginHelper.class.getClassLoader().getResource(PLUGIN_SERVICE_DIR + "camel-jbang-plugin-" + command) != null;
     }
 
     /**
@@ -268,6 +313,10 @@ public final class PluginHelper {
                 // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
                 if (!version.isBlank() && !firstVersion.isBlank()) {
                     versionCheck(main, version, firstVersion, command);
+                }
+                // check if the plugin release is built for this camel version (only stored data, no download)
+                if (!version.isBlank()) {
+                    compatibilityCheck(main.getOut(), version, name, properties);
                 }
 
                 ResolveResult res = resolvePlugin(properties, command, version, gav, repos, main.getOut());
@@ -534,6 +583,31 @@ public final class PluginHelper {
         }
     }
 
+    /**
+     * Warns, once per plugin, when the stored Camel versions of a plugin release (see {@link PluginCompatibility}) do
+     * not include the Camel CLI version, such as after upgrading the CLI. Plugins registered without them are not
+     * checked.
+     */
+    static void compatibilityCheck(Printer printer, String version, String name, JsonObject properties) {
+        String range = asString(properties.get("camelVersions"));
+        if (range == null || range.isBlank() || PluginCompatibility.accepts(range, version)) {
+            return;
+        }
+        // the nearest older release, selected for this Camel version as no release is built for it
+        String selectedFor = asString(properties.get("selectedForCamel"));
+        if (selectedFor != null && selectedFor.equals(PluginCompatibility.minorLine(version))) {
+            return;
+        }
+        String gav = asString(properties.get("dependency"));
+        MavenGav mavenGav = dependencyAsMavenGav(gav);
+        String pluginVersion = mavenGav != null && mavenGav.getVersion() != null ? " " + mavenGav.getVersion() : "";
+        if (COMPATIBILITY_WARNED.add(name + ":" + gav + ":" + range)) {
+            printer.printWarn(
+                    "%s%s is built for Camel %s but this CLI is %s. Run 'camel plugin add %s' to select a matching release."
+                            .formatted(name, pluginVersion, range, version, name));
+        }
+    }
+
     private static DownloadResult downloadPlugin(
             String command, String camelVersion, String version, String group, String repos, Printer printer) {
         DependencyDownloader downloader = new MavenDependencyDownloader();
@@ -735,20 +809,21 @@ public final class PluginHelper {
         return foundAny;
     }
 
+    /**
+     * The jar file that a jar URL points into, such as {@code jar:file:/opt/my%20camel/lib/camel.jar!/META-INF/...}:
+     * decoded, as the path of a folder with a space is encoded in the URL.
+     */
+    static Path jarFileOf(URL jarUrl) throws IOException, URISyntaxException {
+        URL fileUrl = ((JarURLConnection) jarUrl.openConnection()).getJarFileURL();
+        return Path.of(fileUrl.toURI());
+    }
+
     private static boolean scanJarForPlugins(
             CommandLine commandLine, CamelJBangMain main, String target,
             ClassLoader classLoader, URL jarUrl) {
         boolean foundAny = false;
         try {
-            String jarPath = jarUrl.getPath();
-            if (jarPath.startsWith("file:")) {
-                jarPath = jarPath.substring(5);
-            }
-            if (jarPath.contains("!")) {
-                jarPath = jarPath.substring(0, jarPath.indexOf("!"));
-            }
-
-            try (JarFile jarFile = new JarFile(jarPath)) {
+            try (JarFile jarFile = new JarFile(jarFileOf(jarUrl).toFile())) {
                 Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();

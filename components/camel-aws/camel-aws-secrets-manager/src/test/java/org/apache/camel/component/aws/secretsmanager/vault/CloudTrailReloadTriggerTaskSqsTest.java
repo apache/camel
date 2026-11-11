@@ -95,4 +95,16 @@ public class CloudTrailReloadTriggerTaskSqsTest {
         assertDoesNotThrow(task::run);
         verify(sqsClient, never()).deleteMessage(any(DeleteMessageRequest.class));
     }
+
+    @Test
+    public void discardsAMessageThatIsNotJson() throws Exception {
+        CloudTrailReloadTriggerTask task = task("tracked-secret");
+        when(sqsClient.receiveMessage(any(ReceiveMessageRequest.class)))
+                .thenReturn(ReceiveMessageResponse.builder()
+                        .messages(Message.builder().body("not json").receiptHandle("rh1").build())
+                        .build());
+
+        assertDoesNotThrow(task::run);
+        verify(sqsClient, times(1)).deleteMessage(any(DeleteMessageRequest.class));
+    }
 }

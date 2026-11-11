@@ -86,8 +86,10 @@ YAML::
 ----
 ====
 
-Using `jgroups-raft` component on the producer side of the route will use the body of the camel exchange (which must be a `byte[]`)
-to perform a setX() operation on the raftHandle associated with the endpoint.
+Using `jgroups-raft` component on the producer side of the route will use the body of the camel exchange
+to perform a setX() operation on the raftHandle associated with the endpoint. The body is converted to a `byte[]`
+(such as from text, a stream or a file). A body that cannot be converted, such as a `Map`, a `List`, a number or a POJO,
+fails the exchange with an `InvalidPayloadException`. A null body is skipped: nothing is set.
 
 [tabs]
 ====

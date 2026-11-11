@@ -19,12 +19,14 @@ package org.apache.camel.component.cxf.jaxws;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.greeter_control.Greeter;
 import org.apache.cxf.greeter_control.PingMeFault;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +38,26 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Test for throwing an exception with a JAX-WS WebFault annotation from Camel CXF consumer
  */
 public class JaxWsWebFaultAnnotationToFaultTest extends CamelTestSupport {
-    protected static final String ROUTER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1()
-                                                   + "/JaxWsWebFaultAnnotationToFaultTest/router";
+    private static AvailablePortFinder.Port PORT;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        ROUTER_ADDRESS = "http://localhost:" + PORT.getPort()
+                         + "/JaxWsWebFaultAnnotationToFaultTest/router";
+        SERVICE_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
+    protected static String ROUTER_ADDRESS;
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.cxf.greeter_control.Greeter";
-    protected static final String SERVICE_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
+    protected static String SERVICE_URI;
 
     protected static final String MESSAGE = "this is our test message for the exception";
 

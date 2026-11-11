@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,12 +38,16 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.OnCompletionListener;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.SendHook;
 import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.spi.StepHook;
+import org.apache.camel.spi.StepListener;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -517,6 +522,123 @@ public interface ExtendedCamelContext {
     List<InterceptStrategy> getInterceptStrategies();
 
     /**
+     * Gets the {@link StepHook} that is asked before every processing step of a route: the one hook that is installed,
+     * or a hook that asks all the installed hooks in their order (see {@link #addStepHook(StepHook)}).
+     *
+     * @return the hook, or <tt>null</tt> if no hook is installed
+     * @since  4.24
+     */
+    default @Nullable StepHook getStepHook() {
+        return null;
+    }
+
+    /**
+     * Gets the {@link StepHook}s that are installed, in the order they are asked (see {@link #addStepHook(StepHook)}),
+     * for the tools that list them; a step asks {@link #getStepHook()}.
+     *
+     * @return the hooks, empty if none is installed (an unmodifiable snapshot)
+     * @since  4.24
+     */
+    default List<StepHook> getStepHooks() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Installs a {@link StepHook} that is asked before every processing step of a route. More than one hook can be
+     * installed: they are asked in their {@link Ordered order} (a hook that does not implement {@link Ordered} has
+     * order 0, and hooks with the same order are asked in the order they were added), see {@link StepHook} for how they
+     * combine. Adding a hook that is installed already does nothing. The CamelContext does not start or stop the hook,
+     * and the hook stays installed when the CamelContext is stopped and started again.
+     *
+     * @param stepHook the hook
+     * @since          4.24
+     */
+    default void addStepHook(StepHook stepHook) {
+        throw new UnsupportedOperationException("This CamelContext does not support a StepHook");
+    }
+
+    /**
+     * Removes a {@link StepHook} that was installed with {@link #addStepHook(StepHook)}; a hook that is not installed
+     * is ignored. A step that waits for a delay of the hook already is called when the delay ends.
+     *
+     * @param stepHook the hook
+     * @since          4.24
+     */
+    default void removeStepHook(StepHook stepHook) {
+        // a CamelContext without hooks has nothing to remove
+    }
+
+    /**
+     * Adds a {@link StepListener} that observes each call of the processor of a step of a route. Many listeners can be
+     * installed; adding a listener that is already installed (equal to one installed) is ignored. Whether a route calls
+     * the listeners is decided when it is created, so add them before the routes are created: a route created while no
+     * listener was installed is not seen. The CamelContext does not start or stop the listeners, and they stay
+     * installed when the CamelContext is stopped and started again.
+     *
+     * @param listener the listener
+     * @since          4.24
+     */
+    default void addStepListener(StepListener listener) {
+        throw new UnsupportedOperationException("This CamelContext does not support a StepListener");
+    }
+
+    /**
+     * Removes a {@link StepListener} (one equal to it). A call of a step that started before keeps the listener for its
+     * callback.
+     *
+     * @param listener the listener
+     * @since          4.24
+     */
+    default void removeStepListener(StepListener listener) {
+        // no listener can be installed, so there is nothing to remove
+    }
+
+    /**
+     * Gets the {@link StepListener}s, in the order they were added.
+     *
+     * @return an unmodifiable view of the listeners (empty if none is installed), which reflects later adds and removes
+     * @since  4.24
+     */
+    default List<StepListener> getStepListeners() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Adds an {@link OnCompletionListener} that observes where the on completions of the exchanges are: when they move
+     * into a unit of work, are added to or removed from one, are handed over or taken out, and when they run. Many
+     * listeners can be installed; adding a listener that is already installed (equal to one installed) is ignored. The
+     * listeners are read at each event, so a listener added while the routes run is called from the next event on. The
+     * CamelContext does not start or stop the listeners, and they stay installed when the CamelContext is stopped and
+     * started again.
+     *
+     * @param listener the listener
+     * @since          4.24
+     */
+    default void addOnCompletionListener(OnCompletionListener listener) {
+        throw new UnsupportedOperationException("This CamelContext does not support an OnCompletionListener");
+    }
+
+    /**
+     * Removes an {@link OnCompletionListener} (one equal to it). It is no longer called from the next event on.
+     *
+     * @param listener the listener
+     * @since          4.24
+     */
+    default void removeOnCompletionListener(OnCompletionListener listener) {
+        // no listener can be installed, so there is nothing to remove
+    }
+
+    /**
+     * Gets the {@link OnCompletionListener}s, in the order they were added.
+     *
+     * @return an unmodifiable view of the listeners (empty if none is installed), which reflects later adds and removes
+     * @since  4.24
+     */
+    default List<OnCompletionListener> getOnCompletionListeners() {
+        return Collections.emptyList();
+    }
+
+    /**
      * Setup management according to whether JMX is enabled or disabled.
      *
      * @param options optional parameters to configure {@link org.apache.camel.spi.ManagementAgent}.
@@ -580,6 +702,54 @@ public interface ExtendedCamelContext {
      * there are no event listeners that are listening for exchange events.
      */
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
+
+    /**
+     * Gets the {@link SendHook} that runs around the sends to the producer of an endpoint that fire the
+     * {@link org.apache.camel.spi.CamelEvent.ExchangeSendingEvent}: the one hook that is installed, or a hook that runs
+     * all the installed hooks in their order (see {@link #addSendHook(SendHook)}).
+     *
+     * @return the hook, or <tt>null</tt> if no hook is installed
+     * @since  4.24
+     */
+    default @Nullable SendHook getSendHook() {
+        return null;
+    }
+
+    /**
+     * Gets the {@link SendHook}s that are installed, in the order they run (see {@link #addSendHook(SendHook)}), for
+     * the tools that list them; a send asks {@link #getSendHook()}.
+     *
+     * @return the hooks, empty if none is installed (an unmodifiable snapshot)
+     * @since  4.24
+     */
+    default List<SendHook> getSendHooks() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Installs a {@link SendHook} that runs around the sends to the producer of an endpoint that fire the
+     * {@link org.apache.camel.spi.CamelEvent.ExchangeSendingEvent}. More than one hook can be installed: they are asked
+     * before the send in their {@link Ordered order} (a hook that does not implement {@link Ordered} has order 0, and
+     * hooks with the same order are asked in the order they were added), and after the send in the reverse order, see
+     * {@link SendHook} for how they combine. Adding a hook that is installed already does nothing.
+     *
+     * @param sendHook the hook
+     * @since          4.24
+     */
+    default void addSendHook(SendHook sendHook) {
+        throw new UnsupportedOperationException("This CamelContext does not support a SendHook");
+    }
+
+    /**
+     * Removes a {@link SendHook} that was installed with {@link #addSendHook(SendHook)}; a hook that is not installed
+     * is ignored. Sends that are already in the hook complete with the hooks that started them.
+     *
+     * @param sendHook the hook
+     * @since          4.24
+     */
+    default void removeSendHook(SendHook sendHook) {
+        // a CamelContext without hooks has nothing to remove
+    }
 
     /**
      * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not

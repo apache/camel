@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.time.Duration;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -252,20 +251,19 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
      */
     @Override
     public Object putIfAbsent(String key, Object value, Duration ttl) {
-        CacheEntry existing = cache.get(key);
-        if (existing != null && !existing.isExpired()) {
-            return existing.value;
-        }
-        // Remove expired entry if present
-        if (existing != null) {
-            cache.remove(key, existing);
-        }
         long expiresAt = toExpiresAt(ttl);
         CacheEntry newEntry = new CacheEntry(value, expiresAt);
-        CacheEntry prev = cache.putIfAbsent(key, newEntry);
-        if (prev != null) {
-            // Another thread beat us
-            return prev.isExpired() ? null : prev.value;
+        CacheEntry existing = cache.putIfAbsent(key, newEntry);
+        while (existing != null) {
+            if (!existing.isExpired()) {
+                return existing.value;
+            }
+            // replace the expired entry, unless another thread or the topic poller changed the key meanwhile: then look
+            // again, as null must only be returned when this value was stored
+            if (cache.replace(key, existing, newEntry)) {
+                break;
+            }
+            existing = cache.putIfAbsent(key, newEntry);
         }
         try {
             broadcastPut(key, value, expiresAt);
@@ -381,11 +379,12 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
     }
 
     private void evictExpired() {
-        Iterator<Map.Entry<String, CacheEntry>> it = cache.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, CacheEntry> entry = it.next();
-            if (entry.getValue().isExpired()) {
-                it.remove();
+        // remove through the cache: the entry set of the default cache (SimpleLRUCache) is a copy that cannot remove. Only
+        // the expired entry is removed, as the key may have been put again meanwhile
+        for (Map.Entry<String, CacheEntry> entry : cache.entrySet()) {
+            CacheEntry value = entry.getValue();
+            if (value.isExpired()) {
+                cache.remove(entry.getKey(), value);
             }
         }
     }

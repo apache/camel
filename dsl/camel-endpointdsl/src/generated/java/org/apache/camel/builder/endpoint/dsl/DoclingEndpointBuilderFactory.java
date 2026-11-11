@@ -1098,7 +1098,7 @@ public interface DoclingEndpointBuilderFactory {
          * Whether a String message body that starts with / or contains \ is
          * interpreted as a local filesystem path to read. When disabled, such a
          * body is rejected instead of being read. This does not affect the
-         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * CamelDoclingInputFilePath header, nor File, byte[] or explicit path
          * collection bodies used by the batch operations.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1117,7 +1117,7 @@ public interface DoclingEndpointBuilderFactory {
          * Whether a String message body that starts with / or contains \ is
          * interpreted as a local filesystem path to read. When disabled, such a
          * body is rejected instead of being read. This does not affect the
-         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * CamelDoclingInputFilePath header, nor File, byte[] or explicit path
          * collection bodies used by the batch operations.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -2690,7 +2690,7 @@ public interface DoclingEndpointBuilderFactory {
          * Whether a String message body that starts with / or contains \ is
          * interpreted as a local filesystem path to read. When disabled, such a
          * body is rejected instead of being read. This does not affect the
-         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * CamelDoclingInputFilePath header, nor File, byte[] or explicit path
          * collection bodies used by the batch operations.
          * 
          * The option is a: <code>boolean</code> type.
@@ -2709,7 +2709,7 @@ public interface DoclingEndpointBuilderFactory {
          * Whether a String message body that starts with / or contains \ is
          * interpreted as a local filesystem path to read. When disabled, such a
          * body is rejected instead of being read. This does not affect the
-         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * CamelDoclingInputFilePath header, nor File, byte[] or explicit path
          * collection bodies used by the batch operations.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -4175,7 +4175,7 @@ public interface DoclingEndpointBuilderFactory {
          * Whether a String message body that starts with / or contains \ is
          * interpreted as a local filesystem path to read. When disabled, such a
          * body is rejected instead of being read. This does not affect the
-         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * CamelDoclingInputFilePath header, nor File, byte[] or explicit path
          * collection bodies used by the batch operations.
          * 
          * The option is a: <code>boolean</code> type.
@@ -4194,7 +4194,7 @@ public interface DoclingEndpointBuilderFactory {
          * Whether a String message body that starts with / or contains \ is
          * interpreted as a local filesystem path to read. When disabled, such a
          * body is rejected instead of being read. This does not affect the
-         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * CamelDoclingInputFilePath header, nor File, byte[] or explicit path
          * collection bodies used by the batch operations.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -5491,6 +5491,56 @@ public interface DoclingEndpointBuilderFactory {
          */
         public String doclingChunkingMergePeers() {
             return "CamelDoclingChunkingMergePeers";
+        }
+        /**
+         * Status of the async conversion task checked by
+         * CHECK_CONVERSION_STATUS: PENDING, IN_PROGRESS, COMPLETED, FAILED or
+         * UNKNOWN.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DoclingTaskStatus}.
+         */
+        public String doclingTaskStatus() {
+            return "CamelDoclingTaskStatus";
+        }
+        /**
+         * Progress of the async conversion task, when the server reports one.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DoclingTaskProgress}.
+         */
+        public String doclingTaskProgress() {
+            return "CamelDoclingTaskProgress";
+        }
+        /**
+         * The converted document of a completed async conversion task.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DoclingResult}.
+         */
+        public String doclingResult() {
+            return "CamelDoclingResult";
+        }
+        /**
+         * The error message of a failed async conversion task.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DoclingErrorMessage}.
+         */
+        public String doclingErrorMessage() {
+            return "CamelDoclingErrorMessage";
         }
     }
     static DoclingEndpointBuilder endpointBuilder(String componentName, String path) {

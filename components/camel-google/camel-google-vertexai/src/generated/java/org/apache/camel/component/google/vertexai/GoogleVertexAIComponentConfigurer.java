@@ -2,6 +2,7 @@
 package org.apache.camel.component.google.vertexai;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class GoogleVertexAIComponentConfigurer extends PropertyConfigurerSupport
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleVertexAIComponent target = (GoogleVertexAIComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "anthropicversion":
         case "anthropicVersion": getOrCreateConfiguration(target).setAnthropicVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -72,7 +73,7 @@ public class GoogleVertexAIComponentConfigurer extends PropertyConfigurerSupport
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "anthropicversion":
         case "anthropicVersion": return java.lang.String.class;
         case "autowiredenabled":
@@ -111,7 +112,7 @@ public class GoogleVertexAIComponentConfigurer extends PropertyConfigurerSupport
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GoogleVertexAIComponent target = (GoogleVertexAIComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "anthropicversion":
         case "anthropicVersion": return getOrCreateConfiguration(target).getAnthropicVersion();
         case "autowiredenabled":

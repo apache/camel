@@ -50,6 +50,7 @@ final class TuiToolDefinitions {
         List<TuiTool> tools = new ArrayList<>();
         addInteractionTools(tools, r);
         addStructuredDataTools(tools, r);
+        addChaosTools(tools, r);
         addDiagramTools(tools, r);
         addSharedTools(tools, r);
         addCatalogTools(tools, r);
@@ -294,6 +295,33 @@ final class TuiToolDefinitions {
                 r::callDiagramZoom));
     }
 
+    /**
+     * The chaos rules of the selected integration (camel-chaos), which only its tool group adds when chaos is on: check
+     * a rule, and add or change one after the user confirms (CAMEL-26721).
+     */
+    private static void addChaosTools(List<TuiTool> tools, TuiToolRegistry r) {
+        tools.add(tool(toolDef(
+                TuiToolGroups.CHAOS_CHECK_TOOL,
+                "Checks chaos rules without adding them: each rule in plain words, where it can fire, warnings, and "
+                                                + "what it would hit now (hits: sends, polls, routes or steps with "
+                                                + "their route); a rule that is not valid comes back with the reason.",
+                Map.of("rule", propDef("string", "One-line rule, or several separated by ;")),
+                List.of("rule")), r::callChaosCheck, READ_ONLY));
+        tools.add(tool(toolDef(
+                TuiToolGroups.CHAOS_ADD_TOOL,
+                "Adds chaos rules to the selected integration after the user confirms; returns their ids and plain "
+                                              + "words. Check them with " + TuiToolGroups.CHAOS_CHECK_TOOL + " first.",
+                Map.of("rule", propDef("string", "One-line rule, or several separated by ;")),
+                List.of("rule")), r::callChaosAdd));
+        tools.add(tool(toolDef(
+                TuiToolGroups.CHAOS_CHANGE_TOOL,
+                "Changes a chaos rule after the user confirms: the rule with the id gets the new rule and its next "
+                                                 + "version; the report keeps the old one.",
+                Map.of("id", propDef("string", "The id of the rule, such as r1"),
+                        "rule", propDef("string", "The new one-line rule")),
+                List.of("id", "rule")), r::callChaosChange));
+    }
+
     private static void addStructuredDataTools(List<TuiTool> tools, TuiToolRegistry r) {
         tools.add(tool(toolDef(
                 "tui_get_table",
@@ -369,7 +397,8 @@ final class TuiToolDefinitions {
                 Map.of("endpoint", propDef("string",
                         "Endpoint URI, e.g. 'direct:myRoute', 'paho-mqtt5:temperature?brokerUrl=tcp://localhost:1883'"),
                         "body", propDef("string", "Message body to send"),
-                        "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
+                        "headers", propDef("string", "Message headers as key=value pairs separated by newlines"),
+                        "reply", propDef("boolean", "Return the route's answer; default true for direct:")),
                 List.of("endpoint")), r::callSendMessage, CORE));
         // CAMEL-25307: the http tool group; the shared get_http_endpoints and http_request for the selected integration
         tools.add(tool(toolDef(

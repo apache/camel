@@ -45,6 +45,7 @@ public class DefaultMcpServerFactory implements McpServerFactory {
         mcpConfiguration.setTags(configuration.getMcpTags());
         mcpConfiguration.setToolTimeout(configuration.getMcpToolTimeout());
         mcpConfiguration.setResourceTimeout(configuration.getMcpResourceTimeout());
+        mcpConfiguration.setPromptTimeout(configuration.getMcpPromptTimeout());
         mcpConfiguration.setPath(configuration.getMcpPath());
         mcpConfiguration.setServerName(configuration.getMcpServerName());
         mcpConfiguration.setServerTitle(configuration.getMcpServerTitle());
@@ -54,6 +55,7 @@ public class DefaultMcpServerFactory implements McpServerFactory {
         mcpConfiguration.setServerIcons(McpServerIconsParser.parse(configuration.getMcpServerIcons()));
         mcpConfiguration.setSessionKeepAliveInterval(configuration.getMcpSessionKeepAliveInterval());
         mcpConfiguration.setSessionIdleTtl(configuration.getMcpSessionIdleTtl());
+        mcpConfiguration.setAllowedOrigins(configuration.getMcpAllowedOrigins());
         return new McpServerBridge(mcpConfiguration);
     }
 

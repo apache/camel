@@ -33,6 +33,7 @@ include::partial$component-endpoint-headers.adoc[]
 - `listServicesByLabels`
 - `getService`
 - `createService`
+- `updateService`
 - `deleteService`
 
 == Examples

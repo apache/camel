@@ -107,16 +107,28 @@ public interface RouteTopologyDumper {
      * @param handling       for an error path, what happens to the failure: {@link #HANDLING_HANDLED},
      *                       {@link #HANDLING_CONTINUED} or {@link #HANDLING_NOT_HANDLED}; null for a call, and when a
      *                       predicate decides it at runtime (since 4.23)
+     * @param reply          whether the source route waits for the answer of the target route: the send is InOut (the
+     *                       exchange pattern of the endpoint uri, else of the send, else of the message the route
+     *                       consumed), or the component always waits, as direct does: a request-reply over a broker
+     *                       rather than a hand-off (since 4.24)
      * @since                4.21
      */
     record TopologyEdge(String fromRouteId, String toRouteId, String endpoint, String connectionType, String kind,
-            String via, String handling) {
+            String via, String handling, boolean reply) {
 
         /**
          * An edge of kind {@link #EDGE_CALL}.
          */
         public TopologyEdge(String fromRouteId, String toRouteId, String endpoint, String connectionType) {
-            this(fromRouteId, toRouteId, endpoint, connectionType, EDGE_CALL, null, null);
+            this(fromRouteId, toRouteId, endpoint, connectionType, EDGE_CALL, null, null, false);
+        }
+
+        /**
+         * An edge without the answer of its target known.
+         */
+        public TopologyEdge(String fromRouteId, String toRouteId, String endpoint, String connectionType, String kind,
+                            String via, String handling) {
+            this(fromRouteId, toRouteId, endpoint, connectionType, kind, via, handling, false);
         }
 
         /**

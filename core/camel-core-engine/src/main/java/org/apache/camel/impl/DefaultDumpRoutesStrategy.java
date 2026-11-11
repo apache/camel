@@ -149,6 +149,8 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 this.output = ".";
             }
         } else {
+            // a directory starts a fresh directory output, so forget a file name from a previous setOutput
+            outputFileName = null;
             this.output = output;
         }
     }
@@ -339,6 +341,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             if (edge.handling() != null) {
                 jo.put("handling", edge.handling());
             }
+            jo.put("reply", edge.reply());
             edgesArr.add(jo);
         }
         root.put("edges", edgesArr);

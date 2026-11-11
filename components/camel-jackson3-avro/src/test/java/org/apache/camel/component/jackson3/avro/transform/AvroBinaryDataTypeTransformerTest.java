@@ -119,6 +119,18 @@ class AvroBinaryDataTypeTransformerTest {
     }
 
     @Test
+    void shouldWrapMalformedJsonInCamelExecutionException() throws Exception {
+        // CAMEL-26300: the JacksonException of Jackson 3 is wrapped, as the errors of Jackson 2 are
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
+        exchange.getMessage().setBody("{ this is no json }");
+
+        Assertions.assertThrows(CamelExecutionException.class,
+                () -> transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY));
+    }
+
+    @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
         Transformer transformer = camelContext.getTransformerRegistry()
                 .resolveTransformer(new TransformerKey("avro-binary"));

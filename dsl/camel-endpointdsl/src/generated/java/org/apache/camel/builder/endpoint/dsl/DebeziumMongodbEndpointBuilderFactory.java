@@ -314,6 +314,26 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how binary (blob, binary, etc.) columns should be represented
+         * in change events, including: 'bytes' represents binary data as byte
+         * array (default); 'base64' represents binary data as base64-encoded
+         * string; 'base64-url-safe' represents binary data as
+         * base64-url-safe-encoded string; 'hex' represents binary data as
+         * hex-encoded (base16) string.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: bytes
+         * Group: mongodb
+         * 
+         * @param binaryHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder binaryHandlingMode(String binaryHandlingMode) {
+            doSetProperty("binaryHandlingMode", binaryHandlingMode);
+            return this;
+        }
+        /**
          * The method used to capture changes from MongoDB server. Options
          * include: 'change_streams' to capture changes via MongoDB Change
          * Streams, update events do not contain full documents;
@@ -330,6 +350,41 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          */
         default DebeziumMongodbEndpointBuilder captureMode(String captureMode) {
             doSetProperty("captureMode", captureMode);
+            return this;
+        }
+        /**
+         * The scope of captured changes. Options include: 'deployment' (the
+         * default) to capture changes from the entire MongoDB deployment;
+         * 'database' to capture changes from a specific MongoDB
+         * database'collection' to capture changes from a specific MongoDB
+         * collection.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: deployment
+         * Group: mongodb
+         * 
+         * @param captureScope the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder captureScope(String captureScope) {
+            doSetProperty("captureScope", captureScope);
+            return this;
+        }
+        /**
+         * The target to capture changes from. For 'database' scope, this is the
+         * database name. For 'collection' scope, this is the collection name as
+         * ..
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mongodb
+         * 
+         * @param captureTarget the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder captureTarget(String captureTarget) {
+            doSetProperty("captureTarget", captureTarget);
             return this;
         }
         /**
@@ -441,11 +496,9 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * The custom metric tags will accept key-value pairs to customize the
-         * MBean object name which should be appended the end of regular name,
-         * each key would represent a tag for the MBean object name, and the
-         * corresponding value would be the value of that tag the key is. For
-         * example: k1=v1,k2=v2.
+         * A comma-separated list of key-value pairs that are appended to the
+         * MBean object name. Keys must be valid JMX ObjectName property keys.
+         * For example: k1=v1,k2=v2.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -536,6 +589,28 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          */
         default DebeziumMongodbEndpointBuilder errorsMaxRetries(String errorsMaxRetries) {
             doSetProperty("errorsMaxRetries", errorsMaxRetries);
+            return this;
+        }
+        /**
+         * Specify how failures during converting of event should be handled,
+         * including: 'fail' throw an exception that the column of event
+         * conversion is failed with unmatched schema type, causing the
+         * connector to be stopped. it could need schema recovery to covert
+         * successfully; 'warn' (the default) the value of column of event that
+         * conversion failed will be null and be logged with warn level; 'skip'
+         * the value of column of event that conversion failed will be null and
+         * be logged with debug level.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: warn
+         * Group: mongodb
+         * 
+         * @param eventConvertingFailureHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder eventConvertingFailureHandlingMode(String eventConvertingFailureHandlingMode) {
+            doSetProperty("eventConvertingFailureHandlingMode", eventConvertingFailureHandlingMode);
             return this;
         }
         /**
@@ -640,10 +715,31 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how field names should be adjusted for compatibility with the
+         * message converter used by the connector, including: 'avro' replaces
+         * the characters that cannot be used in the Avro type name with
+         * underscore; 'avro_unicode' replaces the underscore or characters that
+         * cannot be used in the Avro type name with corresponding unicode like
+         * _uxxxx. Note: _ is an escape sequence like backslash in Java;'none'
+         * does not apply any adjustment (default).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: none
+         * Group: mongodb
+         * 
+         * @param fieldNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder fieldNameAdjustmentMode(String fieldNameAdjustmentMode) {
+            doSetProperty("fieldNameAdjustmentMode", fieldNameAdjustmentMode);
+            return this;
+        }
+        /**
          * A comma-separated list of the fully-qualified replacements of fields
          * that should be used to rename fields in change event message values.
          * Fully-qualified replacements for fields are of the form
-         * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName, where databaseName and collectionName may contain the wildcard () which matches any characters, the colon character (:) is used to determine rename mapping of field.
+         * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName, where databaseName and collectionName may contain the wildcard (*) which matches any characters, the colon character (:) is used to determine rename mapping of field.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -760,6 +856,82 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Detect schema change during an incremental snapshot and re-select a
+         * current chunk to avoid locking DDLs. Note that changes to a primary
+         * key are not supported and can cause incorrect results if performed
+         * during an incremental snapshot. Another limitation is that if a
+         * schema change affects only columns' default values, then the change
+         * won't be detected until the DDL is processed from the binlog stream.
+         * This doesn't affect the snapshot events' values, but the schema of
+         * snapshot events may have outdated defaults.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param incrementalSnapshotAllowSchemaChanges the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder incrementalSnapshotAllowSchemaChanges(boolean incrementalSnapshotAllowSchemaChanges) {
+            doSetProperty("incrementalSnapshotAllowSchemaChanges", incrementalSnapshotAllowSchemaChanges);
+            return this;
+        }
+        /**
+         * Detect schema change during an incremental snapshot and re-select a
+         * current chunk to avoid locking DDLs. Note that changes to a primary
+         * key are not supported and can cause incorrect results if performed
+         * during an incremental snapshot. Another limitation is that if a
+         * schema change affects only columns' default values, then the change
+         * won't be detected until the DDL is processed from the binlog stream.
+         * This doesn't affect the snapshot events' values, but the schema of
+         * snapshot events may have outdated defaults.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param incrementalSnapshotAllowSchemaChanges the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder incrementalSnapshotAllowSchemaChanges(String incrementalSnapshotAllowSchemaChanges) {
+            doSetProperty("incrementalSnapshotAllowSchemaChanges", incrementalSnapshotAllowSchemaChanges);
+            return this;
+        }
+        /**
+         * The maximum size of chunk (number of documents/rows) for incremental
+         * snapshotting.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1024
+         * Group: mongodb
+         * 
+         * @param incrementalSnapshotChunkSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder incrementalSnapshotChunkSize(int incrementalSnapshotChunkSize) {
+            doSetProperty("incrementalSnapshotChunkSize", incrementalSnapshotChunkSize);
+            return this;
+        }
+        /**
+         * The maximum size of chunk (number of documents/rows) for incremental
+         * snapshotting.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 1024
+         * Group: mongodb
+         * 
+         * @param incrementalSnapshotChunkSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder incrementalSnapshotChunkSize(String incrementalSnapshotChunkSize) {
+            doSetProperty("incrementalSnapshotChunkSize", incrementalSnapshotChunkSize);
+            return this;
+        }
+        /**
          * Specify the strategy used for watermarking during an incremental
          * snapshot: 'insert_insert' both open and close signal is written into
          * signal data collection (default); 'insert_delete' only open signal is
@@ -776,6 +948,27 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          */
         default DebeziumMongodbEndpointBuilder incrementalSnapshotWatermarkingStrategy(String incrementalSnapshotWatermarkingStrategy) {
             doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
+            return this;
+        }
+        /**
+         * Controls the Extended JSON serialization mode used for MongoDB event
+         * payload fields. Options include: 'legacy' (the default) uses MongoDB
+         * Extended JSON v1 strict mode for full document fields and MongoDB
+         * Extended JSON v2 relaxed mode for update fields. 'strict' uses
+         * MongoDB Extended JSON v1 strict mode. 'extended' uses MongoDB
+         * Extended JSON v2 canonical mode. 'relaxed' uses MongoDB Extended JSON
+         * v2 relaxed mode.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: legacy
+         * Group: mongodb
+         * 
+         * @param jsonSerializationMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder jsonSerializationMode(String jsonSerializationMode) {
+            doSetProperty("jsonSerializationMode", jsonSerializationMode);
             return this;
         }
         /**
@@ -1205,6 +1398,121 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder notificationHttpAllowPrivateNetworks(boolean notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+        /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder notificationHttpAllowPrivateNetworks(String notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: mongodb
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder notificationHttpRetries(int notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: mongodb
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder notificationHttpRetries(String notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5s
+         * Group: mongodb
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder notificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5s
+         * Group: mongodb
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder notificationHttpTimeoutMs(String notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+        /**
+         * The URL to which notifications are POSTed as JSON. Required when
+         * 'http' is in the list of enabled channels.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mongodb
+         * 
+         * @param notificationHttpUrl the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder notificationHttpUrl(String notificationHttpUrl) {
+            doSetProperty("notificationHttpUrl", notificationHttpUrl);
+            return this;
+        }
+        /**
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
          * 
@@ -1343,7 +1651,8 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         }
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1359,7 +1668,8 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         }
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1536,6 +1846,72 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder signalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+        /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder signalEmitFailureBackoffMs(String signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder signalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder signalEmitFailureMaxRetries(String signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+        /**
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
@@ -1581,6 +1957,44 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          */
         default DebeziumMongodbEndpointBuilder signalPollIntervalMs(String signalPollIntervalMs) {
             doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
+            return this;
+        }
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder skipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
+            return this;
+        }
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder skipMessagesWithoutChange(String skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
             return this;
         }
         /**
@@ -1733,7 +2147,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * compute the number of rows per chunks. This may not be ideal for
          * larger tables, and using the multiplier, the formula is adjusted to
          * increase the number of chunks by using
-         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 'row_count/(snapshot.max.threads * snapshot.max.threads.multiplier).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1753,7 +2167,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * compute the number of rows per chunks. This may not be ideal for
          * larger tables, and using the multiplier, the formula is adjusted to
          * increase the number of chunks by using
-         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 'row_count/(snapshot.max.threads * snapshot.max.threads.multiplier).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2365,7 +2779,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         }
         /**
          * The identifier of the connector, normally is this format
-         * {server-name}.{database-name}.{table-name}.
+         * +++{server-name}.{database-name}.{table-name}+++.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2438,6 +2852,21 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          */
         public String debeziumDdlSQL() {
             return "CamelDebeziumDdlSQL";
+        }
+        /**
+         * If presents, the description of an update: updatedFields (the changed
+         * fields as a JSON String), removedFields (the names of the removed
+         * fields) and truncatedArrays (the arrays that were truncated, with
+         * their field and new size).
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DebeziumUpdateDescription}.
+         */
+        public String debeziumUpdateDescription() {
+            return "CamelDebeziumUpdateDescription";
         }
     }
     static DebeziumMongodbEndpointBuilder endpointBuilder(String componentName, String path) {

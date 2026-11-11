@@ -24,7 +24,7 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(48);
+        Set<String> props = new HashSet<>(49);
         props.add("accessToken");
         props.add("amount");
         props.add("apiName");
@@ -64,6 +64,7 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
         props.add("query");
         props.add("refundRequest");
         props.add("request");
+        props.add("reverseRequest");
         props.add("searchRequest");
         props.add("settlementDate");
         props.add("signature");

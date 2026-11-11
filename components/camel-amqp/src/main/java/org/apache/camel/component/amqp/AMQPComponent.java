@@ -19,6 +19,7 @@ package org.apache.camel.component.amqp;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.jms.ConnectionFactory;
@@ -34,6 +35,8 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.qpid.jms.JmsConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jms.connection.CachingConnectionFactory;
+import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 
 /**
  * Messaging with AMQP protocol using Apache Qpid Client.
@@ -68,6 +71,17 @@ public class AMQPComponent extends JmsComponent {
     private String trustStoreType = "JKS";
     @Metadata(label = "security", security = "secret", description = "The SSL truststore password.")
     private String trustStorePassword;
+    @Metadata(defaultValue = "true",
+              description = "Whether the producers send over one shared connection to the broker, when the component creates"
+                            + " the connection factory: from brokerUrl, from the host, port, username, password and useSsl"
+                            + " options, or with the amqpComponent factory methods. Turn it off to open and close a connection"
+                            + " for every message sent. The consumers keep their own connections. A connectionFactory that you"
+                            + " set yourself, on the component or on the endpoint, is used as it is.")
+    private boolean cacheConnection = true;
+
+    // the connection factory that the component created, and the cache of its connection for the producers
+    private ConnectionFactory createdConnectionFactory;
+    private CachingConnectionFactory cachedConnectionFactory;
 
     // Constructors
 
@@ -92,13 +106,19 @@ public class AMQPComponent extends JmsComponent {
     public static AMQPComponent amqpComponent(String uri) {
         JmsConnectionFactory connectionFactory = new JmsConnectionFactory(uri);
         connectionFactory.setTopicPrefix("topic://");
-        return new AMQPComponent(connectionFactory);
+        return amqpComponent(connectionFactory);
     }
 
     public static AMQPComponent amqpComponent(String uri, String username, String password) {
         JmsConnectionFactory connectionFactory = new JmsConnectionFactory(username, password, uri);
         connectionFactory.setTopicPrefix("topic://");
-        return new AMQPComponent(connectionFactory);
+        return amqpComponent(connectionFactory);
+    }
+
+    private static AMQPComponent amqpComponent(JmsConnectionFactory connectionFactory) {
+        AMQPComponent answer = new AMQPComponent(connectionFactory);
+        answer.createdConnectionFactory = connectionFactory;
+        return answer;
     }
 
     // Life-cycle
@@ -112,6 +132,7 @@ public class AMQPComponent extends JmsComponent {
                 connectionFactory.setTopicPrefix("topic://");
             }
             getConfiguration().setConnectionFactory(connectionFactory);
+            createdConnectionFactory = connectionFactory;
         } else if (getConfiguration().getConnectionFactory() == null
                 && (host != null || port != null || getUsername() != null || getPassword() != null || useTopicPrefix != null
                         || useSsl != null)) {
@@ -144,6 +165,7 @@ public class AMQPComponent extends JmsComponent {
                 connectionFactory.setTopicPrefix("topic://");
             }
             getConfiguration().setConnectionFactory(connectionFactory);
+            createdConnectionFactory = connectionFactory;
         } else {
             Set<AMQPConnectionDetails> connectionDetails
                     = getCamelContext().getRegistry().findByType(AMQPConnectionDetails.class);
@@ -156,16 +178,69 @@ public class AMQPComponent extends JmsComponent {
                     connectionFactory.setTopicPrefix("topic://");
                 }
                 getConfiguration().setConnectionFactory(connectionFactory);
+                createdConnectionFactory = connectionFactory;
             }
+        }
+        if (cacheConnection && createdConnectionFactory != null
+                && createdConnectionFactory == getConfiguration().getConnectionFactory()
+                && getConfiguration() instanceof AMQPConfiguration configuration) {
+            cachedConnectionFactory = createCachedConnectionFactory(createdConnectionFactory);
+            configuration.useCachedConnection(createdConnectionFactory, cachedConnectionFactory);
         }
         super.doInit();
     }
 
+    private CachingConnectionFactory createCachedConnectionFactory(ConnectionFactory connectionFactory) {
+        ConnectionFactory target = connectionFactory;
+        if (getUsername() != null && getPassword() != null) {
+            // as the endpoints do, see JmsComponent#createEndpoint
+            UserCredentialsConnectionFactoryAdapter adapter = new UserCredentialsConnectionFactoryAdapter();
+            adapter.setTargetConnectionFactory(connectionFactory);
+            adapter.setUsername(getUsername());
+            adapter.setPassword(getPassword());
+            target = adapter;
+        }
+        CachingConnectionFactory answer = new CachingConnectionFactory(target);
+        // a polling consumer (such as pollEnrich) closes its consumer after each receive, so it does not hold on to
+        // the messages that the broker sends it ahead
+        answer.setCacheConsumers(false);
+        // a producer is created for each message, so the next message does not use a producer the broker has closed
+        answer.setCacheProducers(false);
+        return answer;
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        // a connection factory of the endpoint, in any case as the endpoint options are not case sensitive
+        boolean endpointConnectionFactory = parameters.keySet().stream().anyMatch("connectionFactory"::equalsIgnoreCase);
         JmsEndpoint endpoint = (JmsEndpoint) super.createEndpoint(uri, remaining, parameters);
         endpoint.setBinding(new AMQPJmsBinding(endpoint));
+        if (cachedConnectionFactory != null && endpoint.getConfiguration() instanceof AMQPConfiguration configuration) {
+            // the endpoint uses the connection factory that the component created, or the adapter that
+            // JmsComponent#createEndpoint wraps around it with the credentials of the component
+            ConnectionFactory connectionFactory = configuration.getConnectionFactory();
+            boolean createdConnectionFactoryUsed = !endpointConnectionFactory
+                    && getConfiguration().getConnectionFactory() == createdConnectionFactory
+                    && (connectionFactory == createdConnectionFactory
+                            || connectionFactory instanceof UserCredentialsConnectionFactoryAdapter)
+                    && Objects.equals(configuration.getUsername(), getUsername())
+                    && Objects.equals(configuration.getPassword(), getPassword());
+            if (createdConnectionFactoryUsed) {
+                configuration.useCachedConnection(connectionFactory, cachedConnectionFactory);
+            } else {
+                configuration.useCachedConnection(null, null);
+            }
+        }
         return endpoint;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (cachedConnectionFactory != null) {
+            // closes the shared connection, which opens again on the next message sent
+            cachedConnectionFactory.resetConnection();
+        }
+        super.doStop();
     }
 
     /**
@@ -296,6 +371,14 @@ public class AMQPComponent extends JmsComponent {
 
     public void setTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
+    }
+
+    public boolean isCacheConnection() {
+        return cacheConnection;
+    }
+
+    public void setCacheConnection(boolean cacheConnection) {
+        this.cacheConnection = cacheConnection;
     }
 
     private static String urlEncode(String value) {

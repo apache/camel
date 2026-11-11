@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -270,16 +271,34 @@ class ProcessTab extends AbstractTab {
         }
     }
 
-    private static List<String> splitCommandLine(String cmdLine) {
+    // options of the JVM whose value is the next token, after which come the main class or jar and its arguments
+    private static final Set<String> ONE_VALUE_OPTIONS = Set.of("-jar", "-cp", "-classpath", "--class-path");
+
+    /**
+     * The command line a line per option, with its value: an option of the JVM that takes one value (-jar, -cp) has
+     * just that one, and the arguments after it (the main class, the files of camel run) a line each, so none is cut
+     * off at the end of a long -jar line.
+     */
+    static List<String> splitCommandLine(String cmdLine) {
         List<String> parts = new ArrayList<>();
-        for (String token : cmdLine.split("\\s+")) {
-            if (token.startsWith("-") && !parts.isEmpty()) {
+        boolean oneValue = false;
+        boolean arguments = false;
+        for (String token : cmdLine.trim().split("\\s+")) {
+            if (parts.isEmpty()) {
                 parts.add(token);
-            } else if (parts.isEmpty()) {
+            } else if (token.startsWith("-")) {
+                parts.add(token);
+                oneValue = ONE_VALUE_OPTIONS.contains(token);
+                arguments = false;
+            } else if (oneValue) {
+                parts.set(parts.size() - 1, parts.get(parts.size() - 1) + " " + token);
+                oneValue = false;
+                arguments = true;
+            } else if (arguments) {
                 parts.add(token);
             } else {
-                String last = parts.get(parts.size() - 1);
-                parts.set(parts.size() - 1, last + " " + token);
+                // the values of an option, such as --name foo
+                parts.set(parts.size() - 1, parts.get(parts.size() - 1) + " " + token);
             }
         }
         return parts;

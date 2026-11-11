@@ -35,24 +35,29 @@ public class ArrayTypeConverter extends TypeConverterSupport {
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         if (type.isArray()) {
-            if (value instanceof Collection collection) {
-                Object array = Array.newInstance(type.getComponentType(), collection.size());
-                if (array instanceof Object[]) {
-                    collection.toArray((Object[]) array);
-                } else {
-                    int index = 0;
-                    for (Object element : collection) {
-                        Array.set(array, index++, element);
+            // an element that does not fit the component type of the array cannot be converted
+            try {
+                if (value instanceof Collection collection) {
+                    Object array = Array.newInstance(type.getComponentType(), collection.size());
+                    if (array instanceof Object[]) {
+                        collection.toArray((Object[]) array);
+                    } else {
+                        int index = 0;
+                        for (Object element : collection) {
+                            Array.set(array, index++, element);
+                        }
                     }
+                    return (T) array;
+                } else if (value != null && value.getClass().isArray()) {
+                    int size = Array.getLength(value);
+                    Object answer = Array.newInstance(type.getComponentType(), size);
+                    for (int i = 0; i < size; i++) {
+                        Array.set(answer, i, Array.get(value, i));
+                    }
+                    return (T) answer;
                 }
-                return (T) array;
-            } else if (value != null && value.getClass().isArray()) {
-                int size = Array.getLength(value);
-                Object answer = Array.newInstance(type.getComponentType(), size);
-                for (int i = 0; i < size; i++) {
-                    Array.set(answer, i, Array.get(value, i));
-                }
-                return (T) answer;
+            } catch (IllegalArgumentException | ArrayStoreException e) {
+                return null;
             }
         } else if (Collection.class.isAssignableFrom(type) && type.isAssignableFrom(ArrayList.class)) {
             // only for collection types a list can be assigned to (such as not a Set)

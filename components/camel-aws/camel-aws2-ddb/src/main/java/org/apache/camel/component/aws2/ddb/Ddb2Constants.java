@@ -66,7 +66,7 @@ public interface Ddb2Constants {
                             "values that define the item.",
               javaType = "Map<String, AttributeValue>")
     String ITEM = "CamelAwsDdbItem";
-    @Metadata(label = "Query Scan", description = "The list of attributes returned by the operation.",
+    @Metadata(label = "Query Scan", description = "The list of items returned by the operation.",
               javaType = "List<Map<String,AttributeValue>>")
     String ITEMS = "CamelAwsDdbItems";
     @Metadata(label = "DeleteTable DescribeTable UpdateTable", description = "Item count for this table.", javaType = "Long")

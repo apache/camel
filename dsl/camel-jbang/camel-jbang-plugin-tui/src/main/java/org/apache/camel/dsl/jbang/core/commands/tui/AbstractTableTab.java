@@ -25,6 +25,7 @@ import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
@@ -36,6 +37,11 @@ abstract class AbstractTableTab extends AbstractTab {
     protected final TableState tableState = new TableState();
     protected final ScrollbarState tableScrollState = new ScrollbarState();
     protected Rect lastTableArea;
+    // the detail panel of the selected row, for the mouse: null when the tab has none
+    protected Rect lastDetailArea;
+
+    // the lines a turn of the mouse wheel scrolls a detail panel
+    protected static final int WHEEL_LINES = 3;
 
     private final String[] sortColumns;
     protected String sort;
@@ -113,9 +119,49 @@ abstract class AbstractTableTab extends AbstractTab {
         tableState.selectNext(getRowCount());
     }
 
+    /**
+     * A click on a row selects it. On a tab with a detail panel ({@link #lastDetailArea}), the panel the mouse clicks
+     * or scrolls gets the keys, and the wheel scrolls the panel under the mouse: the rows of the table, the lines of
+     * the detail.
+     */
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        return handleTableClick(me, lastTableArea, tableState, getRowCount());
+        boolean up = me.kind() == MouseEventKind.SCROLL_UP;
+        boolean wheel = up || me.kind() == MouseEventKind.SCROLL_DOWN;
+        if (lastDetailArea != null && lastDetailArea.contains(me.x(), me.y()) && (wheel || me.isClick())) {
+            focusDetail(true);
+            if (wheel) {
+                scrollDetail(up ? -WHEEL_LINES : WHEEL_LINES);
+            }
+            return true;
+        }
+        if (lastDetailArea != null && wheel && lastTableArea != null && lastTableArea.contains(me.x(), me.y())) {
+            focusDetail(false);
+            if (up) {
+                navigateUp();
+            } else {
+                navigateDown();
+            }
+            return true;
+        }
+        if (handleTableClick(me, lastTableArea, tableState, getRowCount())) {
+            focusDetail(false);
+            rowClicked();
+            return true;
+        }
+        return false;
+    }
+
+    /** The mouse gave the keys to the detail panel, or back to the table; a tab where Tab moves the keys keeps it. */
+    protected void focusDetail(boolean focused) {
+    }
+
+    /** The wheel over the detail panel: scrolls it by the lines, up when negative. */
+    protected void scrollDetail(int lines) {
+    }
+
+    /** A click selected a row: the detail of another row starts at its top. */
+    protected void rowClicked() {
     }
 
     @Override

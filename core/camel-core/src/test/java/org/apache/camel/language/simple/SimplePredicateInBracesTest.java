@@ -94,6 +94,52 @@ public class SimplePredicateInBracesTest extends LanguageTestSupport {
     }
 
     @Test
+    void testEveryComparisonOperatorInsideTheBraces() {
+        // equals and !equals (CAMEL-24582), !startsWith and !endsWith (CAMEL-22868) are operators inside the braces
+        // too; the predicate answered false and the expression null, as the text was read as one header name
+        exchange.getIn().setHeader("type", "gold");
+        assertPredicate("${header.type equals 'gold'}", true);
+        assertPredicate("${header.type equals 'silver'}", false);
+        assertPredicate("${header.type !equals 'silver'}", true);
+        assertPredicate("${header.type !startsWith 'si'}", true);
+        assertPredicate("${header.type !endsWith 'ld'}", false);
+        assertExpression("${header.type equals 'gold'}", true);
+        // the same answers as outside the braces
+        assertPredicate("${header.type} !startsWith 'si'", true);
+        assertPredicate("${header.type} !endsWith 'ld'", false);
+    }
+
+    @Test
+    void testFunctionWithAQuotedArgumentOnTheLeft() {
+        // the comparison was dropped and the value of the function used: the predicate was true for any non-empty value
+        exchange.getIn().setBody("Hello World");
+        assertPredicate("${substringAfter('Hello ') == 'World'}", true);
+        assertPredicate("${substringAfter('Hello ') == 'Camel'}", false);
+        assertPredicate("${uppercase('a') == 'B'}", false);
+        assertExpression("${uppercase('a') == 'A'}", true);
+        assertPredicate("${concat('a','b') == 'ab' && body contains 'World'}", true);
+        // a bracket or a parenthesis inside the quotes is text too
+        assertPredicate("${replace('[', '(') != 'Hello World'}", false);
+        assertPredicate("${replace('(', '[') == 'Hi'}", false);
+    }
+
+    @Test
+    void testAnOperatorInsideQuotesIsPartOfTheArgument() {
+        exchange.getIn().setBody("a == b");
+        assertExpression("${replace(' == ','=')}", "a=b");
+        assertExpression("${properties:msg:a == b}", "a == b");
+    }
+
+    @Test
+    void testEqualsInTheConditionOfATernaryInsideTheBraces() {
+        // the condition of a ternary is wrapped with the same operators: equals was not one of them, so the condition
+        // was refused as text outside ${ }
+        exchange.getIn().setHeader("type", "gold");
+        assertExpression("${header.type equals 'gold' ? 'yes' : 'no'}", "yes");
+        assertExpression("${header.type !equals 'gold' ? 'yes' : 'no'}", "no");
+    }
+
+    @Test
     public void testTheTernaryStillWins() {
         exchange.getIn().setHeader("n", 5);
         assertExpression("${header.n > 0 ? 'positive' : 'negative'}", "positive");

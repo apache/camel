@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.secretsmanager.vault;
 
 import java.net.URI;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,9 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -62,6 +60,10 @@ import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Period task which checks if AWS secrets has been updated and can trigger Camel to be reloaded.
@@ -93,7 +95,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private static final String CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE = "CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE";
 
     private static final Logger LOG = LoggerFactory.getLogger(CloudTrailReloadTriggerTask.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private static final String SECRETSMANAGER_AMAZONAWS_COM = "secretsmanager.amazonaws.com";
 
     private static final String SECRETSMANAGER_UPDATE_EVENT = "PutSecretValue";
@@ -105,6 +107,9 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     // the events that change the value of a secret, looked up one by one
     private static final List<String> UPDATE_EVENT_NAMES
             = List.of(SECRETSMANAGER_UPDATE_EVENT, SECRETSMANAGER_UPDATE_SECRET_EVENT);
+    // how far before the newest event seen each check looks again: CloudTrail can make an event visible after a newer
+    // one (on average within about 5 minutes, not guaranteed), the default lookBackWindow of the aws-cloudtrail consumer
+    private static final Duration LOOK_BACK = Duration.ofMinutes(10);
 
     private CamelContext camelContext;
     private boolean reloadEnabled = true;
@@ -113,8 +118,11 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private SqsClient sqsClient;
     private SecretsManagerPropertiesFunction propertiesFunction;
     private volatile Instant lastTime;
-    // the ids of the events seen at exactly lastTime, which the next lookup returns again (its startTime is inclusive)
-    private final Set<String> lastTimeEventIds = new HashSet<>();
+    // the time the task started to look for updates: no check looks up events before it
+    private volatile Instant startedAt;
+    // the ids of the events seen with their event time, which the next lookups return again (they start LOOK_BACK
+    // before lastTime, inclusive); pruned once the event time is before the start of the next lookup
+    private final Map<String, Instant> seenEventIds = new HashMap<>();
     private volatile Instant lastCheckTime;
     private volatile Instant lastReloadTime;
     private final Map<String, Instant> updates = new HashMap<>();
@@ -232,6 +240,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
             if (lastTime == null) {
                 // look for the updates made from now on, not in the event history of the last 90 days
                 lastTime = Instant.now();
+                startedAt = lastTime;
             }
         } else {
             SqsClientBuilder clientBuilder = SqsClient.builder();
@@ -277,7 +286,20 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
 
         updates.clear();
         lastTime = null;
-        lastTimeEventIds.clear();
+        startedAt = null;
+        seenEventIds.clear();
+    }
+
+    /**
+     * The start time of the lookups of a check whose newest event seen is at the given time: LOOK_BACK before it, as
+     * CloudTrail can make an event visible after a newer one, but not before the task started.
+     */
+    private static Instant lookupStart(Instant newest, Instant startedAt) {
+        if (newest == null) {
+            return null;
+        }
+        Instant start = newest.minus(LOOK_BACK);
+        return startedAt != null && start.isBefore(startedAt) ? startedAt : start;
     }
 
     /**
@@ -314,31 +336,29 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
         if (!useSqsNotification) {
 
             try {
-                // read every page of the update events since the last check. LookupEvents takes a single lookup
+                // read every page of the update events in the range of the check. LookupEvents takes a single lookup
                 // attribute, so there is one lookup per event name: filtering on the event source instead would also
                 // return every read (GetSecretValue, DescribeSecret), and the pages would grow with the read traffic
-                // read lastTime once: every page of both lookups of this check uses the same start time
+                // read lastTime once: every page of both lookups of this check uses the same start time. The lookups
+                // start LOOK_BACK before the newest event seen, for the events that CloudTrail made visible late
                 Instant since = lastTime;
+                Instant started = startedAt;
+                Instant start = lookupStart(since, started);
                 List<Event> events = new ArrayList<>();
                 for (String eventName : UPDATE_EVENT_NAMES) {
-                    lookupEvents(eventName, since, events);
+                    lookupEvents(eventName, start, events);
                 }
 
                 LOG.debug("Found {} events", events.size());
                 Instant newest = since;
-                Set<String> newestEventIds = new HashSet<>();
                 for (Event event : events) {
-                    if (lastTimeEventIds.contains(event.eventId())) {
-                        // already seen by the previous check
+                    Instant eventTime = event.eventTime();
+                    if (seenEventIds.putIfAbsent(event.eventId(), eventTime) != null) {
+                        // already seen by an earlier check
                         continue;
                     }
-                    Instant eventTime = event.eventTime();
                     if (newest == null || eventTime.isAfter(newest)) {
                         newest = eventTime;
-                        newestEventIds.clear();
-                        newestEventIds.add(event.eventId());
-                    } else if (eventTime.equals(newest)) {
-                        newestEventIds.add(event.eventId());
                     }
                     // the lookups are filtered by event name (PutSecretValue or UpdateSecret), but event names are not
                     // unique across AWS services, so the event source is still checked
@@ -349,7 +369,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                     for (Resource res : a) {
                         String name = res.resourceName();
                         if (matchSecret(name)) {
-                            updates.put(name, event.eventTime());
+                            // an event made visible late can be older than an update of the secret seen before
+                            updates.merge(name, eventTime, (seen, late) -> seen.isAfter(late) ? seen : late);
                             if (isReloadEnabled()) {
                                 LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
                                 triggerReloading = true;
@@ -358,13 +379,12 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                         }
                     }
                 }
-                if (newest != null && newest.equals(since)) {
-                    // no newer event: the events at lastTime seen before are still returned by the next lookup
-                    newestEventIds.addAll(lastTimeEventIds);
-                }
                 lastTime = newest;
-                lastTimeEventIds.clear();
-                lastTimeEventIds.addAll(newestEventIds);
+                // the next lookups do not return the events before their start time again
+                Instant nextStart = lookupStart(newest, started);
+                if (nextStart != null) {
+                    seenEventIds.values().removeIf(t -> t.isBefore(nextStart));
+                }
             } catch (Exception e) {
                 LOG.warn(
                         "Error during AWS Secrets Refresh Task due to {}. This exception is ignored. Will try again on next run.",
@@ -390,20 +410,21 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                             JsonNode event = MAPPER.readTree(message.body());
                             JsonNode innerDetail = event.get("detail");
                             if (ObjectHelper.isNotEmpty(innerDetail)
-                                    && innerDetail.get("eventSource").asText().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)
-                                    && (innerDetail.get("eventName").asText().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)
-                                            || innerDetail.get("eventName").asText()
+                                    && innerDetail.get("eventSource").asString("")
+                                            .equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)
+                                    && (innerDetail.get("eventName").asString("").equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)
+                                            || innerDetail.get("eventName").asString("")
                                                     .equalsIgnoreCase(SECRETSMANAGER_UPDATE_SECRET_EVENT))) {
-                                String name = innerDetail.get("requestParameters").get("secretId").asText();
+                                String name = innerDetail.get("requestParameters").get("secretId").asString("");
                                 if (matchSecret(name)) {
-                                    updates.put(name, Instant.parse(innerDetail.get("eventTime").asText()));
+                                    updates.put(name, Instant.parse(innerDetail.get("eventTime").asString("")));
                                     if (isReloadEnabled()) {
                                         LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
                                         triggerReloading = true;
                                     }
                                 }
                             }
-                        } catch (JsonProcessingException e) {
+                        } catch (JacksonException e) {
                             LOG.warn("Unable to parse SQS message body, discarding message: {}", e.getMessage());
                         }
                         // Always delete the examined message so the queue is drained rather than redelivering it

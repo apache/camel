@@ -21,7 +21,10 @@
 Container Version Checker for Apache Camel Test Infrastructure
 
 This script scans all container.properties files in the test-infra modules and checks
-for newer versions of container images in their respective registries.
+for newer versions of container images in their respective registries. For images
+without architecture-specific overrides, it also verifies that the new version is
+available as a multi-arch manifest for the required architectures (linux/s390x and
+linux/ppc64le) before proposing an upgrade.
 
 Supported Registries:
     - Docker Hub (docker.io, registry-1.docker.io)
@@ -87,6 +90,7 @@ Options:
     --json              Output results in JSON format
     --check-prereleases  Include pre-release versions in checks
     --registry-timeout   Registry API timeout in seconds (default: 30)
+    --skip-arch-check    Skip multi-arch manifest verification
     --help, -h          Show this help message
 
 Dependencies:
@@ -204,6 +208,9 @@ class ContainerImage:
     version_include: List[str] = None  # Whitelist: version must contain one of these words
     version_exclude: List[str] = None  # Blacklist: version must not contain any of these words
     version_freeze_major: bool = False  # Lock to same major version when True
+    has_arch_override: bool = False  # True when arch-specific properties exist for this image
+    arch_overrides: List[str] = None  # Specific arches that have override properties (e.g. ['linux/ppc64le'])
+    skipped_arches: List[str] = None  # Arches skipped by skipITs.* in the module pom.xml
 
     def __post_init__(self):
         """Initialize default values for optional fields."""
@@ -211,6 +218,10 @@ class ContainerImage:
             self.version_include = []
         if self.version_exclude is None:
             self.version_exclude = []
+        if self.arch_overrides is None:
+            self.arch_overrides = []
+        if self.skipped_arches is None:
+            self.skipped_arches = []
         # Infer structural pattern from current version (not a dataclass field, excluded from asdict)
         self._version_pattern = infer_version_pattern(self.current_version)
 
@@ -274,6 +285,16 @@ class VersionCheckResult:
     newer_versions: List[str]
     is_latest: bool
     error: Optional[str] = None
+    arch_missing: Optional[List[str]] = None  # Architectures absent from the manifest list of latest_version
+    arch_unverified: bool = False  # True when the multi-arch check could not be performed (network error, unknown format)
+
+    def __post_init__(self):
+        if self.arch_missing is None:
+            self.arch_missing = []
+
+# Architectures that must be present in a multi-arch manifest before proposing an upgrade.
+# Images with explicit arch-specific property overrides are exempt from this check.
+REQUIRED_ARCHITECTURES = ['linux/s390x', 'linux/ppc64le']
 
 class ContainerRegistryAPI:
     """Base class for container registry API interactions."""
@@ -297,8 +318,149 @@ class ContainerRegistryAPI:
             return "registry-1.docker.io"
         return registry
 
+    def _repo_name(self, image: ContainerImage) -> str:
+        """Build the repository path (namespace/name or just name)."""
+        if image.namespace:
+            return f"{image.namespace}/{image.name}"
+        return image.name
+
+    @staticmethod
+    def _parse_manifest_list(data: dict) -> Optional[List[str]]:
+        """Return present os/arch strings from a manifest-list payload, or None for single-arch.
+
+        Returns a list when the payload is a manifest list (OCI image index or
+        Docker manifest list), or None when it is a single-arch manifest (no
+        ``manifests`` key, or a schema1 manifest with a top-level ``architecture``
+        field).  The caller treats None as "single-arch / unverifiable".
+        """
+        manifests = data.get('manifests', [])
+        if not manifests:
+            return None
+        return [
+            f"{m.get('platform', {}).get('os', '')}/{m.get('platform', {}).get('architecture', '')}"
+            for m in manifests
+        ]
+
+    def _fetch_manifest(self, url: str, token: str = '') -> Optional[dict]:
+        """GET a manifest URL with the multi-arch Accept header and optional Bearer token.
+
+        Returns the parsed JSON on HTTP 200, None otherwise (non-200 or network error).
+        """
+        headers = {
+            'Accept': (
+                'application/vnd.docker.distribution.manifest.list.v2+json,'
+                'application/vnd.oci.image.index.v1+json'
+            )
+        }
+        if token:
+            headers['Authorization'] = f"Bearer {token}"
+        try:
+            response = self.session.get(url, headers=headers, timeout=self.timeout)
+            if response.status_code == 200:
+                return response.json()
+            # Some registries (ghcr.io, docker.elastic.co) return 401 and a
+            # Www-Authenticate challenge even for public images.  Attempt a
+            # token exchange using the challenge header before giving up.
+            if response.status_code == 401:
+                www_auth = response.headers.get('Www-Authenticate', '')
+                bearer_token = self._bearer_token_from_challenge(www_auth)
+                if bearer_token:
+                    headers['Authorization'] = f"Bearer {bearer_token}"
+                    retry = self.session.get(url, headers=headers, timeout=self.timeout)
+                    if retry.status_code == 200:
+                        return retry.json()
+            return None
+        except Exception:
+            return None
+
+    def _bearer_token_from_challenge(self, www_auth: str) -> str:
+        """Parse a Bearer Www-Authenticate challenge and fetch an anonymous token.
+
+        Handles the form:
+            Bearer realm="https://...",service="...",scope="..."
+
+        Returns the token string, or '' on failure.
+        """
+        if not www_auth.lower().startswith('bearer '):
+            return ''
+        try:
+            realm = re.search(r'realm="([^"]+)"', www_auth)
+            service = re.search(r'service="([^"]+)"', www_auth)
+            scope = re.search(r'scope="([^"]+)"', www_auth)
+            if not realm:
+                return ''
+            params = {}
+            if service:
+                params['service'] = service.group(1)
+            if scope:
+                params['scope'] = scope.group(1)
+            token_resp = self.session.get(realm.group(1), params=params, timeout=self.timeout)
+            if token_resp.status_code == 200:
+                return token_resp.json().get('token', '')
+        except Exception:
+            pass
+        return ''
+
+    def check_architectures(self, image: ContainerImage, tag: str) -> Optional[List[str]]:
+        """Return the list of REQUIRED_ARCHITECTURES that are absent from the manifest for *tag*.
+
+        Uses the Docker Registry v2 manifest list API
+        (``GET /v2/<repo>/manifests/<tag>`` with
+        ``Accept: application/vnd.docker.distribution.manifest.list.v2+json``
+        or its OCI equivalent).  Returns an empty list when all required
+        architectures are present.  Returns ``None`` when the check cannot be
+        performed (network error, unrecognised format, non-200 after token
+        retry).  Returns the full set of required arches when the response is
+        a single-arch manifest (no ``manifests`` key), because a single-arch
+        image is by definition not multi-arch.
+        """
+        try:
+            registry = self.normalize_registry_url(image.registry)
+            repo = self._repo_name(image)
+            url = f"https://{registry}/v2/{repo}/manifests/{tag}"
+            data = self._fetch_manifest(url)
+            if data is None:
+                # Cannot verify (network error, 401 without challenge, …).
+                return None
+            present = self._parse_manifest_list(data)
+            if present is None:
+                # Single-arch manifest: the image is definitely not multi-arch.
+                return list(REQUIRED_ARCHITECTURES)
+            return [arch for arch in REQUIRED_ARCHITECTURES if arch not in present]
+        except Exception:
+            # Unexpected format or error — cannot verify.
+            return None
+
 class DockerHubAPI(ContainerRegistryAPI):
     """Docker Hub registry API implementation."""
+
+    def check_architectures(self, image: ContainerImage, tag: str) -> Optional[List[str]]:
+        """Check architectures via registry-1.docker.io, obtaining a Bearer token first."""
+        try:
+            if not image.namespace or image.namespace == "library":
+                repo_name = f"library/{image.name}"
+            else:
+                repo_name = f"{image.namespace}/{image.name}"
+
+            # Obtain an anonymous Bearer token for the manifest scope
+            token_url = (
+                f"https://auth.docker.io/token"
+                f"?service=registry.docker.io&scope=repository:{repo_name}:pull"
+            )
+            token_resp = self.session.get(token_url, timeout=self.timeout)
+            token = token_resp.json().get('token', '') if token_resp.status_code == 200 else ''
+
+            url = f"https://registry-1.docker.io/v2/{repo_name}/manifests/{tag}"
+            data = self._fetch_manifest(url, token=token)
+            if data is None:
+                return None
+            present = self._parse_manifest_list(data)
+            if present is None:
+                # Single-arch manifest: the image is not multi-arch.
+                return list(REQUIRED_ARCHITECTURES)
+            return [arch for arch in REQUIRED_ARCHITECTURES if arch not in present]
+        except Exception:
+            return None
 
     def get_available_versions(self, image: ContainerImage) -> List[str]:
         """Get available versions from Docker Hub."""
@@ -345,6 +507,22 @@ class DockerHubAPI(ContainerRegistryAPI):
 class QuayAPI(ContainerRegistryAPI):
     """Quay.io registry API implementation."""
 
+    def check_architectures(self, image: ContainerImage, tag: str) -> Optional[List[str]]:
+        """Check architectures using the Quay.io distribution-spec manifest endpoint."""
+        try:
+            repo_name = self._repo_name(image)
+            url = f"https://quay.io/v2/{repo_name}/manifests/{tag}"
+            data = self._fetch_manifest(url)
+            if data is None:
+                return None
+            present = self._parse_manifest_list(data)
+            if present is None:
+                # Single-arch manifest: the image is not multi-arch.
+                return list(REQUIRED_ARCHITECTURES)
+            return [arch for arch in REQUIRED_ARCHITECTURES if arch not in present]
+        except Exception:
+            return None
+
     def get_available_versions(self, image: ContainerImage) -> List[str]:
         """Get available versions from Quay.io."""
         try:
@@ -384,6 +562,26 @@ class QuayAPI(ContainerRegistryAPI):
 
 class GCRAPI(ContainerRegistryAPI):
     """Google Container Registry API implementation."""
+
+    def check_architectures(self, image: ContainerImage, tag: str) -> Optional[List[str]]:
+        """Check architectures using the original registry URL.
+
+        ``mirror.gcr.io`` answers manifest requests anonymously (200) while
+        ``gcr.io`` returns 401 for public images.  Use the image's registry as-is
+        (i.e. do NOT normalise) so ``mirror.gcr.io`` manifests are reachable.
+        """
+        try:
+            repo = self._repo_name(image)
+            url = f"https://{image.registry}/v2/{repo}/manifests/{tag}"
+            data = self._fetch_manifest(url)
+            if data is None:
+                return None
+            present = self._parse_manifest_list(data)
+            if present is None:
+                return list(REQUIRED_ARCHITECTURES)
+            return [arch for arch in REQUIRED_ARCHITECTURES if arch not in present]
+        except Exception:
+            return None
 
     def get_available_versions(self, image: ContainerImage) -> List[str]:
         """Get available versions from GCR."""
@@ -576,9 +774,14 @@ class ContainerVersionChecker:
     def __init__(self,
                  include_prereleases: bool = False,
                  registry_timeout: int = 30,
-                 verbose: bool = False):
+                 verbose: bool = False,
+                 skip_arch_check: bool = False):
         self.include_prereleases = include_prereleases
         self.verbose = verbose
+        self.skip_arch_check = skip_arch_check
+        # Populated by run_check() before processing files; maps
+        # camel-test-infra-X → [skipped linux/arches] from component poms.
+        self._component_skip_its_map: Dict[str, List[str]] = {}
 
         # Initialize registry APIs
         self.registry_apis = {
@@ -732,6 +935,136 @@ class ContainerVersionChecker:
 
         return sorted(properties_files)
 
+    @staticmethod
+    def _read_skip_its_from_pom(container_properties_path: str) -> List[str]:
+        """Return 'linux/<arch>' entries for arches that have skipITs.<arch>=true in a pom.xml.
+
+        Walks up the directory tree from the container.properties file, finds the
+        nearest pom.xml, and reads the ``skipITs.ppc64le`` / ``skipITs.s390x``
+        Maven properties.  Returns a list of 'linux/ppc64le' and/or 'linux/s390x'
+        for each arch that is set to true.  An empty list means nothing is skipped
+        or the pom.xml could not be found/parsed.
+        """
+        SKIP_ITS_PLATFORMS = {
+            'skipITs.ppc64le': 'linux/ppc64le',
+            'skipITs.s390x': 'linux/s390x',
+            'skipITs.aarch64': 'linux/arm64',
+        }
+        try:
+            path = Path(container_properties_path).resolve().parent
+            # Walk up at most 10 levels to find a pom.xml
+            for _ in range(10):
+                pom = path / 'pom.xml'
+                if pom.exists():
+                    content = pom.read_text(encoding='utf-8', errors='replace')
+                    skipped = []
+                    for prop, platform in SKIP_ITS_PLATFORMS.items():
+                        # Match <skipITs.ppc64le>true</skipITs.ppc64le> (with any whitespace)
+                        tag = prop.replace('.', r'\.')
+                        m = re.search(rf'<{tag}>\s*(true)\s*</{tag}>', content, re.IGNORECASE)
+                        if m:
+                            skipped.append(platform)
+                    return skipped
+                parent = path.parent
+                if parent == path:
+                    break
+                path = parent
+        except Exception:
+            pass
+        return []
+
+    @staticmethod
+    def _build_component_skip_its_map(scan_path: str) -> Dict[str, List[str]]:
+        """Build a mapping from test-infra artifact IDs to skipped architectures.
+
+        Scans all pom.xml files in the scan_path that reference a
+        ``camel-test-infra-*`` dependency and reads their ``skipITs.ppc64le``
+        / ``skipITs.s390x`` properties.  The result is a dict from artifact ID
+        (e.g. ``camel-test-infra-elasticsearch``) to a list of platform strings
+        (e.g. ``['linux/s390x']``).
+
+        The logic uses **intersection** across all consumer modules: an arch is
+        only considered skipped for a test-infra module when **every** consumer
+        pom that references that module sets ``skipITs.<arch>=true``.  This
+        prevents exempting an arch just because one consumer skips it while
+        others still need it (e.g. ``camel-pgvector`` skips s390x but
+        ``camel-sql`` does not, so ``camel-test-infra-postgres`` should still
+        be checked for s390x).
+
+        This handles the case where the skipITs property lives in a *component*
+        pom (e.g. ``components/camel-elasticsearch-rest-client/pom.xml``) rather
+        than in the test-infra module pom itself.
+        """
+        SKIP_ITS_PLATFORMS = {
+            'skipITs.ppc64le': 'linux/ppc64le',
+            'skipITs.s390x': 'linux/s390x',
+            'skipITs.aarch64': 'linux/arm64',
+        }
+        # First pass: collect per-consumer skipped arches for each test-infra module.
+        # consumers_map: {artifact_id: [set_of_skipped_arches_for_consumer_1, …]}
+        consumers_map: Dict[str, List[set]] = {}
+        try:
+            base = Path(scan_path).resolve()
+            exclude_dirs = {'target', 'build', '.git', '__pycache__'}
+            for pom_file in base.rglob('pom.xml'):
+                rel_parts = pom_file.relative_to(base).parts
+                if any(e in rel_parts for e in exclude_dirs):
+                    continue
+                # Skip test-infra module poms — they are NOT consumer poms.
+                # e.g. test-infra/camel-test-infra-all/pom.xml declares every
+                # camel-test-infra-* artifact but has no skipITs, which would
+                # veto every exemption via the intersection logic.
+                if any(part.startswith('camel-test-infra-') for part in rel_parts):
+                    continue
+                try:
+                    content = pom_file.read_text(encoding='utf-8', errors='replace')
+                except Exception:
+                    continue
+                # Find all camel-test-infra-* artifact references in this pom
+                deps = re.findall(r'<artifactId>(camel-test-infra-[^<]+)</artifactId>', content)
+                if not deps:
+                    continue
+                # Identify the pom's own artifactId to filter it out: a test-infra
+                # module pom declares its own artifactId which is NOT a dependency
+                # reference.  We detect this by looking for an <artifactId> that
+                # appears directly after <project> or inside the top-level block.
+                # As a heuristic, exclude artifacts whose name matches a directory
+                # component of the pom's path (the module directory is usually named
+                # after the artifactId).
+                pom_dir_name = pom_file.parent.name
+                # Filter: only keep deps that are actual dependency references,
+                # not the pom's own artifactId declaration.
+                consumer_deps = [d.strip() for d in deps if d.strip() != pom_dir_name]
+                if not consumer_deps:
+                    continue
+                # Read skipped arches for this pom
+                skipped: set = set()
+                for prop, platform in SKIP_ITS_PLATFORMS.items():
+                    tag = prop.replace('.', r'\.')
+                    m = re.search(rf'<{tag}>\s*(true)\s*</{tag}>', content, re.IGNORECASE)
+                    if m:
+                        skipped.add(platform)
+                for dep in consumer_deps:
+                    dep = dep.strip()
+                    if dep not in consumers_map:
+                        consumers_map[dep] = []
+                    consumers_map[dep].append(skipped)
+        except Exception:
+            pass
+
+        # Second pass: intersect — an arch is only skipped when ALL consumers skip it.
+        result_map: Dict[str, List[str]] = {}
+        for artifact_id, consumer_sets in consumers_map.items():
+            if not consumer_sets:
+                continue
+            # Start with the first consumer's skipped set, intersect with the rest
+            common = consumer_sets[0]
+            for s in consumer_sets[1:]:
+                common = common & s
+            if common:
+                result_map[artifact_id] = sorted(common)
+        return result_map
+
     def parse_properties_file(self, file_path: str) -> List[ContainerImage]:
         """Parse a container.properties file and extract container images."""
         images = []
@@ -761,12 +1094,69 @@ class ContainerVersionChecker:
 
                     properties[key] = value
 
+            # Determine which base properties have arch-specific overrides.
+            # An arch override is a property whose name matches
+            # <base>.{ppc64le,s390x,aarch64,amd64,...} (i.e. a known arch suffix
+            # that makes the update-metadata-version.py skip it via property_prefix()).
+            # Maps the arch suffix (e.g. 'ppc64le') to 'linux/ppc64le'.
+            ARCH_SUFFIX_TO_PLATFORM = {
+                'ppc64le': 'linux/ppc64le',
+                's390x': 'linux/s390x',
+                'aarch64': 'linux/arm64',
+                'arm64': 'linux/arm64',
+                'amd64': 'linux/amd64',
+                'arm': 'linux/arm',
+            }
+            # Collect base names → set of overridden linux platforms
+            keys_arch_override_platforms: Dict[str, List[str]] = {}
+            for key in properties:
+                for arch, platform in ARCH_SUFFIX_TO_PLATFORM.items():
+                    if key.endswith(f'.{arch}'):
+                        base = key[:-(len(arch) + 1)]
+                        if base not in keys_arch_override_platforms:
+                            keys_arch_override_platforms[base] = []
+                        if platform not in keys_arch_override_platforms[base]:
+                            keys_arch_override_platforms[base].append(platform)
+                        break
+
+            # Read skipITs.<arch> from the nearest pom.xml in the same module tree.
+            # e.g. test-infra/camel-test-infra-observability/pom.xml may set
+            # skipITs.ppc64le=true and skipITs.s390x=true to indicate those arches
+            # are already known to be unsupported for this module's tests.
+            module_skipped_arches = self._read_skip_its_from_pom(file_path)
+
+            # Also check the component-level skipITs map, which captures cases where
+            # skipITs.<arch> is defined in a component pom (e.g. components/camel-elasticsearch-rest-client/pom.xml)
+            # rather than in the test-infra module pom itself.  We identify the
+            # test-infra module by extracting its artifact ID from the path.
+            test_infra_module = None
+            for part in Path(file_path).parts:
+                if part.startswith('camel-test-infra-'):
+                    test_infra_module = part
+                    break
+            if test_infra_module and self._component_skip_its_map:
+                for arch in self._component_skip_its_map.get(test_infra_module, []):
+                    if arch not in module_skipped_arches:
+                        module_skipped_arches.append(arch)
+
             # Second pass: build ContainerImage objects
             processed_keys = set()
 
             for key, value in properties.items():
                 # Skip if already processed or if it's a version filter/config property
                 if key in processed_keys or '.version.include' in key or '.version.exclude' in key or '.version.freeze' in key:
+                    continue
+
+                # Skip arch-override sibling keys (e.g. keycloak.container.ppc64le):
+                # they point to arch-specific registries that are not standalone images.
+                is_arch_override_key = False
+                for arch in ARCH_SUFFIX_TO_PLATFORM:
+                    if key.endswith(f'.{arch}'):
+                        base = key[:-(len(arch) + 1)]
+                        if base in properties:
+                            is_arch_override_key = True
+                            break
+                if is_arch_override_key:
                     continue
 
                 try:
@@ -792,6 +1182,10 @@ class ContainerVersionChecker:
                     if freeze_major_key in properties:
                         version_freeze_major = properties[freeze_major_key].lower() in ['true', 'yes', '1']
 
+                    # Detect whether this property has arch-specific override siblings
+                    arch_overrides = keys_arch_override_platforms.get(key, [])
+                    has_arch_override = bool(arch_overrides)
+
                     image = ContainerImage(
                         registry=registry,
                         namespace=namespace,
@@ -801,7 +1195,10 @@ class ContainerVersionChecker:
                         file_path=file_path,
                         version_include=version_include,
                         version_exclude=version_exclude,
-                        version_freeze_major=version_freeze_major
+                        version_freeze_major=version_freeze_major,
+                        has_arch_override=has_arch_override,
+                        arch_overrides=arch_overrides,
+                        skipped_arches=module_skipped_arches,
                     )
                     images.append(image)
                     processed_keys.add(key)
@@ -814,6 +1211,10 @@ class ContainerVersionChecker:
                             print(f"    Exclude filter: {', '.join(version_exclude)}")
                         if version_freeze_major:
                             print(f"    Major version freeze: enabled")
+                        if arch_overrides:
+                            print(f"    Arch-specific overrides present for: {', '.join(arch_overrides)}")
+                        if module_skipped_arches:
+                            print(f"    skipITs arches (pom.xml): {', '.join(module_skipped_arches)}")
 
                 except ValueError as e:
                     if self.verbose:
@@ -906,12 +1307,58 @@ class ContainerVersionChecker:
             latest_version = sorted_versions[0] if sorted_versions else None
             is_latest = current_ver == latest_version or len(newer_versions) == 0
 
+            # Multi-arch check: verify the version the workflow will actually bump to
+            # (latest_version = sorted_versions[0]) exposes the required architectures
+            # in its manifest list.
+            #
+            # Architectures that are already covered by an explicit arch-override
+            # property (image.arch_overrides) or skipped for this module's tests
+            # (image.skipped_arches) are removed from the required set before checking,
+            # so the check is precise rather than all-or-nothing.
+            arch_missing: List[str] = []
+            arch_unverified = False
+            if (
+                not self.skip_arch_check
+                and newer_versions
+                and latest_version is not None
+                and api is not None
+            ):
+                # Build the set of arches we actually need to check for this image.
+                exempted = set(image.arch_overrides or []) | set(image.skipped_arches or [])
+                arches_to_check = [a for a in REQUIRED_ARCHITECTURES if a not in exempted]
+
+                if arches_to_check:
+                    # The workflow bumps to latest_version, so that is what we verify.
+                    candidate = latest_version
+                    if self.verbose:
+                        print(f"      Checking multi-arch manifest for {image.full_name}:{candidate}...")
+                    raw_missing = api.check_architectures(image, candidate)
+                    if raw_missing is None:
+                        # The check could not be performed (network error, auth failure, etc.)
+                        arch_unverified = True
+                        if self.verbose:
+                            print(f"      ⚠ Multi-arch check could not be performed for {candidate}")
+                    else:
+                        # Only report arches we still need to check (not exempted ones).
+                        arch_missing = [a for a in raw_missing if a in arches_to_check]
+                        if arch_missing:
+                            if self.verbose:
+                                print(f"      ⚠ Missing architectures in {candidate}: {', '.join(arch_missing)}")
+                            # Remove versions that lack the required architectures from the
+                            # candidate list so the bot does not propose them as upgrades.
+                            # We only check the top candidate; if it fails we conservatively
+                            # treat the whole newer_versions list as unavailable.
+                            newer_versions = []
+                            is_latest = True  # Suppress the "outdated" classification
+
             return VersionCheckResult(
                 image=image,
                 available_versions=sorted_versions[:10],  # Limit to top 10
                 latest_version=latest_version,
                 newer_versions=newer_versions[:5],  # Limit to top 5 newer
-                is_latest=is_latest
+                is_latest=is_latest,
+                arch_missing=arch_missing,
+                arch_unverified=arch_unverified,
             )
 
         except Exception as e:
@@ -923,6 +1370,24 @@ class ContainerVersionChecker:
                 is_latest=False,
                 error=str(e)
             )
+
+    @staticmethod
+    def _find_repo_root(scan_path: str) -> str:
+        """Walk up from *scan_path* to find the repository root.
+
+        The root is the first ancestor directory that contains a ``components/``
+        sub-directory (which is where the component poms live) **or** a ``.git``
+        marker.  Falls back to *scan_path* if neither is found.
+        """
+        current = Path(scan_path).resolve()
+        for _ in range(20):  # safety bound
+            if (current / 'components').is_dir() or (current / '.git').exists():
+                return str(current)
+            parent = current.parent
+            if parent == current:
+                break
+            current = parent
+        return scan_path
 
     def run_check(self, scan_path: str, quiet: bool = False) -> List[VersionCheckResult]:
         """Run the version check on all container.properties files."""
@@ -938,6 +1403,17 @@ class ContainerVersionChecker:
 
         if not quiet:
             print(f"📁 Found {len(properties_files)} container.properties files")
+
+        # Pre-build the component skipITs map so parse_properties_file can use it.
+        # This handles the common case where skipITs.ppc64le/s390x lives in a component
+        # pom rather than in the test-infra module pom.
+        # We scan from the repository root (not just scan_path) because the component
+        # poms that set skipITs.* are typically under components/, which may be outside
+        # the scan_path (e.g. when scan_path is 'test-infra').
+        repo_root = self._find_repo_root(scan_path)
+        self._component_skip_its_map = self._build_component_skip_its_map(repo_root)
+        if self.verbose and self._component_skip_its_map:
+            print(f"  Built skipITs map for {len(self._component_skip_its_map)} test-infra modules from component poms (scanned {repo_root})")
 
         all_images = []
 
@@ -990,7 +1466,9 @@ def print_results(results: List[VersionCheckResult], verbose: bool = False):
 
     # Separate results into categories
     outdated = [r for r in results if not r.is_latest and not r.error and r.newer_versions]
-    up_to_date = [r for r in results if r.is_latest and not r.error]
+    arch_blocked = [r for r in results if r.arch_missing and not r.error]
+    arch_unverified = [r for r in results if r.arch_unverified and not r.error]
+    up_to_date = [r for r in results if r.is_latest and not r.error and not r.arch_missing]
     errors = [r for r in results if r.error]
 
     print(f"\n{Style.BRIGHT}📊 VERSION CHECK SUMMARY{Style.RESET_ALL}")
@@ -999,6 +1477,10 @@ def print_results(results: List[VersionCheckResult], verbose: bool = False):
     print(f"Total images checked: {len(results)}")
     print(f"{Fore.GREEN}✅ Up to date: {len(up_to_date)}{Style.RESET_ALL}")
     print(f"{Fore.YELLOW}⚠️  Outdated: {len(outdated)}{Style.RESET_ALL}")
+    if arch_blocked:
+        print(f"{Fore.MAGENTA}🏗️  Arch-incomplete (upgrade blocked): {len(arch_blocked)}{Style.RESET_ALL}")
+    if arch_unverified:
+        print(f"{Fore.YELLOW}⚠️  Multi-arch not verified: {len(arch_unverified)}{Style.RESET_ALL}")
     print(f"{Fore.RED}❌ Errors: {len(errors)}{Style.RESET_ALL}")
 
     if outdated:
@@ -1017,6 +1499,38 @@ def print_results(results: List[VersionCheckResult], verbose: bool = False):
                 if len(result.newer_versions) > 3:
                     newer_display.append(f"... (+{len(result.newer_versions) - 3} more)")
                 print(f"  Newer:   {Fore.GREEN}{', '.join(newer_display)}{Style.RESET_ALL}")
+
+    if arch_blocked:
+        print(f"\n{Style.BRIGHT}{Fore.MAGENTA}🏗️  ARCH-INCOMPLETE IMAGES (upgrade blocked){Style.RESET_ALL}")
+        print("-" * 50)
+        print(f"  These images have a newer version available but it is missing")
+        print(f"  required architectures in its manifest list.")
+        print(f"  Upgrade skipped — ensure the image is published for all")
+        print(f"  required platforms ({', '.join(REQUIRED_ARCHITECTURES)}) before upgrading,")
+        print(f"  or add an arch-specific property override in container.properties.")
+
+        for result in arch_blocked:
+            image = result.image
+            print(f"\n{Fore.CYAN}{image.property_name}{Style.RESET_ALL}")
+            print(f"  File:    {os.path.relpath(image.file_path)}")
+            print(f"  Current: {Fore.YELLOW}{image.current_version}{Style.RESET_ALL}")
+            print(f"  Latest:  {Fore.MAGENTA}{result.latest_version}{Style.RESET_ALL}")
+            print(f"  Missing: {Fore.MAGENTA}{', '.join(result.arch_missing or [])}{Style.RESET_ALL}")
+
+    if arch_unverified:
+        print(f"\n{Style.BRIGHT}{Fore.YELLOW}⚠️  MULTI-ARCH NOT VERIFIED{Style.RESET_ALL}")
+        print("-" * 50)
+        print(f"  The multi-arch manifest check could not be performed for these images")
+        print(f"  (network error, authentication failure, or unsupported registry format).")
+        print(f"  Upgrades were still proposed but multi-arch availability is unconfirmed.")
+
+        for result in arch_unverified:
+            image = result.image
+            print(f"\n{Fore.CYAN}{image.property_name}{Style.RESET_ALL}")
+            print(f"  File:    {os.path.relpath(image.file_path)}")
+            print(f"  Current: {Fore.YELLOW}{image.current_version}{Style.RESET_ALL}")
+            if result.latest_version:
+                print(f"  Latest:  {Fore.YELLOW}{result.latest_version}{Style.RESET_ALL}")
 
     if errors:
         print(f"\n{Style.BRIGHT}{Fore.RED}❌ ERRORS{Style.RESET_ALL}")
@@ -1047,7 +1561,9 @@ def output_json(results: List[VersionCheckResult]) -> str:
             'latest_version': result.latest_version,
             'newer_versions': result.newer_versions,
             'is_latest': result.is_latest,
-            'error': result.error
+            'error': result.error,
+            'arch_missing': result.arch_missing or [],
+            'arch_unverified': result.arch_unverified,
         }
         json_results.append(json_result)
 
@@ -1099,6 +1615,12 @@ Examples:
     )
 
     parser.add_argument(
+        '--skip-arch-check',
+        action='store_true',
+        help='Skip multi-arch manifest verification (default: check linux/s390x and linux/ppc64le)'
+    )
+
+    parser.add_argument(
         '--test-infra-path',
         type=str,
         default=None,
@@ -1141,7 +1663,8 @@ Examples:
     checker = ContainerVersionChecker(
         include_prereleases=args.check_prereleases,
         registry_timeout=args.registry_timeout,
-        verbose=args.verbose
+        verbose=args.verbose,
+        skip_arch_check=args.skip_arch_check
     )
 
     try:

@@ -119,45 +119,47 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         } else {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
         }
-        // Set content length from WrappedFile if available and not already set
-        if (fileLength > 0 && !objectMetadata.containsKey("Content-Length")) {
-            objectMetadata.put("Content-Length", String.valueOf(fileLength));
-        }
-        // Handle Content-Length if not already set
-        is = setContentLength(exchange, objectMetadata, obj, is);
+        try {
+            // Set content length from WrappedFile if available and not already set
+            if (fileLength > 0 && !objectMetadata.containsKey("Content-Length")) {
+                objectMetadata.put("Content-Length", String.valueOf(fileLength));
+            }
+            // Handle Content-Length if not already set
+            is = setContentLength(exchange, objectMetadata, obj, is);
 
-        Blob createdBlob;
-        BlobId blobId = BlobId.of(bucketName, objectName);
+            Blob createdBlob;
+            BlobId blobId = BlobId.of(bucketName, objectName);
 
-        BlobInfo.Builder builder = BlobInfo.newBuilder(blobId);
-        String ct = objectMetadata.remove("Content-Type");
-        if (ct != null) {
-            builder.setContentType(ct);
+            BlobInfo.Builder builder = BlobInfo.newBuilder(blobId);
+            String ct = objectMetadata.remove("Content-Type");
+            if (ct != null) {
+                builder.setContentType(ct);
+            }
+            String cd = objectMetadata.remove("Content-Disposition");
+            if (cd != null) {
+                builder.setContentDisposition(cd);
+            }
+            String ce = objectMetadata.remove("Content-Encoding");
+            if (ce != null) {
+                builder.setContentEncoding(ce);
+            }
+            String md5 = objectMetadata.remove("Content-Md5");
+            if (md5 != null) {
+                builder.setMd5(md5);
+            }
+            String cc = objectMetadata.remove("Cache-Control");
+            if (cc != null) {
+                builder.setCacheControl(cc);
+            }
+            BlobInfo blobInfo = builder.setMetadata(objectMetadata).build();
+            // According to documentation, this internally uses a WriteChannel
+            createdBlob = storage.createFrom(blobInfo, is);
+            LOG.trace("created createdBlob [{}]", createdBlob);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(createdBlob);
+        } finally {
+            IOHelper.close(is);
         }
-        String cd = objectMetadata.remove("Content-Disposition");
-        if (cd != null) {
-            builder.setContentDisposition(cd);
-        }
-        String ce = objectMetadata.remove("Content-Encoding");
-        if (ce != null) {
-            builder.setContentEncoding(ce);
-        }
-        String md5 = objectMetadata.remove("Content-Md5");
-        if (md5 != null) {
-            builder.setMd5(md5);
-        }
-        String cc = objectMetadata.remove("Cache-Control");
-        if (cc != null) {
-            builder.setCacheControl(cc);
-        }
-        BlobInfo blobInfo = builder.setMetadata(objectMetadata).build();
-        // According to documentation, this internally uses a WriteChannel
-        createdBlob = storage.createFrom(blobInfo, is);
-        LOG.trace("created createdBlob [{}]", createdBlob);
-        Message message = getMessageForResponse(exchange);
-        message.setBody(createdBlob);
-
-        IOHelper.close(is);
     }
 
     /**

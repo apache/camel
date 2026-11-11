@@ -73,6 +73,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ai-prompt</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ai-resource</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
@@ -134,6 +139,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-api</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-apicurio-registry</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -534,6 +544,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cbor</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-chaos</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -1374,6 +1389,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jbang-run</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jcache</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
@@ -1794,6 +1814,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-mtconnect</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-mustache</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
@@ -2165,6 +2190,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-salesforce-codegen</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-sanitizer</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -2610,6 +2640,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-vertx-http</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-vertx-mqtt</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>

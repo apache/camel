@@ -24,11 +24,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.cli.connector.RepeatedSend;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStructureAction;
+import org.apache.camel.dsl.jbang.core.common.ChaosExperimentRun;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -59,6 +64,7 @@ public final class ToolRegistry {
         registerRuntimeStatusTools();
         registerRuntimeActionTools();
         registerDevConsoleTools();
+        registerChaosTools();
         registerAnalysisTools();
         registerCatalogTools();
         registerExampleTools();
@@ -70,6 +76,20 @@ public final class ToolRegistry {
 
     public static List<ToolDescriptor> allTools() {
         return Collections.unmodifiableList(TOOLS);
+    }
+
+    /**
+     * The tools that a server over HTTP offers: the development MCP server of {@code camel run --mcp}
+     * ({@code JbangDevMcpServer}), which has no hints and does not ask. All but the chaos tools that change the rules:
+     * over HTTP chaos only lists and reports, as its developer console does (design/chaos.adoc).
+     */
+    public static List<ToolDescriptor> httpTools() {
+        // chaos_check is read-only, but the integration parses the rule, and exception= loads a class; chaos_suggest
+        // is read-only, but an action of the CLI connector, not of the console: off HTTP too
+        return TOOLS.stream()
+                .filter(t -> !t.name().startsWith("chaos_") || "chaos_list".equals(t.name())
+                        || "chaos_report".equals(t.name()))
+                .toList();
     }
 
     public static ToolDescriptor findTool(String name) {
@@ -95,6 +115,19 @@ public final class ToolRegistry {
     private static void register(ToolDescriptor descriptor) {
         TOOLS.add(descriptor);
         BY_NAME.put(descriptor.name(), descriptor);
+    }
+
+    /** A whole number argument, or the default when it is not given. */
+    private static int intArg(Map<String, String> args, String name, int defaultValue) {
+        String value = args.get(name);
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            throw new ToolExecutionException(name + " must be a whole number, was: " + value);
+        }
     }
 
     // ---- Process discovery and selection ----
@@ -134,6 +167,7 @@ public final class ToolRegistry {
                     if (name == null || name.isBlank()) {
                         throw new ToolExecutionException("name or PID is required");
                     }
+                    ToolContext.refuseThisProcess(name);
                     RuntimeHelper.ProcessInfo found = ctx.findProcess(name);
                     if (found == null) {
                         List<RuntimeHelper.ProcessInfo> processes = ctx.discoverProcesses();
@@ -319,6 +353,31 @@ public final class ToolRegistry {
                     return result;
                 }));
 
+        register(tool("get_timeline",
+                "Get what happened per second in the last minutes (up to 5): per route the exchanges completed,"
+                                      + " recovered by a redelivery, handled by the error handler and failed, the mean, p95"
+                                      + " and max time, the exchanges in flight and the redelivery attempts; the errors per"
+                                      + " second by route and exception (chaosRule names the camel-chaos rule that made"
+                                      + " one); with camel-chaos the faults per second of each chaos rule (chaos) and the"
+                                      + " seconds a rule had a route down (down of the route); the seconds a circuit breaker"
+                                      + " was open (2) or half open (1) (circuitBreakers); and per second the failed,"
+                                      + " handled and recovered exchanges and the 3 slowest with the remote calls they made. Each series is"
+                                      + " oldest first and ends at the epoch second end. Use it to tell when something went wrong and what it did to which route.")
+                .param("seconds", "integer", "The number of seconds (default 60, at most what the integration records)",
+                        false)
+                .param("routeId", "string", "Route ID or pattern such as orders* (default all routes)", false)
+                .param("exchanges", "boolean", "Include the kept exchanges (default true)", false)
+                .executor((ctx, args) -> ctx.executeAction("timeline", root -> {
+                    String seconds = args.get("seconds");
+                    root.put("seconds", seconds != null ? seconds : "60");
+                    if (args.get("routeId") != null) {
+                        root.put("routeId", args.get("routeId"));
+                    }
+                    if (args.get("exchanges") != null) {
+                        root.put("exchanges", args.get("exchanges"));
+                    }
+                })));
+
         register(tool("get_top_processors",
                 "Show top processor statistics: which processors are slowest and most active.")
                 .executor((ctx, args) -> ctx.executeAction("top-processors", null)));
@@ -353,12 +412,22 @@ public final class ToolRegistry {
                 }));
 
         register(tool("send_message",
-                "Send a test message to a Camel endpoint in the running application.")
+                "Send a test message to a Camel endpoint in the running application. With repeat, or a body of"
+                                      + " file:<folder> (one message per file, in name order; 001.properties has the"
+                                      + " headers of 001.json), it sends several messages with interval millis between"
+                                      + " them, and answers with a summary: sent, failed and the errors.")
                 .param("endpoint", "string",
                         "Endpoint URI to send to (e.g., direct:myRoute, seda:queue)", true)
-                .param("body", "string", "Message body to send", false)
+                .param("body", "string", "Message body to send (file:<path> for a file, file:<folder> for its files)",
+                        false)
                 .param("headers", "string",
                         "Message headers as key=value pairs separated by newlines", false)
+                .param("repeat", "string",
+                        "How many messages to send in all (at most 10000), going round the files of a folder", false)
+                .param("interval", "string",
+                        "The pause between two messages in millis, or a range such as 100..500 to draw each pause at"
+                                             + " random (at most 60000)",
+                        false)
                 // the message runs through the routes and whatever they call, so it can change data
                 .readOnly(false).destructive(true)
                 .core(true)
@@ -367,7 +436,15 @@ public final class ToolRegistry {
                     if (endpoint == null || endpoint.isBlank()) {
                         throw new ToolExecutionException("endpoint is required");
                     }
-                    return ctx.sendMessage(endpoint, args.get("body"), args.get("headers")).toJson();
+                    int repeat = intArg(args, "repeat", 0);
+                    try {
+                        RepeatedSend.interval(args.get("interval"));
+                    } catch (IllegalArgumentException e) {
+                        // an interval that is not a time or a range
+                        throw new ToolExecutionException(e.getMessage());
+                    }
+                    return ctx.sendMessage(endpoint, args.get("body"), args.get("headers"), repeat,
+                            args.get("interval")).toJson();
                 }));
 
         register(tool("eval_expression",
@@ -482,9 +559,10 @@ public final class ToolRegistry {
                 }));
 
         register(tool("get_tool_groups",
-                "Which runtime tool groups (sql, tracing, resilience, http) the integration needs, from what it has: "
-                                         + "datasources and SQL endpoints, OpenTelemetry, message tracing, Micrometer, "
-                                         + "circuit breakers, HTTP endpoints. Returns the tools of each group with one line of guidance, "
+                "Which runtime tool groups (sql, tracing, resilience, http, chaos) the integration needs, from what it "
+                                         + "has: datasources and SQL endpoints, OpenTelemetry, message tracing, "
+                                         + "Micrometer, circuit breakers, HTTP endpoints, camel-chaos. Returns the tools of "
+                                         + "each group with one line of guidance, "
                                          + "and a fingerprint that changes only when the groups do.")
                 .param("name", "string", "Name or PID of the integration (default: the selected or only one)", false)
                 .executor((ctx, args) -> {
@@ -683,6 +761,354 @@ public final class ToolRegistry {
                                      + "Useful for monitoring throughput, latency, and resource usage. "
                                      + "Requires micrometer to be enabled (run with --observe or add camel-micrometer).")
                 .executor((ctx, args) -> ctx.readStatus("micrometer")));
+    }
+
+    // ---- camel-chaos: the rules, the report and the chaos action of the CLI connector (design/chaos.adoc) ----
+
+    private static final String CHAOS_NAME
+            = "Name or PID of the integration (default: the selected one, else the only one running, else the only one"
+              + " with chaos switched on)";
+
+    /**
+     * The chaos tools, the nine operations of camel cmd chaos-add [--dry-run], chaos-change, chaos-remove, chaos-clear,
+     * chaos-load, chaos-suggest and camel get chaos [--report]. The list and the report read the chaos console in the
+     * status of the integration; the others send the chaos action of the CLI connector, which works only when chaos is
+     * switched on and answers a rule that is not valid with the reason of the parser of camel.chaos.rules. Adding and
+     * changing a rule, and loading a scenario, are destructive: a rule makes messages fail, wait or get lost, and
+     * exception= can name any exception class. Removing and clearing only take faults away, and the report keeps the
+     * removed rules. What to try (suggest) only reads the routes.
+     */
+    private static void registerChaosTools() {
+        register(tool("chaos_list",
+                "List the chaos rules of the integration (camel-chaos, development only): id, version, the rule, the "
+                                    + "rule in plain words (description), state, where it can fire now (hooks), "
+                                    + "matches, faults fired, time left, the expectation, and the live "
+                                    + "state: observed rate next to the rate of the rule, when it last fired, faults "
+                                    + "per second over the last minute, and the effect of its faults (exchanges "
+                                    + "completed, recovered by redelivery, handled by the error handler, failed, in "
+                                    + "flight); or why chaos is off.")
+                .param("name", "string", CHAOS_NAME, false)
+                .executor((ctx, args) -> {
+                    selectChaosProcess(ctx, args);
+                    return chaosSection(ctx, "rules").toJson();
+                }));
+
+        register(tool("chaos_report",
+                "Get the chaos report of the integration (camel-chaos): the verdict (PASS or FAIL) and whether it is "
+                                      + "final, the seed, every version of every rule with what it fired and its live "
+                                      + "state, the expectations, the counts per route and the last 20 faults (rule, "
+                                      + "fault, route, endpoint or step, exchange id); or why chaos is off.")
+                .param("name", "string", CHAOS_NAME, false)
+                .executor((ctx, args) -> {
+                    selectChaosProcess(ctx, args);
+                    return chaosSection(ctx, "report").toJson();
+                }));
+
+        register(tool("chaos_add",
+                "Add a chaos rule to the integration, in the one-line form of camel.chaos.rules, e.g. "
+                                   + "'endpoint=kafka:orders* error rate=0.1 until=5m'; several rules separated by ; "
+                                   + "are added together (all or none). Returns the ids of the rules, each rule in "
+                                   + "plain words (description, or descriptions for several), and warnings for "
+                                   + "a rule that matches nothing in the integration now (often a typo: fix it with "
+                                   + "chaos_change). Chaos must be on in the integration; a rule that is not valid is "
+                                   + "refused with the reason.")
+                .param("rule", "string",
+                        "The rule in its one-line text form, as an entry of camel.chaos.rules; several rules separated by ;",
+                        true)
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(false).destructive(true)
+                .executor((ctx, args) -> {
+                    String rule = AuthoringTools.required(args, "rule");
+                    selectChaosProcess(ctx, args);
+                    return chaos(ctx, "add", null, rule);
+                }));
+
+        register(tool("chaos_check",
+                "Check chaos rules without adding them (as camel cmd chaos-add --dry-run): each rule in plain words, "
+                                     + "where it can fire, warnings, and what it would hit now (hits: the sends, polls, "
+                                     + "routes or steps, each with its route). A rule that is not valid is refused "
+                                     + "with the reason, as chaos_add would; nothing changes.")
+                .param("rule", "string",
+                        "The rule in its one-line text form, as an entry of camel.chaos.rules; several rules separated by ;",
+                        true)
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(true).destructive(false)
+                .executor((ctx, args) -> {
+                    String rule = AuthoringTools.required(args, "rule");
+                    selectChaosProcess(ctx, args);
+                    return chaos(ctx, "check", null, rule);
+                }));
+
+        register(tool("chaos_suggest",
+                "What to try (as camel cmd chaos-suggest): chaos rules suggested per route from what the routes do, "
+                                       + "the most worth trying first, such as an HTTP call without a circuit breaker, "
+                                       + "a dead letter channel or a hand-off to another route over seda. Each has the "
+                                       + "route, the kind of fault, the rule, why to try it, and tried=true when a rule "
+                                       + "of that kind has already faulted the route, and feed: how to send messages "
+                                       + "into the route (kind self, http, file or send, a hint such as the command, and "
+                                       + "real=true when that goes to the real system rather than a stub). Two faults "
+                                       + "at once (kind combined, after the single ones) have rules: all the rules to "
+                                       + "add together (chaos_add with them separated by ;). Nothing is added: check a "
+                                       + "rule with chaos_check and add it with chaos_add.")
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(true).destructive(false)
+                .executor((ctx, args) -> {
+                    selectChaosProcess(ctx, args);
+                    return chaos(ctx, "suggest", null, null);
+                }));
+
+        register(tool("chaos_load",
+                "Load a chaos scenario into the integration (as camel cmd chaos-load): the rules there are now are "
+                                    + "removed and the report starts again, then the rules of the scenario are added, "
+                                    + "all or none (a line that is not valid is refused with the reason, and nothing "
+                                    + "changes). Returns the ids and each rule in plain words, and warnings for a rule "
+                                    + "that matches nothing in the integration now.")
+                .param("scenario", "string",
+                        "The scenario, the text of a .chaos file: one rule per line, # comments, and optionally a "
+                                             + "seed=<number> line for the same sequence of faults each run",
+                        true)
+                .param("scenarioName", "string",
+                        "The name of the scenario in the report, such as outage (default scenario)", false)
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(false).destructive(true)
+                .executor((ctx, args) -> {
+                    String scenario = AuthoringTools.required(args, "scenario");
+                    String scenarioName = args.get("scenarioName");
+                    selectChaosProcess(ctx, args);
+                    return ctx.executeAction("chaos", root -> {
+                        root.put("command", "load");
+                        root.put("text", scenario);
+                        if (scenarioName != null && !scenarioName.isBlank()) {
+                            root.put("name", scenarioName);
+                        }
+                    });
+                }));
+
+        register(tool("chaos_change",
+                "Change a chaos rule of the integration: the rule with the id gets the new one-line rule and one more "
+                                      + "version; the report keeps the version it replaces. Returns the id, the new "
+                                      + "version and the new rule in plain words (description), and warnings when the "
+                                      + "new rule matches nothing in the integration now.")
+                .param("id", "string", "The id of the rule, such as r1 (chaos_list shows them)", true)
+                .param("rule", "string", "The new rule in its one-line text form", true)
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(false).destructive(true)
+                .executor((ctx, args) -> {
+                    String id = AuthoringTools.required(args, "id");
+                    String rule = AuthoringTools.required(args, "rule");
+                    selectChaosProcess(ctx, args);
+                    return chaos(ctx, "change", id, rule);
+                }));
+
+        register(tool("chaos_remove",
+                "Remove a chaos rule of the integration: its faults stop, and the report keeps what it did.")
+                .param("id", "string", "The id of the rule, such as r1 (chaos_list shows them)", true)
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(false).destructive(false)
+                .executor((ctx, args) -> {
+                    String id = AuthoringTools.required(args, "id");
+                    selectChaosProcess(ctx, args);
+                    return chaos(ctx, "remove", id, null);
+                }));
+
+        register(tool("chaos_clear",
+                "Remove all chaos rules of the integration: no more faults, and the report keeps what they did "
+                                     + "(with reset=true the report starts again, for a new experiment). Returns how "
+                                     + "many were removed.")
+                .param("name", "string", CHAOS_NAME, false)
+                .param("reset", "boolean",
+                        "Also start a new report: the removed rules, the counts per route and the verdict are gone",
+                        false)
+                .readOnly(false).destructive(false)
+                .executor((ctx, args) -> {
+                    selectChaosProcess(ctx, args);
+                    boolean reset = "true".equalsIgnoreCase(args.get("reset"));
+                    return ctx.executeAction("chaos", root -> {
+                        root.put("command", "clear");
+                        if (reset) {
+                            root.put("reset", true);
+                        }
+                    });
+                }));
+        // an exploration (CAMEL-26773, CAMEL-26786): camel-chaos keeps its journal and ends its rules at the deadline,
+        // so starting one is the consent to the experiments in it, which need no confirm of their own
+        register(tool("chaos_explore_start",
+                "Start a chaos exploration in the integration (as camel cmd chaos-explore-start): a time to try chaos "
+                                             + "rules in, that camel-chaos enforces. While it runs, a rule ends at the "
+                                             + "deadline at the latest, and at the deadline the rules are removed, "
+                                             + "whatever happens. Its journal (the baseline, the rules tried and the "
+                                             + "experiments) is in chaos_report. Run experiments in it with "
+                                             + "chaos_experiment, and finish it with chaos_explore_finish. One runs at a "
+                                             + "time.")
+                .param("budget", "string", "How long it runs, between 10s and 2h (default 10m)", false)
+                .param("focus", "string", "What it is about, such as a route (optional)", false)
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(false).destructive(false)
+                .executor((ctx, args) -> {
+                    selectChaosProcess(ctx, args);
+                    return ctx.executeAction("chaos", root -> {
+                        root.put("command", "explore-start");
+                        putIfSet(root, "budget", args.get("budget"));
+                        putIfSet(root, "focus", args.get("focus"));
+                    });
+                }));
+
+        register(tool("chaos_experiment",
+                "Run one chaos experiment in the running exploration (as camel cmd chaos-experiment), in one call: it "
+                                          + "adds the rules (one of them with an expectation, expect=, that decides the "
+                                          + "hypothesis), sends the messages of feed when given (as send_message, with "
+                                          + "body, headers, repeat and interval), waits until the expectations are "
+                                          + "decided or wait is up, and ends the experiment, which removes its rules. "
+                                          + "Returns the verdict (FAIL: an expectation is unmet; PASS: all are met; "
+                                          + "INCONCLUSIVE: the wait was up before one was decided, so wait longer than "
+                                          + "its within=), the expectations with their actual values, the faults per "
+                                          + "rule, what the routes did meanwhile, the traffic sent, and the time left "
+                                          + "of the exploration (timeLeft, millis), and warnings for a rule that matched "
+                                          + "nothing (fix it and run again). chaos_suggest has rules to try and "
+                                          + "the feed of each route.")
+                .param("rule", "string",
+                        "The rules in their one-line text form, separated by ;, one of them with expect=, such as"
+                                         + " 'route=refunds error rate=every:5 expect=refunds:failed<=0 within=30s'",
+                        true)
+                .param("hypothesis", "string", "What the experiment tests, in a few words", false)
+                .param("feed", "string",
+                        "The endpoint, or the id of the route, to send the messages to (as the feed of chaos_suggest);"
+                                         + " a route that serves HTTP gets HTTP requests, or give the path to call"
+                                         + " (POST /orders/42); leave it out when the route feeds itself (a timer)",
+                        false)
+                .param("body", "string", "The body of the messages (file:<path>, or file:<folder> for a message per file)",
+                        false)
+                .param("headers", "string", "The headers of the messages as key=value pairs separated by newlines", false)
+                .param("repeat", "string", "How many messages to send in all (at most 10000)", false)
+                .param("interval", "string",
+                        "The pause between two messages in millis, or a range such as 100..500 (at most 60000)", false)
+                .param("wait", "string",
+                        "The longest wait for the verdict after the messages were sent, such as 90s (default 2m, at most"
+                                         + " 10m); it is at least the within= of the expectations",
+                        false)
+                .param("note", "string", "What to note with the experiment in the journal", false)
+                .param("name", "string", CHAOS_NAME, false)
+                // its rules make messages fail, wait or get lost, within the exploration the user started
+                .readOnly(false).destructive(true)
+                .executor((ctx, args) -> {
+                    String rule = AuthoringTools.required(args, "rule");
+                    String feed = args.get("feed");
+                    long wait;
+                    try {
+                        RepeatedSend.interval(args.get("interval"));
+                        wait = ChaosExperimentRun.waitMillis(args.get("wait"));
+                    } catch (IllegalArgumentException e) {
+                        throw new ToolExecutionException(e.getMessage());
+                    }
+                    int repeat = intArg(args, "repeat", 0);
+                    selectChaosProcess(ctx, args);
+                    ChaosExperimentRun.Feed traffic = feed != null && !feed.isBlank()
+                            ? new ChaosExperimentRun.Feed(
+                                    feed, args.get("body"), args.get("headers"), repeat,
+                                    args.get("interval"))
+                            : null;
+                    // the run checks the feed first: an experiment without messages says nothing, so the AI gets the
+                    // routes to feed instead, as a tool error (and the status is read once for it)
+                    try {
+                        return ChaosExperimentRun.run(new ChaosExperimentRun.Integration() {
+                            @Override
+                            public JsonObject chaos(String command, Consumer<JsonObject> options) {
+                                String answer = ctx.executeAction("chaos", root -> {
+                                    root.put("command", command);
+                                    options.accept(root);
+                                });
+                                return Jsoner.deserialize(answer, new JsonObject());
+                            }
+
+                            @Override
+                            public JsonObject send(ChaosExperimentRun.Feed f) {
+                                return ctx.sendMessage(f.endpoint(), f.body(), f.headers(), f.repeat(), f.interval());
+                            }
+
+                            @Override
+                            public JsonObject status() {
+                                return ctx.readFullStatus();
+                            }
+                        }, args.get("hypothesis"), rule, traffic, wait, args.get("note")).toJson();
+                    } catch (IllegalArgumentException e) {
+                        throw new ToolExecutionException(e.getMessage(), e);
+                    }
+                }));
+
+        register(tool("chaos_explore_finish",
+                "Finish the chaos exploration of the integration before its deadline (as camel cmd chaos-explore-finish):"
+                                              + " the rules are removed (an open experiment is ended), and the journal "
+                                              + "stays in chaos_report. Returns the journal: the rules tried, the "
+                                              + "experiments with their verdicts, and the baseline.")
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(false).destructive(false)
+                .executor((ctx, args) -> {
+                    selectChaosProcess(ctx, args);
+                    return chaos(ctx, "explore-finish", null, null);
+                }));
+    }
+
+    private static void putIfSet(JsonObject root, String key, String value) {
+        if (value != null && !value.isBlank()) {
+            root.put(key, value);
+        }
+    }
+
+    /**
+     * Selects the integration of a chaos tool, as camel cmd chaos-add picks it: the one the call names, else the
+     * selected one, else the only one running, else the only one with chaos switched on. When none of them is clear,
+     * the error lists the running integrations, so the agent can name one.
+     */
+    private static void selectChaosProcess(ToolContext ctx, Map<String, String> args) {
+        String name = args.get("name");
+        if (name != null && !name.isBlank()) {
+            ctx.selectProcess(name);
+        } else if (!ctx.hasProcess() && ctx.isAutoSelectSingleProcess()) {
+            try {
+                ctx.selectProcess(ProcessFinder.requireOneForChaos(null).pid());
+            } catch (CliException e) {
+                throw new ToolExecutionException(e.getMessage());
+            }
+        }
+    }
+
+    /** Sends the chaos action, and returns the answer of the integration; a refusal is an error with its reason. */
+    private static String chaos(ToolContext ctx, String command, String id, String rule) {
+        return ctx.executeAction("chaos", root -> {
+            root.put("command", command);
+            if (id != null) {
+                root.put("id", id);
+            }
+            if (rule != null) {
+                root.put("rule", rule);
+            }
+        });
+    }
+
+    /**
+     * Whether chaos is on, and the rules or the report from the chaos console in the status of the integration; or why
+     * chaos is off.
+     */
+    static JsonObject chaosSection(ToolContext ctx, String key) {
+        JsonObject status = ctx.readFullStatus();
+        if (status == null) {
+            throw new ToolExecutionException("No status from the integration with pid " + ctx.pid() + " yet");
+        }
+        if (!(status.get("chaos") instanceof Map<?, ?> chaos)) {
+            throw new ToolExecutionException(
+                    "camel-chaos is not on the classpath of the integration with pid " + ctx.pid()
+                                             + ": run it with camel run --chaos, or add the camel-chaos dependency");
+        }
+        JsonObject answer = new JsonObject();
+        boolean on = Boolean.TRUE.equals(chaos.get("enabled")) || "true".equals(String.valueOf(chaos.get("enabled")));
+        answer.put("enabled", on);
+        if (on) {
+            Object value = chaos.get(key);
+            answer.put(key, value != null ? value : "rules".equals(key) ? new JsonArray() : new JsonObject());
+        } else {
+            answer.put("reason", chaos.get("reason"));
+        }
+        return answer;
     }
 
     @SuppressWarnings("unchecked")
@@ -1146,8 +1572,12 @@ public final class ToolRegistry {
             = "Example name as listed, e.g. quick-start/timer-log or fail-well/circuit-breaker (the short name without "
               + "the group, such as timer-log, works too)";
     public static final String EXAMPLE_FILE_DESC
-            = "File name within the example, as in its files, e.g. timer-log.camel.yaml or application.properties "
-              + "for quick-start/timer-log";
+            = "File name within the example, as in its files, e.g. timer-log.camel.yaml, application.properties "
+              + "or test/timer-log.citrus.it.yaml (its Citrus test) for quick-start/timer-log";
+    /** The filter of the example list, shared with the MCP server. */
+    public static final String EXAMPLE_FILTER_DESC
+            = "Filter by name, description or tag (case-insensitive; every word must match); citrus finds the "
+              + "examples with a Citrus test";
 
     private static void registerExampleTools() {
         register(tool("list_examples",
@@ -1155,10 +1585,10 @@ public final class ToolRegistry {
                                        + "route, fail-well, connect, connect-service, contracts, ai, cloud, showcase). "
                                        + "Returns the groups (level, title, intro) and the examples in reading order with "
                                        + "name, title, description, level, order, tags, what they teach, the infra "
-                                       + "services they need, whether they are bundled and their files. "
+                                       + "services they need, whether they are bundled and their files (test/ has the "
+                                       + "Citrus test, run with camel test run). "
                                        + "Call it without arguments for the whole ladder, with level for one group.")
-                .param("filter", "string",
-                        "Filter by name, description, or tag (case-insensitive)", false)
+                .param("filter", "string", EXAMPLE_FILTER_DESC, false)
                 .param("level", "string", EXAMPLE_LEVEL_DESC, false)
                 .param("limit", "integer", "Maximum number of examples to return (default: 50)", false)
                 .executor((ctx, args) -> {
@@ -1223,7 +1653,7 @@ public final class ToolRegistry {
                             }
                             jo.put("bundled", ExampleHelper.isBundled(entry));
                             jo.put("requiresDocker", ExampleHelper.requiresDocker(entry));
-                            jo.put("files", ExampleHelper.getFiles(entry));
+                            jo.put("files", exampleFiles(entry));
                             results.add(jo);
                         }
                     }
@@ -1258,7 +1688,7 @@ public final class ToolRegistry {
         String fileName = file.trim();
         JsonObject entry = resolveExample(ExampleHelper.loadCatalog(), wanted);
         String name = entry.getString("name");
-        List<String> files = ExampleHelper.getFiles(entry);
+        List<String> files = exampleFiles(entry);
         if (!files.contains(fileName)) {
             throw new ToolExecutionException(
                     "File '" + fileName + "' not found in example '" + name + "'. Available files: " + files);
@@ -1281,6 +1711,17 @@ public final class ToolRegistry {
             answer.put("githubUrl", ExampleHelper.getGithubUrl(entry) + "/" + fileName);
         }
         return answer;
+    }
+
+    /**
+     * The files of an example as the example tools list them: the files it runs with, and its Citrus test, which the
+     * catalog leaves out. A model asked to write a Citrus test had no sample to read (test-citrus-orders of the
+     * benchmark).
+     */
+    static List<String> exampleFiles(JsonObject entry) {
+        List<String> files = new ArrayList<>(ExampleHelper.getFiles(entry));
+        files.addAll(ExampleHelper.getTestFiles(entry));
+        return files;
     }
 
     /**

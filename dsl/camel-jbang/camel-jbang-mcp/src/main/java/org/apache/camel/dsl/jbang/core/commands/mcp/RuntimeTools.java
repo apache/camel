@@ -34,6 +34,7 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
@@ -57,6 +58,10 @@ public class RuntimeTools {
 
     private static final String NAME_OR_PID_DESC
             = "Name or PID of the Camel process. Leave empty to auto-detect (works when exactly one Camel process is running)";
+
+    private static final String CHAOS_NAME_OR_PID_DESC
+            = "Name or PID of the Camel process. Leave empty to auto-detect: the only Camel process running, else the"
+              + " only one with chaos switched on";
 
     private static final Set<String> MEMORY_LEAK_COMMANDS = Set.of("start", "stop", "status", "query", "compare");
     private static final int SINGLE_DEFAULT_DURATION = 60;
@@ -88,7 +93,11 @@ public class RuntimeTools {
      * @return                  the tool result as a JsonObject suitable for MCP responses
      */
     private JsonObject delegateToRegistry(String registryToolName, String nameOrPid, Map<String, String> args) {
-        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        return delegateToRegistry(registryToolName, runtimeService.findSingleProcess(nameOrPid), args);
+    }
+
+    private static JsonObject delegateToRegistry(
+            String registryToolName, RuntimeService.ProcessInfo p, Map<String, String> args) {
         ToolContext ctx = new ToolContext();
         ctx.selectProcess(p.pid());
         try {
@@ -126,6 +135,7 @@ public class RuntimeTools {
 
     // ---- Process discovery (MCP-specific, not in ToolRegistry) ----
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   List all running Camel processes that can be inspected. \
@@ -136,6 +146,7 @@ public class RuntimeTools {
 
     // ---- Read-only status tools ----
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get Camel context information: name, version, state, uptime, route count, exchange statistics.")
     public JsonObject camel_runtime_context(
@@ -143,6 +154,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_context", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List Camel routes with their state, uptime, messages processed, last error, and throughput statistics."
                         + " A route with mixedBodyKinds has steps reached with bodies of more than one kind, which need"
@@ -155,6 +167,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_routes", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get health check status for the Camel application.")
     public JsonObject camel_runtime_health(
@@ -162,6 +175,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_health", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List all endpoints registered in the Camel context with their URIs and usage statistics.")
     public JsonObject camel_runtime_endpoints(
@@ -169,6 +183,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_endpoints", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show currently in-flight exchanges (messages being processed).")
     public JsonObject camel_runtime_inflight(
@@ -176,6 +191,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_inflight", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show blocked exchanges that are stuck or waiting.")
     public JsonObject camel_runtime_blocked(
@@ -183,6 +199,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_blocked", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show exchange variables in the Camel context.")
     public JsonObject camel_runtime_variables(
@@ -190,6 +207,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_variables", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show consumer statistics (polling consumers, event-driven consumers).")
     public JsonObject camel_runtime_consumers(
@@ -197,6 +215,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_consumers", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show configuration properties of the running Camel application.")
     public JsonObject camel_runtime_properties(
@@ -204,6 +223,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_properties", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show services registered in the Camel service registry.")
     public JsonObject camel_runtime_services(
@@ -211,6 +231,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_services", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show JVM memory usage (heap/non-heap), garbage collection stats, and thread counts.")
     public JsonObject camel_runtime_memory(
@@ -220,6 +241,7 @@ public class RuntimeTools {
 
     // ---- Interactive action tools ----
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get the source code of routes in the running Camel application.")
     public JsonObject camel_runtime_route_source(
@@ -229,6 +251,7 @@ public class RuntimeTools {
                 Map.of("filter", filter != null ? filter : "*"));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Dump route definitions in XML, YAML, or Java DSL format.")
     public JsonObject camel_runtime_route_dump(
@@ -242,6 +265,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_route_dump", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show the route structure as a tree of processors. With the message history on (camel run --dev),"
                         + " a processor has bodyTypes: the body types it has been reached with, across the messages, and"
@@ -268,6 +292,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_route_structure", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Show configured options for all processors in a route. \
@@ -289,6 +314,7 @@ public class RuntimeTools {
 
     // one tool for the four commands, and the hint is per tool: destructive because stop and suspend take the route's
     // consumer offline (the shared registry, with one tool per command, marks only stop_route destructive)
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = "Control a route: start, stop, suspend, or resume it.")
     public JsonObject camel_runtime_route_control(
@@ -315,6 +341,7 @@ public class RuntimeTools {
 
     // ---- Data, resilience, metrics and analysis (CAMEL-24867: the rest of the shared runtime registry) ----
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = """
                   Execute a SQL statement against a DataSource of the running Camel application. \
@@ -336,17 +363,20 @@ public class RuntimeTools {
         return delegateToRegistry("execute_sql", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Which runtime tool groups the Camel application needs, from what it has: sql (datasources, \
-                  SQL endpoints), tracing (OpenTelemetry, message tracing, Micrometer) and resilience (circuit \
-                  breakers). Returns the core tools, each group's tools with one line of guidance, and a fingerprint \
-                  that changes only when the groups do. A client for a small model offers the core tools plus these.""")
+                  SQL endpoints), tracing (OpenTelemetry, message tracing, Micrometer), resilience (circuit \
+                  breakers), http (the endpoints it serves) and chaos (camel-chaos). Returns the core tools, each \
+                  group's tools with one line of guidance, and a fingerprint that changes only when the groups do. \
+                  A client for a small model offers the core tools plus these.""")
     public JsonObject camel_runtime_tool_groups(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_tool_groups", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   List the HTTP endpoints the running Camel application serves (Rest DSL and platform-http): \
@@ -363,6 +393,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_http_endpoints", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
                   Send an HTTP request to the running Camel application's own server (localhost and its port) and \
@@ -394,6 +425,7 @@ public class RuntimeTools {
         return delegateToRegistry("http_request", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the datasources of the running Camel application with their connection pool status: \
@@ -403,6 +435,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_datasources", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the traced SQL executions of the camel-sql and camel-jdbc components: per statement timing, \
@@ -412,6 +445,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_sql_trace", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the circuit breakers of the running Camel application: state (CLOSED/OPEN/HALF_OPEN), \
@@ -421,6 +455,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_circuit_breakers", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the Micrometer metrics of the running Camel application: counters, gauges, timers and \
@@ -430,6 +465,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_metrics", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Aggregate EIP usage across all routes: which processors are used, how often, and their \
@@ -439,6 +475,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_eip_stats", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the OpenTelemetry spans of the running Camel application: trace IDs, span names, durations, \
@@ -451,6 +488,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_spans", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the startup recorder steps of the running Camel application: each step with duration, level \
@@ -460,6 +498,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_startup_steps", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Analyze the routes of the running Camel application for anti-patterns and structural issues: \
@@ -473,6 +512,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_route_analysis", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Compare the running route definitions with the original source files, to detect configuration \
@@ -491,14 +531,25 @@ public class RuntimeTools {
         }
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
-          description = "Send a test message to a Camel endpoint in the running application.")
+          description = """
+                  Send a test message to a Camel endpoint in the running application. With repeat, or a body of \
+                  file:<folder> (one message per file, in name order; 001.properties has the headers of 001.json), it \
+                  sends several messages with interval millis between them, and answers with a summary: sent, failed \
+                  and the errors. A broker consumer stubbed with camel run --stub=remote is fed this way.""")
     public JsonObject camel_runtime_send(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Endpoint URI to send to (e.g., direct:myRoute, seda:queue)") String endpoint,
-            @ToolArg(description = "Message body to send", required = false) String body,
+            @ToolArg(description = "Message body to send (file:<path> for a file, file:<folder> for its files)",
+                     required = false) String body,
             @ToolArg(description = "Message headers as key=value pairs separated by newlines",
-                     required = false) String headers) {
+                     required = false) String headers,
+            @ToolArg(description = "How many messages to send in all (at most 10000), going round the files of a folder",
+                     required = false) Integer repeat,
+            @ToolArg(description = "The pause between two messages in millis, or a range such as 100..500 to draw"
+                                   + " each pause at random (at most 60000)",
+                     required = false) String interval) {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
         }
@@ -510,9 +561,16 @@ public class RuntimeTools {
         if (headers != null) {
             args.put("headers", headers);
         }
+        if (repeat != null) {
+            args.put("repeat", String.valueOf(repeat));
+        }
+        if (interval != null) {
+            args.put("interval", interval);
+        }
         return delegateToRegistry("send_message", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
                   Enable, disable, or dump message tracing for the running Camel application. \
@@ -526,6 +584,7 @@ public class RuntimeTools {
         return delegateToRegistry("trace_control", nameOrPid, Map.of("action", action));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Dump the messages traced in the running Camel application (tracing must be enabled, \
@@ -535,6 +594,41 @@ public class RuntimeTools {
         return delegateToRegistry("trace_control", nameOrPid, Map.of("action", "dump"));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  What happened per second in the last minutes (up to 5) of the running application: per route the \
+                  exchanges completed, recovered by a redelivery, handled by the error handler and failed, the mean, \
+                  p95 and max time, the exchanges in flight and the redelivery attempts; the errors per second by \
+                  route and exception (chaosRule names the camel-chaos rule that made one); with camel-chaos the faults \
+                  per second of each chaos rule (chaos) and the seconds a rule had a route down (down of the route); \
+                  the seconds a circuit breaker was open (2) or half open (1) (circuitBreakers); \
+                  and per second the failed, handled and recovered exchanges (a recovered one with the failure it was \
+                  redelivered for) and the 3 slowest with the remote calls they made. Each series is oldest first and ends at \
+                  the epoch second end. Use it to tell when something went wrong and what it did to which route; \
+                  camel_runtime_chaos_report has the chaos rules.""")
+    public JsonObject camel_runtime_timeline(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The number of seconds (default 60, at most what the application records)",
+                     required = false) Integer seconds,
+            @ToolArg(description = "Route ID or pattern such as orders* (default all routes)",
+                     required = false) String routeId,
+            @ToolArg(description = "Include the failed, handled, recovered and slowest exchanges (default true)",
+                     required = false) Boolean exchanges) {
+        Map<String, String> args = new HashMap<>();
+        if (seconds != null) {
+            args.put("seconds", seconds.toString());
+        }
+        if (routeId != null && !routeId.isBlank()) {
+            args.put("routeId", routeId);
+        }
+        if (exchanges != null) {
+            args.put("exchanges", exchanges.toString());
+        }
+        return delegateToRegistry("get_timeline", nameOrPid, args);
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show top processor statistics: which processors are slowest and most active.")
     public JsonObject camel_runtime_top(
@@ -542,6 +636,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_top_processors", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the inter-route topology showing how routes connect to each other \
@@ -558,6 +653,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_route_topology", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get a JVM thread dump showing thread names, states, and stack traces.")
     public JsonObject camel_runtime_thread_dump(
@@ -565,6 +661,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_thread_dump", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get a class-level heap histogram showing instance counts and byte usage per class. \
@@ -574,6 +671,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_heap_histogram", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
                   Write a heap dump (.hprof) file from a running Camel integration for deep memory analysis \
@@ -591,6 +689,7 @@ public class RuntimeTools {
         return delegateToRegistry("write_heap_dump", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
                   Diagnose memory leaks in a running Camel integration using Java Flight Recorder (JFR). \
@@ -765,6 +864,7 @@ public class RuntimeTools {
         }
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the message history trace of the last completed exchange, with its route path, processors \
@@ -776,6 +876,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_history", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = """
                   Receive (consume) a message from an endpoint of the running application, the complement of \
@@ -1002,6 +1103,7 @@ public class RuntimeTools {
         return e.getMessage() != null ? e.getMessage() : e.toString();
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Browse messages in a Camel endpoint (e.g., browse messages queued in a SEDA endpoint).")
     public JsonObject camel_runtime_browse(
@@ -1017,5 +1119,250 @@ public class RuntimeTools {
             args.put("limit", limit.toString());
         }
         return delegateToRegistry("browse_endpoint", nameOrPid, args);
+    }
+
+    // ---- camel-chaos (the chaos tool group): the rules and the report, and the chaos action of the CLI connector ----
+    // add, change and load are destructive (a rule makes messages fail, wait or get lost) and the clients ask first
+    // (ToolConfirms.chaos and chaosLoad); suggest only reads the routes; remove and clear change the integration only back towards normal, and the report keeps
+    // the removed rules, so they are not destructive, as trace start and stop are not
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  List the chaos rules of the Camel application (camel-chaos, development only): id, version, the \
+                  rule and the rule in plain words (description), state (active, waiting for its start, or ended), \
+                  where it can fire in the application now (hooks), matches, faults fired, time left, the \
+                  expectation, and the live state: observed rate next to the rate of the rule, when it last fired, \
+                  faults per second over the last minute, and the effect of its faults (exchanges completed, \
+                  recovered by redelivery, handled by the error handler, failed, in flight); or why chaos is off. The rules come from the status of the application, written every second.""")
+    public JsonObject camel_runtime_chaos_list(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateChaos("chaos_list", nameOrPid, Map.of());
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Get the chaos report of the Camel application: the verdict (PASS or FAIL) and whether it is final, \
+                  the seed, every version of every rule with what it fired and its live state, the expectations (a \
+                  pending one is not decided yet), the counts per route and the last 20 faults (rule, fault, route, \
+                  endpoint or step, exchange id); or why chaos is off.""")
+    public JsonObject camel_runtime_chaos_report(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateChaos("chaos_report", nameOrPid, Map.of());
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Check chaos rules without adding them (as camel cmd chaos-add --dry-run): each rule in plain words, \
+                  where it can fire, warnings, and what it would hit now (hits: the sends, polls, routes or steps, \
+                  each with its route). A rule that is not valid is refused with the reason; nothing changes.""")
+    public JsonObject camel_runtime_chaos_check(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The rule in its one-line text form, as an entry of camel.chaos.rules; several"
+                                   + " rules separated by ;") String rule) {
+        requireArg("rule", rule);
+        return delegateChaos("chaos_check", nameOrPid, Map.of("rule", rule));
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  What to try (as camel cmd chaos-suggest): chaos rules suggested per route of the Camel application \
+                  from what the routes do, the most worth trying first, such as an HTTP call without a circuit \
+                  breaker, a dead letter channel or a hand-off to another route over seda. Each has the route, the \
+                  kind of fault, the rule, why to try it, tried=true when a rule of that kind has already faulted \
+                  the route, and feed: how to send messages into the route (kind self, http, file or send, a hint \
+                  such as the command, and real=true when that goes to the real system rather than a stub). Two \
+                  faults at once (kind combined, after the single ones) have rules: all the rules to add together \
+                  (camel_runtime_chaos_add with them separated by ;). \
+                  Nothing is added: check a rule with camel_runtime_chaos_check and add it with \
+                  camel_runtime_chaos_add.""")
+    public JsonObject camel_runtime_chaos_suggest(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateChaos("chaos_suggest", nameOrPid, Map.of());
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
+          description = """
+                  Load a chaos scenario into the Camel application (as camel cmd chaos-load): the rules there are \
+                  now are removed and the report starts again, then the rules of the scenario are added, all or \
+                  none (a line that is not valid is refused with the reason, and nothing changes). Returns the ids \
+                  and each rule in plain words, and warnings for a rule that matches nothing in the application \
+                  now.""")
+    public JsonObject camel_runtime_chaos_load(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The scenario, the text of a .chaos file: one rule per line, # comments, and"
+                                   + " optionally a seed=<number> line for the same sequence of faults each run") String scenario,
+            @ToolArg(description = "The name of the scenario in the report, such as outage (default scenario)",
+                     required = false) String scenarioName) {
+        requireArg("scenario", scenario);
+        Map<String, String> args = new HashMap<>();
+        args.put("scenario", scenario);
+        if (scenarioName != null) {
+            args.put("scenarioName", scenarioName);
+        }
+        return delegateChaos("chaos_load", nameOrPid, args);
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
+          description = """
+                  Add a chaos rule to the Camel application, in the one-line form of camel.chaos.rules, e.g. \
+                  'endpoint=kafka:orders* error rate=0.1 until=5m'; several rules separated by ; are added together \
+                  (all or none). Returns the ids of the rules, each rule in plain words (description for one \
+                  rule, descriptions for several) to check it does what was meant, and warnings for a rule that \
+                  matches nothing in the application now (often a typo: fix it with camel_runtime_chaos_change). \
+                  Chaos must be on in the \
+                  application; a rule that is not valid is refused with the reason.""")
+    public JsonObject camel_runtime_chaos_add(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The rule in its one-line text form, as an entry of camel.chaos.rules; several"
+                                   + " rules separated by ;") String rule) {
+        requireArg("rule", rule);
+        return delegateChaos("chaos_add", nameOrPid, Map.of("rule", rule));
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
+          description = """
+                  Change a chaos rule of the Camel application: the rule with the id gets the new one-line rule and \
+                  one more version; the report keeps the version it replaces. Returns the id, the new version and \
+                  the new rule in plain words (description), and warnings when the new rule matches nothing in the \
+                  application now.""")
+    public JsonObject camel_runtime_chaos_change(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The id of the rule, such as r1 (camel_runtime_chaos_list shows them)") String id,
+            @ToolArg(description = "The new rule in its one-line text form") String rule) {
+        requireArg("id", id);
+        requireArg("rule", rule);
+        return delegateChaos("chaos_change", nameOrPid, Map.of("id", id, "rule", rule));
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = "Remove a chaos rule of the Camel application: its faults stop, and the report keeps what it did.")
+    public JsonObject camel_runtime_chaos_remove(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The id of the rule, such as r1 (camel_runtime_chaos_list shows them)") String id) {
+        requireArg("id", id);
+        return delegateChaos("chaos_remove", nameOrPid, Map.of("id", id));
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Remove all chaos rules of the Camel application: no more faults, and the report keeps what they \
+                  did (with reset=true the report starts again, for a new experiment). Returns how many were \
+                  removed.""")
+    public JsonObject camel_runtime_chaos_clear(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "Also start a new report: the removed rules, the counts per route and the verdict"
+                                   + " are gone (default false)",
+                     required = false) Boolean reset) {
+        return delegateChaos("chaos_clear", nameOrPid,
+                Boolean.TRUE.equals(reset) ? Map.of("reset", "true") : Map.of());
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Start a chaos exploration in the Camel application (as camel cmd chaos-explore-start): a time to \
+                  try chaos rules in, that camel-chaos enforces. While it runs, a rule ends at the deadline at the \
+                  latest, and at the deadline the rules are removed, whatever happens. Its journal (the baseline, \
+                  the rules tried and the experiments) is in camel_runtime_chaos_report. Run experiments in it with \
+                  camel_runtime_chaos_experiment, and finish it with camel_runtime_chaos_explore_finish. One runs \
+                  at a time.""")
+    public JsonObject camel_runtime_chaos_explore_start(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "How long it runs, between 10s and 2h (default 10m)", required = false) String budget,
+            @ToolArg(description = "What it is about, such as a route", required = false) String focus) {
+        Map<String, String> args = new HashMap<>();
+        putIfSet(args, "budget", budget);
+        putIfSet(args, "focus", focus);
+        return delegateChaos("chaos_explore_start", nameOrPid, args);
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
+          description = """
+                  Run one chaos experiment in the running exploration of the Camel application (as camel cmd \
+                  chaos-experiment), in one call: it adds the rules (one of them with an expectation, expect=, that \
+                  decides the hypothesis), sends the messages of feed when given (as camel_runtime_send, with body, \
+                  headers, repeat and interval), waits until the expectations are decided or wait is up, and ends \
+                  the experiment, which removes its rules. Returns the verdict (FAIL: an expectation is unmet; PASS: \
+                  all are met; INCONCLUSIVE: the wait was up before one was decided, so wait longer than its \
+                  within=), the expectations with their actual values, the faults per rule, what the routes did \
+                  meanwhile, the traffic sent, the time left of the exploration (timeLeft, millis), and warnings \
+                  for a rule that matched nothing (fix it and run again). camel_runtime_chaos_suggest has rules to \
+                  try and the feed of each route.""")
+    public JsonObject camel_runtime_chaos_experiment(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The rules in their one-line text form, separated by ;, one of them with expect=,"
+                                   + " such as 'route=refunds error rate=every:5 expect=refunds:failed<=0 within=30s'") String rule,
+            @ToolArg(description = "What the experiment tests, in a few words", required = false) String hypothesis,
+            @ToolArg(description = "The endpoint, or the id of the route, to send the messages to (as the feed of"
+                                   + " camel_runtime_chaos_suggest); a route that serves HTTP gets HTTP requests, or"
+                                   + " give the path to call (POST /orders/42); leave it out when the route feeds itself",
+                     required = false) String feed,
+            @ToolArg(description = "The body of the messages (file:<path>, or file:<folder> for a message per file)",
+                     required = false) String body,
+            @ToolArg(description = "The headers of the messages as key=value pairs separated by newlines",
+                     required = false) String headers,
+            @ToolArg(description = "How many messages to send in all (at most 10000)", required = false) Integer repeat,
+            @ToolArg(description = "The pause between two messages in millis, or a range such as 100..500",
+                     required = false) String interval,
+            @ToolArg(description = "The longest wait for the verdict after the messages were sent, such as 90s"
+                                   + " (default 2m, at most 10m); it is at least the within= of the expectations",
+                     required = false) String wait,
+            @ToolArg(description = "What to note with the experiment in the journal", required = false) String note) {
+        requireArg("rule", rule);
+        Map<String, String> args = new HashMap<>();
+        args.put("rule", rule);
+        putIfSet(args, "hypothesis", hypothesis);
+        putIfSet(args, "feed", feed);
+        putIfSet(args, "body", body);
+        putIfSet(args, "headers", headers);
+        if (repeat != null) {
+            args.put("repeat", repeat.toString());
+        }
+        putIfSet(args, "interval", interval);
+        putIfSet(args, "wait", wait);
+        putIfSet(args, "note", note);
+        return delegateChaos("chaos_experiment", nameOrPid, args);
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Finish the chaos exploration of the Camel application before its deadline (as camel cmd \
+                  chaos-explore-finish): the rules are removed (an open experiment is ended), and the journal stays \
+                  in camel_runtime_chaos_report. Returns the journal: the rules tried, the experiments with their \
+                  verdicts, and the baseline.""")
+    public JsonObject camel_runtime_chaos_explore_finish(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateChaos("chaos_explore_finish", nameOrPid, Map.of());
+    }
+
+    private static void putIfSet(Map<String, String> args, String key, String value) {
+        if (value != null && !value.isBlank()) {
+            args.put(key, value);
+        }
+    }
+
+    /**
+     * As {@link #delegateToRegistry(String, String, Map)}, for a chaos tool: without a name, the only integration
+     * running, else the only one with chaos switched on ({@link RuntimeService#findChaosProcess(String)}).
+     */
+    private JsonObject delegateChaos(String registryToolName, String nameOrPid, Map<String, String> args) {
+        return delegateToRegistry(registryToolName, runtimeService.findChaosProcess(nameOrPid), args);
+    }
+
+    private static void requireArg(String name, String value) {
+        if (value == null || value.isBlank()) {
+            throw new ToolCallException(name + " is required", null);
+        }
     }
 }

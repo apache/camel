@@ -87,7 +87,7 @@ public class DataLakeConfiguration implements Cloneable {
     private Boolean retainUncommitedData = false;
     @UriParam(description = "Whether or not a file changed event raised indicates completion (true) or modification (false)")
     private Boolean close = false;
-    @UriParam(description = "This parameter allows the caller to upload data in parallel and control the order in which it is appended to the file.")
+    @UriParam(description = "The final length of the file, including previously committed data, used by flushToFile.")
     private Long position;
     @UriParam(description = "expression for queryInputStream")
     private String expression;

@@ -18,13 +18,23 @@ package org.apache.camel.processor.aggregate.hazelcast;
 
 import java.util.Set;
 
+import com.hazelcast.core.HazelcastException;
+import com.hazelcast.map.IMap;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException;
+import org.apache.camel.support.DefaultExchangeHolder;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.assertCollectionSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggregationRepositoryCamelTestSupport {
 
@@ -180,5 +190,81 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
             repoOne.doStop();
             repoTwo.doStop();
         }
+    }
+
+    @Test
+    public void checkOptimisticRemoveKeepsTheGroupWhenTheRecoverableStorageFails() throws Exception {
+        HazelcastAggregationRepository repo
+                = new HazelcastAggregationRepository("optimisticRemovePutFailsRepo", true, getFirstInstance());
+
+        try {
+            repo.doStart();
+
+            final String key = "optimisticRemovePutFailsKey";
+            Exchange ex = createExchangeWithBody("This group must not be lost.");
+            repo.add(context(), key, null, ex);
+
+            IMap<String, DefaultExchangeHolder> failingPersistedCache = mockMap();
+            when(failingPersistedCache.put(anyString(), any())).thenThrow(new HazelcastException("Simulated failure"));
+            repo.persistedCache = failingPersistedCache;
+
+            assertThrows(HazelcastException.class, () -> repo.remove(context(), key, ex));
+
+            Exchange getBackEx = repo.get(context(), key);
+            assertNotNull(getBackEx, "the group must still be in the repository after a failed remove");
+            assertEquals(ex.getIn().getBody(), getBackEx.getIn().getBody());
+        } finally {
+            repo.doStop();
+        }
+    }
+
+    @Test
+    public void checkOptimisticRemoveOfAStaleExchangeLeavesNothingToRecover() throws Exception {
+        HazelcastAggregationRepository repo
+                = new HazelcastAggregationRepository("optimisticRemoveStaleRepo", true, getFirstInstance());
+
+        try {
+            repo.doStart();
+
+            final String key = "optimisticRemoveStaleKey";
+            Exchange ex = createExchangeWithBody("The current group.");
+            repo.add(context(), key, null, ex);
+            Exchange staleEx = createExchangeWithBody("A stale group.");
+
+            assertThrows(OptimisticLockingException.class, () -> repo.remove(context(), key, staleEx));
+
+            assertTrue(repo.scan(context()).isEmpty(), "a failed remove must not leave an exchange to recover");
+            assertEquals(ex.getIn().getBody(), repo.get(context(), key).getIn().getBody());
+        } finally {
+            repo.doStop();
+        }
+    }
+
+    @Test
+    public void checkOptimisticRemoveOfAStaleExchangeFailsWhenTheCleanupFails() throws Exception {
+        HazelcastAggregationRepository repo
+                = new HazelcastAggregationRepository("optimisticRemoveCleanupFailsRepo", true, getFirstInstance());
+
+        try {
+            repo.doStart();
+
+            final String key = "optimisticRemoveCleanupFailsKey";
+            Exchange ex = createExchangeWithBody("The current group.");
+            repo.add(context(), key, null, ex);
+            Exchange staleEx = createExchangeWithBody("A stale group.");
+
+            IMap<String, DefaultExchangeHolder> failingPersistedCache = mockMap();
+            when(failingPersistedCache.remove(anyString())).thenThrow(new HazelcastException("Simulated failure"));
+            repo.persistedCache = failingPersistedCache;
+
+            assertThrows(OptimisticLockingException.class, () -> repo.remove(context(), key, staleEx));
+        } finally {
+            repo.doStop();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static IMap<String, DefaultExchangeHolder> mockMap() {
+        return mock(IMap.class);
     }
 }

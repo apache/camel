@@ -2,6 +2,7 @@
 package org.apache.camel.component.rest.openapi;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RestOpenApiEndpoint target = (RestOpenApiEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": target.setApiContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "basepath":
@@ -42,6 +43,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "externalreferences":
+        case "externalReferences": target.setExternalReferences(property(camelContext, java.lang.String.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -64,7 +67,7 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": return java.lang.String.class;
         case "basepath":
@@ -84,6 +87,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "externalreferences":
+        case "externalReferences": return java.lang.String.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -107,7 +112,7 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RestOpenApiEndpoint target = (RestOpenApiEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": return target.getApiContextPath();
         case "basepath":
@@ -127,6 +132,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "externalreferences":
+        case "externalReferences": return target.getExternalReferences();
         case "host": return target.getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

@@ -61,7 +61,10 @@ public class SpringSimpleFileNameWithQuoteTest extends SpringRunWithTestSupport 
             ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext context) {
-            context.getEnvironment().getSystemProperties().put("testDirectory", tempDir.toString());
+            // this is a JVM wide system property, not scoped to the context: the key is prefixed with the test name
+            // so that it cannot clash with other tests running in parallel
+            context.getEnvironment().getSystemProperties().put("SpringSimpleFileNameWithQuoteTest.testDirectory",
+                    tempDir.toString());
         }
     }
 

@@ -35,8 +35,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -46,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Too resource intensive for most systems to run reliably")
-@Tags({ @Tag("couchbase-71") })
 public class ConsumeSqlQueryIT extends CamelTestSupport {
 
     @RegisterExtension
@@ -59,6 +56,7 @@ public class ConsumeSqlQueryIT extends CamelTestSupport {
     static void setUpCouchbase() {
         bucketName = "sqlBucket" + TestUtils.randomWithRange(0, 100);
         cluster = Cluster.connect(service.getConnectionString(), service.getUsername(), service.getPassword());
+        cluster.waitUntilReady(Duration.ofSeconds(30));
 
         // Create bucket without specifying storage backend (uses server default — Magma on 8.0+)
         cluster.buckets().createBucket(

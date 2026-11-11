@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.ocsf;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,7 +25,7 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AllowUnmarshallType", boolean.class);
         map.put("CollectionType", java.lang.Class.class);
-        map.put("ObjectMapper", com.fasterxml.jackson.databind.ObjectMapper.class);
+        map.put("ObjectMapper", tools.jackson.databind.ObjectMapper.class);
         map.put("PrettyPrint", boolean.class);
         map.put("UnmarshalType", java.lang.Class.class);
         map.put("UseDefaultObjectMapper", boolean.class);
@@ -35,13 +36,13 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OcsfDataFormat target = (OcsfDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": target.setAllowUnmarshallType(property(camelContext, boolean.class, value)); return true;
         case "collectiontype":
         case "collectionType": target.setCollectionType(property(camelContext, java.lang.Class.class, value)); return true;
         case "objectmapper":
-        case "objectMapper": target.setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "objectMapper": target.setObjectMapper(property(camelContext, tools.jackson.databind.ObjectMapper.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         case "unmarshaltype":
@@ -61,13 +62,13 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": return boolean.class;
         case "collectiontype":
         case "collectionType": return java.lang.Class.class;
         case "objectmapper":
-        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "objectMapper": return tools.jackson.databind.ObjectMapper.class;
         case "prettyprint":
         case "prettyPrint": return boolean.class;
         case "unmarshaltype":
@@ -83,7 +84,7 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OcsfDataFormat target = (OcsfDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": return target.isAllowUnmarshallType();
         case "collectiontype":

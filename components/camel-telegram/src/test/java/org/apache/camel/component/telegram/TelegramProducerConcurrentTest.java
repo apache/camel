@@ -25,7 +25,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
@@ -34,6 +33,8 @@ import org.apache.camel.component.telegram.util.TelegramMockRoutes.MockProcessor
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -65,7 +66,7 @@ public class TelegramProducerConcurrentTest extends TelegramTestSupport {
         }
 
         // each request is the JSON of one message, sent to the chat of that message
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonMapper.builder().build();
         Set<String> texts = new HashSet<>();
         for (String request : mockProcessor.awaitRecordedMessages(MESSAGES, 10000)) {
             OutgoingTextMessage message = mapper.readValue(request, OutgoingTextMessage.class);

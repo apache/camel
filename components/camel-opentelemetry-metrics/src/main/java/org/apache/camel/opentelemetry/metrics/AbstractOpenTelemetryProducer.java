@@ -16,10 +16,6 @@
  */
 package org.apache.camel.opentelemetry.metrics;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
 import org.apache.camel.Exchange;
@@ -63,14 +59,13 @@ abstract public class AbstractOpenTelemetryProducer<T> extends DefaultProducer {
         String defaultMetricsDescription = simple(exchange, getEndpoint().getMetricsDescription(), String.class);
         String finalMetricsDescription = getStringHeader(in, HEADER_METRIC_DESCRIPTION, defaultMetricsDescription);
 
-        Map<AttributeKey<?>, Object> map = new HashMap<>(attributes.asMap());
-        map.putAll(getAttributesHeader(in, HEADER_METRIC_ATTRIBUTES, Attributes.empty()).asMap());
-
+        // only the attributes from the endpoint are simple expressions, the attributes from the header are used as given
         AttributesBuilder ab = Attributes.builder();
-        for (Map.Entry<AttributeKey<?>, Object> entry : map.entrySet()) {
-            ab.put(simple(exchange, entry.getKey().toString(), String.class),
-                    simple(exchange, entry.getValue().toString(), String.class));
-        }
+        attributes.forEach((key, value) -> ab.put(
+                simple(exchange, key.getKey(), String.class),
+                simple(exchange, value.toString(), String.class)));
+        getAttributesHeader(in, HEADER_METRIC_ATTRIBUTES, Attributes.empty())
+                .forEach((key, value) -> ab.put(key.getKey(), value.toString()));
         ab.put(CAMEL_CONTEXT_ATTRIBUTE, getEndpoint().getCamelContext().getName());
 
         try {

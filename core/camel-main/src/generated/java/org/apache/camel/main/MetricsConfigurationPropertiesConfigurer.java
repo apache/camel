@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -36,6 +37,7 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         map.put("LogMetricsOnShutdownFormat", java.lang.String.class);
         map.put("NamingStrategy", java.lang.String.class);
         map.put("Path", java.lang.String.class);
+        map.put("RecordLastExchangeTimestamp", boolean.class);
         map.put("RoutePolicyLevel", java.lang.String.class);
         map.put("SkipCamelInfo", boolean.class);
         map.put("TextFormatVersion", java.lang.String.class);
@@ -45,7 +47,7 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": target.setBaseEndpointURIExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
@@ -71,6 +73,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "namingstrategy":
         case "namingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "recordlastexchangetimestamp":
+        case "recordLastExchangeTimestamp": target.setRecordLastExchangeTimestamp(property(camelContext, boolean.class, value)); return true;
         case "routepolicylevel":
         case "routePolicyLevel": target.setRoutePolicyLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "skipcamelinfo":
@@ -88,7 +92,7 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": return boolean.class;
         case "binders": return java.lang.String.class;
@@ -114,6 +118,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "namingstrategy":
         case "namingStrategy": return java.lang.String.class;
         case "path": return java.lang.String.class;
+        case "recordlastexchangetimestamp":
+        case "recordLastExchangeTimestamp": return boolean.class;
         case "routepolicylevel":
         case "routePolicyLevel": return java.lang.String.class;
         case "skipcamelinfo":
@@ -127,7 +133,7 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": return target.isBaseEndpointURIExchangeEventNotifier();
         case "binders": return target.getBinders();
@@ -153,6 +159,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "namingstrategy":
         case "namingStrategy": return target.getNamingStrategy();
         case "path": return target.getPath();
+        case "recordlastexchangetimestamp":
+        case "recordLastExchangeTimestamp": return target.isRecordLastExchangeTimestamp();
         case "routepolicylevel":
         case "routePolicyLevel": return target.getRoutePolicyLevel();
         case "skipcamelinfo":

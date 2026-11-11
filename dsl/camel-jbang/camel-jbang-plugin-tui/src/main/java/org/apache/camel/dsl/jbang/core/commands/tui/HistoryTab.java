@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -124,6 +122,10 @@ class HistoryTab extends AbstractTab {
     private int traceTopPanelHeight = 12;
     private int traceDetailTopHeight = 10;
     private int historyTopPanelHeight = 10;
+    // the steps of the history fit their table until the split is dragged
+    private boolean historyHeightDragged;
+    // f: the history is read again on every refresh, so it shows the last exchange (off: it stays put while read)
+    private boolean historyFollow;
     private final DragSplit vSplit = new DragSplit();
     private final DragSplit detailSplit = new DragSplit();
 
@@ -482,7 +484,16 @@ class HistoryTab extends AbstractTab {
             historyRefreshRequested = true;
             return true;
         }
+        if (ke.isCharIgnoreCase('f')) {
+            historyFollow = !historyFollow;
+            historyRefreshRequested = historyFollow;
+            return true;
+        }
         return false;
+    }
+
+    boolean isHistoryFollow() {
+        return historyFollow;
     }
 
     @Override
@@ -548,6 +559,7 @@ class HistoryTab extends AbstractTab {
                         traceTopPanelHeight = newHeight;
                     } else {
                         historyTopPanelHeight = newHeight;
+                        historyHeightDragged = true;
                     }
                 }
                 return true;
@@ -725,7 +737,7 @@ class HistoryTab extends AbstractTab {
         if (pids.isEmpty()) {
             return;
         }
-        if (historyRefreshRequested) {
+        if (historyRefreshRequested || historyFollow) {
             historyRefreshRequested = false;
             historyEntries = data.loadHistoryData(pids);
         }
@@ -914,6 +926,7 @@ class HistoryTab extends AbstractTab {
             if (!showWaterfall) {
                 hintShowBhpv(spans, showHistoryBody, showHistoryHeaders, showHistoryProperties, showHistoryVariables);
             }
+            hint(spans, "f", "follow" + (historyFollow ? " [on]" : " [off]"));
             hintLast(spans, "F5", "refresh");
         }
     }
@@ -1429,6 +1442,7 @@ class HistoryTab extends AbstractTab {
 
         addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
                 entry.location, entry.elapsed, entry.threadName, entry.failed);
+        ChaosMarks.addDetailLine(lines, ctx, ctx.findSelectedIntegration(), entry.exchangeId, null);
         if (showTraceProperties) {
             addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes,
                     propsChanged, prev != null ? prev.exchangeProperties : null);
@@ -1694,6 +1708,9 @@ class HistoryTab extends AbstractTab {
         List<HistoryEntry> current = reorderHistoryDepthFirst(historyEntries);
         historyVisibleCount = current.size();
 
+        if (!historyHeightDragged) {
+            historyTopPanelHeight = fitSteps(current.size(), area.height());
+        }
         historyTopPanelHeight = Math.max(3, Math.min(historyTopPanelHeight, area.height() - 5));
         List<Rect> chunks = Layout.vertical()
                 .constraints(Constraint.length(historyTopPanelHeight), Constraint.fill())
@@ -1764,6 +1781,7 @@ class HistoryTab extends AbstractTab {
 
         addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
                 entry.location, entry.elapsed, entry.threadName, entry.failed);
+        ChaosMarks.addDetailLine(lines, ctx, ctx.findSelectedIntegration(), entry.exchangeId, null);
         if (showHistoryProperties) {
             addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes,
                     propsChanged, prev != null ? prev.exchangeProperties : null);
@@ -1817,228 +1835,26 @@ class HistoryTab extends AbstractTab {
     }
 
     private List<TraceEntry> getTraceStepsDepthFirst(String exchangeId) {
-        List<TraceEntry> allTraces = traces.get();
+        List<TraceEntry> allTraces = new ArrayList<>(traces.get());
         if (allTraces.isEmpty() || exchangeId == null) {
             return Collections.emptyList();
         }
-
-        // Group by exchangeId, each sorted by uid
-        Map<String, List<TraceEntry>> byExchange = new LinkedHashMap<>();
-        for (TraceEntry e : allTraces) {
-            if (e.exchangeId != null) {
-                byExchange.computeIfAbsent(e.exchangeId, k -> new ArrayList<>()).add(e);
-            }
-        }
-        byExchange.values().forEach(list -> list.sort(UID_COMPARATOR));
-
-        // Build from-endpoint → exchangeIds index (consumer endpoint of each exchange)
-        Map<String, List<String>> fromIndex = new LinkedHashMap<>();
-        for (var entry : byExchange.entrySet()) {
-            List<TraceEntry> steps = entry.getValue();
-            if (!steps.isEmpty() && steps.get(0).first) {
-                String ep = extractFromEndpoint(steps.get(0));
-                if (ep != null) {
-                    fromIndex.computeIfAbsent(ep, k -> new ArrayList<>()).add(entry.getKey());
-                }
-            }
-        }
-
-        // Build multicast/splitter child index: routeId → [child exchangeIds]
-        // A child exchange has no first=true entry and its first step is a to[...] node
-        Map<String, List<String>> branchChildren = new LinkedHashMap<>();
-        for (var entry : byExchange.entrySet()) {
-            List<TraceEntry> steps = entry.getValue();
-            if (!steps.isEmpty() && !steps.get(0).first) {
-                TraceEntry firstStep = steps.get(0);
-                if (firstStep.routeId != null && extractToEndpoint(firstStep) != null) {
-                    branchChildren.computeIfAbsent(firstStep.routeId, k -> new ArrayList<>()).add(entry.getKey());
-                }
-            }
-        }
-
-        // Walk depth-first
-        List<TraceEntry> result = new ArrayList<>();
-        Set<String> visited = new HashSet<>();
-        inlineExchange(exchangeId, byExchange, fromIndex, branchChildren, visited, result, 0);
-        return result;
+        // each exchange in the order its steps ran
+        allTraces.sort(UID_COMPARATOR);
+        return StepOrder.depthFirst(exchangeId, allTraces);
     }
 
-    private void inlineExchange(
-            String exchangeId, Map<String, List<TraceEntry>> byExchange,
-            Map<String, List<String>> fromIndex, Map<String, List<String>> branchChildren,
-            Set<String> visited, List<TraceEntry> result, int depth) {
-        if (!visited.add(exchangeId)) {
-            return;
-        }
-        List<TraceEntry> steps = byExchange.get(exchangeId);
-        if (steps == null) {
-            return;
-        }
-        for (TraceEntry step : steps) {
-            step.inlineDepth = depth;
-            result.add(step);
-
-            // After a multicast/splitter step, inline branch child exchanges
-            if (isMulticastNode(step)) {
-                List<String> children = branchChildren.get(step.routeId);
-                if (children != null) {
-                    for (String childId : children) {
-                        if (!visited.contains(childId)) {
-                            inlineExchange(childId, byExchange, fromIndex, branchChildren, visited, result, depth + 1);
-                        }
-                    }
-                }
-            }
-
-            // After a to[X] step, inline consumer exchanges matching endpoint X
-            String targetEndpoint = extractToEndpoint(step);
-            if (targetEndpoint != null) {
-                List<String> children = fromIndex.get(targetEndpoint);
-                if (children != null) {
-                    for (String childId : children) {
-                        if (!visited.contains(childId)) {
-                            inlineExchange(childId, byExchange, fromIndex, branchChildren, visited, result, depth + 1);
-                        }
-                    }
-                }
-            }
-        }
+    /**
+     * The height of the table of the steps that shows them all (the borders and the header take 3 rows), at least the
+     * 10 rows it had, and at most half the screen: the detail of the step gets the rest.
+     */
+    static int fitSteps(int steps, int height) {
+        return Math.max(10, Math.min(steps + 3, height / 2));
     }
 
-    private List<HistoryEntry> reorderHistoryDepthFirst(List<HistoryEntry> entries) {
-        if (entries.isEmpty()) {
-            return entries;
-        }
-
-        Map<String, List<HistoryEntry>> byExchange = new LinkedHashMap<>();
-        for (HistoryEntry e : entries) {
-            if (e.exchangeId != null) {
-                byExchange.computeIfAbsent(e.exchangeId, k -> new ArrayList<>()).add(e);
-            }
-        }
-
-        Map<String, List<String>> fromIndex = new LinkedHashMap<>();
-        for (var entry : byExchange.entrySet()) {
-            List<HistoryEntry> steps = entry.getValue();
-            if (!steps.isEmpty() && steps.get(0).first) {
-                String ep = extractFromEndpoint(steps.get(0).nodeLabel);
-                if (ep != null) {
-                    fromIndex.computeIfAbsent(ep, k -> new ArrayList<>()).add(entry.getKey());
-                }
-            }
-        }
-
-        Map<String, List<String>> branchChildren = new LinkedHashMap<>();
-        for (var entry : byExchange.entrySet()) {
-            List<HistoryEntry> steps = entry.getValue();
-            if (!steps.isEmpty() && !steps.get(0).first) {
-                HistoryEntry firstStep = steps.get(0);
-                if (firstStep.routeId != null && extractToEndpoint(firstStep.nodeLabel) != null) {
-                    branchChildren.computeIfAbsent(firstStep.routeId, k -> new ArrayList<>()).add(entry.getKey());
-                }
-            }
-        }
-
-        String rootExchangeId = entries.get(0).exchangeId;
-        if (rootExchangeId == null) {
-            return entries;
-        }
-
-        List<HistoryEntry> result = new ArrayList<>();
-        Set<String> visited = new HashSet<>();
-        inlineHistoryExchange(rootExchangeId, byExchange, fromIndex, branchChildren, visited, result, 0);
-        return result;
-    }
-
-    private void inlineHistoryExchange(
-            String exchangeId, Map<String, List<HistoryEntry>> byExchange,
-            Map<String, List<String>> fromIndex, Map<String, List<String>> branchChildren,
-            Set<String> visited, List<HistoryEntry> result, int depth) {
-        if (!visited.add(exchangeId)) {
-            return;
-        }
-        List<HistoryEntry> steps = byExchange.get(exchangeId);
-        if (steps == null) {
-            return;
-        }
-        for (HistoryEntry step : steps) {
-            step.inlineDepth = depth;
-            result.add(step);
-
-            if (isMulticastNode(step.nodeShortName)) {
-                List<String> children = branchChildren.get(step.routeId);
-                if (children != null) {
-                    for (String childId : children) {
-                        if (!visited.contains(childId)) {
-                            inlineHistoryExchange(childId, byExchange, fromIndex, branchChildren, visited, result,
-                                    depth + 1);
-                        }
-                    }
-                }
-            }
-
-            String targetEndpoint = extractToEndpoint(step.nodeLabel);
-            if (targetEndpoint != null) {
-                List<String> children = fromIndex.get(targetEndpoint);
-                if (children != null) {
-                    for (String childId : children) {
-                        if (!visited.contains(childId)) {
-                            inlineHistoryExchange(childId, byExchange, fromIndex, branchChildren, visited, result,
-                                    depth + 1);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static boolean isMulticastNode(TraceEntry entry) {
-        return isMulticastNode(entry.nodeShortName);
-    }
-
-    private static boolean isMulticastNode(String nodeShortName) {
-        if (nodeShortName != null) {
-            return switch (nodeShortName) {
-                case "multicast", "recipientList", "split", "routingSlip", "enrich", "pollEnrich",
-                        "wireTap", "dynamicRouter" ->
-                    true;
-                default -> false;
-            };
-        }
-        return false;
-    }
-
-    private static String extractFromEndpoint(TraceEntry entry) {
-        return extractFromEndpoint(entry.nodeLabel);
-    }
-
-    private static String extractFromEndpoint(String nodeLabel) {
-        if (nodeLabel != null) {
-            return normalizeEndpoint(nodeLabel);
-        }
-        return null;
-    }
-
-    private static String extractToEndpoint(TraceEntry entry) {
-        return extractToEndpoint(entry.nodeLabel);
-    }
-
-    private static String extractToEndpoint(String nodeLabel) {
-        if (nodeLabel != null && nodeLabel.startsWith("to[")) {
-            int end = nodeLabel.indexOf(']');
-            if (end > 3) {
-                return normalizeEndpoint(nodeLabel.substring(3, end));
-            }
-        }
-        return null;
-    }
-
-    private static String normalizeEndpoint(String endpoint) {
-        int q = endpoint.indexOf('?');
-        if (q > 0) {
-            endpoint = endpoint.substring(0, q);
-        }
-        return endpoint.replace("://", ":");
+    List<HistoryEntry> reorderHistoryDepthFirst(List<HistoryEntry> entries) {
+        String root = entries.isEmpty() ? null : entries.get(0).exchangeId;
+        return root != null ? StepOrder.depthFirst(root, entries) : entries;
     }
 
     private Set<String> computeAllChildExchangeIds(List<String> exchangeIds) {

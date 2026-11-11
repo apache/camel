@@ -17,13 +17,12 @@
 package org.apache.camel.processor.idempotent.jdbc;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.StampedLock;
 import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
@@ -31,13 +30,15 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Implementation of {@link AbstractJdbcMessageIdRepository} which handles orphan locks resulting from jvm crash.
  *
  * When an instance of the application acquires a lock on the idempotent repository, the lock attributes are added to a
- * HashSet. While the lock is help by the instance, the instance keeps updating the createdAt column with the current
+ * set. While the lock is held by the instance, the instance keeps updating the createdAt column with the current
  * timestamp indicating the instance holding the lock is active.
  *
  * A lock is granted to an instance if either the entry for the lock attributes do not exists in the
@@ -46,9 +47,12 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdRepository {
 
-    private final StampedLock sl = new StampedLock();
+    protected static final String DEFAULT_UPDATE_TIMESTAMP_QUERY
+            = "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt =? WHERE processorName =? AND messageId = ?";
 
-    private final Set<ProcessorNameAndMessageId> processorNameMessageIdSet = new HashSet<>();
+    // a concurrent set, so no lock is held while SQL runs: add and remove hold a connection of the pool while they
+    // run, and the keep-alive needs one too, so a lock held across SQL could deadlock with a small pool
+    private final Set<ProcessorNameAndMessageId> processorNameMessageIdSet = ConcurrentHashMap.newKeySet();
 
     private ExecutorServiceManager executorServiceManager;
 
@@ -62,8 +66,7 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     /** intervals after which keep alive is sent for the locks held by an instance **/
     private long lockKeepAliveIntervalMillis;
 
-    private String updateTimestampQuery
-            = "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt =? WHERE processorName =? AND messageId = ?";
+    private String updateTimestampQuery = DEFAULT_UPDATE_TIMESTAMP_QUERY;
 
     public JdbcOrphanLockAwareIdempotentRepository(CamelContext camelContext) {
         super();
@@ -102,42 +105,77 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
 
     @Override
     protected int delete(String key) {
-        long stamp = sl.writeLock();
-        try {
-            int result = super.delete(key);
-            processorNameMessageIdSet.remove(new ProcessorNameAndMessageId(processorName, key));
-            return result;
-        } finally {
-            sl.unlockWrite(stamp);
+        int result = super.delete(key);
+        ProcessorNameAndMessageId id = new ProcessorNameAndMessageId(processorName, key);
+        processorNameMessageIdSet.remove(id);
+        // an insert of the same key earlier in this transaction keeps it alive only after the commit: cancel that
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
+                if (synchronization instanceof KeepAliveAfterCommit pending && pending.repository == this
+                        && pending.id.equals(id)) {
+                    pending.cancelled = true;
+                }
+            }
         }
-
+        return result;
     }
 
     @Override
     protected int insert(String key) {
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        long stamp = sl.writeLock();
-        try {
-            if (jdbcTemplate.queryForObject(getQueryString(), Integer.class, processorName, key) == 0) {
-                int result = jdbcTemplate.update(getInsertString(), processorName, key, currentTimestamp);
-                processorNameMessageIdSet.add(new ProcessorNameAndMessageId(processorName, key));
-                return result;
-            } else {
-                // Row exists — try to claim orphan lock with conditional UPDATE.
-                // Only succeeds if createdAt is older than lockMaxAge (lock is truly orphaned).
-                // Returns 0 if the lock is held by an active instance, preventing the race in CAMEL-23294.
-                String orphanLockRecoverQueryString = getUpdateTimestampQuery() + " AND createdAt < ?";
-                Timestamp xMillisAgo = new Timestamp(System.currentTimeMillis() - lockMaxAgeMillis);
-                int result
-                        = jdbcTemplate.update(orphanLockRecoverQueryString, currentTimestamp, processorName, key, xMillisAgo);
-                if (result > 0) {
-                    log.debug("Orphan lock seized for key: {}", key);
-                    processorNameMessageIdSet.add(new ProcessorNameAndMessageId(processorName, key));
-                }
-                return result;
+        if (jdbcTemplate.queryForObject(getQueryString(), Integer.class, processorName, key) == 0) {
+            int result = jdbcTemplate.update(getInsertString(), processorName, key, currentTimestamp);
+            keepAliveAfterCommit(key);
+            return result;
+        } else {
+            // Row exists — try to claim orphan lock with conditional UPDATE.
+            // Only succeeds if createdAt is older than lockMaxAge (lock is truly orphaned).
+            // Returns 0 if the lock is held by an active instance, preventing the race in CAMEL-23294.
+            String orphanLockRecoverQueryString = getUpdateTimestampQuery() + " AND createdAt < ?";
+            Timestamp xMillisAgo = new Timestamp(System.currentTimeMillis() - lockMaxAgeMillis);
+            int result = jdbcTemplate.update(orphanLockRecoverQueryString, currentTimestamp, processorName, key, xMillisAgo);
+            if (result > 0) {
+                log.debug("Orphan lock seized for key: {}", key);
+                keepAliveAfterCommit(key);
             }
-        } finally {
-            sl.unlockWrite(stamp);
+            return result;
+        }
+    }
+
+    /**
+     * Keeps the lease of the key alive once the transaction that inserted or seized its row commits. When that
+     * transaction rolls back (for example in a transacted route with removeOnFailure=false), the row is not there, so
+     * the key must not be kept alive: another node may insert it later, and this node would keep its lease alive.
+     */
+    private void keepAliveAfterCommit(String key) {
+        ProcessorNameAndMessageId id = new ProcessorNameAndMessageId(processorName, key);
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new KeepAliveAfterCommit(this, id));
+        } else {
+            processorNameMessageIdSet.add(id);
+        }
+    }
+
+    /**
+     * Adds a key to the keys kept alive after the commit of the transaction that inserted or seized its row, unless the
+     * key was deleted later in that transaction.
+     */
+    private static final class KeepAliveAfterCommit implements TransactionSynchronization {
+        private final JdbcOrphanLockAwareIdempotentRepository repository;
+        private final ProcessorNameAndMessageId id;
+        // set and read by the thread of the transaction
+        private boolean cancelled;
+
+        private KeepAliveAfterCommit(JdbcOrphanLockAwareIdempotentRepository repository, ProcessorNameAndMessageId id) {
+            this.repository = repository;
+            this.id = id;
+        }
+
+        @Override
+        public void afterCommit() {
+            if (!cancelled) {
+                repository.processorNameMessageIdSet.add(id);
+            }
         }
     }
 
@@ -150,8 +188,15 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
 
         super.doInit();
         if (getTableName() != null) {
-            updateTimestampQuery = updateTimestampQuery.replaceFirst(DEFAULT_TABLENAME, getTableName());
+            // update query string from default table name to the new table name
+            updateTimestampQuery = DEFAULT_UPDATE_TIMESTAMP_QUERY.replace(DEFAULT_TABLENAME, getTableName());
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
         executorServiceManager = context.getExecutorServiceManager();
         executorService = executorServiceManager.newSingleThreadScheduledExecutor(this, this.getClass().getSimpleName());
 
@@ -162,38 +207,43 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     }
 
     @Override
-    protected void doShutdown() throws Exception {
+    protected void doStop() throws Exception {
         if (executorServiceManager != null && executorService != null) {
             executorServiceManager.shutdownGraceful(executorService);
+            executorService = null;
         }
+        super.doStop();
     }
 
     @Override
     protected int delete() {
-        long stamp = sl.writeLock();
-        try {
-            int result = super.delete();
-            processorNameMessageIdSet.clear();
-            return result;
-        } finally {
-            sl.unlockWrite(stamp);
+        int result = super.delete();
+        processorNameMessageIdSet.clear();
+        // and the inserts earlier in this transaction are not kept alive after the commit either
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
+                if (synchronization instanceof KeepAliveAfterCommit pending && pending.repository == this) {
+                    pending.cancelled = true;
+                }
+            }
         }
-
+        return result;
     }
 
     void keepAlive() {
-        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        long stamp = sl.readLock();
         try {
-            List<Object[]> args = processorNameMessageIdSet.stream()
-                    .map(processorNameMessageId -> new Object[] {
-                            currentTimestamp, processorNameMessageId.processorName, processorNameMessageId.messageId })
-                    .collect(Collectors.toList());
-            transactionTemplate.execute(status -> jdbcTemplate.batchUpdate(getUpdateTimestampQuery(), args));
+            transactionTemplate.execute(status -> {
+                // take the timestamp and the keys inside the transaction, after the connection was obtained (with the
+                // DataSourceTransactionManager), as waiting for it can take a while
+                Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+                List<Object[]> args = processorNameMessageIdSet.stream()
+                        .map(processorNameMessageId -> new Object[] {
+                                currentTimestamp, processorNameMessageId.processorName, processorNameMessageId.messageId })
+                        .collect(Collectors.toList());
+                return jdbcTemplate.batchUpdate(getUpdateTimestampQuery(), args);
+            });
         } catch (Exception e) {
             log.error("failed updating createdAt in keepAlive due to ", e);
-        } finally {
-            sl.unlockRead(stamp);
         }
     }
 

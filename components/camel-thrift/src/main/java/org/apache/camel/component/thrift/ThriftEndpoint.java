@@ -42,8 +42,8 @@ import org.apache.camel.support.SynchronousDelegateProducer;
            consumerReply = @BodyType(value = Carrier.ANY,
                                      description = "The result of the method: the body is converted to its return type, so"
                                                    + " text works for an i32, and a struct result needs the Thrift struct."
-                                                   + " Ignored for a void method. A body that does not convert gives the client an"
-                                                   + " error, or a null result from the asynchronous server"),
+                                                   + " Ignored for a void method. No body, or a body that does not convert, gives"
+                                                   + " the client an error"),
            producerIn = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.TEXT, Carrier.NULL },
                                   description = "A List of the arguments of the method, in the order of the IDL; a body that"
                                                 + " is not a List is the one argument, no body calls a method without"

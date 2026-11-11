@@ -2,6 +2,7 @@
 package org.apache.camel.component.cbor;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -27,7 +28,7 @@ public class CBORDataFormatConfigurer extends org.apache.camel.support.component
         map.put("CollectionType", java.lang.Class.class);
         map.put("DisableFeatures", java.lang.String.class);
         map.put("EnableFeatures", java.lang.String.class);
-        map.put("ObjectMapper", com.fasterxml.jackson.databind.ObjectMapper.class);
+        map.put("ObjectMapper", tools.jackson.databind.ObjectMapper.class);
         map.put("PrettyPrint", boolean.class);
         map.put("UnmarshalType", java.lang.Class.class);
         map.put("UseDefaultObjectMapper", boolean.class);
@@ -38,7 +39,7 @@ public class CBORDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CBORDataFormat target = (CBORDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowjmstype":
         case "allowJmsType": target.setAllowJmsType(property(camelContext, boolean.class, value)); return true;
         case "allowunmarshalltype":
@@ -50,7 +51,7 @@ public class CBORDataFormatConfigurer extends org.apache.camel.support.component
         case "enablefeatures":
         case "enableFeatures": target.setEnableFeatures(property(camelContext, java.lang.String.class, value)); return true;
         case "objectmapper":
-        case "objectMapper": target.setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "objectMapper": target.setObjectMapper(property(camelContext, tools.jackson.databind.ObjectMapper.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         case "unmarshaltype":
@@ -70,7 +71,7 @@ public class CBORDataFormatConfigurer extends org.apache.camel.support.component
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowjmstype":
         case "allowJmsType": return boolean.class;
         case "allowunmarshalltype":
@@ -82,7 +83,7 @@ public class CBORDataFormatConfigurer extends org.apache.camel.support.component
         case "enablefeatures":
         case "enableFeatures": return java.lang.String.class;
         case "objectmapper":
-        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "objectMapper": return tools.jackson.databind.ObjectMapper.class;
         case "prettyprint":
         case "prettyPrint": return boolean.class;
         case "unmarshaltype":
@@ -98,7 +99,7 @@ public class CBORDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CBORDataFormat target = (CBORDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowjmstype":
         case "allowJmsType": return target.isAllowJmsType();
         case "allowunmarshalltype":

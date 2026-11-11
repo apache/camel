@@ -233,7 +233,7 @@ public class CamelCatalogTest {
         // exact scheme first, then words of the title or scheme
         assertEquals(List.of("aws2-s3", "aws2-s3-vectors"), catalog.suggestComponentNames("s3", 0));
         assertEquals(List.of("aws2-sqs"), catalog.suggestComponentNames("sqs", 0));
-        assertEquals(List.of("paho-mqtt5"), catalog.suggestComponentNames("mqtt", 0));
+        assertEquals(List.of("paho-mqtt5", "vertx-mqtt"), catalog.suggestComponentNames("mqtt", 0));
         assertEquals(List.of("spring-rabbitmq"), catalog.suggestComponentNames("rabbitmq", 0));
         assertEquals(List.of("google-pubsub"), catalog.suggestComponentNames("pubsub", 0));
         assertEquals(List.of("azure-servicebus"), catalog.suggestComponentNames("servicebus", 0));
@@ -2198,6 +2198,17 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void chaosModel() {
+        String json = catalog.chaosModelJSon();
+        Assertions.assertNotNull(json);
+
+        JsonObject chaos = JsonMapper.deserialize(json).getJsonObject("chaos");
+        Assertions.assertNotNull(chaos);
+        Assertions.assertFalse(chaos.getCollection("faults").isEmpty());
+        Assertions.assertFalse(chaos.getCollection("recipes").isEmpty());
+    }
+
+    @Test
     public void devConsolesOpenApiSpec() {
         String json = catalog.devConsolesOpenApiSpec();
         Assertions.assertNotNull(json);
@@ -2254,6 +2265,33 @@ public class CamelCatalogTest {
         assertEquals("ZipAggregationStrategy", model.getName());
         assertEquals("org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy", model.getJavaType());
         assertEquals(7, model.getOptions().size());
+    }
+
+    private static Stream<Arguments> securityBeans() {
+        return Stream.of(
+                Arguments.of("OpaSecurityPolicy", "org.apache.camel.component.opa.security.OpaSecurityPolicy", "camel-opa",
+                        "org.apache.camel.spi.AuthorizationPolicy", "policyPath"),
+                Arguments.of("OpenFgaSecurityPolicy", "org.apache.camel.component.openfga.security.OpenFgaSecurityPolicy",
+                        "camel-openfga", "org.apache.camel.spi.AuthorizationPolicy", "storeId"),
+                Arguments.of("SpiffeSecurityPolicy", "org.apache.camel.component.spiffe.SpiffeSecurityPolicy",
+                        "camel-spiffe", "org.apache.camel.spi.AuthorizationPolicy", "acceptedSpiffeIds"),
+                Arguments.of("SpiffeSSLContextParameters", "org.apache.camel.component.spiffe.SpiffeSSLContextParameters",
+                        "camel-spiffe", "org.apache.camel.support.jsse.SSLContextParameters", "acceptedSpiffeIds"));
+    }
+
+    // camel run looks up a bean class it cannot load by its simple name here, to find the jar to download
+    @ParameterizedTest
+    @MethodSource("securityBeans")
+    void testSecurityBeanNamesItsComponent(
+            String name, String javaType, String artifactId, String interfaceType, String option) {
+        PojoBeanModel model = catalog.pojoBeanModel(name);
+        assertNotNull(model, name);
+
+        assertEquals(javaType, model.getJavaType());
+        assertEquals("org.apache.camel", model.getGroupId());
+        assertEquals(artifactId, model.getArtifactId());
+        assertEquals(interfaceType, model.getInterfaceType());
+        assertTrue(model.getOptions().stream().anyMatch(o -> option.equals(o.getName())), option);
     }
 
     @Test

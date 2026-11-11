@@ -64,7 +64,7 @@ The strategy has the following options:
 | spoolThreshold | 128 KB | Size in bytes when the stream should be spooled to disk instead of keeping in memory. Use a value of 0 or negative to disable it all together so streams is always kept in memory regardless of their size.
 | spoolUsedHeapMemoryLimit | Max | If `spoolUsedHeapMemoryThreshold` is in use, then whether the used heap memory upper limit is either Max or Committed.
 | spoolUsedHeapMemoryThreshold | 0 | A percentage (1 to 99) of current used heap memory to use as threshold for spooling streams to disk. The upper bounds is based on heap committed (guaranteed memory the JVM can claim). This can be used to spool to disk when running low on memory.
-| statisticsEnabled | false | Whether utilization statistics is enabled. By enabling this you can see these statics for example with JMX.
+| statisticsEnabled | false | Whether utilization statistics is enabled. By enabling this you can see these statistics for example with JMX.
 |===
 
 === SpoolDirectory naming pattern

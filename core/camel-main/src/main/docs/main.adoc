@@ -28,7 +28,7 @@ The camel.main supports 132 options, which are listed below.
 | `camel.main.allowUseOriginalMessage` | Sets whether to allow access to the original message from Camel's error handler, or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage(). Turning this off can optimize performance, as defensive copy of the original message is not needed. Default is false. | false | boolean
 | `camel.main.autoConfigurationEnabled` | Whether auto configuration of components, dataformats, languages is enabled or not. When enabled the configuration parameters are loaded from the properties component. You can prefix the parameters in the properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as seda,direct,jaxb. The auto configuration also works for any options on components that is a complex type (not standard Java type) and there has been an explicit single bean instance registered to the Camel registry via the org.apache.camel.spi.Registry#bind(String,Object) method or by using the org.apache.camel.BindToRegistry annotation style. This option is default enabled. | true | boolean
 | `camel.main.autoConfigurationEnvironmentVariablesEnabled` | Whether auto configuration should include OS environment variables as well. When enabled this allows to overrule any configuration using an OS environment variable. For example to set a shutdown timeout of 5 seconds: CAMEL_MAIN_SHUTDOWNTIMEOUT=5. This option is default enabled. | true | boolean
-| `camel.main.autoConfigurationFailFast` | Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason such as a invalid property name, etc. This option is default enabled. | true | boolean
+| `camel.main.autoConfigurationFailFast` | Whether auto configuration should fail fast when configuring one or more properties fails for whatever reason such as a invalid property name, etc. This option is default enabled. | true | boolean
 | `camel.main.autoConfigurationLogSummary` | Whether auto configuration should log a summary with the configured properties. This option is default enabled. | true | boolean
 | `camel.main.autoConfigurationSystemPropertiesEnabled` | Whether auto configuration should include JVM system properties as well. When enabled this allows to overrule any configuration using a JVM system property. For example to set a shutdown timeout of 5 seconds: -D camel.main.shutdown-timeout=5. Note that JVM system properties take precedence over OS environment variables. This option is default enabled. | true | boolean
 | `camel.main.autoStartup` | Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes are started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up. | true | boolean
@@ -69,13 +69,13 @@ The camel.main supports 132 options, which are listed below.
 | `camel.main.exchangeFactoryCapacity` | The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100. | 100 | int
 | `camel.main.exchangeFactoryStatisticsEnabled` | Configures whether statistics is enabled on exchange factory. | false | boolean
 | `camel.main.extraShutdownTimeout` | Extra timeout in seconds to graceful shutdown Camel. When Camel is shutting down then Camel first shutdown all the routes (shutdownTimeout). Then additional services is shutdown (extraShutdownTimeout). | 15 | int
-| `camel.main.fileConfigurations` | Directory to load additional properties files that contains configurations that takes precedence (except for camel.main.xxx configurations). This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers. You can specify a pattern to load from file-system (not classpath) and a name pattern such as /var/app/secret/.properties, multiple directories can be separated by comma. |  | String
+| `camel.main.fileConfigurations` | Directory to load additional properties files that contains configurations that takes precedence (except for camel.main.xxx configurations). This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers. You can specify a pattern to load from file-system (not classpath) and a name pattern such as /var/app/secret/*.properties, multiple directories can be separated by comma. |  | String
 | `camel.main.globalOptions` | Sets global options that can be referenced in the camel context Important: This has nothing to do with property placeholders, and is just a plain set of key/value pairs which are used to configure global options on CamelContext, such as a maximum debug logging length etc. |  | Map
 | `camel.main.groovyPreloadCompiled` | Whether to preload existing compiled Groovy sources from the compileWorkDir option on startup. This can be enabled to avoid compiling sources that already has been compiled during a build phase. | false | boolean
-| `camel.main.groovyScriptPattern` | Directories to scan for groovy source to be pre-compiled. For example: scripts/.groovy will scan inside the classpath folder scripts for all groovy source files. By default, sources are scanned from the classpath, but you can prefix with file: to use file system. The directories are using Ant-path style pattern, and multiple directories can be specified separated by comma. This requires having camel-groovy JAR on the classpath. | classpath:camel-groovy/*,classpath:camel-groovy-compiled/* | String
+| `camel.main.groovyScriptPattern` | Directories to scan for groovy source to be pre-compiled. For example: scripts/*.groovy will scan inside the classpath folder scripts for all groovy source files. By default, sources are scanned from the classpath, but you can prefix with file: to use file system. The directories are using Ant-path style pattern, and multiple directories can be specified separated by comma. This requires having camel-groovy JAR on the classpath. | classpath:camel-groovy/*,classpath:camel-groovy-compiled/* | String
 | `camel.main.inflightRepositoryBrowseEnabled` | Sets whether the inflight repository should allow browsing each inflight exchange. This is by default disabled as there is a very slight performance overhead when enabled. | false | boolean
 | `camel.main.javaRoutesExcludePattern` | Used for exclusive filtering RouteBuilder classes which are collected from the registry or via classpath scanning. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42; To exclude all routes form a specific package use: com/mycompany/bar/&#42; To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42; And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42; |  | String
-| `camel.main.javaRoutesIncludePattern` | Used for inclusive filtering RouteBuilder classes which are collected from the registry or via classpath scanning. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. Multiple patterns can be specified separated by comma. For example to include all classes starting with Foo use: &#42;&#42;/Foo To include all routes form a specific package use: com/mycompany/foo/&#42; To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42; And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42; |  | String
+| `camel.main.javaRoutesIncludePattern` | Used for inclusive filtering RouteBuilder classes which are collected from the registry or via classpath scanning. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. Multiple patterns can be specified separated by comma. For example to include all classes starting with Foo use: &#42;&#42;/Foo* To include all routes form a specific package use: com/mycompany/foo/&#42; To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42; And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42; |  | String
 | `camel.main.jmxEnabled` | Enable JMX in your Camel application. | true | boolean
 | `camel.main.jmxManagementMBeansLevel` | Sets the mbeans registration level. The default value is Default. | Default | ManagementMBeansLevel
 | `camel.main.jmxManagementNamePattern` | The naming pattern for creating the CamelContext JMX management name. The default pattern is #name# | #name# | String
@@ -93,7 +93,7 @@ The camel.main supports 132 options, which are listed below.
 | `camel.main.logName` | The global name to use for Log EIP The name is default the routeId or the source:line if source location is enabled. You can also specify the name using tokens: $\{class} - the logger class name (org.apache.camel.processor.LogProcessor) $\{contextId} - the camel context id $\{routeId} - the route id $\{groupId} - the route group id $\{nodeId} - the node id $\{nodePrefixId} - the node prefix id $\{source} - the source:line (source location must be enabled) ${source.name} - the source filename (source location must be enabled) ${source.line} - the source line number (source location must be enabled) For example to use the route and node id you can specify the name as: $\{routeId}/$\{nodeId} |  | String
 | `camel.main.mainListenerClasses` | Sets classes names that will be used for MainListener that makes it possible to do custom logic during starting and stopping camel-main. |  | String
 | `camel.main.mainListeners` | Sets main listener objects that will be used for MainListener that makes it possible to do custom logic during starting and stopping camel-main. |  | List
-| `camel.main.mdcLoggingKeysPattern` | Sets the pattern used for determine which custom MDC keys to propagate during message routing when the routing engine continues routing asynchronously for the given message. Setting this pattern to will propagate all custom keys. Or setting the pattern to foo,bar will propagate any keys starting with either foo or bar. Notice that a set of standard Camel MDC keys are always propagated which starts with camel. as key name. The match rules are applied in this order (case insensitive): 1. exact match, returns true 2. wildcard match (pattern ends with a and the name starts with the pattern), returns true 3. regular expression match, returns true 4. otherwise returns false Deprecated, use camel-mdc component instead |  | String
+| `camel.main.mdcLoggingKeysPattern` | Sets the pattern used for determine which custom MDC keys to propagate during message routing when the routing engine continues routing asynchronously for the given message. Setting this pattern to * will propagate all custom keys. Or setting the pattern to foo*,bar* will propagate any keys starting with either foo or bar. Notice that a set of standard Camel MDC keys are always propagated which starts with camel. as key name. The match rules are applied in this order (case insensitive): 1. exact match, returns true 2. wildcard match (pattern ends with a * and the name starts with the pattern), returns true 3. regular expression match, returns true 4. otherwise returns false Deprecated, use camel-mdc component instead |  | String
 | `camel.main.messageHistory` | Sets whether message history is enabled or not. Default is false. | false | boolean
 | `camel.main.messageSizeEnabled` | Sets whether message size observation is enabled (default is false). When enabled, Camel will compute the size of message body and headers (in bytes) per endpoint (for both IN and OUT directions) and make this available via JMX MBeans (min/max/mean body size and headers size). | false | boolean
 | `camel.main.modeline` | Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI | false | boolean
@@ -106,13 +106,13 @@ The camel.main supports 132 options, which are listed below.
 | `camel.main.routesBuilders` | Sets the RoutesBuilder instances. |  | List
 | `camel.main.routesCollectorEnabled` | Whether the routes collector is enabled or not. When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and also load additional routes from the file system). The routes collector is default enabled. | true | boolean
 | `camel.main.routesCollectorIgnoreLoadingError` | Whether the routes collector should ignore any errors during loading and compiling routes. This is only intended for development or tooling. | false | boolean
-| `camel.main.routesExcludePattern` | Used for exclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma, as example, to exclude all the routes from a directory whose name contains foo use: &#42;&#42;/foo. |  | String
-| `camel.main.routesIncludePattern` | Used for inclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma, as example, to include all the routes from a directory whose name contains foo use: &#42;&#42;/foo. | classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/* | String
+| `camel.main.routesExcludePattern` | Used for exclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma, as example, to exclude all the routes from a directory whose name contains foo use: &#42;&#42;/*foo*. |  | String
+| `camel.main.routesIncludePattern` | Used for inclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma, as example, to include all the routes from a directory whose name contains foo use: &#42;&#42;/*foo*. | classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/* | String
 | `camel.main.routesReloadDirectory` | Directory to scan for route changes. Camel cannot scan the classpath, so this must be configured to a file directory. Development with Maven as build tool, you can configure the directory to be src/main/resources to scan for Camel routes in XML or YAML files. | src/main/resources/camel | String
 | `camel.main.routesReloadDirectoryRecursive` | Whether the directory to scan should include sub directories. Depending on the number of sub directories, then this can cause the JVM to startup slower as Camel uses the JDK file-watch service to scan for file changes. | false | boolean
 | `camel.main.routesReloadEnabled` | Used for enabling automatic routes reloading. If enabled then Camel will watch for file changes in the given reload directory, and trigger reloading routes if files are changed. | false | boolean
 | `camel.main.routesReloadInterval` | How often to scan the reload directory for changed files, in millis. A change is reloaded at the next scan, so a shorter interval reloads it sooner. A longer interval groups more of one save together: two files saved a second apart are one change at 2000 and two at 1000. | 2000 | long
-| `camel.main.routesReloadPattern` | Used for inclusive filtering of routes from directories. Typical used for specifying to accept routes in XML or YAML files, such as .yaml,.xml. Multiple patterns can be specified separated by comma. |  | String
+| `camel.main.routesReloadPattern` | Used for inclusive filtering of routes from directories. Typical used for specifying to accept routes in XML or YAML files, such as *.yaml,*.xml. Multiple patterns can be specified separated by comma. |  | String
 | `camel.main.routesReloadRemoveAllRoutes` | When reloading routes should all existing routes be stopped and removed. By default, Camel will stop and remove all existing routes before reloading routes. This ensures that only the reloaded routes will be active. If disabled then only routes with the same route id is updated, and any existing routes are continued to run. | true | boolean
 | `camel.main.routesReloadRestartDuration` | Whether to restart max duration when routes are reloaded. For example if max duration is 60 seconds, and a route is reloaded after 25 seconds, then this will restart the count and wait 60 seconds again. | false | boolean
 | `camel.main.shutdownLogInflightExchangesOnTimeout` | Sets whether to log information about the inflight Exchanges which are still running during a shutdown which didn't complete without the given timeout. This requires to enable the option inflightRepositoryBrowseEnabled. | true | boolean
@@ -145,16 +145,16 @@ The camel.main supports 132 options, which are listed below.
 | `camel.main.streamCachingStatisticsEnabled` | Sets whether stream caching statistics is enabled. | false | boolean
 | `camel.main.threadNamePattern` | Sets the thread name pattern used for creating the full thread name. The default pattern is: Camel (#camelId#) thread ##counter# - #name# Where #camelId# is the name of the CamelContext. and #counter# is a unique incrementing counter. and #name# is the regular thread name. You can also use #longName# which is the long thread name which can includes endpoint parameters etc. |  | String
 | `camel.main.tracing` | Sets whether tracing is enabled or not. Default is false. | false | boolean
-| `camel.main.tracingLoggingFormat` | To use a custom tracing logging format. The default format (arrow, routeId, label) is: %-4.4s %-12.12s %-33.33s | %-4.4s [%-12.12s] [%-33.33s] | String
-| `camel.main.tracingPattern` | Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to. The pattern matches by node and route id's Multiple patterns can be separated by comma. |  | String
+| `camel.main.tracingLoggingFormat` | To use a custom tracing logging format. The default format (arrow, routeId, label) is: %-4.4s [%-12.12s] [%-33.33s] | %-4.4s [%-12.12s] [%-33.33s] | String
+| `camel.main.tracingPattern` | Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to*. The pattern matches by node and route id's Multiple patterns can be separated by comma. |  | String
 | `camel.main.tracingStandby` | Whether to set tracing on standby. If on standby then the tracer is installed and made available. Then the tracer can be enabled later at runtime via JMX or via Tracer#setEnabled(boolean) . | false | boolean
 | `camel.main.tracingTemplates` | Whether tracing should trace inner details from route templates (or kamelets). Turning this on increases the verbosity of tracing by including events from internal routes in the templates or kamelets. Default is false. | false | boolean
 | `camel.main.typeConverterStatisticsEnabled` | Sets whether type converter statistics is enabled. By default the type converter utilization statistics is disabled. Notice: If enabled then there is a slight performance impact under very heavy load. | false | boolean
 | `camel.main.useBreadcrumb` | Set whether breadcrumb is enabled. The default value is false. | false | boolean
-| `camel.main.useDataType` | Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has been explicit configured with input and output types. Otherwise data type is default off. | false | boolean
+| `camel.main.useDataType` | Whether to enable using data type on Camel messages. Data type are automatic turned on if one or more routes has been explicit configured with input and output types. Otherwise data type is default off. | false | boolean
 | `camel.main.useMdcLogging` | To turn on MDC logging (deprecated, use camel-mdc component instead) | false | boolean
 | `camel.main.uuidGenerator` | UUID generator to use. default (32 bytes), short (16 bytes), classic (32 bytes or longer), simple (long incrementing counter), off (turned off for exchanges - only intended for performance profiling) | default | String
-| `camel.main.virtualThreadsEnabled` | Whether to enable virtual threads when creating thread pools. When enabled, Camel will use virtual threads instead of platform threads for its thread pools. This can also be enabled via the JVM system property {code camel.threads.virtual.enabled=true} . This option must be read early during bootstrap, so it is set as a system property before thread pools are created. | false | boolean
+| `camel.main.virtualThreadsEnabled` | Whether to enable virtual threads when creating thread pools. When enabled, Camel will use virtual threads instead of platform threads for its thread pools. This can also be enabled via the JVM system property camel.threads.virtual.enabled=true . This option must be read early during bootstrap, so it is set as a system property before thread pools are created. | false | boolean
 | `camel.main.yamlDslCompactNotationWarn` | Whether to log a WARN when YAML DSL routes use compact (shorthand) notation instead of the canonical (explicit/normalized) form. The canonical style is recommended as it is more tooling and AI friendly. Use Camel CLI to normalize existing routes: camel validate normalize &lt;file&gt; | true | boolean
 |===
 
@@ -187,8 +187,8 @@ The camel.routecontroller supports 12 options, which are listed below.
 | `camel.routecontroller.backOffMaxElapsedTime` | Backoff maximum elapsed time in millis, after which the backoff should be considered exhausted and no more attempts should be made. |  | long
 | `camel.routecontroller.backOffMultiplier` | Backoff multiplier to use for exponential backoff. This is used to extend the delay between restart attempts. |  | double
 | `camel.routecontroller.enabled` | To enable using supervising route controller which allows Camel to start up and then, the controller takes care of starting the routes in a safe manner. This can be used when you want to start up Camel despite a route may otherwise fail fast during startup and cause Camel to fail to start up as well. By delegating the route startup to the supervising route controller, then it manages the startup using a background thread. The controller allows to be configured with various settings to attempt to restart failing routes. | false | boolean
-| `camel.routecontroller.excludeRoutes` | Pattern for filtering routes to be excluded as supervised. The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma. For example to exclude all JMS routes, you can say jms:. And to exclude routes with specific route ids mySpecialRoute,myOtherSpecialRoute. The pattern supports wildcards and uses the matcher from org.apache.camel.support.PatternHelper#matchPattern. |  | String
-| `camel.routecontroller.includeRoutes` | Pattern for filtering routes to be included as supervised. The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma. For example to include all kafka routes, you can say kafka:. And to include routes with specific route ids myRoute,myOtherRoute. The pattern supports wildcards and uses the matcher from org.apache.camel.support.PatternHelper#matchPattern. |  | String
+| `camel.routecontroller.excludeRoutes` | Pattern for filtering routes to be excluded as supervised. The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma. For example to exclude all JMS routes, you can say jms:*. And to exclude routes with specific route ids mySpecialRoute,myOtherSpecialRoute. The pattern supports wildcards and uses the matcher from org.apache.camel.support.PatternHelper#matchPattern. |  | String
+| `camel.routecontroller.includeRoutes` | Pattern for filtering routes to be included as supervised. The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma. For example to include all kafka routes, you can say kafka:*. And to include routes with specific route ids myRoute,myOtherRoute. The pattern supports wildcards and uses the matcher from org.apache.camel.support.PatternHelper#matchPattern. |  | String
 | `camel.routecontroller.initialDelay` | Initial delay in milli seconds before the route controller starts, after CamelContext has been started. |  | long
 | `camel.routecontroller.threadPoolSize` | The number of threads used by the route controller scheduled thread pool that are used for restarting routes. The pool uses 1 thread by default, but you can increase this to allow the controller to concurrently attempt to restart multiple routes in case more than one route has problems starting. | 1 | int
 | `camel.routecontroller.unhealthyOnExhausted` | Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed and the route is not successfully started and the route manager is giving up. If setting this to false will make health checks ignore this problem and allow to report the Camel application as UP. | true | boolean
@@ -197,7 +197,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 35 options, which are listed below.
+The camel.server supports 37 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -217,9 +217,11 @@ The camel.server supports 35 options, which are listed below.
 | `camel.server.jwtKeystorePath` | Path to the keystore file used for JWT tokens validation. |  | String
 | `camel.server.jwtKeystoreType` | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | `camel.server.maxBodySize` | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
-| `camel.server.mcpEnabled` | Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources. Requires camel-mcp-server on the classpath. Use setMcpTransport(String) to choose streamable HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is not enabled. | false | boolean
+| `camel.server.mcpAllowedOrigins` | Comma-separated list of origins allowed to call the MCP endpoint on the Vert.x streamable transport. Each entry is an exact origin (scheme, host and port), or ends with a colon and an asterisk to match any port. Scheme and host are compared ignoring case, and a default port (80 for http, 443 for https) may be left out. A wildcard for all origins is not supported: an entry that is not of the form scheme://host or scheme://host:port fails the startup. A request without an Origin header is always served; a request with an Origin header that is not allowed is rejected with HTTP 403. When not set, only loopback origins are allowed (localhost, 127.0.0.1 and ::1 on any port). |  | String
+| `camel.server.mcpEnabled` | Whether to expose ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP prompts. Requires camel-mcp-server on the classpath. Use setMcpTransport(String) to choose streamable HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is not enabled. | false | boolean
 | `camel.server.mcpInstructions` | Top-level MCP instructions returned to clients on initialize. |  | String
 | `camel.server.mcpPath` | HTTP path where the MCP endpoint is served. | /mcp | String
+| `camel.server.mcpPromptTimeout` | Per-request MCP prompt execution timeout in milliseconds. A request exceeding the timeout returns an error to the MCP client; the underlying route may continue running until it completes. | 20000 | long
 | `camel.server.mcpResourceTimeout` | Per-read MCP resource execution timeout in milliseconds. A read exceeding the timeout returns an error to the MCP client; the underlying route keeps running until it completes on its own. | 20000 | long
 | `camel.server.mcpServerDescription` | MCP server description advertised to clients in serverInfo.description . |  | String
 | `camel.server.mcpServerIcons` | JSON array of MCP server icons advertised to clients in serverInfo.icons . Each entry must include a src URL and may include mimeType , sizes and theme . |  | String
@@ -228,9 +230,9 @@ The camel.server supports 35 options, which are listed below.
 | `camel.server.mcpServerWebsiteUrl` | MCP server website URL advertised to clients in serverInfo.websiteUrl . |  | String
 | `camel.server.mcpSessionIdleTtl` | Idle TTL in milliseconds for MCP sessions on the Vert.x streamable transport. Sessions with no activity for longer than this interval are evicted. 0 disables idle eviction. | 300000 | long
 | `camel.server.mcpSessionKeepAliveInterval` | Keep-alive ping interval in milliseconds for MCP sessions on the Vert.x streamable transport. Dead sessions are evicted after consecutive ping failures. 0 disables keep-alive pings. | 30000 | long
-| `camel.server.mcpTags` | Comma-separated list of tag patterns selecting the ai-tool routes to expose as MCP tools and the ai-resource routes to expose as MCP resources. Matching is case-insensitive and supports exact match, wildcard prefix ( {code foo} ), and {code } to match all tags. Only routes registered under a matching tag are exposed; the untagged default pools are never exposed. When not set, nothing is exposed. |  | String
+| `camel.server.mcpTags` | Comma-separated list of tag patterns selecting ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP prompts. Matching is case-insensitive and supports exact match, wildcard prefix ( foo* ), and * to match all tags. Only routes registered under a matching tag are exposed; the untagged default pools are never exposed. When not set, nothing is exposed. |  | String
 | `camel.server.mcpToolTimeout` | Per-call MCP tool execution timeout in milliseconds. A call exceeding the timeout returns an error result to the MCP client; the underlying route keeps running until it completes on its own. | 20000 | long
-| `camel.server.mcpTransport` | MCP transport for ai-tool routes: http (streamable HTTP on the embedded server, default) or stdio (JSON-RPC on process stdin/stdout for local agent subprocesses). | http | String
+| `camel.server.mcpTransport` | MCP transport selection: http (streamable HTTP on the embedded server, serving tools, resources and prompts) or stdio (JSON-RPC on process stdin/stdout for local agent subprocesses, serving tools and prompts only). | http | String
 | `camel.server.path` | Context-path to use for embedded HTTP server | / | String
 | `camel.server.port` | Port to use for binding embedded HTTP server. Use 0 to dynamic assign a free random port number. | 8080 | int
 | `camel.server.staticContextPath` | The context-path to use for serving static content. By default, the root path is used. And if there is an index.html page then this is automatically loaded. | / | String
@@ -305,13 +307,11 @@ The camel.debug supports 15 options, which are listed below.
 
 
 === Camel Tracer configurations
-The camel.trace supports 16 options, which are listed below.
+The camel.trace supports 14 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| `camel.trace.activityEnabled` | Whether activity tracking is enabled. When enabled, the backlog tracer will capture activity data that can be enriched with additional details from tracing (such as span decorator attributes). | false | boolean
-| `camel.trace.activitySize` | Defines how many completed exchange summaries to keep in the activity queue (should be between 1 - 1000). The activity queue captures lightweight metadata (no body or headers) each time an exchange completes a route, providing a rolling window of recent exchange activity. | 100 | int
 | `camel.trace.backlogSize` | Defines how many of the last messages to keep in the tracer (should be between 1 - 1000). | 100 | int
 | `camel.trace.bodyIncludeFiles` | Whether to include the message body of file based messages. The overhead is that the file content has to be read from the file. | true | boolean
 | `camel.trace.bodyIncludeStreams` | Whether to include the message body of stream based messages. If enabled then beware the stream may not be re-readable later. See more about Stream Caching. | false | boolean
@@ -422,7 +422,7 @@ The camel.rest supports 31 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | `camel.rest.apiComponent` | Sets the name of the Camel component to use as the REST API (such as swagger or openapi) |  | String
-| `camel.rest.apiContextPath` | Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. |  | String
+| `camel.rest.apiContextPath` | The path, such as /api-doc, where the REST DSL serves the API documentation of the REST services, as an OpenAPI document. The API documentation is only served when this option is set. This requires camel-openapi-java on the classpath. The document is JSON by default, or YAML when the request path ends with .yaml. The path is relative to contextPath, when that option is set. |  | String
 | `camel.rest.apiContextRouteId` | Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route id. |  | String
 | `camel.rest.apiHost` | To use a specific hostname for the API documentation (such as swagger or openapi) This can be used to override the generated host with this configured hostname |  | String
 | `camel.rest.apiProperties` | Sets additional options on api level |  | Map
@@ -539,20 +539,31 @@ The camel.vault.kubernetescm supports 2 options, which are listed below.
 
 
 === Camel Hashicorp Vault configurations
-The camel.vault.hashicorp supports 9 options, which are listed below.
+The camel.vault.hashicorp supports 20 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| `camel.vault.hashicorp.authentication` | How to log in to hashicorp vault: token (a fixed token), approle (a role ID and a secret ID), kubernetes (the service account token of the pod), jwt (a JWT, such as a workload identity token) or cert (the TLS client certificate of the keyStore). Camel renews the token before it expires, and logs in again when the token can no longer be renewed. | token | String
+| `camel.vault.hashicorp.authMountPath` | The path the login method is mounted at in hashicorp vault (without auth/), when it is not the default path of the login method: approle, kubernetes or jwt |  | String
 | `camel.vault.hashicorp.cloud` | Determine if the Hashicorp Vault is deployed on Hashicorp Cloud or not | false | boolean
 | `camel.vault.hashicorp.host` | Host to access hashicorp vault |  | String
+| `camel.vault.hashicorp.jwt` | The JWT to log in with, for the jwt and kubernetes logins. For a JWT that is replaced over time, such as a projected service account token, use jwtFile instead. |  | String
+| `camel.vault.hashicorp.jwtFile` | The file to read the JWT from at every login, for the jwt and kubernetes logins. The kubernetes login reads /var/run/secrets/kubernetes.io/serviceaccount/token when neither jwt nor jwtFile is set. |  | String
+| `camel.vault.hashicorp.keyStore` | The file with the TLS client certificate and its private key, which Camel presents to hashicorp vault: for the cert login, or for a Vault that requires client certificates. A PKCS12 or JKS key store, or PEM with the certificate and the PKCS#8 private key. |  | String
+| `camel.vault.hashicorp.keyStorePassword` | The password of the key store and of its private key, when it is a PKCS12 or JKS key store |  | String
 | `camel.vault.hashicorp.namespace` | If the Hashicorp Vault instance is deployed on Hashicorp Cloud, this field will determine the namespace |  | String
 | `camel.vault.hashicorp.port` | Port to access hashicorp vault |  | String
 | `camel.vault.hashicorp.refreshEnabled` | Whether to automatically reload Camel upon secrets being updated in Hashicorp Vault. | false | boolean
 | `camel.vault.hashicorp.refreshPeriod` | The period (millis) between checking Hashicorp Vault for updated secrets. | 60000 | long
+| `camel.vault.hashicorp.role` | The hashicorp vault role to log in as, for the kubernetes and jwt logins. The jwt login can leave it out when the login method has a default role. |  | String
+| `camel.vault.hashicorp.roleId` | The role ID of the AppRole, for the approle login |  | String
 | `camel.vault.hashicorp.scheme` | Scheme to access hashicorp vault |  | String
+| `camel.vault.hashicorp.secretId` | The secret ID of the AppRole, for the approle login |  | String
 | `camel.vault.hashicorp.secrets` | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
-| `camel.vault.hashicorp.token` | Token to access hashicorp vault |  | String
+| `camel.vault.hashicorp.token` | Token to access hashicorp vault, for the token login |  | String
+| `camel.vault.hashicorp.trustStore` | The file with the certificates to trust for the TLS connection to hashicorp vault, such as the CA certificate of a private CA: a PKCS12 or JKS trust store, or PEM certificates. When not set, the JVM trusts the certificate as for any other TLS connection. |  | String
+| `camel.vault.hashicorp.trustStorePassword` | The password of the trust store, when it is a PKCS12 or JKS trust store |  | String
 |===
 
 
@@ -655,7 +666,7 @@ The camel.mdc supports 3 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 17 options, which are listed below.
+The camel.metrics supports 18 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -670,10 +681,11 @@ The camel.metrics supports 17 options, which are listed below.
 | `camel.metrics.enableRouteEventNotifier` | Set whether to enable the MicrometerRouteEventNotifier for capturing metrics on the total number of routes and total number of routes running. | true | boolean
 | `camel.metrics.enableRoutePolicy` | Set whether to enable the MicrometerRoutePolicyFactory for capturing metrics on route processing times. | true | boolean
 | `camel.metrics.logMetricsOnShutdown` | Log metrics when application is shutting down. (default, false). | false | boolean
-| `camel.metrics.logMetricsOnShutdownFilters` | List of metrics (comma separated) to log when application is shutting down. You can use character to log any metrics containing the wildcard, for example camel.exchanges. (default to all metrics available). |  | String
+| `camel.metrics.logMetricsOnShutdownFilters` | List of metrics (comma separated) to log when application is shutting down. You can use * character to log any metrics containing the wildcard, for example camel.exchanges.* (default to all metrics available). |  | String
 | `camel.metrics.logMetricsOnShutdownFormat` | Format used to log metrics when application is shutting down. Either json (default) or prometheus format. | json | String
 | `camel.metrics.namingStrategy` | Controls the name style to use for metrics. Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase) | default | String
 | `camel.metrics.path` | The path endpoint used to expose the metrics. | /observe/metrics | String
+| `camel.metrics.recordLastExchangeTimestamp` | Whether to record the last exchange processed timestamp as a Gauge metric (camel.exchanges.last.timestamp). Set to false to disable this metric entirely. | true | boolean
 | `camel.metrics.routePolicyLevel` | Sets the level of information to capture. all = both context and routes. | all | String
 | `camel.metrics.skipCamelInfo` | Skip the evaluation of app.info metric which contains runtime provider information (default, false). | false | boolean
 | `camel.metrics.textFormatVersion` | The text-format version to use with Prometheus scraping. 0.0.4 = text/plain; version=0.0.4; charset=utf-8 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8 | 0.0.4 | String
@@ -776,6 +788,36 @@ The camel.aiObservability supports 1 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | `camel.aiObservability.enabled` | Enables GenAI observability for Camel AI producers (OpenTelemetry spans and Micrometer metrics when backends are present). | true | boolean
+|===
+
+
+=== Camel Chaos configurations
+The camel.chaos supports 7 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| `camel.chaos.enabled` | Whether to install the hooks of camel-chaos, which do nothing until a rule is added. The default is false, and true with profile dev. With profile prod chaos stays off, also when this is true. | false | Boolean
+| `camel.chaos.maxDuration` | The longest time a rule runs: a rule without an until duration ends after it, and a longer until duration or delay is rejected when the rule is added. | 10m | String
+| `camel.chaos.reportFile` | A file to write the chaos report to as JSON when the CamelContext stops, such as target/chaos-report.json. |  | String
+| `camel.chaos.reportOnShutdown` | Whether to log the chaos report when the CamelContext stops, if any rule was added. | true | boolean
+| `camel.chaos.rules` | Rules to add at startup, in the one-line text form of a rule, separated by semicolons. |  | String
+| `camel.chaos.scenario` | A scenario to load at startup: a file with one rule per line, # comments and an optional seed= line (such as test/chaos/outage.chaos), or classpath:name. Its rules are added before the rules option, and its seed is used unless the seed option is set. |  | String
+| `camel.chaos.seed` | The seed of the random draws of the rules. Without it a seed is picked at startup, and shown in the report. |  | Long
+|===
+
+
+=== Camel Sanitizer configurations
+The camel.sanitizer supports 5 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| `camel.sanitizer.checks` | The checks to run, separated by commas: callback (rule R1, the callback of each call of the processor of a step is called exactly once, and process does not throw). | callback | String
+| `camel.sanitizer.enabled` | Whether to install the exchange sanitizer. The default is false, and true with profile dev or in a test with the CamelSanitizer annotation. With profile prod the sanitizer stays off, also when this is true. | false | Boolean
+| `camel.sanitizer.pendingTimeout` | How long an exchange waits, with nothing happening in it, before the call of a step whose callback has not come is reported as still pending (a warning of rule R1, which never fails a test), such as 60s or 500 (milliseconds). Only the innermost pending call of an exchange is reported. 0 turns the warning off. The parts of a split, multicast or recipient list with parallel processing share one lock of the table of pending calls, which orders their threads: use 0 when hunting races between such parts. | 60s | String
+| `camel.sanitizer.reportOnShutdown` | Whether to log the report of the sanitizer when the CamelContext stops, if it reported a violation or a still pending warning, and the calls of steps still pending then. | true | boolean
+| `camel.sanitizer.stackDepth` | How many frames of each stack a report keeps; 0 keeps only the name of the thread, which costs least. | 32 | int
 |===
 
 

@@ -238,7 +238,7 @@ public final class FileUtil {
     }
 
     /**
-     * Returns only the leading path (returns <tt>null</tt> if no path)
+     * Returns only the leading path (returns <code>null</code> if no path)
      */
     public static String onlyPath(String name) {
         if (name == null) {
@@ -271,7 +271,7 @@ public final class FileUtil {
     }
 
     /**
-     * Compacts a path by stacking it and reducing <tt>..</tt>, and uses OS specific file separators (eg
+     * Compacts a path by stacking it and reducing <code>..</code>, and uses OS specific file separators (eg
      * {@link java.io.File#separator}).
      */
     public static String compactPath(String path) {
@@ -279,14 +279,14 @@ public final class FileUtil {
     }
 
     /**
-     * Compacts a path by stacking it and reducing <tt>..</tt>, and uses the given separator.
+     * Compacts a path by stacking it and reducing <code>..</code>, and uses the given separator.
      */
     public static String compactPath(String path, char separator) {
         return compactPath(path, String.valueOf(separator));
     }
 
     /**
-     * Compacts a file path by stacking it and reducing <tt>..</tt>, and uses the given separator.
+     * Compacts a file path by stacking it and reducing <code>..</code>, and uses the given separator.
      */
     public static String compactPath(String path, String separator) {
         if (path == null) {
@@ -408,7 +408,7 @@ public final class FileUtil {
      * @param  from                      the from file
      * @param  to                        the to file
      * @param  copyAndDeleteOnRenameFail whether to fallback and do copy and delete, if renameTo fails
-     * @return                           <tt>true</tt> if the file was renamed, otherwise <tt>false</tt>
+     * @return                           <code>true</code> if the file was renamed, otherwise <code>false</code>
      * @throws java.io.IOException       is thrown if error renaming file
      */
     public static boolean renameFile(File from, File to, boolean copyAndDeleteOnRenameFail) throws IOException {
@@ -421,7 +421,7 @@ public final class FileUtil {
      * @param  from                      the from file
      * @param  to                        the to file
      * @param  copyAndDeleteOnRenameFail whether to fallback and do copy and delete, if renameTo fails
-     * @return                           <tt>true</tt> if the file was renamed, otherwise <tt>false</tt>
+     * @return                           <code>true</code> if the file was renamed, otherwise <code>false</code>
      * @throws java.io.IOException       is thrown if error renaming file
      */
     public static boolean renameFile(Path from, Path to, boolean copyAndDeleteOnRenameFail) throws IOException {
@@ -476,7 +476,7 @@ public final class FileUtil {
      *
      * @param  from        the file to be renamed
      * @param  to          the new target file
-     * @return             <tt>true</tt> if the file was renamed successfully, otherwise <tt>false</tt>
+     * @return             <code>true</code> if the file was renamed successfully, otherwise <code>false</code>
      * @throws IOException If an I/O error occurs during copy or delete operations.
      */
     public static boolean renameFileUsingCopy(File from, File to) throws IOException {
@@ -489,7 +489,7 @@ public final class FileUtil {
      *
      * @param  from        the file to be renamed
      * @param  to          the new target file
-     * @return             <tt>true</tt> if the file was renamed successfully, otherwise <tt>false</tt>
+     * @return             <code>true</code> if the file was renamed successfully, otherwise <code>false</code>
      * @throws IOException If an I/O error occurs during copy or delete operations.
      */
     public static boolean renameFileUsingCopy(Path from, Path to) throws IOException {
@@ -534,7 +534,7 @@ public final class FileUtil {
 
     /**
      * Deletes the file.
-     * <p/>
+     * <p>
      * This implementation will attempt to delete the file up till three times with one second delay, which can mitigate
      * problems on deleting files on some platforms such as Windows.
      *
@@ -546,7 +546,7 @@ public final class FileUtil {
 
     /**
      * Deletes the file.
-     * <p/>
+     * <p>
      * This implementation will attempt to delete the file up till three times with one second delay, which can mitigate
      * problems on deleting files on some platforms such as Windows.
      *
@@ -589,12 +589,12 @@ public final class FileUtil {
 
     /**
      * Is the given file an absolute file.
-     * <p/>
+     * <p>
      * Will also work around issue on Windows to consider files on Windows starting with a \ as absolute files. This
      * makes the logic consistent across all OS platforms.
      *
      * @param  file the file
-     * @return      <tt>true</ff> if it's an absolute path, <tt>false</tt> otherwise.
+     * @return      <code>true</code> if it's an absolute path, <code>false</code> otherwise.
      */
     public static boolean isAbsolute(File file) {
         if (isWindows()) {
@@ -611,7 +611,7 @@ public final class FileUtil {
      * Creates a new file.
      *
      * @param  file        the file
-     * @return             <tt>true</tt> if created a new file, <tt>false</tt> otherwise
+     * @return             <code>true</code> if created a new file, <code>false</code> otherwise
      * @throws IOException is thrown if error creating the new file
      */
     public static boolean createNewFile(File file) throws IOException {
@@ -651,15 +651,21 @@ public final class FileUtil {
     }
 
     /**
-     * Determines whether the URI has a scheme (e.g. file:, classpath: or http:)
+     * Determines whether the given path part is a Windows drive (e.g. {@code C:})
      *
-     * @param  uri the URI
-     * @return     <tt>true</tt> if the URI starts with a scheme
+     * @param  part the path part
+     * @return      <code>true</code> if the part is a single letter followed by a colon
      */
     private static boolean isWindowsDrive(String part) {
         return part.length() == 2 && part.charAt(1) == ':' && Character.isLetter(part.charAt(0));
     }
 
+    /**
+     * Determines whether the URI has a scheme (e.g. file:, classpath: or http:)
+     *
+     * @param  uri the URI
+     * @return     <code>true</code> if the URI starts with a scheme
+     */
     private static boolean hasScheme(String uri) {
         if (uri == null) {
             return false;

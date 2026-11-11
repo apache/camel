@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Kinesis2Component target = (Kinesis2Component) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonkinesisasyncclient":
@@ -59,6 +60,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "iteratorType": getOrCreateConfiguration(target).setIteratorType(property(camelContext, software.amazon.awssdk.services.kinesis.model.ShardIteratorType.class, value)); return true;
         case "kcldisablecloudwatchmetricsexport":
         case "kclDisableCloudwatchMetricsExport": getOrCreateConfiguration(target).setKclDisableCloudwatchMetricsExport(property(camelContext, boolean.class, value)); return true;
+        case "kclstopcheckpointonfailure":
+        case "kclStopCheckpointOnFailure": getOrCreateConfiguration(target).setKclStopCheckpointOnFailure(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresultsperrequest":
@@ -111,7 +114,7 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazonkinesisasyncclient":
@@ -141,6 +144,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "iteratorType": return software.amazon.awssdk.services.kinesis.model.ShardIteratorType.class;
         case "kcldisablecloudwatchmetricsexport":
         case "kclDisableCloudwatchMetricsExport": return boolean.class;
+        case "kclstopcheckpointonfailure":
+        case "kclStopCheckpointOnFailure": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxresultsperrequest":
@@ -189,7 +194,7 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Kinesis2Component target = (Kinesis2Component) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonkinesisasyncclient":
@@ -219,6 +224,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "iteratorType": return getOrCreateConfiguration(target).getIteratorType();
         case "kcldisablecloudwatchmetricsexport":
         case "kclDisableCloudwatchMetricsExport": return getOrCreateConfiguration(target).isKclDisableCloudwatchMetricsExport();
+        case "kclstopcheckpointonfailure":
+        case "kclStopCheckpointOnFailure": return getOrCreateConfiguration(target).isKclStopCheckpointOnFailure();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresultsperrequest":

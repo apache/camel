@@ -29,7 +29,7 @@ public final class GoogleMailStreamConstants {
     public static final String MAIL_FROM = "CamelGoogleMailStreamFrom";
     @Metadata(description = "The carbon copy of the message", javaType = "String")
     public static final String MAIL_CC = "CamelGoogleMailStreamCc";
-    @Metadata(description = "The blind carbon cpoy of the message", javaType = "String")
+    @Metadata(description = "The blind carbon copy of the message", javaType = "String")
     public static final String MAIL_BCC = "CamelGoogleMailStreamBcc";
     @Metadata(description = "The subject of the message", javaType = "String")
     public static final String MAIL_SUBJECT = "CamelGoogleMailStreamSubject";

@@ -217,6 +217,25 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
         assertNull(ex4.getMessage().getBody());
     }
 
+    @Test
+    @Order(6)
+    void headerNamespaceTakesPrecedenceOverOption() {
+        server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
+                .andReturn(200, setupGithubSourceList()).once();
+
+        Exchange ex = template.request("direct:listCustomResourcesWithNamespaceOption", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "testnamespace");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "sources.knative.dev");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, "Namespaced");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, "v1alpha1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
+        });
+
+        assertFalse(ex.isFailed());
+        assertEquals(1, ex.getMessage().getBody(List.class).size());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -224,6 +243,8 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
             public void configure() {
                 from("direct:listCustomResources").toF(
                         "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResources");
+                from("direct:listCustomResourcesWithNamespaceOption").toF(
+                        "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResources&namespace=optionns");
                 from("direct:listCustomResourcesByLabels").toF(
                         "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResourcesByLabels");
                 from("direct:deleteCustomResource").toF(

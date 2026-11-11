@@ -2,6 +2,7 @@
 package org.apache.camel.opentelemetry.metrics;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class OpenTelemetryEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OpenTelemetryEndpoint target = (OpenTelemetryEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
         case "attributes": target.setAttributes(property(camelContext, java.util.Map.class, value)); return true;
         case "decrement": target.setDecrement(property(camelContext, java.lang.String.class, value)); return true;
@@ -39,7 +40,7 @@ public class OpenTelemetryEndpointConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return java.lang.String.class;
         case "attributes": return java.util.Map.class;
         case "decrement": return java.lang.String.class;
@@ -57,7 +58,7 @@ public class OpenTelemetryEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OpenTelemetryEndpoint target = (OpenTelemetryEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return target.getAction();
         case "attributes": return target.getAttributes();
         case "decrement": return target.getDecrement();
@@ -74,7 +75,7 @@ public class OpenTelemetryEndpointConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "attributes": return java.lang.String.class;
         default: return null;
         }

@@ -66,9 +66,10 @@ import dev.tamboui.widgets.spinner.SpinnerStyle;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
+import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
-import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -91,9 +92,12 @@ class AiPanel {
     static final int MAX_IDENTICAL_TOOL_CALLS = 3;
     /**
      * Longest tool result handed to the model. The AI log keeps the full text; the model gets the head plus a note,
-     * because a single log or table dump can otherwise be larger than the whole system prompt.
+     * because a single log or table dump can otherwise be larger than the whole system prompt. It is the longest answer
+     * of camel_catalog_doc, so no catalog answer is cut: a long one names at its end the options and headers it leaves
+     * out, which the model needs to ask for one of them (16_000 cut that end off, once the catalog answers grew to
+     * 18,000 characters).
      */
-    static final int MAX_TOOL_RESULT_CHARS = 16_000;
+    static final int MAX_TOOL_RESULT_CHARS = CatalogDocs.MAX_ANSWER_LENGTH;
     /**
      * Tool results from turns before the previous one are shrunk to this many characters once the turn is answered. The
      * model's own answer already summarises them, and the whole history is re-sent (and re-processed by a local model)
@@ -592,6 +596,17 @@ class AiPanel {
         statsView = false;
         scrollOffset = 0;
         inputLine.replace(question);
+    }
+
+    /**
+     * Opens the panel and sends the question, which the user typed and confirmed on a screen. While the panel answers
+     * another question, or asks about an edit, the question waits in the input for the user to send.
+     */
+    void askNow(String question) {
+        openWithQuestion(question);
+        if (!thinking.get() && editQuestionHandler == null && activeCliCommand == null) {
+            submitInput();
+        }
     }
 
     boolean isAskingAboutEdit() {
@@ -3002,7 +3017,7 @@ class AiPanel {
 
         @Override
         public String selectedProcessName() {
-            return ctx != null ? ctx.selectedName() : null;
+            return ctx != null ? ctx.selectedFullName() : null;
         }
 
         @Override

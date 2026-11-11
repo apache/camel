@@ -47,8 +47,9 @@ public class PQCDataFormat extends DataFormatDefinition {
                             + " SEED and SM4 are encrypted with GCM, and CHACHA7539 with ChaCha20-Poly1305.")
     private String symmetricKeyAlgorithm;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "128",
-              description = "The length (in bits) of the symmetric key.")
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "256",
+              description = "The length (in bits) of the symmetric key. SEED and SM4 only accept 128;"
+                            + " GOST3412_2015 and CHACHA7539 only accept 256.")
     private String symmetricKeyLength;
     @XmlAttribute
     @Metadata(javaType = "java.security.KeyPair",

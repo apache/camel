@@ -1746,7 +1746,7 @@ public interface IBMCOSEndpointBuilderFactory {
             return "CamelIBMCOSBucketDestinationName";
         }
         /**
-         * The optional Cache-Control HTTP header which allows the user to
+         * The *optional* Cache-Control HTTP header which allows the user to
          * specify caching behavior.
          * 
          * The option is a: {@code String} type.
@@ -1759,7 +1759,7 @@ public interface IBMCOSEndpointBuilderFactory {
             return "CamelIBMCOSCacheControl";
         }
         /**
-         * The optional Content-Disposition HTTP header, which specifies
+         * The *optional* Content-Disposition HTTP header, which specifies
          * presentational information such as the recommended filename.
          * 
          * The option is a: {@code String} type.
@@ -1772,7 +1772,7 @@ public interface IBMCOSEndpointBuilderFactory {
             return "CamelIBMCOSContentDisposition";
         }
         /**
-         * The optional Content-Encoding HTTP header specifying what content
+         * The *optional* Content-Encoding HTTP header specifying what content
          * encodings have been applied to the object.
          * 
          * The option is a: {@code String} type.

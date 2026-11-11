@@ -76,9 +76,15 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
     protected static final String DEFAULT_DELETE_EXPIRED_STRING
             = "DELETE FROM CAMEL_KEYVALUE WHERE EXPIRES_AT > 0 AND EXPIRES_AT <= ?";
     protected static final String DEFAULT_UPDATE_IF_VALUE_STRING
-            = "UPDATE CAMEL_KEYVALUE SET ITEM_VALUE = ?, EXPIRES_AT = ? WHERE ITEM_KEY = ? AND ITEM_VALUE = ?";
+            = "UPDATE CAMEL_KEYVALUE SET ITEM_VALUE = ?, EXPIRES_AT = ? WHERE ITEM_KEY = ? AND ITEM_VALUE = ?"
+              + " AND (EXPIRES_AT = 0 OR EXPIRES_AT > ?)";
     protected static final String DEFAULT_DELETE_IF_VALUE_STRING
-            = "DELETE FROM CAMEL_KEYVALUE WHERE ITEM_KEY = ? AND ITEM_VALUE = ?";
+            = "DELETE FROM CAMEL_KEYVALUE WHERE ITEM_KEY = ? AND ITEM_VALUE = ? AND (EXPIRES_AT = 0 OR EXPIRES_AT > ?)";
+    protected static final String DEFAULT_DELETE_IF_EXPIRED_STRING
+            = "DELETE FROM CAMEL_KEYVALUE WHERE ITEM_KEY = ? AND EXPIRES_AT > 0 AND EXPIRES_AT <= ?";
+
+    // how many transactions putIfAbsent may use when concurrent inserts of the same key keep failing
+    private static final int PUT_IF_ABSENT_ATTEMPTS = 3;
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcKeyValueRepository.class);
 
@@ -109,10 +115,14 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
     private String selectKeysString = DEFAULT_SELECT_KEYS_STRING;
     @Metadata(label = "advanced", description = "SQL query to use for deleting expired entries")
     private String deleteExpiredString = DEFAULT_DELETE_EXPIRED_STRING;
-    @Metadata(label = "advanced", description = "SQL query to use for conditional update (CAS replace)")
+    @Metadata(label = "advanced",
+              description = "SQL query to use for conditional update (CAS replace) of an entry that has not expired")
     private String updateIfValueString = DEFAULT_UPDATE_IF_VALUE_STRING;
-    @Metadata(label = "advanced", description = "SQL query to use for conditional delete (CAS delete)")
+    @Metadata(label = "advanced",
+              description = "SQL query to use for conditional delete (CAS delete) of an entry that has not expired")
     private String deleteIfValueString = DEFAULT_DELETE_IF_VALUE_STRING;
+    @Metadata(label = "advanced", description = "SQL query to use for deleting an entry by key only if it has expired")
+    private String deleteIfExpiredString = DEFAULT_DELETE_IF_EXPIRED_STRING;
     @Metadata(label = "advanced,security",
               description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing"
                             + " values read back from the repository. When not set, the JVM-wide jdk.serialFilter is"
@@ -186,6 +196,7 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
             deleteExpiredString = DEFAULT_DELETE_EXPIRED_STRING.replace(DEFAULT_TABLENAME, tableName);
             updateIfValueString = DEFAULT_UPDATE_IF_VALUE_STRING.replace(DEFAULT_TABLENAME, tableName);
             deleteIfValueString = DEFAULT_DELETE_IF_VALUE_STRING.replace(DEFAULT_TABLENAME, tableName);
+            deleteIfExpiredString = DEFAULT_DELETE_IF_EXPIRED_STRING.replace(DEFAULT_TABLENAME, tableName);
         }
     }
 
@@ -282,32 +293,46 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
         transactionTemplate.executeWithoutResult(status -> jdbcTemplate.update(getClearString()));
     }
 
+    /**
+     * Stores the value only if no non-expired entry exists for the key. The primary key of the table decides between
+     * concurrent callers: when the INSERT fails with a duplicate key, the transaction is rolled back and the key is
+     * read again in a new transaction, which returns the value stored by the other caller, or inserts again if that
+     * entry has been deleted meanwhile.
+     *
+     * @throws DuplicateKeyException if the INSERT failed in all attempts, or at once in a transaction of the caller
+     */
     @Override
     public Object putIfAbsent(String key, Object value, Duration ttl) {
-        return transactionTemplate.execute(status -> {
-            // check if a non-expired entry already exists
-            Object existing = doGet(key);
-            if (existing != null) {
-                return existing;
-            }
-            // attempt to insert
-            long expiresAt = toExpiresAt(ttl);
+        byte[] bytes = KeyValueRepositoryHelper.serialize(value);
+        boolean[] joined = { false };
+        for (int attempt = 1;; attempt++) {
             try {
-                jdbcTemplate.update(getInsertString(), key, KeyValueRepositoryHelper.serialize(value), expiresAt);
-                return null;
+                return transactionTemplate.execute(status -> {
+                    joined[0] = status.hasTransaction() && !status.isNewTransaction();
+                    // check if a non-expired entry already exists
+                    Object existing = doGet(key);
+                    if (existing != null) {
+                        return existing;
+                    }
+                    // attempt to insert
+                    long expiresAt = toExpiresAt(ttl);
+                    jdbcTemplate.update(getInsertString(), key, bytes, expiresAt);
+                    return null;
+                });
             } catch (DuplicateKeyException e) {
-                // concurrent insert race -- another thread/node won
-                LOG.debug("Concurrent insert race for key '{}' -- another thread won, treating as existing", key);
-                status.setRollbackOnly();
-                // re-read the value that the other thread inserted
-                Object concurrentValue = doGet(key);
-                return concurrentValue;
+                // another thread/node inserted the key: read it again in a new transaction, as the failed one may
+                // not see that entry (REPEATABLE READ) or the entry may be deleted meanwhile
+                if (joined[0] || attempt >= PUT_IF_ABSENT_ATTEMPTS) {
+                    throw e;
+                }
+                LOG.debug("Concurrent insert race for key '{}' -- reading it again in a new transaction", key);
             }
-        });
+        }
     }
 
     /**
      * Atomically replaces the value for {@code key} only if the current stored value equals {@code expectedOldValue}.
+     * An entry that has expired is not replaced, as {@link #get(String)} does not return it either.
      * <p/>
      * The comparison is performed on the serialized (byte[]) representation of the values. This works correctly for
      * well-behaved {@link java.io.Serializable} types whose serialized form is deterministic (i.e. two independently
@@ -320,6 +345,7 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
      * @param  newValue         the new value to store if the condition is met
      * @param  ttl              the time-to-live for the new entry, or {@code null} / zero for no expiry
      * @return                  {@code true} if the value was replaced, {@code false} if the current value did not match
+     *                          or has expired
      */
     @Override
     public boolean replace(String key, Object expectedOldValue, Object newValue, Duration ttl) {
@@ -327,27 +353,30 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
             long expiresAt = toExpiresAt(ttl);
             byte[] newBytes = KeyValueRepositoryHelper.serialize(newValue);
             byte[] expectedBytes = KeyValueRepositoryHelper.serialize(expectedOldValue);
-            int updated = jdbcTemplate.update(getUpdateIfValueString(), newBytes, expiresAt, key, expectedBytes);
+            int updated = jdbcTemplate.update(getUpdateIfValueString(), newBytes, expiresAt, key, expectedBytes,
+                    System.currentTimeMillis());
             return updated > 0;
         });
         return result != null && result;
     }
 
     /**
-     * Atomically deletes the entry for {@code key} only if the current stored value equals {@code expectedValue}.
+     * Atomically deletes the entry for {@code key} only if the current stored value equals {@code expectedValue}. An
+     * entry that has expired is not deleted by this method, as {@link #get(String)} does not return it either.
      * <p/>
      * The comparison is performed on the serialized (byte[]) representation of the value. See the note on
      * {@link #replace(String, Object, Object, Duration)} for caveats about non-deterministic serialization.
      *
      * @param  key           the key to conditionally delete
      * @param  expectedValue the value that must currently be stored (compared by serialized bytes)
-     * @return               {@code true} if the entry was deleted, {@code false} if the current value did not match
+     * @return               {@code true} if the entry was deleted, {@code false} if the current value did not match or
+     *                       has expired
      */
     @Override
     public boolean delete(String key, Object expectedValue) {
         Boolean result = transactionTemplate.execute(status -> {
             byte[] expectedBytes = KeyValueRepositoryHelper.serialize(expectedValue);
-            int deleted = jdbcTemplate.update(getDeleteIfValueString(), key, expectedBytes);
+            int deleted = jdbcTemplate.update(getDeleteIfValueString(), key, expectedBytes, System.currentTimeMillis());
             return deleted > 0;
         });
         return result != null && result;
@@ -361,29 +390,32 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
 
     /**
      * Internal get that reads the value for the given key within the current transaction. If the entry has expired, it
-     * is deleted and {@code null} is returned.
+     * is deleted, unless it has been stored again meanwhile, and {@code null} is returned.
      *
      * @param  key the key to look up
      * @return     the deserialized value, or {@code null} if not found or expired
      */
     private Object doGet(String key) {
         try {
-            // Use a two-element array as a container: [0] = deserialized value, [1] = expired flag.
+            // Use a single-element array as the expired flag.
             // The DELETE for expired rows is performed after queryForObject returns so that we
             // do not execute a statement while the ResultSet for the SELECT is still open (some
             // JDBC drivers dislike that).
             final boolean[] expired = { false };
+            final long now = System.currentTimeMillis();
             Object value = jdbcTemplate.queryForObject(getSelectString(), (rs, rowNum) -> {
                 byte[] bytes = rs.getBytes(1);
                 long expiresAt = rs.getLong(2);
-                if (expiresAt > 0 && System.currentTimeMillis() >= expiresAt) {
+                if (expiresAt > 0 && now >= expiresAt) {
                     expired[0] = true;
                     return null;
                 }
                 return KeyValueRepositoryHelper.deserialize(bytes, deserializationFilter);
             }, key);
             if (expired[0]) {
-                jdbcTemplate.update(getDeleteString(), key);
+                // delete the row only if it is still expired: another transaction may have stored the key again
+                // since it was read, and that entry must be kept
+                jdbcTemplate.update(getDeleteIfExpiredString(), key, now);
                 return null;
             }
             return value;
@@ -396,7 +428,7 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
         if (ttl == null || ttl.isZero() || ttl.isNegative()) {
             return 0;
         }
-        return System.currentTimeMillis() + ttl.toMillis();
+        return KeyValueRepositoryHelper.expiresAt(ttl);
     }
 
     // ---- Getters and Setters ----
@@ -524,6 +556,14 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
 
     public void setDeleteIfValueString(String deleteIfValueString) {
         this.deleteIfValueString = deleteIfValueString;
+    }
+
+    public String getDeleteIfExpiredString() {
+        return deleteIfExpiredString;
+    }
+
+    public void setDeleteIfExpiredString(String deleteIfExpiredString) {
+        this.deleteIfExpiredString = deleteIfExpiredString;
     }
 
     public String getDeserializationFilter() {

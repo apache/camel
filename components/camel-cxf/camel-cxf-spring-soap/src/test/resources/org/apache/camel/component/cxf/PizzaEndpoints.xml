@@ -30,10 +30,10 @@
 
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
 
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfPayLoadSoapHeaderSpringTest/pizza_service/services/PizzaService"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfPayLoadSoapHeaderSpringTest.port1}/CxfPayLoadSoapHeaderSpringTest/pizza_service/services/PizzaService"
     		wsdlURL="pizza_service.wsdl"/>
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfPayLoadSoapHeaderSpringTest/new_pizza_service/services/PizzaService"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfPayLoadSoapHeaderSpringTest.port2}/CxfPayLoadSoapHeaderSpringTest/new_pizza_service/services/PizzaService"
     		wsdlURL="pizza_service.wsdl"/>
   
 

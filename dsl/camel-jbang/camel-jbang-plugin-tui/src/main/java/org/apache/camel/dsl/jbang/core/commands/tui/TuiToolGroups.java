@@ -28,7 +28,8 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolGroups;
  * The AI panel's side of {@link ToolGroups} (CAMEL-24834): the tui_* tools each group adds to the core set, and the
  * guidance line in the panel's words. Only SQL and HTTP need tools of their own; the spans, the traced messages, the
  * metrics and the circuit breakers are read with core tools (tui_get_spans, tui_get_history, tui_get_table), so those
- * groups only add the line that tells a small model where to look.
+ * groups only add the line that tells a small model where to look. The chaos group adds no tool either: its line says
+ * whether camel-chaos may be injecting faults.
  */
 final class TuiToolGroups {
 
@@ -36,6 +37,9 @@ final class TuiToolGroups {
     static final String UPDATE_ROW_TOOL = "tui_update_row";
     static final String HTTP_ENDPOINTS_TOOL = "tui_http_endpoints";
     static final String HTTP_REQUEST_TOOL = "tui_http_request";
+    static final String CHAOS_CHECK_TOOL = "tui_chaos_check";
+    static final String CHAOS_ADD_TOOL = "tui_chaos_add";
+    static final String CHAOS_CHANGE_TOOL = "tui_chaos_change";
 
     /**
      * The groups of an integration as the panel uses them.
@@ -77,6 +81,11 @@ final class TuiToolGroups {
                 if (f.semanticMonitoring()) {
                     tools.add("tui_get_monitoring");
                 }
+            } else if (group == ToolGroup.CHAOS) {
+                // with chaos off the rules can only be refused
+                if (f.chaosOn()) {
+                    tools.addAll(tools(group));
+                }
             } else {
                 tools.addAll(tools(group));
             }
@@ -90,6 +99,7 @@ final class TuiToolGroups {
             case SQL -> List.of(SQL_TOOL, UPDATE_ROW_TOOL);
             case HTTP -> List.of(HTTP_ENDPOINTS_TOOL, HTTP_REQUEST_TOOL);
             case SEMANTIC -> List.of("tui_get_audit", "tui_get_monitoring");
+            case CHAOS -> List.of(CHAOS_CHECK_TOOL, CHAOS_ADD_TOOL, CHAOS_CHANGE_TOOL);
             default -> List.of();
         };
     }
@@ -118,6 +128,14 @@ final class TuiToolGroups {
                                + " rate; OPEN means the fallback runs.";
             case HTTP -> "HTTP: " + ToolGroups.describeHttp(f) + "; " + HTTP_REQUEST_TOOL + " calls it, "
                          + HTTP_ENDPOINTS_TOOL + " lists the operations.";
+            // faults may be injected on purpose, so the panel does not hunt for a bug behind them; it checks, adds and
+            // changes rules as camel ask does, adding and changing after the user confirms (CAMEL-26721)
+            case CHAOS -> f.chaosOn()
+                    ? "Chaos: camel-chaos is on, so some failures and delays may be injected on purpose; tui_get_status"
+                      + " section 'chaos' has the rules, tui_get_table tab 'Chaos' their live state and effect; "
+                      + CHAOS_CHECK_TOOL + " checks rules, " + CHAOS_ADD_TOOL + " and " + CHAOS_CHANGE_TOOL
+                      + " add and change them after the user confirms."
+                    : "Chaos: camel-chaos is in the integration but off, so it injects no faults.";
         };
     }
 }

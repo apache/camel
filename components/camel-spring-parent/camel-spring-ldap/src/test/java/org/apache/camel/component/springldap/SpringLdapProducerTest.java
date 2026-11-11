@@ -27,6 +27,7 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
@@ -36,15 +37,21 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.query.LdapQuery;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -81,6 +88,44 @@ class SpringLdapProducerTest extends CamelTestSupport {
         exchange.setIn(in);
         assertThrows(UnsupportedOperationException.class,
                 () -> ldapProducer.process(exchange));
+    }
+
+    @Test
+    void testStringBodyNamesTheExpectedMap() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("cn=Alice,ou=people,dc=example,dc=org");
+
+        when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.SEARCH);
+
+        InvalidPayloadException e = assertThrows(InvalidPayloadException.class,
+                () -> ldapProducer.process(exchange));
+        assertEquals(Map.class, e.getType());
+    }
+
+    @Test
+    void testNoBodyNamesTheExpectedMap() {
+        Exchange exchange = new DefaultExchange(context);
+
+        when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.UNBIND);
+
+        InvalidPayloadException e = assertThrows(InvalidPayloadException.class,
+                () -> ldapProducer.process(exchange));
+        assertEquals(Map.class, e.getType());
+    }
+
+    @Test
+    void testFunctionDrivenWithoutFunction() {
+        Exchange exchange = new DefaultExchange(context);
+        Message in = new DefaultMessage(context);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put(SpringLdapProducer.REQUEST, "cn=dn");
+
+        when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.FUNCTION_DRIVEN);
+
+        UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class,
+                () -> processBody(exchange, in, body));
+        assertTrue(e.getMessage().contains("'function'"), e.getMessage());
     }
 
     @Test
@@ -225,6 +270,37 @@ class SpringLdapProducerTest extends CamelTestSupport {
 
         processBody(exchange, in, body);
         verify(ldapTemplate).authenticate(ArgumentMatchers.any(LdapQuery.class), eq(password));
+    }
+
+    @Test
+    void testAuthenticateWithEmptyPassword() {
+        Map<String, Object> body = new HashMap<>();
+        body.put(SpringLdapProducer.DN, "cn=dn");
+        body.put(SpringLdapProducer.FILTER, "filter");
+        body.put(SpringLdapProducer.PASSWORD, "");
+
+        assertAuthenticateFailsWithoutCallingLdap(body);
+    }
+
+    @Test
+    void testAuthenticateWithoutPassword() {
+        Map<String, Object> body = new HashMap<>();
+        body.put(SpringLdapProducer.DN, "cn=dn");
+        body.put(SpringLdapProducer.FILTER, "filter");
+
+        assertAuthenticateFailsWithoutCallingLdap(body);
+    }
+
+    private void assertAuthenticateFailsWithoutCallingLdap(Map<String, Object> body) {
+        Exchange exchange = new DefaultExchange(context);
+        Message in = new DefaultMessage(context);
+
+        when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.AUTHENTICATE);
+
+        AuthenticationException e = assertThrows(AuthenticationException.class,
+                () -> processBody(exchange, in, body));
+        assertTrue(e.getMessage().contains(SpringLdapProducer.PASSWORD));
+        verify(ldapTemplate, never()).authenticate(any(LdapQuery.class), anyString());
     }
 
     @Test

@@ -54,11 +54,14 @@ import org.slf4j.LoggerFactory;
                                                  + " their values, with the ConfigurationItems in the CamelDaprRawConfigResponse"
                                                  + " header"),
            producerIn = @BodyType(value = {
-                   Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL },
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO,
+                   Carrier.NULL },
                                   description = "The data of invokeService, pubSub, invokeBinding, state save and the workflow"
-                                                + " input, event and output, given to the Dapr client as is: bytes are sent as"
-                                                + " they are, other bodies are serialized as JSON (text as a JSON string), and a"
-                                                + " stream fails: convert it to bytes first. State save needs a body; the other"
+                                                + " input, event and output. For invokeService, pubSub, invokeBinding and state"
+                                                + " save, text and streams are converted to bytes, bytes are sent as they are,"
+                                                + " and other bodies are serialized as JSON. The workflow operations give the"
+                                                + " body to the workflow client as is, which serializes it as JSON, so a stream"
+                                                + " fails there: convert it first. State save needs a body; the other"
                                                 + " operations do not read it"),
            producerOut = @BodyType(value = {
                    Carrier.BYTES, Carrier.POJO, Carrier.LIST, Carrier.MAP, Carrier.VALUE, Carrier.UNCHANGED, Carrier.NULL },

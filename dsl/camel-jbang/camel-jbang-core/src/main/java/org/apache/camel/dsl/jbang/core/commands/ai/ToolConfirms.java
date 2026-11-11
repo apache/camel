@@ -43,7 +43,10 @@ import org.apache.camel.util.URISupport;
  * catalog marks internal (direct:, seda:, log:, mock: and the like) stay inside it. Also a message whose body the
  * integration reads from a file outside the project folder (a body that starts with file:);</li>
  * <li>a SQL statement that is not a single SELECT (or SHOW, DESCRIBE), and a row update;</li>
- * <li>an expression in a language that runs code, such as Groovy.</li>
+ * <li>an expression in a language that runs code, such as Groovy;</li>
+ * <li>a chaos rule added or changed (camel-chaos): it makes messages of the integration fail, wait or get lost, and can
+ * name any exception class. Removing a rule only takes faults away. A chaos exploration is confirmed once, when it
+ * starts: the experiments in it add rules without asking again, and camel-chaos removes them at its deadline.</li>
  * </ul>
  * A file write is confirmed with its diff ({@link #write}). {@code camel ask}, which shows no screen of the integration
  * while it works, also asks before a call that stops or starts an integration, browses an endpoint the integration does
@@ -285,6 +288,102 @@ public final class ToolConfirms {
                     "The routes take no messages until they are started again");
             default -> null;
         };
+    }
+
+    /**
+     * A chaos tool that adds or changes a rule (camel-chaos), with the rule; null for the others (list, report, remove,
+     * clear), which only read or take faults away, and without a rule (or the id of a change), which the tool refuses.
+     *
+     * @param command     add, change, remove or clear
+     * @param integration the name of the integration, or null for the selected one
+     * @param id          the id of the rule a change replaces
+     * @param rule        the rule in its one-line text form
+     */
+    public static Call chaos(String command, String integration, String id, String rule) {
+        String c = command == null || rule == null || rule.isBlank() ? "" : command.strip().toLowerCase(Locale.ROOT);
+        String where = integration != null && !integration.isBlank() ? integration : "the selected integration";
+        String reason = "While the rule is active, the integration's messages fail, wait or get lost; exception= can name"
+                        + " any exception class";
+        List<String> rules = c.isEmpty() ? List.of() : splitRules(rule);
+        return switch (c) {
+            // several rules separated by ; are added together: one per line, so each can be read
+            case "add" -> rules.size() > 1
+                    ? new Call("add " + rules.size() + " chaos rules to " + where, String.join("\n", rules), reason)
+                    : new Call("add a chaos rule to " + where, rule, reason);
+            case "change" -> id != null && !id.isBlank()
+                    ? new Call("change chaos rule " + id + " of " + where, rule, reason) : null;
+            default -> null;
+        };
+    }
+
+    /**
+     * The call of loading a chaos scenario (chaos_load): the rules there are now are replaced by those of the scenario,
+     * shown as they are, and the report starts again. Null without a scenario, which the tool refuses.
+     */
+    public static Call chaosLoad(String integration, String scenarioName, String scenario) {
+        if (scenario == null || scenario.isBlank()) {
+            return null;
+        }
+        String where = integration != null && !integration.isBlank() ? integration : "the selected integration";
+        String name = scenarioName != null && !scenarioName.isBlank() ? " " + scenarioName.strip() : "";
+        return new Call(
+                "load chaos scenario" + name + " into " + where, scenario.strip(),
+                "The rules of the integration are replaced by those of the scenario and the report starts again; while"
+                                                                                   + " they are active, the integration's messages fail, wait or get lost");
+    }
+
+    /**
+     * The call of starting a chaos exploration (chaos_explore_start): the consent to the experiments the AI then runs
+     * in it (chaos_experiment), each adding chaos rules without asking again. camel-chaos ends them at the deadline of
+     * the exploration, whatever the AI does.
+     */
+    public static Call chaosExplore(String integration, String budget, String focus) {
+        String where = integration != null && !integration.isBlank() ? integration : "the selected integration";
+        String time = budget != null && !budget.isBlank() ? budget.strip() : "10m";
+        return new Call(
+                "explore chaos in " + where + " for " + time,
+                focus != null && !focus.isBlank() ? "focus: " + focus.strip() : "all routes",
+                "For that time the AI adds chaos rules without asking again, and the integration's messages fail, wait"
+                                                                                              + " or get lost; at the end the"
+                                                                                              + " rules are removed");
+    }
+
+    /**
+     * Splits a text with several rules separated by {@code ;}, as in camel.chaos.rules; a {@code ;} inside quotes does
+     * not split.
+     */
+    static List<String> splitRules(String text) {
+        List<String> answer = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        char quote = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (quote != 0) {
+                current.append(ch);
+                if (ch == '\\' && i + 1 < text.length()) {
+                    current.append(text.charAt(++i));
+                } else if (ch == quote) {
+                    quote = 0;
+                }
+            } else if (ch == ';') {
+                addRule(answer, current);
+            } else {
+                if (ch == '"' || ch == '\'') {
+                    quote = ch;
+                }
+                current.append(ch);
+            }
+        }
+        addRule(answer, current);
+        return answer;
+    }
+
+    private static void addRule(List<String> rules, StringBuilder text) {
+        String rule = text.toString().strip();
+        if (!rule.isEmpty()) {
+            rules.add(rule);
+        }
+        text.setLength(0);
     }
 
     /** Running an integration on this machine. */

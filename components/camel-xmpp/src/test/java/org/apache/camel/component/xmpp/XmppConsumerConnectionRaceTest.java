@@ -57,13 +57,13 @@ class XmppConsumerConnectionRaceTest {
     @Test
     void connectionConnectedMeanwhileByTheReconnectionManagerIsLoggedIn() throws Exception {
         // the ReconnectionManager connected the connection between isConnected() and connect() of the monitor
-        XMPPTCPConnection connection = new XMPPTCPConnection(config()) {
+        XMPPTCPConnection connection = new RecordingConnection(null) {
             @Override
             public synchronized AbstractXMPPConnection connect() throws SmackException {
                 throw new SmackException.AlreadyConnectedException();
             }
         };
-        XmppConsumer consumer = new XmppConsumer(endpoint(null), exchange -> {
+        XmppConsumer consumer = new XmppConsumer(endpoint(), exchange -> {
         });
         consumer.connection = connection;
 
@@ -74,14 +74,14 @@ class XmppConsumerConnectionRaceTest {
 
     @Test
     void connectionLoggedInMeanwhileByTheReconnectionManagerIsNotAFailure() throws Exception {
-        XMPPTCPConnection connection = new XMPPTCPConnection(config()) {
+        // the ReconnectionManager logged the connection in between isAuthenticated() and login() of the monitor
+        XMPPTCPConnection connection = new RecordingConnection(new SmackException.AlreadyLoggedInException()) {
             @Override
             public synchronized AbstractXMPPConnection connect() {
                 return this;
             }
         };
-        // the ReconnectionManager logged the connection in between isAuthenticated() and login() of the monitor
-        XmppConsumer consumer = new XmppConsumer(endpoint(new SmackException.AlreadyLoggedInException()), exchange -> {
+        XmppConsumer consumer = new XmppConsumer(endpoint(), exchange -> {
         });
         consumer.connection = connection;
 
@@ -89,19 +89,54 @@ class XmppConsumerConnectionRaceTest {
         assertEquals(List.of(connection), logins);
     }
 
-    private XmppEndpoint endpoint(SmackException loginFailure) {
-        XmppComponent component = context.getComponent("xmpp", XmppComponent.class);
-        XmppEndpoint endpoint = new XmppEndpoint("xmpp://localhost:5222", component) {
+    @Test
+    void connectionOfAUserThatDoesNotLogInIsOnlyConnected() throws Exception {
+        List<String> connects = new CopyOnWriteArrayList<>();
+        XMPPTCPConnection connection = new RecordingConnection(null) {
             @Override
-            public void login(XMPPTCPConnection connection) throws SmackException {
-                logins.add(connection);
-                if (loginFailure != null) {
-                    throw loginFailure;
-                }
+            public synchronized AbstractXMPPConnection connect() {
+                connects.add("connect");
+                return this;
             }
         };
+        XmppEndpoint endpoint = endpoint();
+        endpoint.setUser("bot");
+        endpoint.setLogin(false);
+        XmppConsumer consumer = new XmppConsumer(endpoint, exchange -> {
+        });
+        consumer.connection = connection;
+
+        consumer.checkConnection();
+
+        assertEquals(List.of("connect"), connects, "The monitor did not connect");
+        assertEquals(List.of(), logins, "The monitor logged in a connection with login=false");
+    }
+
+    private XmppEndpoint endpoint() {
+        XmppComponent component = context.getComponent("xmpp", XmppComponent.class);
+        XmppEndpoint endpoint = new XmppEndpoint("xmpp://localhost:5222", component);
         endpoint.setHost("localhost");
         return endpoint;
+    }
+
+    /**
+     * A connection that records its logins (the monitor logs it in again with the credentials of its first login).
+     */
+    private class RecordingConnection extends XMPPTCPConnection {
+        private final SmackException loginFailure;
+
+        RecordingConnection(SmackException loginFailure) throws Exception {
+            super(config());
+            this.loginFailure = loginFailure;
+        }
+
+        @Override
+        public synchronized void login() throws SmackException {
+            logins.add(this);
+            if (loginFailure != null) {
+                throw loginFailure;
+            }
+        }
     }
 
     private static XMPPTCPConnectionConfiguration config() throws Exception {

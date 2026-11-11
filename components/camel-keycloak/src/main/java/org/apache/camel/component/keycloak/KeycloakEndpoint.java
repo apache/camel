@@ -50,13 +50,14 @@ import org.keycloak.admin.client.KeycloakBuilder;
                                   description = "Mostly not read: the operations take their input from headers, such as"
                                                 + " CamelKeycloakRealmName and CamelKeycloakUserId. With pojoRequest=true the"
                                                 + " create and update operations take the Keycloak representation, such as a"
-                                                + " UserRepresentation for createUser; a body of another type does nothing"
-                                                + " and keeps the body. The bulk operations take a List when"
-                                                + " the header is not set: of UserRepresentation for bulkCreateUsers and"
-                                                + " bulkUpdateUsers, of String ids or role names for the others."
+                                                + " UserRepresentation for createUser, or a Map or JSON text of it; a body"
+                                                + " that does not convert fails. The bulk operations take a List when"
+                                                + " the header is not set: of UserRepresentation (or a Map or JSON text of"
+                                                + " it) for bulkCreateUsers and bulkUpdateUsers, of String ids or role names"
+                                                + " for the others."
                                                 + " introspectToken, revokeAccessToken and revokeRefreshToken take the token"
                                                 + " as text when the CamelKeycloakToken header is not set"),
-           producerOut = @BodyType(value = Carrier.UNKNOWN,
+           producerOut = @BodyType(value = Carrier.UNKNOWN, dependsOn = "allowOperationHeader",
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "createRealm", carriers = Carrier.TEXT,
                                                           javaType = "java.lang.String"),
@@ -296,11 +297,14 @@ import org.keycloak.admin.client.KeycloakBuilder;
                                            @BodyType.When(option = "operation", value = "getFederatedIdentities",
                                                           carriers = Carrier.LIST,
                                                           javaType = "java.util.List<org.keycloak.representations.idm.FederatedIdentityRepresentation>") },
-                                   description = "Depends on the operation, which the CamelKeycloakOperation header can set:"
+                                   description = "Depends on the operation, which the CamelKeycloakOperation header can set"
+                                                 + " with allowOperationHeader=true:"
                                                  + " get gives the Keycloak representation, such as a UserRepresentation, and"
                                                  + " list and search a List of them. Most create operations, deleteUser and"
-                                                 + " some organization operations give the JAX-RS Response, whose status says"
-                                                 + " whether it worked (a 409 or 404 is no error); the others"
+                                                 + " some organization operations give the closed JAX-RS Response, whose"
+                                                 + " status and Location header (the URL of the created resource) can be"
+                                                 + " read; a status other than 2xx fails with a WebApplicationException. The"
+                                                 + " others give"
                                                  + " a confirmation text such as Realm deleted successfully. The bulk"
                                                  + " operations give a Map with total, success, failed and results"))
 public class KeycloakEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {

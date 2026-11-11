@@ -74,4 +74,29 @@ final class TuiTestHelper {
         }
         return false;
     }
+
+    /** Renders a tab into a virtual buffer, for the styles of its cells. */
+    static Buffer renderToBuffer(MonitorTab tab, int width, int height) {
+        Rect area = new Rect(0, 0, width, height);
+        Buffer buffer = Buffer.empty(area);
+        tab.render(Frame.forTesting(buffer), area);
+        return buffer;
+    }
+
+    /** The colour of the border of the panel with this title, from its top left corner, or null when none. */
+    static Color borderColor(Buffer buffer, String title) {
+        for (int y = 0; y < buffer.height(); y++) {
+            StringBuilder row = new StringBuilder();
+            for (int x = 0; x < buffer.width(); x++) {
+                String sym = buffer.get(x, y).symbol();
+                row.append(sym.isEmpty() ? " " : sym.substring(0, 1));
+            }
+            int at = row.indexOf(title);
+            if (at >= 0) {
+                int corner = row.lastIndexOf("╭", at);
+                return corner >= 0 ? buffer.get(corner, y).style().fg().orElse(null) : null;
+            }
+        }
+        return null;
+    }
 }

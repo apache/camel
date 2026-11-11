@@ -37,8 +37,8 @@ import com.sun.net.httpserver.HttpServer;
 /**
  * A minimal in-process fake of the S3 API calls the consumer makes for a single bucket (path-style requests): head
  * bucket, list objects (v2, paginated with max-keys and start-after/continuation-token), head, get and delete object.
- * An object can be removed right after it was listed, the gets of an object can be refused, and the body of an object
- * can be cut short.
+ * An object can be removed right after it was listed, the gets (and heads) of an object can be refused, and the body of
+ * an object can be cut short.
  */
 final class FakeS3Server {
 
@@ -46,6 +46,7 @@ final class FakeS3Server {
     private final HttpServer server;
     private final NavigableMap<String, byte[]> objects = new ConcurrentSkipListMap<>();
     private final Map<String, AtomicInteger> gets = new ConcurrentHashMap<>();
+    private final Map<String, AtomicInteger> heads = new ConcurrentHashMap<>();
     private final Set<String> removedWhenListed = ConcurrentHashMap.newKeySet();
     private final Set<String> refused = ConcurrentHashMap.newKeySet();
     private final Map<String, AtomicInteger> refusedGets = new ConcurrentHashMap<>();
@@ -81,7 +82,7 @@ final class FakeS3Server {
     }
 
     /**
-     * Every get of the object is refused with 403 (AccessDenied), which the client does not retry, until
+     * Every get (and head) of the object is refused with 403 (AccessDenied), which the client does not retry, until
      * {@link #allowGets(String)}.
      */
     void refuseGets(String key) {
@@ -112,6 +113,21 @@ final class FakeS3Server {
         return n != null ? n.get() : 0;
     }
 
+    /**
+     * The number of gets of any object that were answered with the object.
+     */
+    int gets() {
+        return gets.values().stream().mapToInt(AtomicInteger::get).sum();
+    }
+
+    /**
+     * The number of heads of the object that were answered with its metadata.
+     */
+    int heads(String key) {
+        AtomicInteger n = heads.get(key);
+        return n != null ? n.get() : 0;
+    }
+
     private void handle(HttpExchange http) throws IOException {
         String path = http.getRequestURI().getRawPath();
         String key = path.length() > bucket.length() + 2 ? decode(path.substring(bucket.length() + 2)) : null;
@@ -128,9 +144,14 @@ final class FakeS3Server {
         byte[] data = objects.get(key);
         switch (method) {
             case "HEAD" -> {
-                if (data == null) {
+                if (refused.contains(key)) {
+                    // as S3 does, without an error body
+                    refusedGets.computeIfAbsent(key, k -> new AtomicInteger()).incrementAndGet();
+                    respond(http, 403, null, null);
+                } else if (data == null) {
                     respond(http, 404, null, null);
                 } else {
+                    heads.computeIfAbsent(key, k -> new AtomicInteger()).incrementAndGet();
                     objectHeaders(http, data);
                     http.sendResponseHeaders(200, -1);
                     http.close();

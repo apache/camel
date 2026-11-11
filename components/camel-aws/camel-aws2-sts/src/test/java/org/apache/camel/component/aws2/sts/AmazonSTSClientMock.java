@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.sts;
 
+import java.time.Instant;
+
 import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.StsServiceClientConfiguration;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
@@ -29,18 +31,24 @@ import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
 public class AmazonSTSClientMock implements StsClient {
 
+    static final Instant EXPIRATION = Instant.parse("2026-01-01T00:00:00Z");
+
     public AmazonSTSClientMock() {
     }
 
     @Override
     public AssumeRoleResponse assumeRole(AssumeRoleRequest assumeRoleRequest) {
-        return AssumeRoleResponse.builder().assumedRoleUser(AssumedRoleUser.builder().arn("arn").build()).build();
+        return AssumeRoleResponse.builder().assumedRoleUser(AssumedRoleUser.builder().arn("arn").build())
+                .credentials(Credentials.builder().accessKeyId("xxx").secretAccessKey("yyy").sessionToken("test")
+                        .expiration(EXPIRATION).build())
+                .build();
     }
 
     @Override
     public GetSessionTokenResponse getSessionToken(GetSessionTokenRequest getSessionTokenRequest) {
         return GetSessionTokenResponse.builder()
-                .credentials(Credentials.builder().accessKeyId("xxx").secretAccessKey("yyy").sessionToken("test").build())
+                .credentials(Credentials.builder().accessKeyId("xxx").secretAccessKey("yyy").sessionToken("test")
+                        .expiration(EXPIRATION).build())
                 .build();
     }
 
@@ -52,7 +60,8 @@ public class AmazonSTSClientMock implements StsClient {
     @Override
     public GetFederationTokenResponse getFederationToken(GetFederationTokenRequest getFederationTokenRequest) {
         return GetFederationTokenResponse.builder()
-                .credentials(Credentials.builder().accessKeyId("xxx").secretAccessKey("yyy").sessionToken("test").build())
+                .credentials(Credentials.builder().accessKeyId("xxx").secretAccessKey("yyy").sessionToken("test")
+                        .expiration(EXPIRATION).build())
                 .build();
     }
 

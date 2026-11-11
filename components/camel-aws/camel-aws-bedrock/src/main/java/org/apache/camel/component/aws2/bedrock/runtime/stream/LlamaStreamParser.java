@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Parser for Meta Llama model streaming responses
@@ -31,30 +31,30 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class LlamaStreamParser implements StreamResponseParser {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     @Override
-    public String extractText(String chunk) throws JsonProcessingException {
+    public String extractText(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return "";
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode generation = node.get("generation");
-        return ObjectHelper.isNotEmpty(generation) && !generation.isNull() ? generation.asText() : "";
+        return ObjectHelper.isNotEmpty(generation) && !generation.isNull() ? generation.asString() : "";
     }
 
     @Override
-    public String extractCompletionReason(String chunk) throws JsonProcessingException {
+    public String extractCompletionReason(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode stopReason = node.get("stop_reason");
-        return ObjectHelper.isNotEmpty(stopReason) && !stopReason.isNull() ? stopReason.asText() : null;
+        return ObjectHelper.isNotEmpty(stopReason) && !stopReason.isNull() ? stopReason.asString() : null;
     }
 
     @Override
-    public Integer extractTokenCount(String chunk) throws JsonProcessingException {
+    public Integer extractTokenCount(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }
@@ -64,7 +64,7 @@ public class LlamaStreamParser implements StreamResponseParser {
     }
 
     @Override
-    public boolean isFinalChunk(String chunk) throws JsonProcessingException {
+    public boolean isFinalChunk(String chunk) {
         String stopReason = extractCompletionReason(chunk);
         return ObjectHelper.isNotEmpty(stopReason);
     }

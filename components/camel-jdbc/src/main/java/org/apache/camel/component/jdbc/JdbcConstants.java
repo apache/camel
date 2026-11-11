@@ -35,9 +35,11 @@ public final class JdbcConstants {
                                                 "type.",
               javaType = "Set<String>")
     public static final String JDBC_COLUMN_NAMES = "CamelJdbcColumnNames";
-    @Metadata(label = "producer", description = "A `java.util.Map` which has the headers to be used if\n" +
-                                                "`useHeadersAsParameters` has been enabled.",
-              javaType = "Map")
+    @Metadata(label = "producer",
+              description = "The values of the query parameters when `useHeadersAsParameters` has been enabled: a\n" +
+                            "`java.util.Map` with the values of the named parameters, or a `java.util.List` with the\n" +
+                            "values of the positional placeholders, in order (a single value for one placeholder).",
+              javaType = "Object")
     public static final String JDBC_PARAMETERS = "CamelJdbcParameters";
 
     /**

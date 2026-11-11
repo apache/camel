@@ -39,7 +39,7 @@ public class DaprServiceInvocationHandler implements DaprOperationHandler {
 
     @Override
     public DaprOperationResponse handle(Exchange exchange) {
-        Object payload = exchange.getIn().getBody();
+        Object payload = DaprOperationHandler.getPayload(exchange);
         HttpExtension httpExtension = initHttpExtension(exchange);
         String service = configurationOptionsProxy.getServiceToInvoke(exchange);
         String method = configurationOptionsProxy.getMethodToInvoke(exchange);

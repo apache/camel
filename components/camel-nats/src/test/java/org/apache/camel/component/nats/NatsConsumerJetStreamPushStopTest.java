@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.nats;
 
+import java.io.IOException;
 import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -30,6 +31,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import io.nats.client.Connection;
 import io.nats.client.Dispatcher;
@@ -52,6 +54,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -72,6 +75,14 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
     private final CountDownLatch releaseSlow = new CountDownLatch(1);
     private final AtomicBoolean slowInterrupted = new AtomicBoolean();
     private final AtomicBoolean slowDone = new AtomicBoolean();
+
+    @BeforeEach
+    void waitForTheFirstSubscribe() {
+        // the route subscribes on the executor of its consumer, and the consumer uses DeliverPolicy.New: a message
+        // published before that subscribe is skipped, and a stop or a start before it overlaps with it (it would
+        // leave a subscription that nobody ends)
+        await().atMost(10, TimeUnit.SECONDS).until(() -> server.activeSubscriptions() == 1);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -210,6 +221,116 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
         assertEquals(0, server.activeSubscriptions(), "no subscription left once the consumer stopped");
     }
 
+    @Test
+    void stopBeforeTheRunSetsItsDispatcherClosesThatDispatcherBeforeItSubscribes() throws Exception {
+        DefaultConsumer consumer = (DefaultConsumer) context.getRoute("orders").getConsumer();
+        ServiceHelper.stopService(consumer);
+        assertEquals(1, server.closedDispatchers(), "the stop closes the dispatcher of the first run");
+        List<Throwable> reported = reportedBy(consumer);
+
+        // the consumer stops right after its task created the dispatcher, before the task set it: the stop sees no
+        // dispatcher to close, and it interrupts the task. The task must close its dispatcher before it subscribes: a
+        // subscribe on the interrupted thread fails, and a close there would leave a subscription on the server
+        server.afterCreateDispatcher = () -> {
+            server.afterCreateDispatcher = null;
+            ServiceHelper.stopService(consumer);
+        };
+        server.lastTask = null;
+        ServiceHelper.startService(consumer);
+        awaitTaskOfTheLastRunDone();
+
+        assertEquals(1, server.subscribes(), "the stopped run did not subscribe");
+        assertEquals(0, server.interruptedSubscribes(), "the stopped run did not subscribe");
+        assertEquals(2, server.closedDispatchers(), "the dispatcher of each run is closed");
+        assertEquals(0, server.activeSubscriptions(), "no subscription left once the consumer stopped");
+        // a stop is not an error
+        assertTrue(reported.isEmpty(), () -> "reported: " + reported);
+    }
+
+    @Test
+    void stopThatSeesTheDispatcherClosedByTheRunIsNotReportedAsAnError() throws Exception {
+        DefaultConsumer consumer = (DefaultConsumer) context.getRoute("orders").getConsumer();
+        ServiceHelper.stopService(consumer);
+        List<Throwable> reported = reportedBy(consumer);
+        int closedBefore = server.closedDispatchers();
+
+        // the stop begins (on another thread) before the task sets its dispatcher, and reads the dispatcher only after
+        // its flush: the task sees the stop and closes its dispatcher, and then the stop sees that closed dispatcher
+        AtomicReference<Thread> stopper = new AtomicReference<>();
+        server.afterCreateDispatcher = () -> {
+            server.afterCreateDispatcher = null;
+            server.onFlush = () -> {
+                server.onFlush = null;
+                await().atMost(10, TimeUnit.SECONDS).until(() -> server.closedDispatchers() == closedBefore + 1);
+            };
+            Thread thread = new Thread(() -> ServiceHelper.stopService(consumer), "stopper");
+            stopper.set(thread);
+            thread.start();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !consumer.isRunAllowed());
+        };
+        server.lastTask = null;
+        ServiceHelper.startService(consumer);
+        awaitTaskOfTheLastRunDone();
+        stopper.get().join(TimeUnit.SECONDS.toMillis(10));
+        assertFalse(stopper.get().isAlive(), "the stop ended");
+
+        assertTrue(ServiceHelper.isStopped(consumer), "the consumer stopped");
+        assertEquals(closedBefore + 1, server.closedDispatchers(), "the dispatcher of the stopped run is closed");
+        assertEquals(1, server.subscribes(), "the stopped run did not subscribe");
+        // the closed dispatcher is not an error of the stop
+        assertTrue(reported.isEmpty(), () -> "reported: " + reported);
+    }
+
+    @Test
+    void stopBeforeAStandardConsumerSetsItsDispatcherClosesThatDispatcher() throws Exception {
+        // the same window for a consumer without JetStream on the shared connection: its dispatcher would get the
+        // messages of its subject after the stop
+        DefaultConsumer standard = (DefaultConsumer) context.getEndpoint("nats:plain?connection=#conn")
+                .createConsumer(exchange -> {
+                });
+        List<Throwable> reported = reportedBy(standard);
+        int closedBefore = server.closedDispatchers();
+        server.afterCreateDispatcher = () -> {
+            server.afterCreateDispatcher = null;
+            ServiceHelper.stopService(standard);
+        };
+        server.lastTask = null;
+        ServiceHelper.startService(standard);
+        awaitTaskOfTheLastRunDone();
+
+        assertEquals(closedBefore + 1, server.closedDispatchers(), "the dispatcher of the stopped run is closed");
+        assertTrue(reported.isEmpty(), () -> "reported: " + reported);
+    }
+
+    private static List<Throwable> reportedBy(DefaultConsumer consumer) {
+        List<Throwable> reported = new CopyOnWriteArrayList<>();
+        consumer.setExceptionHandler(new ExceptionHandler() {
+            @Override
+            public void handleException(Throwable exception) {
+                reported.add(exception);
+            }
+
+            @Override
+            public void handleException(String message, Throwable exception) {
+                reported.add(exception);
+            }
+
+            @Override
+            public void handleException(String message, Exchange exchange, Throwable exception) {
+                reported.add(exception);
+            }
+        });
+        return reported;
+    }
+
+    /**
+     * Waits until the task of the last run of the consumer returned: the stop shut its executor down, so its thread
+     * ends once the task is done.
+     */
+    private void awaitTaskOfTheLastRunDone() {
+        await().atMost(10, TimeUnit.SECONDS).until(() -> server.lastTask != null && !server.lastTask.isAlive());
+    }
+
     /**
      * A JetStream server with one stream, faked at the level of the jnats interfaces the consumer calls. Each push
      * subscription has its own consumer (DeliverPolicy.New starts after the last published message) which delivers on
@@ -217,7 +338,10 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
      * unsubscribe directly, the dispatcher unsubscribes it by subscription (not by the topic: a push subscription is on
      * its deliver subject), and closing the dispatcher unsubscribes all its subscriptions and interrupts the thread
      * that delivers its messages (jnats NatsDispatcher.stop cancels its thread with Future.cancel(true)). A closed
-     * dispatcher refuses to subscribe or unsubscribe ("Dispatcher is closed").
+     * dispatcher refuses to subscribe or unsubscribe ("Dispatcher is closed"), and closing it again is refused
+     * ("Dispatcher is already closed."). A subscribe on an interrupted thread fails with an IOException, as the request
+     * that jnats makes to the server first does, and a close on an interrupted thread leaves its subscriptions on the
+     * server, as jnats drops the UNSUB that it queues on an interrupted thread.
      */
     static final class FakeServer {
         final List<byte[]> stream = new ArrayList<>();
@@ -226,7 +350,15 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
         final Set<Dispatcher> closed = Collections.newSetFromMap(new IdentityHashMap<>());
         // runs on the thread of the consumer, before a push subscribe reaches the server
         volatile Runnable beforeSubscribe;
+        // runs on the thread of the consumer, after it created a dispatcher and before the consumer gets it
+        volatile Runnable afterCreateDispatcher;
+        // the thread of the consumer that created the last dispatcher
+        volatile Thread lastTask;
+        // runs when the consumer flushes the connection, which doStop does before it reads the dispatcher
+        volatile Runnable onFlush;
         int refusedSubscribes;
+        int interruptedSubscribes;
+        int subscribes;
 
         final class FakeSubscription {
             final Dispatcher dispatcher;
@@ -248,6 +380,14 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
 
         synchronized int refusedSubscribes() {
             return refusedSubscribes;
+        }
+
+        synchronized int interruptedSubscribes() {
+            return interruptedSubscribes;
+        }
+
+        synchronized int subscribes() {
+            return subscribes;
         }
 
         synchronized int closedDispatchers() {
@@ -275,9 +415,24 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
                 case "getServerInfo" -> info;
                 case "jetStreamManagement" -> jsm;
                 case "jetStream" -> js;
-                case "createDispatcher" -> createDispatcher();
+                case "createDispatcher" -> {
+                    lastTask = Thread.currentThread();
+                    Dispatcher d = createDispatcher();
+                    Runnable hook = afterCreateDispatcher;
+                    if (hook != null) {
+                        hook.run();
+                    }
+                    yield d;
+                }
                 case "closeDispatcher" -> {
                     closeDispatcher((Dispatcher) args[0]);
+                    yield null;
+                }
+                case "flush" -> {
+                    Runnable hook = onFlush;
+                    if (hook != null) {
+                        hook.run();
+                    }
                     yield null;
                 }
                 case "getStatus" -> Connection.Status.CONNECTED;
@@ -289,6 +444,10 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
             Dispatcher[] self = new Dispatcher[1];
             self[0] = proxy(Dispatcher.class, (name, args) -> {
                 synchronized (this) {
+                    if ("isActive".equals(name)) {
+                        // as jnats: false once the dispatcher is closed
+                        return !closed.contains(self[0]);
+                    }
                     if (closed.contains(self[0])) {
                         throw new IllegalStateException("Dispatcher is closed");
                     }
@@ -314,9 +473,14 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
             if (!closed.add(d)) {
                 throw new IllegalArgumentException("Dispatcher is already closed.");
             }
+            // jnats queues the UNSUB of each subscription of the dispatcher, and its queue drops a message queued on an
+            // interrupted thread (WriterMessageQueue.push with tryLock): the server then keeps the subscription
+            boolean unsubscribeSent = !Thread.currentThread().isInterrupted();
             for (FakeSubscription f : subscriptions) {
                 if (f.dispatcher == d) {
-                    f.active = false;
+                    if (unsubscribeSent) {
+                        f.active = false;
+                    }
                     // the thread of the dispatcher is cancelled with an interrupt
                     f.thread.interrupt();
                 }
@@ -325,11 +489,19 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
         }
 
         private synchronized JetStreamSubscription subscribe(
-                ConsumerConfiguration cc, Dispatcher dispatcher, MessageHandler handler) {
+                ConsumerConfiguration cc, Dispatcher dispatcher, MessageHandler handler)
+                throws IOException {
             if (closed.contains(dispatcher)) {
                 refusedSubscribes++;
                 throw new IllegalStateException("Dispatcher is closed");
             }
+            if (Thread.currentThread().isInterrupted()) {
+                // the subscribe asks the server first (jnats NatsJetStreamImpl.makeRequestResponseRequired), and an
+                // interrupted request fails with an IOException (the thread stays interrupted)
+                interruptedSubscribes++;
+                throw new IOException(new InterruptedException());
+            }
+            subscribes++;
             FakeSubscription f = new FakeSubscription(dispatcher);
             f.next = cc != null && cc.getDeliverPolicy() == DeliverPolicy.New ? stream.size() + 1 : 1;
             subscriptions.add(f);

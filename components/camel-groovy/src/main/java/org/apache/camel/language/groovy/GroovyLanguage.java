@@ -17,7 +17,9 @@
 package org.apache.camel.language.groovy;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -25,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import groovy.lang.Binding;
+import groovy.lang.GString;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.apache.camel.CamelContext;
@@ -192,7 +195,7 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
             try {
                 return shell.getClassLoader().parseClass(text);
             } catch (CompilationFailedException e) {
-                throw compileFailure(e);
+                throw compileFailure(e, shell.getClassLoader());
             }
         });
         Script gs = ObjectHelper.newInstance(clazz, Script.class);
@@ -200,7 +203,7 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
             gs.setBinding(new Binding(bindings));
         }
         gs.getBinding().setVariable("log", LOG);
-        Object value = gs.run();
+        Object value = scriptResult(gs.run());
         return getCamelContext().getTypeConverter().convertTo(resultType, value);
     }
 
@@ -279,6 +282,15 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
     }
 
     /**
+     * The value that a script returns, with a GString ({@code "Hello ${name}"}) as a String, as the other script
+     * languages return their text. A GString is not equal to a String, and components that check for a String do not
+     * take it as text: camel-jms sends it as an ObjectMessage.
+     */
+    static Object scriptResult(Object value) {
+        return value instanceof GString ? value.toString() : value;
+    }
+
+    /**
      * Runs the registered {@link CompilePreProcessor}s on the script before it is compiled, as the Java DSL does for
      * its sources: with the Camel CLI that downloads the known library of an import (CAMEL-24843).
      */
@@ -293,15 +305,76 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
     }
 
     /**
+     * The packages of the classes a script reaches for that can need an import: JsonSlurper is a class of groovy.json.
+     * A class Groovy finds by itself (java.lang, java.util, java.io, java.net, groovy.lang, groovy.util) compiles, so a
+     * package here that a Groovy version imports is never asked about.
+     */
+    private static final List<String> NOT_IMPORTED = List.of("groovy.json", "groovy.xml", "groovy.time",
+            "groovy.transform", "java.time", "java.time.format", "java.time.temporal", "java.util.concurrent",
+            "java.util.concurrent.atomic", "java.util.function", "java.util.stream", "java.util.regex", "java.nio.file",
+            "java.nio.charset", "java.text", "java.math", "java.security", "java.sql", "org.apache.camel");
+
+    /**
+     * The classes of the simple name in the packages a script does not import by default, that the class loader has:
+     * groovy.json.JsonSlurper for JsonSlurper. Empty when the name is not a class there.
+     */
+    static List<String> notImported(String simpleName, ClassLoader classLoader) {
+        List<String> answer = new ArrayList<>();
+        if (simpleName == null || simpleName.isEmpty() || !Character.isUpperCase(simpleName.charAt(0))) {
+            return answer;
+        }
+        for (String pkg : NOT_IMPORTED) {
+            try {
+                Class.forName(pkg + "." + simpleName, false, classLoader);
+                answer.add(pkg + "." + simpleName);
+            } catch (ClassNotFoundException | LinkageError e) {
+                // not a class of this package
+            }
+        }
+        return answer;
+    }
+
+    /**
      * A compilation failure whose cause is a class the script imports and the classpath does not have: the compiler
      * names the class and nothing else; the message adds what to do, without knowing the runtime (CAMEL-24843).
      */
     static RuntimeException compileFailure(CompilationFailedException e) {
+        return compileFailure(e, GroovyLanguage.class.getClassLoader());
+    }
+
+    /**
+     * As {@link #compileFailure(CompilationFailedException)}, with the class loader the script was compiled with: a
+     * class it has is not missing, it needs an import. r27 of the local-model benchmark wrote new JsonSlurper() with no
+     * import, was told the class is not on the classpath, added a dependency for it, and read the log 17 times.
+     */
+    static RuntimeException compileFailure(CompilationFailedException e, ClassLoader classLoader) {
         String msg = e.getMessage();
         if (msg != null && msg.contains("unable to resolve class")) {
             String cls = msg.substring(msg.indexOf("unable to resolve class") + "unable to resolve class".length()).trim();
             int end = cls.indexOf('\n');
             cls = (end > 0 ? cls.substring(0, end) : cls).trim();
+            String simple = cls.substring(cls.lastIndexOf('.') + 1);
+            List<String> classes = notImported(simple, classLoader);
+            classes.remove(cls);
+            if (!classes.isEmpty()) {
+                String fqn = classes.get(0);
+                String others = classes.size() > 1 ? " (or " + String.join(", ", classes.subList(1, classes.size())) + ")" : "";
+                if (cls.contains(".")) {
+                    // import groovy.util.JsonSlurper: the class of that name is in another package
+                    return new RuntimeCamelException(
+                            "Groovy cannot resolve the class " + cls + ": the class " + simple + " is " + fqn + others
+                                                     + ". Import it as import " + fqn + " at the top of the script.",
+                            e);
+                }
+                // the source line of the error shows how the class is used
+                String created = msg.contains("new " + simple + "()") ? "new " + fqn + "()"
+                        : msg.contains("new " + simple + "(") ? "new " + fqn + "(...)" : fqn;
+                return new RuntimeCamelException(
+                        "Groovy cannot resolve the class " + simple + ": it is " + fqn + others + ", which the script"
+                                                 + " does not import. Add import " + fqn + " at the top of the script,"
+                                                 + " or write " + created + ".",
+                        e);
+            }
             return new RuntimeCamelException(
                     "Groovy cannot resolve the class " + cls + ": it is not on the classpath. Add the library that"
                                              + " provides it as a dependency of the application: a Maven dependency,"

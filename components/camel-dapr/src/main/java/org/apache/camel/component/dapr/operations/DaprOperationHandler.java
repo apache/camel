@@ -16,9 +16,29 @@
  */
 package org.apache.camel.component.dapr.operations;
 
+import java.io.InputStream;
+import java.io.Reader;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 
 public interface DaprOperationHandler {
+
+    /**
+     * The message body to give to the Dapr client as data. The client sends bytes as they are, and serializes any other
+     * body as JSON, so text would be sent as a JSON string (with quotes) and a stream would fail. A text or stream body
+     * is therefore converted to bytes first; other bodies are returned as they are.
+     *
+     * @param  exchange the current exchange
+     * @return          the data to give to the Dapr client
+     */
+    static Object getPayload(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        if (body instanceof String || body instanceof InputStream || body instanceof Reader || body instanceof StreamCache) {
+            return exchange.getIn().getBody(byte[].class);
+        }
+        return body;
+    }
 
     /**
      * Execute the configured operation on this exchange.

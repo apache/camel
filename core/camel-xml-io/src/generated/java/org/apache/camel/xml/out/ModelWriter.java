@@ -2650,7 +2650,7 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("keyEncapsulationAlgorithm", def.getKeyEncapsulationAlgorithm(), "MLKEM");
         doWriteAttribute("symmetricKeyAlgorithm", def.getSymmetricKeyAlgorithm(), "AES");
-        doWriteAttribute("symmetricKeyLength", def.getSymmetricKeyLength(), "128");
+        doWriteAttribute("symmetricKeyLength", def.getSymmetricKeyLength(), "256");
         doWriteAttribute("keyPair", def.getKeyPair(), null);
         doWriteAttribute("provider", def.getProvider(), null);
         doWriteAttribute("keyGenerator", def.getKeyGenerator(), null);
@@ -3290,6 +3290,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("missingOperation", def.getMissingOperation(), "fail");
         doWriteAttribute("unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute("mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
+        doWriteAttribute("externalReferences", def.getExternalReferences(), "all");
         endElement(name);
     }
     protected void doWriteOpenIdConnectDefinition(String name, OpenIdConnectDefinition def) throws IOException {

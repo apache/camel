@@ -627,11 +627,14 @@ public interface PQCEndpointBuilderFactory {
             return this;
         }
         /**
-         * The required length of the symmetric key used.
+         * The required length of the symmetric key used. The default of 256
+         * keeps the strength of the shared secret the KEM produces; the
+         * fixed-size ciphers, such as SEED and SM4, only accept 128, and
+         * GOST3412-2015 and CHACHA7539 only accept 256.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 128
+         * Default: 256
          * Group: advanced
          * 
          * @param symmetricKeyLength the value to set
@@ -642,11 +645,14 @@ public interface PQCEndpointBuilderFactory {
             return this;
         }
         /**
-         * The required length of the symmetric key used.
+         * The required length of the symmetric key used. The default of 256
+         * keeps the strength of the shared secret the KEM produces; the
+         * fixed-size ciphers, such as SEED and SM4, only accept 128, and
+         * GOST3412-2015 and CHACHA7539 only accept 256.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 128
+         * Default: 256
          * Group: advanced
          * 
          * @param symmetricKeyLength the value to set
@@ -654,6 +660,46 @@ public interface PQCEndpointBuilderFactory {
          */
         default AdvancedPQCEndpointBuilder symmetricKeyLength(String symmetricKeyLength) {
             doSetProperty("symmetricKeyLength", symmetricKeyLength);
+            return this;
+        }
+        /**
+         * Whether to sign with a stateful key (XMSS, XMSSMT, LMS/HSS) that the
+         * configured KeyLifecycleManager cannot claim for this process alone.
+         * These are one-time-signature schemes: when two processes load the
+         * same key from a shared store, both sign from the same index and the
+         * key is broken. Only enable it when something outside Camel guarantees
+         * a single signer.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security (advanced)
+         * 
+         * @param allowSharedStatefulKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder allowSharedStatefulKey(boolean allowSharedStatefulKey) {
+            doSetProperty("allowSharedStatefulKey", allowSharedStatefulKey);
+            return this;
+        }
+        /**
+         * Whether to sign with a stateful key (XMSS, XMSSMT, LMS/HSS) that the
+         * configured KeyLifecycleManager cannot claim for this process alone.
+         * These are one-time-signature schemes: when two processes load the
+         * same key from a shared store, both sign from the same index and the
+         * key is broken. Only enable it when something outside Camel guarantees
+         * a single signer.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security (advanced)
+         * 
+         * @param allowSharedStatefulKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder allowSharedStatefulKey(String allowSharedStatefulKey) {
+            doSetProperty("allowSharedStatefulKey", allowSharedStatefulKey);
             return this;
         }
     }

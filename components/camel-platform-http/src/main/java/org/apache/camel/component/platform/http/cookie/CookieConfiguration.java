@@ -41,7 +41,7 @@ public class CookieConfiguration {
     private boolean cookieSecure = DEFAULT_SECURE_FLAG;
     @UriParam(defaultValue = "false")
     private boolean cookieHttpOnly = DEFAULT_HTTP_ONLY_FLAG;
-    @UriParam(defaultValue = "Lax")
+    @UriParam(defaultValue = "LAX")
     private CookieSameSite cookieSameSite = DEFAULT_SAME_SITE;
 
     public CookieConfiguration() {

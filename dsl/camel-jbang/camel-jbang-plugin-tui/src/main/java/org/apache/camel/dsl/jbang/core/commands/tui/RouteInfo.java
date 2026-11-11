@@ -34,6 +34,9 @@ class RouteInfo {
     String coverage;
     long total;
     long failed;
+    // the failures the error handler handled, and its redeliveries (CAMEL-26698)
+    long failuresHandled;
+    long redeliveries;
     long inflight;
     long meanTime;
     long minTime;

@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Serves the Files and Batch APIs: uploading an input file, creating a batch from it, reporting its status and serving
@@ -171,13 +171,13 @@ public class BatchRequestHandler {
         try (InputStream is = exchange.getRequestBody()) {
             request = objectMapper.readTree(is.readAllBytes());
         }
-        String inputFileId = request.path("input_file_id").asText();
+        String inputFileId = request.path("input_file_id").asString();
         if (store.file(inputFileId) == null) {
             sendError(exchange, 404, "invalid_request_error", "No such file: " + inputFileId);
             return;
         }
         JsonNode metadata = request.get("metadata");
-        BatchStore.StoredBatch batch = store.addBatch(inputFileId, request.path("endpoint").asText(),
+        BatchStore.StoredBatch batch = store.addBatch(inputFileId, request.path("endpoint").asString(),
                 metadata != null && !metadata.isNull() ? metadata.toString() : null);
         maybeBuildResults(batch);
         LOG.debug("Created batch {} for input file {}", batch.id, inputFileId);
@@ -249,7 +249,7 @@ public class BatchRequestHandler {
                 continue;
             }
             line++;
-            String customId = objectMapper.readTree(requestLine).path("custom_id").asText();
+            String customId = objectMapper.readTree(requestLine).path("custom_id").asString();
             String requestId = "batch_req_" + batch.id + "_" + line;
             BatchExpectation expectation = expectations.stream()
                     .filter(candidate -> candidate.matches(customId))

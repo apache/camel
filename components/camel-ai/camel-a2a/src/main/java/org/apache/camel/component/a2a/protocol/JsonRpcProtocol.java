@@ -21,12 +21,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.a2a.A2AConstants;
 import org.apache.camel.component.a2a.model.StreamResponse;
 import org.apache.camel.component.a2a.operation.A2AOperations;
 import org.apache.camel.component.a2a.util.A2AJsonMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * JSON-RPC 2.0 implementation of the A2A protocol. All operations are routed through a single POST endpoint at "/".
@@ -119,7 +119,7 @@ public final class JsonRpcProtocol implements A2AProtocol {
     @Override
     public Object unwrapResponse(byte[] responseBody, Class<?> responseType) {
         Map<String, Object> result = unwrapJsonRpcResponse(responseBody);
-        return OBJECT_MAPPER.convertValue(result, responseType);
+        return A2AJsonMapper.convertValue(result, responseType);
     }
 
     /**
@@ -152,7 +152,7 @@ public final class JsonRpcProtocol implements A2AProtocol {
         try {
             byte[] bytes = eventData.getBytes(StandardCharsets.UTF_8);
             Map<String, Object> result = unwrapJsonRpcResponse(bytes);
-            StreamResponse response = OBJECT_MAPPER.convertValue(result, StreamResponse.class);
+            StreamResponse response = A2AJsonMapper.convertValue(result, StreamResponse.class);
             response.validate();
             return response;
         } catch (RuntimeCamelException e) {
@@ -262,6 +262,6 @@ public final class JsonRpcProtocol implements A2AProtocol {
     @Override
     public Object unwrapRequest(byte[] requestBody, Class<?> requestType) {
         Map<String, Object> params = extractParams(requestBody);
-        return OBJECT_MAPPER.convertValue(params, requestType);
+        return A2AJsonMapper.convertValue(params, requestType);
     }
 }

@@ -70,13 +70,17 @@ class ExampleToolsTest {
 
     @Test
     void searchesByNameAndHonoursTheLimit() {
-        JsonObject kafka = new ExampleTools().camel_catalog_examples("kafka", null, 1);
+        // the filter also matches the description, so the first in reading order is not always a kafka example
+        // (the chaos example of fail-well has a refunds route from Kafka)
+        JsonObject all = new ExampleTools().camel_catalog_examples("kafka", null, null);
+        assertThat(objects(all, "examples")).anySatisfy(e -> {
+            assertThat(e.getString("name")).contains("kafka");
+            assertThat(e.<List<String>> getCollection("infraServices")).contains("kafka");
+        });
 
-        assertThat(kafka.getInteger("total")).isGreaterThanOrEqualTo(1);
-        assertThat(kafka.getInteger("count")).isEqualTo(1);
-        JsonObject first = objects(kafka, "examples").get(0);
-        assertThat(first.getString("name")).contains("kafka");
-        assertThat(first.<List<String>> getCollection("infraServices")).contains("kafka");
+        JsonObject one = new ExampleTools().camel_catalog_examples("kafka", null, 1);
+        assertThat(one.getInteger("total")).isEqualTo(all.getInteger("total")).isGreaterThan(1);
+        assertThat(one.getInteger("count")).isEqualTo(1);
     }
 
     @Test
@@ -91,6 +95,22 @@ class ExampleToolsTest {
 
         JsonObject full = new ExampleTools().camel_catalog_example_file("quick-start/timer-log", "timer-log.camel.yaml");
         assertThat(full.getString("content")).isEqualTo(answer.getString("content"));
+    }
+
+    @Test
+    void aSearchForCitrusFindsTheExamplesWithATestToRead() {
+        // test-citrus-orders of the benchmark: a search for citrus found no example, and the files of an example left
+        // out its Citrus test
+        JsonObject citrus = new ExampleTools().camel_catalog_examples("citrus", null, null);
+
+        List<JsonObject> examples = objects(citrus, "examples");
+        assertThat(examples).hasSizeGreaterThan(20);
+        assertThat(examples).allSatisfy(e -> assertThat(e.<List<String>> getCollection("files"))
+                .anyMatch(f -> f.startsWith("test/") && f.endsWith(".citrus.it.yaml")));
+
+        JsonObject test = new ExampleTools().camel_catalog_example_file("csv-to-json", "test/csv-to-json.citrus.it.yaml");
+        assertThat(test.getString("example")).isEqualTo("transform/csv-to-json");
+        assertThat(test.getString("content")).contains("actions:", "../csv-to-json.camel.yaml");
     }
 
     @Test

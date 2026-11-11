@@ -83,7 +83,11 @@ public interface DockerComponentBuilderFactory {
     
         
         /**
-         * Docker host.
+         * Docker host. In socket mode (socket=true), the path of the unix
+         * socket of the Docker daemon, where the default localhost means
+         * /var/run/docker.sock. A host with a tcp:// or unix:// scheme (such as
+         * tcp://myhost:2376 or unix:///var/run/docker.sock) is used as is, and
+         * then the port and socket options are not used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -326,11 +330,14 @@ public interface DockerComponentBuilderFactory {
     
         
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -338,6 +345,31 @@ public interface DockerComponentBuilderFactory {
          */
         default DockerComponentBuilder socket(boolean socket) {
             doSetProperty("socket", socket);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to allow overriding the connection and credential settings of
+         * the endpoint with the CamelDockerHost, CamelDockerPort,
+         * CamelDockerSocketEnabled, CamelDockerSecure, CamelDockerTlsVerify,
+         * CamelDockerCertPath, CamelDockerCmdExecFactory, CamelDockerUsername,
+         * CamelDockerPassword and CamelDockerServerAddress headers. Disabled by
+         * default; enable it only when the header source is trusted, since it
+         * lets a message choose the Docker daemon that the client connects to
+         * and how, and the registry that receives the username and password of
+         * the endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowConnectionAndCredentialsFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default DockerComponentBuilder allowConnectionAndCredentialsFromHeaders(boolean allowConnectionAndCredentialsFromHeaders) {
+            doSetProperty("allowConnectionAndCredentialsFromHeaders", allowConnectionAndCredentialsFromHeaders);
             return this;
         }
     
@@ -456,6 +488,7 @@ public interface DockerComponentBuilderFactory {
             case "parameters": getOrCreateConfiguration((DockerComponent) component).setParameters((java.util.Map) value); return true;
             case "serverAddress": getOrCreateConfiguration((DockerComponent) component).setServerAddress((java.lang.String) value); return true;
             case "socket": getOrCreateConfiguration((DockerComponent) component).setSocket((boolean) value); return true;
+            case "allowConnectionAndCredentialsFromHeaders": getOrCreateConfiguration((DockerComponent) component).setAllowConnectionAndCredentialsFromHeaders((boolean) value); return true;
             case "certPath": getOrCreateConfiguration((DockerComponent) component).setCertPath((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((DockerComponent) component).setPassword((java.lang.String) value); return true;
             case "secure": getOrCreateConfiguration((DockerComponent) component).setSecure((boolean) value); return true;

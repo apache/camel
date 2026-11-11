@@ -31,7 +31,7 @@
   <bean id="testBinding" class="org.apache.camel.component.cxf.CxfOneWayRouteTest$TestCxfBinding"/>
   <bean id="testProcessor" class="org.apache.camel.component.cxf.CxfOneWayRouteTest$TestProcessor"/>
   
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfOneWayRouteTest/router"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfOneWayRouteTest.port1}/CxfOneWayRouteTest/router"
     serviceClass="org.apache.hello_world_soap_http.GreeterImpl"
     endpointName="s:SoapPort"
     serviceName="s:SOAPService">

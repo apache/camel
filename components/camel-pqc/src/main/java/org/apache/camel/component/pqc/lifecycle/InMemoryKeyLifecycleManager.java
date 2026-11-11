@@ -182,6 +182,15 @@ public class InMemoryKeyLifecycleManager implements KeyLifecycleManager {
     }
 
     /**
+     * The keys of this manager live in its own maps, so no other process can hold the same one. The claim is therefore
+     * always granted.
+     */
+    @Override
+    public boolean claimStatefulKey(String keyId, PublicKey publicKey) {
+        return true;
+    }
+
+    /**
      * Removes every key and its metadata. Convenient for resetting the manager between tests.
      */
     public void clear() {

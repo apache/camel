@@ -91,6 +91,20 @@ class RuntimeToolsTest {
     }
 
     @Test
+    void theTimelineAsksForTheSecondsAndTheRoutes() throws Exception {
+        answers.put("timeline", Map.of("end", 100, "seconds", 60, "routes", List.of()));
+
+        assertThat(call("get_timeline", Map.of()).toString()).contains("\"routes\"");
+        assertThat(integration.lastAction().getString("action")).isEqualTo("timeline");
+        assertThat(integration.lastAction().getString("seconds")).isEqualTo("60");
+        assertThat(integration.lastAction().containsKey("routeId")).isFalse();
+        call("get_timeline", Map.of("seconds", "300", "routeId", "orders*", "exchanges", "false"));
+        assertThat(integration.lastAction().getString("seconds")).isEqualTo("300");
+        assertThat(integration.lastAction().getString("routeId")).isEqualTo("orders*");
+        assertThat(integration.lastAction().getString("exchanges")).isEqualTo("false");
+    }
+
+    @Test
     void theStructureAndTheTopProcessorsAndTheTopology() throws Exception {
         answers.put("route-structure", Map.of("routes", List.of()));
         answers.put("top-processors", Map.of("processors", List.of()));
@@ -198,6 +212,17 @@ class RuntimeToolsTest {
         assertThatThrownBy(() -> call("send_message", Map.of("endpoint", "direct:orders", "headers", "id")))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Header must be in key=value format, was: id");
+    }
+
+    @Test
+    void anIntervalThatIsNotATimeOrARangeIsAToolError() {
+        answers.put("send", Map.of("status", "success"));
+
+        assertThatThrownBy(() -> call("send_message", Map.of("endpoint", "direct:orders", "repeat", "5",
+                "interval", "500..100")))
+                .isInstanceOf(ToolExecutionException.class)
+                .hasMessageContaining("from the shortest to the longest");
+        assertThat(integration.lastAction()).isNull();
     }
 
     @Test

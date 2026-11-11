@@ -36,6 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kubernetes.KubernetesHelper.extractNamespace;
 import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesHPAProducer extends DefaultProducer {
@@ -87,7 +88,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         HorizontalPodAutoscalerList hpaList;
 
         if (ObjectHelper.isEmpty(namespace)) {
@@ -101,7 +102,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
     }
 
     protected void doListHPAByLabel(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, Map.class);
         HorizontalPodAutoscalerList hpaList;
 
@@ -123,7 +124,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
 
     protected void doGetHPA(Exchange exchange) {
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(podName)) {
             LOG.error("Get a specific hpa require specify an hpa name");
             throw new IllegalArgumentException("Get a specific hpa require specify an hpa name");
@@ -151,7 +152,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
             Exchange exchange, String operationName,
             Function<Resource<HorizontalPodAutoscaler>, HorizontalPodAutoscaler> operation) {
         String hpaName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         HorizontalPodAutoscalerSpec hpaSpec
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_SPEC, HorizontalPodAutoscalerSpec.class);
         if (ObjectHelper.isEmpty(hpaName)) {
@@ -179,7 +180,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
 
     protected void doDeleteHPA(Exchange exchange) {
         String hpaName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(hpaName)) {
             LOG.error("Delete a specific hpa require specify a hpa name");
             throw new IllegalArgumentException("Delete a specific hpa require specify a hpa name");

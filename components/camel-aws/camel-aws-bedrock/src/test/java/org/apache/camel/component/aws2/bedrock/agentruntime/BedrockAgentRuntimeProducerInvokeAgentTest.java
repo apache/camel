@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.aws2.bedrock.agentruntime;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -38,6 +40,8 @@ import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeAgentRequ
 import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeAgentResponseHandler;
 import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeInlineAgentRequest;
 import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeInlineAgentResponseHandler;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -131,6 +135,28 @@ class BedrockAgentRuntimeProducerInvokeAgentTest {
 
         // The session id is echoed back so a route can reuse it to continue the conversation.
         assertThat(result.getMessage().getHeader(BedrockAgentRuntimeConstants.SESSION_ID)).isEqualTo("session-1");
+    }
+
+    @Test
+    void invokeAgentSendsMapBodyAsJson() {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("question", "what is camel?");
+        body.put("limit", 3);
+        template.send("direct:agent", exchange -> exchange.getMessage().setBody(body));
+
+        InvokeAgentRequest request = capturedAgentRequest.get();
+        assertThat(request).isNotNull();
+        assertThat(request.inputText()).isEqualTo("{\"question\":\"what is camel?\",\"limit\":3}");
+    }
+
+    @Test
+    void invokeInlineAgentSendsJsonNodeBodyAsJson() {
+        ObjectNode body = JsonMapper.builder().build().createObjectNode().put("question", "what is camel?");
+        template.send("direct:inline", exchange -> exchange.getMessage().setBody(body));
+
+        InvokeInlineAgentRequest request = capturedInlineRequest.get();
+        assertThat(request).isNotNull();
+        assertThat(request.inputText()).isEqualTo("{\"question\":\"what is camel?\"}");
     }
 
     @Test

@@ -116,7 +116,7 @@ public interface Web3jConstants {
     String FROM_ADDRESS = "CamelWeb3jFromAddress";
     @Metadata(label = "producer", description = "The address the transaction is directed to", javaType = "String")
     String TO_ADDRESS = "CamelWeb3jToAddress";
-    @Metadata(label = "producer", description = "The transaction index position withing a block.", javaType = "String")
+    @Metadata(label = "producer", description = "The transaction index position within a block.", javaType = "String")
     String POSITION = "CamelWeb3jPosition";
     @Metadata(label = "producer", description = "Hash of the block where this transaction was in.", javaType = "String")
     String BLOCK_HASH = "CamelWeb3jBlockHash";

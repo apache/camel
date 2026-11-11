@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.ignite;
 
+import java.util.List;
+
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.ignite.idgen.IgniteIdGenComponent;
 import org.apache.camel.component.ignite.idgen.IgniteIdGenEndpoint;
 import org.apache.camel.component.ignite.idgen.IgniteIdGenOperation;
@@ -107,6 +111,46 @@ public class IgniteIdGenTest extends AbstractIgniteTest {
         // Cannot test much here with a single Ignite instance, let's just test
         // that the parameter could be set.
         Assertions.assertThat(endpoint.getBatchSize()).isEqualTo(100);
+    }
+
+    @Test
+    void testOperationsThatDoNotAddIgnoreTheBody() {
+        Assertions.assertThat(template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET",
+                "not a number", Long.class)).isZero();
+        Assertions.assertThat(template.requestBody(
+                "ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET_AND_INCREMENT", "not a number", Long.class))
+                .isZero();
+        Assertions.assertThat(template.requestBody(
+                "ignite-idgen:" + resourceUid + "?initialValue=0&operation=INCREMENT_AND_GET", "not a number", Long.class))
+                .isEqualTo(2);
+    }
+
+    @Test
+    void testAddWithoutBodyFails() {
+        for (IgniteIdGenOperation operation : List.of(IgniteIdGenOperation.ADD_AND_GET, IgniteIdGenOperation.GET_AND_ADD)) {
+            Assertions
+                    .assertThatThrownBy(() -> template.requestBody(
+                            "ignite-idgen:" + resourceUid + "?initialValue=0&operation=" + operation, (Object) null))
+                    .isInstanceOf(CamelExecutionException.class)
+                    .cause().isInstanceOf(InvalidPayloadException.class)
+                    .hasMessageContaining("the " + operation + " operation needs the number to add");
+        }
+
+        // the sequence is unchanged
+        Assertions.assertThat(
+                template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET", null, Long.class))
+                .isZero();
+    }
+
+    @Test
+    void testNoOperationFails() {
+        Assertions
+                .assertThatThrownBy(
+                        () -> template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0", (Object) null))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause().isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("operation option")
+                .hasMessageContaining(IgniteConstants.IGNITE_IDGEN_OPERATION);
     }
 
     @AfterEach

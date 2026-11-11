@@ -54,6 +54,7 @@ class FileCliConnectorTransportTest {
     private File dir;
     private DefaultCamelContext context;
     private FileCliConnectorTransport transport;
+    private final EmptySnapshots snapshots = new EmptySnapshots();
 
     @BeforeEach
     void start() {
@@ -63,7 +64,7 @@ class FileCliConnectorTransportTest {
 
         context = new DefaultCamelContext();
         transport = new FileCliConnectorTransport();
-        transport.configure(context, FileCliConnectorTransportTest::dispatch, new EmptySnapshots(), () -> {
+        transport.configure(context, FileCliConnectorTransportTest::dispatch, snapshots, () -> {
         });
         transport.start();
         // poll faster than the default second
@@ -75,6 +76,30 @@ class FileCliConnectorTransportTest {
         transport.stop();
         context.stop();
         System.setProperty("user.home", oldHome);
+    }
+
+    @Test
+    void theStatusIsMovedInPlaceAndGoesWithItsTemporaryFile() {
+        File status = file(PID + "-status.json");
+        // written aside and moved in place, so every read finds a whole status
+        assertThat(awaitJson(status).toJson()).isEqualTo("{}");
+        assertThat(file(PID + "-status.json.tmp")).doesNotExist();
+
+        transport.stop();
+        assertThat(status).doesNotExist();
+        assertThat(file(PID + "-status.json.tmp")).doesNotExist();
+    }
+
+    @Test
+    void anErrorWhileCollectingTheStatusDoesNotEndTheTask() {
+        awaitJson(file(PID + "-status.json"));
+        // CAMEL-26794: an OutOfMemoryError of a moment; the scheduler would never run a task that threw it again, and
+        // the integration would no longer write its status nor answer an action
+        snapshots.error = new OutOfMemoryError("Java heap space");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> snapshots.error == null);
+
+        writeAction(action("result"), "r1");
+        assertThat(awaitJson(file(PID + "-output-r1.json"))).containsEntry("status", "success");
     }
 
     @Test
@@ -316,8 +341,16 @@ class FileCliConnectorTransportTest {
     }
 
     private static final class EmptySnapshots implements CliSnapshotProducer {
+        // thrown once by the next status
+        volatile Error error;
+
         @Override
         public JsonObject status() {
+            Error e = error;
+            if (e != null) {
+                error = null;
+                throw e;
+            }
             return new JsonObject();
         }
 
@@ -347,7 +380,7 @@ class FileCliConnectorTransportTest {
         }
 
         @Override
-        public JsonObject activity() {
+        public JsonObject timeline() {
             return null;
         }
     }

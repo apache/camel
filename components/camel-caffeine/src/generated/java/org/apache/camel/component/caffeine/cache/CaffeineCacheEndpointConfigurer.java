@@ -2,6 +2,7 @@
 package org.apache.camel.component.caffeine.cache;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CaffeineCacheEndpoint target = (CaffeineCacheEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": target.getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
         case "cacheloader":
         case "cacheLoader": target.getConfiguration().setCacheLoader(property(camelContext, com.github.benmanes.caffeine.cache.CacheLoader.class, value)); return true;
@@ -55,7 +56,7 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return java.lang.String.class;
         case "cacheloader":
         case "cacheLoader": return com.github.benmanes.caffeine.cache.CacheLoader.class;
@@ -89,7 +90,7 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CaffeineCacheEndpoint target = (CaffeineCacheEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return target.getConfiguration().getAction();
         case "cacheloader":
         case "cacheLoader": return target.getConfiguration().getCacheLoader();

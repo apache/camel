@@ -18,6 +18,7 @@
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.Message;
+import org.apache.camel.component.jackson3.transform.JsonDataTypeTransformer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.transformer.StringDataTypeTransformer;
 import org.apache.camel.spi.DataType;
@@ -63,6 +64,24 @@ class DefaultTransformerResolverTest {
         transformer = resolver.resolve(new TransformerKey(new DataType("foo"), new DataType("json")), camelContext);
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(FooDataTypeTransformer.class, transformer.getClass());
+    }
+
+    @Test
+    public void shouldPreferTheJackson3LineWhenBothLinesAreOnTheClasspath() {
+        // the service file names the Jackson 2.x class, and the Jackson 3.x class is on the classpath too
+        Transformer transformer = resolver.resolve(new TransformerKey("application-json"), camelContext);
+        Assertions.assertNotNull(transformer);
+        Assertions.assertEquals(JsonDataTypeTransformer.class, transformer.getClass());
+    }
+
+    @Test
+    public void shouldUseTheJackson2LineWhenItIsTheOnlyOne() {
+        camelContext.setClassResolver(new DefaultDataFormatResolverTest.Jackson2OnlyClassResolver());
+
+        Transformer transformer = resolver.resolve(new TransformerKey("application-json"), camelContext);
+        Assertions.assertNotNull(transformer);
+        Assertions.assertEquals(org.apache.camel.component.jackson.transform.JsonDataTypeTransformer.class,
+                transformer.getClass());
     }
 
     @DataTypeTransformer(name = "foo-json", fromType = "foo", toType = "json")

@@ -1923,8 +1923,8 @@ public class TextBodyFlowTest {
 
     @Test
     public void testTheBodyOfAwsAiServices() {
-        // translate, comprehend, the speech of polly and the question of retrieveAndGenerate are text, and the invoke
-        // operations of aws-bedrock send the body as its toString(), so a Map is not the JSON of the request; the
+        // translate, comprehend and the speech of polly are text; the invoke operations of aws-bedrock marshal a Map to
+        // the JSON of the request, and aws-bedrock-agent-runtime sends it as the JSON text of the question; the
         // translation is text and a cloudtrail event is JSON in bytes. converse, rekognition, textract and timestream
         // take their input from headers, and polly without an operation is not known, as the component may set it
         String yaml = """
@@ -2030,12 +2030,12 @@ public class TextBodyFlowTest {
                             json: {}
                         - to: aws2-polly:p?voiceId=Joanna
                 """;
-        assertThat(lines(yaml)).hasSize(7)
+        assertThat(lines(yaml)).hasSize(5)
                 .anySatisfy(m -> assertThat(m).contains("route translate: to: aws2-translate needs the body as text"))
                 .anySatisfy(m -> assertThat(m).contains("route analyze: to: aws2-comprehend needs the body as text"))
                 .anySatisfy(m -> assertThat(m).contains("route speak: to: aws2-polly needs the body as text"))
-                .anySatisfy(m -> assertThat(m).contains("route prompt: to: aws-bedrock needs the body as text"))
-                .anySatisfy(m -> assertThat(m).contains("route ask: to: aws-bedrock-agent-runtime needs the body as text"))
+                .noneSatisfy(m -> assertThat(m).contains("route prompt:"))
+                .noneSatisfy(m -> assertThat(m).contains("route ask:"))
                 .anySatisfy(m -> assertThat(m).contains("route translated: simple reads a field of the body (${body[text]})"))
                 .anySatisfy(m -> assertThat(m).contains("route trail: simple reads a field of the body (${body[eventName]})"));
     }
@@ -2245,6 +2245,379 @@ public class TextBodyFlowTest {
 
     private static ProjectFacts observed(String key, List<String> types, List<String> kinds) {
         return new ProjectFacts(Set.of(), Map.of(), null, Map.of(), Map.of(key, new ProjectFacts.Observed(types, kinds)));
+    }
+
+    @Test
+    public void testAFieldReadAfterAMarshalOfABodyThatIsNotKnown() {
+        // r23 enrich s3: a route a wire tap sends the order Map to marshals it and then logs a field. Told "unmarshal:
+        // json is the step, not marshal", the model added an unmarshal of the Map, which failed at runtime
+        String yaml = """
+                - route:
+                    id: audit-orders
+                    from:
+                      uri: direct:audit
+                      steps:
+                        - marshal:
+                            json: {}
+                        - log:
+                            message: "Audited ${body[orderId]}"
+                """;
+        assertThat(lines(yaml)).singleElement().asString()
+                .contains("marshal: json writes the body as text (the body before it is not known here)")
+                .contains("read the field before the marshal, for example into a variable with setVariable")
+                .contains("only when the body before the marshal was text that you meant to parse, unmarshal: json is"
+                          + " the step");
+    }
+
+    @Test
+    public void testAVariableSendOfAHeader() {
+        // r23 ai-ticket-classifier step 1: the prompt went into a header, and the chat model was sent an empty request
+        String yaml = """
+                - route:
+                    id: classify
+                    from:
+                      uri: file:tickets
+                      steps:
+                        - setHeader:
+                            name: prompt
+                            simple: "Classify this ticket: ${body}"
+                        - to:
+                            uri: langchain4j-chat:classifier
+                            variableSend: prompt
+                            variableReceive: category
+                        - log:
+                            message: "Category ${variable.category}"
+                """;
+        assertThat(lines(yaml)).singleElement().asString()
+                .contains("route classify: variableSend: prompt sends the variable prompt, but no step sets a variable"
+                          + " prompt - the route sets a header prompt")
+                .contains("set it with setVariable and name prompt instead");
+        // a variable of that name, or a step that may set one unseen, and nothing is said
+        assertThat(lines(yaml.replace("setHeader:", "setVariable:"))).isEmpty();
+        assertThat(lines(yaml.replace("        - log:", "        - process:\n            ref: myProcessor\n        - log:")))
+                .isEmpty();
+    }
+
+    /**
+     * The project has order files in orders/, each an order with lines: the facts the AI tools read beside the route.
+     */
+    private static final ProjectFacts ORDER_FILES = new ProjectFacts(
+            Set.of(), Map.of(), null, Map.of(), Map.of(), Map.of(), Set.of(),
+            Map.of("dir:orders", new ProjectFacts.JsonFields(
+                    "the files in orders/", Set.of("orderId", "customer", "country", "status", "lines"),
+                    Map.of("lines", Set.of("sku", "qty", "price")), false, null)));
+
+    /** A route that reads the order files and unmarshals them, then the steps given (written from column 0). */
+    private static String orders(String steps) {
+        return """
+                - route:
+                    id: orders
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: orders
+                        noop: true
+                      steps:
+                        - unmarshal:
+                            json: {}
+                """ + steps.indent(8);
+    }
+
+    @Test
+    public void testAFieldTheJsonDataDoesNotHave() {
+        // r24 route-filter-and-multicast step 2: ${body[lineCount]} on an order, which has lines
+        assertThat(lines(orders("- log: \"Pick ${body[lineCount]} line(s) for ${body[orderId]}\"\n"), ORDER_FILES))
+                .singleElement().satisfies(m -> {
+                    assertThat(m).contains("route orders: simple reads ${body[lineCount]}, but the data here has no field"
+                                           + " lineCount (the fields of the files in orders/: country, customer, lines,"
+                                           + " orderId, status)");
+                    assertThat(m).contains("read one of those (the number of lines is ${body[lines].size()})");
+                });
+        // the fields the data has, a method of the Map, and a predicate
+        assertThat(lines(orders("- log: \"Pick ${body[lines].size()} line(s) for ${body.orderId}\"\n"), ORDER_FILES))
+                .isEmpty();
+        assertThat(lines(orders("- log: \"${body.size()} fields\"\n"), ORDER_FILES)).isEmpty();
+        assertThat(lines(orders("""
+                - filter:
+                    simple: "${body[state]} == 'paid'"
+                    steps:
+                      - log: "paid"
+                """), ORDER_FILES)).singleElement().asString().contains("has no field state");
+        // nothing known without the facts, or after a step that changes the body
+        assertThat(lines(orders("- log: \"${body[lineCount]}\"\n"))).isEmpty();
+        assertThat(lines(orders("""
+                - setBody:
+                    groovy: "[lineCount: body.lines.size()]"
+                - log: "${body[lineCount]}"
+                """), ORDER_FILES)).isEmpty();
+    }
+
+    @Test
+    public void testAFieldOfTheOrderReadInTheSplitOfItsLines() {
+        // r24 connect-http-client step 2: ${body[orderId]} inside the split of the lines, which have no orderId
+        String yaml = orders("""
+                - split:
+                    simple: "${body[lines]}"
+                    steps:
+                      - setVariable:
+                          name: orderId
+                          simple: "${body[orderId]}"
+                      - log: "${variable.orderId}: ${body[sku]} x ${body[qty]}"
+                """);
+        assertThat(lines(yaml, ORDER_FILES)).singleElement().satisfies(m -> {
+            assertThat(m).contains("simple reads ${body[orderId]}, but the data here has no field orderId (the fields of"
+                                   + " one of the lines of the files in orders/: price, qty, sku)");
+            assertThat(m).contains("orderId is a field of the data that was split, not of its element: read it before"
+                                   + " the split, into a variable (setVariable), and write ${variable.orderId} in the"
+                                   + " split");
+        });
+        assertThat(lines(yaml.replace("${body[orderId]}", "${body[sku]}"), ORDER_FILES)).isEmpty();
+    }
+
+    @Test
+    public void testADirectRouteThatEveryCallSendsTheData() {
+        // r24 route-filter-and-multicast step 2: the route the multicast sends the order to reads ${body[lineCount]}
+        String yaml = orders("""
+                - filter:
+                    simple: "${body[status]} == 'paid'"
+                    steps:
+                      - multicast:
+                          steps:
+                            - to: direct:warehouse
+                            - to: direct:invoicing
+                """) + """
+                - route:
+                    id: warehouse
+                    from:
+                      uri: direct:warehouse
+                      steps:
+                        - log: "Warehouse: pick ${body[lineCount]} line(s) for ${body[orderId]}"
+                - route:
+                    id: invoicing
+                    from:
+                      uri: direct:invoicing
+                      steps:
+                        - log: "Invoicing: bill customer ${body[customer]} for ${body[orderId]}"
+                """;
+        assertThat(lines(yaml, ORDER_FILES)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route warehouse: simple reads ${body[lineCount]}, but the data here has no field"
+                                   + " lineCount");
+        });
+        // a call that sends something else: the route's body is not known
+        assertThat(lines(yaml + """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: direct:warehouse
+                """, ORDER_FILES)).isEmpty();
+    }
+
+    /** The project has orders.json, a JSON array: the facts the AI tools read beside the route file. */
+    private static final ProjectFacts ORDERS_ARRAY
+            = new ProjectFacts(Set.of(), Map.of(), null, Map.of(), Map.of(), Map.of(), Set.of("file:orders.json"));
+
+    /** A route that loads orders.json and unmarshals it, then the steps given (written from column 0). */
+    private static String getOrder(String steps) {
+        return """
+                - route:
+                    id: get-order
+                    from:
+                      uri: direct
+                      parameters:
+                        name: get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              constant:
+                                expression: "resource:file:orders.json"
+                        - unmarshal:
+                            json:
+                              library: Jackson
+                """ + steps.indent(8);
+    }
+
+    private static final String CHOICE = """
+            - choice:
+                when:
+                  - simple: "${body.orderId} == ${header.id}"
+                    steps:
+                      - log:
+                          message: found
+            """;
+
+    @Test
+    public void testAFieldOfAListFromAJsonArrayFile() {
+        // the local-model benchmark (rest-code-first step 1): every run read ${body.orderId} on the List of orders.json
+        assertThat(lines(getOrder(CHOICE), ORDERS_ARRAY)).singleElement().asString()
+                .contains("route get-order: simple reads a field of the body (${body.orderId})")
+                .contains("the body here is a List, not one element, and a List has no field orderId")
+                .contains("unmarshal: json turns the JSON array of orders.json into a List")
+                .contains("To pick the element whose orderId has a given value, such as the header orderId, set the"
+                          + " body with jsonpath before this step")
+                // the step as YAML lines, resultType a key of its own: in words it was copied into the text of the path
+                .endsWith(":\n- setBody:\n    expression:\n      jsonpath:\n"
+                          + "        expression: \"$[?(@.orderId == '${header.orderId}')]\"\n"
+                          + "        resultType: java.util.Map");
+        // the key form, in a filter
+        String filter = """
+                - filter:
+                    simple: "${body[orderId]} == ${header.id}"
+                    steps:
+                      - log:
+                          message: found
+                """;
+        assertThat(lines(getOrder(filter), ORDERS_ARRAY)).singleElement().asString()
+                .contains("(${body[orderId]})").contains("a List has no field orderId");
+        // a log message reads it too
+        assertThat(lines(getOrder("- log:\n    message: \"Order ${body.orderId}\"\n"), ORDERS_ARRAY))
+                .singleElement().asString().contains("a List has no field orderId");
+    }
+
+    @Test
+    public void testAListFromAJsonArrayFileReadAsAList() {
+        // what does work on a List: Groovy (body.orderId is the List of the orderIds), an element, its size
+        String groovy = """
+                - setBody:
+                    expression:
+                      groovy:
+                        expression: "body.find { it.orderId == headers.id }"
+                """;
+        assertThat(lines(getOrder(groovy), ORDERS_ARRAY)).isEmpty();
+        assertThat(lines(getOrder("- log:\n    message: \"${body[0].orderId} of ${body.size()}\"\n"), ORDERS_ARRAY))
+                .isEmpty();
+        // not known to be an array: a Map has the field
+        assertThat(lines(getOrder(CHOICE), ProjectFacts.NONE)).isEmpty();
+        assertThat(lines(getOrder(CHOICE).replace("orders.json", "order.json"), ORDERS_ARRAY)).isEmpty();
+    }
+
+    @Test
+    public void testAFieldOfAListPicksTheElementByThePathParameter() {
+        // r25 rest-code-first step 1: the message said ${header.orderId}, the path parameter was id, and a model added
+        // a setHeader orderId to match it
+        String rest = """
+                - rest:
+                    path: /orders
+                    get:
+                      - path: "/{id}"
+                        to:
+                          uri: direct:get-order
+                """;
+        assertThat(lines(rest + getOrder(CHOICE), ORDERS_ARRAY)).singleElement().asString()
+                .contains("To pick the element whose orderId is the path parameter id, set the body with jsonpath")
+                .endsWith("        expression: \"$[?(@.orderId == '${header.id}')]\"\n        resultType: java.util.Map");
+        // a route the route of the operation calls has its headers too
+        String called = rest + """
+                - route:
+                    id: get-order
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - to:
+                            uri: direct:lookup
+                """ + getOrder(CHOICE).replace("get-order", "lookup");
+        assertThat(lines(called, ORDERS_ARRAY)).singleElement().asString()
+                .contains("route lookup: ").contains("'${header.id}'");
+        // the operation in another file of the project, which the facts bring
+        ProjectFacts facts = new ProjectFacts(
+                Set.of(), Map.of(), null, Map.of(), Map.of(), Map.of(), Set.of("file:orders.json"), Map.of(),
+                Map.of("direct:get-order", Set.of("id")));
+        assertThat(lines(getOrder(CHOICE), facts)).singleElement().asString().contains("'${header.id}'");
+        // the parameter that has the name of the field, of two; a parameter of another name is another value
+        assertThat(lines(rest.replace("/{id}", "/{customerId}/{orderId}") + getOrder(CHOICE), ORDERS_ARRAY))
+                .singleElement().asString().contains("is the path parameter orderId").contains("'${header.orderId}'");
+        assertThat(lines(rest.replace("/{id}", "/{customerId}") + getOrder(CHOICE), ORDERS_ARRAY))
+                .singleElement().asString().contains("has a given value, such as the header orderId")
+                .contains("'${header.orderId}'");
+    }
+
+    @Test
+    public void testAFieldReadAfterASetBodyThatEmptiedIt() {
+        // r24 connect-http-client step 1: the body set to null before the split, so the split had nothing to split
+        String yaml = """
+                - route:
+                    id: check-stock
+                    from:
+                      uri: file:orders?noop=true
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - setBody:
+                            simple: "${null}"
+                        - split:
+                            simple: "${body[lines]}"
+                            steps:
+                              - toD:
+                                  uri: http://localhost:8080/stock/CAMEL-MUG
+                              - log: "Stock answer: ${body}"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route check-stock: simple reads a field of the body (${body[lines]})");
+            assertThat(m).contains("but the body here is null - setBody with ${null} empties it");
+            assertThat(m).contains("inside the split when the call is made for each element");
+        });
+        // emptied inside the split, right before the call: right
+        assertThat(lines(yaml.replace("""
+                        - setBody:
+                            simple: "${null}"
+                        - split:
+                            simple: "${body[lines]}"
+                            steps:
+                """, """
+                        - split:
+                            simple: "${body[lines]}"
+                            steps:
+                              - setBody:
+                                  simple: "${null}"
+                """))).isEmpty();
+        // empty text has no fields either
+        assertThat(lines(yaml.replace("simple: \"${null}\"", "constant: \"\""))).singleElement()
+                .satisfies(m -> assertThat(m).contains("but the body here is empty text - setBody with constant"));
+    }
+
+    @Test
+    public void testEmptyTextBeforeAnHttpCallIsAPost() {
+        // r24 connect-http-client: a setBody with constant "" before the GET of the stock service: 405 Method Not
+        // Allowed 87 times, as the http producer sends a POST for any body that is not null
+        String yaml = """
+                - route:
+                    id: check-stock
+                    from:
+                      uri: file:orders?noop=true
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - split:
+                            simple: "${body[lines]}"
+                            steps:
+                              - setBody:
+                                  constant: ""
+                              - to:
+                                  uri: http://localhost:8080/stock/CAMEL-MUG
+                              - log: "Stock answer: ${body}"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route check-stock: to: http sends the body as the request, and empty text is still"
+                                   + " a body, so the call is a POST");
+            assertThat(m).contains("set the body to null for a call with no body (setBody with simple: ${null})");
+            assertThat(m).contains("or set httpMethod: GET");
+        });
+        // null, a GET, and a route that sets the http method itself
+        assertThat(lines(yaml.replace("constant: \"\"", "simple: \"${null}\""))).isEmpty();
+        assertThat(lines(yaml.replace("uri: http://localhost:8080/stock/CAMEL-MUG",
+                "uri: http://localhost:8080/stock/CAMEL-MUG\n                  parameters:\n"
+                                                                                    + "                    httpMethod: GET")))
+                .isEmpty();
+        assertThat(lines(yaml.replace("""
+                              - setBody:
+                                  constant: ""
+                """, """
+                              - setHeader:
+                                  name: CamelHttpMethod
+                                  constant: GET
+                              - setBody:
+                                  constant: ""
+                """))).isEmpty();
     }
 
     private static List<String> lines(String yaml, ProjectFacts facts) {
@@ -2671,6 +3044,50 @@ public class TextBodyFlowTest {
                                                        + " need, such as for a file name or a log, before the marshal"));
     }
 
+    /**
+     * r28 of the local-model benchmark, route-enrich-and-dedupe step 3: the marshal wrote the JSON text into a variable
+     * (variableReceive), so the body was still the order Map at the wireTap. Told to add marshal: json before the step,
+     * which it had, the model sent the same lines 11 times: the variable is what to send.
+     */
+    @Test
+    public void testAMarshalIntoAVariableBeforeAWireTapOfTheBody() {
+        String yaml = """
+                - route:
+                    id: incoming-orders
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json:
+                              library: Jackson
+                        - setVariable:
+                            name: orderId
+                            expression:
+                              simple:
+                                expression: "${body[orderId]}"
+                        - marshal:
+                            json:
+                              library: Jackson
+                            variableReceive: orderJson
+                        - wireTap:
+                            uri: "file:audit?fileName=${variable.orderId}.json"
+                """;
+        assertThat(lines(yaml)).singleElement().asString()
+                .startsWith("Line 19: ")
+                .endsWith("route incoming-orders: wireTap: file needs the body as text, bytes, a stream or a file, but"
+                          + " the body here is parsed data (a Map or a List), not text - unmarshal: json turns the text"
+                          + " into data: the marshal wrote the text into the variable orderJson (variableReceive:"
+                          + " orderJson), and the body is still the data: send that variable with variableSend: orderJson"
+                          + " on this wireTap, or leave out variableReceive so that the marshal writes the body");
+        // the variable sent: valid
+        assertThat(lines(yaml.replace("""
+                            uri: "file:audit?fileName=${variable.orderId}.json"
+                """, """
+                            uri: "file:audit?fileName=${variable.orderId}.json"
+                            variableSend: orderJson
+                """))).isEmpty();
+    }
+
     @Test
     public void testAWireTapOrAnEnrichOfDataToAFile() {
         // what the benchmark wrote (r22): the order Map is tapped to a file
@@ -2759,6 +3176,43 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testAFieldReadOnTheFileAPollEnrichGives() {
+        // r24 enrich step 2: with no variableReceive the polled customer file is the body, read as if it were parsed
+        String yaml = """
+                - route:
+                    id: enrich
+                    from:
+                      uri: direct:enrich
+                      steps:
+                        - pollEnrich:
+                            expression:
+                              simple:
+                                expression: "file:customers?fileName=${header.customer}.json&noop=true"
+                            timeout: 5000
+                        - log:
+                            message: "Customer ${body[name]}"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route enrich: ");
+            assertThat(m).contains("${body[name]}");
+            assertThat(m).contains("the body here is the file as it was read (a GenericFile)");
+            assertThat(m).contains("pollEnrich: file:customers gives it");
+        });
+        // what the file has, and the file once unmarshalled
+        assertThat(lines(yaml.replace("${body[name]}", "${body.fileName}"))).isEmpty();
+        assertThat(lines(yaml.replace("""
+                        - log:
+                """, """
+                        - unmarshal:
+                            json: {}
+                        - log:
+                """))).isEmpty();
+        // an aggregation strategy merges the reply with the message: nothing is known after it
+        assertThat(lines(yaml.replace("timeout: 5000",
+                "timeout: 5000\n            aggregationStrategy: \"#mergeCustomer\""))).isEmpty();
+    }
+
+    @Test
     public void testAFieldReadOnAVariableThatHoldsTheFile() {
         // what the benchmark wrote (r22): the customer file is polled into a variable, and read as if it were parsed
         String yaml = """
@@ -2831,5 +3285,125 @@ public class TextBodyFlowTest {
                 """;
         assertThat(lines(copied)).singleElement()
                 .satisfies(m -> assertThat(m).contains("simple reads a field of the variable customer"));
+    }
+
+    /**
+     * The order files in orders/ and the customer files in customers/: the facts the AI tools read beside the route.
+     */
+    private static final ProjectFacts ORDER_AND_CUSTOMER_FILES = new ProjectFacts(
+            Set.of(), Map.of(), null, Map.of(), Map.of(), Map.of(), Set.of(),
+            Map.of("dir:orders", ORDER_FILES.jsonFields().get("dir:orders"),
+                    "dir:customers", new ProjectFacts.JsonFields(
+                            "the files in customers/", Set.of("id", "name", "tier"), Map.of(), false, null)));
+
+    /** The orders, each enriched with its customer file by a pollEnrich, then the steps given (from column 0). */
+    private static String enriched(String steps) {
+        return orders("""
+                - pollEnrich:
+                    expression:
+                      simple:
+                        expression: "file:customers?fileName=${body[customer]}.json&noop=true"
+                    timeout: 5000
+                """ + steps);
+    }
+
+    @Test
+    public void testAFieldOfTheBodyAPollEnrichReplaced() {
+        // r25 enrich step 2: told to add unmarshal: json for ${body[orderId]}, a field of the order the pollEnrich had
+        // replaced, two runs lost the order and failed
+        String yaml = enriched("- log: \"Order ${body[orderId]} for ${body[name]} (${body[tier]})\"\n");
+        assertThat(lines(yaml, ORDER_AND_CUSTOMER_FILES)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route orders: the log message reads a field of the body (${body[orderId]}), but the"
+                                   + " body here is the file as it was read (a GenericFile), not parsed data -"
+                                   + " pollEnrich: file:customers gives it: the pollEnrich replaced the body, and orderId"
+                                   + " is a field of the body before it (the files in orders/). To keep that body, add"
+                                   + " variableReceive: customer to the pollEnrich, so the file goes into the variable"
+                                   + " customer, then parse it in place with unmarshal: {json: {}, variableSend:"
+                                   + " customer, variableReceive: customer} after the pollEnrich, and read its fields as"
+                                   + " ${variable.customer[name]}");
+            assertThat(m).doesNotContain("add unmarshal: json before this step");
+        });
+        // the read of the order is the one reported, wherever it is in the message
+        assertThat(lines(enriched("- log: \"Customer ${body[name]} for order ${body[orderId]}\"\n"),
+                ORDER_AND_CUSTOMER_FILES)).singleElement().asString()
+                .contains("reads a field of the body (${body[orderId]})")
+                .contains("add variableReceive: customer to the pollEnrich");
+        // without the customer files the order still has the field
+        assertThat(lines(yaml, ORDER_FILES)).singleElement().asString()
+                .contains("orderId is a field of the body before it (the files in orders/)")
+                .contains("${variable.customer[name]}");
+        // a field of the customer only: the file is what the step means to read
+        assertThat(lines(enriched("- log: \"Customer ${body[name]}\"\n"), ORDER_AND_CUSTOMER_FILES)).singleElement()
+                .asString().contains("add unmarshal: json before this step to read its fields")
+                .doesNotContain("variableReceive");
+        // what the file has itself is read on the file, even when the order has a field of that name
+        ProjectFacts named = new ProjectFacts(
+                Set.of(), Map.of(), null, Map.of(), Map.of(), Map.of(), Set.of(),
+                Map.of("dir:orders", new ProjectFacts.JsonFields(
+                        "the files in orders/", Set.of("orderId", "customer", "fileName"), Map.of(), false, null)));
+        assertThat(lines(enriched("- log: \"Customer file ${body.fileName}\"\n"), named)).isEmpty();
+        // nothing known of the fields: both ways
+        assertThat(lines(yaml)).singleElement().asString()
+                .contains("pollEnrich: file:customers gives it: to read the file, add unmarshal: json before this step;"
+                          + " if orderId is a field of the body before the pollEnrich, keep that body instead: add"
+                          + " variableReceive: customer to the pollEnrich");
+        // the reference: the customer in a variable, parsed in place
+        assertThat(lines(enriched("""
+                - unmarshal:
+                    json: {}
+                    variableSend: customer
+                    variableReceive: customer
+                - log: "Order ${body[orderId]} for ${variable.customer[name]} (${variable.customer[tier]})"
+                """).replace("timeout: 5000", "timeout: 5000\n            variableReceive: customer"),
+                ORDER_AND_CUSTOMER_FILES)).isEmpty();
+    }
+
+    @Test
+    public void testAFieldOfTheBodyAPollEnrichReplacedAfterTheFileIsParsed() {
+        // the customer file parsed in the body, and the order id read on it: the same fix, with the unmarshal in place
+        String yaml = enriched("""
+                - unmarshal:
+                    json: {}
+                - log: "Order ${body[orderId]} for ${body[name]} (${body[tier]})"
+                """);
+        assertThat(lines(yaml, ORDER_AND_CUSTOMER_FILES)).singleElement().satisfies(m -> {
+            assertThat(m).contains("simple reads ${body[orderId]}, but the data here has no field orderId (the fields of"
+                                   + " the files in customers/: id, name, tier)");
+            assertThat(m).contains("the pollEnrich replaced the body, and orderId is a field of the body before it (the"
+                                   + " files in orders/). To keep that body, add variableReceive: customer to the"
+                                   + " pollEnrich, and write the unmarshal after it as unmarshal: {json: {},"
+                                   + " variableSend: customer, variableReceive: customer}, which parses the variable in"
+                                   + " place; then read its fields as ${variable.customer[name]}");
+        });
+        // a field neither has: the fields of the customer files
+        assertThat(lines(yaml.replace("${body[orderId]}", "${body[orderNo]}"), ORDER_AND_CUSTOMER_FILES)).singleElement()
+                .asString().contains("has no field orderNo").contains("read one of those");
+        // the fields of the customer are fine
+        assertThat(lines(yaml.replace("${body[orderId]}", "${body[id]}"), ORDER_AND_CUSTOMER_FILES)).isEmpty();
+    }
+
+    @Test
+    public void testAFieldOfTheFileAPollEnrichPutInAVariable() {
+        // r25 enrich step 2: ${body[name]} after a pollEnrich with variableReceive, told to read one of the fields of
+        // the order; the customer is in the variable
+        String yaml = enriched("- log: \"Order ${body[orderId]} for ${body[name]} (${body[tier]})\"\n")
+                .replace("timeout: 5000", "timeout: 5000\n            variableReceive: customer");
+        assertThat(lines(yaml, ORDER_AND_CUSTOMER_FILES)).singleElement().satisfies(m -> {
+            assertThat(m).contains("simple reads ${body[name]}, but the data here has no field name (the fields of the"
+                                   + " files in orders/: country, customer, lines, orderId, status)");
+            assertThat(m).contains("name is a field of the file in the variable customer (pollEnrich: file:customers"
+                                   + " gives it), not of the body: parse the variable in place with unmarshal: {json:"
+                                   + " {}, variableSend: customer, variableReceive: customer} before this step, and"
+                                   + " read ${variable.customer[name]}");
+            assertThat(m).doesNotContain("read one of those");
+        });
+        // once parsed in place, the variable has the field
+        assertThat(lines(yaml.replace("        - log:", "        - unmarshal:\n            json: {}\n"
+                                                        + "            variableSend: customer\n"
+                                                        + "            variableReceive: customer\n        - log:"),
+                ORDER_AND_CUSTOMER_FILES)).singleElement().asString()
+                .endsWith("name is a field of the variable customer, not of the body: read ${variable.customer[name]}");
+        // without the customer files: the fields of the order
+        assertThat(lines(yaml, ORDER_FILES)).singleElement().asString().contains("read one of those");
     }
 }

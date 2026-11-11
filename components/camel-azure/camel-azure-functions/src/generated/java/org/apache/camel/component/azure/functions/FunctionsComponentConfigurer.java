@@ -2,6 +2,7 @@
 package org.apache.camel.component.azure.functions;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FunctionsComponent target = (FunctionsComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": getOrCreateConfiguration(target).setAppServiceManager(property(camelContext, com.azure.resourcemanager.appservice.AppServiceManager.class, value)); return true;
         case "autowiredenabled":
@@ -66,6 +67,8 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
         case "subscriptionId": getOrCreateConfiguration(target).setSubscriptionId(property(camelContext, java.lang.String.class, value)); return true;
         case "tenantid":
         case "tenantId": getOrCreateConfiguration(target).setTenantId(property(camelContext, java.lang.String.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": getOrCreateConfiguration(target).setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
         case "tokencredential":
         case "tokenCredential": getOrCreateConfiguration(target).setTokenCredential(property(camelContext, com.azure.core.credential.TokenCredential.class, value)); return true;
         default: return false;
@@ -79,7 +82,7 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": return com.azure.resourcemanager.appservice.AppServiceManager.class;
         case "autowiredenabled":
@@ -116,6 +119,8 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
         case "subscriptionId": return java.lang.String.class;
         case "tenantid":
         case "tenantId": return java.lang.String.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return boolean.class;
         case "tokencredential":
         case "tokenCredential": return com.azure.core.credential.TokenCredential.class;
         default: return null;
@@ -125,7 +130,7 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FunctionsComponent target = (FunctionsComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": return getOrCreateConfiguration(target).getAppServiceManager();
         case "autowiredenabled":
@@ -162,6 +167,8 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
         case "subscriptionId": return getOrCreateConfiguration(target).getSubscriptionId();
         case "tenantid":
         case "tenantId": return getOrCreateConfiguration(target).getTenantId();
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return getOrCreateConfiguration(target).isThrowExceptionOnFailure();
         case "tokencredential":
         case "tokenCredential": return getOrCreateConfiguration(target).getTokenCredential();
         default: return null;

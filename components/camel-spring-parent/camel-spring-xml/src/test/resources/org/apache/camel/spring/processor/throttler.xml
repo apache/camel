@@ -40,7 +40,7 @@
     <route>
       <from uri="direct:a"/>
       <!-- throttle max of 2 concurrent messages -->
-      <throttle>
+      <throttle mode="ConcurrentRequests">
         <constant>2</constant>
       </throttle>
       <process ref="incrementProcessor"/>
@@ -54,7 +54,7 @@
 
     <route>
       <from uri="direct:expressionConstant"/>
-      <throttle>
+      <throttle mode="ConcurrentRequests">
         <constant>2</constant>
       </throttle>
       <process ref="incrementProcessor"/>
@@ -69,7 +69,7 @@
     <!-- START SNIPPET: e2 -->
     <route>
       <from uri="direct:expressionHeader"/>
-      <throttle>
+      <throttle mode="ConcurrentRequests">
         <!-- use a header to determine the max number of current messages -->
         <header>throttleValue</header>
       </throttle>
@@ -86,7 +86,7 @@
     <route>
       <from uri="direct:start"/>
       <!-- throttle max of 2 concurrent messages -->
-      <throttle rejectExecution="true">
+      <throttle mode="ConcurrentRequests" rejectExecution="true">
         <constant>2</constant>
       </throttle>
       <delay>
@@ -99,7 +99,7 @@
     <route>
       <from uri="direct:fifo"/>
       <!-- throttle max of 1 concurrent request -->
-      <throttle>
+      <throttle mode="ConcurrentRequests">
         <constant>1</constant>
       </throttle>
       <delay>
@@ -111,7 +111,7 @@
     <route errorHandlerRef="myDLC">
       <from uri="direct:release"/>
       <!-- throttle max of 1 concurrent request -->
-      <throttle>
+      <throttle mode="ConcurrentRequests">
         <constant>1</constant>
       </throttle>
       <delay>

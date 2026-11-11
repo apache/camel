@@ -180,6 +180,19 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
     }
 
     @Test
+    public void aClassWithNoImportSaysToImportIt() {
+        // JsonOutput.toJson(body) with no import of groovy.json: Groovy reads the class as a variable
+        Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:class", Map.of("sku", "A1")));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("No such property: JsonOutput"), cause.getMessage());
+        assertTrue(cause.getMessage().contains("(JsonOutput is the class groovy.json.JsonOutput, which the script does not"
+                                               + " import: add import groovy.json.JsonOutput at the top of the script, or"
+                                               + " write groovy.json.JsonOutput)"),
+                cause.getMessage());
+        assertFalse(cause.getMessage().contains("the script variables are"), cause.getMessage());
+    }
+
+    @Test
     public void messageIsAScriptVariableAsTheHintSays() {
         String out = template.requestBodyAndHeader("direct:message", "World", "name", "Hello", String.class);
         assertEquals("Hello World", out);
@@ -197,6 +210,7 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
                 from("direct:customer").transform().groovy("body.customer.customerNo");
                 from("direct:header").transform().groovy("headers.skuList.find { it.sku == headers.sku }");
                 from("direct:message").transform().groovy("message.getHeader('name') + ' ' + message.body");
+                from("direct:class").transform().groovy("JsonOutput.toJson(body)");
             }
         };
     }

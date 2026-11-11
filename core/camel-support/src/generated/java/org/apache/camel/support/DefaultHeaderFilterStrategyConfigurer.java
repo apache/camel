@@ -2,6 +2,7 @@
 package org.apache.camel.support;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DefaultHeaderFilterStrategyConfigurer extends org.apache.camel.supp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.support.DefaultHeaderFilterStrategy target = (org.apache.camel.support.DefaultHeaderFilterStrategy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullvalues":
         case "allowNullValues": target.setAllowNullValues(property(camelContext, boolean.class, value)); return true;
         case "caseinsensitive":
@@ -41,7 +42,7 @@ public class DefaultHeaderFilterStrategyConfigurer extends org.apache.camel.supp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullvalues":
         case "allowNullValues": return boolean.class;
         case "caseinsensitive":
@@ -61,7 +62,7 @@ public class DefaultHeaderFilterStrategyConfigurer extends org.apache.camel.supp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.support.DefaultHeaderFilterStrategy target = (org.apache.camel.support.DefaultHeaderFilterStrategy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullvalues":
         case "allowNullValues": return target.isAllowNullValues();
         case "caseinsensitive":
@@ -80,7 +81,7 @@ public class DefaultHeaderFilterStrategyConfigurer extends org.apache.camel.supp
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "infilter":
         case "inFilter": return java.lang.String.class;
         case "outfilter":

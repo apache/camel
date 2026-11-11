@@ -54,6 +54,13 @@ class RouteTopologyDevConsoleTest extends ContextTestSupport {
 
                 from("direct:isolated").routeId("isolated")
                         .to("mock:nowhere");
+
+                // request-reply over a queue: the asker waits for the answer of the quoter
+                from("direct:ask").routeId("asker")
+                        .to("seda:quote?exchangePattern=InOut");
+
+                from("seda:quote").routeId("quoter")
+                        .to("mock:quoted");
             }
         };
     }
@@ -75,7 +82,7 @@ class RouteTopologyDevConsoleTest extends ContextTestSupport {
 
         JsonArray nodes = (JsonArray) json.get("nodes");
         assertNotNull(nodes);
-        assertEquals(5, nodes.size());
+        assertEquals(7, nodes.size());
 
         JsonArray edges = (JsonArray) json.get("edges");
         assertNotNull(edges);
@@ -108,6 +115,23 @@ class RouteTopologyDevConsoleTest extends ContextTestSupport {
         assertNotNull(edge, "Expected edge from trigger to processor via direct:process");
         assertEquals("direct:process", edge.getString("endpoint"));
         assertEquals("internal", edge.getString("connectionType"));
+    }
+
+    @Test
+    void testAnEdgeSaysWhetherTheRouteWaitsForTheAnswer() {
+        DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("route-topology");
+        JsonObject json = (JsonObject) console.call(DevConsole.MediaType.JSON);
+        JsonArray edges = (JsonArray) json.get("edges");
+
+        // CAMEL-26823: a direct route runs before the sender goes on, a request-reply waits for its answer
+        assertEquals(Boolean.TRUE, findEdge(edges, "trigger", "processor").get("reply"));
+        assertEquals(Boolean.TRUE, findEdge(edges, "asker", "quoter").get("reply"));
+        // a hand-off over a queue does not
+        assertEquals(Boolean.FALSE, findEdge(edges, "looper", "looper").get("reply"));
+
+        String text = (String) console.call(DevConsole.MediaType.TEXT);
+        assertTrue(text.contains("--> quoter via seda:quote [internal, request-reply]"), text);
+        assertTrue(text.contains("--> processor via direct:process [internal]"), text);
     }
 
     @Test

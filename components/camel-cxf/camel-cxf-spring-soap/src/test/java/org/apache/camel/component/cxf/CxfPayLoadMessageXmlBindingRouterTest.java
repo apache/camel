@@ -25,14 +25,15 @@ import org.w3c.dom.Element;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -43,12 +44,36 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfPayLoadMessageXmlBindingRouterTest extends CamelSpringTestSupport {
 
-    protected static final String ROUTER_ADDRESS = "http://localhost:"
-                                                   + CXFTestSupport.getPort1()
-                                                   + "/CxfPayLoadMessageXmlBindingRouterTest/router";
-    protected static final String SERVICE_ADDRESS = "http://localhost:"
-                                                    + CXFTestSupport.getPort2()
-                                                    + "/CxfPayLoadMessageXmlBindingRouterTest/helloworld";
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+
+    private static void allocateCxfPayLoadMessageXmlBindingRouterTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfPayLoadMessageXmlBindingRouterTest.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("CxfPayLoadMessageXmlBindingRouterTest.port2", PORT2.toString());
+        ROUTER_ADDRESS = "http://localhost:"
+                         + PORT1.getPort()
+                         + "/CxfPayLoadMessageXmlBindingRouterTest/router";
+        SERVICE_ADDRESS = "http://localhost:"
+                          + PORT2.getPort()
+                          + "/CxfPayLoadMessageXmlBindingRouterTest/helloworld";
+    }
+
+    @AfterAll
+    static void releaseCxfPayLoadMessageXmlBindingRouterTestPorts() {
+        System.clearProperty("CxfPayLoadMessageXmlBindingRouterTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("CxfPayLoadMessageXmlBindingRouterTest.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+    }
+
+    protected static String ROUTER_ADDRESS;
+    protected static String SERVICE_ADDRESS;
 
     protected static String getBindingId() {
         return "http://cxf.apache.org/bindings/xformat";
@@ -56,6 +81,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelSpringTestSuppor
 
     @BeforeAll
     public static void startService() {
+        allocateCxfPayLoadMessageXmlBindingRouterTestPorts();
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 

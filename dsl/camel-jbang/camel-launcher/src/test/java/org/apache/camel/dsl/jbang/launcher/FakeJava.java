@@ -86,16 +86,29 @@ final class FakeJava {
         return exe;
     }
 
+    /**
+     * A launcher home with the layout of the distribution: the script in bin/ and the launcher JAR in lib/.
+     *
+     * @return the bin/ directory, which has the script
+     */
     static Path newLauncherHome(Path base, Path scriptResource) throws IOException {
         Path home = Files.createTempDirectory(base, "launcher-home");
-        Path script = home.resolve(scriptResource.getFileName().toString());
+        Path bin = Files.createDirectories(home.resolve("bin"));
+        Path script = bin.resolve(scriptResource.getFileName().toString());
         Files.copy(scriptResource, script);
         if (!WINDOWS) {
             Files.setPosixFilePermissions(script, Set.of(OWNER_READ, OWNER_WRITE, OWNER_EXECUTE));
         }
         // A stub jar so the launcher's "camel-launcher-*.jar" glob resolves; fake java never reads it.
-        Files.writeString(home.resolve("camel-launcher-9.9.9.jar"), "stub");
-        return home;
+        Files.writeString(Files.createDirectories(home.resolve("lib")).resolve("camel-launcher-9.9.9.jar"), "stub");
+        return bin;
+    }
+
+    /**
+     * The lib/ directory of a launcher home (see {@link #newLauncherHome(Path, Path)}).
+     */
+    static Path lib(Path bin) {
+        return bin.resolveSibling("lib");
     }
 
     static Result run(Path script, Map<String, String> env, String... args) throws Exception {

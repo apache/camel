@@ -17,6 +17,8 @@
 package org.apache.camel.component.ai.resource;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -51,6 +53,18 @@ public class AiResourceExecutorTest extends CamelTestSupport {
                      + "&tags=test"
                      + "&mimeType=text/plain")
                         .setBody(constant("notes".getBytes(StandardCharsets.UTF_8)));
+
+                from("ai-resource:list_as_blob"
+                     + "?resourceUri=camel:///list.bin"
+                     + "&tags=test"
+                     + "&mimeType=application/octet-stream")
+                        .setBody(constant(List.of("a", "b")));
+
+                from("ai-resource:map_as_blob"
+                     + "?resourceUri=camel:///map.bin"
+                     + "&tags=test"
+                     + "&mimeType=application/octet-stream")
+                        .setBody(constant(Map.of("key", "value")));
 
                 from("ai-resource:empty_resource"
                      + "?resourceUri=camel:///empty"
@@ -92,6 +106,29 @@ public class AiResourceExecutorTest extends CamelTestSupport {
 
         assertThat(result).isInstanceOf(AiResourceResult.Text.class);
         assertThat(((AiResourceResult.Text) result).value()).isEqualTo("notes");
+    }
+
+    @Test
+    public void testListBodyWithBinaryMimeTypeIsAConversionError() {
+        AiResourceResult result = read("camel:///list.bin");
+
+        assertThat(result).isInstanceOf(AiResourceResult.ExecutionError.class);
+        AiResourceResult.ExecutionError error = (AiResourceResult.ExecutionError) result;
+        String expected = "Resource 'camel:///list.bin' produced a body that cannot be converted to byte[]"
+                          + " (declared mimeType is application/octet-stream)";
+        assertThat(error.message()).isEqualTo(expected);
+        assertThat(error.cause()).isInstanceOf(IllegalStateException.class)
+                .hasNoCause();
+    }
+
+    @Test
+    public void testMapBodyWithBinaryMimeTypeIsAConversionError() {
+        AiResourceResult result = read("camel:///map.bin");
+
+        assertThat(result).isInstanceOf(AiResourceResult.ExecutionError.class);
+        String expected = "Resource 'camel:///map.bin' produced a body that cannot be converted to byte[]"
+                          + " (declared mimeType is application/octet-stream)";
+        assertThat(((AiResourceResult.ExecutionError) result).message()).isEqualTo(expected);
     }
 
     @Test

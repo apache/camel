@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,10 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.vault.HashicorpVaultConfiguration target = (org.apache.camel.vault.HashicorpVaultConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "authmountpath":
+        case "authMountPath": target.setAuthMountPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "authentication": target.setAuthentication(property(camelContext, java.lang.String.class, value)); return true;
         case "awsvaultconfiguration":
         case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "azurevaultconfiguration":
@@ -37,6 +41,13 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "ibmsecretsmanagervaultconfiguration":
         case "iBMSecretsManagerVaultConfiguration": target.setIBMSecretsManagerVaultConfiguration(property(camelContext, org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class, value)); return true;
+        case "jwt": target.setJwt(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtfile":
+        case "jwtFile": target.setJwtFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystore":
+        case "keyStore": target.setKeyStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystorepassword":
+        case "keyStorePassword": target.setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "kubernetesconfigmapvaultconfiguration":
         case "kubernetesConfigMapVaultConfiguration": target.setKubernetesConfigMapVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class, value)); return true;
         case "kubernetesvaultconfiguration":
@@ -47,18 +58,30 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "refreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
         case "refreshperiod":
         case "refreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
+        case "role": target.setRole(property(camelContext, java.lang.String.class, value)); return true;
+        case "roleid":
+        case "roleId": target.setRoleId(property(camelContext, java.lang.String.class, value)); return true;
         case "scheme": target.setScheme(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretid":
+        case "secretId": target.setSecretId(property(camelContext, java.lang.String.class, value)); return true;
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "springcloudconfigconfiguration":
         case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "truststore":
+        case "trustStore": target.setTrustStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "truststorepassword":
+        case "trustStorePassword": target.setTrustStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "authmountpath":
+        case "authMountPath": return java.lang.String.class;
+        case "authentication": return java.lang.String.class;
         case "awsvaultconfiguration":
         case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "azurevaultconfiguration":
@@ -73,6 +96,13 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "host": return java.lang.String.class;
         case "ibmsecretsmanagervaultconfiguration":
         case "iBMSecretsManagerVaultConfiguration": return org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class;
+        case "jwt": return java.lang.String.class;
+        case "jwtfile":
+        case "jwtFile": return java.lang.String.class;
+        case "keystore":
+        case "keyStore": return java.lang.String.class;
+        case "keystorepassword":
+        case "keyStorePassword": return java.lang.String.class;
         case "kubernetesconfigmapvaultconfiguration":
         case "kubernetesConfigMapVaultConfiguration": return org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class;
         case "kubernetesvaultconfiguration":
@@ -83,11 +113,20 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "refreshEnabled": return boolean.class;
         case "refreshperiod":
         case "refreshPeriod": return long.class;
+        case "role": return java.lang.String.class;
+        case "roleid":
+        case "roleId": return java.lang.String.class;
         case "scheme": return java.lang.String.class;
+        case "secretid":
+        case "secretId": return java.lang.String.class;
         case "secrets": return java.lang.String.class;
         case "springcloudconfigconfiguration":
         case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "token": return java.lang.String.class;
+        case "truststore":
+        case "trustStore": return java.lang.String.class;
+        case "truststorepassword":
+        case "trustStorePassword": return java.lang.String.class;
         default: return null;
         }
     }
@@ -95,7 +134,10 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.vault.HashicorpVaultConfiguration target = (org.apache.camel.vault.HashicorpVaultConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "authmountpath":
+        case "authMountPath": return target.getAuthMountPath();
+        case "authentication": return target.getAuthentication();
         case "awsvaultconfiguration":
         case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "azurevaultconfiguration":
@@ -110,6 +152,13 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "host": return target.getHost();
         case "ibmsecretsmanagervaultconfiguration":
         case "iBMSecretsManagerVaultConfiguration": return target.getIBMSecretsManagerVaultConfiguration();
+        case "jwt": return target.getJwt();
+        case "jwtfile":
+        case "jwtFile": return target.getJwtFile();
+        case "keystore":
+        case "keyStore": return target.getKeyStore();
+        case "keystorepassword":
+        case "keyStorePassword": return target.getKeyStorePassword();
         case "kubernetesconfigmapvaultconfiguration":
         case "kubernetesConfigMapVaultConfiguration": return target.getKubernetesConfigMapVaultConfiguration();
         case "kubernetesvaultconfiguration":
@@ -120,11 +169,20 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "refreshEnabled": return target.isRefreshEnabled();
         case "refreshperiod":
         case "refreshPeriod": return target.getRefreshPeriod();
+        case "role": return target.getRole();
+        case "roleid":
+        case "roleId": return target.getRoleId();
         case "scheme": return target.getScheme();
+        case "secretid":
+        case "secretId": return target.getSecretId();
         case "secrets": return target.getSecrets();
         case "springcloudconfigconfiguration":
         case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "token": return target.getToken();
+        case "truststore":
+        case "trustStore": return target.getTrustStore();
+        case "truststorepassword":
+        case "trustStorePassword": return target.getTrustStorePassword();
         default: return null;
         }
     }

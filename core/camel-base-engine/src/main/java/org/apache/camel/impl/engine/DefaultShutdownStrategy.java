@@ -34,6 +34,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -120,6 +123,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private final CamelLogger logger = new CamelLogger(LOG, LoggingLevel.DEBUG);
 
     private CamelContext camelContext;
+    // guards the lazy creation of the executor, as several shutdowns can run at the same time
+    private final Lock executorLock = new ReentrantLock();
     private ExecutorService executor;
     private long timeout = 45;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
@@ -130,7 +135,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     private boolean forceShutdown;
     private final AtomicBoolean timeoutOccurred = new AtomicBoolean();
-    private volatile Future<?> currentShutdownTaskFuture;
+    private final AtomicReference<Future<?>> currentShutdownTaskFuture = new AtomicReference<>();
 
     public DefaultShutdownStrategy() {
     }
@@ -207,32 +212,43 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             logger.log(msg);
         }
 
-        // use another thread to perform the shutdowns so we can support timeout
+        // use another thread to perform the shutdowns so we can support timeout.
+        // The future and the timeout flag of this shutdown are local: several shutdowns can run at the same time (a
+        // route is stopped or suspended while the CamelContext is stopping), and the timeout of one must not cancel,
+        // force or cut short the graceful shutdown of another. The fields are only set for the getters.
+        final AtomicBoolean shutdownTimeoutOccurred = new AtomicBoolean();
+        Future<?> future = null;
+        boolean interrupted = false;
         timeoutOccurred.set(false);
         try {
-            currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(
+            future = getExecutorService().submit(new ShutdownTask(
                     context, routesOrdered, timeout, timeUnit, suspendOnly,
-                    abortAfterTimeout, timeoutOccurred, isLogInflightExchangesOnTimeout()));
-            currentShutdownTaskFuture.get(timeout, timeUnit);
+                    abortAfterTimeout, shutdownTimeoutOccurred, isLogInflightExchangesOnTimeout()));
+            currentShutdownTaskFuture.set(future);
+            future.get(timeout, timeUnit);
         } catch (RejectedExecutionException e) {
             // the task was rejected
         } catch (ExecutionException e) {
             // unwrap execution exception
             throw RuntimeCamelException.wrapRuntimeCamelException(e.getCause());
         } catch (Exception e) {
-            // either timeout or interrupted exception was thrown so this is okay
-            // as interrupted would mean cancel was called on the currentShutdownTaskFuture to signal a forced timeout
+            // the timeout of this shutdown elapsed, or the calling thread was interrupted (handled as a timeout)
+            interrupted = e instanceof InterruptedException;
 
             // we hit a timeout, so set the flag
+            shutdownTimeoutOccurred.set(true);
             timeoutOccurred.set(true);
 
             // timeout then cancel the task
-            if (currentShutdownTaskFuture != null) {
-                currentShutdownTaskFuture.cancel(true);
+            if (future != null) {
+                future.cancel(true);
             }
 
-            // signal we are forcing shutdown now, since timeout occurred
-            this.forceShutdown = forceShutdown;
+            // signal we are forcing shutdown now, since timeout occurred (another shutdown that times out, and
+            // is not forced, must not turn it off again)
+            if (forceShutdown) {
+                this.forceShutdown = true;
+            }
 
             // if set, stop processing and return false to indicate that the shutdown is aborting
             if (!forceShutdown && abortAfterTimeout) {
@@ -240,7 +256,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                          + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
                 // we attempt to force shutdown so lets log the current inflight exchanges which are affected
-                logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
+                logInflightExchanges(context, routesOrdered, isLogInflightExchangesOnTimeout());
 
                 return false;
             } else {
@@ -249,13 +265,13 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                              + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
                     // we attempt to force shutdown so lets log the current inflight exchanges which are affected
-                    logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
+                    logInflightExchanges(context, routesOrdered, isLogInflightExchangesOnTimeout());
 
                     // force the routes to shutdown now
                     shutdownRoutesNow(routesOrdered);
 
                     // now the route consumers has been shutdown, then prepare route services for shutdown now (forced)
-                    for (RouteStartupOrder order : routes) {
+                    for (RouteStartupOrder order : routesOrdered) {
                         for (Service service : order.getServices()) {
                             prepareShutdown(service, false, true, true, isSuppressLoggingOnTimeout());
                         }
@@ -264,11 +280,16 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     LOG.warn("Timeout occurred during graceful shutdown. Will ignore shutting down the remainder routes."
                              + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
-                    logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
+                    logInflightExchanges(context, routesOrdered, isLogInflightExchangesOnTimeout());
                 }
             }
         } finally {
-            currentShutdownTaskFuture = null;
+            // only clear the future of this shutdown, not the one of another shutdown that runs meanwhile
+            currentShutdownTaskFuture.compareAndSet(future, null);
+            if (interrupted) {
+                // restore the interrupt flag, now that the routes have been shutdown (forced) or the shutdown aborted
+                Thread.currentThread().interrupt();
+            }
         }
 
         if (logger.shouldLog()) {
@@ -377,12 +398,12 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     /**
-     * Future for the current shutdown task, when a task is in progress.
+     * Future for the task of the shutdown that was started last, while that shutdown is in progress, or <tt>null</tt>.
      * <p/>
      * Important: This API is only for advanced use-cases.
      */
     public Future<?> getCurrentShutdownTaskFuture() {
-        return currentShutdownTaskFuture;
+        return currentShutdownTaskFuture.get();
     }
 
     /**
@@ -464,11 +485,16 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     private ExecutorService getExecutorService() {
-        if (executor == null) {
-            // use a thread pool that allow to terminate idle threads so they do not hang around forever
-            executor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "ShutdownTask");
+        executorLock.lock();
+        try {
+            if (executor == null) {
+                // use a thread pool that allow to terminate idle threads so they do not hang around forever
+                executor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "ShutdownTask");
+            }
+            return executor;
+        } finally {
+            executorLock.unlock();
         }
-        return executor;
     }
 
     @Override
@@ -481,11 +507,16 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     @Override
     protected void doShutdown() throws Exception {
-        if (executor != null) {
-            // force shutting down as we are shutting down Camel
-            camelContext.getExecutorServiceManager().shutdownNow(executor);
-            // should clear executor so we can restart by creating a new thread pool
-            executor = null;
+        executorLock.lock();
+        try {
+            if (executor != null) {
+                // force shutting down as we are shutting down Camel
+                camelContext.getExecutorServiceManager().shutdownNow(executor);
+                // should clear executor so we can restart by creating a new thread pool
+                executor = null;
+            }
+        } finally {
+            executorLock.unlock();
         }
     }
 
@@ -708,6 +739,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         TimeSource.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
+                        if (timeoutOccurred.get()) {
+                            // the timeout of this shutdown cancelled this task (see below)
+                            break;
+                        }
                         if (abortAfterTimeout) {
                             LOG.warn("Interrupted while waiting during graceful shutdown, will abort.");
                             return;
@@ -719,6 +754,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 } else {
                     done = true;
                 }
+            }
+
+            if (timeoutOccurred.get()) {
+                // the shutdown timed out: the thread that called it has cancelled this task, and forces, aborts or
+                // ignores the remainder routes, so this task must not stop the deferred consumers as well (at the
+                // same time, and on an interrupted thread where a consumer can fail to stop)
+                LOG.debug("Timeout occurred during graceful shutdown, the shutdown task stops now");
+                return;
             }
 
             // prepare for shutdown
@@ -733,8 +776,35 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 }
             }
 
+            if (!suspendOnly && !deferredConsumers.isEmpty()) {
+                if (timeoutOccurred.get()) {
+                    // the shutdown timed out while the deferred consumers were prepared (such as a seda consumer
+                    // draining its queue), and the thread that called it shuts down the routes now
+                    LOG.debug("Timeout occurred during graceful shutdown, the shutdown task stops now");
+                    return;
+                }
+                // the deferred consumers have routed messages while this task waited, so prepare the services again
+                // (such as an aggregator with forceCompletionOnStop completing the groups of these messages) while
+                // the routes can still process them, as stopping a consumer stops the processors of its route
+                boolean forced = context.getShutdownStrategy().isForceShutdown();
+                boolean suppress = context.getShutdownStrategy().isSuppressLoggingOnTimeout();
+                for (RouteStartupOrder order : routes) {
+                    for (Service service : order.getServices()) {
+                        if (service instanceof Consumer) {
+                            continue;
+                        }
+                        prepareShutdown(service, false, forced, true, suppress);
+                    }
+                }
+            }
+
             // now all messages has been completed then stop the deferred consumers
             for (ShutdownDeferredConsumer deferred : deferredConsumers) {
+                if (timeoutOccurred.get()) {
+                    // the shutdown timed out meanwhile, and the thread that called it shuts down the routes now
+                    LOG.debug("Timeout occurred during graceful shutdown, the shutdown task stops now");
+                    return;
+                }
                 Consumer consumer = deferred.getConsumer();
                 if (suspendOnly) {
                     suspendNow(deferred.getRoute().getId(), consumer);

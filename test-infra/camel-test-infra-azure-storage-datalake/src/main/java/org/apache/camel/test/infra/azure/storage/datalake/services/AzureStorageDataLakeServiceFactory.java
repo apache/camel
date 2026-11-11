@@ -66,6 +66,7 @@ public final class AzureStorageDataLakeServiceFactory {
 
     public static AzureService createService() {
         return builder()
+                .addLocalMapping(AzureStorageDataLakeLocalContainerService::new)
                 .addRemoteMapping(AzureStorageDataLakeRemoteService::new)
                 .build();
     }
@@ -78,9 +79,15 @@ public final class AzureStorageDataLakeServiceFactory {
         static final AzureService INSTANCE;
         static {
             SimpleTestServiceBuilder<AzureService> instance = builder();
-            instance.addRemoteMapping(AzureStorageDataLakeRemoteService::new);
+            instance.addLocalMapping(
+                    () -> new SingletonAzureStorageDataLakeService(new AzureStorageDataLakeLocalContainerService(), "azure"))
+                    .addRemoteMapping(AzureStorageDataLakeRemoteService::new);
             INSTANCE = instance.build();
         }
+    }
+
+    static class AzureStorageDataLakeLocalContainerService extends AzureStorageDataLakeLocalContainerInfraService
+            implements AzureService {
     }
 
     static class AzureStorageDataLakeRemoteService extends AzureStorageDataLakeRemoteInfraService implements AzureService {

@@ -164,10 +164,12 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
     }
 
     /**
-     * Sets a leading API context-path the REST API services will be using.
+     * The path, such as <tt>/api-doc</tt>, where the REST DSL serves the API documentation of the REST services, as an
+     * OpenAPI document.
      * <p/>
-     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application is
-     * deployed using a context-path.
+     * The API documentation is only served when this option is set. This requires <tt>camel-openapi-java</tt> on the
+     * classpath. The document is JSON by default, or YAML when the request path ends with <tt>.yaml</tt>. The path is
+     * relative to contextPath, when that option is set.
      */
     public RestConfigurationProperties withApiContextPath(String apiContextPath) {
         setApiContextPath(apiContextPath);

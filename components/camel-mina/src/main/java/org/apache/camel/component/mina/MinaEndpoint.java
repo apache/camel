@@ -50,6 +50,7 @@ import org.apache.camel.util.ObjectHelper;
            consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT },
                                      dependsOn = { "codec", "transferExchange" },
                                      byOption = {
+                                             @BodyType.When(option = "textline", value = "true", carriers = Carrier.ANY),
                                              @BodyType.When(option = "protocol", value = "udp",
                                                             carriers = {
                                                                     Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
@@ -57,12 +58,13 @@ import org.apache.camel.util.ObjectHelper;
                                              @BodyType.When(option = "allowDefaultCodec", value = "false",
                                                             carriers = { Carrier.NULL, Carrier.POJO },
                                                             javaType = "org.apache.mina.core.buffer.IoBuffer") },
-                                     description = "The body the route ends with is written back to the caller, also with"
-                                                   + " sync=false. Send a String: with textline=true other bodies are"
-                                                   + " written with toString(), and the object codec writes any"
-                                                   + " Serializable object, which a Mina client accepts only when its"
-                                                   + " objectCodecPattern lists the class. No body sends nothing and closes"
-                                                   + " the connection"),
+                                     description = "With sync=true (the default) the body the route ends with is written"
+                                                   + " back to the caller; with sync=false nothing is written. Send a"
+                                                   + " String: textline=true converts any body to a line of text, and the"
+                                                   + " object codec writes any Serializable object, which a Mina client"
+                                                   + " accepts only when its objectCodecPattern lists the class (a byte"
+                                                   + " array needs [B). No body sends nothing and closes the connection"
+                                                   + " (disconnectOnNoReply)"),
            producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT },
                                   dependsOn = { "codec", "transferExchange" },
                                   byOption = {
@@ -81,16 +83,16 @@ import org.apache.camel.util.ObjectHelper;
            producerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, javaType = "java.lang.String",
                                    dependsOn = { "codec", "objectCodecPattern", "transferExchange" },
                                    byOption = {
-                                           @BodyType.When(option = "sync", value = "false",
-                                                          carriers = { Carrier.UNCHANGED, Carrier.NULL }),
+                                           @BodyType.When(option = "sync", value = "false", carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "protocol", value = "udp",
                                                           carriers = { Carrier.BYTES, Carrier.NULL }, javaType = "byte[]"),
                                            @BodyType.When(option = "allowDefaultCodec", value = "false",
                                                           carriers = { Carrier.POJO, Carrier.NULL },
                                                           javaType = "org.apache.mina.core.buffer.IoBuffer") },
                                    description = "With sync=true (the default) the reply of the server as a String, or a"
-                                                 + " byte array over UDP. No body is not sent and stays null. With"
-                                                 + " sync=false an InOut exchange ends with an empty message"))
+                                                 + " byte array over UDP. The object codec accepts another reply only when"
+                                                 + " objectCodecPattern lists its class (a byte array needs [B). No body is"
+                                                 + " not sent and stays null. With sync=false the message is unchanged"))
 public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, EndpointServiceLocation {
 
     @UriParam

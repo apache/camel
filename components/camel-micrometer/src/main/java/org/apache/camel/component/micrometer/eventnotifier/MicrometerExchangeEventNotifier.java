@@ -18,6 +18,8 @@ package org.apache.camel.component.micrometer.eventnotifier;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
@@ -42,16 +44,20 @@ import org.apache.camel.support.SimpleEventNotifierSupport;
 
 public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNotifier<ExchangeEvent> {
     // Used as a backing value for the camel exchange last timestamp meter
-    private static AtomicLong lastExchangeTimestampHolder = new AtomicLong(0);
+    private final AtomicLong lastExchangeTimestampHolder = new AtomicLong(0);
 
     private InflightRepository inflightRepository;
 
     private final Map<String, Meter> meterMap = new HashMap<>();
+    // ids of routes not to meter (created by kamelets/templates), decided once when the route is added so the
+    // exchange events do not need CamelContext.getRoute(id), which copies the route list on every call
+    private final Set<String> skippedRouteIds = ConcurrentHashMap.newKeySet();
     private Predicate<Exchange> ignoreExchanges = exchange -> false;
     private MicrometerExchangeEventNotifierNamingStrategy namingStrategy;
     boolean registerKamelets;
     boolean registerTemplates = true;
     boolean baseEndpointURI = true;
+    boolean recordLastExchangeTimestamp = true;
 
     public MicrometerExchangeEventNotifier() {
         super(ExchangeEvent.class);
@@ -88,6 +94,14 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         this.namingStrategy = namingStrategy;
     }
 
+    public boolean isRecordLastExchangeTimestamp() {
+        return recordLastExchangeTimestamp;
+    }
+
+    public void setRecordLastExchangeTimestamp(boolean recordLastExchangeTimestamp) {
+        this.recordLastExchangeTimestamp = recordLastExchangeTimestamp;
+    }
+
     @Override
     protected void doInit() throws Exception {
         ManagementStrategy ms = getCamelContext().getManagementStrategy();
@@ -102,6 +116,17 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         super.doStart();
 
         inflightRepository = getCamelContext().getInflightRepository();
+
+        // Register once at startup — backing value updated via AtomicLong on each exchange
+        if (recordLastExchangeTimestamp) {
+            Meter meter = Gauge.builder(
+                    MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME,
+                    lastExchangeTimestampHolder,
+                    AtomicLong::get)
+                    .description("Last exchange processed time in milliseconds since the Unix epoch")
+                    .register(getMeterRegistry());
+            meterMap.put(MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME, meter);
+        }
 
         // need to be able to add/remove meter accordingly to route changes
         getCamelContext().getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
@@ -124,6 +149,9 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     private void addInflightMeter(Route route) {
         boolean skip = (route.isCreatedByKamelet() && !registerKamelets)
                 || (route.isCreatedByRouteTemplate() && !registerTemplates);
+        if (skip) {
+            skippedRouteIds.add(route.getRouteId());
+        }
         if (!skip) {
             String routeId = route.getRouteId();
             String name = getNamingStrategy().getInflightExchangesName();
@@ -137,6 +165,7 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     }
 
     private void removeInflightMeter(String routeId) {
+        skippedRouteIds.remove(routeId);
         Meter meter = meterMap.remove(routeId);
         if (meter != null) {
             getMeterRegistry().remove(meter);
@@ -150,6 +179,7 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         // remove all meters
         meterMap.values().forEach(m -> getMeterRegistry().remove(m));
         meterMap.clear();
+        skippedRouteIds.clear();
     }
 
     @Override
@@ -163,12 +193,8 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
             } else {
                 routeId = ExchangeHelper.getAtRouteId(ee.getExchange());
             }
-            if (routeId != null) {
-                Route route = ee.getExchange().getContext().getRoute(routeId);
-                if (route != null) {
-                    skip = (route.isCreatedByKamelet() && !registerKamelets)
-                            || (route.isCreatedByRouteTemplate() && !registerTemplates);
-                }
+            if (routeId != null && skippedRouteIds.contains(routeId)) {
+                skip = true;
             }
             if (skip) {
                 return;
@@ -206,28 +232,18 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
             Timer timer = getOrCreateTimer(name, tags, "Time taken for exchange processing");
             sample.stop(timer);
         }
-        setLastTimeExchange();
+        if (recordLastExchangeTimestamp) {
+            setLastTimeExchange();
+        }
     }
 
     private Timer getOrCreateTimer(final String name, final Tags tags, final String description) {
-        Timer timer = getMeterRegistry().find(name).tags(tags).timer();
-        if (timer == null) {
-            timer = Timer.builder(name).tags(tags).description(description).register(getMeterRegistry());
-        }
-        return timer;
+        // register() returns the existing timer with a map lookup; find() would copy and scan every meter
+        return Timer.builder(name).tags(tags).description(description).register(getMeterRegistry());
     }
 
     private void setLastTimeExchange() {
-        Gauge meter = getMeterRegistry().find(MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME).gauge();
-        if (meter == null) {
-            meter = Gauge.builder(
-                    MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME,
-                    MicrometerExchangeEventNotifier.lastExchangeTimestampHolder,
-                    AtomicLong::get)
-                    .description("Last exchange processed time in milliseconds since the Unix epoch")
-                    .register(getMeterRegistry());
-        }
-        MicrometerExchangeEventNotifier.lastExchangeTimestampHolder.set(System.currentTimeMillis());
+        lastExchangeTimestampHolder.set(System.currentTimeMillis());
     }
 
 }

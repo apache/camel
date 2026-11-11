@@ -45,7 +45,7 @@ import static org.apache.camel.component.twitter.TwitterConstants.SCHEME_DIRECT_
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "The text of the direct message: bytes, a stream or a file are read as text,"
                                                 + " and a Map or a POJO is sent as its toString(). The CamelTwitterUser header"
-                                                + " overrides the user to send to"),
+                                                + " overrides the user to send to. No body fails"),
            producerOut = @BodyType(value = Carrier.UNCHANGED, description = "Unchanged"))
 public class TwitterDirectMessageEndpoint extends AbstractTwitterEndpoint {
 

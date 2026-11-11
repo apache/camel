@@ -38,22 +38,24 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Comment;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
 import org.apache.commons.io.IOUtils;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmlunit.assertj3.XmlAssert;
 import org.xmlunit.builder.Input;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.ObjectReadContext;
+import tools.jackson.core.ObjectWriteContext;
+import tools.jackson.core.json.JsonFactory;
 
 final class XJTestUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(XJTestUtils.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
     private static final Map<String, Templates> XSL_TEMPLATES = Collections.synchronizedMap(new HashMap<>());
-    private static final JsonFactory JSON_FACTORY = new JsonFactory();
+    private static final JsonFactory JSON_FACTORY = JsonFactory.builder().build();
 
     private XJTestUtils() {
     }
@@ -96,7 +98,7 @@ final class XJTestUtils {
 
     static void transformXml2JsonAndCompare(String xsl, String testName) throws Exception {
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(byteArrayOutputStream);
+        final JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(ObjectWriteContext.empty(), byteArrayOutputStream);
 
         final XmlJsonStreamWriter xmlStreamWriter = new XmlJsonStreamWriter(jsonGenerator);
         final StAXResult stAXResult = new StAXResult(xmlStreamWriter);
@@ -143,7 +145,7 @@ final class XJTestUtils {
             throw new IOException(testName + ".xml not found");
         }
 
-        final JsonParser jsonParser = JSON_FACTORY.createParser(inputFile);
+        final JsonParser jsonParser = JSON_FACTORY.createParser(ObjectReadContext.empty(), inputFile);
 
         final XMLStreamReader xmlStreamReader = new JsonXmlStreamReader(jsonParser);
 

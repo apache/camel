@@ -23,11 +23,6 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.a2a.auth.A2AAuthHandler;
@@ -56,6 +51,11 @@ import org.apache.camel.component.a2a.state.InMemoryTaskStore;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -69,10 +69,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class A2AAdversarialCoverageTest extends CamelTestSupport {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .build();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -445,7 +445,7 @@ class A2AAdversarialCoverageTest extends CamelTestSupport {
         int read = stream.read(buffer);
         String firstFrame = new String(buffer, 0, read, StandardCharsets.UTF_8);
         JsonNode envelope = OBJECT_MAPPER.readTree(firstFrame.substring("data: ".length()).trim());
-        assertThat(envelope.get("result").get("task").get("id").asText()).isEqualTo("task-subscribe");
+        assertThat(envelope.get("result").get("task").get("id").asString()).isEqualTo("task-subscribe");
     }
 
     @Test
@@ -483,9 +483,9 @@ class A2AAdversarialCoverageTest extends CamelTestSupport {
 
         assertThat(exchange.getMessage().getHeader(Exchange.CONTENT_TYPE)).isEqualTo(A2AConstants.JSONRPC_CONTENT_TYPE);
         JsonNode envelope = OBJECT_MAPPER.readTree(exchange.getMessage().getBody(byte[].class));
-        assertThat(envelope.get("id").asText()).isEqualTo("sub-terminal");
+        assertThat(envelope.get("id").asString()).isEqualTo("sub-terminal");
         assertThat(envelope.get("error").get("code").asInt()).isEqualTo(-32004);
-        assertThat(envelope.get("error").get("message").asText()).contains("already terminal");
+        assertThat(envelope.get("error").get("message").asString()).contains("already terminal");
     }
 
     @Test
@@ -527,7 +527,7 @@ class A2AAdversarialCoverageTest extends CamelTestSupport {
         JsonNode node = OBJECT_MAPPER.readTree(OBJECT_MAPPER.writeValueAsBytes(capabilities));
 
         assertThat(node.get("extensions").isArray()).isTrue();
-        assertThat(node.get("extensions").get(0).get("uri").asText()).isEqualTo("https://example.com/ext");
+        assertThat(node.get("extensions").get(0).get("uri").asString()).isEqualTo("https://example.com/ext");
     }
 
     // ---- Terminal state guard ----

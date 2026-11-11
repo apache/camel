@@ -82,6 +82,7 @@
         <module>camel-ai</module>
         <module>camel-alibaba</module>
         <module>camel-amqp</module>
+        <module>camel-apicurio-registry</module>
         <module>camel-arangodb</module>
         <module>camel-as2</module>
         <module>camel-asn1</module>
@@ -104,6 +105,7 @@
         <module>camel-camunda</module>
         <module>camel-cassandraql</module>
         <module>camel-cbor</module>
+        <module>camel-chaos</module>
         <module>camel-chunk</module>
         <module>camel-clickhouse</module>
         <module>camel-clickup</module>
@@ -235,6 +237,7 @@
         <module>camel-mllp</module>
         <module>camel-mongodb-gridfs</module>
         <module>camel-mongodb</module>
+        <module>camel-mtconnect</module>
         <module>camel-mustache</module>
         <module>camel-mvel</module>
         <module>camel-mybatis</module>
@@ -290,6 +293,7 @@
         <module>camel-rxjava</module>
         <module>camel-saga</module>
         <module>camel-salesforce</module>
+        <module>camel-sanitizer</module>
         <module>camel-sap-netweaver</module>
         <module>camel-saxon</module>
         <module>camel-scheduler</module>

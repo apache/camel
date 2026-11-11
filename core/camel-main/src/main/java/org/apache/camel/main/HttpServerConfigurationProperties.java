@@ -81,12 +81,16 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private long mcpToolTimeout = 20000;
     @Metadata(defaultValue = "20000")
     private long mcpResourceTimeout = 20000;
+    @Metadata(defaultValue = "20000")
+    private long mcpPromptTimeout = 20000;
     @Metadata(defaultValue = "/mcp")
     private String mcpPath = "/mcp";
     @Metadata(defaultValue = "30000")
     private long mcpSessionKeepAliveInterval = 30000;
     @Metadata(defaultValue = "300000")
     private long mcpSessionIdleTtl = 300000;
+    @Metadata
+    private String mcpAllowedOrigins;
     @Metadata
     private String mcpServerName;
     @Metadata
@@ -360,9 +364,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources. Requires camel-mcp-server
-     * on the classpath. Use {@link #setMcpTransport(String)} to choose streamable HTTP (default) or stdio for IDE
-     * subprocess integration. By default, the MCP server is not enabled.
+     * Whether to expose ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP
+     * prompts. Requires camel-mcp-server on the classpath. Use {@link #setMcpTransport(String)} to choose streamable
+     * HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is not enabled.
      */
     public void setMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
@@ -373,8 +377,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * MCP transport for ai-tool routes: {@code http} (streamable HTTP on the embedded server, default) or {@code stdio}
-     * (JSON-RPC on process stdin/stdout for local agent subprocesses).
+     * MCP transport selection: {@code http} (streamable HTTP on the embedded server, serving tools, resources and
+     * prompts) or {@code stdio} (JSON-RPC on process stdin/stdout for local agent subprocesses, serving tools and
+     * prompts only).
      */
     public void setMcpTransport(String mcpTransport) {
         this.mcpTransport = mcpTransport;
@@ -385,8 +390,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Comma-separated list of tag patterns selecting the ai-tool routes to expose as MCP tools and the ai-resource
-     * routes to expose as MCP resources. Matching is case-insensitive and supports exact match, wildcard prefix
+     * Comma-separated list of tag patterns selecting ai-tool routes as MCP tools, ai-resource routes as MCP resources
+     * and ai-prompt routes as MCP prompts. Matching is case-insensitive and supports exact match, wildcard prefix
      * ({@code foo*}), and {@code *} to match all tags. Only routes registered under a matching tag are exposed; the
      * untagged default pools are never exposed. When not set, nothing is exposed.
      */
@@ -416,6 +421,18 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setMcpResourceTimeout(long mcpResourceTimeout) {
         this.mcpResourceTimeout = mcpResourceTimeout;
+    }
+
+    public long getMcpPromptTimeout() {
+        return mcpPromptTimeout;
+    }
+
+    /**
+     * Per-request MCP prompt execution timeout in milliseconds. A request exceeding the timeout returns an error to the
+     * MCP client; the underlying route may continue running until it completes.
+     */
+    public void setMcpPromptTimeout(long mcpPromptTimeout) {
+        this.mcpPromptTimeout = mcpPromptTimeout;
     }
 
     public String getMcpPath() {
@@ -518,6 +535,23 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setMcpSessionIdleTtl(long mcpSessionIdleTtl) {
         this.mcpSessionIdleTtl = mcpSessionIdleTtl;
+    }
+
+    public String getMcpAllowedOrigins() {
+        return mcpAllowedOrigins;
+    }
+
+    /**
+     * Comma-separated list of origins allowed to call the MCP endpoint on the Vert.x streamable transport. Each entry
+     * is an exact origin (scheme, host and port), or ends with a colon and an asterisk to match any port. Scheme and
+     * host are compared ignoring case, and a default port (80 for http, 443 for https) may be left out. A wildcard for
+     * all origins is not supported: an entry that is not of the form scheme://host or scheme://host:port fails the
+     * startup. A request without an Origin header is always served; a request with an Origin header that is not allowed
+     * is rejected with HTTP 403. When not set, only loopback origins are allowed (localhost, 127.0.0.1 and ::1 on any
+     * port).
+     */
+    public void setMcpAllowedOrigins(String mcpAllowedOrigins) {
+        this.mcpAllowedOrigins = mcpAllowedOrigins;
     }
 
     /**
@@ -701,9 +735,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources. Requires camel-mcp-server
-     * on the classpath. Use {@link #setMcpTransport(String)} to choose streamable HTTP (default) or stdio for IDE
-     * subprocess integration. By default, the MCP server is not enabled.
+     * Whether to expose ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP
+     * prompts. Requires camel-mcp-server on the classpath. Use {@link #setMcpTransport(String)} to choose streamable
+     * HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is not enabled.
      */
     public HttpServerConfigurationProperties withMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
@@ -711,7 +745,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * MCP transport for ai-tool routes: {@code http} (default) or {@code stdio}.
+     * MCP transport selection: {@code http} (streamable HTTP on the embedded server, serving tools, resources and
+     * prompts) or {@code stdio} (JSON-RPC on process stdin/stdout for local agent subprocesses, serving tools and
+     * prompts only).
      */
     public HttpServerConfigurationProperties withMcpTransport(String mcpTransport) {
         this.mcpTransport = mcpTransport;
@@ -719,8 +755,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Comma-separated list of tag patterns selecting the ai-tool routes to expose as MCP tools and the ai-resource
-     * routes to expose as MCP resources. Matching is case-insensitive and supports exact match, wildcard prefix
+     * Comma-separated list of tag patterns selecting ai-tool routes as MCP tools, ai-resource routes as MCP resources
+     * and ai-prompt routes as MCP prompts. Matching is case-insensitive and supports exact match, wildcard prefix
      * ({@code foo*}), and {@code *} to match all tags. Only routes registered under a matching tag are exposed; the
      * untagged default pools are never exposed. When not set, nothing is exposed.
      */
@@ -744,6 +780,14 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpResourceTimeout(long mcpResourceTimeout) {
         this.mcpResourceTimeout = mcpResourceTimeout;
+        return this;
+    }
+
+    /**
+     * Per-request MCP prompt execution timeout in milliseconds.
+     */
+    public HttpServerConfigurationProperties withMcpPromptTimeout(long mcpPromptTimeout) {
+        this.mcpPromptTimeout = mcpPromptTimeout;
         return this;
     }
 
@@ -816,6 +860,15 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpSessionIdleTtl(long mcpSessionIdleTtl) {
         this.mcpSessionIdleTtl = mcpSessionIdleTtl;
+        return this;
+    }
+
+    /**
+     * Comma-separated list of origins allowed to call the MCP endpoint on the Vert.x streamable transport. When not
+     * set, only loopback origins are allowed.
+     */
+    public HttpServerConfigurationProperties withMcpAllowedOrigins(String mcpAllowedOrigins) {
+        this.mcpAllowedOrigins = mcpAllowedOrigins;
         return this;
     }
 

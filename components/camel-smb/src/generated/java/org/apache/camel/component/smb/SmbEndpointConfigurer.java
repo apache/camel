@@ -2,6 +2,7 @@
 package org.apache.camel.component.smb;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SmbEndpoint target = (SmbEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullbody":
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
         case "antexclude":
@@ -136,8 +137,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLock": target.setReadLock(property(camelContext, java.lang.String.class, value)); return true;
         case "readlockcheckinterval":
         case "readLockCheckInterval": target.setReadLockCheckInterval(property(camelContext, long.class, value)); return true;
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": target.setReadLockDeleteOrphanLockFiles(property(camelContext, boolean.class, value)); return true;
         case "readlocklogginglevel":
         case "readLockLoggingLevel": target.setReadLockLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "readlockmarkerfile":
@@ -146,10 +145,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLockMinAge": target.setReadLockMinAge(property(camelContext, long.class, value)); return true;
         case "readlockminlength":
         case "readLockMinLength": target.setReadLockMinLength(property(camelContext, long.class, value)); return true;
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": target.setReadLockRemoveOnCommit(property(camelContext, boolean.class, value)); return true;
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": target.setReadLockRemoveOnRollback(property(camelContext, boolean.class, value)); return true;
         case "readlocktimeout":
         case "readLockTimeout": target.setReadLockTimeout(property(camelContext, long.class, value)); return true;
         case "recursive": target.setRecursive(property(camelContext, boolean.class, value)); return true;
@@ -202,7 +197,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullbody":
         case "allowNullBody": return boolean.class;
         case "antexclude":
@@ -316,8 +311,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLock": return java.lang.String.class;
         case "readlockcheckinterval":
         case "readLockCheckInterval": return long.class;
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": return boolean.class;
         case "readlocklogginglevel":
         case "readLockLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "readlockmarkerfile":
@@ -326,10 +319,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLockMinAge": return long.class;
         case "readlockminlength":
         case "readLockMinLength": return long.class;
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": return boolean.class;
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": return boolean.class;
         case "readlocktimeout":
         case "readLockTimeout": return long.class;
         case "recursive": return boolean.class;
@@ -378,7 +367,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SmbEndpoint target = (SmbEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullbody":
         case "allowNullBody": return target.isAllowNullBody();
         case "antexclude":
@@ -492,8 +481,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLock": return target.getReadLock();
         case "readlockcheckinterval":
         case "readLockCheckInterval": return target.getReadLockCheckInterval();
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": return target.isReadLockDeleteOrphanLockFiles();
         case "readlocklogginglevel":
         case "readLockLoggingLevel": return target.getReadLockLoggingLevel();
         case "readlockmarkerfile":
@@ -502,10 +489,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLockMinAge": return target.getReadLockMinAge();
         case "readlockminlength":
         case "readLockMinLength": return target.getReadLockMinLength();
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": return target.isReadLockRemoveOnCommit();
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": return target.isReadLockRemoveOnRollback();
         case "readlocktimeout":
         case "readLockTimeout": return target.getReadLockTimeout();
         case "recursive": return target.isRecursive();
@@ -553,7 +536,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": return com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation.class;
         case "filter": return com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation.class;

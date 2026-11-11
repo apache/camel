@@ -32,14 +32,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +51,27 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CxfMtomConsumerTest extends CamelTestSupport {
-    protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:"
-                                                          + CXFTestSupport.getPort1() + "/CxfMtomConsumerTest/jaxws-mtom/hello";
-    protected static final String MTOM_ENDPOINT_URI = "cxf://" + MTOM_ENDPOINT_ADDRESS
-                                                      + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello&properties.mtom-enabled=true";
+
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateCxfMtomConsumerTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        MTOM_ENDPOINT_ADDRESS = "http://localhost:"
+                                + PORT1.getPort() + "/CxfMtomConsumerTest/jaxws-mtom/hello";
+        MTOM_ENDPOINT_URI = "cxf://" + MTOM_ENDPOINT_ADDRESS
+                            + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello&properties.mtom-enabled=true";
+    }
+
+    @AfterAll
+    static void releaseCxfMtomConsumerTestPorts() {
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
+    protected static String MTOM_ENDPOINT_ADDRESS;
+    protected static String MTOM_ENDPOINT_URI;
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfMtomConsumerTest.class);
 

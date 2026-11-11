@@ -44,6 +44,7 @@ import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.saaj.SaajSoapMessage;
 
 import static org.apache.camel.component.spring.ws.SpringWebserviceHelper.toResult;
+import static org.apache.camel.component.spring.ws.SpringWebserviceHelper.toSource;
 
 public class SpringWebserviceConsumer extends DefaultConsumer implements MessageEndpoint {
 
@@ -83,7 +84,8 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
             } else if (exchange.getPattern().isOutCapable()) {
                 Message responseMessage = exchange.getMessage(Message.class);
                 if (responseMessage != null) {
-                    Source responseBody = responseMessage.getBody(Source.class);
+                    // a null body gives an empty SOAP body, a body that is not XML fails with a fault
+                    Source responseBody = responseMessage.getBody() != null ? toSource(responseMessage) : null;
                     WebServiceMessage response = messageContext.getResponse();
                     configuration.getMessageFilter().filterConsumer(exchange, response);
                     toResult(responseBody, response.getPayloadResult());

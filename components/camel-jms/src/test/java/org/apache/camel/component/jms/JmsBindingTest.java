@@ -28,6 +28,7 @@ import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.ObjectMessage;
 
+import com.example.external.ExternalText;
 import com.example.external.NotAllowedPayload;
 import org.apache.activemq.artemis.jms.client.ActiveMQTextMessage;
 import org.apache.camel.Exchange;
@@ -185,6 +186,21 @@ public class JmsBindingTest {
         when(message.getObject()).thenReturn(new HashMap<>());
         // when enabled, extraction proceeds (returns the deserialized payload)
         assertDoesNotThrow(() -> jmsBindingUnderTest.extractBodyFromJms(null, message));
+    }
+
+    @Test
+    public void testCharSequenceBodyIsText() throws Exception {
+        try (DefaultCamelContext camelContext = new DefaultCamelContext()) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            assertEquals(JmsMessageType.Text, jmsBindingUnderTest.getJMSMessageTypeForBody(exchange, "Hello"));
+            assertEquals(JmsMessageType.Text,
+                    jmsBindingUnderTest.getJMSMessageTypeForBody(exchange, new StringBuilder("Hello")));
+            // text that is not a String, as a Groovy GString
+            assertEquals(JmsMessageType.Text,
+                    jmsBindingUnderTest.getJMSMessageTypeForBody(exchange, new ExternalText("Hello")));
+            // a Serializable body that is not text is still an ObjectMessage
+            assertEquals(JmsMessageType.Object, jmsBindingUnderTest.getJMSMessageTypeForBody(exchange, 123));
+        }
     }
 
     @Test

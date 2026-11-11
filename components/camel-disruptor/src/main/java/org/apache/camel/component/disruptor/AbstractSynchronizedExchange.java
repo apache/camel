@@ -37,6 +37,11 @@ public abstract class AbstractSynchronizedExchange implements SynchronizedExchan
     }
 
     @Override
+    public Exchange getExchangeToCopy() {
+        return exchange;
+    }
+
+    @Override
     public Exchange cancelAndGetOriginalExchange() {
         if (synchronizations != null) {
             for (Synchronization synchronization : synchronizations) {

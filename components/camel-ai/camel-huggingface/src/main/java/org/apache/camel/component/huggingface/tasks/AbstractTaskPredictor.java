@@ -42,10 +42,18 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.json.JsonMapper;
 
 public abstract class AbstractTaskPredictor implements TaskPredictor {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractTaskPredictor.class);
+    // reads a whole output as one JSON value, so a text that only starts with a JSON object is not read as one
+    private static final ObjectReader OUTPUT_READER
+            = JsonMapper.builderWithJackson2Defaults().build().reader().with(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
     private final ReentrantLock lock = new ReentrantLock();
     protected HuggingFaceEndpoint endpoint;
     protected HuggingFaceConfiguration config;
@@ -150,22 +158,61 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
     @Override
     public void predict(Exchange exchange) throws Exception {
         Input input = prepareInput(exchange);
+        Output output = infer(input);
+        processOutput(exchange, output);
+    }
+
+    /**
+     * Runs the model on the input. With pooling, the calls share one predictor and run one at a time.
+     */
+    protected Output infer(Input input) throws Exception {
         if (config.isPooling()) {
             lock.lock();
             try {
                 if (predictor == null) {
                     predictor = model.newPredictor();
                 }
-                Output output = predictor.predict(input);
-                processOutput(exchange, output);
+                return predictor.predict(input);
             } finally {
                 lock.unlock();
             }
         } else {
             try (Predictor<Input, Output> djlPredictor = model.newPredictor()) {
-                Output output = djlPredictor.predict(input);
-                processOutput(exchange, output);
+                return djlPredictor.predict(input);
             }
+        }
+    }
+
+    /**
+     * Fails when the output of the Python handler is its error payload: a JSON object with the single field
+     * {@code error}, or when there is no output. Any other output is a result, also a text or a JSON that has the word
+     * error in it.
+     */
+    protected static void failOnPythonError(String output) {
+        if (output == null) {
+            throw new RuntimeCamelException("Python inference returned no output");
+        }
+        String text = output.strip();
+        // only an output that starts with an error field can be the error payload, so other outputs are not parsed
+        if (text.startsWith("{") && text.substring(1).stripLeading().startsWith("\"error\"")) {
+            JsonNode node;
+            try {
+                node = OUTPUT_READER.readTree(text);
+            } catch (JacksonException e) {
+                // not a JSON object, so a text result
+                return;
+            }
+            failOnPythonError(node);
+        }
+    }
+
+    /**
+     * Fails when the JSON output of the Python handler is its error payload: an object with the single field
+     * {@code error}.
+     */
+    protected static void failOnPythonError(JsonNode output) {
+        if (output != null && output.isObject() && output.size() == 1 && output.has("error")) {
+            throw new RuntimeCamelException("Python inference failed: " + output.get("error").asString());
         }
     }
 

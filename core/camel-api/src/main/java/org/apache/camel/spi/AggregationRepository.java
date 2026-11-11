@@ -88,7 +88,10 @@ public interface AggregationRepository {
     /**
      * Confirms the completion of the {@link Exchange}.
      * <p/>
-     * This method is always invoked.
+     * This method is invoked for every completed group, unless the repository is a
+     * {@link RecoverableAggregationRepository}: then
+     * {@link RecoverableAggregationRepository#confirmWithResult(CamelContext, String)} is invoked instead, and not for
+     * a group that was completed by its first exchange, as such a group was never added to the repository.
      *
      * @param camelContext the current CamelContext
      * @param exchangeId   exchange id to confirm

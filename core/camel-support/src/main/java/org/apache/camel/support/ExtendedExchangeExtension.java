@@ -422,8 +422,6 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public Exchange createCopyWithProperties(CamelContext context) {
-        DefaultExchange answer = new DefaultExchange(context, exchange.internalProperties, exchange.properties);
-        answer.setPattern(exchange.pattern);
-        return answer;
+        return exchange.createCopyWithProperties(context);
     }
 }

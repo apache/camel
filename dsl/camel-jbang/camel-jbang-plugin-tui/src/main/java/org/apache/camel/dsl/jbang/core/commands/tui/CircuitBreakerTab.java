@@ -90,7 +90,8 @@ class CircuitBreakerTab extends AbstractTableTab {
             String fallback = cb.fallbackCalls > 0 ? String.valueOf(cb.fallbackCalls) : "";
             String timeout = cb.timedOutCalls > 0 ? String.valueOf(cb.timedOutCalls) : "";
             String rate = cb.failureRate >= 0 ? String.format("%.0f%%", cb.failureRate) : "";
-            String inflight = String.valueOf(cb.inflight);
+            // blank when zero, as the other counts, so the ones that are not stand out
+            String inflight = cb.inflight > 0 ? String.valueOf(cb.inflight) : "";
             String sinceLast = formatSinceLast(cb.sinceLastStarted, cb.sinceLastSuccess, cb.sinceLastFail);
 
             rows.add(Row.from(
@@ -113,6 +114,10 @@ class CircuitBreakerTab extends AbstractTableTab {
             rows.add(emptyRow("No circuit breakers", 13));
         }
 
+        // a breaker that shows up once the tab is open (the route is still starting) is selected like one that was there
+        if (!sorted.isEmpty() && tableState.selected() == null) {
+            tableState.select(0);
+        }
         CircuitBreakerInfo selectedCb = null;
         Integer sel = tableState.selected();
         if (sel != null && sel >= 0 && sel < sorted.size()) {
@@ -157,7 +162,8 @@ class CircuitBreakerTab extends AbstractTableTab {
                         Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Circuit Breaker ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
+                        .title(" Circuit Breaker ").build())
                 .build();
 
         lastTableArea = chunks.get(0);
@@ -271,7 +277,8 @@ class CircuitBreakerTab extends AbstractTableTab {
 
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
+                        .title(title).build())
                 .build(), area);
     }
 
@@ -303,7 +310,8 @@ class CircuitBreakerTab extends AbstractTableTab {
                 Span.styled("░".repeat(empty), Style.EMPTY.dim()));
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(barLine))
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Failure Rate ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
+                        .title(" Failure Rate ").build())
                 .build(), vSplit.get(0));
 
         LinkedList<Long> successHist = cbSuccessHistory.get(key);
@@ -331,18 +339,20 @@ class CircuitBreakerTab extends AbstractTableTab {
         long curFail = failArr[renderPoints - 1];
         Line chartTitle = Line.from(
                 Span.styled("▬", Theme.success()),
-                Span.raw(String.format(" ok:%-4d ", curSuccess)),
+                Span.raw(String.format(" ok:%-4s ", MetricsCollector.formatThroughput(curSuccess))),
                 Span.styled("▬", Theme.error()),
-                Span.raw(String.format(" fail:%-4d msg/s ", curFail)));
+                Span.raw(String.format(" fallback:%-4s msg/s ", MetricsCollector.formatThroughput(curFail))));
         frame.renderWidget(DualSparkline.builder()
                 .topData(successArr)
                 .bottomData(failArr)
                 .topStyle(Theme.success())
                 .bottomStyle(Theme.error())
                 .showYAxis(true)
+                // the rates are scaled by THROUGHPUT_SCALE; the axis shows msg/s like the title
+                .yAxisFormatter(MetricsCollector::formatThroughput)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
                         .title(Title.from(chartTitle)).build())
                 .build(), vSplit.get(1));
 
@@ -369,7 +379,8 @@ class CircuitBreakerTab extends AbstractTableTab {
                 Span.styled("fail:", dim), Span.raw(" " + lastFail));
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(Line.from(Span.raw("")), metricsLine1, metricsLine2))
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
+                        .build())
                 .build(), vSplit.get(2));
     }
 

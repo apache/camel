@@ -203,12 +203,12 @@ public interface HazelcastQueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the Queue Consumer mode: Listen or Poll.
+         * Define the Queue Consumer mode: listen or poll.
          * 
          * The option is a:
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
          * 
-         * Default: Listen
+         * Default: listen
          * Group: consumer
          * 
          * @param queueConsumerMode the value to set
@@ -219,12 +219,12 @@ public interface HazelcastQueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the Queue Consumer mode: Listen or Poll.
+         * Define the Queue Consumer mode: listen or poll.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
          * 
-         * Default: Listen
+         * Default: listen
          * Group: consumer
          * 
          * @param queueConsumerMode the value to set
@@ -747,7 +747,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
             return "CamelHazelcastDrainToCollection";
         }
         /**
-         * The type of event - here added and removed.
+         * The type of event - here *added* and *removed*.
          * 
          * The option is a: {@code String} type.
          * 

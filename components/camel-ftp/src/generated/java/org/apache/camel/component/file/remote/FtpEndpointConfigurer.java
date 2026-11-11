@@ -2,6 +2,7 @@
 package org.apache.camel.component.file.remote;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FtpEndpoint target = (FtpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": target.getConfiguration().setAccount(property(camelContext, java.lang.String.class, value)); return true;
         case "activeportrange":
         case "activePortRange": target.getConfiguration().setActivePortRange(property(camelContext, java.lang.String.class, value)); return true;
@@ -158,8 +159,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLock": target.setReadLock(property(camelContext, java.lang.String.class, value)); return true;
         case "readlockcheckinterval":
         case "readLockCheckInterval": target.setReadLockCheckInterval(property(camelContext, long.class, value)); return true;
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": target.setReadLockDeleteOrphanLockFiles(property(camelContext, boolean.class, value)); return true;
         case "readlocklogginglevel":
         case "readLockLoggingLevel": target.setReadLockLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "readlockmarkerfile":
@@ -168,10 +167,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLockMinAge": target.setReadLockMinAge(property(camelContext, long.class, value)); return true;
         case "readlockminlength":
         case "readLockMinLength": target.setReadLockMinLength(property(camelContext, long.class, value)); return true;
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": target.setReadLockRemoveOnCommit(property(camelContext, boolean.class, value)); return true;
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": target.setReadLockRemoveOnRollback(property(camelContext, boolean.class, value)); return true;
         case "readlocktimeout":
         case "readLockTimeout": target.setReadLockTimeout(property(camelContext, long.class, value)); return true;
         case "reconnectdelay":
@@ -232,7 +227,7 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": return java.lang.String.class;
         case "activeportrange":
         case "activePortRange": return java.lang.String.class;
@@ -368,8 +363,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLock": return java.lang.String.class;
         case "readlockcheckinterval":
         case "readLockCheckInterval": return long.class;
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": return boolean.class;
         case "readlocklogginglevel":
         case "readLockLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "readlockmarkerfile":
@@ -378,10 +371,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLockMinAge": return long.class;
         case "readlockminlength":
         case "readLockMinLength": return long.class;
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": return boolean.class;
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": return boolean.class;
         case "readlocktimeout":
         case "readLockTimeout": return long.class;
         case "reconnectdelay":
@@ -443,7 +432,7 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FtpEndpoint target = (FtpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": return target.getConfiguration().getAccount();
         case "activeportrange":
         case "activePortRange": return target.getConfiguration().getActivePortRange();
@@ -579,8 +568,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLock": return target.getReadLock();
         case "readlockcheckinterval":
         case "readLockCheckInterval": return target.getReadLockCheckInterval();
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": return target.isReadLockDeleteOrphanLockFiles();
         case "readlocklogginglevel":
         case "readLockLoggingLevel": return target.getReadLockLoggingLevel();
         case "readlockmarkerfile":
@@ -589,10 +576,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readLockMinAge": return target.getReadLockMinAge();
         case "readlockminlength":
         case "readLockMinLength": return target.getReadLockMinLength();
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": return target.isReadLockRemoveOnCommit();
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": return target.isReadLockRemoveOnRollback();
         case "readlocktimeout":
         case "readLockTimeout": return target.getReadLockTimeout();
         case "reconnectdelay":
@@ -653,7 +636,7 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": return org.apache.commons.net.ftp.FTPFile.class;
         case "filter": return org.apache.commons.net.ftp.FTPFile.class;

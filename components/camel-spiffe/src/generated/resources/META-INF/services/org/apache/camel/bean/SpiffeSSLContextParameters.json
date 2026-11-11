@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "SpiffeSSLContextParameters",
+    "javaType": "org.apache.camel.component.spiffe.SpiffeSSLContextParameters",
+    "interfaceType": "org.apache.camel.support.jsse.SSLContextParameters",
+    "title": "Spiffe SSLContext Parameters",
+    "description": "SSLContextParameters whose SSLContext is backed by the SPIFFE Workload API: the X.509-SVID and the trust bundles are fetched live and rotated automatically, giving mutual TLS to any component that accepts an sslContextParameters reference. Set acceptedSpiffeIds or acceptAnySpiffeId; the inherited options, such as serverParameters.clientAuthentication, still apply.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-spiffe",
+    "version": "4.24.0-SNAPSHOT",
+    "properties": { "spiffeSocketPath": { "index": 0, "kind": "property", "displayName": "Spiffe Socket Path", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Path to the SPIFFE Workload API endpoint (for example unix:\/\/\/tmp\/agent.sock). When not set, the SPIFFE_ENDPOINT_SOCKET environment variable is used." }, "acceptedSpiffeIds": { "index": 1, "kind": "property", "displayName": "Accepted Spiffe Ids", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Comma-separated allow-list of peer SPIFFE IDs to accept during the TLS handshake (for example spiffe:\/\/example.org\/client). Mutually exclusive with acceptAnySpiffeId." }, "acceptAnySpiffeId": { "index": 2, "kind": "property", "displayName": "Accept Any Spiffe Id", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "security": "insecure:ssl", "defaultValue": false, "description": "Accept any peer SPIFFE ID that validates against the trust bundle, instead of an explicit acceptedSpiffeIds allow-list. This authenticates the trust domain but not the peer, so it is the SPIFFE analogue of disabling hostname verification. Use with care; mutually exclusive with acceptedSpiffeIds." }, "initTimeout": { "index": 3, "kind": "property", "displayName": "Init Timeout", "label": "security", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 30000, "description": "Timeout in milliseconds to wait for the first SVID from the Workload API when creating the source, so a slow or unreachable endpoint cannot block indefinitely." } }
+  }
+}
+

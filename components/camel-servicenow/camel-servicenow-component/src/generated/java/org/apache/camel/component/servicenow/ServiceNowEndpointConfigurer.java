@@ -2,6 +2,7 @@
 package org.apache.camel.component.servicenow;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServiceNowEndpoint target = (ServiceNowEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiurl":
         case "apiUrl": target.getConfiguration().setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "apiversion":
@@ -54,7 +55,7 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "key": target.getConfiguration().setKey(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "mapper": target.getConfiguration().setMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "mapper": target.getConfiguration().setMapper(property(camelContext, tools.jackson.databind.ObjectMapper.class, value)); return true;
         case "models": target.getConfiguration().setModels(property(camelContext, java.util.Map.class, value)); return true;
         case "oauthclientid":
         case "oauthClientId": target.getConfiguration().setOauthClientId(property(camelContext, java.lang.String.class, value)); return true;
@@ -107,7 +108,7 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiurl":
         case "apiUrl": return java.lang.String.class;
         case "apiversion":
@@ -139,7 +140,7 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "key": return java.lang.Boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "mapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "mapper": return tools.jackson.databind.ObjectMapper.class;
         case "models": return java.util.Map.class;
         case "oauthclientid":
         case "oauthClientId": return java.lang.String.class;
@@ -193,7 +194,7 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ServiceNowEndpoint target = (ServiceNowEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiurl":
         case "apiUrl": return target.getConfiguration().getApiUrl();
         case "apiversion":
@@ -278,7 +279,7 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "models": return java.lang.Class.class;
         case "requestmodels":
         case "requestModels": return java.lang.Class.class;

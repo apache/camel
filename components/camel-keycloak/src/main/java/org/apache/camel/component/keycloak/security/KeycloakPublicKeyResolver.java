@@ -24,36 +24,59 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Resolves and caches public keys from Keycloak's JWKS endpoint for JWT signature verification.
  */
 public class KeycloakPublicKeyResolver {
     private static final Logger LOG = LoggerFactory.getLogger(KeycloakPublicKeyResolver.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
+
+    public static final long DEFAULT_CACHE_REFRESH_INTERVAL_MS = 300_000; // 5 minutes
+    public static final long DEFAULT_MIN_REFRESH_INTERVAL_MS = 10_000; // 10 seconds
 
     private final String serverUrl;
     private final String realm;
-    private final Map<String, PublicKey> keyCache = new ConcurrentHashMap<>();
     private final ReentrantLock lock = new ReentrantLock();
-    private volatile long lastRefreshTime = 0;
-    private static final long CACHE_REFRESH_INTERVAL_MS = 300_000; // 5 minutes
+    private final long cacheRefreshIntervalNanos;
+    private final long minRefreshIntervalNanos;
+
+    private volatile Map<String, PublicKey> keyCache = Map.of();
+    private volatile long lastRefreshAttemptNanos;
 
     public KeycloakPublicKeyResolver(String serverUrl, String realm) {
+        this(serverUrl, realm, DEFAULT_CACHE_REFRESH_INTERVAL_MS, DEFAULT_MIN_REFRESH_INTERVAL_MS);
+    }
+
+    public KeycloakPublicKeyResolver(String serverUrl, String realm, long cacheRefreshIntervalMs,
+                                     long minRefreshIntervalMs) {
         this.serverUrl = serverUrl;
         this.realm = realm;
+        this.cacheRefreshIntervalNanos = TimeUnit.MILLISECONDS.toNanos(cacheRefreshIntervalMs);
+        this.minRefreshIntervalNanos = TimeUnit.MILLISECONDS.toNanos(minRefreshIntervalMs);
+    }
+
+    public long getCacheRefreshIntervalMs() {
+        return TimeUnit.NANOSECONDS.toMillis(cacheRefreshIntervalNanos);
+    }
+
+    public long getMinRefreshIntervalMs() {
+        return TimeUnit.NANOSECONDS.toMillis(minRefreshIntervalNanos);
     }
 
     /**
@@ -65,18 +88,35 @@ public class KeycloakPublicKeyResolver {
      * @throws IOException if fetching keys fails
      */
     public PublicKey getPublicKey(String kid) throws IOException {
-        // Check if we need to refresh the cache
-        long now = System.currentTimeMillis();
-        if (keyCache.isEmpty() || (now - lastRefreshTime) > CACHE_REFRESH_INTERVAL_MS) {
-            refreshKeys();
+        long elapsed = System.nanoTime() - lastRefreshAttemptNanos;
+        long periodicInterval = keyCache.isEmpty() ? minRefreshIntervalNanos : cacheRefreshIntervalNanos;
+        if (lastRefreshAttemptNanos == 0 || elapsed > periodicInterval) {
+            refreshKeysIfStale(null, periodicInterval);
         }
 
-        // If the kid is not known yet, force a refresh once to pick up rotated keys
+        // If the kid is not known yet, refresh only if minimum cooldown has elapsed to prevent cache stampede
         if (kid != null && !keyCache.containsKey(kid)) {
-            refreshKeys();
+            elapsed = System.nanoTime() - lastRefreshAttemptNanos;
+            if (lastRefreshAttemptNanos == 0 || elapsed > minRefreshIntervalNanos) {
+                refreshKeysIfStale(kid, minRefreshIntervalNanos);
+            }
         }
 
         return selectKey(kid);
+    }
+
+    private void refreshKeysIfStale(String kid, long minIntervalNanos) throws IOException {
+        lock.lock();
+        try {
+            long elapsed = System.nanoTime() - lastRefreshAttemptNanos;
+            if ((kid != null && keyCache.containsKey(kid))
+                    || (lastRefreshAttemptNanos != 0 && elapsed <= minIntervalNanos)) {
+                return; // another thread refreshed (or attempted refresh) meanwhile
+            }
+            refreshKeys();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -89,8 +129,9 @@ public class KeycloakPublicKeyResolver {
      * @throws IOException if no matching key (or, for a {@code null} kid, no key at all) is available
      */
     PublicKey selectKey(String kid) throws IOException {
+        Map<String, PublicKey> currentCache = keyCache;
         if (kid != null) {
-            PublicKey key = keyCache.get(kid);
+            PublicKey key = currentCache.get(kid);
             if (key == null) {
                 throw new IOException("No public key found in Keycloak JWKS for kid: " + kid);
             }
@@ -98,8 +139,8 @@ public class KeycloakPublicKeyResolver {
         }
 
         // No kid in the token header - fall back to the first available key
-        if (!keyCache.isEmpty()) {
-            return keyCache.values().iterator().next();
+        if (!currentCache.isEmpty()) {
+            return currentCache.values().iterator().next();
         }
 
         throw new IOException("No public keys available from Keycloak JWKS endpoint");
@@ -111,6 +152,7 @@ public class KeycloakPublicKeyResolver {
     public void refreshKeys() throws IOException {
         lock.lock();
         try {
+            lastRefreshAttemptNanos = System.nanoTime();
             String jwksUrl = String.format("%s/realms/%s/protocol/openid-connect/certs", serverUrl, realm);
             LOG.debug("Fetching public keys from: {}", jwksUrl);
 
@@ -126,7 +168,6 @@ public class KeycloakPublicKeyResolver {
                 });
 
                 parseJwks(responseBody);
-                lastRefreshTime = System.currentTimeMillis();
                 LOG.debug("Successfully loaded {} public keys from JWKS endpoint", keyCache.size());
             }
         } finally {
@@ -136,14 +177,19 @@ public class KeycloakPublicKeyResolver {
 
     @SuppressWarnings("unchecked")
     void parseJwks(String jwksJson) throws IOException {
-        Map<String, Object> jwks = OBJECT_MAPPER.readValue(jwksJson, Map.class);
+        Map<String, Object> jwks;
+        try {
+            jwks = OBJECT_MAPPER.readValue(jwksJson, Map.class);
+        } catch (JacksonException e) {
+            throw new IOException("Failed to parse JWKS response", e);
+        }
         List<Map<String, Object>> keys = (List<Map<String, Object>>) jwks.get("keys");
 
         if (keys == null || keys.isEmpty()) {
             throw new IOException("No keys found in JWKS response");
         }
 
-        keyCache.clear();
+        Map<String, PublicKey> parsedKeys = new HashMap<>();
         for (Map<String, Object> keyData : keys) {
             String kty = (String) keyData.get("kty");
             String kid = (String) keyData.get("kid");
@@ -154,7 +200,7 @@ public class KeycloakPublicKeyResolver {
                 try {
                     PublicKey publicKey = parseRsaPublicKey(keyData);
                     if (kid != null) {
-                        keyCache.put(kid, publicKey);
+                        parsedKeys.put(kid, publicKey);
                     }
                 } catch (Exception e) {
                     LOG.warn("Failed to parse RSA key with kid '{}': {}", kid, e.getMessage());
@@ -162,9 +208,11 @@ public class KeycloakPublicKeyResolver {
             }
         }
 
-        if (keyCache.isEmpty()) {
+        if (parsedKeys.isEmpty()) {
             throw new IOException("No valid RSA signature keys found in JWKS response");
         }
+
+        keyCache = Map.copyOf(parsedKeys);
     }
 
     private PublicKey parseRsaPublicKey(Map<String, Object> keyData)
@@ -197,7 +245,12 @@ public class KeycloakPublicKeyResolver {
      * Clears the key cache.
      */
     public void clearCache() {
-        keyCache.clear();
-        lastRefreshTime = 0;
+        lock.lock();
+        try {
+            keyCache = Map.of();
+            lastRefreshAttemptNanos = 0;
+        } finally {
+            lock.unlock();
+        }
     }
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xj;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -30,6 +29,7 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import tools.jackson.core.json.JsonFactory;
 
 /**
  * Transform JSON and XML message using a XSLT.
@@ -64,7 +64,8 @@ import org.apache.camel.spi.UriParam;
                                                  + " JSON2XML. output=DOM works with JSON2XML only"))
 public class XJEndpoint extends XsltSaxonEndpoint {
 
-    private final JsonFactory jsonFactory = new JsonFactory();
+    // keeps the Jackson 2 output, such as a surrogate pair written as escapes in UTF-8
+    private final JsonFactory jsonFactory = JsonFactory.builderWithJackson2Defaults().build();
 
     @UriParam
     @Metadata(required = true, description = "Transform direction. Either XML2JSON or JSON2XML")

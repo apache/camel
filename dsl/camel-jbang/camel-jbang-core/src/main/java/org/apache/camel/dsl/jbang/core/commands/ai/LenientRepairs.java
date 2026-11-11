@@ -29,15 +29,20 @@ import java.util.regex.Pattern;
 /**
  * CAMEL-25532: the YAML shapes a model writes for a Camel route that have one reading, repaired before a write is
  * refused for them: an option at the column of its EIP, a plain value where an expression goes, a list where a map goes
- * (and the other way round), a list item or a key one column off, an unquoted placeholder, an enum value in another
- * case, and the names models use for an option that has another name (from the benchmark traces). Each repair is driven
- * by the validator's message for that shape and changes only the lines it names; a name is never guessed by similarity.
- * The caller validates the result again, and keeps it only when no new problem is left.
+ * (and the other way round), a list item or a key one column off, steps: or otherwise: in the column of the dashes of a
+ * list where the schema takes it in one place, an unquoted placeholder, an enum value in another case, a line break
+ * escaped twice (the two characters \n) between a value and the next key, and the names models use for an option that
+ * has another name (from the benchmark traces). Each repair is driven by the validator's message for that shape and
+ * changes only the lines it names; a name is never guessed by similarity. The caller validates the result again, and
+ * keeps it only when no new problem is left.
  */
 final class LenientRepairs {
 
-    /** The repaired content and what was done, one line each ("line 13: steps: indented under split:"). */
-    record Result(String content, List<String> applied) {
+    /**
+     * The repaired content and what was done, one line each ("line 13: steps: indented under split:"); moved when an
+     * entry moved to other lines, so the line numbers of the content are not the ones the model wrote.
+     */
+    record Result(String content, List<String> applied, boolean moved) {
     }
 
     /** A repair of one place of the content; a move changes the lines above it, so it goes alone. */
@@ -77,12 +82,35 @@ final class LenientRepairs {
             "^line (\\d+): .* without quotes is read as a YAML map .*write the line as (.+)$");
     private static final Pattern BRACES = Pattern.compile(
             "^Line (\\d+): .*\\((\\{[^}]*\\}) without quotes is a YAML map");
+    // the validator quotes each line after its number: line 11 ("    - log:"): ...
     private static final Pattern ITEM_COLUMN = Pattern.compile(
-            "^line (\\d+): this list item starts in column (\\d+), but the list that starts at line \\d+ has its items in"
-                                                               + " column (\\d+)");
+            "^line (\\d+)(?: \\(\".*?\"\\))?: this list item starts in column (\\d+), but the list that starts at line"
+                                                               + " \\d+(?: \\(\".*?\"\\))? has its items in column (\\d+)");
     private static final Pattern KEY_COLUMN = Pattern.compile(
             "^line (\\d+): (\\S+) starts in column (\\d+), but the keys of the mapping that starts at line \\d+ are in"
                                                               + " column (\\d+)");
+    /**
+     * steps: or otherwise: in the column of the dashes of a list, which the validator places where the schema takes it,
+     * when one place does, with the lines to write (what it is there, the column, the line after which it goes).
+     */
+    private static final Pattern KEY_IN_DASH_COLUMN = Pattern.compile(
+            "^line (\\d+): (steps|otherwise) starts in column \\d+, the column of the - of the list item at line \\d+, so"
+                                                                      + " it is part of neither that item nor the key that"
+                                                                      + " holds the list\\. It is (.+?): (?:write it in"
+                                                                      + " column (\\d+)|it goes in column (\\d+), after"
+                                                                      + " line (\\d+))\\. Write lines? (\\d+)(?:-(\\d+))?"
+                                                                      + " as:\\n",
+            Pattern.DOTALL);
+    /**
+     * A value followed by the two characters \n of a line break escaped twice and the next key, with the lines to
+     * write: the parts of the line between the \n.
+     */
+    private static final Pattern ESCAPED_LINE_BREAK = Pattern.compile(
+            "^line (\\d+): the value of (.+?) is followed by \\\\n, the two characters \\\\ and n: YAML reads them as"
+                                                                      + " text, not as a line break, so what comes after"
+                                                                      + " them is not a key\\. Write line \\1 as these"
+                                                                      + " (\\d+) lines:\\n",
+            Pattern.DOTALL);
 
     /** How many columns a list item or key may be off to be moved: a slip, not another structure. */
     private static final int MAX_SHIFT = 2;
@@ -124,17 +152,51 @@ final class LenientRepairs {
         todo = todo.stream().sorted(Comparator.comparingInt(Repair::line).reversed()).toList();
         Set<Integer> done = new HashSet<>();
         List<String> applied = new ArrayList<>();
+        boolean moved = false;
         for (Repair r : todo) {
             if (done.add(r.line()) && r.action().apply(lines)) {
                 applied.add(0, r.description());
+                moved |= r.move();
             }
         }
-        return applied.isEmpty() ? null : new Result(String.join("\n", lines), applied);
+        return applied.isEmpty() ? null : new Result(String.join("\n", lines), applied, moved);
     }
 
     private static List<Repair> repairsFor(String error, List<String> lines) {
         List<Repair> answer = new ArrayList<>();
         Matcher m;
+        if ((m = KEY_IN_DASH_COLUMN.matcher(error)).find()) {
+            // the place of steps: and otherwise: is fixed by the schema, and the validator found the one place it
+            // takes: r28 of the local-model benchmark, fail-well-error-handling step 2 sent the same lines 16 times
+            int line = Integer.parseInt(m.group(1));
+            int first = Integer.parseInt(m.group(7));
+            int last = m.group(8) != null ? Integer.parseInt(m.group(8)) : first;
+            List<String> written = List.of(error.substring(m.end()).split("\n", -1));
+            String column = m.group(4) != null ? m.group(4) : m.group(5) + " after line " + m.group(6);
+            answer.add(new Repair(
+                    line, m.group(6) != null, "line " + line + ": " + m.group(2) + ": moved to column " + column + " ("
+                                              + m.group(3) + ")",
+                    ls -> replaceLines(ls, first - 1, last, written)));
+            return answer;
+        }
+        if ((m = ESCAPED_LINE_BREAK.matcher(error)).find()) {
+            // a line break escaped twice in the tool call is not text: r29 of the local-model benchmark,
+            // contracts-rest-code-first step 1 sent the same lines 15, 10 and 16 times in three runs
+            int line = Integer.parseInt(m.group(1));
+            List<String> written = List.of(error.substring(m.end()).split("\n", -1));
+            if (written.size() == Integer.parseInt(m.group(3))) {
+                // the note names all the lines the line became, so an error left in one of them marks this repair
+                List<String> keys = written.subList(0, written.size() - 1).stream().map(LenientRepairs::keyOf).toList();
+                answer.add(new Repair(
+                        line, false, "lines " + line + "-" + (line + keys.size()) + ": the two characters \\n after the "
+                                     + (keys.size() == 1
+                                             ? "value of " + keys.get(0) + " written as a line break"
+                                             : "values of " + String.join(", ", keys.subList(0, keys.size() - 1))
+                                               + " and " + keys.get(keys.size() - 1) + " written as line breaks"),
+                        ls -> splitLine(ls, line - 1, written)));
+            }
+            return answer;
+        }
         if (error.contains("lines up with") && error.startsWith("Line ")) {
             int line = leadingLine(error);
             Matcher o = OPTION_AT_EIP.matcher(error);
@@ -181,6 +243,11 @@ final class LenientRepairs {
                     line, false, "line " + line + ": " + key + ": the value in the case of the enumeration",
                     ls -> enumCase(ls, line - 1, key, choices)));
         } else if ((m = LIST_FOR_MAP.matcher(error)).find()) {
+            if (error.contains("A second condition is another item of when:")) {
+                // the items are conditions with their steps, not steps: under steps: they are still wrong (r27l-4
+                // connect-http-client step 3, refused 19 times in a row with the repair said to need no change)
+                return answer;
+            }
             int line = Integer.parseInt(m.group(1));
             String key = m.group(2);
             answer.add(new Repair(
@@ -547,6 +614,86 @@ final class LenientRepairs {
         }
         lines.set(index, l.substring(0, at + 2) + "\"" + braces + "\"" + l.substring(at + 2 + braces.length()));
         return true;
+    }
+
+    /**
+     * The lines the validator says to write in place of the lines it names, when they are those lines, moved or with
+     * another indentation: the same lines without their indentation, in another order at most.
+     */
+    private static boolean replaceLines(List<String> lines, int from, int to, List<String> written) {
+        if (from < 0 || to > lines.size() || from >= to || written.size() != to - from) {
+            return false;
+        }
+        List<String> before = lines.subList(from, to).stream().map(String::strip).sorted().toList();
+        List<String> after = written.stream().map(String::strip).sorted().toList();
+        if (!before.equals(after)) {
+            return false;
+        }
+        for (int i = 0; i < written.size(); i++) {
+            lines.set(from + i, written.get(i));
+        }
+        return true;
+    }
+
+    /** The key a line declares, as the validator names it: - to of - to: "direct:a". */
+    private static String keyOf(String line) {
+        String stripped = line.strip();
+        int colon = stripped.indexOf(':');
+        return colon > 0 ? stripped.substring(0, colon) : "the value";
+    }
+
+    /**
+     * The lines the validator says to write in place of a line with the two characters \n of a line break escaped
+     * twice, when they are that line with each \n turned into a line break, and each line after the first starts in a
+     * column the lines above have for it: a key of the mapping of the line above or of one that holds it, an item of
+     * the list of the line above or of one that holds it. Text after a \n goes nowhere else, and is not repaired.
+     */
+    private static boolean splitLine(List<String> lines, int index, List<String> written) {
+        if (!valid(lines, index) || written.size() < 2) {
+            return false;
+        }
+        StringBuilder same = new StringBuilder(Pattern.quote(written.get(0)));
+        for (String part : written.subList(1, written.size())) {
+            same.append("[ \\t]*\\\\n").append(Pattern.quote(part));
+        }
+        if (!lines.get(index).matches(same + "[ \\t]*")) {
+            return false;
+        }
+        List<String> split = new ArrayList<>(lines);
+        split.remove(index);
+        split.addAll(index, written);
+        for (int i = 1; i < written.size(); i++) {
+            String part = written.get(i);
+            if (!openColumn(split, index + i, indent(part), part.strip().startsWith("- "))) {
+                return false;
+            }
+        }
+        lines.clear();
+        lines.addAll(split);
+        return true;
+    }
+
+    /**
+     * Whether a key (or a list item) can start in the column on the line at index: the column of the key of the line
+     * above or of a mapping that holds it (of the - of the line above or of a list item that holds it).
+     */
+    private static boolean openColumn(List<String> lines, int index, int column, boolean item) {
+        int limit = Integer.MAX_VALUE;
+        for (int j = index - 1; j >= 0 && limit > 0; j--) {
+            String l = lines.get(j);
+            String s = l.strip();
+            int i = indent(l);
+            if (s.isEmpty() || s.startsWith("#") || i >= limit) {
+                continue;
+            }
+            boolean dash = s.startsWith("- ");
+            int key = dash ? i + 1 + indent(s.substring(1)) : i;
+            if (item ? dash && i == column : key == column) {
+                return true;
+            }
+            limit = i;
+        }
+        return false;
     }
 
     /** A list item or a key one column off, moved with its lines to the column the validator names. */

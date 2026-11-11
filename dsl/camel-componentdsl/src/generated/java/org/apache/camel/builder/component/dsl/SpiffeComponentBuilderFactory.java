@@ -193,9 +193,9 @@ public interface SpiffeComponentBuilderFactory {
         }
     
         /**
-         * The address of the SPIFFE Workload API endpoint (for example {code
-         * unix:///tmp/agent.sock} or {code tcp://127.0.0.1:8082}). When not
-         * set, the SPIFFE_ENDPOINT_SOCKET environment variable is used.
+         * The address of the SPIFFE Workload API endpoint (for example
+         * unix:///tmp/agent.sock or tcp://127.0.0.1:8082). When not set, the
+         * SPIFFE_ENDPOINT_SOCKET environment variable is used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

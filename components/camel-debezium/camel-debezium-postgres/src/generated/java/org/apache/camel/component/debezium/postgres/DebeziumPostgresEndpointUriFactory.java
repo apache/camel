@@ -24,7 +24,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(134);
+        Set<String> props = new HashSet<>(146);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -36,7 +36,9 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("customMetricTags");
         props.add("customSanitizePattern");
         props.add("databaseDbname");
+        props.add("databaseExcludeList");
         props.add("databaseHostname");
+        props.add("databaseIncludeList");
         props.add("databaseInitialStatements");
         props.add("databasePassword");
         props.add("databasePort");
@@ -52,11 +54,13 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("datatypePropagateSourceType");
         props.add("decimalHandlingMode");
         props.add("errorsMaxRetries");
+        props.add("eventConvertingFailureHandlingMode");
         props.add("eventProcessingFailureHandlingMode");
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("executorShutdownTimeoutMs");
         props.add("extendedHeadersEnabled");
+        props.add("fieldNameAdjustmentMode");
         props.add("guardrailCollectionsLimitAction");
         props.add("guardrailCollectionsMax");
         props.add("heartbeatActionQuery");
@@ -65,6 +69,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("hstoreHandlingMode");
         props.add("includeSchemaComments");
         props.add("includeUnknownDatatypes");
+        props.add("incrementalSnapshotAllowSchemaChanges");
         props.add("incrementalSnapshotChunkSize");
         props.add("incrementalSnapshotWatermarkingStrategy");
         props.add("internalKeyConverter");
@@ -84,6 +89,10 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("messagePrefixIncludeList");
         props.add("name");
         props.add("notificationEnabledChannels");
+        props.add("notificationHttpAllowPrivateNetworks");
+        props.add("notificationHttpRetries");
+        props.add("notificationHttpTimeoutMs");
+        props.add("notificationHttpUrl");
         props.add("notificationSinkTopicName");
         props.add("offsetCommitPolicy");
         props.add("offsetCommitTimeoutMs");
@@ -116,8 +125,11 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("schemaNameAdjustmentMode");
         props.add("schemaRefreshMode");
         props.add("signalDataCollection");
+        props.add("signalEmitFailureBackoffMs");
+        props.add("signalEmitFailureMaxRetries");
         props.add("signalEnabledChannels");
         props.add("signalPollIntervalMs");
+        props.add("skipMessagesWithoutChange");
         props.add("skippedOperations");
         props.add("slotDropOnStop");
         props.add("slotFailover");

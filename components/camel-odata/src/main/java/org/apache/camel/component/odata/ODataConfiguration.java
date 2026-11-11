@@ -23,7 +23,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class ODataConfiguration {
 
-    @UriParam(label = "producer", description = "The OData operation to perform")
+    @UriParam(label = "producer", defaultValue = "READ_SET", description = "The OData operation to perform")
     private ODataOperation operation = ODataOperation.READ_SET;
 
     @UriParam(label = "producer", description = "The OData $filter query parameter")

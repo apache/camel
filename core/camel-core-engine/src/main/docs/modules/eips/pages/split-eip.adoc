@@ -1263,6 +1263,9 @@ In this example, if 50% or more of the processed items have failed, the splitter
 Both `maxFailedRecords` and `errorThreshold` can be combined. The splitter stops when either
 threshold is exceeded.
 
+When the splitter stops because a threshold is reached, the exchange keeps the original input message
+and has the exception set, the same as with `stopOnException`.
+
 IMPORTANT: The `stopOnException` option is mutually exclusive with `maxFailedRecords` and
 `errorThreshold`. You cannot use `stopOnException` together with either of these options.
 
@@ -1430,7 +1433,8 @@ NOTE: The `watermarkExpression` option uses the Simple language for expression e
 
 NOTE: The watermark is only updated when the split completes successfully. If the split is aborted
 (e.g., due to exceeding `maxFailedRecords`), the watermark is not updated, which allows the
-failed batch to be retried.
+failed batch to be retried. The same applies when the `watermarkExpression` fails, or when the resume
+strategy fails to store the watermark: the split fails with that exception, and the items are processed again.
 
 IMPORTANT: Watermark tracking assumes sequential route invocations (e.g., batch jobs triggered by
 a `timer` or `scheduler`). If multiple exchanges hit the same route concurrently, they will read
@@ -1677,6 +1681,11 @@ If an error occurred it will set the exception on the `Exchange` and mark it for
 The error handler will yet again kick in, as the `Exchange` has been marked as rollback.
 No redelivery attempts are performed (as it was marked for rollback) and the `Exchange`
 will be moved into the dead letter queue.
+
+With a shared unit of work, the on completions of the message (such as the consumer committing or rolling back the
+file) run when the Splitter is done, with its outcome. A split message sent to an asynchronous endpoint such as `seda`
+hands over only the on completions that the split message added itself; use `waitForTaskToComplete=Always` on the
+endpoint to make the split wait for it.
 
 == See Also
 

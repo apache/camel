@@ -76,6 +76,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private RouteControllerConfigurationProperties routeControllerConfigurationProperties;
     private ErrorRegistryConfigurationProperties errorRegistryConfigurationProperties;
     private AiObservabilityConfigurationProperties aiObservabilityConfigurationProperties;
+    private ChaosConfigurationProperties chaosConfigurationProperties;
+    private SanitizerConfigurationProperties sanitizerConfigurationProperties;
 
     @Override
     public void close() {
@@ -162,6 +164,14 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (aiObservabilityConfigurationProperties != null) {
             aiObservabilityConfigurationProperties.close();
             aiObservabilityConfigurationProperties = null;
+        }
+        if (chaosConfigurationProperties != null) {
+            chaosConfigurationProperties.close();
+            chaosConfigurationProperties = null;
+        }
+        if (sanitizerConfigurationProperties != null) {
+            sanitizerConfigurationProperties.close();
+            sanitizerConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -420,6 +430,48 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * To configure camel-chaos (faults turned on in a running application during development).
+     *
+     * @since 4.24
+     */
+    public ChaosConfigurationProperties chaosConfig() {
+        if (chaosConfigurationProperties == null) {
+            chaosConfigurationProperties = new ChaosConfigurationProperties(this);
+        }
+        return chaosConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any camel-chaos configuration specified.
+     *
+     * @since 4.24
+     */
+    public boolean hasChaosConfiguration() {
+        return chaosConfigurationProperties != null;
+    }
+
+    /**
+     * To configure camel-sanitizer (checks of the contract of AsyncProcessor during development and tests).
+     *
+     * @since 4.24
+     */
+    public SanitizerConfigurationProperties sanitizerConfig() {
+        if (sanitizerConfigurationProperties == null) {
+            sanitizerConfigurationProperties = new SanitizerConfigurationProperties(this);
+        }
+        return sanitizerConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any camel-sanitizer configuration specified.
+     *
+     * @since 4.24
+     */
+    public boolean hasSanitizerConfiguration() {
+        return sanitizerConfigurationProperties != null;
+    }
+
+    /**
      * To configure Route Controller.
      */
     public RouteControllerConfigurationProperties routeControllerConfig() {
@@ -585,7 +637,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason
+     * Whether auto configuration should fail fast when configuring one or more properties fails for whatever reason
      * such as a invalid property name, etc.
      * <p/>
      * This option is default enabled.
@@ -903,7 +955,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason
+     * Whether auto configuration should fail fast when configuring one or more properties fails for whatever reason
      * such as a invalid property name, etc.
      * <p/>
      * This option is default enabled.

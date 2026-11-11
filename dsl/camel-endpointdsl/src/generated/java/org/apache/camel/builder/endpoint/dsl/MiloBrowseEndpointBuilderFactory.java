@@ -276,7 +276,7 @@ public interface MiloBrowseEndpointBuilderFactory {
         /**
          * Whether to browse recursively into sub-types, ignores includeSubTypes
          * setting as it's implied to be set to true. Default value notice:
-         * Whether to recursively browse sub-types: truefalse.
+         * Whether to recursively browse sub-types: true|false.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -293,7 +293,7 @@ public interface MiloBrowseEndpointBuilderFactory {
         /**
          * Whether to browse recursively into sub-types, ignores includeSubTypes
          * setting as it's implied to be set to true. Default value notice:
-         * Whether to recursively browse sub-types: truefalse.
+         * Whether to recursively browse sub-types: true|false.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -760,7 +760,7 @@ public interface MiloBrowseEndpointBuilderFactory {
         /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
-         * characters (such as {code }, {code /}, {code }, {code &amp;}).
+         * characters (such as ?, /, , &amp;).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -837,7 +837,7 @@ public interface MiloBrowseEndpointBuilderFactory {
         /**
          * The username for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the username contains special
-         * characters (such as {code }, {code /}, {code }, {code &amp;}).
+         * characters (such as ?, /, , &amp;).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

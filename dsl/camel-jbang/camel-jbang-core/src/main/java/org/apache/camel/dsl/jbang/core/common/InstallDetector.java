@@ -22,12 +22,18 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import org.apache.camel.util.FileUtil;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Detects where the currently running Camel CLI launcher lives, and discovers other Camel CLI installations on the same
@@ -51,7 +57,69 @@ public final class InstallDetector {
     public record InstallInfo(Path location, InstallMethod method) {
     }
 
+    // not FileUtil.isWindows(): FileUtil has a logger, and the self-update check runs this before each command of the
+    // launcher, where creating a logger would configure log4j
+    private static final boolean IS_WINDOWS
+            = System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows");
+
+    /**
+     * A nightly build as the Apache snapshot repository names it, which the web installer uses as its directory name:
+     * {@code X.Y.Z-YYYYMMDD.HHMMSS-N}. The groups are the version ({@code X.Y.Z}), the UTC timestamp of the deploy and
+     * its build number.
+     */
+    public static final Pattern NIGHTLY_BUILD
+            = Pattern.compile("([0-9]+\\.[0-9]+\\.[0-9]+)-([0-9]{8}\\.[0-9]{6})-([0-9]{1,9})");
+    private static final DateTimeFormatter NIGHTLY_TIMESTAMP = DateTimeFormatter.ofPattern("yyyyMMdd.HHmmss");
+
     private InstallDetector() {
+    }
+
+    /**
+     * The nightly build the running launcher was installed as by the web installer ({@code camel self-update --version
+     * SNAPSHOT}), such as {@code 4.24.0-20261108.143653-24}: the name of its directory under
+     * {@link #webInstallerVersionsRoot()}, when that is a nightly build.
+     */
+    public static Optional<String> runningNightlyBuild() {
+        String jarPath = System.getProperty("camel.launcher.jar");
+        if (jarPath == null || jarPath.isBlank()) {
+            return Optional.empty();
+        }
+        return nightlyBuildOf(Paths.get(jarPath), webInstallerVersionsRoot());
+    }
+
+    /**
+     * The nightly build a launcher JAR belongs to: the name of its directory under the web installer's
+     * {@code versionsRoot}, when that is a nightly build ({@code X.Y.Z-YYYYMMDD.HHMMSS-N}).
+     */
+    public static Optional<String> nightlyBuildOf(Path launcherJar, Path versionsRoot) {
+        if (launcherJar == null) {
+            return Optional.empty();
+        }
+        Path jar = launcherJar.toAbsolutePath().normalize();
+        Path root = versionsRoot.toAbsolutePath().normalize();
+        if (!jar.startsWith(root) || jar.getNameCount() <= root.getNameCount()) {
+            return Optional.empty();
+        }
+        String dir = jar.getName(root.getNameCount()).toString();
+        return isNightlyBuild(dir) ? Optional.of(dir) : Optional.empty();
+    }
+
+    /** Whether {@code value} is a nightly build, {@code X.Y.Z-YYYYMMDD.HHMMSS-N}. */
+    public static boolean isNightlyBuild(String value) {
+        return value != null && NIGHTLY_BUILD.matcher(value).matches();
+    }
+
+    /** When a nightly build was deployed to the snapshot repository (its timestamp is UTC). */
+    public static Optional<ZonedDateTime> nightlyBuildTime(String build) {
+        Matcher m = build != null ? NIGHTLY_BUILD.matcher(build) : null;
+        if (m == null || !m.matches()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(LocalDateTime.parse(m.group(2), NIGHTLY_TIMESTAMP).atZone(ZoneOffset.UTC));
+        } catch (DateTimeParseException e) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -102,7 +170,7 @@ public final class InstallDetector {
      * {@code %LOCALAPPDATA%\Apache Camel\cli\versions} on Windows.
      */
     public static Path webInstallerVersionsRoot() {
-        if (FileUtil.isWindows()) {
+        if (IS_WINDOWS) {
             return Paths.get(System.getenv("LOCALAPPDATA"), "Apache Camel", "cli", "versions");
         }
         String xdgDataHome = System.getenv("XDG_DATA_HOME");
@@ -160,7 +228,7 @@ public final class InstallDetector {
     public static List<InstallInfo> scanKnownLocations() {
         List<InstallInfo> found = new ArrayList<>();
         scanWebInstaller(found);
-        if (FileUtil.isWindows()) {
+        if (IS_WINDOWS) {
             scanChocolatey(found);
             scanScoopWindows(found);
         } else {
@@ -173,7 +241,7 @@ public final class InstallDetector {
 
     private static void scanWebInstaller(List<InstallInfo> found) {
         Path root = webInstallerVersionsRoot();
-        listVersionDirs(root, dir -> Files.exists(dir.resolve("bin").resolve(FileUtil.isWindows() ? "camel.bat" : "camel.sh")))
+        listVersionDirs(root, dir -> Files.exists(dir.resolve("bin").resolve(IS_WINDOWS ? "camel.bat" : "camel.sh")))
                 .forEach(dir -> found.add(new InstallInfo(dir, InstallMethod.WEB_INSTALLER)));
     }
 
@@ -229,7 +297,8 @@ public final class InstallDetector {
     }
 
     /**
-     * Walks {@code PATH} the way a shell would and returns the first {@code camel} executable found.
+     * Walks {@code PATH} the way a shell would and returns the first {@code camel} executable found, with its symbolic
+     * links followed (the web installer puts a symlink to {@code versions/<version>/bin/camel.sh} on {@code PATH}).
      */
     public static Optional<Path> resolveActiveOnPath() {
         String path = System.getenv("PATH");
@@ -240,16 +309,33 @@ public final class InstallDetector {
         if (path == null || path.isBlank()) {
             return Optional.empty();
         }
-        String exeName = FileUtil.isWindows() ? "camel.cmd" : "camel";
+        String exeName = IS_WINDOWS ? "camel.cmd" : "camel";
         for (String dir : path.split(File.pathSeparator)) {
             if (dir.isBlank()) {
                 continue;
             }
             Path candidate = Paths.get(dir, exeName);
             if (Files.exists(candidate)) {
-                return Optional.of(candidate);
+                return Optional.of(followLinks(candidate));
             }
         }
         return Optional.empty();
+    }
+
+    // Follows the symbolic links of the file itself (a chain of them, at most 16), so the active install is the
+    // version directory the link points into. The parent directories are not resolved (unlike toRealPath, which turns
+    // macOS /var into /private/var), as the scanned install locations are not resolved either.
+    static Path followLinks(Path path) {
+        Path current = path;
+        for (int i = 0; i < 16 && Files.isSymbolicLink(current); i++) {
+            try {
+                Path target = Files.readSymbolicLink(current);
+                Path parent = current.toAbsolutePath().getParent();
+                current = (parent != null ? parent.resolve(target) : target).normalize();
+            } catch (IOException | UnsupportedOperationException | SecurityException e) {
+                break;
+            }
+        }
+        return current;
     }
 }

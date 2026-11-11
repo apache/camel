@@ -30,7 +30,8 @@ public abstract class AzureStorageInfraService implements AzureInfraService, Con
     private final AzuriteContainer container;
 
     protected AzureStorageInfraService() {
-        this(LocalPropertyResolver.getProperty(AzureStorageInfraService.class, AzureProperties.AZURE_CONTAINER));
+        this(LocalPropertyResolver.getProperty(AzureStorageInfraService.class,
+                AzureProperties.AZURE_STORAGE_BLOB_CONTAINER));
     }
 
     protected AzureStorageInfraService(String imageName) {

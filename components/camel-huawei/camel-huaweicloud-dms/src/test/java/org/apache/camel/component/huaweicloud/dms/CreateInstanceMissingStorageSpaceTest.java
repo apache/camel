@@ -82,7 +82,7 @@ public class CreateInstanceMissingStorageSpaceTest extends CamelTestSupport {
     public void missingStorageSpaceIsRejected() {
         availableZones.add(testConfiguration.getProperty("availableZone"));
 
-        Exchange result = template.request("direct:operation", e -> e.getIn().setBody("sample_body"));
+        Exchange result = template.request("direct:operation", e -> e.getIn().setBody(null));
 
         Throwable cause = result.getException();
         assertNotNull(cause, "a create with no storageSpace was expected to fail");

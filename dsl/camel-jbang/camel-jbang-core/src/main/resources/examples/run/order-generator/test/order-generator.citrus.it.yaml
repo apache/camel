@@ -1,0 +1,24 @@
+name: order-generator-test
+description: The order generator logs a new order with a number and a JSON body
+actions:
+  - camel:
+      cli:
+        run:
+          integration:
+            name: "order-generator"
+            file: "../order-generator.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "beans.yaml"
+            - "OrderNumber.java"
+  - camel:
+      cli:
+        verify:
+          integration: "order-generator"
+          logMessage: "New order ORD-1001"
+  - camel:
+      cli:
+        verify:
+          integration: "order-generator"
+          logMessage: "\"sku\": \"CAMEL-TSHIRT\""

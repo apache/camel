@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.camunda.processor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.camunda.CamundaEndpoint;
@@ -34,16 +33,13 @@ public class MessageProcessor extends AbstractBaseProcessor {
     public void process(Exchange exchange) throws Exception {
         MessageRequest message = null;
 
-        if (exchange.getMessage().getBody() instanceof MessageRequest) {
-            message = exchange.getMessage().getBody(MessageRequest.class);
-        } else if (exchange.getMessage().getBody() instanceof String) {
-            try {
-                String bodyString = exchange.getMessage().getBody(String.class);
-                message = objectMapper.readValue(bodyString, MessageRequest.class);
-            } catch (JsonProcessingException jsonProcessingException) {
-                throw new IllegalArgumentException("Cannot convert body to MessageRequest", jsonProcessingException);
-            }
-        } else {
+        Object body = exchange.getMessage().getBody();
+        if (body instanceof MessageRequest) {
+            message = (MessageRequest) body;
+        } else if (body != null) {
+            message = readJson(exchange, MessageRequest.class, "Cannot convert body to MessageRequest");
+        }
+        if (message == null) {
             throw new CamelException("Message data missing");
         }
 
@@ -58,6 +54,7 @@ public class MessageProcessor extends AbstractBaseProcessor {
         }
 
         setBody(exchange, resultMessage);
+        failIfNotSuccess(exchange, resultMessage);
     }
 
     private MessageResponse publishMessage(MessageRequest message) {

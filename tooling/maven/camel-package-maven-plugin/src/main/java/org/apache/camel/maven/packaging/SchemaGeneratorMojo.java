@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -393,7 +394,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                         EipOptionModel o = new EipOptionModel();
                         o.setKind("exchangeProperty");
                         // SPLIT_INDEX => CamelSplitIndex
-                        String n = field.getName().toLowerCase().replace('_', '-');
+                        String n = field.getName().toLowerCase(Locale.ROOT).replace('_', '-');
                         String n2 = SchemaHelper.dashToCamelCase(n);
                         String valueName = "Camel" + Character.toUpperCase(n2.charAt(0)) + n2.substring(1);
                         o.setName(valueName);

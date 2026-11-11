@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.huaweicloud.iam;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.huaweicloud.sdk.iam.v3.IamClient;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListGroupsRequest;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListGroupsResponse;
@@ -37,6 +34,7 @@ import com.huaweicloud.sdk.iam.v3.model.UpdateUserRequest;
 import com.huaweicloud.sdk.iam.v3.model.UpdateUserRequestBody;
 import com.huaweicloud.sdk.iam.v3.model.UpdateUserResponse;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.huaweicloud.iam.constants.IAMOperations;
 import org.apache.camel.component.huaweicloud.iam.constants.IAMProperties;
 import org.apache.camel.component.huaweicloud.iam.models.ClientConfigurations;
@@ -44,12 +42,17 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.TokenStreamLocation;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.UnrecognizedPropertyException;
+import tools.jackson.databind.json.JsonMapper;
 
 public class IAMProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(IAMProducer.class);
     private IAMEndpoint endpoint;
     private IamClient iamClient;
-    private Gson gson;
+    private ObjectMapper mapper;
 
     public IAMProducer(IAMEndpoint endpoint) {
         super(endpoint);
@@ -59,7 +62,8 @@ public class IAMProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.gson = new Gson();
+        // the Jackson annotations of the SDK model give the field names of the IAM API, such as domain_id
+        this.mapper = JsonMapper.builderWithJackson2Defaults().build();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -108,7 +112,7 @@ public class IAMProducer extends DefaultProducer {
         // invoke list users method and map return object to exchange body
         KeystoneListUsersRequest request = new KeystoneListUsersRequest();
         KeystoneListUsersResponse response = iamClient.keystoneListUsers(request);
-        exchange.getMessage().setBody(gson.toJson(response.getUsers()));
+        exchange.getMessage().setBody(mapper.writeValueAsString(response.getUsers()));
     }
 
     /**
@@ -130,29 +134,34 @@ public class IAMProducer extends DefaultProducer {
         ShowUserRequest request = new ShowUserRequest()
                 .withUserId(clientConfigurations.getUserId());
         ShowUserResponse response = iamClient.showUser(request);
-        exchange.getMessage().setBody(gson.toJson(response.getUser()));
+        exchange.getMessage().setBody(mapper.writeValueAsString(response.getUser()));
     }
 
     /**
      * Perform update user operation
      *
-     * @param exchange
-     * @param clientConfigurations
+     * @param  exchange
+     * @param  clientConfigurations
+     * @throws InvalidPayloadException if the body cannot be read as text
      */
-    private void updateUser(Exchange exchange, ClientConfigurations clientConfigurations) {
-        // checking for valid exchange body containing user information. Body must be an UpdateUserOption object or a JSON string
+    private void updateUser(Exchange exchange, ClientConfigurations clientConfigurations)
+            throws InvalidPayloadException {
+        // checking for valid exchange body containing user information. Body must be an UpdateUserOption object or its
+        // JSON, as text, bytes, a stream or a file
         Object body = exchange.getMessage().getBody();
-        UpdateUserOption userOption;
+        UpdateUserOption userOption = null;
         if (body instanceof UpdateUserOption) {
             userOption = (UpdateUserOption) body;
-        } else if (body instanceof String) {
-            String strBody = (String) body;
+        } else if (body != null) {
+            String strBody = exchange.getMessage().getMandatoryBody(String.class);
             try {
-                userOption = new ObjectMapper().readValue(strBody, UpdateUserOption.class);
-            } catch (JsonProcessingException e) {
-                throw new IllegalArgumentException("String request body must be a valid JSON");
+                userOption = mapper.readValue(strBody, UpdateUserOption.class);
+            } catch (JacksonException e) {
+                throw new IllegalArgumentException(
+                        "Request body must be a valid JSON representation of an UpdateUserOption" + jsonErrorDetail(e));
             }
-        } else {
+        }
+        if (userOption == null) {
             throw new IllegalArgumentException(
                     "Exchange body is mandatory and should be a valid JSON string or UpdateUserOption object");
         }
@@ -172,7 +181,7 @@ public class IAMProducer extends DefaultProducer {
                 .withBody(requestBody)
                 .withUserId(clientConfigurations.getUserId());
         UpdateUserResponse response = iamClient.updateUser(request);
-        exchange.getMessage().setBody(gson.toJson(response.getUser()));
+        exchange.getMessage().setBody(mapper.writeValueAsString(response.getUser()));
     }
 
     /**
@@ -184,7 +193,7 @@ public class IAMProducer extends DefaultProducer {
         // invoke list groups method and map return object to exchange body
         KeystoneListGroupsRequest request = new KeystoneListGroupsRequest();
         KeystoneListGroupsResponse response = iamClient.keystoneListGroups(request);
-        exchange.getMessage().setBody(gson.toJson(response.getGroups()));
+        exchange.getMessage().setBody(mapper.writeValueAsString(response.getGroups()));
     }
 
     /**
@@ -206,29 +215,35 @@ public class IAMProducer extends DefaultProducer {
         KeystoneListUsersForGroupByAdminRequest request = new KeystoneListUsersForGroupByAdminRequest()
                 .withGroupId(clientConfigurations.getGroupId());
         KeystoneListUsersForGroupByAdminResponse response = iamClient.keystoneListUsersForGroupByAdmin(request);
-        exchange.getMessage().setBody(gson.toJson(response.getUsers()));
+        exchange.getMessage().setBody(mapper.writeValueAsString(response.getUsers()));
     }
 
     /**
      * Perform update group operation
      *
-     * @param exchange
-     * @param clientConfigurations
+     * @param  exchange
+     * @param  clientConfigurations
+     * @throws InvalidPayloadException if the body cannot be read as text
      */
-    private void updateGroup(Exchange exchange, ClientConfigurations clientConfigurations) {
-        // checking for valid exchange body containing group information. Body must be an KeystoneUpdateGroupOption object or a JSON string
+    private void updateGroup(Exchange exchange, ClientConfigurations clientConfigurations)
+            throws InvalidPayloadException {
+        // checking for valid exchange body containing group information. Body must be a KeystoneUpdateGroupOption object
+        // or its JSON, as text, bytes, a stream or a file
         Object body = exchange.getMessage().getBody();
-        KeystoneUpdateGroupOption groupOption;
+        KeystoneUpdateGroupOption groupOption = null;
         if (body instanceof KeystoneUpdateGroupOption) {
             groupOption = (KeystoneUpdateGroupOption) body;
-        } else if (body instanceof String) {
-            String strBody = (String) body;
+        } else if (body != null) {
+            String strBody = exchange.getMessage().getMandatoryBody(String.class);
             try {
-                groupOption = new ObjectMapper().readValue(strBody, KeystoneUpdateGroupOption.class);
-            } catch (JsonProcessingException e) {
-                throw new IllegalArgumentException("String request body must be a valid JSON with the proper keys");
+                groupOption = mapper.readValue(strBody, KeystoneUpdateGroupOption.class);
+            } catch (JacksonException e) {
+                throw new IllegalArgumentException(
+                        "Request body must be a valid JSON representation of a KeystoneUpdateGroupOption"
+                                                   + jsonErrorDetail(e));
             }
-        } else {
+        }
+        if (groupOption == null) {
             throw new IllegalArgumentException(
                     "Exchange body is mandatory and should be a valid JSON string or KeystoneUpdateGroupOption object");
         }
@@ -248,7 +263,49 @@ public class IAMProducer extends DefaultProducer {
                 .withBody(requestBody)
                 .withGroupId(clientConfigurations.getGroupId());
         KeystoneUpdateGroupResponse response = iamClient.keystoneUpdateGroup(request);
-        exchange.getMessage().setBody(gson.toJson(response.getGroup()));
+        exchange.getMessage().setBody(mapper.writeValueAsString(response.getGroup()));
+    }
+
+    /**
+     * Where the JSON of a request body is wrong, such as (unknown field domainId at line 1, column 14) or (wrong value
+     * for field enabled at line 1, column 30). It names the fields only: the message of Jackson can quote a value of
+     * the body, such as a password.
+     */
+    private static String jsonErrorDetail(JacksonException e) {
+        String path = fieldPath(e);
+        String detail;
+        if (e instanceof UnrecognizedPropertyException) {
+            detail = "unknown field " + path;
+        } else if (!path.isEmpty()) {
+            detail = "wrong value for field " + path;
+        } else {
+            detail = "error";
+        }
+        TokenStreamLocation location = e.getLocation();
+        if (location != null && location.getLineNr() > 0) {
+            detail += " at line " + location.getLineNr() + ", column " + location.getColumnNr();
+        } else if (path.isEmpty()) {
+            return "";
+        }
+        return " (" + detail + ")";
+    }
+
+    /**
+     * The field names and the array indexes of the path of a mapping error.
+     */
+    private static String fieldPath(JacksonException e) {
+        StringBuilder path = new StringBuilder();
+        for (JacksonException.Reference reference : e.getPath()) {
+            if (reference.getPropertyName() != null) {
+                if (!path.isEmpty()) {
+                    path.append('.');
+                }
+                path.append(reference.getPropertyName());
+            } else if (reference.getIndex() >= 0) {
+                path.append('[').append(reference.getIndex()).append(']');
+            }
+        }
+        return path.toString();
     }
 
     /**

@@ -18,8 +18,6 @@ package org.apache.camel.component.camunda;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.api.worker.JobClient;
 import io.camunda.client.api.worker.JobHandler;
@@ -33,6 +31,9 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class CamundaConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(CamundaConsumer.class);
@@ -41,7 +42,7 @@ public class CamundaConsumer extends DefaultConsumer {
 
     private JobWorker jobWorker;
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
     public CamundaConsumer(CamundaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -104,8 +105,8 @@ public class CamundaConsumer extends DefaultConsumer {
             if (getEndpoint().isFormatJSON()) {
                 try {
                     exchange.getMessage().setBody(objectMapper.writeValueAsString(message));
-                } catch (JsonProcessingException jsonProcessingException) {
-                    throw new IllegalArgumentException("Cannot convert result", jsonProcessingException);
+                } catch (JacksonException e) {
+                    throw new IllegalArgumentException("Cannot convert result", e);
                 }
             } else {
                 exchange.getMessage().setBody(message);

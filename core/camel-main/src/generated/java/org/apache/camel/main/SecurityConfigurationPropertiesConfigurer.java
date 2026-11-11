@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -34,7 +35,7 @@ public class SecurityConfigurationPropertiesConfigurer extends org.apache.camel.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.SecurityConfigurationProperties target = (org.apache.camel.main.SecurityConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedproperties":
         case "allowedProperties": target.setAllowedProperties(property(camelContext, java.lang.String.class, value)); return true;
         case "insecuredevpolicy":
@@ -57,7 +58,7 @@ public class SecurityConfigurationPropertiesConfigurer extends org.apache.camel.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedproperties":
         case "allowedProperties": return java.lang.String.class;
         case "insecuredevpolicy":
@@ -76,7 +77,7 @@ public class SecurityConfigurationPropertiesConfigurer extends org.apache.camel.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.SecurityConfigurationProperties target = (org.apache.camel.main.SecurityConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedproperties":
         case "allowedProperties": return target.getAllowedProperties();
         case "insecuredevpolicy":

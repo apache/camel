@@ -762,15 +762,15 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jackson ObjectMapper to use when serializing/deserializing
          * Salesforce objects.
          * 
-         * The option is a:
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * The option is a: <code>tools.jackson.databind.ObjectMapper</code>
+         * type.
          * 
          * Group: common
          * 
          * @param objectMapper the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointConsumerBuilder objectMapper(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+        default SalesforceEndpointConsumerBuilder objectMapper(tools.jackson.databind.ObjectMapper objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -779,7 +779,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option will be converted to a
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * <code>tools.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 
@@ -906,8 +906,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Use raw payload String for request and response (either JSON or XML
-         * depending on format), instead of DTOs, false by default.
+         * Use raw payload for request and response, instead of DTOs, false by
+         * default. The REST, apexCall and composite operations return the
+         * response as is, as an InputStream, and the streaming subscribe
+         * consumer gives the message as JSON text.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -922,8 +924,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Use raw payload String for request and response (either JSON or XML
-         * depending on format), instead of DTOs, false by default.
+         * Use raw payload for request and response, instead of DTOs, false by
+         * default. The REST, apexCall and composite operations return the
+         * response as is, as an InputStream, and the streaming subscribe
+         * consumer gives the message as JSON text.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2364,15 +2368,15 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jackson ObjectMapper to use when serializing/deserializing
          * Salesforce objects.
          * 
-         * The option is a:
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * The option is a: <code>tools.jackson.databind.ObjectMapper</code>
+         * type.
          * 
          * Group: common
          * 
          * @param objectMapper the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointProducerBuilder objectMapper(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+        default SalesforceEndpointProducerBuilder objectMapper(tools.jackson.databind.ObjectMapper objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -2381,7 +2385,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option will be converted to a
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * <code>tools.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 
@@ -2508,8 +2512,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Use raw payload String for request and response (either JSON or XML
-         * depending on format), instead of DTOs, false by default.
+         * Use raw payload for request and response, instead of DTOs, false by
+         * default. The REST, apexCall and composite operations return the
+         * response as is, as an InputStream, and the streaming subscribe
+         * consumer gives the message as JSON text.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2524,8 +2530,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Use raw payload String for request and response (either JSON or XML
-         * depending on format), instead of DTOs, false by default.
+         * Use raw payload for request and response, instead of DTOs, false by
+         * default. The REST, apexCall and composite operations return the
+         * response as is, as an InputStream, and the streaming subscribe
+         * consumer gives the message as JSON text.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2990,7 +2998,7 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * The portion of the endpoint URL after the domain name. E.g.,
+         * The portion of the endpoint URL after the domain name. E.g., +
          * '/services/data/v52.0/sobjects/Account/'.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -3808,15 +3816,15 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jackson ObjectMapper to use when serializing/deserializing
          * Salesforce objects.
          * 
-         * The option is a:
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * The option is a: <code>tools.jackson.databind.ObjectMapper</code>
+         * type.
          * 
          * Group: common
          * 
          * @param objectMapper the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointBuilder objectMapper(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+        default SalesforceEndpointBuilder objectMapper(tools.jackson.databind.ObjectMapper objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -3825,7 +3833,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option will be converted to a
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * <code>tools.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 
@@ -3952,8 +3960,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Use raw payload String for request and response (either JSON or XML
-         * depending on format), instead of DTOs, false by default.
+         * Use raw payload for request and response, instead of DTOs, false by
+         * default. The REST, apexCall and composite operations return the
+         * response as is, as an InputStream, and the streaming subscribe
+         * consumer gives the message as JSON text.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3968,8 +3978,10 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Use raw payload String for request and response (either JSON or XML
-         * depending on format), instead of DTOs, false by default.
+         * Use raw payload for request and response, instead of DTOs, false by
+         * default. The REST, apexCall and composite operations return the
+         * response as is, as an InputStream, and the streaming subscribe
+         * consumer gives the message as JSON text.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

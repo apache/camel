@@ -23,13 +23,13 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -103,10 +103,10 @@ class ValidateJsonTest {
         Path text = dir.resolve("notes.txt");
         Files.writeString(text, "not a route");
 
-        // nothing is left to validate, which is not found (the error document is printed by the error handler)
+        // nothing is left to validate, so file not found (the error document is printed by the error handler)
         CliException e = assertThrows(CliException.class,
                 () -> run(new YamlValidateCommand(main()), "--json", text.toString()));
-        assertThat(e.getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).startsWith("WARN: Skipping non-YAML file");
     }
 
@@ -115,7 +115,7 @@ class ValidateJsonTest {
         Path text = Files.writeString(dir.resolve("notes.txt"), "not a route");
 
         CliException e = assertThrows(CliException.class, () -> run(new YamlValidateCommand(main()), text.toString()));
-        assertThat(e.getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(e.getMessage()).isEqualTo("No YAML files to validate");
         e = assertThrows(CliException.class, () -> run(new PropertiesValidateCommand(main()), text.toString()));
         assertThat(e.getMessage()).isEqualTo("No properties files to validate");
@@ -127,7 +127,7 @@ class ValidateJsonTest {
     }
 
     private static int run(CamelCommand command, String... args) throws Exception {
-        CommandLine.populateCommand(command, args);
+        CommandLineTestHelper.parse(command, args);
         return command.doCall();
     }
 

@@ -16,16 +16,38 @@
  */
 package org.apache.camel.component.ibm.secrets.manager;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.Map;
+import java.util.UUID;
+
+import javax.xml.transform.Source;
+
+import org.w3c.dom.Node;
 
 import com.ibm.cloud.sdk.core.http.Response;
 import com.ibm.cloud.secrets_manager_sdk.secrets_manager.v2.model.*;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class IBMSecretsManagerProducer extends DefaultProducer {
+
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
+    private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {
+    };
+
     public IBMSecretsManagerProducer(final Endpoint endpoint) {
         super(endpoint);
     }
@@ -70,7 +92,7 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
                     "Secret Name must be specified. Set the header '" + IBMSecretsManagerConstants.SECRET_NAME
                                                + "' with the desired secret name.");
         }
-        String payload = exchange.getMessage().getBody(String.class);
+        String payload = arbitraryPayload(exchange.getMessage());
         if (ObjectHelper.isEmpty(payload)) {
             throw new IllegalArgumentException(
                     "Secret payload must be provided in the message body for createArbitrarySecret operation.");
@@ -97,10 +119,10 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
                     "Secret Name must be specified. Set the header '" + IBMSecretsManagerConstants.SECRET_NAME
                                                + "' with the desired secret name.");
         }
-        Map<String, Object> data = exchange.getMessage().getBody(Map.class);
+        Map<String, Object> data = kvData(exchange.getMessage());
         if (ObjectHelper.isEmpty(data)) {
             throw new IllegalArgumentException(
-                    "Secret data must be provided as a Map in the message body for createKVSecret operation.");
+                    "Secret data must be provided as a Map or a JSON object in the message body for createKVSecret operation.");
         }
         kvSecretResourceBuilder.data(data);
         kvSecretResourceBuilder.secretType(KVSecretPrototype.SecretType.KV);
@@ -125,21 +147,16 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
         }
         Response<Secret> getResp = getEndpoint().getSecretManager().getSecret(getSecretOptionsBuilder.build()).execute();
 
-        String secretType = getResp.getResult().getSecretType();
-        switch (secretType) {
-            case "arbitrary":
-                exchange.getMessage().setBody(getResp.getResult().getPayload());
-                break;
-            case "kv":
-                exchange.getMessage().setBody(getResp.getResult().getData());
-                break;
-            case "service_credentials":
-                exchange.getMessage().setBody(getResp.getResult());
-                break;
-            default:
-                throw new IllegalArgumentException(
-                        "Unsupported secret type '" + secretType
-                                                   + "'. Supported types are: arbitrary, kv, service_credentials.");
+        Secret secret = getResp.getResult();
+        String secretType = secret.getSecretType();
+        if (Secret.SecretType.ARBITRARY.equals(secretType)) {
+            exchange.getMessage().setBody(secret.getPayload());
+        } else if (Secret.SecretType.KV.equals(secretType)) {
+            exchange.getMessage().setBody(secret.getData());
+        } else {
+            // service_credentials, username_password, iam_credentials, imported_cert, public_cert, private_cert and
+            // custom_credentials: the Secret of the IBM SDK, with the fields of its type
+            exchange.getMessage().setBody(secret);
         }
     }
 
@@ -172,13 +189,17 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
                 .build();
         Response<Secret> getResp = getEndpoint().getSecretManager().getSecret(getSecretOptions).execute();
         String secretType = getResp.getResult().getSecretType();
+        if (secretType == null) {
+            throw new IllegalArgumentException(
+                    "The secret has no secret type. The updateSecret operation supports arbitrary and kv secrets.");
+        }
 
         SecretVersionPrototype secretVersionPrototype;
         switch (secretType) {
             case "arbitrary":
                 String payload = exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_PAYLOAD, String.class);
                 if (ObjectHelper.isEmpty(payload)) {
-                    payload = exchange.getMessage().getBody(String.class);
+                    payload = arbitraryPayload(exchange.getMessage());
                 }
                 if (ObjectHelper.isEmpty(payload)) {
                     throw new IllegalArgumentException("Secret payload must be specified for arbitrary secret update");
@@ -190,7 +211,7 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
             case "kv":
                 Map<String, Object> data = exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_DATA, Map.class);
                 if (ObjectHelper.isEmpty(data)) {
-                    data = exchange.getMessage().getBody(Map.class);
+                    data = kvData(exchange.getMessage());
                 }
                 if (ObjectHelper.isEmpty(data)) {
                     throw new IllegalArgumentException("Secret data must be specified for KV secret update");
@@ -200,7 +221,9 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
                 secretVersionPrototype = kvBuilder.build();
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported secret type for update: " + secretType);
+                throw new IllegalArgumentException(
+                        "Unsupported secret type for update: " + secretType
+                                                   + ". The updateSecret operation supports arbitrary and kv secrets.");
         }
 
         CreateSecretVersionOptions createSecretVersionOptions = new CreateSecretVersionOptions.Builder()
@@ -226,6 +249,60 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
         Response<SecretVersionMetadataCollection> result
                 = getEndpoint().getSecretManager().listSecretVersions(listSecretVersionsOptions).execute();
         exchange.getMessage().setBody(result.getResult());
+    }
+
+    /**
+     * The payload of an arbitrary secret. Text, bytes, a stream, a file, XML (a DOM node or a Source) or a ByteBuffer
+     * are read as text with the type converter, and a number, a boolean, a character, an enum or a UUID is its text. A
+     * Map, a List or another object is stored as JSON, rather than as its toString().
+     */
+    private static String arbitraryPayload(Message message) {
+        Object body = message.getBody();
+        if (body == null || isText(body)) {
+            return message.getBody(String.class);
+        }
+        try {
+            return MAPPER.writeValueAsString(body);
+        } catch (JacksonException e) {
+            throw new IllegalArgumentException(
+                    "The message body of type " + body.getClass().getName()
+                                               + " cannot be stored as JSON in an arbitrary secret. Convert it to text first.",
+                    e);
+        }
+    }
+
+    /**
+     * The keys and values of a kv secret: a Map (also a body that the type converter turns into a Map), or a JSON
+     * object as text, bytes, a stream or a file.
+     */
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> kvData(Message message) {
+        Map<String, Object> data = message.getBody(Map.class);
+        Object body = message.getBody();
+        if (data != null || body == null) {
+            return data;
+        }
+        String json = message.getBody(String.class);
+        if (ObjectHelper.isEmpty(json)) {
+            return null;
+        }
+        try {
+            return MAPPER.readValue(json, MAP_TYPE);
+        } catch (JacksonException e) {
+            // the cause is not kept, as the message of the JSON parser can quote the secret
+            throw new IllegalArgumentException(
+                    "Secret data must be provided as a Map or a JSON object in the message body for a kv secret,"
+                                               + " but the body of type " + body.getClass().getName()
+                                               + " is not a JSON object");
+        }
+    }
+
+    private static boolean isText(Object body) {
+        return body instanceof CharSequence || body instanceof byte[] || body instanceof InputStream
+                || body instanceof Reader || body instanceof StreamCache || body instanceof File || body instanceof Path
+                || body instanceof WrappedFile || body instanceof Node || body instanceof Source
+                || body instanceof ByteBuffer || body instanceof Number || body instanceof Boolean
+                || body instanceof Character || body instanceof Enum<?> || body instanceof UUID;
     }
 
     @Override

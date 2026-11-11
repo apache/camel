@@ -32,6 +32,7 @@ import org.apache.camel.xml.LwModelHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN;
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_CONTEXT;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
+@Isolated
 public class XmlIoDumpRouteCoverageAdviceWithTest extends ContextTestSupport {
 
     @Override

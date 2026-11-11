@@ -98,8 +98,10 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
                                      description = "The response entity: a jakarta.ws.rs.core.Response, or text, bytes, a"
                                                    + " stream, a file, or an object a JAX-RS provider writes for the"
                                                    + " Content-Type (a JAXB bean as XML); a Map or a List fails without a"
-                                                   + " provider for it. With the Default binding the request"
-                                                   + " MessageContentsList fails: set the reply body"),
+                                                   + " provider for it. With the Default binding an unchanged request"
+                                                   + " MessageContentsList replies with its single element, or no content"
+                                                   + " when empty (unless the method returns a collection); one of several"
+                                                   + " parameters fails: set the reply body"),
            producerIn = @BodyType(value = {
                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
                    Carrier.POJO },
@@ -108,8 +110,10 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
                                                                     Carrier.LIST, Carrier.TEXT, Carrier.VALUE,
                                                                     Carrier.POJO, Carrier.NULL }),
                                   description = "The request entity, written for the Content-Type header: text, bytes, a"
-                                                + " stream, a file or an object a JAX-RS provider writes; of a List only"
-                                                + " the first element is sent, and a Map fails. A GET sends no body. With"
+                                                + " stream, a file or an object a JAX-RS provider writes, such as a List as"
+                                                + " a whole (of a MessageContentsList or an Object[] only the first element"
+                                                + " is sent); a"
+                                                + " Map fails. A GET sends no body. With"
                                                 + " httpClientAPI=false: the parameters of the resource method named by the"
                                                 + " CamelCxfOperationName header, as a List or the one parameter"),
            producerOut = @BodyType(value = Carrier.POJO,
@@ -678,7 +682,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     /**
      * Set custom JAX-RS provider(s) list to the CxfRs endpoint. You can specify a string with a list of providers to
-     * lookup in the registy separated by comma.
+     * lookup in the registry separated by comma.
      */
     public void setProviders(List<?> providers) {
         this.providers.addAll(providers);

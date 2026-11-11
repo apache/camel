@@ -41,7 +41,7 @@ public class MimeTypeHelper {
      * Probes the file name to determine the mime type (such as application/xml, text/plain).
      *
      * @param  fileName the file name, such as order.xml
-     * @return          the mime type, or <tt>null</tt> if not possible to determine.
+     * @return          the mime type, or <code>null</code> if not possible to determine.
      */
     public static String probeMimeType(String fileName) {
         String answer = null;

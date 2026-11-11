@@ -24,8 +24,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -53,6 +51,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -80,7 +80,7 @@ class A2ANestedAgentTest {
             byte[] input = http.getRequestBody().readAllBytes();
             JsonNode request = input.length == 0 ? MAPPER.createObjectNode() : MAPPER.readTree(input);
             boolean rpc = request.has("method");
-            String operation = rpc ? request.path("method").asText() : http.getRequestURI().getPath();
+            String operation = rpc ? request.path("method").asString() : http.getRequestURI().getPath();
             peerOperation.set(operation);
             peerRequest.set(rpc ? request.path("params") : request);
             Message answer = Message.builder().messageId("peer-message").contextId("peer-context").taskId("peer-task")
@@ -214,8 +214,8 @@ class A2ANestedAgentTest {
         response(send("sync", "existing-outer"));
         JsonNode message = peerRequest.get().path("message");
         if (explicit) {
-            assertThat(message.path("taskId").asText()).isEqualTo("selected-peer-task");
-            assertThat(message.path("contextId").asText()).isEqualTo("selected-peer-context");
+            assertThat(message.path("taskId").asString()).isEqualTo("selected-peer-task");
+            assertThat(message.path("contextId").asString()).isEqualTo("selected-peer-context");
         } else {
             assertThat(message.hasNonNull("taskId")).isFalse();
             assertThat(message.hasNonNull("contextId")).isFalse();

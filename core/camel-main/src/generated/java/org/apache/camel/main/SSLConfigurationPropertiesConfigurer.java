@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -56,7 +57,7 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.SSLConfigurationProperties target = (org.apache.camel.main.SSLConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "certalias":
         case "certAlias": target.setCertAlias(property(camelContext, java.lang.String.class, value)); return true;
         case "ciphersuites":
@@ -122,7 +123,7 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "certalias":
         case "certAlias": return java.lang.String.class;
         case "ciphersuites":
@@ -184,7 +185,7 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.SSLConfigurationProperties target = (org.apache.camel.main.SSLConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "certalias":
         case "certAlias": return target.getCertAlias();
         case "ciphersuites":

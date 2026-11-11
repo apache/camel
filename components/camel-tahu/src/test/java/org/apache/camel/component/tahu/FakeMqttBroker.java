@@ -24,19 +24,24 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A minimal in-process MQTT 3.1.1 broker for tests: it accepts every connection and subscription, acknowledges every
- * publish and records the topics published to it. It does not route messages to subscribers.
+ * publish and records the topics and payloads published to it. It does not route messages to subscribers: a test sends
+ * a message to the subscribed clients with {@link #publish(String, byte[])}.
  */
 final class FakeMqttBroker implements AutoCloseable {
 
     private final ServerSocket serverSocket;
     private final List<Socket> sockets = new CopyOnWriteArrayList<>();
     private final List<String> publishedTopics = new CopyOnWriteArrayList<>();
+    private final List<Published> published = new CopyOnWriteArrayList<>();
+    private final List<String> subscriptions = new CopyOnWriteArrayList<>();
+    private final List<OutputStream> subscribers = new CopyOnWriteArrayList<>();
     private final AtomicInteger connects = new AtomicInteger();
     private volatile boolean running = true;
 
@@ -55,8 +60,34 @@ final class FakeMqttBroker implements AutoCloseable {
         return publishedTopics;
     }
 
+    List<Published> getPublished() {
+        return published;
+    }
+
+    List<String> getSubscriptions() {
+        return subscriptions;
+    }
+
     int getConnects() {
         return connects.get();
+    }
+
+    /**
+     * Sends a message with QoS 0 to every client that subscribed to a topic.
+     */
+    void publish(String topic, byte[] payload) throws IOException {
+        byte[] topicBytes = topic.getBytes(StandardCharsets.UTF_8);
+        byte[] body = new byte[2 + topicBytes.length + payload.length];
+        body[0] = (byte) (topicBytes.length >> 8);
+        body[1] = (byte) topicBytes.length;
+        System.arraycopy(topicBytes, 0, body, 2, topicBytes.length);
+        System.arraycopy(payload, 0, body, 2 + topicBytes.length, payload.length);
+        for (OutputStream out : subscribers) {
+            writePacket(out, 0x30, body);
+        }
+    }
+
+    record Published(String topic, byte[] payload) {
     }
 
     private void accept() {
@@ -74,9 +105,10 @@ final class FakeMqttBroker implements AutoCloseable {
     }
 
     private void handle(Socket socket) {
+        OutputStream out = null;
         try (socket) {
             DataInputStream in = new DataInputStream(socket.getInputStream());
-            OutputStream out = socket.getOutputStream();
+            out = socket.getOutputStream();
             while (running) {
                 int header = in.read();
                 if (header < 0) {
@@ -93,7 +125,10 @@ final class FakeMqttBroker implements AutoCloseable {
                     case 3 -> {
                         int qos = (header >> 1) & 3;
                         int topicLength = ((body[0] & 0xff) << 8) | (body[1] & 0xff);
-                        publishedTopics.add(new String(body, 2, topicLength, StandardCharsets.UTF_8));
+                        String topic = new String(body, 2, topicLength, StandardCharsets.UTF_8);
+                        publishedTopics.add(topic);
+                        int payloadStart = 2 + topicLength + (qos > 0 ? 2 : 0);
+                        published.add(new Published(topic, Arrays.copyOfRange(body, payloadStart, body.length)));
                         if (qos == 1) {
                             write(out, 0x40, body[2 + topicLength], body[3 + topicLength]);
                         } else if (qos == 2) {
@@ -107,6 +142,7 @@ final class FakeMqttBroker implements AutoCloseable {
                         int i = 2;
                         while (i < body.length) {
                             int length = ((body[i] & 0xff) << 8) | (body[i + 1] & 0xff);
+                            subscriptions.add(new String(body, i + 2, length, StandardCharsets.UTF_8));
                             i += 2 + length;
                             granted.write(body[i++]);
                         }
@@ -116,6 +152,9 @@ final class FakeMqttBroker implements AutoCloseable {
                         suback[1] = body[1];
                         System.arraycopy(qos, 0, suback, 2, qos.length);
                         writePacket(out, 0x90, suback);
+                        if (!subscribers.contains(out)) {
+                            subscribers.add(out);
+                        }
                     }
                     case 10 -> write(out, 0xB0, body[0], body[1]);
                     case 12 -> writePacket(out, 0xD0, new byte[0]);
@@ -131,6 +170,9 @@ final class FakeMqttBroker implements AutoCloseable {
             // the client went away
         } finally {
             sockets.remove(socket);
+            if (out != null) {
+                subscribers.remove(out);
+            }
         }
     }
 
@@ -152,7 +194,13 @@ final class FakeMqttBroker implements AutoCloseable {
 
     private static synchronized void writePacket(OutputStream out, int header, byte[] body) throws IOException {
         out.write(header);
-        out.write(body.length);
+        // the remaining length: 7 bits per byte, the high bit set when another byte follows
+        int length = body.length;
+        do {
+            int digit = length % 128;
+            length /= 128;
+            out.write(length > 0 ? digit | 128 : digit);
+        } while (length > 0);
         out.write(body);
         out.flush();
     }

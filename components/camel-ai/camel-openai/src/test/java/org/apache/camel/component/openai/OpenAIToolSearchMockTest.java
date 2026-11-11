@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.openai.models.chat.completions.ChatCompletionFunctionTool;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -36,6 +35,7 @@ import org.apache.camel.test.infra.openai.mock.RecordedRequest;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import tools.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -338,7 +338,7 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
     private static List<String> toolNames(JsonNode root) {
         List<String> names = new ArrayList<>();
         for (JsonNode tool : root.path("tools")) {
-            names.add(tool.path("function").path("name").asText());
+            names.add(tool.path("function").path("name").asString());
         }
         return names;
     }
@@ -366,7 +366,7 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
             }
             List<String> names = new ArrayList<>();
             for (JsonNode tool : root.path("tools")) {
-                names.add(tool.path("function").path("name").asText());
+                names.add(tool.path("function").path("name").asString());
             }
             turns.add(names);
         }
@@ -375,13 +375,13 @@ class OpenAIToolSearchMockTest extends CamelTestSupport {
 
     private static boolean containsUserText(JsonNode root, String prompt) {
         for (JsonNode message : root.path("messages")) {
-            if (prompt.equals(message.path("content").asText())) {
+            if (prompt.equals(message.path("content").asString(""))) {
                 return true;
             }
             JsonNode content = message.path("content");
             if (content.isArray()) {
                 for (JsonNode part : content) {
-                    if (prompt.equals(part.path("text").asText())) {
+                    if (prompt.equals(part.path("text").asString())) {
                         return true;
                     }
                 }

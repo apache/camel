@@ -22,10 +22,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
@@ -35,14 +31,18 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class A2AConsumerHttpIntegrationTest {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private static final ObjectMapper MAPPER = JsonMapper.builder()
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .build();
 
     private int port;
     private CamelContext context;
@@ -118,8 +118,8 @@ class A2AConsumerHttpIntegrationTest {
 
         assertThat(response.statusCode()).isEqualTo(200);
         JsonNode card = MAPPER.readTree(response.body());
-        assertThat(card.get("name").asText()).isEqualTo("TestAgent");
-        assertThat(card.get("version").asText()).isEqualTo("1.0.0");
+        assertThat(card.get("name").asString()).isEqualTo("TestAgent");
+        assertThat(card.get("version").asString()).isEqualTo("1.0.0");
     }
 
     @Test
@@ -140,8 +140,8 @@ class A2AConsumerHttpIntegrationTest {
         assertThat(response.statusCode()).isEqualTo(200);
         JsonNode body = MAPPER.readTree(response.body());
         assertThat(body.has("task")).isTrue();
-        assertThat(body.get("task").get("id").asText()).isNotEmpty();
-        assertThat(body.get("task").get("contextId").asText()).isNotEmpty();
+        assertThat(body.get("task").get("id").asString()).isNotEmpty();
+        assertThat(body.get("task").get("contextId").asString()).isNotEmpty();
     }
 
     @Test
@@ -165,9 +165,9 @@ class A2AConsumerHttpIntegrationTest {
 
         assertThat(response.statusCode()).isEqualTo(200);
         JsonNode task = MAPPER.readTree(response.body()).get("task");
-        assertThat(task.get("id").asText()).isNotEmpty();
-        assertThat(task.get("status").get("state").asText()).isEqualTo("TASK_STATE_COMPLETED");
-        assertThat(task.get("status").get("message").get("parts").get(0).get("text").asText()).isEqualTo("Strict Hello");
+        assertThat(task.get("id").asString()).isNotEmpty();
+        assertThat(task.get("status").get("state").asString()).isEqualTo("TASK_STATE_COMPLETED");
+        assertThat(task.get("status").get("message").get("parts").get(0).get("text").asString()).isEqualTo("Strict Hello");
     }
 
     @Test
@@ -184,12 +184,12 @@ class A2AConsumerHttpIntegrationTest {
 
         HttpResponse<String> createResp = post("/message:send",
                 "{\"message\":{\"messageId\":\"msg-get\",\"role\":\"user\",\"parts\":[{\"text\":\"Hi\"}]}}");
-        String taskId = MAPPER.readTree(createResp.body()).get("task").get("id").asText();
+        String taskId = MAPPER.readTree(createResp.body()).get("task").get("id").asString();
 
         HttpResponse<String> getResp = get("/tasks/" + taskId);
 
         assertThat(getResp.statusCode()).isEqualTo(200);
-        assertThat(MAPPER.readTree(getResp.body()).get("id").asText()).isEqualTo(taskId);
+        assertThat(MAPPER.readTree(getResp.body()).get("id").asString()).isEqualTo(taskId);
     }
 
     @Test
@@ -208,7 +208,7 @@ class A2AConsumerHttpIntegrationTest {
 
         assertThat(response.statusCode()).isEqualTo(404);
         JsonNode error = MAPPER.readTree(response.body()).get("error");
-        assertThat(error.get("details").get(0).get("reason").asText()).isEqualTo("TASK_NOT_FOUND");
+        assertThat(error.get("details").get(0).get("reason").asString()).isEqualTo("TASK_NOT_FOUND");
     }
 
     @Test
@@ -226,14 +226,14 @@ class A2AConsumerHttpIntegrationTest {
 
         HttpResponse<String> createResp = post("/message:send",
                 "{\"message\":{\"messageId\":\"msg-cancel\",\"role\":\"user\",\"parts\":[{\"text\":\"work\"}]}}");
-        String taskId = MAPPER.readTree(createResp.body()).get("task").get("id").asText();
+        String taskId = MAPPER.readTree(createResp.body()).get("task").get("id").asString();
 
         HttpResponse<String> cancelResp = post("/tasks/" + taskId + ":cancel", "");
 
         assertThat(cancelResp.statusCode()).isEqualTo(200);
         JsonNode task = MAPPER.readTree(cancelResp.body());
-        assertThat(task.get("id").asText()).isEqualTo(taskId);
-        assertThat(task.get("status").get("state").asText()).isEqualTo("TASK_STATE_CANCELED");
+        assertThat(task.get("id").asString()).isEqualTo(taskId);
+        assertThat(task.get("status").get("state").asString()).isEqualTo("TASK_STATE_CANCELED");
     }
 
     @Test
@@ -286,9 +286,9 @@ class A2AConsumerHttpIntegrationTest {
 
         assertThat(response.statusCode()).isEqualTo(200);
         JsonNode body = MAPPER.readTree(response.body());
-        assertThat(body.get("jsonrpc").asText()).isEqualTo("2.0");
-        assertThat(body.get("result").get("task").get("id").asText()).isNotEmpty();
-        assertThat(body.get("id").asText()).isEqualTo("req-1");
+        assertThat(body.get("jsonrpc").asString()).isEqualTo("2.0");
+        assertThat(body.get("result").get("task").get("id").asString()).isNotEmpty();
+        assertThat(body.get("id").asString()).isEqualTo("req-1");
     }
 
     @Test
@@ -306,7 +306,7 @@ class A2AConsumerHttpIntegrationTest {
         HttpResponse<String> response = get("/.well-known/agent-card.json");
 
         assertThat(response.statusCode()).isEqualTo(200);
-        assertThat(MAPPER.readTree(response.body()).get("name").asText()).isEqualTo("SecureAgent");
+        assertThat(MAPPER.readTree(response.body()).get("name").asString()).isEqualTo("SecureAgent");
     }
 
     @Test
@@ -323,13 +323,13 @@ class A2AConsumerHttpIntegrationTest {
 
         HttpResponse<String> createTaskResp = post("/message:send",
                 "{\"message\":{\"messageId\":\"msg-push\",\"role\":\"user\",\"parts\":[{\"text\":\"push\"}]}}");
-        String taskId = MAPPER.readTree(createTaskResp.body()).get("task").get("id").asText();
+        String taskId = MAPPER.readTree(createTaskResp.body()).get("task").get("id").asString();
 
         HttpResponse<String> createConfigResp = post(
                 "/tasks/" + taskId + "/pushNotificationConfigs",
                 "{\"url\":\"https://example.com/webhook\"}");
         assertThat(createConfigResp.statusCode()).isEqualTo(200);
-        String configId = MAPPER.readTree(createConfigResp.body()).get("id").asText();
+        String configId = MAPPER.readTree(createConfigResp.body()).get("id").asString();
         assertThat(configId).isNotEmpty();
 
         HttpResponse<String> listResp = get("/tasks/" + taskId + "/pushNotificationConfigs");
@@ -337,7 +337,7 @@ class A2AConsumerHttpIntegrationTest {
 
         HttpResponse<String> getResp = get("/tasks/" + taskId + "/pushNotificationConfigs/" + configId);
         assertThat(getResp.statusCode()).isEqualTo(200);
-        assertThat(MAPPER.readTree(getResp.body()).get("id").asText()).isEqualTo(configId);
+        assertThat(MAPPER.readTree(getResp.body()).get("id").asString()).isEqualTo(configId);
 
         HttpResponse<String> deleteResp = delete("/tasks/" + taskId + "/pushNotificationConfigs/" + configId);
         assertThat(deleteResp.statusCode()).isEqualTo(200);
@@ -363,6 +363,6 @@ class A2AConsumerHttpIntegrationTest {
 
         assertThat(response.statusCode()).isEqualTo(401);
         JsonNode error = MAPPER.readTree(response.body()).get("error");
-        assertThat(error.get("details").get(0).get("reason").asText()).isEqualTo("AUTHENTICATION");
+        assertThat(error.get("details").get(0).get("reason").asString()).isEqualTo("AUTHENTICATION");
     }
 }

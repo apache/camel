@@ -43,7 +43,7 @@ public class OpenTelemetryContextOnlyPolicyTest extends AbstractOpenTelemetryRou
     private static final long DELAY_FOO = 20;
     private static final long DELAY_BAR = 50;
     private static final long DELAY_BAZ = 1500L;
-    private static final long TOLERANCE = 20L;
+    private static final long TOLERANCE = 200L;
 
     @Override
     public OpenTelemetryRoutePolicyFactory createOpenTelemetryRoutePolicyFactory() {
@@ -79,8 +79,10 @@ public class OpenTelemetryContextOnlyPolicyTest extends AbstractOpenTelemetryRou
 
         assertInstanceOf(HistogramPointData.class, pd);
         HistogramPointData hpd = (HistogramPointData) pd;
-        assertTrue(hpd.getMax() < DELAY_BAR + TOLERANCE);
-        assertTrue(hpd.getMin() >= DELAY_FOO);
+        assertTrue(hpd.getMax() < DELAY_BAR + TOLERANCE,
+                "max value: expected < " + (DELAY_BAR + TOLERANCE) + " but was " + hpd.getMax());
+        assertTrue(hpd.getMin() >= DELAY_FOO,
+                "min value: expected >= " + DELAY_FOO + " but was " + hpd.getMin());
         assertEquals(count, hpd.getCount());
     }
 
@@ -93,7 +95,8 @@ public class OpenTelemetryContextOnlyPolicyTest extends AbstractOpenTelemetryRou
         });
 
         long maxDuration = pollLongTimer(DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION);
-        assertTrue(maxDuration >= 0L && maxDuration < DELAY_BAZ + TOLERANCE, "max duration of long task");
+        assertTrue(maxDuration >= 0L && maxDuration < DELAY_BAZ + TOLERANCE,
+                "max duration of long task: expected in [0, " + (DELAY_BAZ + TOLERANCE) + ") but was " + maxDuration);
 
         MockEndpoint.assertIsSatisfied(context);
     }

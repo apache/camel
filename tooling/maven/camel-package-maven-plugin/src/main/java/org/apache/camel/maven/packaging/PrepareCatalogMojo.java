@@ -86,6 +86,13 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final int UNUSED_LABELS_WARN = 15;
+
+    /**
+     * The Jackson 2.x artifacts whose data formats and transformers share their names with the Jackson 3.x line; the
+     * catalog documents the Jackson 3.x line.
+     */
+    private static final List<String> JACKSON2_ARTIFACTS
+            = List.of("camel-jackson", "camel-jacksonxml", "camel-jackson-avro", "camel-jackson-protobuf");
     public static final String SEPARATOR = "================================================================================";
     public static final String ADOC = ".adoc";
     public static final String SRC_GENERATED_RESOURCES = "src/generated/resources";
@@ -437,6 +444,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             Set<String> beans = executeBeans();
             executeApis();
             Set<String> consoles = executeDevConsoles();
+            executeChaosModel();
             Set<String> others = executeOthers();
             executeDocuments(components, dataformats, languages, others);
             executeDocs();
@@ -691,8 +699,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // Check duplicates
         duplicateJsonFiles = getDuplicates(jsonFiles);
 
-        // Filter out Jackson 3.x data formats
-        jsonFiles = filterJackson3Duplicates(jsonFiles);
+        // Filter out the Jackson 2.x data formats, the catalog documents the Jackson 3.x line
+        jsonFiles = filterJackson2Duplicates(jsonFiles);
 
         // Copy all descriptors
         Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> dataFormatsOutDir.resolve(p.getFileName()));
@@ -817,8 +825,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // Check duplicates
         duplicateJsonFiles = getDuplicates(jsonFiles);
 
-        // Filter out Jackson 3.x transformers
-        jsonFiles = filterJackson3Duplicates(jsonFiles);
+        // Filter out the Jackson 2.x transformers, the catalog documents the Jackson 3.x line
+        jsonFiles = filterJackson2Duplicates(jsonFiles);
 
         // Copy all descriptors
         Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> transformersOutDir.resolve(p.getFileName()));
@@ -915,6 +923,22 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printApisReport(jsonFiles, duplicateJsonFiles);
 
         return apiNames;
+    }
+
+    /**
+     * Copies the model of the chaos rules of camel-chaos into the catalog (CamelCatalog.chaosModelJSon()).
+     */
+    protected void executeChaosModel() throws Exception {
+        List<Path> models = allJsonFiles.stream()
+                .filter(p -> p.endsWith("META-INF/org/apache/camel/chaos/chaos-model.json"))
+                .toList();
+        if (models.size() != 1) {
+            getLog().warn("Expected one chaos-model.json (camel-chaos), found " + models.size());
+            return;
+        }
+        Path target = consolesOutDir.toPath().resolve("../chaos-model.json");
+        FileUtil.updateFile(target, Files.readString(models.get(0)));
+        getLog().info("Copied the chaos model of camel-chaos");
     }
 
     protected Set<String> executeDevConsoles() throws Exception {
@@ -1682,13 +1706,18 @@ public class PrepareCatalogMojo extends AbstractMojo {
     }
 
     /**
-     * Filters out Jackson 3.x data formats from the catalog - they conflict with the previous existing camel-jackson /
-     * camel-jacksonxml / camel-jackson-avro / camel-jackson-protobuf.
+     * Filters out the Jackson 2.x data formats and transformers (camel-jackson, camel-jacksonxml, camel-jackson-avro,
+     * camel-jackson-protobuf) from the catalog. They register the same names as the Jackson 3.x line (camel-jackson3,
+     * camel-jackson3xml, camel-jackson3-avro, camel-jackson3-protobuf), which is the line the catalog documents and the
+     * one that tooling (camel-jbang, export, dependency detection) resolves the names to.
      */
-    private Set<Path> filterJackson3Duplicates(Set<Path> jsonFiles) {
+    private Set<Path> filterJackson2Duplicates(Set<Path> jsonFiles) {
         return jsonFiles.stream()
                 // use forward slashes so the check also works with Windows paths
-                .filter(p -> !p.toString().replace('\\', '/').contains("/components/camel-jackson3"))
+                .filter(p -> {
+                    String path = p.toString().replace('\\', '/');
+                    return JACKSON2_ARTIFACTS.stream().noneMatch(a -> path.contains("/components/" + a + "/"));
+                })
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 

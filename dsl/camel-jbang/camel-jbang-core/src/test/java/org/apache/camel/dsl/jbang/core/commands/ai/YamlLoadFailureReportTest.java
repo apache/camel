@@ -18,13 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
-import org.apache.camel.impl.engine.SimpleCamelContext;
-import org.apache.camel.impl.event.CamelContextReloadFailureEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -91,18 +88,16 @@ class YamlLoadFailureReportTest {
     }
 
     @Test
-    void theReloadNotifierPrintsTheReportForTheFileThatFailed() throws Exception {
+    void theReportIsForTheRouteFileThatFailedToReload() throws Exception {
+        // camel run reports a reload failure in dev mode with logIfYamlLoadFailure, for the file that failed to reload
         Path route = dir.resolve("orders.camel.yaml");
         Files.writeString(route, BAD_ROUTE);
-        List<String> printed = new ArrayList<>();
-        YamlLoadFailureReport.ReloadFailureNotifier notifier = new YamlLoadFailureReport.ReloadFailureNotifier(printed::add);
-        // the event the file watcher emits: the file name is the action, the loader's exception the cause
-        CamelContextReloadFailureEvent event = new CamelContextReloadFailureEvent(
-                new SimpleCamelContext(), route.toString(),
-                new YamlDeserializationException("Error constructing YAML node id: pollEnrich: unsupported field: uri"));
-        assertThat(notifier.isEnabled(event)).isTrue();
-        notifier.notify(event);
-        assertThat(printed).hasSize(4);
-        assertThat(printed.get(2)).contains("pollEnrich");
+        YamlDeserializationException failure
+                = new YamlDeserializationException("Error constructing YAML node id: pollEnrich: unsupported field: uri");
+
+        assertThat(YamlLoadFailureReport.isYamlLoadFailure(failure)).isTrue();
+        List<String> lines = YamlLoadFailureReport.report(YamlLoadFailureReport.yamlFiles(List.of(route.toString())));
+        assertThat(lines).hasSize(4);
+        assertThat(lines.get(2)).contains("pollEnrich");
     }
 }

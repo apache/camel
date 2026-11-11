@@ -390,6 +390,24 @@ camel.vault.hashicorp.cloud = true
 camel.vault.hashicorp.namespace = namespace
 ----
 
+Instead of a token, Camel can log in with an AppRole, with the service account of a Kubernetes pod, with a JWT, such
+as a workload identity token, or with a TLS client certificate, which `camel.vault.hashicorp.authentication` chooses.
+For a Vault whose certificate is signed by a private CA, `camel.vault.hashicorp.trustStore` sets the certificates to
+trust. For example:
+
+[source,properties]
+----
+camel.vault.hashicorp.host = host
+camel.vault.hashicorp.port = port
+camel.vault.hashicorp.scheme = https
+camel.vault.hashicorp.authentication = approle
+camel.vault.hashicorp.roleId = {{env:VAULT_ROLE_ID}}
+camel.vault.hashicorp.secretId = {{env:VAULT_SECRET_ID}}
+----
+
+Camel renews the token before it expires, and logs in again when the token can no longer be renewed. The
+xref:components::hashicorp-vault-component.adoc[HashiCorp Vault component] describes each login and its options.
+
 At this point you'll be able to reference a property by using `hashicorp:` as prefix in the `{{ }}` syntax.
 Hashicorp Vault also supports <<Version Syntax,version-specific lookups>> using the `@` suffix.
 See <<Vault Usage Syntax>> for the full syntax reference.

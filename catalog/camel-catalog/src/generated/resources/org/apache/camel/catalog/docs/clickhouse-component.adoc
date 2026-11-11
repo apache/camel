@@ -60,14 +60,32 @@ The component is producer-only and supports the following operations, selected w
 | Operation | Description
 | `insert` (default) | Streams the message body into the target table using the configured `format`. Accepted body
 types are `InputStream`, `byte[]`, `String`, `java.io.File` (matched to the `format`), or a `List` of objects
-whose class has been registered on the shared `Client`. When the body is a `List` and `batchSize` is greater
-than 0, the list is split into batches of that size, each sent as a separate insert. The number of written
-rows is set on the `CamelClickHouseWrittenRows` header.
-| `query` | Runs the SQL statement contained in the message body and returns the result set (in the configured
-`format`) as a `String` body. The number of read rows is set on the `CamelClickHouseReadRows` header.
+whose class has been registered on the shared `Client` with `Client.register(Class, TableSchema)`. A `List` of
+`Map` is not supported: marshal the rows to the `format` (such as `JSONEachRow`) first. When the body is a `List`
+and `batchSize` is greater than 0, the list is split into batches of that size, each sent as a separate insert.
+An empty `List` is a 0-row insert: nothing is sent to ClickHouse.
+The number of written rows is set on the `CamelClickHouseWrittenRows` header.
+| `query` | Runs the SQL statement contained in the message body and returns the result set in the configured
+`format`: a `String` body for text formats (such as `JSONEachRow`, `CSV` or `TSV`), and a `byte[]` body for binary
+formats (such as `RowBinary`, `Native`, `Parquet`, `Arrow` or `Avro`). The `CamelClickHouseReadRows` header is set
+to the number of rows the server read to run the query, which is not the number of rows in the result.
 | `ping` | Pings the ClickHouse server and sets the boolean result on both the message body and the
 `CamelClickHousePingOk` header.
 |===
+
+== Headers that override the endpoint
+
+The `CamelClickHouseOperation` and `CamelClickHouseFormat` headers take the place of the `operation` and `format`
+options for one message. As `query` runs the message body as SQL, a message that sets `CamelClickHouseOperation` to
+`query` on an insert endpoint chooses the SQL that runs.
+
+The `CamelClickHouseDatabase` and `CamelClickHouseTable` headers are ignored unless the endpoint sets
+`allowDatabaseAndTableFromHeaders=true`. With that option, they take the place of the database and the table of the
+endpoint for one message, so the message chooses the database that an insert or a query runs in and the table that an
+insert writes to.
+
+When the messages come from an untrusted producer through a consumer that does not filter out `Camel*` headers,
+remove these headers with `removeHeaders("CamelClickHouse*")` before the `clickhouse` endpoint.
 
 == Examples
 

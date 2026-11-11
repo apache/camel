@@ -34,6 +34,8 @@ import org.apache.camel.support.PropertyBindingSupport;
 @JdkService(RestBindingJacksonXmlDataFormatFactory.FACTORY)
 public class JacksonXMLRestBindingJacksonXmlDataFormatFactory implements RestBindingJacksonXmlDataFormatFactory {
 
+    private static final String FAIL_ON_UNKNOWN_PROPERTIES = "FAIL_ON_UNKNOWN_PROPERTIES";
+
     @Override
     public void setupJacksonXml(
             CamelContext camelContext, RestConfiguration config,
@@ -63,6 +65,7 @@ public class JacksonXMLRestBindingJacksonXmlDataFormatFactory implements RestBin
 
         setAdditionalConfiguration(config, "xml.in.", builder);
         builder.bind();
+        failOnUnknownProperties(xml);
 
         //
         // OUT
@@ -81,6 +84,24 @@ public class JacksonXMLRestBindingJacksonXmlDataFormatFactory implements RestBin
 
         setAdditionalConfiguration(config, "xml.out.", outBuilder);
         outBuilder.bind();
+    }
+
+    /**
+     * Jackson 3 accepts unknown properties by default, where Jackson 2 rejects them. REST binding keeps rejecting them
+     * in request bodies, as they come from external callers, unless the feature or a mapper of your own is configured.
+     */
+    private static void failOnUnknownProperties(DataFormat dataFormat) {
+        if (dataFormat instanceof JacksonXMLDataFormat xml
+                && xml.getXmlMapper() == null
+                && !namesFailOnUnknownProperties(xml.getEnableFeatures())
+                && !namesFailOnUnknownProperties(xml.getDisableFeatures())) {
+            xml.setEnableFeatures(xml.getEnableFeatures() != null
+                    ? xml.getEnableFeatures() + "," + FAIL_ON_UNKNOWN_PROPERTIES : FAIL_ON_UNKNOWN_PROPERTIES);
+        }
+    }
+
+    private static boolean namesFailOnUnknownProperties(String features) {
+        return features != null && features.contains(FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     private static String getOutTypeName(String outType, Class<?> outTypeClass, String typeName) {

@@ -103,6 +103,15 @@ The following route reads a range of a spreadsheet; the result is a `ValueRange`
             message: "Rows: ${body.values}"
 ----
 
+The values of a spreadsheet are read and written with the `data` API, such as `data/get`, `data/update` and
+`data/append`; the `spreadsheets` API works on the spreadsheet itself, such as `spreadsheets/create` and
+`spreadsheets/get`.
+
+The consumer calls the method on every poll and sends one message with the result, such as the `ValueRange` of
+`data/get` with all the rows of the range. No method returns a list, so the `splitResult` option has no effect on
+this component: it does not give one message per row. For one message per row, use the
+xref:google-sheets-stream-component.adoc[Google Sheets Stream] component with `splitResults=true`.
+
 == ValueInputOption
 
 Many of the APIs with Google sheets require including the following header,

@@ -2,6 +2,7 @@
 package org.apache.camel.processor.errorhandler;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class RedeliveryPolicyConfigurer extends org.apache.camel.support.compone
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.errorhandler.RedeliveryPolicy target = (org.apache.camel.processor.errorhandler.RedeliveryPolicy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowredeliverywhilestopping":
         case "allowRedeliveryWhileStopping": target.setAllowRedeliveryWhileStopping(property(camelContext, boolean.class, value)); return true;
         case "asyncdelayedredelivery":
@@ -77,7 +78,7 @@ public class RedeliveryPolicyConfigurer extends org.apache.camel.support.compone
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowredeliverywhilestopping":
         case "allowRedeliveryWhileStopping": return boolean.class;
         case "asyncdelayedredelivery":
@@ -133,7 +134,7 @@ public class RedeliveryPolicyConfigurer extends org.apache.camel.support.compone
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.errorhandler.RedeliveryPolicy target = (org.apache.camel.processor.errorhandler.RedeliveryPolicy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowredeliverywhilestopping":
         case "allowRedeliveryWhileStopping": return target.isAllowRedeliveryWhileStopping();
         case "asyncdelayedredelivery":

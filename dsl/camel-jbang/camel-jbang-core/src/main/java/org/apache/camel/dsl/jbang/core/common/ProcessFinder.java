@@ -119,6 +119,55 @@ public final class ProcessFinder {
     }
 
     /**
+     * The one running Camel integration a chaos command acts on (camel cmd chaos-add, chaos-change, chaos-remove, and
+     * the chaos tools of the AI agents): the one the name or pid matches; without a name, the only one that runs, else
+     * the only one of them with chaos switched on. A rule is added to one integration (its id is known only there), so
+     * no name never means all of them.
+     *
+     * @param  nameOrPid    a name, a pattern or a pid; <tt>null</tt> or blank to pick the one integration
+     * @throws CliException (exit code 3) when the name matches no integration, or more than one; (exit code 2) without
+     *                      a name, when no integration runs, or several run and not exactly one of them has chaos
+     *                      switched on, with the list of the running integrations to pick one from
+     * @since               4.24
+     */
+    public static CamelProcess requireOneForChaos(String nameOrPid) {
+        if (nameOrPid != null && !nameOrPid.isBlank()) {
+            return requireOne(nameOrPid);
+        }
+        List<CamelProcess> running = find(null);
+        if (running.size() == 1) {
+            return running.get(0);
+        }
+        if (running.isEmpty()) {
+            throw CliException.usage("No running Camel integrations: start one with chaos switched on (camel run --chaos)");
+        }
+        List<CamelProcess> on = running.stream().filter(ProcessFinder::chaosOn).toList();
+        if (on.size() == 1) {
+            return on.get(0);
+        }
+        StringJoiner sj = new StringJoiner(", ");
+        for (CamelProcess p : running) {
+            String chaos = chaosOn(p) ? "chaos on" : "chaos off";
+            sj.add(p.name() != null && !p.name().isEmpty()
+                    ? p.name() + " (pid " + p.pid() + ", " + chaos + ")" : "pid " + p.pid() + " (" + chaos + ")");
+        }
+        throw CliException.usage(running.size() + " Camel integrations are running and "
+                                 + (on.isEmpty() ? "none has" : on.size() + " have") + " chaos switched on: " + sj
+                                 + ". Give the name or pid of one.");
+    }
+
+    /**
+     * Whether the integration has camel-chaos switched on, as its status says (the CLI connector puts the chaos console
+     * in it).
+     *
+     * @since 4.24
+     */
+    public static boolean chaosOn(CamelProcess process) {
+        return process.status() != null && process.status().get("chaos") instanceof JsonObject chaos
+                && chaos.getBooleanOrDefault("enabled", false);
+    }
+
+    /**
      * The running Camel integrations that match the name or pid, at least one.
      *
      * @throws CliException (exit code 3) when no integration matches

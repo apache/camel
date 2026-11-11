@@ -525,7 +525,8 @@ public interface PineconeVectorDbEndpointBuilderFactory {
             return "CamelPineconeCollectionCloudRegion";
         }
         /**
-         * Index Upsert Id.
+         * The id of the vector for UPSERT, UPDATE and QUERY_BY_ID. Without it,
+         * UPSERT generates a random UUID and sets this header to it.
          * 
          * The option is a: {@code String} type.
          * 
@@ -537,10 +538,11 @@ public interface PineconeVectorDbEndpointBuilderFactory {
             return "CamelPineconeIndexId";
         }
         /**
-         * Query Top K.
+         * The number of matches QUERY and QUERY_BY_ID return.
          * 
          * The option is a: {@code Integer} type.
          * 
+         * Default: 10
          * Group: producer
          * 
          * @return the name of the header {@code PineconeQueryTopK}.
@@ -563,7 +565,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
         /**
          * Query Filter.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code com.google.protobuf.Struct} type.
          * 
          * Group: producer
          * 
@@ -587,7 +589,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
         /**
          * Query Include Metadata.
          * 
-         * The option is a: {@code com.google.protobuf.Struct} type.
+         * The option is a: {@code boolean} type.
          * 
          * Group: producer
          * 
@@ -595,6 +597,21 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          */
         public String pineconeQueryIncludeMetadata() {
             return "CamelPineconeQueryIncludeMetadata";
+        }
+        /**
+         * The metadata UPSERT stores with the vector, and the fields of the
+         * metadata UPDATE sets. The pinecone:embeddings data type transformer
+         * puts the text of the embedding in its text_segment field, which the
+         * pinecone:rag data type transformer reads.
+         * 
+         * The option is a: {@code com.google.protobuf.Struct} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PineconeMetadata}.
+         */
+        public String pineconeMetadata() {
+            return "CamelPineconeMetadata";
         }
     }
     static PineconeVectorDbEndpointBuilder endpointBuilder(String componentName, String path) {

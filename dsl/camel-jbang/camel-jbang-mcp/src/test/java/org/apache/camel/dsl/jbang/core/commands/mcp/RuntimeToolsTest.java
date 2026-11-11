@@ -124,7 +124,9 @@ class RuntimeToolsTest {
         for (String name : List.of("execute_sql", "get_tool_groups", "get_http_endpoints", "http_request", "get_datasources",
                 "get_sql_trace",
                 "get_circuit_breakers", "get_metrics",
-                "get_eip_stats", "get_spans", "get_startup_steps", "get_route_analysis", "detect_config_drift")) {
+                "get_eip_stats", "get_spans", "get_startup_steps", "get_route_analysis", "detect_config_drift",
+                "chaos_list", "chaos_report", "chaos_check", "chaos_add", "chaos_change", "chaos_remove", "chaos_clear",
+                "chaos_suggest", "chaos_load")) {
             assertThat(ToolRegistry.findTool(name)).as(name).isNotNull();
         }
     }
@@ -132,7 +134,7 @@ class RuntimeToolsTest {
     @Test
     void sendRequiresEndpoint() {
         RuntimeTools tools = createTools();
-        assertThatThrownBy(() -> tools.camel_runtime_send(null, null, "body", null))
+        assertThatThrownBy(() -> tools.camel_runtime_send(null, null, "body", null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("endpoint is required");
     }

@@ -47,6 +47,15 @@
             <artifactId>sshd-sftp</artifactId>
             <version>${sshd-version}</version>
         </dependency>
+        <!-- sshd implements the post-quantum key exchanges (mlkem768x25519-sha256 and the other hybrids, and
+             sntrup761x25519-sha512) through the BouncyCastle lightweight API. Without it on the runtime classpath
+             those factories report themselves unsupported, so they never reach the proposal and the connection
+             silently falls back to a classical key exchange. -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${bouncycastle-version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>
@@ -126,11 +135,29 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>standard-integration-tests</id>
                                 <goals>
                                     <goal>integration-test</goal>
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
+                                    <excludedGroups>require-isolated-jvm</excludedGroups>
+                                    <forkCount>1</forkCount>
+                                    <reuseForks>true</reuseForks>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>default</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>isolated-integration-tests</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <groups>require-isolated-jvm</groups>
                                     <forkCount>1</forkCount>
                                     <reuseForks>false</reuseForks>
                                 </configuration>

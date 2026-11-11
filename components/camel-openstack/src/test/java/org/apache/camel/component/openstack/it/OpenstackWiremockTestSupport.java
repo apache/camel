@@ -47,4 +47,8 @@ public class OpenstackWiremockTestSupport extends CamelTestSupport {
         return server.baseUrl();
     }
 
+    protected static WireMockServer server() {
+        return server;
+    }
+
 }

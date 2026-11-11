@@ -4468,7 +4468,7 @@
           "delayPattern" : {
             "type" : "string",
             "title" : "Delay Pattern",
-            "description" : "Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10 use 30s)."
+            "description" : "Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10+ use 30s)."
           },
           "disableRedelivery" : {
             "type" : "boolean",
@@ -4668,7 +4668,7 @@
             "pattern" : {
               "type" : "string",
               "title" : "Pattern",
-              "description" : "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with ), and regular expression (all case-insensitive)."
+              "description" : "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive)."
             }
           }
         } ],
@@ -4712,7 +4712,7 @@
             "pattern" : {
               "type" : "string",
               "title" : "Pattern",
-              "description" : "Name or pattern of properties to remove. Supports exact match, wildcard (ending with ), and regular expression (all case-insensitive)."
+              "description" : "Name or pattern of properties to remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive)."
             }
           }
         } ],
@@ -8541,12 +8541,12 @@
             "disableFeatures" : {
               "type" : "string",
               "title" : "Disable Features",
-              "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma."
+              "description" : "Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma."
             },
             "enableFeatures" : {
               "type" : "string",
               "title" : "Enable Features",
-              "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma."
+              "description" : "Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma."
             },
             "id" : {
               "type" : "string",
@@ -8578,7 +8578,7 @@
             "moduleClassNames" : {
               "type" : "string",
               "title" : "Module Class Names",
-              "description" : "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma."
+              "description" : "To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma."
             },
             "moduleRefs" : {
               "type" : "string",
@@ -8598,7 +8598,7 @@
             "serializablePackages" : {
               "type" : "string",
               "title" : "Serializable Packages",
-              "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class."
+              "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12+ validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class."
             },
             "timezone" : {
               "type" : "string",
@@ -8689,7 +8689,7 @@
           "urlSafe" : {
             "type" : "boolean",
             "title" : "Url Safe",
-            "description" : "Instead of emitting and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes.",
+            "description" : "Instead of emitting + and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes.",
             "default" : false
           }
         }
@@ -9846,12 +9846,12 @@
           "disableFeatures" : {
             "type" : "string",
             "title" : "Disable Features",
-            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
+            "description" : "Set of features to disable on the Jackson ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
           },
           "enableFeatures" : {
             "type" : "string",
             "title" : "Enable Features",
-            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
+            "description" : "Set of features to enable on the Jackson ObjectMapper. The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
           },
           "enableJaxbAnnotationModule" : {
             "type" : "boolean",
@@ -9882,7 +9882,7 @@
           "moduleClassNames" : {
             "type" : "string",
             "title" : "Module Class Names",
-            "description" : "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma."
+            "description" : "To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma."
           },
           "moduleRefs" : {
             "type" : "string",
@@ -10120,12 +10120,12 @@
           "disableFeatures" : {
             "type" : "string",
             "title" : "Disable Features",
-            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
+            "description" : "Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
           },
           "enableFeatures" : {
             "type" : "string",
             "title" : "Enable Features",
-            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
+            "description" : "Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name."
           },
           "id" : {
             "type" : "string",
@@ -10157,7 +10157,7 @@
           "moduleClassNames" : {
             "type" : "string",
             "title" : "Module Class Names",
-            "description" : "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma."
+            "description" : "To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma."
           },
           "moduleRefs" : {
             "type" : "string",
@@ -10456,8 +10456,8 @@
           "symmetricKeyLength" : {
             "type" : "number",
             "title" : "Symmetric Key Length",
-            "description" : "The length (in bits) of the symmetric key.",
-            "default" : 128
+            "description" : "The length (in bits) of the symmetric key. SEED and SM4 only accept 128; GOST3412_2015 and CHACHA7539 only accept 256.",
+            "default" : 256
           }
         }
       },
@@ -10550,12 +10550,12 @@
             "disableFeatures" : {
               "type" : "string",
               "title" : "Disable Features",
-              "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma."
+              "description" : "Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma."
             },
             "enableFeatures" : {
               "type" : "string",
               "title" : "Enable Features",
-              "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated by comma."
+              "description" : "Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma."
             },
             "id" : {
               "type" : "string",
@@ -10587,7 +10587,7 @@
             "moduleClassNames" : {
               "type" : "string",
               "title" : "Module Class Names",
-              "description" : "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma."
+              "description" : "To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma."
             },
             "moduleRefs" : {
               "type" : "string",
@@ -11324,7 +11324,7 @@
           "passPhraseByte" : {
             "type" : "string",
             "title" : "Pass Phrase Byte",
-            "description" : "A byte used as passPhrase to encrypt/decrypt content.",
+            "description" : "A byte[] used as passPhrase to encrypt/decrypt content.",
             "format" : "binary"
           },
           "recipientKeyAlias" : {
@@ -14186,6 +14186,13 @@
             "description" : "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.",
             "default" : false
           },
+          "externalReferences" : {
+            "type" : "string",
+            "title" : "External References",
+            "description" : "Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows references to the classpath and the file system only, and none allows only references inside the document. A reference the option does not allow fails the start.",
+            "default" : "all",
+            "enum" : [ "all", "local", "none" ]
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -14964,7 +14971,7 @@
           "apiContextPath" : {
             "type" : "string",
             "title" : "Api Context Path",
-            "description" : "Sets a leading context-path the REST API will be using."
+            "description" : "The path, such as /api-doc, where the REST DSL serves the API documentation of the REST services, as an OpenAPI document. The API documentation is only served when this option is set. This requires camel-openapi-java on the classpath. The document is JSON by default, or YAML when the request path ends with .yaml. The path is relative to contextPath, when that option is set."
           },
           "apiContextRouteId" : {
             "type" : "string",

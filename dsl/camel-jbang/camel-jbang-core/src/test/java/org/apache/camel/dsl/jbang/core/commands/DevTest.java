@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -29,7 +29,7 @@ class DevTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldDefaultToDevModeWithSourceDir() throws Exception {
         Dev command = createDev();
-        CommandLine.populateCommand(command);
+        CommandLineTestHelper.parse(command);
 
         // before doCall, dev is not yet set
         assertFalse(command.dev);
@@ -49,7 +49,7 @@ class DevTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldNotOverrideSourceDirWhenFilesSpecified() throws Exception {
         Dev command = createDev();
-        CommandLine.populateCommand(command, "hello.yaml");
+        CommandLineTestHelper.parse(command, "hello.yaml");
 
         assertFalse(command.files.isEmpty());
 
@@ -67,7 +67,7 @@ class DevTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldRespectExplicitSourceDir() throws Exception {
         Dev command = createDev();
-        CommandLine.populateCommand(command, "--source-dir=src/main/routes");
+        CommandLineTestHelper.parse(command, "--source-dir=src/main/routes");
 
         assertTrue(command.files.isEmpty());
 

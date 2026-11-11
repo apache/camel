@@ -16,12 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.version;
 
+import java.time.format.DateTimeFormatter;
+
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.core.common.InstallDetector;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get", description = "Displays current Camel version", sortOptions = false,
@@ -49,6 +52,14 @@ public class VersionGet extends CamelCommand {
         CamelCatalog catalog = new DefaultCamelCatalog();
         String v = catalog.getCatalogVersion();
         printer().println("Camel CLI version: " + v);
+        // a nightly build has a SNAPSHOT version: the build tells which one, and when it was built
+        InstallDetector.runningNightlyBuild().ifPresent(build -> printer().println("Nightly build: " + build
+                                                                                   + InstallDetector.nightlyBuildTime(build)
+                                                                                           .map(t -> " (built " + t.format(
+                                                                                                   DateTimeFormatter.ofPattern(
+                                                                                                           "yyyy-MM-dd HH:mm:ss"))
+                                                                                                     + " UTC)")
+                                                                                           .orElse("")));
 
         CommandLineHelper.loadProperties(properties -> {
             String uv = properties.getProperty("camel-version");

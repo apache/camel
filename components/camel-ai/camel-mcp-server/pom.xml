@@ -29,7 +29,7 @@
     <artifactId>camel-mcp-server</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: AI :: MCP Server</name>
-    <description>Expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP</description>
+    <description>Expose ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP prompts</description>
 
     <properties>
         <firstVersion>4.22.0</firstVersion>
@@ -97,6 +97,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-stream</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-ollama</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -114,5 +119,44 @@
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <!--
+            Official MCP conformance profile (-Poc).
+
+            Runs OfficialMcpConformanceIT, which executes
+            `npx @modelcontextprotocol/conformance server` against the Camel Main HTTP MCP
+            server.  Node.js ≥ 18 and npm registry access are required; the npx package is
+            cached by npm after the first run.
+
+            Usage:
+                mvn verify -Poc
+                # or equivalently:
+                mvn verify -Dofficial-mcp-conformance
+
+            The profile is intentionally NOT active by default: it needs Node.js and
+            network access, neither of which is available in all CI environments.
+        -->
+        <profile>
+            <id>oc</id>
+            <properties>
+                <!-- Activate OfficialMcpConformanceIT (read by @EnabledIfSystemProperty) -->
+                <official-mcp-conformance>true</official-mcp-conformance>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <official-mcp-conformance>true</official-mcp-conformance>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

@@ -992,7 +992,7 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set binary mode. If true, message body will be sent as byte. By
+         * Set binary mode. If true, message body will be sent as byte[]. By
          * default, it is false.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1008,7 +1008,7 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set binary mode. If true, message body will be sent as byte. By
+         * Set binary mode. If true, message body will be sent as byte[]. By
          * default, it is false.
          * 
          * The option will be converted to a <code>boolean</code> type.

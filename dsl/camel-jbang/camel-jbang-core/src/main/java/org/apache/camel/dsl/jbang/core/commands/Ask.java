@@ -21,13 +21,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
-import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.json.JsonObject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -128,6 +129,13 @@ public class Ask extends CamelCommand {
     /** Below this size (billions of parameters) a model's answers about a running integration are often wrong. */
     static final double SMALL_MODEL_BILLIONS = 8;
 
+    // the tools the model does not get, such as starting a chaos exploration that camel cmd chaos-explore started
+    Set<String> hiddenTools = Set.of();
+    // the last answer of the model, such as the report of camel cmd chaos-explore, which it saves
+    String lastAnswer;
+    // the model that answered, and its API, such as qwen3.6 (ollama)
+    String usedModel;
+
     private long targetPid;
     private AskTools askTools;
     // the chat's reader, or one made on the terminal for the first call to confirm
@@ -166,6 +174,7 @@ public class Ask extends CamelCommand {
             return 1;
         }
         warnSmallModel(client.model, client.ollamaParameterBillions());
+        usedModel = client.model + " (" + client.apiType + ")";
 
         RuntimeHelper.ProcessInfo process = findProcess(nameOrPid);
         if (process != null) {
@@ -182,7 +191,8 @@ public class Ask extends CamelCommand {
                 process != null ? process.pid() : -1,
                 process != null ? process.name() : null,
                 core, core ? askTools.groupGuidance() : List.of());
-        List<LlmClient.ToolDef> toolDefs = askTools.buildToolDefinitions(core);
+        List<LlmClient.ToolDef> toolDefs = new ArrayList<>(askTools.buildToolDefinitions(core));
+        toolDefs.removeIf(t -> hiddenTools.contains(t.name()));
 
         if (question == null || question.isEmpty()) {
             return runInteractiveChat(client, process, systemPrompt, toolDefs);
@@ -291,6 +301,7 @@ public class Ask extends CamelCommand {
                     continue;
                 }
                 messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), List.of()));
+                lastAnswer = response.text();
                 printStats(totalUsage, startTime);
                 return 0;
             }

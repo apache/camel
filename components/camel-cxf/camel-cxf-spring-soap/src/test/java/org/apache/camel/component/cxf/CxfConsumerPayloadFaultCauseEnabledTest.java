@@ -29,7 +29,7 @@ import javax.xml.namespace.QName;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
@@ -38,6 +38,8 @@ import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.Fault;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -50,13 +52,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode with the exception cause returned
  */
 public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelSpringTestSupport {
+
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateCxfConsumerPayloadFaultCauseEnabledTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfConsumerPayloadFaultCauseEnabledTest.port1", PORT1.toString());
+    }
+
+    @AfterAll
+    static void releaseCxfConsumerPayloadFaultCauseEnabledTestPorts() {
+        System.clearProperty("CxfConsumerPayloadFaultCauseEnabledTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
     protected static final QName SERVICE_QNAME = new QName("http://camel.apache.org/wsdl-first", "PersonService");
-    protected final String serviceAddress = "http://localhost:" + CXFTestSupport.getPort1()
+    protected final String serviceAddress = "http://localhost:" + PORT1.getPort()
                                             + "/" + getClass().getSimpleName() + "/PersonService";
 
     @Override
     public void setupResources() {
-        CXFTestSupport.getPort1();
     }
 
     @Override

@@ -59,6 +59,9 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             @Metadata(description = "Total number of exchanges") long exchangesTotal,
             @Metadata(description = "Number of failed exchanges") long exchangesFailed,
             @Metadata(description = "Number of inflight exchanges") long exchangesInflight,
+            @Metadata(description = "Number of exchanges whose failure was handled by the error handler, such as moved to a dead letter channel") long failuresHandled,
+            @Metadata(description = "Number of redeliveries by the error handler of Camel (internal only)") long redeliveries,
+            @Metadata(description = "Number of redeliveries initiated from outside, such as by a JMS broker") long externalRedeliveries,
             @Metadata(description = "Messages per second throughput (only present when available)") String exchangesThroughput,
             @Metadata(description = "Mean processing time in milliseconds") long meanProcessingTime,
             @Metadata(description = "Max processing time in milliseconds") long maxProcessingTime,
@@ -208,6 +211,9 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             sb.append(String.format("%n        Total: %s", mp.getExchangesTotal()));
             sb.append(String.format("%n        Failed: %s", mp.getExchangesFailed()));
             sb.append(String.format("%n        Inflight: %s", mp.getExchangesInflight()));
+            sb.append(String.format("%n        Failures Handled: %s", mp.getFailuresHandled()));
+            sb.append(String.format("%n        Redeliveries: %s", mp.getRedeliveries()));
+            sb.append(String.format("%n        External Redeliveries: %s", mp.getExternalRedeliveries()));
             long idle = mp.getIdleSince();
             if (idle > 0) {
                 sb.append(String.format("%n        Idle Since: %s", TimeUtils.printDuration(idle)));
@@ -403,7 +409,8 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         Long lastFailed = timestampOf(mp.getLastExchangeFailureTimestamp());
 
         return new Statistics(
-                mp.getIdleSince(), mp.getExchangesTotal(), mp.getExchangesFailed(), mp.getExchangesInflight(), thp,
+                mp.getIdleSince(), mp.getExchangesTotal(), mp.getExchangesFailed(), mp.getExchangesInflight(),
+                mp.getFailuresHandled(), mp.getRedeliveries(), mp.getExternalRedeliveries(), thp,
                 mp.getMeanProcessingTime(), mp.getMaxProcessingTime(), mp.getMinProcessingTime(),
                 p50, p95, p99, lastProcessingTime, deltaProcessingTime,
                 lastCreated, lastCompleted, lastFailureHandled, lastFailed);

@@ -45,6 +45,7 @@ import org.apache.camel.component.sjms.SjmsMessage;
 import org.apache.camel.component.sjms.SjmsTemplate;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -315,7 +316,8 @@ public class EndpointMessageListener implements SessionMessageListener {
 
                     producer = messageProducerCreator.create(session, endpoint, replyDestination);
 
-                    template.send(producer, reply);
+                    // an exception reply has no Camel message: it has no QoS headers, so it gets the QoS of the endpoint
+                    template.send(producer, reply, out != null ? out : new DefaultMessage(exchange));
                 } finally {
                     close(producer);
                 }
@@ -448,6 +450,12 @@ public class EndpointMessageListener implements SessionMessageListener {
                     sendReply(session, (String) replyDestination, message, exchange, body, cause);
                 }
                 LOG.trace("onMessage.sendReply END");
+                // sendReply sets an exception on the exchange if the reply could not be sent, so rethrow it
+                // to rollback the JMS message (if transacted or client acknowledge) and log the error
+                Exception replyException = exchange.getException();
+                if (replyException != null && replyException != cause) {
+                    rce = wrapRuntimeCamelException(replyException);
+                }
             }
 
             // if an exception occurred

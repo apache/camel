@@ -18,7 +18,25 @@
 package org.apache.camel.test.infra.azure.common;
 
 public final class AzureProperties {
+    /**
+     * The Floci AZ image of the local Azure services
+     */
     public static final String AZURE_CONTAINER = "azure.container";
+    /**
+     * The Azurite image of the local Blob service. Blob and Queue keep a key each, so the version of the test-infra
+     * metadata is matched by their implementation alias and not by the shared {@code azure} alias of Floci AZ.
+     */
+    public static final String AZURE_STORAGE_BLOB_CONTAINER = "azure.storage.blob.container";
+    /**
+     * The Azurite image of the local Queue service
+     */
+    public static final String AZURE_STORAGE_QUEUE_CONTAINER = "azure.storage.queue.container";
+    /**
+     * The Artemis image of the AMQP brokers that Floci AZ starts for Event Hubs and Service Bus. Floci AZ copies AMQP
+     * libraries patched for one Artemis version into it, so the version must be the one that the Floci AZ image of
+     * {@link #AZURE_CONTAINER} expects.
+     */
+    public static final String AZURE_BROKER_CONTAINER = "azure.broker.container";
 
     private AzureProperties() {
 

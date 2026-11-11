@@ -148,6 +148,11 @@ from("direct:in")
 will update a counter with name `new.name` instead of `name.not.used` using the
 tag `dynamic-key` with value `dynamic-value` in addition to the tag `key` with value `value`.
 
+The tags from the `CamelMetricsTags` header are used as given: unlike the `tags` URI parameters,
+their keys and values are not evaluated as `Simple` expressions. A tag from the header overrides a tag
+from the URI with the same key. To tag a meter with a value from the message, use a `tags` URI parameter
+such as `tags.customer=${header.customerId}`, or compute the value in the route before setting the header.
+
 All Metrics specific headers are removed from the message once the Micrometer endpoint finishes processing of exchange.
 If the Micrometer endpoint cannot update the meter, then the exchange fails with the exception, which the
 error handler of the route handles as any other failure. For example, a `value`, `increment` or `decrement` that is
@@ -173,6 +178,9 @@ micrometer:counter:name[?options]
 If neither `increment` or `decrement` is defined then value of the counter will
 be incremented by one. If `increment` and `decrement` are both defined
 only increment operation is called.
+If `increment` or `decrement` is defined, but neither of them gives a number (for example `+increment=${body}+` with
+a `Map`, a POJO or a `null` body, or `+increment=${header.amount}+` with no such header), the exchange fails with an
+`IllegalArgumentException`, and the counter is not updated.
 
 [tabs]
 ====

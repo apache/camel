@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,8 +38,8 @@ import dev.tamboui.style.Style;
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -91,6 +92,18 @@ class MonitorContext {
     /** Collector behind the Ollama tab and the tui_get_ollama tool; set by CamelMonitor at startup. */
     OllamaMonitor ollamaMonitor;
     BiConsumer<String, Boolean> notificationCallback;
+    // opens the Chaos screen with the known rules for a target ({@code !} on an endpoint, a consumer or a diagram node)
+    Consumer<ChaosHere.Target> chaosHere;
+    // ! on the Errors tab: opens the Chaos screen with a rule that makes the selected error again (CAMEL-26723)
+    Consumer<String> chaosRule;
+    // opens what a line of About is about (Enter): a route on the Diagram, an endpoint on the Endpoint tab
+    Consumer<AboutView.Target> openFromAbout;
+    // the exchanges chaos rules faulted, for the marks on the Activity, Errors and Inspect tabs
+    final ChaosMarks chaosMarks = new ChaosMarks();
+    // what happened second by second, for the Timeline screen (CAMEL-26691)
+    final Timeline timeline = new Timeline();
+    // whether the integrations were ready and live, second by second, for the strip of the Health tab
+    final HealthHistory healthHistory = new HealthHistory();
     BiConsumer<String, String> openMarkdownCallback;
     /** Opens markdown in the doc viewer scrolled to a heading: title, markdown, heading (may be null). */
     MarkdownOpener openMarkdownAtCallback;
@@ -166,6 +179,20 @@ class MonitorContext {
         return confirmActions && !tapeDriven.getAsBoolean();
     }
 
+    /**
+     * The name of the selected integration or infra service as a name to act on: a camel command, an answer to a tool.
+     * {@link #selectedName()} is shortened for a title.
+     */
+    String selectedFullName() {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info != null) {
+            return info.name;
+        }
+        InfraInfo infra = findSelectedInfra();
+        return infra != null ? infra.alias : "?";
+    }
+
+    /** The name of the selected integration or infra service for a title, at most 20 characters. */
     String selectedName() {
         IntegrationInfo info = findSelectedIntegration();
         if (info != null) {
@@ -389,6 +416,23 @@ class MonitorContext {
          * line, the exception and its causes.
          */
         default void explainLogError(String error) {
+            ask(AiFixPrompt.ofLogError(error));
+        }
+
+        /**
+         * Opens the AI panel with a question made by the screen, such as explain with AI on the Chaos screen and on an
+         * error a chaos rule made (CAMEL-26702).
+         */
+        default void ask(String question) {
+        }
+
+        /**
+         * Opens the AI panel and sends the question at once, for a request the user typed and confirmed on a screen
+         * ({@code d} on the Chaos screen). When the panel is busy, the question waits in its input, as with
+         * {@link #ask(String)}.
+         */
+        default void askNow(String question) {
+            ask(question);
         }
     }
 }

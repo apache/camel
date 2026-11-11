@@ -35,6 +35,8 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
@@ -43,8 +45,8 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.run.common.CatalogLoader;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -259,10 +261,14 @@ class TuiToolRegistry {
         return tools;
     }
 
+    // the tools that only the tool groups of the integration add, also to the full set: the semantic history, and
+    // the chaos rules when camel-chaos is on
+    private static final Set<String> GROUP_ONLY_TOOLS = Set.of("tui_get_audit", "tui_get_monitoring",
+            TuiToolGroups.CHAOS_CHECK_TOOL, TuiToolGroups.CHAOS_ADD_TOOL, TuiToolGroups.CHAOS_CHANGE_TOOL);
+
     List<ToolDef> getAvailableToolDefinitions(Collection<String> selected) {
         return getToolDefinitions().stream()
-                .filter(tool -> !Set.of("tui_get_audit", "tui_get_monitoring").contains(tool.name())
-                        || selected.contains(tool.name()))
+                .filter(tool -> !GROUP_ONLY_TOOLS.contains(tool.name()) || selected.contains(tool.name()))
                 .toList();
     }
 
@@ -505,10 +511,15 @@ class TuiToolRegistry {
             return "Error: keys array is empty";
         }
         String confirmation = facade.openConfirmation();
-        if (confirmation != null) {
-            // only the user answers a dialog that asks to confirm an action (CAMEL-25444)
+        boolean escCancels = keys.size() == 1
+                && ("Esc".equalsIgnoreCase(keys.get(0)) || "Escape".equalsIgnoreCase(keys.get(0)))
+                && facade.isOpenConfirmationCancelledByEsc();
+        if (confirmation != null && !escCancels) {
+            // only the user answers a dialog that asks to confirm an action (CAMEL-25444); a lone Esc may cancel a
+            // dialog that Esc only cancels, never answer it (CAMEL-26699)
             return "Not sent: " + confirmation + " is open, and only the user answers it. Wait for the user, or tell"
-                   + " them what you need: keys sent while it is open are dropped.";
+                   + " them what you need: keys sent while it is open are dropped"
+                   + (facade.isOpenConfirmationCancelledByEsc() ? " (a lone Esc cancels it)." : ".");
         }
         int delay = 150;
         Object delayArg = args.get("delay");
@@ -1276,7 +1287,8 @@ class TuiToolRegistry {
         }
         String body = args.get("body") instanceof String s ? s : null;
         String headers = args.get("headers") instanceof String s ? s : null;
-        JsonObject response = facade.sendMessage(endpoint, body, headers);
+        Boolean reply = args.get("reply") instanceof Boolean b ? b : null;
+        JsonObject response = facade.sendMessage(endpoint, body, headers, reply);
         if (response == null) {
             return "Error: no integration selected or PID unavailable";
         }
@@ -1334,6 +1346,44 @@ class TuiToolRegistry {
             return "Error: no integration selected or PID unavailable";
         }
         return Jsoner.serialize(response);
+    }
+
+    /** Checks chaos rules in the selected integration (chaos_check), which adds nothing. */
+    String callChaosCheck(Map<String, Object> args) {
+        String rule = args.get("rule") instanceof String s ? s : null;
+        if (rule == null || rule.isBlank()) {
+            return "Error: rule is required";
+        }
+        return executeShared("chaos_check", Map.of("rule", rule));
+    }
+
+    /** Adds chaos rules to the selected integration (chaos_add), after the user confirms. */
+    String callChaosAdd(Map<String, Object> args) {
+        String rule = args.get("rule") instanceof String s ? s : null;
+        if (rule == null || rule.isBlank()) {
+            return "Error: rule is required";
+        }
+        JsonObject rejected = facade != null
+                ? facade.confirm(ToolConfirms.chaos("add", facade.getSelectedIntegrationName(), null, rule)) : null;
+        if (rejected != null) {
+            return Jsoner.serialize(rejected);
+        }
+        return executeShared("chaos_add", Map.of("rule", rule));
+    }
+
+    /** Changes a chaos rule of the selected integration (chaos_change), after the user confirms. */
+    String callChaosChange(Map<String, Object> args) {
+        String id = args.get("id") instanceof String s ? s : null;
+        String rule = args.get("rule") instanceof String s ? s : null;
+        if (id == null || id.isBlank() || rule == null || rule.isBlank()) {
+            return "Error: id and rule are required";
+        }
+        JsonObject rejected = facade != null
+                ? facade.confirm(ToolConfirms.chaos("change", facade.getSelectedIntegrationName(), id, rule)) : null;
+        if (rejected != null) {
+            return Jsoner.serialize(rejected);
+        }
+        return executeShared("chaos_change", Map.of("id", id, "rule", rule));
     }
 
     String callUpdateRow(Map<String, Object> args) {
@@ -1888,6 +1938,13 @@ class TuiToolRegistry {
             result.put("message", "Failed to start: " + name);
             if (outcome.log() != null) {
                 result.put("log", outcome.log());
+                // a port another integration has: which one, and the way out
+                List<Line> hint = PortInUse.hint(outcome.log().lines().toList(), facade.liveIntegrations());
+                if (!hint.isEmpty()) {
+                    result.put("hint", hint.stream()
+                            .map(l -> l.spans().stream().map(Span::content).collect(Collectors.joining()).strip())
+                            .filter(t -> !t.isEmpty()).collect(Collectors.joining(" ")));
+                }
             }
             // a tool error (MCP isError), which still has the log that tells why
             throw new ToolExecutionException(Jsoner.serialize(result));

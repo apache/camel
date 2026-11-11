@@ -32,6 +32,12 @@
     <name>Camel :: Azure :: Functions</name>
     <description>Camel Azure Functions Component</description>
 
+    <properties>
+        <!-- Floci AZ is not available on these platforms -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -40,6 +46,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+        <!-- HttpOperationFailedException, thrown for an HTTP error status as the http components do -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-http-base</artifactId>
         </dependency>
 
         <!-- Azure SDK for Resource Management -->
@@ -63,6 +74,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-azure-functions</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

@@ -79,6 +79,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ai-prompt</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-ai-resource</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -135,6 +140,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-amqp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-apicurio-registry</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -505,6 +515,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cbor</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-chaos</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1594,6 +1609,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-mtconnect</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-mustache</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1950,6 +1970,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-salesforce-codegen</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-sanitizer</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -2365,6 +2390,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-vertx-http</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-vertx-mqtt</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

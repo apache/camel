@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -29,6 +30,7 @@ import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -146,6 +148,71 @@ class RestartProcessTest extends ProcessCommandTestSupport {
         assertTrue(printer.getStderr().contains("boom"), printer.getStderr());
     }
 
+    /**
+     * CAMEL-26397: on Linux the JDK gives no arguments of a process whose command line is longer than a page (4 KB),
+     * such as camel run started through jbang, and its command line cut short. The integration is restarted with the
+     * whole command line, from /proc/&lt;pid&gt;/cmdline.
+     */
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void testRestartRelaunchesTheWholeCommandLine(@TempDir Path proc) throws Exception {
+        String script = "echo '{\"context\":{\"name\":\"myApp\",\"phase\":5}}' > '"
+                        + CommandLineHelper.getCamelDir().toAbsolutePath() + "'/$$-status.json; echo started; exec sleep 60";
+        // as long as a classpath
+        String longArgument = "/m2/a.jar:".repeat(500);
+        Path dir = Files.createDirectories(proc.resolve(Long.toString(TEST_PID)));
+        Files.writeString(dir.resolve("cmdline"), String.join("\0", "sh", "-c", script, "sh", longArgument) + "\0");
+        ProcessHelper.useProcRoot(proc);
+
+        int exit;
+        try {
+            exit = restart(cutShort("/bin/sh", "/bin/sh -c " + script + " sh " + longArgument));
+        } finally {
+            ProcessHelper.useProcRoot(null);
+            stopTheRelaunchedIntegration();
+        }
+
+        assertEquals(0, exit);
+        assertTrue(printer.getOutput().contains("Restarted Camel integration: myApp (PID: "), printer.getOutput());
+    }
+
+    @Test
+    void testCommandLineCutShortIsNotRelaunched(@TempDir Path proc) throws Exception {
+        writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
+        // no /proc/<pid>/cmdline
+        ProcessHelper.useProcRoot(proc);
+
+        RestartProcess command = new RestartProcess(new CamelJBangMain().withPrinter(printer));
+        command.name = "myApp";
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle current = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(current);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+            mocked.when(() -> ProcessHandle.of(TEST_PID)).thenReturn(Optional.of(ph));
+            cutShort("/opt/java/bin/java", "/opt/java/bin/java -classpath " + "/m2/a.jar:".repeat(500) + " Main")
+                    .accept(ph);
+
+            CliException e = assertThrows(CliException.class, command::doCall);
+
+            // relaunched, its classpath would be cut short
+            assertEquals("Cannot restart: command line not available for PID " + TEST_PID, e.getMessage());
+            verify(ph, never()).destroy();
+        } finally {
+            ProcessHelper.useProcRoot(null);
+        }
+    }
+
+    // the JDK has no arguments of the process, and the first page (4 KB) of its command line
+    private static Consumer<ProcessHandle> cutShort(String command, String commandLine) {
+        return ph -> {
+            when(ph.info().command()).thenReturn(Optional.of(command));
+            when(ph.info().arguments()).thenReturn(Optional.empty());
+            when(ph.info().commandLine()).thenReturn(Optional.of(commandLine.substring(0, 4096)));
+        };
+    }
+
     @Test
     void testCommandLineOfTheIntegration() {
         assertEquals(List.of("java", "-jar", "app.jar"), RestartProcess.parseCommandLine("java  -jar app.jar"));
@@ -165,6 +232,14 @@ class RestartProcessTest extends ProcessCommandTestSupport {
 
     // restarts myApp, which runs the given command
     private int restart(String command, String... args) throws Exception {
+        return restart(ph -> {
+            when(ph.info().command()).thenReturn(Optional.of(command));
+            when(ph.info().arguments()).thenReturn(Optional.of(args));
+        });
+    }
+
+    // restarts myApp, whose command line the JDK gives as stubbed
+    private int restart(Consumer<ProcessHandle> commandLine) throws Exception {
         writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
         RestartProcess restart = new RestartProcess(new CamelJBangMain().withPrinter(printer));
         restart.name = "myApp";
@@ -177,8 +252,7 @@ class RestartProcessTest extends ProcessCommandTestSupport {
             mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
             // found, and gone once it is stopped
             mocked.when(() -> ProcessHandle.of(TEST_PID)).thenReturn(Optional.of(ph), Optional.empty());
-            when(ph.info().command()).thenReturn(Optional.of(command));
-            when(ph.info().arguments()).thenReturn(Optional.of(args));
+            commandLine.accept(ph);
 
             int exit = restart.doCall();
             // there is no pid file of camel run to delete, so the integration is asked to stop by its process

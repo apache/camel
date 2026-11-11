@@ -53,6 +53,11 @@ public class QdrantEmbeddingsDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
         Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
+        if (embedding == null) {
+            throw new IllegalArgumentException(
+                    "Missing embedding vector header '" + CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR
+                                               + "'. Ensure the langchain4j-embeddings component is called before this transformer.");
+        }
         TextSegment text = message.getBody(TextSegment.class);
         Common.PointId id
                 = message.getHeader(QdrantHeaders.POINT_ID, () -> PointIdFactory.id(UUID.randomUUID()), Common.PointId.class);

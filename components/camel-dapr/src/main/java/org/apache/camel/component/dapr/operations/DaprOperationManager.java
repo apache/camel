@@ -35,6 +35,7 @@ public class DaprOperationManager {
         handlerMap.put(DaprOperation.state, new DaprStateHandler(configurationOptionsProxy, endpoint));
         handlerMap.put(DaprOperation.pubSub, new DaprPubSubHandler(configurationOptionsProxy, endpoint));
         handlerMap.put(DaprOperation.invokeBinding, new DaprInvokeBindingHandler(configurationOptionsProxy, endpoint));
+        handlerMap.put(DaprOperation.secret, new DaprSecretHandler(configurationOptionsProxy, endpoint));
         handlerMap.put(DaprOperation.configuration, new DaprConfigurationHandler(configurationOptionsProxy, endpoint));
         handlerMap.put(DaprOperation.lock, new DaprLockHandler(configurationOptionsProxy, endpoint));
         handlerMap.put(DaprOperation.workflow, new DaprWorkflowHandler(configurationOptionsProxy, endpoint));

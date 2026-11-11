@@ -49,7 +49,9 @@ import org.apache.camel.util.ObjectHelper;
 @BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
                                    description = "One message per poll with the return value of the method: a Google"
                                                  + " Sheets model object, such as the ValueRange of data/get, which is one"
-                                                 + " message and not split per row. The model classes are GenericJson, which"
+                                                 + " message and not split per row. No method returns a list, so"
+                                                 + " splitResult has no effect: google-sheets-stream with splitResults"
+                                                 + " gives one message per row. The model classes are GenericJson, which"
                                                  + " is also a Map of the JSON fields"),
            producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
                                   description = "The body is used only when inBody names a parameter of the method, and"

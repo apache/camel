@@ -2,6 +2,7 @@
 package org.apache.camel.component.dapr;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,9 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DaprComponent target = (DaprComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsecretstoreandkeyfromheaders":
+        case "allowSecretStoreAndKeyFromHeaders": getOrCreateConfiguration(target).setAllowSecretStoreAndKeyFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bindingname":
@@ -67,6 +70,7 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "lockOperation": getOrCreateConfiguration(target).setLockOperation(property(camelContext, org.apache.camel.component.dapr.LockOperation.class, value)); return true;
         case "lockowner":
         case "lockOwner": getOrCreateConfiguration(target).setLockOwner(property(camelContext, java.lang.String.class, value)); return true;
+        case "metadata": getOrCreateConfiguration(target).setMetadata(property(camelContext, java.util.Map.class, value)); return true;
         case "methodtoinvoke":
         case "methodToInvoke": getOrCreateConfiguration(target).setMethodToInvoke(property(camelContext, java.lang.String.class, value)); return true;
         case "previewclient":
@@ -112,7 +116,9 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsecretstoreandkeyfromheaders":
+        case "allowSecretStoreAndKeyFromHeaders": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bindingname":
@@ -150,6 +156,7 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "lockOperation": return org.apache.camel.component.dapr.LockOperation.class;
         case "lockowner":
         case "lockOwner": return java.lang.String.class;
+        case "metadata": return java.util.Map.class;
         case "methodtoinvoke":
         case "methodToInvoke": return java.lang.String.class;
         case "previewclient":
@@ -191,7 +198,9 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DaprComponent target = (DaprComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsecretstoreandkeyfromheaders":
+        case "allowSecretStoreAndKeyFromHeaders": return getOrCreateConfiguration(target).isAllowSecretStoreAndKeyFromHeaders();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bindingname":
@@ -229,6 +238,7 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "lockOperation": return getOrCreateConfiguration(target).getLockOperation();
         case "lockowner":
         case "lockOwner": return getOrCreateConfiguration(target).getLockOwner();
+        case "metadata": return getOrCreateConfiguration(target).getMetadata();
         case "methodtoinvoke":
         case "methodToInvoke": return getOrCreateConfiguration(target).getMethodToInvoke();
         case "previewclient":
@@ -263,6 +273,14 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "workflowStartTime": return getOrCreateConfiguration(target).getWorkflowStartTime();
         case "workflowversion":
         case "workflowVersion": return getOrCreateConfiguration(target).getWorkflowVersion();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "metadata": return java.lang.String.class;
         default: return null;
         }
     }

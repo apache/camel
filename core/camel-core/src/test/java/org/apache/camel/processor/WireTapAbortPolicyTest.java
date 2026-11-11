@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Wire tap unit test
  */
 @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
-                          disabledReason = "Tasks are not rejected when using Virtual Threads")
+                          disabledReason = "With Virtual Threads, maxQueueSize 0 means no limit, so no task is rejected")
 @Isolated
 public class WireTapAbortPolicyTest extends ContextTestSupport {
 

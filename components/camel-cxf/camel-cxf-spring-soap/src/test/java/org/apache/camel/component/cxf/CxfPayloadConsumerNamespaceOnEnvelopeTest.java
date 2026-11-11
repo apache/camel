@@ -19,9 +19,11 @@ package org.apache.camel.component.cxf;
 import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +32,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelSpringTestSupport {
+
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateCxfPayloadConsumerNamespaceOnEnvelopeTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("GetTokenBeans.port1", PORT1.toString());
+    }
+
+    @AfterAll
+    static void releaseCxfPayloadConsumerNamespaceOnEnvelopeTestPorts() {
+        System.clearProperty("GetTokenBeans.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
     /*
      * The request message is generated directly. The issue here is that the xsi
      * and xs namespaces are defined on the SOAP envelope but are used within
@@ -47,9 +66,7 @@ public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelSpringTestSu
             = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
               + "<soap:Body><ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><arg0 xsi:type=\"xs:string\">Send</arg0></ns2:getToken></soap:Body></soap:Envelope>";
 
-    // Don't remove this, it initializes the CXFTestSupport class
     static {
-        CXFTestSupport.getPort1();
         // Works without streaming...
         // System.setProperty("org.apache.camel.component.cxf.streaming", "false");
     }

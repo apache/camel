@@ -1175,7 +1175,7 @@ class AiPanelTest {
         assertTrue(client.sawCorrectionRequest, "the model must be told what is invalid and asked to fix the answer");
         assertEquals(2, client.answers, "the first answer and the corrected one");
         assertTrue(last.text().contains("${header.user} ?: 'Guest'"), last.text());
-        assertFalse(last.text().contains("${header.user ?: 'Guest'}"), last.text());
+        assertFalse(last.text().contains("${header.user ?: Guest}"), last.text());
         assertNull(last.note(), "a corrected answer is shown as it is");
         assertEquals(1, last.corrections());
         assertEquals(2, last.requests());
@@ -1198,9 +1198,9 @@ class AiPanelTest {
         AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
         assertEquals(AiRole.ASSISTANT, last.role(), last.text());
         assertEquals(2, client.answers, "one correction turn, never a second");
-        assertTrue(last.text().contains("${header.user ?: 'Guest'}"), last.text());
+        assertTrue(last.text().contains("${header.user ?: Guest}"), last.text());
         assertNotNull(last.note(), "the user must see that the expression is invalid");
-        assertTrue(last.note().startsWith("**Simple check:** `${header.user ?: 'Guest'}` is invalid: "), last.note());
+        assertTrue(last.note().startsWith("**Simple check:** `${header.user ?: Guest}` is invalid: "), last.note());
         assertEquals(1, last.corrections());
     }
 
@@ -1224,7 +1224,7 @@ class AiPanelTest {
         assertFalse(last.byline().contains("correction"), last.byline());
     }
 
-    /** Answers with the operator inside the placeholder, and fixes it when asked, like a small local model. */
+    /** Answers with a fallback that is not quoted, and fixes it when asked, like a small local model. */
     private static final class CorrectingLlmClient extends LlmClient {
 
         volatile boolean sawCorrectionRequest;
@@ -1253,7 +1253,7 @@ class AiPanelTest {
             boolean correct = firstAnswerIsCorrect || (correction && fixes);
             String text = correct
                     ? "Use `${header.user} ?: 'Guest'` as the expression: the elvis operator goes between placeholders."
-                    : "Use `${header.user ?: 'Guest'}` as the expression to fall back to Guest.";
+                    : "Use `${header.user ?: Guest}` as the expression to fall back to Guest.";
             return new ChatResponse(text, List.of(), "stop", false, TokenUsage.EMPTY);
         }
     }

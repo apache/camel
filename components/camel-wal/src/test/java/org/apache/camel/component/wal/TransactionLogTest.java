@@ -14,40 +14,80 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.wal;
+
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class TransactionLogTest {
+class TransactionLogTest {
+
+    private static LogEntry entry(String key) {
+        return new LogEntry(LogEntry.EntryState.NEW, 0, key.getBytes(StandardCharsets.UTF_8), 0, new byte[] { 1 });
+    }
+
+    private static TransactionLog.EntryContainer[] add(TransactionLog log, int count) {
+        TransactionLog.EntryContainer[] containers = new TransactionLog.EntryContainer[count];
+        for (int i = 0; i < count; i++) {
+            containers[i] = log.add(entry("record-" + i));
+        }
+        return containers;
+    }
+
     @DisplayName("Tests that can update records on the same layer")
     @Test
     void testCanUpdateSameLayer() {
-        assertTrue(TransactionLog.canUpdate(0, 10, 0, 1));
-        assertTrue(TransactionLog.canUpdate(0, 10, 0, 10));
-        assertFalse(TransactionLog.canUpdate(0, 10, 0, 11));
+        TransactionLog log = new TransactionLog(10);
+        TransactionLog.EntryContainer[] containers = add(log, 3);
+
+        assertSame(containers[0], log.update(containers[0].layerInfo, LogEntry.EntryState.PROCESSED));
+        assertSame(containers[2], log.update(containers[2].layerInfo, LogEntry.EntryState.FAILED));
     }
 
     @DisplayName("Tests that prevent updating a record that has been rolled-over")
     @Test
     void testCannotUpdateRolledOverRecord() {
-        assertFalse(TransactionLog.canUpdate(1, 3, 0, 1));
-        assertFalse(TransactionLog.canUpdate(1, 3, 0, 2));
-        // two layers behind: the previous layer has replaced it already
-        assertFalse(TransactionLog.canUpdate(2, 3, 0, 5));
+        TransactionLog log = new TransactionLog(3);
+        TransactionLog.EntryContainer[] containers = add(log, 5);
+
+        // records 3 and 4 (layer 1) replaced records 0 and 1 (layer 0)
+        assertNull(log.update(containers[0].layerInfo, LogEntry.EntryState.PROCESSED));
+        assertNull(log.update(containers[1].layerInfo, LogEntry.EntryState.PROCESSED));
+
+        // two layers behind: record 7 (layer 2) replaced record 4 (layer 1), which had replaced record 1 (layer 0)
+        TransactionLog.EntryContainer[] next = add(log, 3);
+        assertNull(log.update(containers[1].layerInfo, LogEntry.EntryState.PROCESSED));
+        assertNull(log.update(containers[4].layerInfo, LogEntry.EntryState.PROCESSED));
+        assertSame(next[2], log.update(next[2].layerInfo, LogEntry.EntryState.PROCESSED));
     }
 
     @DisplayName("Tests that can update records after a roll-over has started")
     @Test
     void testCanUpdateDifferentLayerWithRollOver() {
-        assertTrue(TransactionLog.canUpdate(1, 10, 0, 11));
-        assertTrue(TransactionLog.canUpdate(1, 10, 1, 10));
-        // the current index is the index of the next entry to add, so the entry there is not replaced yet
-        assertTrue(TransactionLog.canUpdate(1, 10, 0, 10));
-        assertTrue(TransactionLog.canUpdate(1, 3, 0, 3));
+        TransactionLog log = new TransactionLog(3);
+        TransactionLog.EntryContainer[] containers = add(log, 4);
+
+        // record 3 (layer 1) replaced record 0; record 1, the next to replace, and record 2 are still there
+        assertSame(containers[1], log.update(containers[1].layerInfo, LogEntry.EntryState.PROCESSED));
+        assertSame(containers[2], log.update(containers[2].layerInfo, LogEntry.EntryState.PROCESSED));
+        assertSame(containers[3], log.update(containers[3].layerInfo, LogEntry.EntryState.PROCESSED));
+    }
+
+    @DisplayName("Tests that a record of another transaction log is not updated in this one")
+    @Test
+    void testCannotUpdateRecordOfAnotherLog() {
+        // as after a restart of the route: the writer of the previous start had its own transaction log
+        TransactionLog previous = new TransactionLog(10);
+        TransactionLog.EntryContainer[] stale = add(previous, 2);
+        TransactionLog log = new TransactionLog(10);
+        TransactionLog.EntryContainer[] containers = add(log, 2);
+
+        assertNull(log.update(stale[1].layerInfo, LogEntry.EntryState.PROCESSED));
+        assertEquals(LogEntry.EntryState.NEW, containers[1].logEntry.getEntryState());
     }
 }

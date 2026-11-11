@@ -19,12 +19,16 @@ package org.apache.camel.util.xml;
 import java.io.IOException;
 import java.io.Serializable;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
+
+import org.xml.sax.SAXException;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
+import org.apache.camel.converter.jaxp.XmlConverter;
 
 import static org.apache.camel.converter.stream.StreamCacheConverter.convertToByteArray;
 
@@ -34,6 +38,8 @@ import static org.apache.camel.converter.stream.StreamCacheConverter.convertToBy
  */
 @Converter(generateBulkLoader = true)
 public final class StreamSourceConverter {
+
+    private static final XmlConverter XML_CONVERTER = new XmlConverter();
 
     /**
      * Utility classes should not have a public constructor.
@@ -53,7 +59,13 @@ public final class StreamSourceConverter {
     }
 
     @Converter(order = 3)
-    public static StreamCache convertToStreamCache(SAXSource source, Exchange exchange) {
+    public static StreamCache convertToStreamCache(SAXSource source, Exchange exchange)
+            throws SAXException, ParserConfigurationException {
+        if (source.getXMLReader() == null) {
+            // parse with the same secure XMLReader as the SAXSource instances that XmlConverter creates,
+            // instead of the default parser of the TransformerFactory
+            source = new SAXSource(XML_CONVERTER.createXMLReader(), source.getInputSource());
+        }
         String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, source);
         return new SourceCache(data);
     }

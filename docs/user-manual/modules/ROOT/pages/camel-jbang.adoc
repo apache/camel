@@ -143,6 +143,9 @@ camel run hello.yaml --dev
 | Exporting to Spring Boot / Quarkus / Camel Main,
   SBOM generation, plugin management, version management, automated upgrades.
 
+| xref:camel-jbang-java-api.adoc[Java API for Export and Run]
+| Exporting and running integrations from Java, for tools such as IDEs, visual designers and AI agents.
+
 | xref:camel-jbang-tips.adoc[Tips and Recipes]
 | Run from GitHub or clipboard, stub components, inline code, interactive prompts,
   upload via HTTP.

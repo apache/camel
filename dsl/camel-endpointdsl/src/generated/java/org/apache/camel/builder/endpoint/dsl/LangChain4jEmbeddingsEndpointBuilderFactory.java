@@ -110,7 +110,7 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
         /**
          * The LangChain4j provider of the embedding model, to create the model
          * from the options here (modelName, baseUrl, apiKey, temperature,
-         * timeout, and provider-specific model. properties) instead of a
+         * timeout, and provider-specific model.* properties) instead of a
          * EmbeddingModel bean. The LangChain4j module of the provider
          * (dev.langchain4j:langchain4j-ollama, ...) must be on the classpath;
          * Camel JBang downloads it. Ignored when a EmbeddingModel is
@@ -512,7 +512,7 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
         /**
          * A TextSegment representation of the vector embedding input text.
          * 
-         * The option is a: {@code  dev.langchain4j.data.segment.TextSegment}
+         * The option is a: {@code dev.langchain4j.data.segment.TextSegment}
          * type.
          * 
          * Group: producer

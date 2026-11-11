@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.salesforce.api;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.exc.StreamWriteException;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 /**
  * Jackson Serializer for generating ';' separated strings for MultiSelect pick-lists.
@@ -39,7 +37,7 @@ public class StringMultiSelectPicklistSerializer extends StdSerializer<Object> {
     }
 
     @Override
-    public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+    public void serialize(Object value, JsonGenerator jgen, SerializationContext provider) {
         try {
 
             String[] a = (String[]) value;
@@ -57,10 +55,10 @@ public class StringMultiSelectPicklistSerializer extends StdSerializer<Object> {
             jgen.writeString(buffer.toString());
 
         } catch (Exception e) {
-            throw new JsonGenerationException(
+            throw new StreamWriteException(
+                    jgen,
                     String.format("Exception writing pick list value %s of type %s: %s", value, value.getClass().getName(),
-                            e.getMessage()),
-                    jgen);
+                            e.getMessage()));
         }
     }
 }

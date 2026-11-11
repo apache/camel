@@ -33,7 +33,12 @@ include::partial$component-endpoint-headers.adoc[]
 === Body content
 
 For the startCase operation, the input variables are retrieved from the body message.
-This one has to contain a `Map<String,Serializable>`.
+This one has to contain a `Map<String,Serializable>`, or a JSON object as text (`String`, `byte[]` or `InputStream`)
+such as `{"amount": 1}`, which is parsed into that `Map`.
+Any other body, also JSON text that is not an object (such as a JSON array), fails with an `InvalidPayloadException`.
+
+After the operation, the body is still the `Map` of the inputs, or the JSON text that was sent.
+The id of the started case is set in the `CamelBonitaCaseId` header.
 
 
 == Examples

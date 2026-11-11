@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -35,8 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p/>
  * Before the fix, each SFTP connect/disconnect cycle left behind NIO2 and timer daemon threads from the SshClient,
  * causing the thread count to grow continuously until the system's thread limit was exhausted.
+ * <p/>
+ * It counts the live SshClient threads of the JVM, so it runs in its own JVM (tag {@code require-isolated-jvm}):
+ * clients of other tests in a shared JVM would make the count unreliable.
  */
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/sftp/hostkey.pem')")
+@Tag("require-isolated-jvm")
 class SftpDisconnectThreadLeakIT extends SftpServerTestSupport {
 
     @Test

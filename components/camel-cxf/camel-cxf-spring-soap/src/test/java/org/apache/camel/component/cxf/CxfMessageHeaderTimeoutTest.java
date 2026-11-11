@@ -26,12 +26,13 @@ import jakarta.xml.ws.Endpoint;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.hello_world_soap_http.Greeter;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -44,15 +45,31 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
 
+    private static AvailablePortFinder.Port PORT1;
+
+    private static void allocateCxfMessageHeaderTimeoutTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfMessageHeaderTimeoutTest.port1", PORT1.toString());
+        SERVER_ADDRESS = "http://localhost:" + PORT1.getPort() + "/CxfMessageHeaderTimeoutTest/SoapContext/SoapPort";
+    }
+
+    @AfterAll
+    static void releaseCxfMessageHeaderTimeoutTestPorts() {
+        System.clearProperty("CxfMessageHeaderTimeoutTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(CxfMessageHeaderTimeoutTest.class);
 
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final String SERVER_ADDRESS
-            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfMessageHeaderTimeoutTest/SoapContext/SoapPort";
+    protected static String SERVER_ADDRESS;
 
     @BeforeAll
     public static void startService() {
+        allocateCxfMessageHeaderTimeoutTestPorts();
         Greeter implementor = new GreeterImplWithSleep();
         Endpoint.publish(SERVER_ADDRESS, implementor);
     }

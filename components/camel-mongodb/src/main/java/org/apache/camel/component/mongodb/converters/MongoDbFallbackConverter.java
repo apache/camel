@@ -19,7 +19,6 @@ package org.apache.camel.component.mongodb.converters;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -28,12 +27,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.bson.Document;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @Converter(generateLoader = true)
 public final class MongoDbFallbackConverter {
 
     // Jackson's ObjectMapper is thread-safe, so no need to create a pool nor synchronize access to it
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
+    private static final String JACKSON2_NODE_PACKAGE = "com.fasterxml.jackson.databind.";
+    private static final String JACKSON3_NODE_PACKAGE = "tools.jackson.databind.";
 
     private MongoDbFallbackConverter() {
     }
@@ -43,10 +46,17 @@ public final class MongoDbFallbackConverter {
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry)
             throws InvalidPayloadException {
 
+        if (isJacksonNode(value)) {
+            // a Jackson node of either line is its JSON text: the mapper below knows only Jackson 3 nodes
+            value = value.toString();
+        }
+
         // if the source is a string and we attempt to convert to one of the known mongodb json classes then try that
         if (String.class == value.getClass()) {
 
-            if (type == DBObject.class) {
+            if (type == Document.class) {
+                return MongoDbBasicConverters.fromStringToDocument(value.toString());
+            } else if (type == DBObject.class) {
                 Object out = BasicDBObject.parse(value.toString());
                 if (out instanceof DBObject) { // condition is always true!
                     return out;
@@ -84,6 +94,11 @@ public final class MongoDbFallbackConverter {
         }
 
         return null;
+    }
+
+    private static boolean isJacksonNode(Object value) {
+        String className = value.getClass().getName();
+        return className.startsWith(JACKSON3_NODE_PACKAGE) || className.startsWith(JACKSON2_NODE_PACKAGE);
     }
 
     @SuppressWarnings("unchecked")

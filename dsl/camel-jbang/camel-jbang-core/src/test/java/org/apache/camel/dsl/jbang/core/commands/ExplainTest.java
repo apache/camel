@@ -23,11 +23,11 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -137,7 +137,7 @@ class ExplainTest extends CamelCommandBaseTestSupport {
 
     @Test
     void aFileThatDoesNotExistIsNotFound() throws Exception {
-        assertThat(command(dir.resolve("nope.yaml").toString()).doCall()).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(command(dir.resolve("nope.yaml").toString()).doCall()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
 
         assertThat(printer.getStderr()).contains("File not found: ");
         assertThat(llm.lastRequest()).isNull();
@@ -145,7 +145,7 @@ class ExplainTest extends CamelCommandBaseTestSupport {
 
     private Explain command(String... args) {
         Explain command = new Explain(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command,
+        CommandLineTestHelper.parse(command,
                 Stream.concat(Arrays.stream(args), Stream.of("--api-type=ollama", "--url=" + llm.url(), "--model=test"))
                         .toArray(String[]::new));
         return command;

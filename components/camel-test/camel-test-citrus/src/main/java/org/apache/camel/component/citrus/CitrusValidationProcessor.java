@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.citrus;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -23,11 +27,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.message.DefaultMessage;
 import org.citrusframework.message.MessagePayloadBuilder;
@@ -44,6 +51,10 @@ import org.slf4j.LoggerFactory;
 class CitrusValidationProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CitrusValidationProcessor.class);
+
+    private static final Set<String> BINARY_MESSAGE_TYPES = Set.of(
+            MessageType.BINARY.name(), MessageType.BINARY_BASE64.name(),
+            MessageType.GZIP.name(), MessageType.GZIP_BASE64.name());
 
     private final Supplier<TestContext> testContextSupplier;
     private final String messageType;
@@ -72,10 +83,9 @@ class CitrusValidationProcessor implements Processor {
 
         try {
             if (spec != null) {
-                DefaultMessage receivedMessage = buildReceivedMessage(exchange);
-                DefaultMessage controlMessage = buildControlMessage(spec, testContext);
-
                 String resolvedType = resolveMessageType(spec);
+                DefaultMessage receivedMessage = buildReceivedMessage(exchange, resolvedType);
+                DefaultMessage controlMessage = buildControlMessage(spec, testContext);
                 controlMessage.setType(resolvedType);
 
                 List<ValidationContext> validationContexts = buildValidationContexts(spec);
@@ -92,13 +102,27 @@ class CitrusValidationProcessor implements Processor {
 
     // --- Citrus validation helpers ---
 
-    private DefaultMessage buildReceivedMessage(Exchange exchange) {
-        Object body = exchange.getIn().getBody();
-        if (body instanceof StreamCache sc) {
-            body = exchange.getIn().getBody(String.class);
-            sc.reset();
+    private DefaultMessage buildReceivedMessage(Exchange exchange, String resolvedType) {
+        Message in = exchange.getIn();
+        Object body = in.getBody();
+        if ((body instanceof InputStream || body instanceof Reader) && !(body instanceof StreamCache)) {
+            // cache a plain stream, so the validation does not consume it for the next step in the route
+            StreamCache cache = exchange.getContext().getTypeConverter().convertTo(StreamCache.class, exchange, body);
+            if (cache != null) {
+                in.setBody(cache);
+                body = cache;
+            }
         }
-        Map<String, Object> headers = new LinkedHashMap<>(exchange.getIn().getHeaders());
+        // the binary validators compare bytes, the others compare text
+        Class<?> payloadType = BINARY_MESSAGE_TYPES.contains(resolvedType) ? byte[].class : String.class;
+        if (body instanceof StreamCache sc) {
+            body = in.getBody(payloadType);
+            sc.reset();
+        } else if (body instanceof byte[] || body instanceof File || body instanceof Path || body instanceof WrappedFile) {
+            // read the content, as Citrus would otherwise compare a byte[] as [123, 34, ...] and a file as its path
+            body = in.getBody(payloadType);
+        }
+        Map<String, Object> headers = new LinkedHashMap<>(in.getHeaders());
         return new DefaultMessage(body, headers);
     }
 

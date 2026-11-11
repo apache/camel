@@ -23,12 +23,12 @@ import java.util.List;
 import ai.djl.modality.Classifications;
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Predictor for the TEXT_CLASSIFICATION task, performing sentiment or label classification on text.
@@ -85,7 +85,7 @@ import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
  */
 public class TextClassificationPredictor extends AbstractTaskPredictor {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
     public TextClassificationPredictor(HuggingFaceEndpoint endpoint) {
         super(endpoint);
@@ -111,15 +111,13 @@ public class TextClassificationPredictor extends AbstractTaskPredictor {
     @Override
     protected void processOutput(Exchange exchange, Output output) throws Exception {
         String resultJson = output.getAsString("data");
-        if (resultJson.contains("\"error\"")) {
-            throw new RuntimeCamelException("Python inference failed: " + resultJson);
-        }
-        exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, resultJson);
         JsonNode node = objectMapper.readTree(resultJson);
+        failOnPythonError(node);
+        exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, resultJson);
         List<String> classNames = new ArrayList<>();
         List<Double> probabilities = new ArrayList<>();
         for (JsonNode item : node) {
-            String label = item.get("label").asText();
+            String label = item.get("label").asString("");
             classNames.add(label);
             double score = item.get("score").asDouble();
             probabilities.add(score);

@@ -90,7 +90,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
             initializeChannel();
 
             if (configuration.getAuthenticationType() == GrpcAuthType.GOOGLE) {
-                ObjectHelper.notNull(configuration.getKeyCertChainResource(), "serviceAccountResource");
+                ObjectHelper.notNull(configuration.getServiceAccountResource(), "serviceAccountResource");
 
                 Credentials creds = GoogleCredentials.fromStream(
                         ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),

@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -37,9 +38,11 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("JwtKeystorePath", java.lang.String.class);
         map.put("JwtKeystoreType", java.lang.String.class);
         map.put("MaxBodySize", java.lang.Long.class);
+        map.put("McpAllowedOrigins", java.lang.String.class);
         map.put("McpEnabled", boolean.class);
         map.put("McpInstructions", java.lang.String.class);
         map.put("McpPath", java.lang.String.class);
+        map.put("McpPromptTimeout", long.class);
         map.put("McpResourceTimeout", long.class);
         map.put("McpServerDescription", java.lang.String.class);
         map.put("McpServerIcons", java.lang.String.class);
@@ -63,7 +66,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.HttpServerConfigurationProperties target = (org.apache.camel.main.HttpServerConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationenabled":
         case "authenticationEnabled": target.setAuthenticationEnabled(property(camelContext, boolean.class, value)); return true;
         case "authenticationpath":
@@ -92,12 +95,16 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": target.setJwtKeystoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "maxbodysize":
         case "maxBodySize": target.setMaxBodySize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "mcpallowedorigins":
+        case "mcpAllowedOrigins": target.setMcpAllowedOrigins(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpenabled":
         case "mcpEnabled": target.setMcpEnabled(property(camelContext, boolean.class, value)); return true;
         case "mcpinstructions":
         case "mcpInstructions": target.setMcpInstructions(property(camelContext, java.lang.String.class, value)); return true;
         case "mcppath":
         case "mcpPath": target.setMcpPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpprompttimeout":
+        case "mcpPromptTimeout": target.setMcpPromptTimeout(property(camelContext, long.class, value)); return true;
         case "mcpresourcetimeout":
         case "mcpResourceTimeout": target.setMcpResourceTimeout(property(camelContext, long.class, value)); return true;
         case "mcpserverdescription":
@@ -141,7 +148,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationenabled":
         case "authenticationEnabled": return boolean.class;
         case "authenticationpath":
@@ -170,12 +177,16 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": return java.lang.String.class;
         case "maxbodysize":
         case "maxBodySize": return java.lang.Long.class;
+        case "mcpallowedorigins":
+        case "mcpAllowedOrigins": return java.lang.String.class;
         case "mcpenabled":
         case "mcpEnabled": return boolean.class;
         case "mcpinstructions":
         case "mcpInstructions": return java.lang.String.class;
         case "mcppath":
         case "mcpPath": return java.lang.String.class;
+        case "mcpprompttimeout":
+        case "mcpPromptTimeout": return long.class;
         case "mcpresourcetimeout":
         case "mcpResourceTimeout": return long.class;
         case "mcpserverdescription":
@@ -215,7 +226,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.HttpServerConfigurationProperties target = (org.apache.camel.main.HttpServerConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationenabled":
         case "authenticationEnabled": return target.isAuthenticationEnabled();
         case "authenticationpath":
@@ -244,12 +255,16 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": return target.getJwtKeystoreType();
         case "maxbodysize":
         case "maxBodySize": return target.getMaxBodySize();
+        case "mcpallowedorigins":
+        case "mcpAllowedOrigins": return target.getMcpAllowedOrigins();
         case "mcpenabled":
         case "mcpEnabled": return target.isMcpEnabled();
         case "mcpinstructions":
         case "mcpInstructions": return target.getMcpInstructions();
         case "mcppath":
         case "mcpPath": return target.getMcpPath();
+        case "mcpprompttimeout":
+        case "mcpPromptTimeout": return target.getMcpPromptTimeout();
         case "mcpresourcetimeout":
         case "mcpResourceTimeout": return target.getMcpResourceTimeout();
         case "mcpserverdescription":

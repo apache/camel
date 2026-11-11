@@ -21,7 +21,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Assertions;
@@ -183,7 +183,7 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
         CatalogDoc command = createCommand("jackson", false);
         Assertions.assertEquals(0, command.doCall());
         Assertions.assertTrue(printer.getOutput().startsWith("Dataformat Name: jackson"), printer.getOutput());
-        Assertions.assertTrue(printer.getOutput().contains("<artifactId>camel-jackson</artifactId>"),
+        Assertions.assertTrue(printer.getOutput().contains("<artifactId>camel-jackson3</artifactId>"),
                 printer.getOutput());
 
         printer = new StringPrinter();

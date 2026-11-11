@@ -451,6 +451,19 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
+     * Whether a directory can be listed one entry at a time, and the listing stopped once {@link #canPollMoreFiles}
+     * returns {@code false}, rather than listed whole before its files are picked. This is the case when the eager
+     * {@code maxMessagesPerPoll} limit is in use, and nothing needs the whole directory: {@code preSort} sorts all its
+     * files, and a done file is looked up among them.
+     *
+     * @return <tt>true</tt> if the listing can stop at the limit
+     */
+    protected boolean canStopListingAtLimit() {
+        return eagerLimitMaxMessagesPerPoll && maxMessagesPerPoll > 0
+                && !endpoint.isPreSort() && endpoint.getDoneFileName() == null;
+    }
+
+    /**
      * Override if required. Perform some checks (and perhaps actions) before we poll.
      *
      * @return <tt>true</tt> to poll, <tt>false</tt> to skip this poll.
@@ -591,7 +604,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // (for instance to move the file after we have processed it)
             GenericFileOnCompletion<T> onCompletion
                     = new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName);
-            onCompletion.setKeptDoneFiles(getKeptDoneFiles());
+            GenericFileKeptDoneFiles kept = getKeptDoneFiles();
+            if (kept != null) {
+                onCompletion.setKeptDoneFiles(kept.batch());
+            }
             exchange.getExchangeExtension().addOnCompletion(onCompletion);
 
             LOG.debug("About to process file: {} using exchange: {}", target, exchange);
@@ -814,12 +830,15 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // the resolved path must stay within the starting directory, as the name it was built from is
         // reported by the remote server and is not necessarily a single path segment, and a local file
         // can be a symbolic link
-        if (endpoint.isJailStartingDirectory() && !isWithinStartingDirectory(absoluteFilePath)) {
+        if (endpoint.isJailStartingDirectory() && !isWithinStartingDirectory(file, absoluteFilePath)) {
+            String message = isUnresolvableLink(absoluteFilePath)
+                    ? "Skipping file as symbolic link cannot be resolved: {}"
+                    : "Skipping file as it resolves outside the starting directory: {}";
             // such a file usually stays where it is and is listed again on every poll, so only warn the first time
             if (skippedOutsideStartingDirectory.put(absoluteFilePath, Boolean.TRUE) == null) {
-                LOG.warn("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
+                LOG.warn(message, absoluteFilePath);
             } else {
-                LOG.debug("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
+                LOG.debug(message, absoluteFilePath);
             }
             return false;
         }
@@ -887,6 +906,31 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected boolean isWithinStartingDirectory(String absoluteFilePath) {
         // no boundary to enforce by default
         return true;
+    }
+
+    /**
+     * Strategy to determine whether a listed file stays within the configured starting directory.
+     * <p/>
+     * Checks the resolved path with {@link #isWithinStartingDirectory(String)} by default. Consumers whose listing
+     * tells more about a file than its path, such as whether it is a symbolic link, override this. The check is only
+     * consulted when {@link GenericFileEndpoint#isJailStartingDirectory()} is enabled.
+     *
+     * @param  file             the listed file
+     * @param  absoluteFilePath the resolved absolute path of the listed file
+     * @return                  {@code true} if the file stays within the starting directory
+     */
+    protected boolean isWithinStartingDirectory(Supplier<GenericFile<T>> file, String absoluteFilePath) {
+        return isWithinStartingDirectory(absoluteFilePath);
+    }
+
+    /**
+     * Strategy to determine whether a skipped file could not be resolved (such as a dangling symbolic link).
+     *
+     * @param  absoluteFilePath the resolved absolute path of the listed file
+     * @return                  {@code true} if the file could not be resolved rather than resolving outside
+     */
+    protected boolean isUnresolvableLink(String absoluteFilePath) {
+        return false;
     }
 
     /**

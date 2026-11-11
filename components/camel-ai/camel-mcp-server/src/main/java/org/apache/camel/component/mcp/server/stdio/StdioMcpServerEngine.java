@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.mcp.server.stdio;
 
+import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
@@ -32,8 +36,10 @@ import io.modelcontextprotocol.server.transport.StdioServerTransportProvider;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.ai.tool.AiToolAnnotations;
+import org.apache.camel.component.mcp.server.McpPromptSdkSupport;
 import org.apache.camel.component.mcp.server.McpServerEngine;
 import org.apache.camel.component.mcp.server.McpServerInfo;
+import org.apache.camel.component.mcp.server.McpServerPrompt;
 import org.apache.camel.component.mcp.server.McpServerTool;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.support.service.ServiceSupport;
@@ -67,7 +73,14 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
     private McpSyncServer server;
     private InputStream inputStream;
     private OutputStream outputStream;
+    private PrintStream originalOut;
     private final List<McpServerFeatures.SyncToolSpecification> pendingTools = new ArrayList<>();
+    private final List<McpServerFeatures.SyncPromptSpecification> pendingPrompts = new ArrayList<>();
+
+    // Package-private to allow tests to verify pending prompt lifecycle.
+    int pendingPromptCount() {
+        return pendingPrompts.size();
+    }
 
     @Override
     public CamelContext getCamelContext() {
@@ -82,7 +95,31 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
     @Override
     public void initialize(McpServerInfo info) {
         this.info = info;
-        this.jsonMapper = McpJsonDefaults.getMapper();
+    }
+
+    /**
+     * The JSON mapper of the MCP SDK, found with the service loader of the application class loader of Camel.
+     * <p>
+     * The MCP SDK finds the mapper with the thread context class loader. Camel CLI (camel run) loads the downloaded
+     * jars, such as mcp-json-jackson2, in the application context class loader of CamelContext, which is the thread
+     * context class loader while CamelContext starts, but not while Camel Main configures it and initializes this
+     * engine.
+     */
+    private McpJsonMapper jsonMapper() {
+        if (jsonMapper == null) {
+            ClassLoader cl = camelContext != null ? camelContext.getApplicationContextClassLoader() : null;
+            if (cl == null) {
+                cl = StdioMcpServerEngine.class.getClassLoader();
+            }
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(cl);
+                jsonMapper = McpJsonDefaults.getMapper();
+            } finally {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
+        }
+        return jsonMapper;
     }
 
     /**
@@ -101,24 +138,30 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
 
     @Override
     protected void doStart() throws Exception {
-        if (jsonMapper == null) {
-            jsonMapper = McpJsonDefaults.getMapper();
-        }
+        McpJsonMapper mapper = jsonMapper();
         if (inputStream != null && outputStream != null) {
-            transport = new StdioServerTransportProvider(jsonMapper, inputStream, outputStream);
+            transport = new StdioServerTransportProvider(mapper, inputStream, outputStream);
         } else {
-            transport = new StdioServerTransportProvider(jsonMapper);
+            // stdout carries the MCP protocol only: keep it for the transport, and send anything else written to
+            // System.out (a stream:out endpoint, a println in a bean, a banner of a library) to stderr
+            originalOut = System.out;
+            System.setOut(System.err);
+            transport = new StdioServerTransportProvider(mapper, new StopOnEndOfInput(System.in), originalOut);
         }
         server = McpServer.sync(transport)
                 .serverInfo(info.serverName(), info.version())
-                .capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
+                .capabilities(McpSchema.ServerCapabilities.builder().tools(true).prompts(true).build())
                 .immediateExecution(true)
                 .build();
         for (McpServerFeatures.SyncToolSpecification spec : pendingTools) {
             addTool(spec);
         }
         pendingTools.clear();
-        LOG.info("MCP server '{}' serving ai-tool routes over stdio", info.serverName());
+        for (McpServerFeatures.SyncPromptSpecification spec : pendingPrompts) {
+            addPrompt(spec);
+        }
+        pendingPrompts.clear();
+        LOG.info("MCP server '{}' serving ai-tool and ai-prompt routes over stdio", info.serverName());
     }
 
     @Override
@@ -129,8 +172,59 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
             server.closeGracefully();
             server = null;
         }
+        if (originalOut != null) {
+            System.setOut(originalOut);
+            originalOut = null;
+        }
         pendingTools.clear();
+        pendingPrompts.clear();
         transport = null;
+    }
+
+    private void onEndOfInput() {
+        if (camelContext == null || isStoppingOrStopped()) {
+            return;
+        }
+        // the client closed stdin: the MCP stdio transport expects the server to exit then, so stop Camel (which
+        // also ends Camel Main), from another thread as this is the thread that reads stdin
+        LOG.info("MCP client closed stdin, stopping {}", camelContext.getName());
+        Thread thread = new Thread(() -> {
+            try {
+                camelContext.stop();
+            } catch (Exception e) {
+                LOG.warn("Failed to stop {} after the MCP client closed stdin: {}", camelContext.getName(), e.getMessage());
+            }
+        }, "CamelMcpStdioShutdown");
+        thread.start();
+    }
+
+    /**
+     * Calls {@link #onEndOfInput()} when the input reaches its end.
+     */
+    private final class StopOnEndOfInput extends FilterInputStream {
+
+        private final AtomicBoolean ended = new AtomicBoolean();
+
+        StopOnEndOfInput(InputStream in) {
+            super(in);
+        }
+
+        @Override
+        public int read() throws IOException {
+            return checkEnd(super.read());
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            return checkEnd(super.read(b, off, len));
+        }
+
+        private int checkEnd(int n) {
+            if (n == -1 && ended.compareAndSet(false, true)) {
+                onEndOfInput();
+            }
+            return n;
+        }
     }
 
     @Override
@@ -156,6 +250,52 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
             // notification fails when stdin is closed (the client went away); the tool must not fail the route
             LOG.warn("MCP tool {} added, but the client could not be notified: {}", spec.tool().name(), e.getMessage());
         }
+    }
+
+    @Override
+    public void promptAdded(McpServerPrompt prompt) {
+        McpServerFeatures.SyncPromptSpecification spec = McpPromptSdkSupport.buildSpecification(prompt, jsonMapper);
+        if (server == null) {
+            pendingPrompts.add(spec);
+            LOG.debug("MCP prompt queued until stdio server starts: {}", prompt.name());
+            return;
+        }
+        addPrompt(spec);
+    }
+
+    private void addPrompt(McpServerFeatures.SyncPromptSpecification spec) {
+        try {
+            server.addPrompt(spec);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            LOG.warn("MCP prompt {} added, but the client could not be notified: {}",
+                    spec.prompt().name(), e.getMessage());
+        }
+    }
+
+    @Override
+    public void promptRemoved(String promptName) {
+        for (Iterator<McpServerFeatures.SyncPromptSpecification> iterator = pendingPrompts.iterator();
+             iterator.hasNext();) {
+            if (promptName.equals(iterator.next().prompt().name())) {
+                iterator.remove();
+            }
+        }
+        if (server == null) {
+            return;
+        }
+        try {
+            server.removePrompt(promptName);
+            LOG.debug("MCP prompt removed: {}", promptName);
+        } catch (Exception e) {
+            LOG.debug("Failed to remove MCP prompt {}: {}", promptName, e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean supportsPrompts() {
+        return true;
     }
 
     @Override
@@ -197,7 +337,7 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
 
     private McpSchema.Tool buildMcpTool(McpServerTool tool) {
         String schema = tool.inputSchemaJson() != null ? tool.inputSchemaJson() : EMPTY_OBJECT_SCHEMA;
-        McpSchema.Tool.Builder builder = McpSchema.Tool.builder(tool.name(), jsonMapper, schema)
+        McpSchema.Tool.Builder builder = McpSchema.Tool.builder(tool.name(), jsonMapper(), schema)
                 .description(tool.description());
         applyAnnotations(builder, tool.annotations());
         return builder.build();

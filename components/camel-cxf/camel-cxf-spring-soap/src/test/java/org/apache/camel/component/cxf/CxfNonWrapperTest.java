@@ -22,13 +22,15 @@ import jakarta.xml.ws.BindingProvider;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.non_wrapper.Person;
 import org.apache.camel.non_wrapper.PersonService;
 import org.apache.camel.non_wrapper.UnknownPersonFault;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -36,7 +38,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CxfNonWrapperTest extends CamelSpringTestSupport {
-    int port1 = CXFTestSupport.getPort1();
+
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateCxfNonWrapperTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfNonWrapperTest.port1", PORT1.toString());
+    }
+
+    @AfterAll
+    static void releaseCxfNonWrapperTestPorts() {
+        System.clearProperty("CxfNonWrapperTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
+    int port1 = PORT1.getPort();
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {

@@ -40,7 +40,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     private ExceptionHandler exceptionHandler;
     private final GenericFile<T> file;
     private final String absoluteFileName;
-    private GenericFileKeptDoneFiles keptDoneFiles;
+    private GenericFileKeptDoneFiles.Batch keptDoneFiles;
 
     public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations,
                                    GenericFileProcessStrategy processStrategy, GenericFile<T> file,
@@ -67,10 +67,10 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     }
 
     /**
-     * The done files kept for the files the poll left, when the endpoint uses a done file with a fixed name;
-     * <tt>null</tt> otherwise.
+     * The done files kept for the files the poll left, as the files of the poll of this file see them, when the
+     * endpoint uses a done file with a fixed name; <tt>null</tt> otherwise.
      */
-    void setKeptDoneFiles(GenericFileKeptDoneFiles keptDoneFiles) {
+    void setKeptDoneFiles(GenericFileKeptDoneFiles.Batch keptDoneFiles) {
         this.keptDoneFiles = keptDoneFiles;
     }
 

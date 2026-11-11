@@ -177,6 +177,114 @@ public class YamlValidatorDynamicUriTest {
         }
     }
 
+    @Test
+    public void testAnExpressionInAnOptionThatIsNotEvaluated() {
+        // r24 connect-service-kafka-orders step 3: every record got the text ${header.orderId} as its key
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: kafka
+                            parameters:
+                              topic: orders
+                              key: "${header.orderId}"
+                """;
+        for (YamlValidator validator : List.of(classic, canonical)) {
+            assertThat(validate(validator, yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                    .contains("to: the option key holds an expression (${header.orderId})")
+                    .contains("remove the option and set the header CamelKafkaKey before this step"));
+        }
+        // in the uri as well
+        assertHint(yaml.replace("""
+                            uri: kafka
+                            parameters:
+                              topic: orders
+                              key: "${header.orderId}"
+                """, """
+                            uri: "kafka:orders?key=${header.orderId}"
+                """), "the option key holds an expression", "CamelKafkaKey");
+    }
+
+    @Test
+    public void testTheHeaderOfAComponentWithADashInItsName() {
+        // the headers of aws2-sqs start with CamelAwsSqs: the scheme with no dash and no digit
+        assertHint("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: aws2-sqs:orders
+                            parameters:
+                              delaySeconds: "${header.delay}"
+                """, "the option delaySeconds holds an expression", "set the header CamelAwsSqsDelaySeconds");
+        // the headers of the kubernetes components all start with CamelKubernetes
+        assertHint("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: kubernetes-pods:http://localhost:8080
+                            parameters:
+                              operation: "${header.op}"
+                """, "the option operation holds an expression", "set the header CamelKubernetesOperation");
+    }
+
+    @Test
+    public void testAnOptionTheProducerEvaluates() {
+        // the fileName of file takes an expression, toD evaluates its options for each message, and the method of
+        // bean binds its parameters for each call
+        assertNoOptionHint("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: "bean:userService?method=findById(${header.id})"
+                """);
+        assertNoOptionHint("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: file:out
+                            parameters:
+                              fileName: "${header.orderId}.json"
+                """);
+        assertNoOptionHint("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - toD:
+                            uri: kafka
+                            parameters:
+                              topic: orders
+                              key: "${header.orderId}"
+                """);
+        // CamelSpringRabbitmqRoutingKey is a header the consumer sets, the producer does not read it
+        assertNoOptionHint("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: spring-rabbitmq:orders
+                            parameters:
+                              routingKey: "${header.kind}"
+                """);
+    }
+
+    private void assertNoOptionHint(String yaml) {
+        for (YamlValidator validator : List.of(classic, canonical)) {
+            assertThat(validate(validator, yaml)).noneMatch(e -> e.getMessage().contains("holds an expression"));
+        }
+    }
+
     private void assertNoHint(String yaml) {
         for (YamlValidator validator : List.of(classic, canonical)) {
             assertThat(validate(validator, yaml))

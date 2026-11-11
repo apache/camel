@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.xml.ws.Service;
 
 import javax.xml.namespace.QName;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.http.base.HttpOperationFailedException;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.hello_world_soap_http.Greeter;
@@ -48,12 +51,41 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelSpringTestSuppor
                                                + "<faultType>NoSuchCodeLitFault</faultType></testDocLitFault>"
                                                + "</soap:Body></soap:Envelope>";
 
+    private static AvailablePortFinder.Port port1;
+    private static AvailablePortFinder.Port port2;
+    // a subclass @BeforeAll hides the one of its parent and both are run, so every allocation is kept to be released
+    private static final List<AvailablePortFinder.Port> ALLOCATED_PORTS = new ArrayList<>();
+    private static final List<String> PORT_PROPERTIES = new ArrayList<>();
+
     public static int getPort1() {
-        return CXFTestSupport.getPort1();
+        return port1.getPort();
     }
 
     public static int getPort2() {
-        return CXFTestSupport.getPort2();
+        return port2.getPort();
+    }
+
+    /**
+     * Allocates the ports and publishes them as system properties named "&lt;prefix&gt;.port1" and
+     * "&lt;prefix&gt;.port2" for the Spring XML. Must be called before the service endpoint is published and the Spring
+     * context is created.
+     */
+    protected static void allocatePorts(String prefix) {
+        port1 = AvailablePortFinder.find();
+        port2 = AvailablePortFinder.find();
+        ALLOCATED_PORTS.add(port1);
+        ALLOCATED_PORTS.add(port2);
+        System.setProperty(prefix + ".port1", port1.toString());
+        System.setProperty(prefix + ".port2", port2.toString());
+        PORT_PROPERTIES.add(prefix + ".port1");
+        PORT_PROPERTIES.add(prefix + ".port2");
+    }
+
+    protected static void releasePorts() {
+        PORT_PROPERTIES.forEach(System::clearProperty);
+        PORT_PROPERTIES.clear();
+        ALLOCATED_PORTS.forEach(AvailablePortFinder.Port::release);
+        ALLOCATED_PORTS.clear();
     }
 
     @Override

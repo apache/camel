@@ -32,6 +32,12 @@
     <name>Camel :: Azure :: Storage Datalake</name>
     <description>Camel Azure Datalake Component</description>
 
+    <properties>
+        <!-- Floci AZ is not available on these platforms -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

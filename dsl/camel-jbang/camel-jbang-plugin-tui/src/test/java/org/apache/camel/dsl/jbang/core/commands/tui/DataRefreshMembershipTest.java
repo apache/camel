@@ -31,7 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * A new or stopped integration is noticed on every tab: the cheap look at the status files in ~/.camel asks for a full
- * scan when they change, at most once a second. Lookups that wait for the diagram retry until found.
+ * scan when they change, at most once a second. Lookups that wait for the diagram retry until found. A status that is
+ * not of late adds nothing to the charts.
  */
 @Isolated
 class DataRefreshMembershipTest {
@@ -107,6 +108,31 @@ class DataRefreshMembershipTest {
             return null;
         }, () -> false, 0)).isNull();
         assertThat(calls.get()).isEqualTo(1);
+    }
+
+    @Test
+    void aStatusOfThenAddsNothingToTheCharts() {
+        DataRefreshService service = newService();
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "562838";
+        info.throughput = "1.00";
+        info.statusWrittenAt = System.currentTimeMillis();
+        service.recordHistories(info);
+        assertThat(service.metrics().getThroughputHistory().get("562838")).hasSize(1);
+
+        // held with kill -STOP a minute ago: its status still says 1 msg/s, and the chart does not take it on
+        info.statusWrittenAt = System.currentTimeMillis() - 60_000;
+        service.metrics().getThroughputHistory().clear();
+        service.recordHistories(info);
+        assertThat(service.metrics().getThroughputHistory()).doesNotContainKey("562838");
+    }
+
+    @Test
+    void anExampleIsSelectedByTheNameItGivesItself() {
+        assertThat(DataRefreshService.isLaunched("fail-well/circuit-breaker", "circuit-breaker")).isTrue();
+        assertThat(DataRefreshService.isLaunched("orders", "Orders")).isTrue();
+        assertThat(DataRefreshService.isLaunched("fail-well/circuit-breaker", "retry")).isFalse();
+        assertThat(DataRefreshService.isLaunched("orders", null)).isFalse();
     }
 
     private static DataRefreshService newService() {

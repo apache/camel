@@ -28,9 +28,6 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -39,6 +36,10 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.AzureVaultConfiguration;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * A {@link PropertiesFunction} that lookup the property value from Azure Key Vault service.
@@ -85,6 +86,8 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
     private static final String CAMEL_VAULT_AZURE_TENANT_ID = "CAMEL_VAULT_AZURE_TENANT_ID";
 
     private static final String CAMEL_VAULT_AZURE_IDENTITY_ENABLED = "CAMEL_VAULT_AZURE_IDENTITY_ENABLED";
+
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private CamelContext camelContext;
     private SecretClient client;
     // this function is shared and invoked concurrently
@@ -209,7 +212,7 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
         if (key != null) {
             try {
                 returnValue = getSecretFromSource(key, subkey, defaultValue, version);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeCamelException(
                         "Error getting secret from vault using key: " + key + " due to: " + e.getMessage(), e);
             }
@@ -219,8 +222,7 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
     }
 
     private String getSecretFromSource(
-            String key, String subkey, String defaultValue, String version)
-            throws JsonProcessingException {
+            String key, String subkey, String defaultValue, String version) {
         String returnValue;
 
         // capture name of secret
@@ -230,11 +232,10 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
             KeyVaultSecret secret = client.getSecret(key, ObjectHelper.isNotEmpty(version) ? version : "");
             returnValue = secret.getValue();
             if (ObjectHelper.isNotEmpty(subkey)) {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode actualObj = mapper.readTree(returnValue);
+                JsonNode actualObj = MAPPER.readTree(returnValue);
                 JsonNode field = actualObj.get(subkey);
                 if (ObjectHelper.isNotEmpty(field)) {
-                    returnValue = field.textValue();
+                    returnValue = field.stringValue(null);
                 } else {
                     returnValue = null;
                 }

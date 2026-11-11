@@ -33,9 +33,6 @@ import com.azure.messaging.eventhubs.models.EventContext;
 import com.azure.storage.blob.BlobContainerAsyncClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -49,6 +46,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.vault.AzureVaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Period task which checks if Azure Key Vaults secrets has been updated and can trigger Camel to be reloaded.
@@ -60,6 +61,8 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
 
     private static final String BLOB_SERVICE_URI_SEGMENT = ".blob.core.windows.net";
     private static final String SECRET_VERSION_ADD = "Microsoft.KeyVault.SecretNewVersionCreated";
+
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private CamelContext camelContext;
     private boolean reloadEnabled = true;
@@ -212,12 +215,11 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
     protected void onEventListener(final EventContext eventContext) {
         boolean triggerReloading = false;
 
-        ObjectMapper mapper = new ObjectMapper();
-        final JsonNode actualObj = retrieveEventData(eventContext, mapper);
+        final JsonNode actualObj = retrieveEventData(eventContext);
 
         for (int i = 0; i < actualObj.size(); i++) {
-            String secret = actualObj.get(i).get("subject").textValue();
-            String eventType = actualObj.get(i).get("eventType").textValue();
+            String secret = actualObj.get(i).get("subject").stringValue(null);
+            String eventType = actualObj.get(i).get("eventType").stringValue(null);
             if (ObjectHelper.isNotEmpty(secret) && ObjectHelper.isNotEmpty(eventType)) {
                 if (eventType.equalsIgnoreCase(SECRET_VERSION_ADD)) {
                     if (matchSecret(secret)) {
@@ -242,14 +244,14 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
         }
     }
 
-    private static JsonNode retrieveEventData(EventContext eventContext, ObjectMapper mapper) {
+    private static JsonNode retrieveEventData(EventContext eventContext) {
         try {
-            return mapper.readTree(eventContext.getEventData().getBodyAsString());
-        } catch (JsonProcessingException e) {
+            return MAPPER.readTree(eventContext.getEventData().getBodyAsString());
+        } catch (JacksonException e) {
             LOG.warn("Unable to process event data body: {}", e.getMessage(), e);
             // Return empty array instead of throwing exception - the calling code handles empty arrays
             // gracefully by not executing the loop when size() is 0
-            return mapper.createArrayNode();
+            return MAPPER.createArrayNode();
         }
     }
 

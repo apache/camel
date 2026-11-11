@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -71,6 +72,7 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.support.StepHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
@@ -90,7 +92,7 @@ import static org.apache.camel.impl.engine.DefaultChannel.getOrCreateBacklogTrac
  * <li>Execute {@link UnitOfWork}</li>
  * <li>Keeping track which route currently is being routed</li>
  * <li>Execute {@link RoutePolicy}</li>
- * <li>Gather JMX performance statics</li>
+ * <li>Gather JMX performance statistics</li>
  * <li>Tracing</li>
  * <li>Debugging</li>
  * <li>Message History</li>
@@ -117,12 +119,22 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
     private static final Object[] EMPTY_STATES = new Object[0];
 
+    private static final AtomicIntegerFieldUpdater<AsyncAfterTask> AWAITED
+            = AtomicIntegerFieldUpdater.newUpdater(AsyncAfterTask.class, "awaited");
+
     final CamelContext camelContext;
     private final ReactiveExecutor reactiveExecutor;
     private final ShutdownStrategy shutdownStrategy;
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
     private byte statefulAdvices;
     private PooledObjectFactory<CamelInternalTask> taskFactory;
+    // the id of the step, when this is the channel of a step that asks the step hook itself, as it has no error handler
+    // that does (set by DefaultChannel)
+    String stepHookNodeId;
+    // whether the processor has no error handler around it (set by DefaultChannel for a step without an error handler,
+    // such as the steps of a doTry or an onException, or through setCatchProcessorThrows): this then catches an exception that the processor throws instead of
+    // calling the callback, which would otherwise be dropped by the reactive executor and leave the exchange hanging
+    boolean catchProcessorThrows;
 
     public CamelInternalProcessor(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -213,6 +225,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         addAdvice(CamelInternalProcessor.wrap(processor));
     }
 
+    /**
+     * Whether to catch an exception that the wrapped processor throws from {@code process(exchange, callback)}, instead
+     * of setting it on the exchange, and fail the exchange with it. For a processor with no error handler around it, as
+     * {@link DefaultChannel} does for a step without an error handler. Must be set before this processor is used.
+     */
+    public void setCatchProcessorThrows(boolean catchProcessorThrows) {
+        this.catchProcessorThrows = catchProcessorThrows;
+    }
+
     @Override
     public void setRouteOnAdvices(Route route) {
         RoutePolicyAdvice task = getAdvice(RoutePolicyAdvice.class);
@@ -237,6 +258,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private final Object[] states;
         private Exchange exchange;
         private AsyncCallback originalCallback;
+        // only when catchProcessorThrows: n while the callback of call n of the processor with this task is still to
+        // come, and -n once call n is settled (0 before the first call). The callback (done) and the takeover of a
+        // processor that throws before it calls the callback compete for it (compareAndSet from n to -n), so the
+        // exchange is continued exactly once. The calls are numbered, as this task is reused when tasks are pooled. One
+        // int field, not an object per call, as this task runs every step (the field fits in the padding of the task)
+        volatile int awaited;
 
         private AsyncAfterTask(Object[] states) {
             this.states = states;
@@ -246,6 +273,16 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         public void prepare(Exchange exchange, AsyncCallback originalCallback) {
             this.exchange = exchange;
             this.originalCallback = originalCallback;
+            if (catchProcessorThrows) {
+                int call = Math.abs(awaited) + 1;
+                if (call <= 0) {
+                    // the numbers wrap around after Integer.MAX_VALUE calls
+                    call = 1;
+                }
+                // an ordered write is enough: the callback reaches another thread only through a hand-off that
+                // publishes it
+                AWAITED.lazySet(this, call);
+            }
         }
 
         @Override
@@ -262,6 +299,19 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public void done(boolean doneSync) {
+            if (catchProcessorThrows) {
+                final int call = awaited;
+                if (call <= 0 || !AWAITED.compareAndSet(this, call, -call)) {
+                    // the logs here do not read the exchange id: it is created on first use, and the exchange may be
+                    // in use on another thread
+                    // (stepHookNodeId is the id of the step in a channel without an error handler)
+                    LOG.warn("The callback of {} (step {}) was called when it was no longer awaited (after the processor"
+                             + " had thrown an exception, which failed the exchange instead, or more than once; an"
+                             + " AsyncProcessor must not throw from process). This callback is ignored.",
+                            processor, stepHookNodeId);
+                    return;
+                }
+            }
             try {
                 AdviceIterator.runAfterTasks(advices, states, exchange);
             } finally {
@@ -280,6 +330,44 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 if (taskFactory != null) {
                     taskFactory.release(this);
                 }
+            }
+        }
+
+        /**
+         * Continues the exchange with the exception that the processor threw before it called its callback, unless the
+         * callback came first.
+         */
+        void takeOver(int call, Throwable cause) {
+            if (!AWAITED.compareAndSet(this, call, -call)) {
+                // the callback continued the exchange (which may already be done, or in use on another thread, so its
+                // id is not read here), so this exception is only logged
+                LOG.warn("Error processing an exchange by {} (step {}) due to {}. The exchange continued, so this"
+                         + " exception is ignored.",
+                        processor, stepHookNodeId, cause.getMessage(), cause);
+                return;
+            }
+            // this task still holds the exchange and the callback of this call: only the callback, by winning the
+            // compareAndSet, could have released it. Fail the exchange, as when the processor sets the exception on
+            // the exchange and calls the callback
+            final AsyncCallback originalCallback = this.originalCallback;
+            exchange.setException(cause);
+            try {
+                AdviceIterator.runAfterTasks(advices, states, exchange);
+            } finally {
+                try {
+                    // the after processing of the unit of work that the callback of the processor would have done after
+                    // this task (such as clearing the MDC)
+                    final UnitOfWork uow = exchange.getUnitOfWork();
+                    if (uow != null && uow.isBeforeAfterProcess()) {
+                        uow.afterProcess(processor, exchange, this, false);
+                    }
+                } finally {
+                    reactiveExecutor.schedule(originalCallback);
+                }
+                // this task is not released: the processor may still call its callback (this task), which must find no
+                // call awaited and be ignored, instead of continuing an exchange that reuses this task. It keeps no
+                // reference to the exchange, which a broken processor may hold on to with its callback
+                reset();
             }
         }
     }
@@ -318,7 +406,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         Object[] states;
 
         // create internal callback which will execute the advices in reverse order when done
-        CamelInternalTask afterTask = taskFactory != null ? taskFactory.acquire() : null;
+        AsyncAfterTask afterTask = taskFactory != null ? (AsyncAfterTask) taskFactory.acquire() : null;
         if (afterTask == null) {
             states = statefulAdvices > 0 ? new Object[statefulAdvices] : EMPTY_STATES;
             afterTask = new AsyncAfterTask(states);
@@ -377,7 +465,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         return true;
     }
 
-    private boolean processNonTransacted(Exchange exchange, CamelInternalTask afterTask) {
+    private boolean processNonTransacted(Exchange exchange, AsyncAfterTask afterTask) {
+        // read while this call owns the task: once the callback is called, the task may be released and reused
+        final int call = catchProcessorThrows ? afterTask.awaited : 0;
         final AsyncCallback async = beforeProcess(exchange, afterTask);
 
         // ----------------------------------------------------------
@@ -386,7 +476,30 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         if (LOG.isTraceEnabled()) {
             LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
         }
-        boolean sync = processor.process(exchange, async);
+        final String nodeId = stepHookNodeId;
+        boolean sync;
+        try {
+            sync = nodeId == null
+                    ? processor.process(exchange, async)
+                    : StepHelper.process(camelContext.getCamelContextExtension().getStepHook(), exchange, nodeId, processor,
+                            async);
+        } catch (Throwable e) {
+            // a Throwable, not only an Exception, as in the other fixes of this kind (SimpleTask, RedeliveryTask,
+            // NoErrorHandler): an Error such as NoClassDefFoundError thrown before the callback would also hang
+            if (!catchProcessorThrows || afterTask.awaited != call) {
+                // an error handler around the processor handles it, or the callback was called before the exception was
+                // thrown and continued the exchange (this task may already be released): leave the exception to the
+                // caller, as before
+                throw e;
+            }
+            // the processor threw before it called the callback, such as an AsyncProcessor that throws from
+            // process(exchange, callback) instead of setting the exception on the exchange. Take over through the
+            // reactive executor, after the work already queued there, so a callback that the processor handed on and
+            // that this queued work calls still comes first and continues the exchange (a callback that only work
+            // queued after the takeover calls loses to it, and is ignored)
+            reactiveExecutor.schedule(() -> afterTask.takeOver(call, e));
+            sync = false;
+        }
         if (!sync) {
             // Deprecated since 4.19.0
             EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);
@@ -430,7 +543,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ START +++
             // ----------------------------------------------------------
-            processor.process(exchange);
+            final String nodeId = stepHookNodeId;
+            if (nodeId == null) {
+                processor.process(exchange);
+            } else {
+                StepHelper.process(camelContext.getCamelContextExtension().getStepHook(), exchange, nodeId, processor);
+            }
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
@@ -476,7 +594,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     /**
-     * Advice to invoke callbacks for before and after routing.
+     * Advice to invoke callbacks for before and after routing, and to keep the doTry block of a calling route out of
+     * this route.
      */
     public static class RouteLifecycleAdvice implements CamelInternalProcessorAdvice<Object> {
 
@@ -492,20 +611,33 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (uow != null) {
                 uow.beforeRoute(exchange, route);
             }
-            return null;
+            // the try block marker of a doTry turns off the error handler per output of the EIPs in the steps of
+            // that doTry (routing slip, dynamic router, multicast, recipient list), but a route called from the doTry
+            // has its own error handler, so the marker of the caller is removed here and set again when this route
+            // is done
+            return exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
         }
 
         @Override
-        public void after(Exchange exchange, Object object) throws Exception {
-            UnitOfWork uow = exchange.getUnitOfWork();
-            if (uow != null) {
-                uow.afterRoute(exchange, route);
+        public void after(Exchange exchange, Object tryRouteBlock) throws Exception {
+            try {
+                UnitOfWork uow = exchange.getUnitOfWork();
+                if (uow != null) {
+                    uow.afterRoute(exchange, route);
+                }
+            } finally {
+                // the caller is in its doTry again (also when this route completed asynchronously)
+                if (tryRouteBlock != null) {
+                    exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, tryRouteBlock);
+                } else {
+                    exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+                }
             }
         }
 
         @Override
         public boolean hasState() {
-            return false;
+            return true;
         }
     }
 
@@ -1117,7 +1249,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
      * Advice to inject new {@link UnitOfWork} to the {@link Exchange} if needed, and as well to ensure the
      * {@link UnitOfWork} is done and stopped.
      */
-    public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
+    public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork>, Ordered {
 
         private final Route route;
         private String routeId;
@@ -1195,6 +1327,21 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             } else {
                 return PluginHelper.getUnitOfWorkFactory(exchange.getContext()).createUnitOfWork(exchange);
             }
+        }
+
+        @Override
+        public int getOrder() {
+            // UnitOfWorkProcessorAdvice must run first in before() (to set up the UoW) and
+            // last in after() (to tear it down). Using HIGHEST (Integer.MIN_VALUE) places it
+            // at position 0 in the sorted advice list; before() runs in ascending order (UoW
+            // first), after() runs in reverse (UoW last).
+            //
+            // StreamCachingAdvice uses HIGHEST + 1 so that:
+            //   before(): UoW → StreamCaching → tracers/debuggers (stream is cached before being read)
+            //   after():  tracers → StreamCaching → UoW (stream is reset before TempFileManager
+            //             onCompletion deletes the spool file)
+            // This fixes CAMEL-26640 without regressing CAMEL-10096 or CAMEL-24392.
+            return Ordered.HIGHEST;
         }
 
     }
@@ -1316,8 +1463,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public int getOrder() {
-            // we want stream caching first
-            return Ordered.HIGHEST;
+            // HIGHEST + 1: immediately after UnitOfWorkProcessorAdvice (HIGHEST), so the stream
+            // is cached before tracers read it (before()) and reset before TempFileManager deletes
+            // the spool file (after()). See UnitOfWorkProcessorAdvice.getOrder() for the full
+            // ordering rationale.
+            return Ordered.HIGHEST + 1;
         }
     }
 

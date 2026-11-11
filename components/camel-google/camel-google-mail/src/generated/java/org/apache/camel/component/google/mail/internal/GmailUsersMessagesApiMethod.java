@@ -22,10 +22,6 @@ import static org.apache.camel.support.component.ApiMethodArg.setter;
 @Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum GmailUsersMessagesApiMethod implements ApiMethod {
 
-    ATTACHMENTS(
-        com.google.api.services.gmail.Gmail.Users.Messages.Attachments.class,
-        "attachments"),
-
     BATCH_DELETE(
         com.google.api.services.gmail.Gmail.Users.Messages.BatchDelete.class,
         "batchDelete",

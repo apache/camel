@@ -50,7 +50,87 @@ The component can interact with HashiCorp Vault, which may be deployed either as
 When using a HashiCorp Vault Cloud instance, in addition to the standard parameters such as `host`, `port`, `scheme`, and `token`, you must configure the following additional parameters:
 
 * `cloud`:: A boolean flag that must be explicitly set to `true` to indicate that the HashiCorp Vault instance is hosted in the cloud.
-* `namespace`:: The namespace of your secrets engine.
+* `namespace`:: The namespace of your secrets engine. The operations work on `<namespace>/<secretsEngine>`; without a
+namespace they work on the secrets engine itself, as on-premise.
+
+=== Logging in to HashiCorp Vault
+
+The `authentication` option chooses how the component logs in to HashiCorp Vault:
+
+[cols="1,3",options="header"]
+|===
+| Login | Settings
+
+| `token` (the default)
+| `token`: a token created in Vault beforehand.
+
+| `approle`
+| `roleId` and `secretId`: the role ID and a secret ID of an AppRole.
+
+| `kubernetes`
+| `role`: the Vault role of the application. The login sends the service account token of the pod, which it reads from
+`/var/run/secrets/kubernetes.io/serviceaccount/token`, or from the file set with `jwtFile`.
+
+| `jwt`
+| `jwt`, or `jwtFile` to read the JWT from a file. `role` is the Vault role to log in as, which can be left out when the
+JWT login of Vault has a default role.
+
+| `cert`
+| `keyStore`: the TLS client certificate, see <<TLS>>. `role` is the name of the certificate role in Vault; without
+it, Vault tries every certificate role that trusts the certificate. The login needs the `https` scheme.
+|===
+
+When the login method is not mounted at its default path in Vault (`approle`, `kubernetes`, `jwt` or `cert`), set the
+path with `authMountPath`, without `auth/`.
+
+Camel renews the token before it expires, and logs in again when the token can no longer be renewed, such as when it
+reached its maximum time to live. A JWT read from a file is read again at every login, so a token that the platform
+replaces in the file, such as a projected service account token, is picked up. When the endpoint stops, Camel revokes
+the token of its login. A token given for the token login is renewed when it is renewable, but never revoked.
+
+On HashiCorp Cloud (`cloud=true` and a `namespace`), the login is made in the namespace, as are the renewal and the
+revocation of the token.
+
+For example, an endpoint that logs in with an AppRole, whose role ID and secret ID are in environment variables:
+
+[source,java]
+----
+from("direct:start")
+    .to("hashicorp-vault:secret?operation=getSecret&host=vault.example.com&authentication=approle"
+        + "&roleId={{env:VAULT_ROLE_ID}}&secretId=RAW({{env:VAULT_SECRET_ID}})")
+    .log("${body}");
+----
+
+=== TLS
+
+With the `https` scheme, the component trusts the certificate of Vault as any other TLS connection of the JVM does. For
+a Vault whose certificate is signed by a private CA, set `trustStore` to the certificates to trust: a PKCS12 or JKS
+trust store with its `trustStorePassword`, or a PEM file with the CA certificates, such as the file that the
+`VAULT_CACERT` environment variable of the Vault CLI points to.
+
+To present a client certificate to Vault, for the `cert` login or for a Vault that requires client certificates, set
+`keyStore`: a PKCS12 or JKS key store with its `keyStorePassword`, or a PEM file with the certificate and its private
+key. The key of a PEM file is not encrypted, in PKCS#8 (`-----BEGIN PRIVATE KEY-----`) or, for an RSA key, in PKCS#1
+(`-----BEGIN RSA PRIVATE KEY-----`).
+
+For example, the properties function logs in with a client certificate:
+
+[source,properties]
+----
+camel.vault.hashicorp.host = vault.example.com
+camel.vault.hashicorp.port = 8200
+camel.vault.hashicorp.scheme = https
+camel.vault.hashicorp.trustStore = /etc/vault/ca.pem
+camel.vault.hashicorp.authentication = cert
+camel.vault.hashicorp.role = my-application
+camel.vault.hashicorp.keyStore = /etc/vault/client.pem
+----
+
+=== OpenBao
+
+The component, the properties function and the secret refresh task also work with https://openbao.org/[OpenBao], the
+open source fork of HashiCorp Vault, which keeps the API of Vault. OpenBao has the token, AppRole, Kubernetes, JWT and
+TLS certificate logins built in.
 
 
 == Examples
@@ -64,7 +144,9 @@ and `CamelHashicorpVaultSecretPath` headers override them per message.
 
 ==== Creating a secret
 
-The message body is the map of key/value pairs to store as the secret:
+The message body is the map of key/value pairs to store as the secret. A POJO is written as JSON, and text, bytes,
+a stream or a file must hold a JSON object of the fields. A message without a body fails, instead of writing a new,
+empty version of the secret:
 
 [tabs]
 ====
@@ -105,7 +187,7 @@ YAML::
 
 The message body becomes a Map with the fields of the secret under `data` and its version details under
 `metadata`, or no body when the secret does not exist; the `CamelHashicorpVaultSecretVersion` header reads a given
-version instead of the latest:
+version (a number) instead of the latest:
 
 [tabs]
 ====
@@ -320,10 +402,32 @@ camel.vault.hashicorp.namespace = namespace
 
 This will make the Properties function works even in the HashiCorp Cloud deployment option.
 
+The properties function logs in with a token by default. To log in another way, set the options of
+<<Logging in to HashiCorp Vault>> with the `camel.vault.hashicorp` prefix. For example, an application in a Kubernetes
+pod logs in with the service account of the pod:
+
+[source,properties]
+----
+camel.vault.hashicorp.host = vault.example.com
+camel.vault.hashicorp.port = 8200
+camel.vault.hashicorp.scheme = https
+camel.vault.hashicorp.authentication = kubernetes
+camel.vault.hashicorp.role = my-application
+----
+
+The properties function also reads these options from the environment variables
+`CAMEL_HASHICORP_VAULT_AUTHENTICATION`, `CAMEL_HASHICORP_VAULT_ROLE_ID`, `CAMEL_HASHICORP_VAULT_SECRET_ID`,
+`CAMEL_HASHICORP_VAULT_ROLE`, `CAMEL_HASHICORP_VAULT_JWT`, `CAMEL_HASHICORP_VAULT_JWT_FILE` and
+`CAMEL_HASHICORP_VAULT_AUTH_MOUNT_PATH`, and the settings of <<TLS>> from `CAMEL_HASHICORP_VAULT_TRUST_STORE`,
+`CAMEL_HASHICORP_VAULT_TRUST_STORE_PASSWORD`, `CAMEL_HASHICORP_VAULT_KEY_STORE` and
+`CAMEL_HASHICORP_VAULT_KEY_STORE_PASSWORD`. When any of the `CAMEL_HASHICORP_VAULT_*` environment variables is set, the
+properties function takes all its settings from the environment variables, and none from the `camel.vault.hashicorp`
+configuration. The secret refresh task logs in the same way as the properties function.
+
 NOTE: if you're running the application on a Kubernetes based cloud platform, you can initialize the environment variables from a Secret or Configmap to enhance security. You can also enhance security by xref:manual::using-propertyplaceholder.adoc#_resolving_property_placeholders_on_cloud[setting a Secret property placeholder] which will be initialized at application runtime only.
 
 NOTE: `camel.vault.hashicorp` configuration only applies to the HashiCorp Vault properties function (E.g when resolving properties).
-When using the `operation` option to create, get, list secrets etc., you should provide the `host`, `port`, `scheme` (if required) & `token` options.
+When using the `operation` option to create, get, list secrets etc., you should provide the `host`, `port`, `scheme` (if required) and the options of the login, such as `token`.
 
 At this point, you'll be able to reference a property in the following way:
 

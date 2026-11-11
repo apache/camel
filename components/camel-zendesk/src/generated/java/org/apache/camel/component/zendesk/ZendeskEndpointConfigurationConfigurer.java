@@ -2,6 +2,7 @@
 package org.apache.camel.component.zendesk;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -158,7 +159,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.zendesk.ZendeskEndpointConfiguration target = (org.apache.camel.component.zendesk.ZendeskEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "active": target.setActive(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "article": target.setArticle(property(camelContext, org.zendesk.client.v2.model.hc.Article.class, value)); return true;
         case "articleattachments":
@@ -372,7 +373,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "active": return java.lang.Boolean.class;
         case "article": return org.zendesk.client.v2.model.hc.Article.class;
         case "articleattachments":
@@ -582,7 +583,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.zendesk.ZendeskEndpointConfiguration target = (org.apache.camel.component.zendesk.ZendeskEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "active": return target.getActive();
         case "article": return target.getArticle();
         case "articleattachments":
@@ -791,7 +792,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "attachments": return org.zendesk.client.v2.model.Attachment.class;
         case "clazz": return org.zendesk.client.v2.model.views.ViewRow.class;
         case "labels": return java.lang.String.class;

@@ -156,12 +156,7 @@ public final class KafkaChangelog<V> {
         consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer.getName());
         consumer = new KafkaConsumer<>(consumerConfig);
 
-        producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer.getName());
-        // set up the producer to remove all batching on send, we want all sends to be fully synchronous
-        producerConfig.putIfAbsent(ProducerConfig.ACKS_CONFIG, "1");
-        producerConfig.putIfAbsent(ProducerConfig.BATCH_SIZE_CONFIG, "0");
-        producer = new KafkaProducer<>(producerConfig);
+        producer = new KafkaProducer<>(producerProperties());
 
         poller = new TopicPoller();
         ServiceHelper.startService(poller);
@@ -177,6 +172,19 @@ public final class KafkaChangelog<V> {
             LOG.info("Syncing {} from topic: {} continuously using background thread", name, topic);
             executorService.submit(poller);
         }
+    }
+
+    /**
+     * The properties of the producer: the configured properties, with the serializers, and without batching, as every
+     * change is written synchronously. The acks and the idempotence are the ones of the Kafka client (acks=all with
+     * idempotence), unless the configured properties set them. Package-private for tests.
+     */
+    Properties producerProperties() {
+        producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer.getName());
+        // set up the producer to remove all batching on send, we want all sends to be fully synchronous
+        producerConfig.putIfAbsent(ProducerConfig.BATCH_SIZE_CONFIG, "0");
+        return producerConfig;
     }
 
     /**

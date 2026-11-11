@@ -25,16 +25,22 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
-import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.AvailablePortFinder.Port;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
+/**
+ * Tests for {@link MonitorStartup} that bind a real network port: isolated from parallel test forks to avoid port races
+ * (CAMEL-26377).
+ */
+@Isolated
 class MonitorStartupTest {
 
     @Test
@@ -49,22 +55,26 @@ class MonitorStartupTest {
     @Test
     void camelTuiForwardsDefaults() {
         TuiCommand command = new TuiCommand(new CamelJBangMain(), getClass().getClassLoader());
-        new CommandLine(command).parseArgs("--web", "--defaults");
+        CommandLineTestHelper.parse(command, "--web", "--defaults");
         assertThat(command.buildArgs()).containsExactly("--web", "--defaults");
 
         CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
-        new CommandLine(monitor).parseArgs(command.buildArgs().toArray(String[]::new));
+        CommandLineTestHelper.parse(monitor, command.buildArgs().toArray(String[]::new));
         assertThat(monitor.web).isTrue();
         assertThat(monitor.defaults).isTrue();
     }
 
     @Test
-    void browserOnlyRefusesMcp() {
+    void browserOnlyRefusesMcp() throws Exception {
         TuiWebServer server = newServer(0);
 
-        assertThatThrownBy(() -> MonitorStartup.serveBrowserOnly(server, 0, true, new ListPrinter()))
-                .isInstanceOf(CliException.class)
-                .hasMessageContaining("--mcp needs an interactive terminal");
+        try {
+            assertThatThrownBy(() -> MonitorStartup.serveBrowserOnly(server, 0, true, new ListPrinter()))
+                    .isInstanceOf(CliException.class)
+                    .hasMessageContaining("--mcp needs an interactive terminal");
+        } finally {
+            server.stop();
+        }
     }
 
     @Test
@@ -83,13 +93,15 @@ class MonitorStartupTest {
             });
             serving.start();
 
-            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-                try (Socket socket = new Socket()) {
-                    socket.connect(new InetSocketAddress("127.0.0.1", port), 500);
-                }
-            });
+            // the line is printed once the server is bound: a connect before that is refused, and Awaitility does
+            // not retry on the ConnectException, so wait for the line and connect once
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !printer.lines.isEmpty() || !serving.isAlive());
+            assertThat(failure.get()).isNull();
             assertThat(printer.lines).containsExactly(
                     "Camel TUI in the browser at http://127.0.0.1:" + port + "/ (Ctrl+C to stop)");
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress("127.0.0.1", port), 5000);
+            }
             assertThat(serving.isAlive()).as("waits while the server runs").isTrue();
 
             server.stop();

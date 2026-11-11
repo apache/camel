@@ -51,6 +51,13 @@ The component supports the following operations:
 * `invokeFunction` - invoke a function with a payload (producer)
 * `getFunction` - retrieve function metadata (producer)
 
+=== Payload of invokeFunction
+
+The message body is the payload of the function. A `String` is sent in UTF-8, and a `byte[]`, an `InputStream` or a
+file is sent as its bytes, so binary data is kept. Without a body the function is invoked with an empty payload. A `Map`
+or a POJO does not convert to bytes and fails with an `InvalidPayloadException`, so marshal it first, for example to
+JSON with `marshal().json()`.
+
 === Producer example
 
 [tabs]

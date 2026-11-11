@@ -48,6 +48,7 @@ org
   └── camel
     └── catalog
       ├── beans (JSON schema)
+      ├── chaos-model.json (the model of the chaos rules)
       ├── components (JSON schema)
       ├── dataformats (JSON schema)
       ├── dev-consoles (JSON schema)
@@ -76,6 +77,11 @@ response schema generated directly from the console's typed Java `Response` reco
 covering every dev console endpoint, so the same contract used internally to serve the live `api`
 dev console is also available standalone for tooling. A `dev-consoles.properties` index file lists
 all available dev console names.
+
+The `chaos-model.json` file, since Camel 4.24, is the model of the rules of
+xref:next@components:others:chaos.adoc[camel-chaos]: the targets, the hooks of each target and the faults each one
+offers, the parameters of each fault, the options, the expectations, the limits, and recipes (known rules in plain
+words, as templates). It is for the tools that help to write rules, such as a form or an AI.
 
 The `docs` directory contains the AsciiDoc documentation pages for all components, EIPs,
 data formats, languages, and other artifacts. A `docs.properties` index file lists all
@@ -156,6 +162,37 @@ out.getJavaType();     // java.lang.String
 See xref:body-types.adoc[Message Body Types] for what the body types are, the tools that use them, how components
 declare them, and the JSON of each side with the rule to read it for the options of a step.
 
+=== Simulation test worlds in the Catalog
+
+A component whose consumer has a fake world for the deterministic simulation tests of the `camel-test-dst` module has a
+`dstWorlds` section in the catalog, with an entry per world class: the fake of the external system, what the world
+covers, the faults it injects, the invariants it checks, its JIRA issues and the DST tests that run it. The worlds are
+test classes, so this is how tools (and AI agents asked to test a consumer) find out which components have a world, and
+which have none yet. The entries come from the `@DstWorld` annotation on each world class; `javaType` is a test class,
+which is in no JAR:
+
+[source,json]
+----
+"dstWorlds": {
+  "SqsWorld": { "javaType": "org.apache.camel.component.aws2.sqs.dst.SqsWorld",
+    "fake": "FakeSqs: a standard SQS queue (ReceiveMessage, DeleteMessage, ChangeMessageVisibilityBatch) bound as amazonSQSClient",
+    "covers": [ "the visibility timeout extender (extendMessageVisibility=true)", ... ],
+    "faults": [ "ReceiveMessage fails", ... ], "invariants": [ ... ],
+    "issues": [ "CAMEL-25700", "CAMEL-25737", "CAMEL-25738", "CAMEL-25911" ],
+    "tests": [ "SqsRedeliveryDstTest", "SqsVisibilityDstTest" ] }
+}
+----
+
+The Java API gives them on the model:
+
+[source,java]
+----
+CamelCatalog catalog = new DefaultCamelCatalog();
+
+List<DstWorldModel> worlds = catalog.componentModel("aws2-sqs").getDstWorlds();
+worlds.get(0).getTests();     // [SqsRedeliveryDstTest, SqsVisibilityDstTest]
+----
+
 === Documentation in the Catalog
 
 The catalog includes the AsciiDoc documentation pages from all modules. This makes the full
@@ -213,4 +250,7 @@ String summary = catalog.listDevConsolesAsJson();
 
 // the OpenAPI 3.0 specification aggregated across every dev console endpoint
 String openApiSpec = catalog.devConsolesOpenApiSpec();
+
+// the model of the chaos rules of camel-chaos
+String chaosModel = catalog.chaosModelJSon();
 ----

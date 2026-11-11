@@ -54,7 +54,7 @@ public class JiraConfiguration implements Cloneable {
     }
 
     /**
-     * (OAuth only) The verification code from Jira generated in the first step of the authorization proccess.
+     * (OAuth only) The verification code from Jira generated in the first step of the authorization process.
      */
     public void setVerificationCode(String verificationCode) {
         this.verificationCode = verificationCode;

@@ -20,97 +20,60 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String messageKeyColumns;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory")
     private String transactionMetadataFactory = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory";
-    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
-    private long streamingDelayMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean notificationHttpAllowPrivateNetworks = false;
     @UriParam(label = LABEL_NAME)
     private String customMetricTags;
-    @UriParam(label = LABEL_NAME)
-    private String openlineageIntegrationJobNamespace;
-    @UriParam(label = LABEL_NAME, defaultValue = "10m", javaType = "java.time.Duration")
-    private int databaseQueryTimeoutMs = 600000;
     @UriParam(label = LABEL_NAME, defaultValue = "direct")
     private String dataQueryMode = "direct";
+    @UriParam(label = LABEL_NAME, defaultValue = "5s", javaType = "java.time.Duration")
+    private int notificationHttpTimeoutMs = 5000;
     @UriParam(label = LABEL_NAME, defaultValue = "source")
     private String signalEnabledChannels = "source";
+    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
+    private long signalEmitFailureBackoffMs = 10000;
     @UriParam(label = LABEL_NAME)
     private String databaseInstance;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean includeSchemaChanges = true;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean legacySnapshotMaxThreads = false;
-    @UriParam(label = LABEL_NAME)
-    private String heartbeatActionQuery;
-    @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
-    private long pollIntervalMs = 500;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
-    private int guardrailCollectionsMax = 0;
     @UriParam(label = LABEL_NAME)
     private String signalDataCollection;
     @UriParam(label = LABEL_NAME)
     private String converters;
-    @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
-    private String heartbeatTopicsPrefix = "__debezium-heartbeat";
     @UriParam(label = LABEL_NAME)
     private int snapshotFetchSize;
     @UriParam(label = LABEL_NAME, defaultValue = "1")
     private int snapshotMaxThreadsMultiplier = 1;
-    @UriParam(label = LABEL_NAME)
-    private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
     @UriParam(label = LABEL_NAME)
-    private String databaseUser;
-    @UriParam(label = LABEL_NAME)
-    private String datatypePropagateSourceType;
+    private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME)
     private String databaseNames;
     @UriParam(label = LABEL_NAME, defaultValue = "disabled")
     private String snapshotTablesOrderByRowCount = "disabled";
-    @UriParam(label = LABEL_NAME, defaultValue = "INSERT_INSERT")
-    private String incrementalSnapshotWatermarkingStrategy = "INSERT_INSERT";
     @UriParam(label = LABEL_NAME)
     private String snapshotSelectStatementOverrides;
-    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
-    private int heartbeatIntervalMs = 0;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean snapshotModeConfigurationBasedSnapshotOnSchemaError = false;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean incrementalSnapshotAllowSchemaChanges = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean schemaHistoryInternalSkipUnparseableDdl = false;
-    @UriParam(label = LABEL_NAME)
-    private String columnIncludeList;
-    @UriParam(label = LABEL_NAME)
-    private String columnPropagateSourceType;
-    @UriParam(label = LABEL_NAME, defaultValue = "-1")
-    private int errorsMaxRetries = -1;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private int streamingFetchSize = 0;
     @UriParam(label = LABEL_NAME)
     private String tableExcludeList;
-    @UriParam(label = LABEL_NAME, secret = true)
-    @Metadata(required = true)
-    private String databasePassword;
+    @UriParam(label = LABEL_NAME)
+    private String databaseExcludeList;
+    @UriParam(label = LABEL_NAME)
+    private String notificationHttpUrl;
+    @UriParam(label = LABEL_NAME, defaultValue = "warn")
+    private String eventConvertingFailureHandlingMode = "warn";
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
     private int maxBatchSize = 2048;
-    @UriParam(label = LABEL_NAME, defaultValue = "t")
-    private String skippedOperations = "t";
-    @UriParam(label = LABEL_NAME, defaultValue = "Debezium change data capture job")
-    private String openlineageIntegrationJobDescription = "Debezium change data capture job";
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.schema.SchemaTopicNamingStrategy")
     private String topicNamingStrategy = "io.debezium.schema.SchemaTopicNamingStrategy";
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
     private String snapshotMode = "initial";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotData = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "true")
-    private boolean extendedHeadersEnabled = true;
-    @UriParam(label = LABEL_NAME, defaultValue = "8192")
-    private int maxQueueSize = 8192;
-    @UriParam(label = LABEL_NAME, defaultValue = "warn")
-    private String guardrailCollectionsLimitAction = "warn";
-    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$")
-    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$";
     @UriParam(label = LABEL_NAME, defaultValue = "1024")
     private int incrementalSnapshotChunkSize = 1024;
     @UriParam(label = LABEL_NAME)
@@ -126,80 +89,143 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "4s", javaType = "java.time.Duration")
     private long executorShutdownTimeoutMs = 4000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean provideTransactionMetadata = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean schemaHistoryInternalStoreOnlyCapturedTablesDdl = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotOnDataError = false;
     @UriParam(label = LABEL_NAME)
     private String schemaHistoryInternalFileFilename;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean tombstonesOnDelete = false;
-    @UriParam(label = LABEL_NAME)
-    @Metadata(required = true)
-    private String topicPrefix;
-    @UriParam(label = LABEL_NAME, defaultValue = "precise")
-    private String decimalHandlingMode = "precise";
     @UriParam(label = LABEL_NAME, defaultValue = "bytes")
     private String binaryHandlingMode = "bytes";
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean includeSchemaComments = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.sqlserver.SqlServerSourceInfoStructMaker")
-    private String sourceinfoStructMaker = "io.debezium.connector.sqlserver.SqlServerSourceInfoStructMaker";
+    @UriParam(label = LABEL_NAME, defaultValue = "precise")
+    private String decimalHandlingMode = "precise";
     @UriParam(label = LABEL_NAME)
     private String openlineageIntegrationDatasetKafkaBootstrapServers;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean incrementalSnapshotOptionRecompile = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean openlineageIntegrationEnabled = false;
     @UriParam(label = LABEL_NAME)
     private String snapshotIncludeCollectionList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedStartStream = false;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean statisticsMetricsEnabled = true;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
-    private long maxQueueSizeInBytes = 0;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean snapshotModeConfigurationBasedSnapshotSchema = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "adaptive")
-    private String timePrecisionMode = "adaptive";
     @UriParam(label = LABEL_NAME, defaultValue = "5s", javaType = "java.time.Duration")
     private long signalPollIntervalMs = 5000;
     @UriParam(label = LABEL_NAME)
-    private String postProcessors;
-    @UriParam(label = LABEL_NAME)
     private String notificationEnabledChannels;
-    @UriParam(label = LABEL_NAME, defaultValue = "fail")
-    private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "repeatable_read")
     private String snapshotIsolationMode = "repeatable_read";
+    @UriParam(label = LABEL_NAME, defaultValue = "fail")
+    private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "1")
     private int snapshotMaxThreads = 1;
-    @UriParam(label = LABEL_NAME, defaultValue = "1433")
-    private int databasePort = 1433;
     @UriParam(label = LABEL_NAME)
     private String notificationSinkTopicName;
     @UriParam(label = LABEL_NAME)
     private String snapshotModeCustomName;
-    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.storage.kafka.history.KafkaSchemaHistory")
-    private String schemaHistoryInternal = "io.debezium.storage.kafka.history.KafkaSchemaHistory";
     @UriParam(label = LABEL_NAME, defaultValue = "500")
     private int maxIterationTransactions = 500;
-    @UriParam(label = LABEL_NAME)
-    private String columnExcludeList;
-    @UriParam(label = LABEL_NAME)
-    private String databaseHostname;
     @UriParam(label = LABEL_NAME, defaultValue = "none")
     private String schemaNameAdjustmentMode = "none";
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.relational.ConcurrentMapTableMappingStorage")
     private String memoryManagementSchemasClass = "io.debezium.relational.ConcurrentMapTableMappingStorage";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean skipMessagesWithoutChange = false;
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
+    @UriParam(label = LABEL_NAME)
+    private String databaseIncludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "none")
+    private String fieldNameAdjustmentMode = "none";
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private long streamingDelayMs = 0;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobNamespace;
+    @UriParam(label = LABEL_NAME, defaultValue = "10m", javaType = "java.time.Duration")
+    private int databaseQueryTimeoutMs = 600000;
+    @UriParam(label = LABEL_NAME, defaultValue = "10000")
+    private int queryFetchSize = 10000;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean legacySnapshotMaxThreads = false;
+    @UriParam(label = LABEL_NAME)
+    private String heartbeatActionQuery;
+    @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
+    private long pollIntervalMs = 500;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int guardrailCollectionsMax = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
+    private String heartbeatTopicsPrefix = "__debezium-heartbeat";
+    @UriParam(label = LABEL_NAME)
+    private String databaseUser;
+    @UriParam(label = LABEL_NAME)
+    private String datatypePropagateSourceType;
+    @UriParam(label = LABEL_NAME, defaultValue = "INSERT_INSERT")
+    private String incrementalSnapshotWatermarkingStrategy = "INSERT_INSERT";
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private int heartbeatIntervalMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedSnapshotOnSchemaError = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean schemaHistoryInternalSkipUnparseableDdl = false;
+    @UriParam(label = LABEL_NAME)
+    private String columnIncludeList;
+    @UriParam(label = LABEL_NAME)
+    private String columnPropagateSourceType;
+    @UriParam(label = LABEL_NAME, defaultValue = "-1")
+    private int errorsMaxRetries = -1;
+    @UriParam(label = LABEL_NAME, secret = true)
+    @Metadata(required = true)
+    private String databasePassword;
+    @UriParam(label = LABEL_NAME, defaultValue = "t")
+    private String skippedOperations = "t";
+    @UriParam(label = LABEL_NAME, defaultValue = "Debezium change data capture job")
+    private String openlineageIntegrationJobDescription = "Debezium change data capture job";
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean extendedHeadersEnabled = true;
+    @UriParam(label = LABEL_NAME, defaultValue = "8192")
+    private int maxQueueSize = 8192;
+    @UriParam(label = LABEL_NAME, defaultValue = "warn")
+    private String guardrailCollectionsLimitAction = "warn";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean provideTransactionMetadata = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean schemaHistoryInternalStoreOnlyCapturedTablesDdl = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = false;
+    @UriParam(label = LABEL_NAME)
+    @Metadata(required = true)
+    private String topicPrefix;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean includeSchemaComments = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.sqlserver.SqlServerSourceInfoStructMaker")
+    private String sourceinfoStructMaker = "io.debezium.connector.sqlserver.SqlServerSourceInfoStructMaker";
+    @UriParam(label = LABEL_NAME, defaultValue = "off")
+    private String schemaHistoryInternalMemoryOptimization = "off";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean incrementalSnapshotOptionRecompile = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean openlineageIntegrationEnabled = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private long maxQueueSizeInBytes = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int signalEmitFailureMaxRetries = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "adaptive")
+    private String timePrecisionMode = "adaptive";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedSnapshotSchema = false;
+    @UriParam(label = LABEL_NAME)
+    private String postProcessors;
+    @UriParam(label = LABEL_NAME, defaultValue = "1433")
+    private int databasePort = 1433;
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.storage.kafka.history.KafkaSchemaHistory")
+    private String schemaHistoryInternal = "io.debezium.storage.kafka.history.KafkaSchemaHistory";
+    @UriParam(label = LABEL_NAME)
+    private String columnExcludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "2")
+    private int notificationHttpRetries = 2;
+    @UriParam(label = LABEL_NAME)
+    private String databaseHostname;
     @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
     private long connectionValidationTimeoutMs = 60000;
 
@@ -234,22 +260,23 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * A delay period after the snapshot is completed and the streaming begins,
-     * given in milliseconds. Defaults to 0 ms.
+     * When true, the SSRF guard permits notification URLs that resolve to
+     * loopback, site-local or link-local addresses (e.g. an in-cluster
+     * Service). Defaults to false so only public addresses are allowed.
      */
-    public void setStreamingDelayMs(long streamingDelayMs) {
-        this.streamingDelayMs = streamingDelayMs;
+    public void setNotificationHttpAllowPrivateNetworks(
+            boolean notificationHttpAllowPrivateNetworks) {
+        this.notificationHttpAllowPrivateNetworks = notificationHttpAllowPrivateNetworks;
     }
 
-    public long getStreamingDelayMs() {
-        return streamingDelayMs;
+    public boolean isNotificationHttpAllowPrivateNetworks() {
+        return notificationHttpAllowPrivateNetworks;
     }
 
     /**
-     * The custom metric tags will accept key-value pairs to customize the MBean
-     * object name which should be appended the end of regular name, each key
-     * would represent a tag for the MBean object name, and the corresponding
-     * value would be the value of that tag the key is. For example: k1=v1,k2=v2
+     * A comma-separated list of key-value pairs that are appended to the MBean
+     * object name. Keys must be valid JMX ObjectName property keys. For
+     * example: k1=v1,k2=v2
      */
     public void setCustomMetricTags(String customMetricTags) {
         this.customMetricTags = customMetricTags;
@@ -257,30 +284,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getCustomMetricTags() {
         return customMetricTags;
-    }
-
-    /**
-     * The job's namespace emitted by Debezium
-     */
-    public void setOpenlineageIntegrationJobNamespace(
-            String openlineageIntegrationJobNamespace) {
-        this.openlineageIntegrationJobNamespace = openlineageIntegrationJobNamespace;
-    }
-
-    public String getOpenlineageIntegrationJobNamespace() {
-        return openlineageIntegrationJobNamespace;
-    }
-
-    /**
-     * Time to wait for a query to execute, given in milliseconds. Defaults to
-     * 600 seconds (600,000 ms); zero means there is no limit.
-     */
-    public void setDatabaseQueryTimeoutMs(int databaseQueryTimeoutMs) {
-        this.databaseQueryTimeoutMs = databaseQueryTimeoutMs;
-    }
-
-    public int getDatabaseQueryTimeoutMs() {
-        return databaseQueryTimeoutMs;
     }
 
     /**
@@ -298,6 +301,18 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Connect and read timeout, in milliseconds, for HTTP notification
+     * delivery.
+     */
+    public void setNotificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+        this.notificationHttpTimeoutMs = notificationHttpTimeoutMs;
+    }
+
+    public int getNotificationHttpTimeoutMs() {
+        return notificationHttpTimeoutMs;
+    }
+
+    /**
      * List of channels names that are enabled. Source channel is enabled by
      * default
      */
@@ -307,6 +322,18 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getSignalEnabledChannels() {
         return signalEnabledChannels;
+    }
+
+    /**
+     * Duration to sleep for after encountering an error emitting a window
+     * event, given in milliseconds. Defaults to 10 seconds.
+     */
+    public void setSignalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+        this.signalEmitFailureBackoffMs = signalEmitFailureBackoffMs;
+    }
+
+    public long getSignalEmitFailureBackoffMs() {
+        return signalEmitFailureBackoffMs;
     }
 
     /**
@@ -337,57 +364,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * When enabled, uses the legacy table-per-thread parallel snapshot
-     * algorithm. When set to false (the default), tables are split into chunks
-     * and processed across all snapshot threads, allowing for higher
-     * concurrency for snapshots.
-     */
-    public void setLegacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
-        this.legacySnapshotMaxThreads = legacySnapshotMaxThreads;
-    }
-
-    public boolean isLegacySnapshotMaxThreads() {
-        return legacySnapshotMaxThreads;
-    }
-
-    /**
-     * The query executed with every heartbeat.
-     */
-    public void setHeartbeatActionQuery(String heartbeatActionQuery) {
-        this.heartbeatActionQuery = heartbeatActionQuery;
-    }
-
-    public String getHeartbeatActionQuery() {
-        return heartbeatActionQuery;
-    }
-
-    /**
-     * Time to wait for new change events to appear after receiving no events,
-     * given in milliseconds. Defaults to 500 ms.
-     */
-    public void setPollIntervalMs(long pollIntervalMs) {
-        this.pollIntervalMs = pollIntervalMs;
-    }
-
-    public long getPollIntervalMs() {
-        return pollIntervalMs;
-    }
-
-    /**
-     * The maximum number of collections or tables that can be captured by the
-     * connector. When this limit is exceeded, the action specified by
-     * 'guardrail.collections.limit.action' will be taken. Set to 0 to disable
-     * this guardrail.
-     */
-    public void setGuardrailCollectionsMax(int guardrailCollectionsMax) {
-        this.guardrailCollectionsMax = guardrailCollectionsMax;
-    }
-
-    public int getGuardrailCollectionsMax() {
-        return guardrailCollectionsMax;
-    }
-
-    /**
      * The name of the data collection that is used to send signals/commands to
      * Debezium. For multi-partition mode connectors, multiple signal data
      * collections can be specified as a comma-separated list. Signaling is
@@ -412,18 +388,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getConverters() {
         return converters;
-    }
-
-    /**
-     * The prefix that is used to name heartbeat topics.Defaults to
-     * __debezium-heartbeat.
-     */
-    public void setHeartbeatTopicsPrefix(String heartbeatTopicsPrefix) {
-        this.heartbeatTopicsPrefix = heartbeatTopicsPrefix;
-    }
-
-    public String getHeartbeatTopicsPrefix() {
-        return heartbeatTopicsPrefix;
     }
 
     /**
@@ -455,19 +419,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The job's tags emitted by Debezium. A comma-separated list of key-value
-     * pairs.For example: k1=v1,k2=v2
-     */
-    public void setOpenlineageIntegrationJobTags(
-            String openlineageIntegrationJobTags) {
-        this.openlineageIntegrationJobTags = openlineageIntegrationJobTags;
-    }
-
-    public String getOpenlineageIntegrationJobTags() {
-        return openlineageIntegrationJobTags;
-    }
-
-    /**
      * The maximum number of millis to wait for table locks at the beginning of
      * a snapshot. If locks cannot be acquired in this time frame, the snapshot
      * will be aborted. Defaults to 10 seconds
@@ -481,29 +432,16 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Name of the database user to be used when connecting to the database.
+     * The job's tags emitted by Debezium. A comma-separated list of key-value
+     * pairs.For example: k1=v1,k2=v2
      */
-    public void setDatabaseUser(String databaseUser) {
-        this.databaseUser = databaseUser;
+    public void setOpenlineageIntegrationJobTags(
+            String openlineageIntegrationJobTags) {
+        this.openlineageIntegrationJobTags = openlineageIntegrationJobTags;
     }
 
-    public String getDatabaseUser() {
-        return databaseUser;
-    }
-
-    /**
-     * A comma-separated list of regular expressions matching the
-     * database-specific data type names that adds the data type's original type
-     * and original length as parameters to the corresponding field schemas in
-     * the emitted change records.
-     */
-    public void setDatatypePropagateSourceType(
-            String datatypePropagateSourceType) {
-        this.datatypePropagateSourceType = datatypePropagateSourceType;
-    }
-
-    public String getDatatypePropagateSourceType() {
-        return datatypePropagateSourceType;
+    public String getOpenlineageIntegrationJobTags() {
+        return openlineageIntegrationJobTags;
     }
 
     /**
@@ -534,22 +472,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Specify the strategy used for watermarking during an incremental
-     * snapshot: 'insert_insert' both open and close signal is written into
-     * signal data collection (default); 'insert_delete' only open signal is
-     * written on signal data collection, the close will delete the relative
-     * open signal;
-     */
-    public void setIncrementalSnapshotWatermarkingStrategy(
-            String incrementalSnapshotWatermarkingStrategy) {
-        this.incrementalSnapshotWatermarkingStrategy = incrementalSnapshotWatermarkingStrategy;
-    }
-
-    public String getIncrementalSnapshotWatermarkingStrategy() {
-        return incrementalSnapshotWatermarkingStrategy;
-    }
-
-    /**
      *  This property contains a comma-separated list of fully-qualified tables
      * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
      * specific connectors. Select statements for the individual tables are
@@ -573,33 +495,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Length of an interval in milli-seconds in in which the connector
-     * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
-     * disable heartbeat messages. Disabled by default.
-     */
-    public void setHeartbeatIntervalMs(int heartbeatIntervalMs) {
-        this.heartbeatIntervalMs = heartbeatIntervalMs;
-    }
-
-    public int getHeartbeatIntervalMs() {
-        return heartbeatIntervalMs;
-    }
-
-    /**
-     * When 'snapshot.mode' is set as configuration_based, this setting permits
-     * to specify whenever the schema should be snapshotted or not in case of
-     * error.
-     */
-    public void setSnapshotModeConfigurationBasedSnapshotOnSchemaError(
-            boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
-        this.snapshotModeConfigurationBasedSnapshotOnSchemaError = snapshotModeConfigurationBasedSnapshotOnSchemaError;
-    }
-
-    public boolean isSnapshotModeConfigurationBasedSnapshotOnSchemaError() {
-        return snapshotModeConfigurationBasedSnapshotOnSchemaError;
-    }
-
-    /**
      * Detect schema change during an incremental snapshot and re-select a
      * current chunk to avoid locking DDLs. Note that changes to a primary key
      * are not supported and can cause incorrect results if performed during an
@@ -616,58 +511,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public boolean isIncrementalSnapshotAllowSchemaChanges() {
         return incrementalSnapshotAllowSchemaChanges;
-    }
-
-    /**
-     * Controls the action Debezium will take when it meets a DDL statement in
-     * binlog, that it cannot parse.By default the connector will stop operating
-     * but by changing the setting it can ignore the statements which it cannot
-     * parse. If skipping is enabled then Debezium can miss metadata changes.
-     */
-    public void setSchemaHistoryInternalSkipUnparseableDdl(
-            boolean schemaHistoryInternalSkipUnparseableDdl) {
-        this.schemaHistoryInternalSkipUnparseableDdl = schemaHistoryInternalSkipUnparseableDdl;
-    }
-
-    public boolean isSchemaHistoryInternalSkipUnparseableDdl() {
-        return schemaHistoryInternalSkipUnparseableDdl;
-    }
-
-    /**
-     * Regular expressions matching columns to include in change events
-     */
-    public void setColumnIncludeList(String columnIncludeList) {
-        this.columnIncludeList = columnIncludeList;
-    }
-
-    public String getColumnIncludeList() {
-        return columnIncludeList;
-    }
-
-    /**
-     * A comma-separated list of regular expressions matching fully-qualified
-     * names of columns that adds the columns original type and original length
-     * as parameters to the corresponding field schemas in the emitted change
-     * records.
-     */
-    public void setColumnPropagateSourceType(String columnPropagateSourceType) {
-        this.columnPropagateSourceType = columnPropagateSourceType;
-    }
-
-    public String getColumnPropagateSourceType() {
-        return columnPropagateSourceType;
-    }
-
-    /**
-     * The maximum number of retries on connection errors before failing (-1 =
-     * no limit, 0 = disabled, > 0 = num of retries).
-     */
-    public void setErrorsMaxRetries(int errorsMaxRetries) {
-        this.errorsMaxRetries = errorsMaxRetries;
-    }
-
-    public int getErrorsMaxRetries() {
-        return errorsMaxRetries;
     }
 
     /**
@@ -696,14 +539,45 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Password of the database user to be used when connecting to the database.
+     * A comma-separated list of regular expressions that match database names
+     * to be excluded from monitoring
      */
-    public void setDatabasePassword(String databasePassword) {
-        this.databasePassword = databasePassword;
+    public void setDatabaseExcludeList(String databaseExcludeList) {
+        this.databaseExcludeList = databaseExcludeList;
     }
 
-    public String getDatabasePassword() {
-        return databasePassword;
+    public String getDatabaseExcludeList() {
+        return databaseExcludeList;
+    }
+
+    /**
+     * The URL to which notifications are POSTed as JSON. Required when 'http'
+     * is in the list of enabled channels.
+     */
+    public void setNotificationHttpUrl(String notificationHttpUrl) {
+        this.notificationHttpUrl = notificationHttpUrl;
+    }
+
+    public String getNotificationHttpUrl() {
+        return notificationHttpUrl;
+    }
+
+    /**
+     * Specify how failures during converting of event should be handled,
+     * including: 'fail' throw an exception that the column of event conversion
+     * is failed with unmatched schema type, causing the connector to be
+     * stopped. it could need schema recovery to covert successfully; 'warn'
+     * (the default) the value of column of event that conversion failed will be
+     * null and be logged with warn level; 'skip' the value of column of event
+     * that conversion failed will be null and be logged with debug level.
+     */
+    public void setEventConvertingFailureHandlingMode(
+            String eventConvertingFailureHandlingMode) {
+        this.eventConvertingFailureHandlingMode = eventConvertingFailureHandlingMode;
+    }
+
+    public String getEventConvertingFailureHandlingMode() {
+        return eventConvertingFailureHandlingMode;
     }
 
     /**
@@ -715,32 +589,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public int getMaxBatchSize() {
         return maxBatchSize;
-    }
-
-    /**
-     * The comma-separated list of operations to skip during streaming, defined
-     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes, 't' for
-     * truncates, and 'none' to indicate nothing skipped. By default, only
-     * truncate operations will be skipped.
-     */
-    public void setSkippedOperations(String skippedOperations) {
-        this.skippedOperations = skippedOperations;
-    }
-
-    public String getSkippedOperations() {
-        return skippedOperations;
-    }
-
-    /**
-     * The job's description emitted by Debezium
-     */
-    public void setOpenlineageIntegrationJobDescription(
-            String openlineageIntegrationJobDescription) {
-        this.openlineageIntegrationJobDescription = openlineageIntegrationJobDescription;
-    }
-
-    public String getOpenlineageIntegrationJobDescription() {
-        return openlineageIntegrationJobDescription;
     }
 
     /**
@@ -790,59 +638,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public boolean isSnapshotModeConfigurationBasedSnapshotData() {
         return snapshotModeConfigurationBasedSnapshotData;
-    }
-
-    /**
-     * Enable/Disable Debezium context headers that provides essential metadata
-     * for tracking and identifying the source of CDC events in downstream
-     * processing systems.
-     */
-    public void setExtendedHeadersEnabled(boolean extendedHeadersEnabled) {
-        this.extendedHeadersEnabled = extendedHeadersEnabled;
-    }
-
-    public boolean isExtendedHeadersEnabled() {
-        return extendedHeadersEnabled;
-    }
-
-    /**
-     * Maximum size of the queue for change events read from the database log
-     * but not yet recorded or forwarded. Defaults to 8192, and should always be
-     * larger than the maximum batch size.
-     */
-    public void setMaxQueueSize(int maxQueueSize) {
-        this.maxQueueSize = maxQueueSize;
-    }
-
-    public int getMaxQueueSize() {
-        return maxQueueSize;
-    }
-
-    /**
-     * Specify the action to take when a guardrail collections limit is
-     * exceeded: 'warn' (the default) logs a warning message and continues
-     * processing; 'fail' stops the connector with an error.
-     */
-    public void setGuardrailCollectionsLimitAction(
-            String guardrailCollectionsLimitAction) {
-        this.guardrailCollectionsLimitAction = guardrailCollectionsLimitAction;
-    }
-
-    public String getGuardrailCollectionsLimitAction() {
-        return guardrailCollectionsLimitAction;
-    }
-
-    /**
-     * Regular expression identifying configuration keys whose values should be
-     * masked. When set, this custom pattern replaces Debeziums default password
-     * masking pattern.
-     */
-    public void setCustomSanitizePattern(String customSanitizePattern) {
-        this.customSanitizePattern = customSanitizePattern;
-    }
-
-    public String getCustomSanitizePattern() {
-        return customSanitizePattern;
     }
 
     /**
@@ -936,46 +731,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Enables transaction metadata extraction together with event counting
-     */
-    public void setProvideTransactionMetadata(boolean provideTransactionMetadata) {
-        this.provideTransactionMetadata = provideTransactionMetadata;
-    }
-
-    public boolean isProvideTransactionMetadata() {
-        return provideTransactionMetadata;
-    }
-
-    /**
-     * Controls what DDL will Debezium store in database schema history. By
-     * default (false) Debezium will store all incoming DDL statements. If set
-     * to true, then only DDL that manipulates a captured table will be stored.
-     */
-    public void setSchemaHistoryInternalStoreOnlyCapturedTablesDdl(
-            boolean schemaHistoryInternalStoreOnlyCapturedTablesDdl) {
-        this.schemaHistoryInternalStoreOnlyCapturedTablesDdl = schemaHistoryInternalStoreOnlyCapturedTablesDdl;
-    }
-
-    public boolean isSchemaHistoryInternalStoreOnlyCapturedTablesDdl() {
-        return schemaHistoryInternalStoreOnlyCapturedTablesDdl;
-    }
-
-    /**
-     * Controls what DDL will Debezium store in database schema history. By
-     * default (false) Debezium will store all incoming DDL statements. If set
-     * to true, then only DDL that manipulates a table from captured
-     * schema/database will be stored.
-     */
-    public void setSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl(
-            boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl) {
-        this.schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = schemaHistoryInternalStoreOnlyCapturedDatabasesDdl;
-    }
-
-    public boolean isSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl() {
-        return schemaHistoryInternalStoreOnlyCapturedDatabasesDdl;
-    }
-
-    /**
      * When 'snapshot.mode' is set as configuration_based, this setting permits
      * to specify whenever the data should be snapshotted or not in case of
      * error.
@@ -1018,18 +773,18 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Topic prefix that identifies and provides a namespace for the particular
-     * database server/cluster is capturing changes. The topic prefix should be
-     * unique across all other connectors, since it is used as a prefix for all
-     * Kafka topic names that receive events emitted by this connector. Only
-     * alphanumeric characters, hyphens, dots and underscores must be accepted.
+     * Specify how binary (blob, binary, etc.) columns should be represented in
+     * change events, including: 'bytes' represents binary data as byte array
+     * (default); 'base64' represents binary data as base64-encoded string;
+     * 'base64-url-safe' represents binary data as base64-url-safe-encoded
+     * string; 'hex' represents binary data as hex-encoded (base16) string
      */
-    public void setTopicPrefix(String topicPrefix) {
-        this.topicPrefix = topicPrefix;
+    public void setBinaryHandlingMode(String binaryHandlingMode) {
+        this.binaryHandlingMode = binaryHandlingMode;
     }
 
-    public String getTopicPrefix() {
-        return topicPrefix;
+    public String getBinaryHandlingMode() {
+        return binaryHandlingMode;
     }
 
     /**
@@ -1047,49 +802,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getDecimalHandlingMode() {
         return decimalHandlingMode;
-    }
-
-    /**
-     * Specify how binary (blob, binary, etc.) columns should be represented in
-     * change events, including: 'bytes' represents binary data as byte array
-     * (default); 'base64' represents binary data as base64-encoded string;
-     * 'base64-url-safe' represents binary data as base64-url-safe-encoded
-     * string; 'hex' represents binary data as hex-encoded (base16) string
-     */
-    public void setBinaryHandlingMode(String binaryHandlingMode) {
-        this.binaryHandlingMode = binaryHandlingMode;
-    }
-
-    public String getBinaryHandlingMode() {
-        return binaryHandlingMode;
-    }
-
-    /**
-     * Whether the connector parse table and column's comment to metadata
-     * object. Note: Enable this option will bring the implications on memory
-     * usage. The number and size of ColumnImpl objects is what largely impacts
-     * how much memory is consumed by the Debezium connectors, and adding a
-     * String to each of them can potentially be quite heavy. The default is
-     * 'false'.
-     */
-    public void setIncludeSchemaComments(boolean includeSchemaComments) {
-        this.includeSchemaComments = includeSchemaComments;
-    }
-
-    public boolean isIncludeSchemaComments() {
-        return includeSchemaComments;
-    }
-
-    /**
-     * The name of the SourceInfoStructMaker class that returns SourceInfo
-     * schema and struct.
-     */
-    public void setSourceinfoStructMaker(String sourceinfoStructMaker) {
-        this.sourceinfoStructMaker = sourceinfoStructMaker;
-    }
-
-    public String getSourceinfoStructMaker() {
-        return sourceinfoStructMaker;
     }
 
     /**
@@ -1113,32 +825,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public boolean isTableIgnoreBuiltin() {
         return tableIgnoreBuiltin;
-    }
-
-    /**
-     * Add OPTION(RECOMPILE) on each SELECT statement during the incremental
-     * snapshot process. This prevents parameter sniffing but can cause CPU
-     * pressure on the source database.
-     */
-    public void setIncrementalSnapshotOptionRecompile(
-            boolean incrementalSnapshotOptionRecompile) {
-        this.incrementalSnapshotOptionRecompile = incrementalSnapshotOptionRecompile;
-    }
-
-    public boolean isIncrementalSnapshotOptionRecompile() {
-        return incrementalSnapshotOptionRecompile;
-    }
-
-    /**
-     * Enable Debezium to emit data lineage metadata through OpenLineage API
-     */
-    public void setOpenlineageIntegrationEnabled(
-            boolean openlineageIntegrationEnabled) {
-        this.openlineageIntegrationEnabled = openlineageIntegrationEnabled;
-    }
-
-    public boolean isOpenlineageIntegrationEnabled() {
-        return openlineageIntegrationEnabled;
     }
 
     /**
@@ -1181,54 +867,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Maximum size of the queue in bytes for change events read from the
-     * database log but not yet recorded or forwarded. Defaults to 0. Mean the
-     * feature is not enabled
-     */
-    public void setMaxQueueSizeInBytes(long maxQueueSizeInBytes) {
-        this.maxQueueSizeInBytes = maxQueueSizeInBytes;
-    }
-
-    public long getMaxQueueSizeInBytes() {
-        return maxQueueSizeInBytes;
-    }
-
-    /**
-     * When 'snapshot.mode' is set as configuration_based, this setting permits
-     * to specify whenever the schema should be snapshotted or not.
-     */
-    public void setSnapshotModeConfigurationBasedSnapshotSchema(
-            boolean snapshotModeConfigurationBasedSnapshotSchema) {
-        this.snapshotModeConfigurationBasedSnapshotSchema = snapshotModeConfigurationBasedSnapshotSchema;
-    }
-
-    public boolean isSnapshotModeConfigurationBasedSnapshotSchema() {
-        return snapshotModeConfigurationBasedSnapshotSchema;
-    }
-
-    /**
-     * Time, date, and timestamps can be represented with different kinds of
-     * precisions, including: 'adaptive' (the default) bases the precision of
-     * time, date, and timestamp values on the database column's precision;
-     * 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields always
-     * use microseconds precision; 'connect' always represents time, date, and
-     * timestamp values using Kafka Connect's built-in representations for Time,
-     * Date, and Timestamp, which uses millisecond precision regardless of the
-     * database columns' precision; 'isostring' represents time, date, and
-     * timestamp values as ISO-8601 formatted strings at the UTC time zone;
-     * 'microseconds' always represents time, date, and timestamp values using
-     * microsecond precision; 'nanoseconds' always represents time, date, and
-     * timestamp values using nanosecond precision.
-     */
-    public void setTimePrecisionMode(String timePrecisionMode) {
-        this.timePrecisionMode = timePrecisionMode;
-    }
-
-    public String getTimePrecisionMode() {
-        return timePrecisionMode;
-    }
-
-    /**
      * Interval for looking for new signals in registered channels, given in
      * milliseconds. Defaults to 5 seconds.
      */
@@ -1241,19 +879,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Optional list of post processors. The processors are defined using
-     * '<post.processor.prefix>.type' config option and configured using options
-     * '<post.processor.prefix.<option>'
-     */
-    public void setPostProcessors(String postProcessors) {
-        this.postProcessors = postProcessors;
-    }
-
-    public String getPostProcessors() {
-        return postProcessors;
-    }
-
-    /**
      * List of notification channels names that are enabled.
      */
     public void setNotificationEnabledChannels(
@@ -1263,23 +888,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getNotificationEnabledChannels() {
         return notificationEnabledChannels;
-    }
-
-    /**
-     * Specify how failures during processing of events (i.e. when encountering
-     * a corrupted event) should be handled, including: 'fail' (the default) an
-     * exception indicating the problematic event and its position is raised,
-     * causing the connector to be stopped; 'warn' the problematic event and its
-     * position will be logged and the event will be skipped; 'ignore' the
-     * problematic event will be skipped.
-     */
-    public void setEventProcessingFailureHandlingMode(
-            String eventProcessingFailureHandlingMode) {
-        this.eventProcessingFailureHandlingMode = eventProcessingFailureHandlingMode;
-    }
-
-    public String getEventProcessingFailureHandlingMode() {
-        return eventProcessingFailureHandlingMode;
     }
 
     /**
@@ -1310,6 +918,23 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify how failures during processing of events (i.e. when encountering
+     * a corrupted event) should be handled, including: 'fail' (the default) an
+     * exception indicating the problematic event and its position is raised,
+     * causing the connector to be stopped; 'warn' the problematic event and its
+     * position will be logged and the event will be skipped; 'ignore' the
+     * problematic event will be skipped.
+     */
+    public void setEventProcessingFailureHandlingMode(
+            String eventProcessingFailureHandlingMode) {
+        this.eventProcessingFailureHandlingMode = eventProcessingFailureHandlingMode;
+    }
+
+    public String getEventProcessingFailureHandlingMode() {
+        return eventProcessingFailureHandlingMode;
+    }
+
+    /**
      * The maximum number of threads used to perform the snapshot. Defaults to
      * 1.
      */
@@ -1319,17 +944,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public int getSnapshotMaxThreads() {
         return snapshotMaxThreads;
-    }
-
-    /**
-     * Port of the database server.
-     */
-    public void setDatabasePort(int databasePort) {
-        this.databasePort = databasePort;
-    }
-
-    public int getDatabasePort() {
-        return databasePort;
     }
 
     /**
@@ -1359,19 +973,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The name of the SchemaHistory class that should be used to store and
-     * recover database schema changes. The configuration properties for the
-     * history are prefixed with the 'schema.history.internal.' string.
-     */
-    public void setSchemaHistoryInternal(String schemaHistoryInternal) {
-        this.schemaHistoryInternal = schemaHistoryInternal;
-    }
-
-    public String getSchemaHistoryInternal() {
-        return schemaHistoryInternal;
-    }
-
-    /**
      * This property can be used to reduce the connector memory usage footprint
      * when changes are streamed from multiple tables per database.
      */
@@ -1381,28 +982,6 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public int getMaxIterationTransactions() {
         return maxIterationTransactions;
-    }
-
-    /**
-     * Regular expressions matching columns to exclude from change events
-     */
-    public void setColumnExcludeList(String columnExcludeList) {
-        this.columnExcludeList = columnExcludeList;
-    }
-
-    public String getColumnExcludeList() {
-        return columnExcludeList;
-    }
-
-    /**
-     * Resolvable hostname or IP address of the database server.
-     */
-    public void setDatabaseHostname(String databaseHostname) {
-        this.databaseHostname = databaseHostname;
-    }
-
-    public String getDatabaseHostname() {
-        return databaseHostname;
     }
 
     /**
@@ -1437,6 +1016,21 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Enable to skip publishing messages when there is no change in included
+     * columns.This would essentially filter messages to be sent when there is
+     * no change in columns included as per
+     * column.include.list/column.exclude.list.For Postgres - this would require
+     * REPLICA IDENTITY of table to be FULL.
+     */
+    public void setSkipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+        this.skipMessagesWithoutChange = skipMessagesWithoutChange;
+    }
+
+    public boolean isSkipMessagesWithoutChange() {
+        return skipMessagesWithoutChange;
+    }
+
+    /**
      * The tables for which changes are to be captured
      */
     public void setTableIncludeList(String tableIncludeList) {
@@ -1445,6 +1039,615 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getTableIncludeList() {
         return tableIncludeList;
+    }
+
+    /**
+     * The databases for which changes are to be captured
+     */
+    public void setDatabaseIncludeList(String databaseIncludeList) {
+        this.databaseIncludeList = databaseIncludeList;
+    }
+
+    public String getDatabaseIncludeList() {
+        return databaseIncludeList;
+    }
+
+    /**
+     * Specify how field names should be adjusted for compatibility with the
+     * message converter used by the connector, including: 'avro' replaces the
+     * characters that cannot be used in the Avro type name with underscore;
+     * 'avro_unicode' replaces the underscore or characters that cannot be used
+     * in the Avro type name with corresponding unicode like _uxxxx. Note: _ is
+     * an escape sequence like backslash in Java;'none' does not apply any
+     * adjustment (default)
+     */
+    public void setFieldNameAdjustmentMode(String fieldNameAdjustmentMode) {
+        this.fieldNameAdjustmentMode = fieldNameAdjustmentMode;
+    }
+
+    public String getFieldNameAdjustmentMode() {
+        return fieldNameAdjustmentMode;
+    }
+
+    /**
+     * A delay period after the snapshot is completed and the streaming begins,
+     * given in milliseconds. Defaults to 0 ms.
+     */
+    public void setStreamingDelayMs(long streamingDelayMs) {
+        this.streamingDelayMs = streamingDelayMs;
+    }
+
+    public long getStreamingDelayMs() {
+        return streamingDelayMs;
+    }
+
+    /**
+     * The job's namespace emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobNamespace(
+            String openlineageIntegrationJobNamespace) {
+        this.openlineageIntegrationJobNamespace = openlineageIntegrationJobNamespace;
+    }
+
+    public String getOpenlineageIntegrationJobNamespace() {
+        return openlineageIntegrationJobNamespace;
+    }
+
+    /**
+     * Time to wait for a query to execute, given in milliseconds. Defaults to
+     * 600 seconds (600,000 ms); zero means there is no limit.
+     */
+    public void setDatabaseQueryTimeoutMs(int databaseQueryTimeoutMs) {
+        this.databaseQueryTimeoutMs = databaseQueryTimeoutMs;
+    }
+
+    public int getDatabaseQueryTimeoutMs() {
+        return databaseQueryTimeoutMs;
+    }
+
+    /**
+     * The maximum number of records that should be loaded into memory while
+     * streaming. A value of '0' uses the default JDBC fetch size. The default
+     * value is '10000'.
+     */
+    public void setQueryFetchSize(int queryFetchSize) {
+        this.queryFetchSize = queryFetchSize;
+    }
+
+    public int getQueryFetchSize() {
+        return queryFetchSize;
+    }
+
+    /**
+     * When enabled, uses the legacy table-per-thread parallel snapshot
+     * algorithm. When set to false (the default), tables are split into chunks
+     * and processed across all snapshot threads, allowing for higher
+     * concurrency for snapshots.
+     */
+    public void setLegacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+        this.legacySnapshotMaxThreads = legacySnapshotMaxThreads;
+    }
+
+    public boolean isLegacySnapshotMaxThreads() {
+        return legacySnapshotMaxThreads;
+    }
+
+    /**
+     * The query executed with every heartbeat.
+     */
+    public void setHeartbeatActionQuery(String heartbeatActionQuery) {
+        this.heartbeatActionQuery = heartbeatActionQuery;
+    }
+
+    public String getHeartbeatActionQuery() {
+        return heartbeatActionQuery;
+    }
+
+    /**
+     * Time to wait for new change events to appear after receiving no events,
+     * given in milliseconds. Defaults to 500 ms. Values will be capped at 5000
+     * ms.
+     */
+    public void setPollIntervalMs(long pollIntervalMs) {
+        this.pollIntervalMs = pollIntervalMs;
+    }
+
+    public long getPollIntervalMs() {
+        return pollIntervalMs;
+    }
+
+    /**
+     * The maximum number of collections or tables that can be captured by the
+     * connector. When this limit is exceeded, the action specified by
+     * 'guardrail.collections.limit.action' will be taken. Set to 0 to disable
+     * this guardrail.
+     */
+    public void setGuardrailCollectionsMax(int guardrailCollectionsMax) {
+        this.guardrailCollectionsMax = guardrailCollectionsMax;
+    }
+
+    public int getGuardrailCollectionsMax() {
+        return guardrailCollectionsMax;
+    }
+
+    /**
+     * The prefix that is used to name heartbeat topics.Defaults to
+     * __debezium-heartbeat.
+     */
+    public void setHeartbeatTopicsPrefix(String heartbeatTopicsPrefix) {
+        this.heartbeatTopicsPrefix = heartbeatTopicsPrefix;
+    }
+
+    public String getHeartbeatTopicsPrefix() {
+        return heartbeatTopicsPrefix;
+    }
+
+    /**
+     * Name of the database user to be used when connecting to the database.
+     */
+    public void setDatabaseUser(String databaseUser) {
+        this.databaseUser = databaseUser;
+    }
+
+    public String getDatabaseUser() {
+        return databaseUser;
+    }
+
+    /**
+     * A comma-separated list of regular expressions matching the
+     * database-specific data type names that adds the data type's original type
+     * and original length as parameters to the corresponding field schemas in
+     * the emitted change records.
+     */
+    public void setDatatypePropagateSourceType(
+            String datatypePropagateSourceType) {
+        this.datatypePropagateSourceType = datatypePropagateSourceType;
+    }
+
+    public String getDatatypePropagateSourceType() {
+        return datatypePropagateSourceType;
+    }
+
+    /**
+     * Specify the strategy used for watermarking during an incremental
+     * snapshot: 'insert_insert' both open and close signal is written into
+     * signal data collection (default); 'insert_delete' only open signal is
+     * written on signal data collection, the close will delete the relative
+     * open signal;
+     */
+    public void setIncrementalSnapshotWatermarkingStrategy(
+            String incrementalSnapshotWatermarkingStrategy) {
+        this.incrementalSnapshotWatermarkingStrategy = incrementalSnapshotWatermarkingStrategy;
+    }
+
+    public String getIncrementalSnapshotWatermarkingStrategy() {
+        return incrementalSnapshotWatermarkingStrategy;
+    }
+
+    /**
+     * Length of an interval in milli-seconds in in which the connector
+     * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
+     * disable heartbeat messages. Disabled by default.
+     */
+    public void setHeartbeatIntervalMs(int heartbeatIntervalMs) {
+        this.heartbeatIntervalMs = heartbeatIntervalMs;
+    }
+
+    public int getHeartbeatIntervalMs() {
+        return heartbeatIntervalMs;
+    }
+
+    /**
+     * When 'snapshot.mode' is set as configuration_based, this setting permits
+     * to specify whenever the schema should be snapshotted or not in case of
+     * error.
+     */
+    public void setSnapshotModeConfigurationBasedSnapshotOnSchemaError(
+            boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+        this.snapshotModeConfigurationBasedSnapshotOnSchemaError = snapshotModeConfigurationBasedSnapshotOnSchemaError;
+    }
+
+    public boolean isSnapshotModeConfigurationBasedSnapshotOnSchemaError() {
+        return snapshotModeConfigurationBasedSnapshotOnSchemaError;
+    }
+
+    /**
+     * Controls the action Debezium will take when it meets a DDL statement in
+     * binlog, that it cannot parse.By default the connector will stop operating
+     * but by changing the setting it can ignore the statements which it cannot
+     * parse. If skipping is enabled then Debezium can miss metadata changes.
+     */
+    public void setSchemaHistoryInternalSkipUnparseableDdl(
+            boolean schemaHistoryInternalSkipUnparseableDdl) {
+        this.schemaHistoryInternalSkipUnparseableDdl = schemaHistoryInternalSkipUnparseableDdl;
+    }
+
+    public boolean isSchemaHistoryInternalSkipUnparseableDdl() {
+        return schemaHistoryInternalSkipUnparseableDdl;
+    }
+
+    /**
+     * Regular expressions matching columns to include in change events
+     */
+    public void setColumnIncludeList(String columnIncludeList) {
+        this.columnIncludeList = columnIncludeList;
+    }
+
+    public String getColumnIncludeList() {
+        return columnIncludeList;
+    }
+
+    /**
+     * A comma-separated list of regular expressions matching fully-qualified
+     * names of columns that adds the columns original type and original length
+     * as parameters to the corresponding field schemas in the emitted change
+     * records.
+     */
+    public void setColumnPropagateSourceType(String columnPropagateSourceType) {
+        this.columnPropagateSourceType = columnPropagateSourceType;
+    }
+
+    public String getColumnPropagateSourceType() {
+        return columnPropagateSourceType;
+    }
+
+    /**
+     * The maximum number of retries on connection errors before failing (-1 =
+     * no limit, 0 = disabled, > 0 = num of retries).
+     */
+    public void setErrorsMaxRetries(int errorsMaxRetries) {
+        this.errorsMaxRetries = errorsMaxRetries;
+    }
+
+    public int getErrorsMaxRetries() {
+        return errorsMaxRetries;
+    }
+
+    /**
+     * Password of the database user to be used when connecting to the database.
+     */
+    public void setDatabasePassword(String databasePassword) {
+        this.databasePassword = databasePassword;
+    }
+
+    public String getDatabasePassword() {
+        return databasePassword;
+    }
+
+    /**
+     * The comma-separated list of operations to skip during streaming, defined
+     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes, 't' for
+     * truncates, and 'none' to indicate nothing skipped. By default, only
+     * truncate operations will be skipped.
+     */
+    public void setSkippedOperations(String skippedOperations) {
+        this.skippedOperations = skippedOperations;
+    }
+
+    public String getSkippedOperations() {
+        return skippedOperations;
+    }
+
+    /**
+     * The job's description emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobDescription(
+            String openlineageIntegrationJobDescription) {
+        this.openlineageIntegrationJobDescription = openlineageIntegrationJobDescription;
+    }
+
+    public String getOpenlineageIntegrationJobDescription() {
+        return openlineageIntegrationJobDescription;
+    }
+
+    /**
+     * Enable/Disable Debezium context headers that provides essential metadata
+     * for tracking and identifying the source of CDC events in downstream
+     * processing systems.
+     */
+    public void setExtendedHeadersEnabled(boolean extendedHeadersEnabled) {
+        this.extendedHeadersEnabled = extendedHeadersEnabled;
+    }
+
+    public boolean isExtendedHeadersEnabled() {
+        return extendedHeadersEnabled;
+    }
+
+    /**
+     * Maximum size of the queue for change events read from the database log
+     * but not yet recorded or forwarded. Defaults to 8192, and should always be
+     * larger than the maximum batch size.
+     */
+    public void setMaxQueueSize(int maxQueueSize) {
+        this.maxQueueSize = maxQueueSize;
+    }
+
+    public int getMaxQueueSize() {
+        return maxQueueSize;
+    }
+
+    /**
+     * Specify the action to take when a guardrail collections limit is
+     * exceeded: 'warn' (the default) logs a warning message and continues
+     * processing; 'fail' stops the connector with an error.
+     */
+    public void setGuardrailCollectionsLimitAction(
+            String guardrailCollectionsLimitAction) {
+        this.guardrailCollectionsLimitAction = guardrailCollectionsLimitAction;
+    }
+
+    public String getGuardrailCollectionsLimitAction() {
+        return guardrailCollectionsLimitAction;
+    }
+
+    /**
+     * Regular expression identifying configuration keys whose values should be
+     * masked. When set, this custom pattern replaces Debeziums default password
+     * masking pattern.
+     */
+    public void setCustomSanitizePattern(String customSanitizePattern) {
+        this.customSanitizePattern = customSanitizePattern;
+    }
+
+    public String getCustomSanitizePattern() {
+        return customSanitizePattern;
+    }
+
+    /**
+     * Enables transaction metadata extraction together with event counting
+     */
+    public void setProvideTransactionMetadata(boolean provideTransactionMetadata) {
+        this.provideTransactionMetadata = provideTransactionMetadata;
+    }
+
+    public boolean isProvideTransactionMetadata() {
+        return provideTransactionMetadata;
+    }
+
+    /**
+     * Controls what DDL will Debezium store in database schema history. By
+     * default (false) Debezium will store all incoming DDL statements. If set
+     * to true, then only DDL that manipulates a captured table will be stored.
+     */
+    public void setSchemaHistoryInternalStoreOnlyCapturedTablesDdl(
+            boolean schemaHistoryInternalStoreOnlyCapturedTablesDdl) {
+        this.schemaHistoryInternalStoreOnlyCapturedTablesDdl = schemaHistoryInternalStoreOnlyCapturedTablesDdl;
+    }
+
+    public boolean isSchemaHistoryInternalStoreOnlyCapturedTablesDdl() {
+        return schemaHistoryInternalStoreOnlyCapturedTablesDdl;
+    }
+
+    /**
+     * Controls what DDL will Debezium store in database schema history. By
+     * default (false) Debezium will store all incoming DDL statements. If set
+     * to true, then only DDL that manipulates a table from captured
+     * schema/database will be stored.
+     */
+    public void setSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl(
+            boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl) {
+        this.schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = schemaHistoryInternalStoreOnlyCapturedDatabasesDdl;
+    }
+
+    public boolean isSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl() {
+        return schemaHistoryInternalStoreOnlyCapturedDatabasesDdl;
+    }
+
+    /**
+     * Topic prefix that identifies and provides a namespace for the particular
+     * database server/cluster is capturing changes. The topic prefix should be
+     * unique across all other connectors, since it is used as a prefix for all
+     * Kafka topic names that receive events emitted by this connector. Only
+     * alphanumeric characters, hyphens, dots and underscores must be accepted.
+     */
+    public void setTopicPrefix(String topicPrefix) {
+        this.topicPrefix = topicPrefix;
+    }
+
+    public String getTopicPrefix() {
+        return topicPrefix;
+    }
+
+    /**
+     * Whether the connector parse table and column's comment to metadata
+     * object. Note: Enable this option will bring the implications on memory
+     * usage. The number and size of ColumnImpl objects is what largely impacts
+     * how much memory is consumed by the Debezium connectors, and adding a
+     * String to each of them can potentially be quite heavy. The default is
+     * 'false'.
+     */
+    public void setIncludeSchemaComments(boolean includeSchemaComments) {
+        this.includeSchemaComments = includeSchemaComments;
+    }
+
+    public boolean isIncludeSchemaComments() {
+        return includeSchemaComments;
+    }
+
+    /**
+     * The name of the SourceInfoStructMaker class that returns SourceInfo
+     * schema and struct.
+     */
+    public void setSourceinfoStructMaker(String sourceinfoStructMaker) {
+        this.sourceinfoStructMaker = sourceinfoStructMaker;
+    }
+
+    public String getSourceinfoStructMaker() {
+        return sourceinfoStructMaker;
+    }
+
+    /**
+     * Controls how Debezium deduplicates identical schema objects (tables,
+     * columns, attributes) in memory using an interner.
+     */
+    public void setSchemaHistoryInternalMemoryOptimization(
+            String schemaHistoryInternalMemoryOptimization) {
+        this.schemaHistoryInternalMemoryOptimization = schemaHistoryInternalMemoryOptimization;
+    }
+
+    public String getSchemaHistoryInternalMemoryOptimization() {
+        return schemaHistoryInternalMemoryOptimization;
+    }
+
+    /**
+     * Add OPTION(RECOMPILE) on each SELECT statement during the incremental
+     * snapshot process. This prevents parameter sniffing but can cause CPU
+     * pressure on the source database.
+     */
+    public void setIncrementalSnapshotOptionRecompile(
+            boolean incrementalSnapshotOptionRecompile) {
+        this.incrementalSnapshotOptionRecompile = incrementalSnapshotOptionRecompile;
+    }
+
+    public boolean isIncrementalSnapshotOptionRecompile() {
+        return incrementalSnapshotOptionRecompile;
+    }
+
+    /**
+     * Enable Debezium to emit data lineage metadata through OpenLineage API
+     */
+    public void setOpenlineageIntegrationEnabled(
+            boolean openlineageIntegrationEnabled) {
+        this.openlineageIntegrationEnabled = openlineageIntegrationEnabled;
+    }
+
+    public boolean isOpenlineageIntegrationEnabled() {
+        return openlineageIntegrationEnabled;
+    }
+
+    /**
+     * Maximum size of the queue in bytes for change events read from the
+     * database log but not yet recorded or forwarded. Defaults to 0. Mean the
+     * feature is not enabled
+     */
+    public void setMaxQueueSizeInBytes(long maxQueueSizeInBytes) {
+        this.maxQueueSizeInBytes = maxQueueSizeInBytes;
+    }
+
+    public long getMaxQueueSizeInBytes() {
+        return maxQueueSizeInBytes;
+    }
+
+    /**
+     * The maximum number of retries after encountering an error emitting a
+     * window event (-1 = no limit, 0 = disabled, > 0 = num of retries).
+     * Defaults to 0.
+     */
+    public void setSignalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+        this.signalEmitFailureMaxRetries = signalEmitFailureMaxRetries;
+    }
+
+    public int getSignalEmitFailureMaxRetries() {
+        return signalEmitFailureMaxRetries;
+    }
+
+    /**
+     * Time, date, and timestamps can be represented with different kinds of
+     * precisions, including: 'adaptive' (the default) bases the precision of
+     * time, date, and timestamp values on the database column's precision;
+     * 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields always
+     * use microseconds precision; 'connect' always represents time, date, and
+     * timestamp values using Kafka Connect's built-in representations for Time,
+     * Date, and Timestamp, which uses millisecond precision regardless of the
+     * database columns' precision; 'isostring' represents time, date, and
+     * timestamp values as ISO-8601 formatted strings at the UTC time zone;
+     * 'structured' represents time, date, timestamp, and datetime values as
+     * Kafka Connect structs with separate calendar and clock components;
+     * 'microseconds' always represents time, date, and timestamp values using
+     * microsecond precision; 'nanoseconds' always represents time, date, and
+     * timestamp values using nanosecond precision.
+     */
+    public void setTimePrecisionMode(String timePrecisionMode) {
+        this.timePrecisionMode = timePrecisionMode;
+    }
+
+    public String getTimePrecisionMode() {
+        return timePrecisionMode;
+    }
+
+    /**
+     * When 'snapshot.mode' is set as configuration_based, this setting permits
+     * to specify whenever the schema should be snapshotted or not.
+     */
+    public void setSnapshotModeConfigurationBasedSnapshotSchema(
+            boolean snapshotModeConfigurationBasedSnapshotSchema) {
+        this.snapshotModeConfigurationBasedSnapshotSchema = snapshotModeConfigurationBasedSnapshotSchema;
+    }
+
+    public boolean isSnapshotModeConfigurationBasedSnapshotSchema() {
+        return snapshotModeConfigurationBasedSnapshotSchema;
+    }
+
+    /**
+     * Optional list of post processors. The processors are defined using
+     * '<post.processor.prefix>.type' config option and configured using options
+     * '<post.processor.prefix.<option>'
+     */
+    public void setPostProcessors(String postProcessors) {
+        this.postProcessors = postProcessors;
+    }
+
+    public String getPostProcessors() {
+        return postProcessors;
+    }
+
+    /**
+     * Port of the database server.
+     */
+    public void setDatabasePort(int databasePort) {
+        this.databasePort = databasePort;
+    }
+
+    public int getDatabasePort() {
+        return databasePort;
+    }
+
+    /**
+     * The name of the SchemaHistory class that should be used to store and
+     * recover database schema changes. The configuration properties for the
+     * history are prefixed with the 'schema.history.internal.' string.
+     */
+    public void setSchemaHistoryInternal(String schemaHistoryInternal) {
+        this.schemaHistoryInternal = schemaHistoryInternal;
+    }
+
+    public String getSchemaHistoryInternal() {
+        return schemaHistoryInternal;
+    }
+
+    /**
+     * Regular expressions matching columns to exclude from change events
+     */
+    public void setColumnExcludeList(String columnExcludeList) {
+        this.columnExcludeList = columnExcludeList;
+    }
+
+    public String getColumnExcludeList() {
+        return columnExcludeList;
+    }
+
+    /**
+     * Number of retries after the first failed HTTP notification delivery
+     * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are always
+     * retried at least 3 times.
+     */
+    public void setNotificationHttpRetries(int notificationHttpRetries) {
+        this.notificationHttpRetries = notificationHttpRetries;
+    }
+
+    public int getNotificationHttpRetries() {
+        return notificationHttpRetries;
+    }
+
+    /**
+     * Resolvable hostname or IP address of the database server.
+     */
+    public void setDatabaseHostname(String databaseHostname) {
+        this.databaseHostname = databaseHostname;
+    }
+
+    public String getDatabaseHostname() {
+        return databaseHostname;
     }
 
     /**
@@ -1466,51 +1669,33 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
         addPropertyIfNotNull(configBuilder, "transaction.metadata.factory", transactionMetadataFactory);
-        addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
+        addPropertyIfNotNull(configBuilder, "notification.http.allow.private.networks", notificationHttpAllowPrivateNetworks);
         addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
-        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
-        addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "data.query.mode", dataQueryMode);
+        addPropertyIfNotNull(configBuilder, "notification.http.timeout.ms", notificationHttpTimeoutMs);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
+        addPropertyIfNotNull(configBuilder, "signal.emit.failure.backoff.ms", signalEmitFailureBackoffMs);
         addPropertyIfNotNull(configBuilder, "database.instance", databaseInstance);
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
-        addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
-        addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
-        addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
-        addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
         addPropertyIfNotNull(configBuilder, "converters", converters);
-        addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads.multiplier", snapshotMaxThreadsMultiplier);
-        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
-        addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
-        addPropertyIfNotNull(configBuilder, "datatype.propagate.source.type", datatypePropagateSourceType);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "database.names", databaseNames);
         addPropertyIfNotNull(configBuilder, "snapshot.tables.order.by.row.count", snapshotTablesOrderByRowCount);
-        addPropertyIfNotNull(configBuilder, "incremental.snapshot.watermarking.strategy", incrementalSnapshotWatermarkingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
-        addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
-        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.schema.error", snapshotModeConfigurationBasedSnapshotOnSchemaError);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.allow.schema.changes", incrementalSnapshotAllowSchemaChanges);
-        addPropertyIfNotNull(configBuilder, "schema.history.internal.skip.unparseable.ddl", schemaHistoryInternalSkipUnparseableDdl);
-        addPropertyIfNotNull(configBuilder, "column.include.list", columnIncludeList);
-        addPropertyIfNotNull(configBuilder, "column.propagate.source.type", columnPropagateSourceType);
-        addPropertyIfNotNull(configBuilder, "errors.max.retries", errorsMaxRetries);
         addPropertyIfNotNull(configBuilder, "streaming.fetch.size", streamingFetchSize);
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
-        addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
+        addPropertyIfNotNull(configBuilder, "database.exclude.list", databaseExcludeList);
+        addPropertyIfNotNull(configBuilder, "notification.http.url", notificationHttpUrl);
+        addPropertyIfNotNull(configBuilder, "event.converting.failure.handling.mode", eventConvertingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
-        addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
-        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.description", openlineageIntegrationJobDescription);
         addPropertyIfNotNull(configBuilder, "topic.naming.strategy", topicNamingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.data", snapshotModeConfigurationBasedSnapshotData);
-        addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
-        addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
-        addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
-        addPropertyIfNotNull(configBuilder, "custom.sanitize.pattern", customSanitizePattern);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.chunk.size", incrementalSnapshotChunkSize);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.owners", openlineageIntegrationJobOwners);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
@@ -1518,43 +1703,74 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
         addPropertyIfNotNull(configBuilder, "memory.management.tables.class", memoryManagementTablesClass);
         addPropertyIfNotNull(configBuilder, "executor.shutdown.timeout.ms", executorShutdownTimeoutMs);
-        addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
-        addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.tables.ddl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);
-        addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.databases.ddl", schemaHistoryInternalStoreOnlyCapturedDatabasesDdl);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.data.error", snapshotModeConfigurationBasedSnapshotOnDataError);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
-        addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
-        addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
-        addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
-        addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
+        addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
-        addPropertyIfNotNull(configBuilder, "incremental.snapshot.option.recompile", incrementalSnapshotOptionRecompile);
-        addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
         addPropertyIfNotNull(configBuilder, "statistics.metrics.enabled", statisticsMetricsEnabled);
-        addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
-        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
-        addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "signal.poll.interval.ms", signalPollIntervalMs);
-        addPropertyIfNotNull(configBuilder, "post.processors", postProcessors);
         addPropertyIfNotNull(configBuilder, "notification.enabled.channels", notificationEnabledChannels);
-        addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.isolation.mode", snapshotIsolationMode);
+        addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
-        addPropertyIfNotNull(configBuilder, "database.port", databasePort);
         addPropertyIfNotNull(configBuilder, "notification.sink.topic.name", notificationSinkTopicName);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.custom.name", snapshotModeCustomName);
-        addPropertyIfNotNull(configBuilder, "schema.history.internal", schemaHistoryInternal);
         addPropertyIfNotNull(configBuilder, "max.iteration.transactions", maxIterationTransactions);
-        addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
-        addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "memory.management.schemas.class", memoryManagementSchemasClass);
+        addPropertyIfNotNull(configBuilder, "skip.messages.without.change", skipMessagesWithoutChange);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
+        addPropertyIfNotNull(configBuilder, "database.include.list", databaseIncludeList);
+        addPropertyIfNotNull(configBuilder, "field.name.adjustment.mode", fieldNameAdjustmentMode);
+        addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
+        addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
+        addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
+        addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
+        addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
+        addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
+        addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
+        addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
+        addPropertyIfNotNull(configBuilder, "datatype.propagate.source.type", datatypePropagateSourceType);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.watermarking.strategy", incrementalSnapshotWatermarkingStrategy);
+        addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.schema.error", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+        addPropertyIfNotNull(configBuilder, "schema.history.internal.skip.unparseable.ddl", schemaHistoryInternalSkipUnparseableDdl);
+        addPropertyIfNotNull(configBuilder, "column.include.list", columnIncludeList);
+        addPropertyIfNotNull(configBuilder, "column.propagate.source.type", columnPropagateSourceType);
+        addPropertyIfNotNull(configBuilder, "errors.max.retries", errorsMaxRetries);
+        addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
+        addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.description", openlineageIntegrationJobDescription);
+        addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
+        addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
+        addPropertyIfNotNull(configBuilder, "custom.sanitize.pattern", customSanitizePattern);
+        addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
+        addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.tables.ddl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);
+        addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.databases.ddl", schemaHistoryInternalStoreOnlyCapturedDatabasesDdl);
+        addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
+        addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
+        addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
+        addPropertyIfNotNull(configBuilder, "schema.history.internal.memory.optimization", schemaHistoryInternalMemoryOptimization);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.option.recompile", incrementalSnapshotOptionRecompile);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
+        addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
+        addPropertyIfNotNull(configBuilder, "signal.emit.failure.max.retries", signalEmitFailureMaxRetries);
+        addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
+        addPropertyIfNotNull(configBuilder, "post.processors", postProcessors);
+        addPropertyIfNotNull(configBuilder, "database.port", databasePort);
+        addPropertyIfNotNull(configBuilder, "schema.history.internal", schemaHistoryInternal);
+        addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
+        addPropertyIfNotNull(configBuilder, "notification.http.retries", notificationHttpRetries);
+        addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);
         
         return configBuilder.build();

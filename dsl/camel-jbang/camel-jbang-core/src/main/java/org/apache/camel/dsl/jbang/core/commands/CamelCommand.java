@@ -31,9 +31,9 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
-import org.apache.camel.dsl.jbang.core.common.Printer;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
+import org.apache.camel.dsl.jbang.run.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.camel.util.StringHelper;
 import org.jline.jansi.AnsiConsole;
 import picocli.CommandLine;
@@ -232,8 +232,8 @@ public abstract class CamelCommand implements Callable<Integer> {
         return CommandLineHelper.getCamelDir().resolve(pid + "-history.json");
     }
 
-    public Path getActivityFile(String pid) {
-        return CommandLineHelper.getCamelDir().resolve(pid + "-activity.json");
+    public Path getTimelineFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-timeline.json");
     }
 
     protected Printer printer() {

@@ -18,6 +18,7 @@ package org.apache.camel.tooling.model;
 
 import java.util.List;
 
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
@@ -398,5 +399,83 @@ class JsonMapperTest {
         assertEquals("engineMaxMemory", some.getConfigurationOptions().get(0).getName());
         assertEquals("long", some.getLanguageOptions().get(0).getJavaType());
         assertEquals(List.of("resultType"), some.getOptions().stream().map(BaseOptionModel::getName).toList());
+    }
+
+    @Test
+    void testShouldReadAndWriteDstWorlds() {
+        // CAMEL-26438: the fake worlds of a component's deterministic simulation tests
+        ComponentModel model = new ComponentModel();
+        model.setName("aws2-sqs");
+        model.setScheme("aws2-sqs");
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertFalse(json.contains("\"dstWorlds\""), json);
+        assertTrue(JsonMapper.generateComponentModel(json).getDstWorlds().isEmpty());
+
+        DstWorldModel world = new DstWorldModel();
+        world.setName("SqsWorld");
+        world.setJavaType("org.apache.camel.component.aws2.sqs.dst.SqsWorld");
+        world.setFake("FakeSqs");
+        world.setCovers(List.of("the visibility timeout extender"));
+        world.setFaults(List.of("ReceiveMessage fails", "DeleteMessage is lost"));
+        world.setInvariants(List.of("every offered message is routed at least once"));
+        world.setIssues(List.of("CAMEL-25700"));
+        world.setTests(List.of("SqsRedeliveryDstTest", "SqsVisibilityDstTest"));
+        model.addDstWorld(world);
+
+        json = JsonMapper.createParameterJsonSchema(model);
+        // a section of its own after the options, one line per world
+        assertTrue(json.indexOf("\"dstWorlds\"") > json.indexOf("\"properties\""), json);
+        assertTrue(json.contains("\"SqsWorld\": { \"javaType\": \"org.apache.camel.component.aws2.sqs.dst.SqsWorld\","),
+                json);
+        ComponentModel model2 = JsonMapper.generateComponentModel(json);
+        assertEquals(1, model2.getDstWorlds().size());
+        DstWorldModel world2 = model2.getDstWorlds().get(0);
+        assertEquals("SqsWorld", world2.getName());
+        assertEquals("org.apache.camel.component.aws2.sqs.dst.SqsWorld", world2.getJavaType());
+        assertEquals("FakeSqs", world2.getFake());
+        assertEquals(List.of("the visibility timeout extender"), world2.getCovers());
+        assertEquals(List.of("ReceiveMessage fails", "DeleteMessage is lost"), world2.getFaults());
+        assertEquals(List.of("every offered message is routed at least once"), world2.getInvariants());
+        assertEquals(List.of("CAMEL-25700"), world2.getIssues());
+        assertEquals(List.of("SqsRedeliveryDstTest", "SqsVisibilityDstTest"), world2.getTests());
+        // the section is written again as it was read
+        String json2 = JsonMapper.createParameterJsonSchema(model2);
+        assertEquals(json.substring(json.indexOf("\"dstWorlds\"")), json2.substring(json2.indexOf("\"dstWorlds\"")));
+    }
+
+    @Test
+    void testEmptyDeprecationNoteIsNotWritten() {
+        // an option annotated with @Metadata gets the annotation default "" as deprecation note
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setName("directoryName");
+        option.setDeprecationNote("");
+
+        JsonObject json = JsonMapper.asJsonObject(option);
+        assertFalse(json.containsKey("deprecationNote"));
+        assertEquals(false, json.get("deprecated"));
+
+        ComponentModel model = new ComponentModel();
+        model.addEndpointOption(option);
+        String text = JsonMapper.createParameterJsonSchema(model);
+        assertFalse(text.contains("\"deprecationNote\""));
+        ComponentModel model2 = JsonMapper.generateComponentModel(text);
+        assertNull(model2.getEndpointOptions().get(0).getDeprecationNote());
+    }
+
+    @Test
+    void testDeprecationNoteIsWritten() {
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setName("oldOption");
+        option.setDeprecated(true);
+        option.setDeprecationNote("Use newOption instead");
+
+        JsonObject json = JsonMapper.asJsonObject(option);
+        assertEquals("Use newOption instead", json.get("deprecationNote"));
+
+        ComponentModel model = new ComponentModel();
+        model.addEndpointOption(option);
+        ComponentModel model2 = JsonMapper.generateComponentModel(JsonMapper.createParameterJsonSchema(model));
+        assertTrue(model2.getEndpointOptions().get(0).isDeprecated());
+        assertEquals("Use newOption instead", model2.getEndpointOptions().get(0).getDeprecationNote());
     }
 }

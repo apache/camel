@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -26,6 +27,7 @@ import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -55,6 +57,8 @@ class StartupTab extends AbstractTab {
 
     private volatile List<StartupStep> steps = Collections.emptyList();
     private int scrollOffset;
+    // s: the steps in the order they started (a waterfall), or the slowest first
+    private boolean slowestFirst;
     private long totalDuration;
     private long maxDuration;
     private long minDurationColor;
@@ -118,6 +122,11 @@ class StartupTab extends AbstractTab {
         }
         if (ke.isKey(KeyCode.F5)) {
             loadStartupData();
+            return true;
+        }
+        if (ke.isCharIgnoreCase('s')) {
+            slowestFirst = !slowestFirst;
+            scrollOffset = 0;
             return true;
         }
         return false;
@@ -199,7 +208,8 @@ class StartupTab extends AbstractTab {
             return;
         }
 
-        String title = String.format(" Startup Timeline — Total: %dms, Steps: %d ", totalDuration, steps.size());
+        String title = String.format(" Startup Timeline — Total: %dms, Steps: %d%s ", totalDuration, steps.size(),
+                slowestFirst ? ", slowest first" : "");
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
@@ -217,11 +227,18 @@ class StartupTab extends AbstractTab {
 
         int end = Math.min(scrollOffset + visibleLines, steps.size());
 
-        int barMaxWidth = Math.max(10, inner.width() - 30);
+        List<StartupStep> ordered = ordered(steps, slowestFirst);
+        // the time the steps span: a bar starts where its step started, as long as it took
+        long t0 = steps.stream().mapToLong(st -> st.beginTime).filter(b -> b > 0).min().orElse(0);
+        long t1 = steps.stream().mapToLong(st -> st.beginTime + st.duration).max().orElse(0);
+        long span = t0 > 0 ? Math.max(1, t1 - t0) : Math.max(1, maxDuration);
+        int labelWidth = Math.min(inner.width() / 2,
+                steps.stream().mapToInt(st -> 2 * st.level + CharWidth.of(label(st))).max().orElse(10) + 2);
+        int barMaxWidth = Math.max(10, inner.width() - 9 - labelWidth - 1);
 
         List<Line> lines = new ArrayList<>();
         for (int i = scrollOffset; i < end; i++) {
-            lines.add(renderStep(steps.get(i), barMaxWidth));
+            lines.add(renderStep(ordered.get(i), labelWidth, barMaxWidth, t0, span));
         }
 
         List<Rect> hChunks = Layout.horizontal()
@@ -239,30 +256,42 @@ class StartupTab extends AbstractTab {
         }
     }
 
-    private Line renderStep(StartupStep step, int maxBarWidth) {
-        String indent = "  ".repeat(step.level);
-
+    /**
+     * A step: how long it took, what it is (indented by its level), and its bar on the time line of the startup, from
+     * where it started (without begin times, as an older Camel has them, from the left).
+     */
+    private Line renderStep(StartupStep step, int labelWidth, int maxBarWidth, long t0, long span) {
         boolean isRoot = step.level == 0;
         Style bandStyle = isRoot ? LABEL : colorForDuration(step.duration);
+        int offset = t0 > 0 && step.beginTime > 0
+                ? (int) Math.min(maxBarWidth - 1, Math.round((double) (step.beginTime - t0) / span * maxBarWidth)) : 0;
+        int barWidth = Math.max(1, Math.min(maxBarWidth - offset,
+                (int) Math.round((double) step.duration / span * maxBarWidth)));
+        String what = TuiHelper.truncate("  ".repeat(step.level) + label(step), labelWidth);
+        return Line.from(
+                Span.styled(String.format("%7dms ", step.duration), isRoot ? LABEL : VALUE),
+                Span.styled(what + " ".repeat(Math.max(1, labelWidth - CharWidth.of(what))), LABEL),
+                Span.raw(" ".repeat(offset)),
+                Span.styled("█".repeat(barWidth), bandStyle));
+    }
 
-        double ratio = maxDuration > 0 ? (double) step.duration / maxDuration : 0;
-        int barWidth = Math.max(1, (int) Math.round(ratio * maxBarWidth));
-        String bar = "█".repeat(barWidth);
-
-        String durationStr = step.duration + "ms";
+    private static String label(StartupStep step) {
         String label = step.name != null ? step.name : "";
         if (step.description != null && !step.description.isEmpty() && !step.description.equals(label)) {
             label += " " + step.description;
         }
+        return label;
+    }
 
-        int pad = Math.max(1, 8 - durationStr.length());
-
-        return Line.from(
-                Span.raw(indent),
-                Span.styled(bar, bandStyle),
-                Span.raw(" ".repeat(pad)),
-                Span.styled(durationStr, isRoot ? LABEL : VALUE),
-                Span.styled("  " + label, LABEL));
+    /** The steps in the order they started (by begin time, the outer step first), or the slowest first. */
+    static List<StartupStep> ordered(List<StartupStep> steps, boolean slowestFirst) {
+        List<StartupStep> ordered = new ArrayList<>(steps);
+        if (slowestFirst) {
+            ordered.sort(Comparator.comparingLong((StartupStep st) -> st.duration).reversed());
+        } else if (steps.stream().anyMatch(st -> st.beginTime > 0)) {
+            ordered.sort(Comparator.comparingLong((StartupStep st) -> st.beginTime).thenComparingInt(st -> st.level));
+        }
+        return ordered;
     }
 
     private Style colorForDuration(long duration) {
@@ -272,6 +301,7 @@ class StartupTab extends AbstractTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
+        hint(spans, "s", slowestFirst ? "start order" : "slowest first");
         hintLast(spans, "PgUp/Dn", "page");
     }
 

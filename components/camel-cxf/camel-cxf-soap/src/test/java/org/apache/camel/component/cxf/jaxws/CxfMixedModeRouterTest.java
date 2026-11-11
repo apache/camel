@@ -26,12 +26,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.cxf.common.DataFormat;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.soap.SoapHeader;
@@ -47,12 +47,29 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfMixedModeRouterTest extends CamelTestSupport {
-    protected static int port1 = CXFTestSupport.getPort1();
-    protected static int port2 = CXFTestSupport.getPort2();
+    private static AvailablePortFinder.Port PORT;
+    private static AvailablePortFinder.Port PORT_2;
+
+    private static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        PORT_2 = AvailablePortFinder.find();
+        ROUTER_ADDRESS = "http://localhost:" + PORT.getPort() + "/CxfMixedModeRouterTest/router";
+        SERVICE_ADDRESS = "http://localhost:" + PORT_2.getPort() + "/CxfMixedModeRouterTest/helloworld";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+        if (PORT_2 != null) {
+            PORT_2.release();
+        }
+    }
 
     protected static Server server;
-    protected static final String ROUTER_ADDRESS = "http://localhost:" + port1 + "/CxfMixedModeRouterTest/router";
-    protected static final String SERVICE_ADDRESS = "http://localhost:" + port2 + "/CxfMixedModeRouterTest/helloworld";
+    protected static String ROUTER_ADDRESS;
+    protected static String SERVICE_ADDRESS;
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 
     private String routerEndpointURI
@@ -61,6 +78,7 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
 
     @BeforeAll
     public static void startService() {
+        allocatePorts();
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 

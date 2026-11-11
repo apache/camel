@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws2.bedrock.agentruntime;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class BedrockAgentRuntimeEndpointConfigurer extends PropertyConfigurerSup
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BedrockAgentRuntimeEndpoint target = (BedrockAgentRuntimeEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "agentaliasid":
@@ -91,7 +92,7 @@ public class BedrockAgentRuntimeEndpointConfigurer extends PropertyConfigurerSup
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "agentaliasid":
@@ -156,7 +157,7 @@ public class BedrockAgentRuntimeEndpointConfigurer extends PropertyConfigurerSup
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BedrockAgentRuntimeEndpoint target = (BedrockAgentRuntimeEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "agentaliasid":

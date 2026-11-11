@@ -28,6 +28,8 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.ignite.queue.IgniteQueueComponent;
 import org.apache.camel.component.ignite.queue.IgniteQueueEndpoint;
 import org.apache.camel.component.ignite.queue.IgniteQueueOperation;
@@ -273,6 +275,33 @@ public class IgniteQueueTest extends AbstractIgniteTest {
             }
         }).get()).isGreaterThanOrEqualTo(1000L);
 
+    }
+
+    @Test
+    void testOperationsWithAnElementFailWithoutBody() {
+        for (IgniteQueueOperation operation : List.of(IgniteQueueOperation.ADD, IgniteQueueOperation.CONTAINS,
+                IgniteQueueOperation.REMOVE, IgniteQueueOperation.RETAIN_ALL, IgniteQueueOperation.OFFER,
+                IgniteQueueOperation.PUT)) {
+            Assertions
+                    .assertThatThrownBy(() -> template.requestBody(
+                            "ignite-queue:" + resourceUid + "?operation=" + operation, (Object) null))
+                    .as(operation.name())
+                    .isInstanceOf(CamelExecutionException.class)
+                    .cause().isInstanceOf(InvalidPayloadException.class)
+                    .hasMessageContaining("the " + operation + " operation needs the element");
+        }
+
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration())).isEmpty();
+    }
+
+    @Test
+    void testNoOperationFails() {
+        Assertions
+                .assertThatThrownBy(() -> template.requestBody("ignite-queue:" + resourceUid, "hello"))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause().isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("operation option")
+                .hasMessageContaining(IgniteConstants.IGNITE_QUEUE_OPERATION);
     }
 
     @AfterEach
