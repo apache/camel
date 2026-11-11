@@ -1,0 +1,83 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * CAMEL-24290: workaround for https://github.com/jenkinsci/jenkins/pull/27365
+ *
+ * This job is triggered (wait: false) by the Camel Jenkinsfile* pipelines. It holds the idle executors of the
+ * ppc64le / s390x agents that are running a Camel build, so that Jenkins provisions a new agent for the queued build.
+ *
+ * IMPORTANT: this job MUST NOT use throttleJobProperty / throttle() with the 'camel' category. The occupier
+ * has to allocate node(<busy agent>), which a throttled job could not do while a Camel build runs on that agent,
+ * and it would hit the very same Jenkins bug. A Jenkins administrator has to create this job (pipeline from
+ * SCM, script path 'Jenkinsfile.occupier') next to the Camel jobs.
+ */
+def occupierBranches = [:]
+
+pipeline {
+
+    agent none
+
+    options {
+        buildDiscarder(
+            logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
+        )
+        timeout(time: 30, unit: 'MINUTES')
+        skipDefaultCheckout(true)
+    }
+
+    parameters {
+        string(name: 'PLATFORMS', defaultValue: 'ppc64le,s390x', description: 'Comma separated platforms for which idle executors are occupied')
+    }
+
+    stages {
+        stage('Inspect nodes') {
+            // Short lived, on a platform which is not subject to the workaround
+            agent {
+                label 'ubuntu'
+            }
+            steps {
+                script {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: scm.branches,
+                        extensions: [
+                            [$class: 'CloneOption', depth: 1, noTags: true, shallow: true]
+                        ],
+                        userRemoteConfigs: scm.userRemoteConfigs
+                    ])
+                    def platforms = params.PLATFORMS.split(',').collect { it.trim() }.findAll { it }
+                    def altArchNodes = load 'etc/scripts/jenkins-alt-arch-nodes.groovy'
+                    occupierBranches = altArchNodes.provisionAltArchNodes(platforms)
+                }
+            }
+        }
+
+        stage('Occupy idle executors') {
+            // No agent here: each branch allocates the node it occupies
+            steps {
+                script {
+                    if (occupierBranches) {
+                        parallel occupierBranches
+                    } else {
+                        echo 'No idle executor to occupy'
+                    }
+                }
+            }
+        }
+    }
+}
