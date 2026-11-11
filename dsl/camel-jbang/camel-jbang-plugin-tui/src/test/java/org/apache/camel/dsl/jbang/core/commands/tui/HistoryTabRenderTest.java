@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -284,6 +285,25 @@ class HistoryTabRenderTest {
         long[] none = HistoryTab.waterfallOffsets(
                 List.of(step("from1", true, false, 5, 0), step("log1", false, false, 5, 0)));
         assertTrue(Arrays.equals(new long[] { 0, 0 }, none));
+    }
+
+    @Test
+    void theDiagramIsDrawnAgainForAnotherExchange() {
+        List<HistoryEntry> shown = List.of(historyEntry("EX-1"), historyEntry("EX-1"));
+
+        // the history was read again (tab opened again, F5) and starts with another exchange
+        assertTrue(HistoryTab.isOtherExchange(shown, List.of(historyEntry("EX-2"))));
+        // the same exchange: the diagram already shows it
+        assertFalse(HistoryTab.isOtherExchange(shown, List.of(historyEntry("EX-1"), historyEntry("EX-1"))));
+        // nothing drawn yet, or no history: nothing to draw again
+        assertFalse(HistoryTab.isOtherExchange(List.of(), List.of(historyEntry("EX-2"))));
+        assertFalse(HistoryTab.isOtherExchange(shown, List.of()));
+    }
+
+    private static HistoryEntry historyEntry(String exchangeId) {
+        HistoryEntry e = new HistoryEntry();
+        e.exchangeId = exchangeId;
+        return e;
     }
 
     private static HistoryTab.WaterfallStep step(String id, boolean first, boolean last, long elapsed, long start) {

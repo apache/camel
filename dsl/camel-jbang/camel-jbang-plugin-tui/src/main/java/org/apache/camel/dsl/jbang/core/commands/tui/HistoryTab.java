@@ -752,14 +752,23 @@ class HistoryTab extends AbstractTab {
      * (CAMEL-26864).
      */
     private void redrawHistoryDiagram() {
-        if (!diagram.isShowDiagram() || !traces.get().isEmpty() || historyEntries.isEmpty()
-                || diagramHistorySteps.isEmpty()) {
+        if (!diagram.isShowDiagram() || !traces.get().isEmpty()) {
             return;
         }
-        String shown = diagramHistorySteps.get(0).exchangeId;
-        if (!Objects.equals(shown, reorderHistoryDepthFirst(historyEntries).get(0).exchangeId)) {
+        if (isOtherExchange(diagramHistorySteps, reorderHistoryDepthFirst(historyEntries))) {
             loadDiagramForCurrentView();
         }
+    }
+
+    /**
+     * Whether the history now starts with another exchange than the one the Diagram view draws. Nothing drawn, or no
+     * history, is not another exchange: there is nothing to draw again.
+     */
+    static boolean isOtherExchange(List<HistoryEntry> shown, List<HistoryEntry> current) {
+        if (shown.isEmpty() || current.isEmpty()) {
+            return false;
+        }
+        return !Objects.equals(shown.get(0).exchangeId, current.get(0).exchangeId);
     }
 
     boolean isTraceDetailView() {

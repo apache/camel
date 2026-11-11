@@ -50,11 +50,11 @@ box lists all outbound components (producers). The integration
 name sits in the middle, showing the overall message flow direction.
 
 The numbers, the in and out of the throughput chart, and the avg body
-chart are of the messages that come into the integration and go out of it. An endpoint
-one of its routes sends to and another consumes (`direct`, `seda`) is
-a hand-off between its routes and is left out: it would count each
-message twice, as an out and an in, and say it left. The table still
-lists it.
+chart are of the messages that come into the integration and go out
+of it. An endpoint one of its routes sends to and another consumes
+(`direct`, `seda`) is a hand-off between its routes and is left out:
+it would count each message twice, as an out and an in, and say it
+left. The table still lists it.
 
 ## Throughput Chart
 
