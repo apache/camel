@@ -61,6 +61,16 @@ final class DiagramTopology {
     private volatile Structure structure;
 
     /**
+     * The topology asked for last, when it is of this integration, without asking for it: null until a tab (Diagram,
+     * Routes, About) has asked for it. For what must not wait on the integration, such as the jump links of the source
+     * editor.
+     */
+    JsonObject cached(String pid) {
+        Structure s = structure;
+        return s != null && pid != null && s.pid().equals(pid) ? s.topology() : null;
+    }
+
+    /**
      * The step of a route by its id, from the structure asked for last (the Routes tab shows what each step does); null
      * until the structure of the integration has been asked for, or when it has no such step.
      */

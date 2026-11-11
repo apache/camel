@@ -155,7 +155,7 @@ public class TopologyLayoutEngine {
                 boolean backEdge = layers.getOrDefault(e.fromRouteId, 0) >= layers.getOrDefault(e.toRouteId, 0)
                         && !e.fromRouteId.equals(e.toRouteId);
                 boolean selfLoop = e.fromRouteId.equals(e.toRouteId);
-                layoutEdges.add(new TopologyLayoutEdge(from, to, e.endpoint, e.connectionType, backEdge, selfLoop));
+                layoutEdges.add(new TopologyLayoutEdge(from, to, e.endpoint, e.connectionType, backEdge, selfLoop, e.reply));
             }
         }
 
@@ -338,6 +338,9 @@ public class TopologyLayoutEngine {
         public String via;
         // for an error path: handled, continued or notHandled (null when a predicate decides)
         public String handling;
+        // whether the source route waits for the answer of the target route (a direct call, a request-reply over a
+        // broker) rather than handing the message off
+        public boolean reply;
 
         public boolean isErrorPath() {
             return "error".equals(kind);
@@ -382,17 +385,27 @@ public class TopologyLayoutEngine {
         public final String connectionType;
         public final boolean backEdge;
         public final boolean selfLoop;
+        // whether the source route waits for the answer of the target route
+        public final boolean reply;
 
         public TopologyLayoutEdge(
                                   TopologyLayoutNode from, TopologyLayoutNode to,
                                   String endpoint, String connectionType,
                                   boolean backEdge, boolean selfLoop) {
+            this(from, to, endpoint, connectionType, backEdge, selfLoop, false);
+        }
+
+        public TopologyLayoutEdge(
+                                  TopologyLayoutNode from, TopologyLayoutNode to,
+                                  String endpoint, String connectionType,
+                                  boolean backEdge, boolean selfLoop, boolean reply) {
             this.from = from;
             this.to = to;
             this.endpoint = endpoint;
             this.connectionType = connectionType;
             this.backEdge = backEdge;
             this.selfLoop = selfLoop;
+            this.reply = reply;
         }
     }
 

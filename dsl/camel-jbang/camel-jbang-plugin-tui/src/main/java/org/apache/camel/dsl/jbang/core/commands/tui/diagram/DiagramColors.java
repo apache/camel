@@ -33,6 +33,8 @@ public final class DiagramColors {
     static final char T_UP = '┴';
     static final char CROSS = '┼';
     static final char ARROW = '▼';
+    // the head of an edge whose source route waits for the answer: there and back
+    static final char REPLY_ARROW = '⇅';
     static final char DASH_V = '┆';
     static final char DASH_H = '┄';
 
