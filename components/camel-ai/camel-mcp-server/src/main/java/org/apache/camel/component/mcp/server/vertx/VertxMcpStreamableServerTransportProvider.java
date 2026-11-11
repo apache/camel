@@ -294,12 +294,14 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                 .onComplete(ar -> vertx.runOnContext(ignored -> {
                     if (ar.failed()) {
                         LOG.warn("Unable to execute MCP OAuth validation", ar.cause());
+                        ctx.request().resume();
                         ctx.response().setStatusCode(503).end("Service Unavailable");
                         return;
                     }
 
                     OAuthHttpSecuritySupport.Validation validation = ar.result();
                     if (!validation.isAuthenticated()) {
+                        ctx.request().resume();
                         ctx.response()
                                 .setStatusCode(validation.getRejectionStatusCode())
                                 .putHeader("Content-Type", "text/plain");
@@ -321,6 +323,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                             .toList();
 
                     if (!missingScopes.isEmpty()) {
+                        ctx.request().resume();
                         String challenge = "Bearer error=\"insufficient_scope\"";
                         if (protectedResourceMetadata != null) {
                             challenge = protectedResourceMetadata.addToWwwAuthenticate(challenge);

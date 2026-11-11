@@ -16,10 +16,17 @@
  */
 package org.apache.camel.component.mcp.server.main;
 
+import java.io.BufferedInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -126,6 +133,16 @@ class McpServerMainOAuthTest {
                 mcpRequest(null).DELETE().build(), HttpResponse.BodyHandlers.ofString());
         assertThat(delete.statusCode()).isEqualTo(401);
         assertThat(delete.headers().firstValue("WWW-Authenticate")).hasValue(MISSING_TOKEN_CHALLENGE);
+    }
+
+    @Test
+    void rejectedLargeRequestsDoNotBlockTheNextRequestOnTheSameConnection() throws Exception {
+        byte[] largeBody = ("{\"payload\":\"" + "x".repeat(300 * 1024) + "\"}")
+                .getBytes(StandardCharsets.UTF_8);
+
+        assertRejectedLargePostDoesNotBlockConnection("invalid", 401, largeBody);
+        assertRejectedLargePostDoesNotBlockConnection("insufficient", 403, largeBody);
+        assertRejectedLargePostDoesNotBlockConnection("unavailable", 503, largeBody);
     }
 
     @Test
@@ -283,6 +300,121 @@ class McpServerMainOAuthTest {
         } finally {
             client.closeGracefully();
         }
+    }
+
+    private static void assertRejectedLargePostDoesNotBlockConnection(
+            String token, int expectedStatus, byte[] body)
+            throws Exception {
+        try (Socket socket = new Socket("localhost", PORT)) {
+            socket.setSoTimeout(5_000);
+            BufferedInputStream input = new BufferedInputStream(socket.getInputStream());
+            OutputStream output = socket.getOutputStream();
+
+            String postHeaders = "POST /mcp HTTP/1.1\r\n"
+                                 + "Host: localhost:" + PORT + "\r\n"
+                                 + "Accept: application/json, text/event-stream\r\n"
+                                 + "Authorization: Bearer " + token + "\r\n"
+                                 + "Content-Type: application/json\r\n"
+                                 + "Content-Length: " + body.length + "\r\n"
+                                 + "Connection: keep-alive\r\n\r\n";
+            output.write(postHeaders.getBytes(StandardCharsets.US_ASCII));
+            output.write(body);
+            output.flush();
+
+            assertThat(readHttpResponseStatus(input)).isEqualTo(expectedStatus);
+
+            String getRequest = "GET /mcp HTTP/1.1\r\n"
+                                + "Host: localhost:" + PORT + "\r\n"
+                                + "Accept: application/json, text/event-stream\r\n"
+                                + "Authorization: Bearer " + token + "\r\n"
+                                + "Connection: keep-alive\r\n\r\n";
+            output.write(getRequest.getBytes(StandardCharsets.US_ASCII));
+            output.flush();
+
+            // This request is deliberately sent on the same socket. If the rejected POST
+            // left the request paused, the server cannot parse or answer this follow-up.
+            assertThat(readHttpResponseStatus(input)).isEqualTo(expectedStatus);
+        }
+    }
+
+    private static int readHttpResponseStatus(InputStream input) throws IOException {
+        String statusLine = readHttpLine(input);
+        String[] statusParts = statusLine.split(" ", 3);
+        if (statusParts.length < 2) {
+            throw new IOException("Invalid HTTP status line: " + statusLine);
+        }
+
+        long contentLength = -1;
+        boolean chunked = false;
+        String header;
+        while (!(header = readHttpLine(input)).isEmpty()) {
+            int separator = header.indexOf(':');
+            if (separator < 0) {
+                continue;
+            }
+            String name = header.substring(0, separator).trim();
+            String value = header.substring(separator + 1).trim();
+            if ("Content-Length".equalsIgnoreCase(name)) {
+                contentLength = Long.parseLong(value);
+            } else if ("Transfer-Encoding".equalsIgnoreCase(name)) {
+                chunked = value.toLowerCase(java.util.Locale.ROOT).contains("chunked");
+            }
+        }
+
+        if (chunked) {
+            consumeChunkedHttpBody(input);
+        } else if (contentLength >= 0) {
+            skipHttpBytes(input, contentLength);
+        }
+        return Integer.parseInt(statusParts[1]);
+    }
+
+    private static void consumeChunkedHttpBody(InputStream input) throws IOException {
+        while (true) {
+            String sizeLine = readHttpLine(input);
+            int extension = sizeLine.indexOf(';');
+            String size = extension >= 0 ? sizeLine.substring(0, extension) : sizeLine;
+            long chunkSize = Long.parseLong(size.trim(), 16);
+            if (chunkSize == 0) {
+                while (!readHttpLine(input).isEmpty()) {
+                    // Consume optional trailer headers.
+                }
+                return;
+            }
+            skipHttpBytes(input, chunkSize);
+            if (!readHttpLine(input).isEmpty()) {
+                throw new IOException("Invalid chunk terminator in HTTP response");
+            }
+        }
+    }
+
+    private static void skipHttpBytes(InputStream input, long count) throws IOException {
+        long remaining = count;
+        while (remaining > 0) {
+            long skipped = input.skip(remaining);
+            if (skipped == 0) {
+                if (input.read() < 0) {
+                    throw new EOFException("Unexpected end of HTTP response body");
+                }
+                skipped = 1;
+            }
+            remaining -= skipped;
+        }
+    }
+
+    private static String readHttpLine(InputStream input) throws IOException {
+        StringBuilder line = new StringBuilder();
+        int current;
+        while ((current = input.read()) >= 0) {
+            if (current == '\r') {
+                if (input.read() != '\n') {
+                    throw new IOException("Invalid HTTP line ending");
+                }
+                return line.toString();
+            }
+            line.append((char) current);
+        }
+        throw new EOFException("Unexpected end of HTTP response");
     }
 
     private static McpSyncClient newClient(String token) {
