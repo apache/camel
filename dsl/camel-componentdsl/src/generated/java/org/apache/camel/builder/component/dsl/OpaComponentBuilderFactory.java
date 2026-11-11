@@ -355,6 +355,26 @@ public interface OpaComponentBuilderFactory {
             return this;
         }
     
+
+        /**
+         * Whether the server readiness check also requires activation of OPA's
+         * configured bundles. Sends /health?bundles=true. Does not enable
+         * health checks, change policy evaluation or guarantee a particular
+         * policy revision. Not used in wasm mode or with an injected client.
+         *
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         *
+         * Default: false
+         * Group: advanced
+         *
+         * @param healthCheckBundles the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder healthCheckBundles(boolean healthCheckBundles) {
+            doSetProperty("healthCheckBundles", healthCheckBundles);
+            return this;
+        }
+
         /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
@@ -562,6 +582,7 @@ public interface OpaComponentBuilderFactory {
             case "autowiredEnabled": ((OpaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "borrowTimeout": getOrCreateConfiguration((OpaComponent) component).setBorrowTimeout((long) value); return true;
             case "connectionTimeout": getOrCreateConfiguration((OpaComponent) component).setConnectionTimeout((long) value); return true;
+            case "healthCheckBundles": getOrCreateConfiguration((OpaComponent) component).setHealthCheckBundles((boolean) value); return true;
             case "opaClient": getOrCreateConfiguration((OpaComponent) component).setOpaClient((com.styra.opa.OPAClient) value); return true;
             case "poolSize": getOrCreateConfiguration((OpaComponent) component).setPoolSize((int) value); return true;
             case "requestTimeout": getOrCreateConfiguration((OpaComponent) component).setRequestTimeout((long) value); return true;

@@ -659,6 +659,36 @@ component with `healthCheckProducerEnabled`. The check reports DOWN with the und
 server and a server answering its health endpoint with an error are reported differently, so a deny is never
 confused with an outage.
 
+Set `healthCheckBundles=true` on the endpoint or `OpaSecurityPolicy` bean to request
+`/health?bundles=true`. OPA then includes activation/readiness of its configured bundles and discovery in the
+server's health result. This is useful when a server starts downloading bundles after startup: a reachable server
+can otherwise report healthy before it has activated its policy bundle. The default remains the basic `/health`
+check. This option does not itself enable producer health checks or change policy evaluation.
+
+For example, with producer checks enabled:
+
+[source,java]
+----
+.to("opa:authz/orders/allow?healthCheckBundles=true")
+----
+
+For a policy bean:
+
+[source,yaml]
+----
+- beans:
+    - name: opaPolicy
+      type: org.apache.camel.component.opa.security.OpaSecurityPolicy
+      properties:
+        serverUrl: http://localhost:8181
+        policyPath: authz/orders/allow
+        healthCheckBundles: true
+----
+
+Bundle-aware readiness follows OPA's health semantics. It does not verify a particular bundle revision,
+guarantee policy freshness, or validate business permissions for a message. It is unused in `wasm` mode,
+with an injected `opaClient`, or when the corresponding health check is disabled.
+
 `OpaSecurityPolicy` registers an equivalent check, under an id starting `security-policy:opa-`. It is arguably the
 more important of the two: a denied producer merely records a verdict the route can inspect, while the policy throws
 `CamelAuthorizationException` and stops the exchange, so an unreachable server there fails every message outright.
