@@ -16,7 +16,7 @@ headers are provided. This format is produced by popular `gzip`/`gunzip`
 tool. Messages marshalled using GZip compression can be unmarshalled
 using GZip decompression just prior to being consumed at the endpoint.
 The compression capability is quite useful when you deal with large XML
-and text-based payloads or when you read messages previously comressed
+and text-based payloads or when you read messages previously compressed
 using `gzip` tool.
 
 [NOTE]
