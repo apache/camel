@@ -172,8 +172,8 @@ public final class MavenGav {
     }
 
     /**
-     * @param  gav {@code <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>}
-     * @return     a new {@link MavenGav}
+     * @param  gaecv {@code <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>}
+     * @return       a new {@link MavenGav}
      */
     public static MavenGav parseMavenResolverString(String gaecv) {
         String[] parts = gaecv.split(":");

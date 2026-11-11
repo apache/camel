@@ -146,8 +146,8 @@ public final class QuarkusHelper {
      * @param  camelVersion                    if specified, the value of {@code --camel-version} CLI parameter or the
      *                                         Camel version of the currently running camel-jbang. Must not be
      *                                         {@code null}
-     * @param  quarkusExtensionRegistryBaseUri
-     * @param  downloader                      A {@link MavenDownloader} to use for accessing
+     * @param  mavenResolver                   resolves a Maven artifact for a given GAV
+     * @param  quarkusExtensionRegistryBaseUri base URI of the Quarkus platform registry
      * @return                                 the resolved platform BOM version from the registry, or the original
      *                                         buildTimeVersion if resolution fails
      */
@@ -417,10 +417,11 @@ public final class QuarkusHelper {
 
     /**
      *
-     * @param  streams    the streams array from the registry
-     * @param  majorMinor the major.minor version to match (e.g., "3.15")
-     * @param  fieldName  the field name to extract from the release ("version" or "quarkus-core-version")
-     * @return            the version string, or empty if not found
+     * @param  streams                         the streams array from the registry
+     * @param  wantedCamelVersion              the major.minor Camel version to match (e.g., "3.15")
+     * @param  mavenResolver                   resolves a Maven artifact for a given GAV
+     * @param  quarkusExtensionRegistryBaseUri base URI of the Quarkus platform registry
+     * @return                                 the matching platform BOM, or empty if there is none
      */
     static Optional<QuarkusPlatformBom> findPlatformBom(
             JsonArray streams, MajorMinor wantedCamelVersion, Function<MavenGav, MavenArtifact> mavenResolver,
@@ -693,7 +694,7 @@ public final class QuarkusHelper {
          * <li>other newer major, closer is higher
          * <li>other older major, newer is higher
          * </ol>
-         * Example: for {@code thisVersion} 2.3, the distances computed for the following {@code otherVersion} would
+         * Example: for this version 2.3, the distances computed for the following {@code other} would
          * give the following ordering:
          * <ul>
          * <li>2.3 (perfect match)
@@ -711,9 +712,8 @@ public final class QuarkusHelper {
          * <li>0.1 (even less close older major)
          * </ul>
          *
-         * @param  thisVersion
-         * @param  otherVersion
-         * @return
+         * @param  other the version to measure the distance to
+         * @return       the distance, usable as an ordering key
          */
         BigInteger distanceTo(MajorMinor other) {
             if (this.equals(other)) {
