@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.yaml.validator.YamlPointerLines;
+import org.apache.camel.support.LanguageSupport;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -38,9 +39,9 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 /**
  * What a written route does that works but is probably not what was asked, said as a note of the write: the route can
- * be right, so the write is not refused. A to: that copies each file its file consumer then moves to .camel, a
- * request-reply over JMS whose reply replaces the message that was sent, and a literal written over a {{key}}
- * placeholder that leaves the key in application.properties unused.
+ * be right, so the write is not refused. A to: that copies each file its file consumer then moves to .camel, a to: that
+ * appends to a file with nothing between the messages, a request-reply over JMS whose reply replaces the message that
+ * was sent, and a literal written over a {{key}} placeholder that leaves the key in application.properties unused.
  */
 final class WriteNotes {
 
@@ -90,6 +91,9 @@ final class WriteNotes {
     /** The option a placeholder is the value of, in a uri (?schedule=) or as a YAML key (schedule: "). */
     private static final Pattern URI_OPTION = Pattern.compile("[?&]([\\w.-]+)=$");
     private static final Pattern YAML_KEY = Pattern.compile("^([\\w.-]+):\\s*[\"']?$");
+
+    /** The appendChars option in a uri, with its value up to the next option. */
+    private static final Pattern APPEND_CHARS = Pattern.compile("(?i)([?&]appendChars=)[^&]*");
 
     private WriteNotes() {
     }
@@ -271,6 +275,167 @@ final class WriteNotes {
 
     private static boolean dynamic(String text) {
         return text.contains("{{") || text.contains("${");
+    }
+
+    /**
+     * A to: or toD: on the file component with fileExist Append that adds nothing after each message: the messages run
+     * together in the file, so lines written one per message become one line. r32 of the local-model benchmark,
+     * route-batch-file step 2 ("append each line that cannot be read to rejects/<file name>, one per line"): in 4 of
+     * the 5 runs that wrote the route, the lines ran together. 3 had no appendChars, and one had appendChars: "\n". In
+     * YAML that is a line break, and the endpoint uri drops line breaks, so it adds nothing (the run logged the
+     * endpoint as appendChars=&fileExist=Append). In step 3, 4 of the 7 runs rewrote the file and turned the
+     * appendChars: "\\n" of the reference into "\n" the same way. A \n in a toD with ${...} adds nothing too: the toD
+     * turns it into a line break first. A body that already ends with a line break gets no note. Only the file
+     * component has appendChars (ftp, sftp and the other file components leave it out). Each note is "Line N: ..." for
+     * the line of the to:.
+     */
+    static List<String> fileAppendNotes(String content) {
+        List<String> notes = new ArrayList<>();
+        if (content == null || !content.toLowerCase(Locale.ROOT).contains("append")) {
+            return notes;
+        }
+        Object doc;
+        try {
+            doc = new Yaml(new SafeConstructor(new LoaderOptions())).load(content);
+        } catch (Exception e) {
+            return notes;
+        }
+        if (!(doc instanceof List<?> items)) {
+            return notes;
+        }
+        try {
+            // the pointer of each such to:, with its note
+            Map<String, String> appends = new LinkedHashMap<>();
+            for (int i = 0; i < items.size(); i++) {
+                appendNested(items.get(i), "/" + i, false, appends);
+            }
+            Node root = appends.isEmpty() ? null : YamlPointerLines.root(content);
+            for (Map.Entry<String, String> e : appends.entrySet()) {
+                int line = YamlPointerLines.line(root, e.getKey(), null);
+                notes.add((line > 0 ? "Line " + line + ": " : "") + e.getValue());
+            }
+        } catch (RuntimeException e) {
+            // a shape the walk does not know: a note must never fail the write
+        }
+        return notes;
+    }
+
+    /**
+     * Walks the steps: lists in the node: those of a route or a routeConfiguration, and those of the EIPs of a route
+     * (the when: of a choice, a doCatch). lineEnds is whether the body ends with a line break where the node starts.
+     */
+    private static void appendNested(Object node, String at, boolean lineEnds, Map<String, String> appends) {
+        if (node instanceof Map<?, ?> m) {
+            for (Map.Entry<?, ?> e : m.entrySet()) {
+                String key = String.valueOf(e.getKey());
+                if ("steps".equals(key) && e.getValue() instanceof List<?> steps) {
+                    appendSteps(steps, at + "/steps", lineEnds, appends);
+                } else {
+                    appendNested(e.getValue(), at + "/" + key, lineEnds, appends);
+                }
+            }
+        } else if (node instanceof List<?> list) {
+            for (int i = 0; i < list.size(); i++) {
+                appendNested(list.get(i), at + "/" + i, lineEnds, appends);
+            }
+        }
+    }
+
+    /**
+     * Adds the note of each to: or toD: of the steps that appends to a file with nothing after each message, and walks
+     * the steps of the EIPs among them. The steps before a to: tell whether the body already ends with a line break: a
+     * setBody or transform whose Simple text ends with \n, or marshal with csv, which ends each record with one. The
+     * steps of a split start with a part of the body, which has none.
+     */
+    private static void appendSteps(List<?> steps, String at, boolean lineEnds, Map<String, String> appends) {
+        boolean ends = lineEnds;
+        for (int j = 0; j < steps.size(); j++) {
+            if (!(steps.get(j) instanceof Map<?, ?> step) || step.size() != 1) {
+                continue;
+            }
+            String eip = String.valueOf(step.keySet().iterator().next());
+            Object value = step.values().iterator().next();
+            if ("setBody".equals(eip) || "transform".equals(eip)) {
+                ends = endsWithLineBreak(value);
+            } else if ("marshal".equals(eip) || "unmarshal".equals(eip)) {
+                ends = "marshal".equals(eip) && value instanceof Map<?, ?> m && m.containsKey("csv");
+            } else if ("to".equals(eip) || "toD".equals(eip)) {
+                String note = ends ? null : appendNote(eip, value);
+                if (note != null) {
+                    appends.put(at + "/" + j, note);
+                }
+            } else {
+                appendNested(value, at + "/" + j + "/" + eip, ends && !"split".equals(eip), appends);
+            }
+        }
+    }
+
+    /**
+     * Whether a setBody or transform ends the body with a line break: Simple text that ends with \n, the two characters
+     * that Simple turns into a line break. A line break of the YAML itself does not count: Simple trims it away (r32
+     * wrote "${variable.originalLine}\n" in double quotes, and the lines still ran together).
+     */
+    private static boolean endsWithLineBreak(Object setBody) {
+        Object expression = setBody instanceof Map<?, ?> m && m.get("expression") instanceof Map<?, ?> e ? e : setBody;
+        Object simple = expression instanceof Map<?, ?> m ? m.get("simple") : null;
+        Object text = simple instanceof Map<?, ?> s ? s.get("expression") : simple;
+        return text instanceof String s && s.strip().endsWith("\\n");
+    }
+
+    /**
+     * The note of a to: or toD: on the file component with fileExist Append whose appendChars adds nothing after each
+     * message; null for any other. The value it gives is one that works where it goes. Under parameters: that is
+     * appendChars: "\\n", the two characters \n that the file component turns into a line break. In a uri it is %5Cn,
+     * which is \n as a uri writes it and needs no escape whatever the quotes of the uri. A toD with ${...} gets %5Cn
+     * too: it reads its uri as Simple, which turns \n into a line break that the uri then drops.
+     */
+    private static String appendNote(String eip, Object endpoint) {
+        FileEndpoint target = fileEndpoint(endpoint);
+        Object fileExist = target != null ? optionValue(target.options(), "fileExist") : null;
+        // Camel reads the value in any case: append, APPEND
+        if (fileExist == null || !"Append".equalsIgnoreCase(String.valueOf(fileExist).strip())) {
+            return null;
+        }
+        String uri = String.valueOf(endpoint instanceof Map<?, ?> m ? m.get("uri") : endpoint).strip();
+        // the toD uses Simple for its uri only when it has a function, as the runtime decides
+        boolean simple = "toD".equals(eip) && (LanguageSupport.hasSimpleFunction(uri)
+                || LanguageSupport.hasSimpleFunction(target.directory())
+                || target.options().values().stream().anyMatch(v -> LanguageSupport.hasSimpleFunction(String.valueOf(v))));
+        Object appendChars = optionValue(target.options(), "appendChars");
+        String chars = appendChars != null ? String.valueOf(appendChars) : "";
+        String read = simple ? chars.replace("\\r", "\r").replace("\\n", "\n") : chars;
+        // the endpoint uri is read as one line: its line breaks go, with the spaces around them
+        if (!read.isEmpty() && !(read.isBlank() && (read.indexOf('\n') >= 0 || read.indexOf('\r') >= 0))) {
+            return null;
+        }
+        String fix;
+        if (target.parameters()) {
+            fix = (appendChars == null ? "add" : "write") + " appendChars: " + (simple ? "\"%5Cn\"" : "\"\\\\n\"")
+                  + " under parameters: of this " + eip + ":";
+        } else {
+            String written = appendChars == null
+                    ? uri + (uri.contains("?") ? "&" : "?") + "appendChars=%5Cn"
+                    : APPEND_CHARS.matcher(uri).replaceFirst("$1%5Cn");
+            fix = "write the uri of this " + eip + ": as " + written;
+        }
+        return (chars.indexOf('\n') >= 0 || chars.indexOf('\r') >= 0
+                ? "this appendChars is a line break in the YAML, and the endpoint uri drops line breaks, so " : "")
+               + "fileExist Append adds each message right after the one before, with nothing between them. To write"
+               + " one message per line, " + fix + ", which writes a line break after each message."
+               + (simple
+                       ? " In a toD with ${...}, write \\n as %5Cn: the toD turns \\n into a line break, which the uri"
+                         + " drops."
+                       : target.parameters() ? "" : " %5Cn is \\n as a uri writes it.");
+    }
+
+    /** The value of the option whatever the case of its name, as Camel reads fileexist as fileExist; null for none. */
+    private static Object optionValue(Map<String, Object> options, String name) {
+        for (Map.Entry<String, Object> e : options.entrySet()) {
+            if (name.equalsIgnoreCase(e.getKey().strip())) {
+                return e.getValue();
+            }
+        }
+        return null;
     }
 
     /**
