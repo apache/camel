@@ -171,10 +171,9 @@ public interface InfluxDb2EndpointBuilderFactory {
             return this;
         }
         /**
-         * (deprecated) Never read: InfluxDB 2.x has no per-write retention
-         * policy. Deprecation note: Never read by the component: the InfluxDB
-         * 2.x write API has no retention policy, retention is a property of the
-         * bucket.
+         * Define the retention policy to the data created by the endpoint.
+         * Deprecation note: Never read by the component: the InfluxDB 2.x write
+         * API has no retention policy, retention is a property of the bucket.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -362,10 +361,10 @@ public interface InfluxDb2EndpointBuilderFactory {
             return "CamelInfluxDB2MeasurementName";
         }
         /**
-         * (deprecated) Never read: InfluxDB 2.x has no per-write retention
-         * policy. Deprecation note: Never read by the component: the InfluxDB
-         * 2.x write API has no retention policy, retention is a property of the
-         * bucket.
+         * The string that defines the retention policy to the data created by
+         * the endpoint. Deprecation note: Never read by the component: the
+         * InfluxDB 2.x write API has no retention policy, retention is a
+         * property of the bucket.
          * 
          * The option is a: {@code String} type.
          * 

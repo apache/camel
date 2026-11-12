@@ -79,8 +79,7 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
     @UriParam
     @Metadata(required = true, description = "The name of the bucket where the time series will be stored.")
     private String bucket;
-    @UriParam(defaultValue = "default", description = "(deprecated) Never read: InfluxDB 2.x has no per-write"
-                                                      + " retention policy.")
+    @UriParam(defaultValue = "default", description = "Define the retention policy to the data created by the endpoint.")
     @Metadata(deprecationNote = "Never read by the component: the InfluxDB 2.x write API has no retention policy,"
                                 + " retention is a property of the bucket")
     @Deprecated
@@ -138,10 +137,20 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
         this.bucket = bucket;
     }
 
+    /**
+     * @deprecated Never read by the component: the InfluxDB 2.x write API has no retention policy, retention is a
+     *             property of the bucket
+     */
+    @Deprecated
     public String getRetentionPolicy() {
         return retentionPolicy;
     }
 
+    /**
+     * @deprecated Never read by the component: the InfluxDB 2.x write API has no retention policy, retention is a
+     *             property of the bucket
+     */
+    @Deprecated
     public void setRetentionPolicy(String retentionPolicy) {
         this.retentionPolicy = retentionPolicy;
     }

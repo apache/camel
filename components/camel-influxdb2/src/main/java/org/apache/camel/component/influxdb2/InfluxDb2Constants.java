@@ -21,7 +21,7 @@ import org.apache.camel.spi.Metadata;
 public final class InfluxDb2Constants {
     @Metadata(description = "The name of measurement", javaType = "String")
     public static final String MEASUREMENT = "CamelInfluxDB2MeasurementName";
-    @Metadata(description = "(deprecated) Never read: InfluxDB 2.x has no per-write retention policy",
+    @Metadata(description = "The string that defines the retention policy to the data created by the endpoint",
               javaType = "String",
               deprecationNote = "Never read by the component: the InfluxDB 2.x write API has no retention policy,"
                                 + " retention is a property of the bucket")

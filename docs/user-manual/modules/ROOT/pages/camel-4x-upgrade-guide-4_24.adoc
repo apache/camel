@@ -8211,6 +8211,7 @@ not pass a language on; a language header alone turns OCR on, unless the endpoin
 
 The language itself is passed to docling untouched, in both forms: it is docling's own identifier (language codes such
 as `en,de`, BCP-47 tags such as `iso:zh-Hant`, or `script/Latin`), and docling validates it.
+
 === camel-influxdb2 - the retentionPolicy option and the camelInfluxDB.RetentionPolicy header are deprecated
 
 Neither has ever had any effect. A retention policy is an InfluxDB 1.x concept: its write API takes one per write, and
