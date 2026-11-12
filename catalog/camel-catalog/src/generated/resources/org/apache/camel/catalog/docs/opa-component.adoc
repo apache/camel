@@ -650,6 +650,10 @@ so the policy always returns a verdict.
 
 == Health check
 
+Each check owns its HTTP client and releases it when the check stops. The five-second
+health deadline includes the complete response body; a stalled body reports DOWN and
+the outstanding request is cancelled.
+
 Because the component fails closed, an OPA server that cannot be reached fails *every* exchange through the route.
 The producer registers a readiness check that probes the server's `/health` endpoint, so an unavailable policy
 decision point shows up in the health registry rather than only in the error logs once traffic starts failing.
