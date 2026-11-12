@@ -56,10 +56,9 @@ public final class CxfConstants {
               javaType = "String", applicableFor = SCHEME_CXF)
     public static final String OPERATION_NAMESPACE = "CamelCxfOperationNamespace";
     public static final String SPRING_CONTEXT_ENDPOINT = "bean:";
-    @Metadata(description = "The address to send the request to, in place of the service address. The producer sets it as the"
-                            + " CXF property org.apache.cxf.message.Message.ENDPOINT_ADDRESS of the CXF request message. The"
-                            + " HTTP transport uses it, and the Camel transport does not.",
-              javaType = "String", applicableFor = SCHEME_CXF)
+    @Metadata(description = "The address that the producer sends the request to, in place of the service address. With the cxf"
+                            + " component, the HTTP transport of CXF uses it, and the Camel transport does not.",
+              javaType = "String")
     public static final String DESTINATION_OVERRIDE_URL = Exchange.DESTINATION_OVERRIDE_URL;
     @Metadata(description = "The CXF response context, as a Map. The producer sets it on the Camel message of the response. It"
                             + " holds the CXF properties of the CXF response message, for example the response code. The"
@@ -158,11 +157,7 @@ public final class CxfConstants {
     @Metadata(description = "The class to read the response entity as, for example String. The consumer sets it to the return"
                             + " type of the resource method. The producer uses it only with the WebClient API, where the"
                             + " message body of the reply is the jakarta.ws.rs.core.Response if this header is not set or is"
-                            + " Response. When synchronous is false, this header is a class other than Response and the"
-                            + " CamelCxfRsResponseGenericType header is set, the producer reads the response entity as that"
-                            + " generic type instead. When synchronous is true and this header is a class other than Response,"
-                            + " CXF fails the exchange for a status code of 300 or more, except 304, regardless of"
-                            + " throwExceptionOnFailure.",
+                            + " Response.",
               javaType = "Class", applicableFor = SCHEME_CXF_RS)
     public static final String CAMEL_CXF_RS_RESPONSE_CLASS = "CamelCxfRsResponseClass";
     @Metadata(description = "The generic type to read the response entity as, given as a java.lang.reflect.Type. The consumer"

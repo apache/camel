@@ -51,7 +51,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
               description = "Whether to always process the exchange synchronously. If true, the producer sends each request"
                             + " without an InvocationCallback and waits for the response, and the consumer runs the route"
                             + " without a CXF continuation. The component sets the value on each endpoint that it creates,"
-                            + " unless the endpoint URI sets synchronous.")
+                            + " including a bean: endpoint, unless the endpoint URI sets synchronous.")
     private boolean synchronous;
 
     public CxfRsComponent() {

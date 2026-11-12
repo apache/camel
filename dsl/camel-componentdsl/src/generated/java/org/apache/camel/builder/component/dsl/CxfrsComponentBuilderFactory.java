@@ -111,7 +111,8 @@ public interface CxfrsComponentBuilderFactory {
          * producer sends each request without an InvocationCallback and waits
          * for the response, and the consumer runs the route without a CXF
          * continuation. The component sets the value on each endpoint that it
-         * creates, unless the endpoint URI sets synchronous.
+         * creates, including a bean: endpoint, unless the endpoint URI sets
+         * synchronous.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

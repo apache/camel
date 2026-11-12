@@ -247,15 +247,12 @@ public interface CxfRsEndpointBuilderFactory {
          * of the parameters of the resource method. SimpleConsumer: the path,
          * query, header, cookie, form and matrix parameters become Camel
          * headers named as in their annotations, and the first other parameter,
-         * normally the request entity, becomes the message body. The message
-         * body stays the MessageContentsList when there is no such parameter or
-         * when the method has Multipart parameters, whose parts become
-         * attachments and Camel headers. With SimpleConsumer, the response also
-         * gets the Camel headers that the header filter strategy keeps, except
-         * Content-Length. Custom: the CxfRsBinding of the binding option maps
-         * the request and the reply. Setting the binding option sets
-         * bindingStyle to Custom. The producer uses the binding that Default or
-         * Custom selects, and cannot be created with SimpleConsumer.
+         * normally the request entity, becomes the message body. The component
+         * documentation describes SimpleConsumer in detail. Custom: the
+         * CxfRsBinding of the binding option maps the request and the reply.
+         * Setting the binding option sets bindingStyle to Custom. The producer
+         * uses the binding that Default or Custom selects, and cannot be
+         * created with SimpleConsumer.
          * 
          * The option is a:
          * <code>org.apache.camel.component.cxf.jaxrs.BindingStyle</code> type.
@@ -276,15 +273,12 @@ public interface CxfRsEndpointBuilderFactory {
          * of the parameters of the resource method. SimpleConsumer: the path,
          * query, header, cookie, form and matrix parameters become Camel
          * headers named as in their annotations, and the first other parameter,
-         * normally the request entity, becomes the message body. The message
-         * body stays the MessageContentsList when there is no such parameter or
-         * when the method has Multipart parameters, whose parts become
-         * attachments and Camel headers. With SimpleConsumer, the response also
-         * gets the Camel headers that the header filter strategy keeps, except
-         * Content-Length. Custom: the CxfRsBinding of the binding option maps
-         * the request and the reply. Setting the binding option sets
-         * bindingStyle to Custom. The producer uses the binding that Default or
-         * Custom selects, and cannot be created with SimpleConsumer.
+         * normally the request entity, becomes the message body. The component
+         * documentation describes SimpleConsumer in detail. Custom: the
+         * CxfRsBinding of the binding option maps the request and the reply.
+         * Setting the binding option sets bindingStyle to Custom. The producer
+         * uses the binding that Default or Custom selects, and cannot be
+         * created with SimpleConsumer.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.jaxrs.BindingStyle</code> type.
@@ -1158,10 +1152,8 @@ public interface CxfRsEndpointBuilderFactory {
          * org.apache.camel.component.cxf.common.CxfOperationException when the
          * HTTP status code of the response is greater than 207. The exception
          * holds the status code, the response headers and the response entity.
-         * When synchronous is true, the producer fails the exchange this way
-         * only when it reads the response as a jakarta.ws.rs.core.Response.
-         * When synchronous is true and the producer does not read the response
-         * as a Response, or when this option is false, CXF itself can still
+         * When synchronous is true, the producer does this only when it reads
+         * the response as a jakarta.ws.rs.core.Response. CXF itself can also
          * fail the exchange for a status code of 300 or more, for example with
          * the proxy-based API when the resource method does not return a
          * Response.
@@ -1183,10 +1175,8 @@ public interface CxfRsEndpointBuilderFactory {
          * org.apache.camel.component.cxf.common.CxfOperationException when the
          * HTTP status code of the response is greater than 207. The exception
          * holds the status code, the response headers and the response entity.
-         * When synchronous is true, the producer fails the exchange this way
-         * only when it reads the response as a jakarta.ws.rs.core.Response.
-         * When synchronous is true and the producer does not read the response
-         * as a Response, or when this option is false, CXF itself can still
+         * When synchronous is true, the producer does this only when it reads
+         * the response as a jakarta.ws.rs.core.Response. CXF itself can also
          * fail the exchange for a status code of 300 or more, for example with
          * the proxy-based API when the resource method does not return a
          * Response.
@@ -1460,8 +1450,8 @@ public interface CxfRsEndpointBuilderFactory {
          * producer sends each request without an InvocationCallback and waits
          * for the response, and the consumer runs the route without a CXF
          * continuation. The component sets it to the value of its own
-         * synchronous option when it creates the endpoint, unless the endpoint
-         * URI sets it.
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1480,8 +1470,8 @@ public interface CxfRsEndpointBuilderFactory {
          * producer sends each request without an InvocationCallback and waits
          * for the response, and the consumer runs the route without a CXF
          * continuation. The component sets it to the value of its own
-         * synchronous option when it creates the endpoint, unless the endpoint
-         * URI sets it.
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2420,7 +2410,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The id of the registry bean that defines this endpoint. Written in
          * the path of the endpoint URI in place of the service address, with
          * the prefix bean:, for example bean:rsEndpoint. The bean is a
-         * CxfRsEndpoint that the component uses as this endpoint, or a CXF
+         * CxfRsEndpoint, or, with camel-cxf-spring-rest, a CXF
          * JAXRSServerFactoryBean for the consumer or a JAXRSClientFactoryBean
          * for the producer, for example from a cxf:rsServer or cxf:rsClient
          * element in Spring XML. The options of the endpoint URI are applied
@@ -2455,7 +2445,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The id of the registry bean that defines this endpoint. Written in
          * the path of the endpoint URI in place of the service address, with
          * the prefix bean:, for example bean:rsEndpoint. The bean is a
-         * CxfRsEndpoint that the component uses as this endpoint, or a CXF
+         * CxfRsEndpoint, or, with camel-cxf-spring-rest, a CXF
          * JAXRSServerFactoryBean for the consumer or a JAXRSClientFactoryBean
          * for the producer, for example from a cxf:rsServer or cxf:rsClient
          * element in Spring XML. The options of the endpoint URI are applied
@@ -2500,6 +2490,20 @@ public interface CxfRsEndpointBuilderFactory {
          */
         public String cxfOperationName() {
             return "CamelCxfOperationName";
+        }
+        /**
+         * The address that the producer sends the request to, in place of the
+         * service address. With the cxf component, the HTTP transport of CXF
+         * uses it, and the Camel transport does not.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DestinationOverrideUrl}.
+         */
+        public String destinationOverrideUrl() {
+            return "CamelDestinationOverrideUrl";
         }
         /**
          * The authenticated user of the request, as a Subject. The consumer
@@ -2699,12 +2703,7 @@ public interface CxfRsEndpointBuilderFactory {
          * consumer sets it to the return type of the resource method. The
          * producer uses it only with the WebClient API, where the message body
          * of the reply is the jakarta.ws.rs.core.Response if this header is not
-         * set or is Response. When synchronous is false, this header is a class
-         * other than Response and the CamelCxfRsResponseGenericType header is
-         * set, the producer reads the response entity as that generic type
-         * instead. When synchronous is true and this header is a class other
-         * than Response, CXF fails the exchange for a status code of 300 or
-         * more, except 304, regardless of throwExceptionOnFailure.
+         * set or is Response.
          * 
          * The option is a: {@code Class} type.
          * 

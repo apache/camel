@@ -4441,13 +4441,13 @@ public class StaticEndpointBuilders {
      * Path parameter: beanId
      * The id of the registry bean that defines this endpoint. Written in the
      * path of the endpoint URI in place of the service address, with the prefix
-     * bean:, for example bean:rsEndpoint. The bean is a CxfRsEndpoint that the
-     * component uses as this endpoint, or a CXF JAXRSServerFactoryBean for the
-     * consumer or a JAXRSClientFactoryBean for the producer, for example from a
-     * cxf:rsServer or cxf:rsClient element in Spring XML. The options of the
-     * endpoint URI are applied after the settings of the bean. On a
-     * CxfRsEndpoint bean, they are applied to the bean itself, so endpoint URIs
-     * with different options must not share one CxfRsEndpoint bean.
+     * bean:, for example bean:rsEndpoint. The bean is a CxfRsEndpoint, or, with
+     * camel-cxf-spring-rest, a CXF JAXRSServerFactoryBean for the consumer or a
+     * JAXRSClientFactoryBean for the producer, for example from a cxf:rsServer
+     * or cxf:rsClient element in Spring XML. The options of the endpoint URI
+     * are applied after the settings of the bean. On a CxfRsEndpoint bean, they
+     * are applied to the bean itself, so endpoint URIs with different options
+     * must not share one CxfRsEndpoint bean.
      * 
      * Path parameter: address
      * The service address, for example http://localhost:9000/rest. The consumer
@@ -4475,13 +4475,13 @@ public class StaticEndpointBuilders {
      * Path parameter: beanId
      * The id of the registry bean that defines this endpoint. Written in the
      * path of the endpoint URI in place of the service address, with the prefix
-     * bean:, for example bean:rsEndpoint. The bean is a CxfRsEndpoint that the
-     * component uses as this endpoint, or a CXF JAXRSServerFactoryBean for the
-     * consumer or a JAXRSClientFactoryBean for the producer, for example from a
-     * cxf:rsServer or cxf:rsClient element in Spring XML. The options of the
-     * endpoint URI are applied after the settings of the bean. On a
-     * CxfRsEndpoint bean, they are applied to the bean itself, so endpoint URIs
-     * with different options must not share one CxfRsEndpoint bean.
+     * bean:, for example bean:rsEndpoint. The bean is a CxfRsEndpoint, or, with
+     * camel-cxf-spring-rest, a CXF JAXRSServerFactoryBean for the consumer or a
+     * JAXRSClientFactoryBean for the producer, for example from a cxf:rsServer
+     * or cxf:rsClient element in Spring XML. The options of the endpoint URI
+     * are applied after the settings of the bean. On a CxfRsEndpoint bean, they
+     * are applied to the bean itself, so endpoint URIs with different options
+     * must not share one CxfRsEndpoint bean.
      * 
      * Path parameter: address
      * The service address, for example http://localhost:9000/rest. The consumer

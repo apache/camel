@@ -264,10 +264,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
               description = "The Java class of the service, for example a service endpoint interface or a class that"
                             + " implements one. Written as a fully qualified class name, for example"
                             + " org.example.orders.OrderService. Required when dataFormat is POJO, which is the default."
-                            + " Without a WSDL, CXF builds the service from this class. The endpoint looks for the WebService"
-                            + " or WebServiceProvider annotation on the class, on its superclasses, and on the interfaces that"
-                            + " the class and its superclasses implement directly. If the endpoint finds the annotation, CXF"
-                            + " uses the JAX-WS frontend, and otherwise the simple frontend.")
+                            + " Without a WSDL, CXF builds the service from this class.")
     private Class<?> serviceClass;
     @UriParam(label = "service",
               description = "The WSDL port, which is the name attribute of the wsdl:port element. Written as a QName in the"
@@ -314,15 +311,13 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private boolean wrapped;
     @UriParam(label = "producer",
               description = "To use a custom org.apache.camel.support.jsse.SSLContextParameters for the HTTPS requests that"
-                            + " the producer sends to the service address. If not set, the component sets it to the global SSL"
-                            + " context parameters when it creates the endpoint and its own useGlobalSslContextParameters"
-                            + " option is true. Not used for reading the WSDL that wsdlURL points to. The consumer does not"
-                            + " use it.")
+                            + " the producer sends. If not set, the component sets it to the global SSL context parameters"
+                            + " when it creates the endpoint and its own useGlobalSslContextParameters option is true. Not"
+                            + " used for reading the WSDL that wsdlURL points to. The consumer does not use it.")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "producer",
-              description = "To use a custom javax.net.ssl.HostnameVerifier for the HTTPS requests that the producer sends to"
-                            + " the service address. Not used for reading the WSDL that wsdlURL points to. The consumer does"
-                            + " not use it.")
+              description = "To use a custom javax.net.ssl.HostnameVerifier for the HTTPS requests that the producer sends."
+                            + " Not used for reading the WSDL that wsdlURL points to. The consumer does not use it.")
     private HostnameVerifier hostnameVerifier;
     @UriParam(description = "Whether to use the document-literal wrapped style instead of the document-literal bare style for"
                             + " the operations of serviceClass. Not used for RPC-style operations or when serviceClass is a"
@@ -334,9 +329,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
               description = "Whether to allow CXF to keep the last message part of an incoming SOAP message as a"
                             + " javax.xml.transform.Source read from the stream, instead of parsing it into a DOM. Only used"
                             + " when dataFormat is PAYLOAD. The component sets it to the value of its own allowStreaming"
-                            + " option when it creates the endpoint, unless the endpoint URI sets it. If not set, the endpoint"
-                            + " uses the JVM system property org.apache.camel.component.cxf.streaming, and allows streaming"
-                            + " when that property is not set either.")
+                            + " option when it creates the endpoint, including a bean: endpoint, unless the endpoint URI sets"
+                            + " it. If not set, the endpoint uses the JVM system property"
+                            + " org.apache.camel.component.cxf.streaming, and allows streaming when that property is not set"
+                            + " either.")
     private Boolean allowStreaming;
     @UriParam(label = "advanced")
     private CxfBinding cxfBinding;
@@ -414,7 +410,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
               description = "Whether to always process the exchange synchronously. If true, the producer invokes the CXF"
                             + " Client without a callback and waits until the invocation returns, and the consumer runs the"
                             + " route without a CXF continuation. The component sets it to the value of its own synchronous"
-                            + " option when it creates the endpoint, unless the endpoint URI sets it.")
+                            + " option when it creates the endpoint, including a bean: endpoint, unless the endpoint URI sets"
+                            + " it.")
     private boolean synchronous;
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Whether to validate the incoming and outgoing SOAP messages of the endpoint against the XML"

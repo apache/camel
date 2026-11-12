@@ -368,12 +368,7 @@ public interface CxfEndpointBuilderFactory {
          * interface or a class that implements one. Written as a fully
          * qualified class name, for example org.example.orders.OrderService.
          * Required when dataFormat is POJO, which is the default. Without a
-         * WSDL, CXF builds the service from this class. The endpoint looks for
-         * the WebService or WebServiceProvider annotation on the class, on its
-         * superclasses, and on the interfaces that the class and its
-         * superclasses implement directly. If the endpoint finds the
-         * annotation, CXF uses the JAX-WS frontend, and otherwise the simple
-         * frontend.
+         * WSDL, CXF builds the service from this class.
          * 
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
@@ -392,12 +387,7 @@ public interface CxfEndpointBuilderFactory {
          * interface or a class that implements one. Written as a fully
          * qualified class name, for example org.example.orders.OrderService.
          * Required when dataFormat is POJO, which is the default. Without a
-         * WSDL, CXF builds the service from this class. The endpoint looks for
-         * the WebService or WebServiceProvider annotation on the class, on its
-         * superclasses, and on the interfaces that the class and its
-         * superclasses implement directly. If the endpoint finds the
-         * annotation, CXF uses the JAX-WS frontend, and otherwise the simple
-         * frontend.
+         * WSDL, CXF builds the service from this class.
          * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
@@ -576,10 +566,10 @@ public interface CxfEndpointBuilderFactory {
          * SOAP message as a javax.xml.transform.Source read from the stream,
          * instead of parsing it into a DOM. Only used when dataFormat is
          * PAYLOAD. The component sets it to the value of its own allowStreaming
-         * option when it creates the endpoint, unless the endpoint URI sets it.
-         * If not set, the endpoint uses the JVM system property
-         * org.apache.camel.component.cxf.streaming, and allows streaming when
-         * that property is not set either.
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -598,10 +588,10 @@ public interface CxfEndpointBuilderFactory {
          * SOAP message as a javax.xml.transform.Source read from the stream,
          * instead of parsing it into a DOM. Only used when dataFormat is
          * PAYLOAD. The component sets it to the value of its own allowStreaming
-         * option when it creates the endpoint, unless the endpoint URI sets it.
-         * If not set, the endpoint uses the JVM system property
-         * org.apache.camel.component.cxf.streaming, and allows streaming when
-         * that property is not set either.
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -1202,8 +1192,8 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * To use a custom javax.net.ssl.HostnameVerifier for the HTTPS requests
-         * that the producer sends to the service address. Not used for reading
-         * the WSDL that wsdlURL points to. The consumer does not use it.
+         * that the producer sends. Not used for reading the WSDL that wsdlURL
+         * points to. The consumer does not use it.
          * 
          * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
@@ -1218,8 +1208,8 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * To use a custom javax.net.ssl.HostnameVerifier for the HTTPS requests
-         * that the producer sends to the service address. Not used for reading
-         * the WSDL that wsdlURL points to. The consumer does not use it.
+         * that the producer sends. Not used for reading the WSDL that wsdlURL
+         * points to. The consumer does not use it.
          * 
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.
@@ -1235,11 +1225,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * To use a custom org.apache.camel.support.jsse.SSLContextParameters
-         * for the HTTPS requests that the producer sends to the service
-         * address. If not set, the component sets it to the global SSL context
-         * parameters when it creates the endpoint and its own
-         * useGlobalSslContextParameters option is true. Not used for reading
-         * the WSDL that wsdlURL points to. The consumer does not use it.
+         * for the HTTPS requests that the producer sends. If not set, the
+         * component sets it to the global SSL context parameters when it
+         * creates the endpoint and its own useGlobalSslContextParameters option
+         * is true. Not used for reading the WSDL that wsdlURL points to. The
+         * consumer does not use it.
          * 
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
@@ -1255,11 +1245,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * To use a custom org.apache.camel.support.jsse.SSLContextParameters
-         * for the HTTPS requests that the producer sends to the service
-         * address. If not set, the component sets it to the global SSL context
-         * parameters when it creates the endpoint and its own
-         * useGlobalSslContextParameters option is true. Not used for reading
-         * the WSDL that wsdlURL points to. The consumer does not use it.
+         * for the HTTPS requests that the producer sends. If not set, the
+         * component sets it to the global SSL context parameters when it
+         * creates the endpoint and its own useGlobalSslContextParameters option
+         * is true. Not used for reading the WSDL that wsdlURL points to. The
+         * consumer does not use it.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
@@ -1512,12 +1502,7 @@ public interface CxfEndpointBuilderFactory {
          * interface or a class that implements one. Written as a fully
          * qualified class name, for example org.example.orders.OrderService.
          * Required when dataFormat is POJO, which is the default. Without a
-         * WSDL, CXF builds the service from this class. The endpoint looks for
-         * the WebService or WebServiceProvider annotation on the class, on its
-         * superclasses, and on the interfaces that the class and its
-         * superclasses implement directly. If the endpoint finds the
-         * annotation, CXF uses the JAX-WS frontend, and otherwise the simple
-         * frontend.
+         * WSDL, CXF builds the service from this class.
          * 
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
@@ -1536,12 +1521,7 @@ public interface CxfEndpointBuilderFactory {
          * interface or a class that implements one. Written as a fully
          * qualified class name, for example org.example.orders.OrderService.
          * Required when dataFormat is POJO, which is the default. Without a
-         * WSDL, CXF builds the service from this class. The endpoint looks for
-         * the WebService or WebServiceProvider annotation on the class, on its
-         * superclasses, and on the interfaces that the class and its
-         * superclasses implement directly. If the endpoint finds the
-         * annotation, CXF uses the JAX-WS frontend, and otherwise the simple
-         * frontend.
+         * WSDL, CXF builds the service from this class.
          * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
@@ -1648,8 +1628,8 @@ public interface CxfEndpointBuilderFactory {
          * producer invokes the CXF Client without a callback and waits until
          * the invocation returns, and the consumer runs the route without a CXF
          * continuation. The component sets it to the value of its own
-         * synchronous option when it creates the endpoint, unless the endpoint
-         * URI sets it.
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1668,8 +1648,8 @@ public interface CxfEndpointBuilderFactory {
          * producer invokes the CXF Client without a callback and waits until
          * the invocation returns, and the consumer runs the route without a CXF
          * continuation. The component sets it to the value of its own
-         * synchronous option when it creates the endpoint, unless the endpoint
-         * URI sets it.
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1688,10 +1668,10 @@ public interface CxfEndpointBuilderFactory {
          * SOAP message as a javax.xml.transform.Source read from the stream,
          * instead of parsing it into a DOM. Only used when dataFormat is
          * PAYLOAD. The component sets it to the value of its own allowStreaming
-         * option when it creates the endpoint, unless the endpoint URI sets it.
-         * If not set, the endpoint uses the JVM system property
-         * org.apache.camel.component.cxf.streaming, and allows streaming when
-         * that property is not set either.
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -1710,10 +1690,10 @@ public interface CxfEndpointBuilderFactory {
          * SOAP message as a javax.xml.transform.Source read from the stream,
          * instead of parsing it into a DOM. Only used when dataFormat is
          * PAYLOAD. The component sets it to the value of its own allowStreaming
-         * option when it creates the endpoint, unless the endpoint URI sets it.
-         * If not set, the endpoint uses the JVM system property
-         * org.apache.camel.component.cxf.streaming, and allows streaming when
-         * that property is not set either.
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -2436,12 +2416,7 @@ public interface CxfEndpointBuilderFactory {
          * interface or a class that implements one. Written as a fully
          * qualified class name, for example org.example.orders.OrderService.
          * Required when dataFormat is POJO, which is the default. Without a
-         * WSDL, CXF builds the service from this class. The endpoint looks for
-         * the WebService or WebServiceProvider annotation on the class, on its
-         * superclasses, and on the interfaces that the class and its
-         * superclasses implement directly. If the endpoint finds the
-         * annotation, CXF uses the JAX-WS frontend, and otherwise the simple
-         * frontend.
+         * WSDL, CXF builds the service from this class.
          * 
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
@@ -2460,12 +2435,7 @@ public interface CxfEndpointBuilderFactory {
          * interface or a class that implements one. Written as a fully
          * qualified class name, for example org.example.orders.OrderService.
          * Required when dataFormat is POJO, which is the default. Without a
-         * WSDL, CXF builds the service from this class. The endpoint looks for
-         * the WebService or WebServiceProvider annotation on the class, on its
-         * superclasses, and on the interfaces that the class and its
-         * superclasses implement directly. If the endpoint finds the
-         * annotation, CXF uses the JAX-WS frontend, and otherwise the simple
-         * frontend.
+         * WSDL, CXF builds the service from this class.
          * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
@@ -2529,10 +2499,10 @@ public interface CxfEndpointBuilderFactory {
          * SOAP message as a javax.xml.transform.Source read from the stream,
          * instead of parsing it into a DOM. Only used when dataFormat is
          * PAYLOAD. The component sets it to the value of its own allowStreaming
-         * option when it creates the endpoint, unless the endpoint URI sets it.
-         * If not set, the endpoint uses the JVM system property
-         * org.apache.camel.component.cxf.streaming, and allows streaming when
-         * that property is not set either.
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -2551,10 +2521,10 @@ public interface CxfEndpointBuilderFactory {
          * SOAP message as a javax.xml.transform.Source read from the stream,
          * instead of parsing it into a DOM. Only used when dataFormat is
          * PAYLOAD. The component sets it to the value of its own allowStreaming
-         * option when it creates the endpoint, unless the endpoint URI sets it.
-         * If not set, the endpoint uses the JVM system property
-         * org.apache.camel.component.cxf.streaming, and allows streaming when
-         * that property is not set either.
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -3100,11 +3070,9 @@ public interface CxfEndpointBuilderFactory {
             return "CamelCxfOperationNamespace";
         }
         /**
-         * The address to send the request to, in place of the service address.
-         * The producer sets it as the CXF property
-         * org.apache.cxf.message.Message.ENDPOINT_ADDRESS of the CXF request
-         * message. The HTTP transport uses it, and the Camel transport does
-         * not.
+         * The address that the producer sends the request to, in place of the
+         * service address. With the cxf component, the HTTP transport of CXF
+         * uses it, and the Camel transport does not.
          * 
          * The option is a: {@code String} type.
          * 
