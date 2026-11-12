@@ -24,6 +24,7 @@ import java.net.ServerSocket;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.util.ArrayList;
@@ -224,7 +225,9 @@ public class OpaRestTransportTest extends CamelTestSupport {
                 e -> {
                 });
 
-        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        // the timeout, not some other failure, is what stopped the evaluation
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class)
+                .hasRootCauseInstanceOf(HttpTimeoutException.class);
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
         assertThat(headersSent.getCount()).isZero();
     }
@@ -322,7 +325,8 @@ public class OpaRestTransportTest extends CamelTestSupport {
                 "opa:authz/allow?serverUrl=http://localhost:" + mutePort() + "&requestTimeout=500", e -> {
                 });
 
-        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class)
+                .hasRootCauseInstanceOf(HttpTimeoutException.class);
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
     }
 

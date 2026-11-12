@@ -44,11 +44,13 @@ import org.apache.camel.util.ObjectHelper;
  * are the JDK default of "wait indefinitely". A server that accepts the connection and then goes quiet parks the
  * calling thread for ever - and a component that fails closed never reaches the point of denying, it simply stops.
  * {@code failOpen} does not help, because it sits downstream of a call that never returns.</li>
- * <li><b>It builds a client per request.</b> On the Java 17 baseline {@link HttpClient} is not {@link AutoCloseable},
- * so each one holds its selector thread and executor until it is collected - once per message, on the path an
- * {@code OpaSecurityPolicy} guards.</li>
+ * <li><b>It builds a client per request.</b> Each {@link HttpClient} holds its selector thread and executor until it is
+ * closed or collected - once per message, on the path an {@code OpaSecurityPolicy} guards.</li>
  * </ul>
- * One client is built here per evaluator and reused, and every request is re-issued carrying a timeout.
+ * One client is built here per evaluator and reused, and every request is re-issued carrying a timeout. The response
+ * body is buffered rather than streamed with {@code ofInputStream}: the timeout of a request only covers the wait for
+ * the response headers, so the whole response, body included, is awaited under {@code requestTimeout} here, and a
+ * server that stalls or drips its body is cut off like one that never answers.
  */
 public class OpaHttpClient implements HTTPClient, AutoCloseable {
 
@@ -106,6 +108,10 @@ public class OpaHttpClient implements HTTPClient, AutoCloseable {
             throw e;
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
+            if (cause instanceof Error error) {
+                // an OutOfMemoryError from buffering the body is not an HTTP failure; keep it what it is
+                throw error;
+            }
             if (cause instanceof IOException io) {
                 throw io;
             }
