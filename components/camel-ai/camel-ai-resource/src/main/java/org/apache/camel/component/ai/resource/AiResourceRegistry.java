@@ -51,6 +51,8 @@ public final class AiResourceRegistry {
     private final ReentrantLock lock = new ReentrantLock();
     private final Map<String, Set<AiResourceSpec>> resources = new HashMap<>();
     private final Set<AiResourceSpec> defaultResources = new LinkedHashSet<>();
+    private final Map<String, Set<AiResourceTemplateSpec>> resourceTemplates = new HashMap<>();
+    private final Set<AiResourceTemplateSpec> defaultResourceTemplates = new LinkedHashSet<>();
     private final List<AiResourceRegistryListener> listeners = new CopyOnWriteArrayList<>();
 
     AiResourceRegistry() {
@@ -150,6 +152,88 @@ public final class AiResourceRegistry {
     }
 
     /**
+     * Registers a URI template under a tag. Adapters enforce overlap rules against the subset they expose.
+     */
+    public void putTemplate(String tag, AiResourceTemplateSpec spec) {
+        boolean added;
+        lock.lock();
+        try {
+            Set<AiResourceTemplateSpec> set = resourceTemplates.get(tag);
+            if (set == null) {
+                set = new LinkedHashSet<>();
+            }
+            // The registry is framework-agnostic and does not know which tags an adapter exposes. An adapter
+            // refuses overlapping templates within its selected view when it publishes them.
+            added = set.add(spec);
+            if (added) {
+                resourceTemplates.putIfAbsent(tag, set);
+            }
+        } finally {
+            lock.unlock();
+        }
+        if (added) {
+            notifyTemplateRegistered(tag, spec);
+        }
+    }
+
+    /**
+     * Removes a URI template from a tag.
+     */
+    public void removeTemplate(String tag, AiResourceTemplateSpec spec) {
+        boolean removed = false;
+        lock.lock();
+        try {
+            Set<AiResourceTemplateSpec> set = resourceTemplates.get(tag);
+            if (set != null) {
+                removed = set.remove(spec);
+                if (set.isEmpty()) {
+                    resourceTemplates.remove(tag);
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+        if (removed) {
+            notifyTemplateDeregistered(tag, spec);
+        }
+    }
+
+    /**
+     * Registers a template in the default pool. It is checked against every tagged pool because the default pool is
+     * merged into every tag-specific view.
+     */
+    public void putDefaultTemplate(AiResourceTemplateSpec spec) {
+        boolean added;
+        lock.lock();
+        try {
+            // Default templates are merged into every tagged view; collision checks belong to the adapter's
+            // selected publication set rather than this generic registry.
+            added = defaultResourceTemplates.add(spec);
+        } finally {
+            lock.unlock();
+        }
+        if (added) {
+            notifyTemplateRegistered(null, spec);
+        }
+    }
+
+    /**
+     * Removes a template from the default pool.
+     */
+    public void removeDefaultTemplate(AiResourceTemplateSpec spec) {
+        boolean removed;
+        lock.lock();
+        try {
+            removed = defaultResourceTemplates.remove(spec);
+        } finally {
+            lock.unlock();
+        }
+        if (removed) {
+            notifyTemplateDeregistered(null, spec);
+        }
+    }
+
+    /**
      * Adds a listener notified on resource registration changes. See {@link AiResourceRegistryListener} for the
      * callback contract; add the listener before reading a snapshot to observe current state without missing events.
      */
@@ -179,6 +263,28 @@ public final class AiResourceRegistry {
             } catch (Exception e) {
                 LOG.warn("AiResourceRegistryListener {} failed on resourceDeregistered for resource '{}': {}",
                         listener, spec.getUri(), e.getMessage(), e);
+            }
+        }
+    }
+
+    private void notifyTemplateRegistered(String tag, AiResourceTemplateSpec spec) {
+        for (AiResourceRegistryListener listener : listeners) {
+            try {
+                listener.resourceTemplateRegistered(tag, spec);
+            } catch (Exception e) {
+                LOG.warn("AiResourceRegistryListener {} failed on resourceTemplateRegistered for template '{}': {}",
+                        listener, spec.getUriTemplate(), e.getMessage(), e);
+            }
+        }
+    }
+
+    private void notifyTemplateDeregistered(String tag, AiResourceTemplateSpec spec) {
+        for (AiResourceRegistryListener listener : listeners) {
+            try {
+                listener.resourceTemplateDeregistered(tag, spec);
+            } catch (Exception e) {
+                LOG.warn("AiResourceRegistryListener {} failed on resourceTemplateDeregistered for template '{}': {}",
+                        listener, spec.getUriTemplate(), e.getMessage(), e);
             }
         }
     }
@@ -233,6 +339,61 @@ public final class AiResourceRegistry {
         lock.lock();
         try {
             return new LinkedHashSet<>(defaultResources);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Returns templates registered for a tag, merged with templates in the default pool.
+     */
+    public Set<AiResourceTemplateSpec> getResourceTemplatesByTag(String tag) {
+        lock.lock();
+        try {
+            Set<AiResourceTemplateSpec> result = new LinkedHashSet<>(defaultResourceTemplates);
+            Set<AiResourceTemplateSpec> tagged = resourceTemplates.get(tag);
+            if (tagged != null) {
+                result.addAll(tagged);
+            }
+            return result;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Returns all templates across all tags and the default pool.
+     */
+    public Set<AiResourceTemplateSpec> getAllResourceTemplates() {
+        lock.lock();
+        try {
+            Set<AiResourceTemplateSpec> result = new LinkedHashSet<>(defaultResourceTemplates);
+            for (Set<AiResourceTemplateSpec> tagged : resourceTemplates.values()) {
+                result.addAll(tagged);
+            }
+            return result;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public Map<String, Set<AiResourceTemplateSpec>> getResourceTemplates() {
+        lock.lock();
+        try {
+            Map<String, Set<AiResourceTemplateSpec>> snapshot = new LinkedHashMap<>();
+            for (Map.Entry<String, Set<AiResourceTemplateSpec>> entry : resourceTemplates.entrySet()) {
+                snapshot.put(entry.getKey(), new LinkedHashSet<>(entry.getValue()));
+            }
+            return Map.copyOf(snapshot);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public Set<AiResourceTemplateSpec> getDefaultResourceTemplates() {
+        lock.lock();
+        try {
+            return new LinkedHashSet<>(defaultResourceTemplates);
         } finally {
             lock.unlock();
         }

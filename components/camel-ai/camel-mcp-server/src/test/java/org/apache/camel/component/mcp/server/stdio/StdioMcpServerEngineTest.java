@@ -26,10 +26,13 @@ import org.apache.camel.component.mcp.server.McpPromptArgument;
 import org.apache.camel.component.mcp.server.McpPromptHandler;
 import org.apache.camel.component.mcp.server.McpPromptMessage;
 import org.apache.camel.component.mcp.server.McpPromptResult;
+import org.apache.camel.component.mcp.server.McpResourceReadResult;
 import org.apache.camel.component.mcp.server.McpServerBridge;
 import org.apache.camel.component.mcp.server.McpServerConfiguration;
 import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerPrompt;
+import org.apache.camel.component.mcp.server.McpServerResource;
+import org.apache.camel.component.mcp.server.McpServerResourceTemplate;
 import org.apache.camel.component.mcp.server.McpServerTool;
 import org.apache.camel.component.mcp.server.McpToolCallHandler;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
@@ -85,6 +88,48 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
         assertThatCode(() -> engine.toolAdded(sampleTool("queued_tool", "Queued before start")))
                 .doesNotThrowAnyException();
         assertThatCode(() -> engine.toolRemoved("queued_tool")).doesNotThrowAnyException();
+    }
+
+    @Test
+    void resourceAddedBeforeStartIsQueuedAndCanBeRemoved() {
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.initialize(new McpServerInfo(
+                "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
+
+        engine.resourceAdded(sampleResource("camel:///queued"));
+        assertThat(engine.pendingResourceCount()).isEqualTo(1);
+        engine.resourceRemoved("camel:///queued");
+        assertThat(engine.pendingResourceCount()).isZero();
+    }
+
+    @Test
+    void resourceTemplateAddedBeforeStartIsQueuedAndCanBeRemoved() {
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.initialize(new McpServerInfo(
+                "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
+
+        engine.resourceTemplateAdded(sampleResourceTemplate("camel:///queued/{id}"));
+        assertThat(engine.pendingResourceTemplateCount()).isEqualTo(1);
+        engine.resourceTemplateRemoved("camel:///queued/{id}");
+        assertThat(engine.pendingResourceTemplateCount()).isZero();
+    }
+
+    @Test
+    void resourceTemplateAddedBeforeStartIsFlushedWhenServerStarts() throws Exception {
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.initialize(new McpServerInfo(
+                "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
+        engine.setTransportStreams(new ByteArrayInputStream(new byte[0]), new ByteArrayOutputStream());
+        engine.resourceTemplateAdded(sampleResourceTemplate("camel:///queued/{id}"));
+
+        assertThat(engine.pendingResourceTemplateCount()).isEqualTo(1);
+        try {
+            assertThatCode(engine::start).doesNotThrowAnyException();
+            assertThat(engine.isStarted()).isTrue();
+            assertThat(engine.pendingResourceTemplateCount()).isZero();
+        } finally {
+            engine.stop();
+        }
     }
 
     @Test
@@ -146,6 +191,64 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
         } finally {
             engine.stop();
         }
+    }
+
+    private static McpServerResource sampleResource(String uri) {
+        return new McpServerResource() {
+            @Override
+            public String uri() {
+                return uri;
+            }
+
+            @Override
+            public String name() {
+                return "queued";
+            }
+
+            @Override
+            public String description() {
+                return "Queued resource";
+            }
+
+            @Override
+            public String mimeType() {
+                return "text/plain";
+            }
+
+            @Override
+            public org.apache.camel.component.mcp.server.McpResourceReadHandler handler() {
+                return () -> McpResourceReadResult.text("queued");
+            }
+        };
+    }
+
+    private static McpServerResourceTemplate sampleResourceTemplate(String uriTemplate) {
+        return new McpServerResourceTemplate() {
+            @Override
+            public String uriTemplate() {
+                return uriTemplate;
+            }
+
+            @Override
+            public String name() {
+                return "queued_template";
+            }
+
+            @Override
+            public String description() {
+                return "Queued resource template";
+            }
+
+            @Override
+            public String mimeType() {
+                return "text/plain";
+            }
+
+            @Override
+            public org.apache.camel.component.mcp.server.McpResourceTemplateReadHandler handler() {
+                return uri -> McpResourceReadResult.text(uri);
+            }
+        };
     }
 
     private static McpServerPrompt samplePrompt(String name, String description) {

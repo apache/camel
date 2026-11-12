@@ -27,6 +27,12 @@ public final class AiResource {
 
     public static final String DEFAULT_MIME_TYPE = "text/plain";
 
+    /** Header containing the concrete URI requested for a resource-template read. */
+    public static final String RESOURCE_URI_HEADER = "CamelAiResourceUri";
+
+    /** Prefix for headers carrying raw, client-supplied template variables. */
+    public static final String TEMPLATE_VARIABLE_HEADER_PREFIX = "CamelAiResourceTemplateVariable.";
+
     private AiResource() {
     }
 }

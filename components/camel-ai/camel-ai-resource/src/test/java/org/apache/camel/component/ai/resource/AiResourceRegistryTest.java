@@ -141,7 +141,62 @@ public class AiResourceRegistryTest {
         assertThat(registry.getResources().get("crm")).containsExactly(spec);
     }
 
+    @Test
+    public void testTemplateRegistrationAndLookup() {
+        AiResourceTemplateSpec spec = template("customer", "crm://customers/{id}");
+
+        registry.putTemplate("crm", spec);
+
+        assertThat(registry.getResourceTemplates().get("crm")).containsExactly(spec);
+        assertThat(registry.getResourceTemplatesByTag("crm")).containsExactly(spec);
+        assertThat(spec.match("crm://customers/42")).hasValue(java.util.Map.of("id", "42"));
+    }
+
+    @Test
+    public void testOverlappingTemplatesAreRetainedForAdapterSelection() {
+        AiResourceTemplateSpec byId = template("customer", "crm://customers/{id}");
+        AiResourceTemplateSpec byNumber = template("byNumber", "crm://customers/{number}");
+
+        registry.putTemplate("crm", byId);
+        registry.putTemplate("crm", byNumber);
+
+        assertThat(registry.getResourceTemplatesByTag("crm")).containsExactly(byId, byNumber);
+    }
+
+    @Test
+    public void testOverlappingDefaultAndTaggedTemplatesAreRetainedForAdapterSelection() {
+        AiResourceTemplateSpec tagged = template("customer", "crm://customers/{id}");
+        AiResourceTemplateSpec untagged = template("byNumber", "crm://customers/{number}");
+
+        registry.putTemplate("crm", tagged);
+        registry.putDefaultTemplate(untagged);
+
+        assertThat(registry.getResourceTemplatesByTag("crm")).containsExactlyInAnyOrder(tagged, untagged);
+    }
+
+    @Test
+    public void testDifferentTagsCanRegisterOverlappingTemplates() {
+        registry.putTemplate("crm", template("customer", "crm://customers/{id}"));
+        registry.putTemplate("orders", template("order", "crm://customers/{customerId}"));
+
+        assertThat(registry.getResourceTemplatesByTag("crm")).hasSize(1);
+        assertThat(registry.getResourceTemplatesByTag("orders")).hasSize(1);
+    }
+
+    @Test
+    public void testTemplateRemovalAndDefaultPool() {
+        AiResourceTemplateSpec spec = template("customer", "crm://customers/{id}");
+        registry.putDefaultTemplate(spec);
+        assertThat(registry.getResourceTemplatesByTag("crm")).containsExactly(spec);
+        registry.removeDefaultTemplate(spec);
+        assertThat(registry.getAllResourceTemplates()).isEmpty();
+    }
+
     private static AiResourceSpec spec(String name, String uri) {
         return new AiResourceSpec(name, uri, "desc", "text/plain", null, null);
+    }
+
+    private static AiResourceTemplateSpec template(String name, String uriTemplate) {
+        return new AiResourceTemplateSpec(name, uriTemplate, "desc", "text/plain", null, null);
     }
 }
