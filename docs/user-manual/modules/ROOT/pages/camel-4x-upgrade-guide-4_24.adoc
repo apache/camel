@@ -5189,6 +5189,18 @@ bucket. The poll still fails when none of the listed objects could be got, and w
 lists `maxMessagesPerPoll` objects, the next poll now continues after the last listed object (before, after the last
 object that was consumed), so an object that cannot be got at the end of a page does not hold the listing back.
 
+=== camel-minio - maxMessagesPerPoll now limits a poll to one page
+
+The consumer used `maxMessagesPerPoll` only as the page size of the bucket listing, so one poll listed every page of
+the bucket, got the metadata of every object, and routed all of them. A poll now lists at most `maxMessagesPerPoll`
+objects (one page, as camel-aws2-s3 does), and the next poll continues after the last object the previous poll
+listed. Draining a large bucket therefore takes more polls than before. Setting `maxMessagesPerPoll` to 0 or a
+negative number keeps the previous behaviour of listing the whole bucket in one poll. Some listed objects are not
+routed (folders when `includeFolders` is false, objects still being uploaded, objects that cannot be got), so a poll
+can route fewer objects than the limit, and the next poll continues after them. The `startAfter` option now marks
+where each pass through the bucket begins: the polls of a pass continue after the last listed object, and a new pass
+starts after `startAfter` again once the listing has been read to its end.
+
 === camel-minio - Server-side encryption options now apply to MinioProducer
 
 The `serverSideEncryption` and `serverSideEncryptionCustomerKey` endpoint options now apply to producer operations:

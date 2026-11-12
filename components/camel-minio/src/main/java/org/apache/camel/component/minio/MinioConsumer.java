@@ -69,10 +69,11 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     private final Set<String> inProgress = ConcurrentHashMap.newKeySet();
     private long totalCounter;
     private String continuationToken;
-    // the name of the last object listed by the poll, and the number of objects it listed (set once the listing is
-    // read to the end)
+    // the largest name of the objects listed by the last poll (set once its listing has been read)
     private String lastListedObjectName;
-    private int listedObjects;
+    // whether the listing of the last poll was read to its end (false when the poll stopped at the limit, and
+    // left false when a listing request failed before the end of the listing was known)
+    private boolean listingExhausted;
     private transient String minioConsumerToString;
 
     public MinioConsumer(MinioEndpoint endpoint, Processor processor) {
@@ -161,16 +162,15 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 listObjectRequest.prefix(getConfiguration().getPrefix());
             }
 
-            if (isNotEmpty(getConfiguration().getStartAfter())) {
-                listObjectRequest.startAfter(getConfiguration().getStartAfter());
-                continuationToken = null;
-            }
-
-            // if there was a marker from previous poll then use that to
-            // continue from where we left last time
+            // if there was a marker from previous poll then use that to continue from where we left last time;
+            // the configured startAfter only marks where a pass through the bucket begins, so it is used when
+            // there is no marker: if it took precedence on every poll, each poll would start over at the
+            // configured value and, with a poll capped at maxMessagesPerPoll, never get past its first page
             if (isNotEmpty(continuationToken)) {
                 LOG.trace("Resuming from marker: {}", continuationToken);
                 listObjectRequest.startAfter(continuationToken);
+            } else if (isNotEmpty(getConfiguration().getStartAfter())) {
+                listObjectRequest.startAfter(getConfiguration().getStartAfter());
             }
 
             Iterator<Result<Item>> listObjects = getMinioClient().listObjects(listObjectRequest.build()).iterator();
@@ -180,19 +180,29 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
             if (listObjects.hasNext()) {
                 lastListedObjectName = null;
-                listedObjects = 0;
+                // not known to have ended until the listing of this poll has been read, so a listing request
+                // that fails leaves the token of the previous poll in place
+                listingExhausted = false;
+                boolean listingEnded = false;
                 try {
                     exchanges = createExchanges(listObjects);
+                    listingEnded = listingExhausted;
                 } finally {
-                    // the next poll continues after the last listed object, also when objects of this poll are skipped
-                    // or none of them could be got: such objects must not hold the consumer back, and they are listed
-                    // again when the listing starts over
-                    if (lastListedObjectName != null) {
-                        if (maxMessagesPerPoll <= 0 || listedObjects < maxMessagesPerPoll) {
-                            continuationToken = null;
-                        } else {
-                            continuationToken = lastListedObjectName;
-                        }
+                    // the next poll continues after the largest name this poll listed, also when objects of this
+                    // poll are skipped or none of them could be got: such objects must not hold the consumer
+                    // back, and they are listed again when the listing starts over. The token is kept when the
+                    // listing has not ended, and cleared when it has, so the next poll starts a new pass through
+                    // the bucket (from the configured startAfter, when one is set). A poll that lists nothing
+                    // (the object it would continue after was deleted) clears the token in the empty listing
+                    // branch below and starts over, as before.
+                    // Note on includeVersions: the token is an object name, passed to the next listing as a key
+                    // marker without a version marker, so when a page ends partway through the versions of one
+                    // object, the remaining versions of that object are listed on the next pass through the
+                    // bucket, not by the next poll
+                    if (listingEnded) {
+                        continuationToken = null;
+                    } else if (lastListedObjectName != null) {
+                        continuationToken = lastListedObjectName;
                     }
                 }
                 if (LOG.isTraceEnabled()) {
@@ -222,6 +232,11 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         // whether the stat of at least one listed object succeeded
         boolean anyGot = false;
         String lastListed = null;
+        // whether the listing was read to its end: it is not when the poll stops at the limit (the listing is
+        // not probed there, see below). Below the limit the listing is read until the iterator has no more
+        // items, paging through pages the server capped below the limit, so its end is only reported once the
+        // iterator is exhausted
+        boolean exhausted = false;
         try {
             do {
                 messageCounter++;
@@ -238,10 +253,31 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                         failures.put(objectName, e);
                     }
                 }
-                lastListed = minioObjectSummary.objectName();
-            } while (minioObjectSummaries.hasNext());
+                // the token of the next poll is the largest name listed by this poll, not simply the last item
+                // the iterator returned: the items of a page are not all in name order (a page can end on a
+                // folder prefix that sorts before objects the page held), and continuing after a smaller name
+                // would list objects of this page again
+                String listedName = minioObjectSummary.objectName();
+                if (lastListed == null || listedName.compareTo(lastListed) > 0) {
+                    lastListed = listedName;
+                }
+                // a limit above 0 caps the objects listed by a poll, so do not read further pages of the listing:
+                // the next poll continues after the last listed object. Do not probe hasNext() to find out
+                // whether the listing continues at the limit: the minio client iterator fetches the next page
+                // to answer, and that page would be discarded here and fetched again by the next poll (the
+                // listing response itself, with its truncated flag, is not exposed by the client). The listing
+                // is therefore treated as not ended at the limit; when it did end at a full page, the next poll
+                // lists nothing and clears the token, which costs one empty poll per pass through the bucket
+                if (maxMessagesPerPoll > 0 && messageCounter >= maxMessagesPerPoll) {
+                    break;
+                }
+                if (!minioObjectSummaries.hasNext()) {
+                    exhausted = true;
+                    break;
+                }
+            } while (true);
             lastListedObjectName = lastListed;
-            listedObjects = messageCounter;
+            listingExhausted = exhausted;
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Received {} messages in this poll", messageCounter);
