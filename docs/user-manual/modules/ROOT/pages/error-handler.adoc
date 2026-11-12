@@ -185,7 +185,11 @@ additional documentation of the features above.
 == An Error thrown by a processor
 
 A plain `Processor` (in `process(...)`, in `bean(...)` for a bean that is a `Processor`, or a producer that is not an
-`AsyncProcessor`) may throw an `Error` instead of an exception:
+`AsyncProcessor`) may throw an `Error` instead of an exception. The same rules apply to an `Error` of the expression of
+a `recipientList`, of the expression of a `split` with `synchronous=true`, of the `AggregationStrategy` of a `split`,
+`multicast` or `recipientList` with `synchronous=true` and without `parallelProcessing`, of a data type transformer, of
+a transformer or validator of the input or output type of a route (`inputType`, `outputType`), and of a plain
+`Processor` of a transacted exchange in a step without an error handler of its own (such as in a `doTry` block):
 
 [cols="2,4",options="header"]
 |===

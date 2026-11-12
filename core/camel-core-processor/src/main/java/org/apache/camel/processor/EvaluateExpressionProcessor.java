@@ -41,7 +41,12 @@ public class EvaluateExpressionProcessor extends BaseProcessorSupport implements
         try {
             Object result = expression.evaluate(exchange, Object.class);
             exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, result);
-        } catch (Exception e) {
+        } catch (VirtualMachineError e) {
+            // left as before (thrown on after the callback), as in DelegateSyncProcessor
+            throw e;
+        } catch (Throwable e) {
+            // also an Error of the code it calls: the callback is called in finally, so an Error thrown on after it
+            // would not fail the exchange
             exchange.setException(e);
         } finally {
             callback.done(true);

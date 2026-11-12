@@ -62,7 +62,7 @@ public class DelegatingDataTypeProcessor extends BaseProcessorSupport implements
                 exchange.setException(new IllegalArgumentException(
                         "Exchange property '" + CAMEL_DATA_TYPE_PROPERTY + "' is not set. "
                                                                    + "Cannot determine target data type for transformation."));
-                callback.done(true);
+                // the callback is called in finally
                 return true;
             }
 
@@ -84,7 +84,12 @@ public class DelegatingDataTypeProcessor extends BaseProcessorSupport implements
             } else {
                 transformer.transform(message, fromDataType, toDataType);
             }
-        } catch (Exception e) {
+        } catch (VirtualMachineError e) {
+            // left as before (thrown on after the callback), as in DelegateSyncProcessor
+            throw e;
+        } catch (Throwable e) {
+            // also an Error of the code it calls: the callback is called in finally, so an Error thrown on after it
+            // would not fail the exchange
             exchange.setException(e);
         } finally {
             callback.done(true);
