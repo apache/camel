@@ -26,6 +26,8 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
 
@@ -84,6 +86,7 @@ public class BeanMethodThrowsErrorTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     public void stackOverflowErrorOfABeanMethodIsNotGivenToOnException() throws Exception {
         getMockEndpoint("mock:handled").expectedMessageCount(0);
 
@@ -96,6 +99,7 @@ public class BeanMethodThrowsErrorTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     public void outOfMemoryErrorOfABeanMethodIsNotGivenToDoCatch() throws Exception {
         // as a bean that is a Processor, the exchange stays inflight, so do not wait for it when the context stops
         context.getShutdownStrategy().setTimeUnit(TimeUnit.MILLISECONDS);
@@ -110,6 +114,7 @@ public class BeanMethodThrowsErrorTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     public void stackOverflowErrorOfABeanMethodIsNotRedeliveredNorGivenToTheDeadLetterChannel() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(0);
 

@@ -29,6 +29,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
@@ -114,6 +116,7 @@ public class ProcessorThrowsErrorTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     public void stackOverflowErrorOfAProcessorIsNotGivenToOnException() throws Exception {
         getMockEndpoint("mock:handled").expectedMessageCount(0);
 
@@ -126,6 +129,7 @@ public class ProcessorThrowsErrorTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     public void outOfMemoryErrorOfAProcessorIsNotGivenToDoCatch() throws Exception {
         // as before, the exchange stays inflight, so do not wait for it when the context stops
         shortShutdownTimeout();
@@ -139,6 +143,7 @@ public class ProcessorThrowsErrorTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     public void stackOverflowErrorOfAProcessorIsNotRedeliveredNorGivenToTheDeadLetterChannel() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(0);
 
@@ -150,6 +155,7 @@ public class ProcessorThrowsErrorTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     public void stackOverflowErrorOfABeanThatIsAProcessorIsNotGivenToOnException() throws Exception {
         getMockEndpoint("mock:handled").expectedMessageCount(0);
 
@@ -161,6 +167,7 @@ public class ProcessorThrowsErrorTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     public void stackOverflowErrorOfAProducerIsNotGivenToOnException() throws Exception {
         getMockEndpoint("mock:handled").expectedMessageCount(0);
 
