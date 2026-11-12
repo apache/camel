@@ -2728,8 +2728,7 @@ class AiPanel {
 
     /**
      * The user's question as a blockquote, its lines kept as typed (hard breaks). A fenced code block in it, such as
-     * the source the fix with AI question quotes, is put outside the quote, as a code block inside a quote is not
-     * rendered.
+     * the source the fix with AI question quotes, stays in the quote as a code block, its lines as they are.
      */
     static String quoteQuestion(String text) {
         if (text == null) {
@@ -2737,25 +2736,16 @@ class AiPanel {
         }
         StringBuilder sb = new StringBuilder();
         boolean inFence = false;
-        boolean quoted = false;
         for (String line : text.split("\n", -1)) {
             if (line.strip().startsWith("```")) {
-                if (!inFence && quoted) {
-                    // end the quote, so the fence starts a code block of its own
-                    sb.append('\n');
-                    quoted = false;
-                }
-                sb.append(line.strip()).append('\n');
-                if (inFence) {
-                    sb.append('\n');
-                }
+                sb.append("> ").append(line.strip());
                 inFence = !inFence;
             } else if (inFence) {
-                sb.append(line).append('\n');
+                sb.append(line.isEmpty() ? ">" : "> " + line);
             } else {
-                sb.append(line.isBlank() ? ">" : "> " + line + "  ").append('\n');
-                quoted = true;
+                sb.append(line.isBlank() ? ">" : "> " + line + "  ");
             }
+            sb.append('\n');
         }
         return sb.toString().stripTrailing();
     }
