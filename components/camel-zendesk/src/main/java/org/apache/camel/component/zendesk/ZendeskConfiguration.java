@@ -151,8 +151,8 @@ public class ZendeskConfiguration {
     }
 
     /**
-     * Masks a credential so that logging or a JMX attribute of this configuration cannot leak it. {@code xxxxxx} is
-     * the mask Camel uses when it sanitizes a URI, and whether the value was set at all is still visible.
+     * Masks a credential so that logging or a JMX attribute of this configuration cannot leak it. {@code xxxxxx} is the
+     * mask Camel uses when it sanitizes a URI, and whether the value was set at all is still visible.
      */
     private static String mask(Object secret) {
         return secret != null ? "xxxxxx" : "null";
