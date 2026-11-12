@@ -713,11 +713,17 @@ public class ODataProducerTest extends CamelTestSupport {
 
             Exchange exchange = authEndpoint.createExchange();
             exchange.getMessage().setHeader("X-Caller", "caller-value");
+            // keeps WireMock from gzipping the body, so the response headers are the plain ones
             exchange.getMessage().setHeader("Accept-Encoding", "identity");
             authProducer.process(exchange);
 
             assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
             assertNull(exchange.getMessage().getHeader("Authorization"));
+            // the headers of the delegated HTTP request are not part of the result either
+            assertNull(exchange.getMessage().getHeader(Exchange.HTTP_URI));
+            assertNull(exchange.getMessage().getHeader(Exchange.HTTP_QUERY));
+            assertNull(exchange.getMessage().getHeader(Exchange.HTTP_METHOD));
+            assertNull(exchange.getMessage().getHeader("Accept"));
             assertEquals("caller-value", exchange.getMessage().getHeader("X-Caller"));
             assertEquals("response-value", exchange.getMessage().getHeader("X-Response"));
             assertEquals("W/\"collection-v1\"", exchange.getMessage().getHeader(ODataConstants.ETAG));
