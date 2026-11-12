@@ -41,7 +41,7 @@ import org.apache.camel.language.simple.types.UnaryOperatorType;
 
 /**
  * Base class for Simple language parser.
- * <p/>
+ * <p>
  * This parser is based on the principles of a <a href="http://en.wikipedia.org/wiki/Recursive_descent_parser">recursive
  * descent parser</a>.
  */
@@ -134,11 +134,11 @@ public abstract class BaseSimpleParser {
 
     /**
      * Prepares blocks, such as functions, single or double-quoted texts.
-     * <p/>
+     * <p>
      * This process prepares the {@link Block}s in the AST. This is done by linking child {@link SimpleNode nodes} which
      * are within the start and end of the blocks, as child to the given block. This is done to have the AST graph
      * updated and prepared properly.
-     * <p/>
+     * <p>
      * So when the AST node is later used to create the {@link org.apache.camel.Predicate}s or
      * {@link org.apache.camel.Expression}s to be used by Camel then the AST graph has a linked and prepared graph of
      * nodes which represent the input expression.
@@ -188,10 +188,10 @@ public abstract class BaseSimpleParser {
 
     /**
      * Prepares unary expressions.
-     * <p/>
+     * <p>
      * This process prepares the unary expressions in the AST. This is done by linking the unary operator with the left
      * hand side node, to have the AST graph updated and prepared properly.
-     * <p/>
+     * <p>
      * So when the AST node is later used to create the {@link org.apache.camel.Predicate}s or
      * {@link org.apache.camel.Expression}s to be used by Camel then the AST graph has a linked and prepared graph of
      * nodes which represent the input expression.
@@ -241,10 +241,10 @@ public abstract class BaseSimpleParser {
 
     /**
      * Prepares chain expressions.
-     * <p/>
+     * <p>
      * This process prepares the other expressions in the AST. This is done by linking the other operator with both the
      * right and left hand side nodes, to have the AST graph updated and prepared properly.
-     * <p/>
+     * <p>
      * So when the AST node is later used to create the {@link Predicate}s to be used by Camel then the AST graph has a
      * linked and prepared graph of nodes which represent the input expression.
      */
@@ -365,10 +365,10 @@ public abstract class BaseSimpleParser {
 
     /**
      * Prepares ternary expressions.
-     * <p/>
+     * <p>
      * This process prepares the ternary expressions in the AST. This is done by linking the ternary operator (condition
      * ? trueValue : falseValue) with all three parts: condition, trueValue, and falseValue.
-     * <p/>
+     * <p>
      * The ternary operator consists of two tokens: ? and : We need to find the pattern: condition ? trueValue :
      * falseValue
      */
@@ -445,12 +445,12 @@ public abstract class BaseSimpleParser {
 
     /**
      * Accept the given token.
-     * <p/>
+     * <p>
      * This is to be used by the grammar to accept tokens and then continue parsing using the grammar, such as a
      * function grammar.
      *
      * @param  accept the token
-     * @return        <tt>true</tt> if accepted, <tt>false</tt> otherwise.
+     * @return        <code>true</code> if accepted, <code>false</code> otherwise.
      */
     protected boolean accept(TokenType accept) {
         return token == null || token.getType().getType() == accept;
@@ -511,7 +511,7 @@ public abstract class BaseSimpleParser {
 
     /**
      * Expect and accept a given number of tokens in sequence.
-     * <p/>
+     * <p>
      * This is used to accept whitespace or string literals.
      *
      * @param expect the token to accept

@@ -241,7 +241,7 @@ public enum BinaryOperatorType {
      * Returns the types of right hand side parameters this operator supports.
      *
      * @param  operator the operator
-     * @return          <tt>null</tt> if accepting all types, otherwise the array of accepted types
+     * @return          <code>null</code> if accepting all types, otherwise the array of accepted types
      */
     public static ParameterType[] supportedParameterTypes(BinaryOperatorType operator) {
         if (operator == EQ) {

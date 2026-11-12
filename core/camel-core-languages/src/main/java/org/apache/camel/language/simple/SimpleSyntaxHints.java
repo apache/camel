@@ -280,7 +280,7 @@ public final class SimpleSyntaxHints {
     /**
      * Wraps the function references of a predicate written inside {@code ${ }} so that it can be parsed as one:
      * {@code body != null && body.size() > 0} becomes {@code ${body} != null && ${body.size()} > 0}.
-     * <p/>
+     * <p>
      * Each comparison is wrapped, not only the first, so that a compound condition reads the way it looks (CAMEL-24920,
      * CAMEL-24921). An operator counts only when whitespace surrounds it outside quotes, brackets and parentheses,
      * which is what keeps {@code ${header.Content-Length}} and {@code ${date:now:yyyy-MM-dd}} a plain function, and an
@@ -405,7 +405,7 @@ public final class SimpleSyntaxHints {
      * The elvis operator written inside {@code ${ }}, as the same expression with the operator after the function:
      * {@code header.a ?: 'x'} is {@code ${header.a} ?: 'x'}, and {@code header.a ?: ${header.b} ?: 'x'} is
      * {@code ${header.a} ?: ${header.b} ?: 'x'}; null when the text has no elvis operator (CAMEL-26401).
-     * <p/>
+     * <p>
      * Like the other operators it counts only with a space on both sides, outside quotes, brackets, parentheses and
      * nested functions, so {@code ${header.a ?:10}} is a header named {@code a ?:10}, as {@code ?:10} after the braces
      * is text, and {@code ${body.replace('a ?: b', '')}} is a function. The default value of a property is text too:

@@ -109,7 +109,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
     /**
      * A predicate written inside the braces, as an expression that answers whether it matches; null when the text is
      * not a predicate but a plain function (CAMEL-24921).
-     * <p/>
+     * <p>
      * An operator counts only when whitespace surrounds it outside quotes, so {@code ${header.Content-Length}} and
      * {@code ${date:now:yyyy-MM-dd}} are names, not arithmetic.
      */

@@ -44,8 +44,8 @@ public class SimpleIllegalSyntaxException extends ExpressionIllegalSyntaxExcepti
     /**
      * Index where the parsing error occurred
      *
-     * @return index of the parsing error in the input, returns <tt>-1</tt> if the cause of the problem is not
-     *         applicable to specific index in the input
+     * @return index of the parsing error in the input, returns <code>-1</code> if the cause of the problem is not
+     *         applicable to a specific index in the input
      */
     public int getIndex() {
         return index;

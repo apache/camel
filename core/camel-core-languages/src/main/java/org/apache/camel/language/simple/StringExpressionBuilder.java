@@ -546,11 +546,11 @@ public final class StringExpressionBuilder {
     }
 
     /**
-     * Returns an expression that escapes special characters in the given expression (or message body if <tt>null</tt>)
-     * according to the escape kind.
+     * Returns an expression that escapes special characters in the given expression (or message body if
+     * <code>null</code>) according to the escape kind.
      *
      * @param kind       the kind of escaping (html, xml, json, js, sql, url)
-     * @param expression the expression to escape, or <tt>null</tt> to use the message body
+     * @param expression the expression to escape, or <code>null</code> to use the message body
      */
     public static Expression escapeExpression(final EscapeHelper.Kind kind, final String expression) {
         return new ExpressionAdapter() {

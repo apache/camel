@@ -23,7 +23,7 @@ public interface LiteralNode extends SimpleNode {
 
     /**
      * Adds the given text to this model.
-     * <p/>
+     * <p>
      * This operation can be invoked multiple times to add more text.
      *
      * @param text the text to add
@@ -33,15 +33,15 @@ public interface LiteralNode extends SimpleNode {
     /**
      * Gets the text
      *
-     * @return the text, will never be <tt>null</tt>, but may contain an empty string.
+     * @return the text, will never be <code>null</code>, but may contain an empty string.
      */
     String getText();
 
     /**
      * Whether to quote embedded nodes.
-     * <p/>
-     * Some functions such as the <tt>bean:</tt> function would need to quote its embedded nodes as they are parameter
-     * values for method names.
+     * <p>
+     * Some functions such as the <code>bean:</code> function would need to quote its embedded nodes as they are
+     * parameter values for method names.
      */
     boolean quoteEmbeddedNodes();
 
