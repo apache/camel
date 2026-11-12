@@ -7765,6 +7765,17 @@ simple language) no longer has `"deprecationNote": ""`. The key is now present o
 already the case for options without `@Metadata`. Tools that read the catalog JSON get no key (null with
 `camel-tooling-model`) instead of an empty string.
 
+=== camel-langchain4j-embeddings - the producer uses the EmbeddingRequest API of LangChain4j
+
+The producer now calls `EmbeddingModel.embed(EmbeddingRequest)` instead of `embed(TextSegment)` and
+`embedAll(List<TextSegment>)`, so the `CamelLangChain4jEmbeddingsResponseModel` header is now set with the
+model name of the response. `EmbeddingResponse` has no finish reason, so the
+`CamelLangChain4jEmbeddingsFinishReason` header is no longer set.
+
+A custom `EmbeddingModel` must implement `embedAll(List<TextSegment>)` (or `doEmbed(EmbeddingRequest)`), as
+the LangChain4j models do. A model that only overrides `embed(TextSegment)` is no longer called, and the
+default methods of LangChain4j then fail with a `StackOverflowError`.
+
 === Jackson 3
 
 Camel 4.24 moves its own code to Jackson 3 (`tools.jackson`, version 3.2). The `camel-jackson`, `camel-jacksonxml`,

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.embeddings;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -96,7 +97,7 @@ class LangChain4jEmbeddingsErrorMetadataTest extends CamelTestSupport {
         }
 
         @Override
-        public Response<Embedding> embed(TextSegment textSegment) {
+        public Response<List<Embedding>> embedAll(List<TextSegment> textSegments) {
             throw new RateLimitException("quota exceeded");
         }
     }
