@@ -172,6 +172,8 @@ public interface InfluxDb2EndpointBuilderFactory {
         }
         /**
          * Define the retention policy to the data created by the endpoint.
+         * Deprecation note: Never read by the component: the InfluxDB 2.x write
+         * API has no retention policy, retention is a property of the bucket.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -181,6 +183,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * @param retentionPolicy the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default InfluxDb2EndpointBuilder retentionPolicy(String retentionPolicy) {
             doSetProperty("retentionPolicy", retentionPolicy);
             return this;
@@ -359,7 +362,9 @@ public interface InfluxDb2EndpointBuilderFactory {
         }
         /**
          * The string that defines the retention policy to the data created by
-         * the endpoint.
+         * the endpoint. Deprecation note: Never read by the component: the
+         * InfluxDB 2.x write API has no retention policy, retention is a
+         * property of the bucket.
          * 
          * The option is a: {@code String} type.
          * 
@@ -367,6 +372,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * 
          * @return the name of the header {@code InfluxDB.RetentionPolicy}.
          */
+        @Deprecated
         public String influxdbRetentionpolicy() {
             return "camelInfluxDB.RetentionPolicy";
         }
