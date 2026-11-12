@@ -37,6 +37,13 @@
         <title>MCP Server</title>
         <supportLevel>Preview</supportLevel>
         <failsafe.rerunFailingTestsCount>3</failsafe.rerunFailingTestsCount>
+        <!-- Run test classes in parallel: each class owns its own Vert.x server on a
+             dedicated port so there is no shared state between test classes.
+             Use -Dcamel.surefire.parallel=false or -Dcamel.failsafe.parallel=false to disable. -->
+        <camel.surefire.parallel>true</camel.surefire.parallel>
+        <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
+        <camel.failsafe.parallel>true</camel.failsafe.parallel>
+        <camel.failsafe.parallel.factor>1</camel.failsafe.parallel.factor>
     </properties>
 
     <dependencies>
@@ -143,6 +150,30 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration combine.children="merge">
+                    <!-- Run IT classes in parallel: each class owns its own Vert.x server on a
+                         dedicated port (or its own subprocess), so there is no shared state.
+                         Use -Dcamel.failsafe.parallel=false to disable for debugging. -->
+                    <properties>
+                        <configurationParameters>
+                            junit.jupiter.execution.parallel.enabled = ${camel.failsafe.parallel}
+                            junit.jupiter.execution.parallel.mode.default = same_thread
+                            junit.jupiter.execution.parallel.mode.classes.default = concurrent
+                            junit.jupiter.execution.parallel.config.strategy = ${camel.failsafe.parallel.strategy}
+                            junit.jupiter.execution.parallel.config.dynamic.factor = ${camel.failsafe.parallel.factor}
+                            junit.jupiter.execution.parallel.config.executor-service = FORK_JOIN_POOL
+                        </configurationParameters>
+                    </properties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <profiles>
         <!--
