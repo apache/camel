@@ -44,11 +44,11 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("data/rw/constdone/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("data/rw/constdone/hello.txt"))));
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("",
-                        new String(copyFileContentFromContainer("/data/rw/constdone/done"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/constdone/done"))));
     }
 
     @Test
@@ -59,11 +59,11 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/prefixdone/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/prefixdone/hello.txt"))));
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("",
-                        new String(copyFileContentFromContainer("/data/rw/prefixdone/done-hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/prefixdone/done-hello.txt"))));
     }
 
     @Test
@@ -74,11 +74,11 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/extdone/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/extdone/hello.txt"))));
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("",
-                        new String(copyFileContentFromContainer("/data/rw/extdone/hello.txt.done"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/extdone/hello.txt.done"))));
     }
 
     @Test
@@ -89,11 +89,11 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/replextdone/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/replextdone/hello.txt"))));
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("",
-                        new String(copyFileContentFromContainer("/data/rw/replextdone/hello.done"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/replextdone/hello.done"))));
     }
 
     @Test

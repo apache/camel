@@ -50,7 +50,7 @@ public class FromSmbMoveFileToSubdirIT extends SmbServerTestSupport {
         // verify file moved in smb dir
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World this file will be moved",
-                        new String(copyFileContentFromContainer("/data/rw/movefiletosubdir/greet/hello.txt.old"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/movefiletosubdir/greet/hello.txt.old"))));
     }
 
     @Override

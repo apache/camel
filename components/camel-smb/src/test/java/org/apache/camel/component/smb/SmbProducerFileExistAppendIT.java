@@ -53,7 +53,7 @@ public class SmbProducerFileExistAppendIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World\nBye World",
-                        new String(copyFileContentFromContainer("/data/rw/exist/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/exist/hello.txt"))));
     }
 
     @Override

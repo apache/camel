@@ -39,7 +39,7 @@ public class SmbProducerFileWithPathIT extends SmbServerTestSupport {
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
                         new String(
-                                copyFileContentFromContainer("/data/rw/uploadWithPath/hello/jono.txt"),
+                                copyExistingFileContentFromContainer("/data/rw/uploadWithPath/hello/jono.txt"),
                                 StandardCharsets.ISO_8859_1)));
     }
 }

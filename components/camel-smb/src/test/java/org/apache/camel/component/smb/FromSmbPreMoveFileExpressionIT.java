@@ -66,7 +66,7 @@ public class FromSmbPreMoveFileExpressionIT extends SmbServerTestSupport {
         // assert file is created
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World this file will be moved",
-                        new String(copyFileContentFromContainer("/data/rw/premoveexpr/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/premoveexpr/hello.txt"))));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class FromSmbPreMoveFileExpressionIT extends SmbServerTestSupport {
                         // assert the file is pre moved
                         await().atMost(15, TimeUnit.SECONDS)
                                 .untilAsserted(() -> assertEquals("Hello World this file will be moved",
-                                        new String(copyFileContentFromContainer("/data/rw/inprogress/hello.bak"))));
+                                        new String(copyExistingFileContentFromContainer("/data/rw/inprogress/hello.bak"))));
                     }
                 }).to("mock:result");
             }

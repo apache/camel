@@ -50,7 +50,7 @@ class SmbConsumerPartialReadIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/partialread/failed/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/partialread/failed/hello.txt"))));
     }
 
     @Override
