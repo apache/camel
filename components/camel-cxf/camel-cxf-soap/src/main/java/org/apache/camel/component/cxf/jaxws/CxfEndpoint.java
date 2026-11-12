@@ -241,7 +241,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private List<String> schemaLocations;
     private String transportId;
 
-    @UriPath(description = "To lookup an existing configured CxfEndpoint. Must used bean: as prefix.")
+    @UriPath(description = "The id of a CxfEndpoint bean in the registry to use as this endpoint. Written in the path of the"
+                           + " endpoint URI in place of the service address, with the prefix bean:, for example"
+                           + " bean:orderEndpoint. The component sets the options of the endpoint URI on that bean, so"
+                           + " endpoint URIs with different options must not share one bean instance.")
     private String beanId;
     @UriParam(defaultValue = "POJO",
               description = "How the SOAP message is represented in the Camel message body. POJO: the parameters of the"
@@ -250,11 +253,21 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                             + " removed, so SOAP headers are not available. CXF_MESSAGE: a SAAJ SOAPMessage, processed by the"
                             + " full set of CXF interceptors. MESSAGE is deprecated and is the same as RAW.")
     private DataFormat dataFormat = DataFormat.POJO;
-    @UriPath(label = "service")
+    @UriPath(label = "service",
+             description = "The service address, for example http://localhost:9000/orders. The consumer receives requests at"
+                           + " this address, and the producer sends requests to it. The CamelDestinationOverrideUrl header"
+                           + " replaces this address for a request that the producer sends over HTTP.")
     private String address;
     @UriParam(label = "service")
     private String wsdlURL;
-    @UriParam(label = "service")
+    @UriParam(label = "service",
+              description = "The Java class of the service, for example a service endpoint interface or a class that"
+                            + " implements one. Written as a fully qualified class name, for example"
+                            + " org.example.orders.OrderService. Required when dataFormat is POJO, which is the default."
+                            + " Without a WSDL, CXF builds the service from this class. The endpoint looks for the WebService"
+                            + " or WebServiceProvider annotation on the class, on its superclasses, and on the interfaces that"
+                            + " the class and its superclasses implement directly. If the endpoint finds the annotation, CXF"
+                            + " uses the JAX-WS frontend, and otherwise the simple frontend.")
     private Class<?> serviceClass;
     @UriParam(label = "service",
               description = "The WSDL port, which is the name attribute of the wsdl:port element. Written as a QName in the"
@@ -267,68 +280,148 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                             + " set and wsdlURL points to a WSDL with one service, that service is used.")
     private String serviceName;
     private transient QName serviceNameQName;
-    @UriParam(label = "service")
+    @UriParam(label = "service",
+              description = "The id of the CXF binding, which is a namespace URI, for example"
+                            + " http://cxf.apache.org/bindings/xformat for the XML binding without a SOAP envelope. If not"
+                            + " set, CXF uses the binding of the wsdl:port. The id http://schemas.xmlsoap.org/wsdl/soap12/"
+                            + " selects SOAP 1.2 when there is no WSDL.")
     private String bindingId;
     @UriParam(label = "service",
               description = "The address to publish in the WSDL that the consumer serves at the service address followed by"
                             + " ?wsdl. It replaces the location of the address element in the wsdl:port. Use it when clients"
                             + " reach the service through another address, for example when the service is behind a proxy.")
     private String publishedEndpointUrl;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The name of the operation that the producer invokes. Used when the Camel message has no"
+                            + " CamelCxfOperationName header. If neither the CamelCxfOperationName header nor this option is"
+                            + " set, the producer invokes the first operation that CXF returns for the service, in an order"
+                            + " that is not defined. If neither wsdlURL nor serviceClass is set, the producer sets this option"
+                            + " to Invoke.")
     private String defaultOperationName;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The namespace of the operation named by the CamelCxfOperationName header or by"
+                            + " defaultOperationName. Used when the Camel message has no CamelCxfOperationNamespace header. If"
+                            + " neither the CamelCxfOperationNamespace header nor this option is set, the producer uses the"
+                            + " namespace of the service, which is the namespace of serviceName when serviceName is set. If"
+                            + " neither wsdlURL nor serviceClass is set, the producer sets this option to"
+                            + " http://camel.apache.org/cxf/jaxws/dispatch.")
     private String defaultOperationNamespace;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "Whether to invoke a document-literal wrapped operation in its wrapped form instead of its"
+                            + " unwrapped form. If true and dataFormat is POJO, the Camel message body of the request must"
+                            + " hold the wrapper object in place of the parameters of the operation. The consumer does not use"
+                            + " it.")
     private boolean wrapped;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "To use a custom org.apache.camel.support.jsse.SSLContextParameters for the HTTPS requests that"
+                            + " the producer sends to the service address. If not set, the component sets it to the global SSL"
+                            + " context parameters when it creates the endpoint and its own useGlobalSslContextParameters"
+                            + " option is true. Not used for reading the WSDL that wsdlURL points to. The consumer does not"
+                            + " use it.")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "To use a custom javax.net.ssl.HostnameVerifier for the HTTPS requests that the producer sends to"
+                            + " the service address. Not used for reading the WSDL that wsdlURL points to. The consumer does"
+                            + " not use it.")
     private HostnameVerifier hostnameVerifier;
-    @UriParam
+    @UriParam(description = "Whether to use the document-literal wrapped style instead of the document-literal bare style for"
+                            + " the operations of serviceClass. Not used for RPC-style operations or when serviceClass is a"
+                            + " Provider. Otherwise, if not set, CXF uses the parameterStyle of the SOAPBinding annotation,"
+                            + " and the wrapped style when there is none. The consumer does not use it when dataFormat is"
+                            + " CXF_MESSAGE.")
     private Boolean wrappedStyle;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "Whether to allow CXF to keep the last message part of an incoming SOAP message as a"
+                            + " javax.xml.transform.Source read from the stream, instead of parsing it into a DOM. Only used"
+                            + " when dataFormat is PAYLOAD. The component sets it to the value of its own allowStreaming"
+                            + " option when it creates the endpoint, unless the endpoint URI sets it. If not set, the endpoint"
+                            + " uses the JVM system property org.apache.camel.component.cxf.streaming, and allows streaming"
+                            + " when that property is not set either.")
     private Boolean allowStreaming;
     @UriParam(label = "advanced")
     private CxfBinding cxfBinding;
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam(label = "logging")
+    @UriParam(label = "logging",
+              description = "Whether to add a LoggingFeature, which writes the incoming and outgoing SOAP messages of the"
+                            + " endpoint to the log. The LoggingFeature writes them with SLF4J at INFO level to loggers whose"
+                            + " names start with org.apache.cxf.services.")
     private boolean loggingFeatureEnabled;
-    @UriParam(label = "logging", defaultValue = "" + AbstractLoggingInterceptor.DEFAULT_LIMIT)
+    @UriParam(label = "logging", defaultValue = "" + AbstractLoggingInterceptor.DEFAULT_LIMIT,
+              description = "The size limit at which CXF truncates a SOAP message in the log. Sets the limit of the"
+                            + " LoggingFeature that the endpoint adds when loggingFeatureEnabled is true. Use -1 for no limit.")
     private int loggingSizeLimit = AbstractLoggingInterceptor.DEFAULT_LIMIT;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "Whether to send SOAP messages with MTOM, so that CXF writes them as XOP packages. Sets the"
+                            + " exchange property mtom-enabled to the value of this option. The producer copies the property"
+                            + " to the CXF request message, and the consumer copies it to the CXF response message. When"
+                            + " dataFormat is RAW, CXF does not write the Camel message body as an XOP package.")
     private boolean mtomEnabled;
     @UriParam(label = "advanced",
               description = "Whether to skip the check that each element in the SOAP body matches the message part that the"
                             + " operation declares. Sets the CXF property soap.no.validate.parts to true. This is not XML"
-                            + " schema validation, which schemaValidationEnabled controls.")
+                            + " schema validation, which schemaValidationEnabled controls. If dataFormat is PAYLOAD and"
+                            + " neither wsdlURL nor serviceClass is set, the producer sets this option to true.")
     private boolean skipPayloadMessagePartCheck;
-    @UriParam(label = "logging")
+    @UriParam(label = "logging",
+              description = "Whether to skip the log entry that the PhaseInterceptorChain writes when an interceptor throws an"
+                            + " exception, for example the exception of a failed exchange of the consumer. Sets the CXF"
+                            + " property org.apache.cxf.logging.FaultListener to a FaultListener that skips this log entry.")
     private boolean skipFaultLogging;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether to hide the exception of a failed exchange from the client. If true, the fault that the"
+                            + " consumer returns does not contain the class or the message of the exception. This does not"
+                            + " apply to a CXF Fault or an exception with the WebFault annotation, nor to a Camel message body"
+                            + " that is a Throwable or a CxfPayload with a soap:Fault.")
     private boolean muteException = true;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "Whether to copy a protocol header to the Camel message as one String instead of a List when it"
+                            + " has more than one value. The values are joined by a comma and a space. This applies to the"
+                            + " request that the consumer receives and to the response that the producer receives. Sets the"
+                            + " exchange property CamelCxfProtocolHeadersMerged to true.")
     private boolean mergeProtocolHeaders;
     @UriParam(label = "advanced",
               description = "To use a custom org.apache.camel.component.cxf.jaxws.CxfConfigurer to configure CXF in Java"
                             + " code. Its configure method receives the CXF factory bean before the client or server is"
                             + " created, and configureClient and configureServer receive the created Client or Server.")
     private CxfConfigurer cxfConfigurer;
-    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
+    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration",
+              description = "The timeout in milliseconds of the CXF continuation that the consumer uses to process the"
+                            + " exchange asynchronously. If it expires before the route has completed, the consumer returns a"
+                            + " fault to the client and sets an ExchangeTimedOutException on the exchange. Use 0 for no"
+                            + " timeout. Not used when synchronous is true or when the consumer gets no continuation from the"
+                            + " transport, for example with the JMS transport.")
     private long continuationTimeout = 30000;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The user name for HTTP Basic authentication. The producer puts it, together with the password, in"
+                            + " the protocol header Authorization of its HTTP requests. Only used when the password option is"
+                            + " set. Not used for reading the WSDL that wsdlURL points to. The consumer does not use it.")
     private String username;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The password for HTTP Basic authentication. The producer puts it, together with the user name, in"
+                            + " the protocol header Authorization of its HTTP requests. Only used when the username option is"
+                            + " set. Not used for reading the WSDL that wsdlURL points to. The consumer does not use it.")
     private String password;
     @UriParam(label = "advanced", prefix = "properties.", multiValue = true)
     private Map<String, Object> properties;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "To use a custom org.apache.camel.http.base.cookie.CookieHandler to keep the cookies of an HTTP"
+                            + " session between the requests that the producer sends. An InstanceCookieHandler keeps the"
+                            + " cookies in the handler itself, and an ExchangeCookieHandler keeps them in an exchange"
+                            + " property. The consumer does not use it.")
     private CookieHandler cookieHandler;
     @UriParam(defaultValue = "false", label = "producer,advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+              description = "Whether to always process the exchange synchronously. If true, the producer invokes the CXF"
+                            + " Client without a callback and waits until the invocation returns, and the consumer runs the"
+                            + " route without a CXF continuation. The component sets it to the value of its own synchronous"
+                            + " option when it creates the endpoint, unless the endpoint URI sets it.")
     private boolean synchronous;
     @UriParam(defaultValue = "false", label = "advanced",
-              description = "Enable schema validation for request and response. Disabled by default for performance reason")
+              description = "Whether to validate the incoming and outgoing SOAP messages of the endpoint against the XML"
+                            + " schema of the service. Sets the CXF property schema-validation-enabled to the value of this"
+                            + " option. If not set, CXF validates only when another setting enables validation, for example"
+                            + " the SchemaValidation annotation on serviceClass. When dataFormat is RAW, CXF does not validate"
+                            + " the messages.")
     private Boolean schemaValidationEnabled;
 
     public CxfEndpoint() {
@@ -919,23 +1012,14 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return serviceClass;
     }
 
-    /**
-     * The class name of the SEI (Service Endpoint Interface) class which could have JSR181 annotation or not.
-     */
     public void setServiceClass(Class<?> cls) {
         serviceClass = cls;
     }
 
-    /**
-     * The class name of the SEI (Service Endpoint Interface) class which could have JSR181 annotation or not.
-     */
     public void setServiceClass(Object instance) {
         serviceClass = ClassHelper.getRealClass(instance);
     }
 
-    /**
-     * The class name of the SEI (Service Endpoint Interface) class which could have JSR181 annotation or not.
-     */
     public void setServiceClass(String type) throws ClassNotFoundException {
         if (ObjectHelper.isEmpty(type)) {
             throw new IllegalArgumentException("The serviceClass option can neither be null nor an empty String.");
@@ -1013,10 +1097,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return resolvePropertyPlaceholders(defaultOperationName);
     }
 
-    /**
-     * This option will set the default operationName that will be used by the CxfProducer which invokes the remote
-     * service.
-     */
     public void setDefaultOperationName(String name) {
         defaultOperationName = name;
     }
@@ -1025,10 +1105,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return resolvePropertyPlaceholders(defaultOperationNamespace);
     }
 
-    /**
-     * This option will set the default operationNamespace that will be used by the CxfProducer which invokes the remote
-     * service.
-     */
     public void setDefaultOperationNamespace(String namespace) {
         defaultOperationNamespace = namespace;
     }
@@ -1037,9 +1113,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return wrapped;
     }
 
-    /**
-     * Which kind of operation that CXF endpoint producer will invoke
-     */
     public void setWrapped(boolean wrapped) {
         this.wrapped = wrapped;
     }
@@ -1048,20 +1121,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return wrappedStyle;
     }
 
-    /**
-     * The WSDL style that describes how parameters are represented in the SOAP body. If the value is false, CXF will
-     * chose the document-literal unwrapped style, If the value is true, CXF will chose the document-literal wrapped
-     * style
-     */
     public void setWrappedStyle(Boolean wrapped) {
         wrappedStyle = wrapped;
     }
 
-    /**
-     * This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming
-     * messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming
-     * in some cases.
-     */
     public void setAllowStreaming(Boolean allowStreaming) {
         this.allowStreaming = allowStreaming;
     }
@@ -1147,9 +1210,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return defaultBus;
     }
 
-    /**
-     * This option enables CXF Logging Feature which writes inbound and outbound SOAP messages to log.
-     */
     public void setLoggingFeatureEnabled(boolean loggingFeatureEnabled) {
         this.loggingFeatureEnabled = loggingFeatureEnabled;
     }
@@ -1162,10 +1222,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return loggingSizeLimit;
     }
 
-    /**
-     * To limit the total size of number of bytes the logger will output when logging feature has been enabled and -1
-     * for no limit.
-     */
     public void setLoggingSizeLimit(int loggingSizeLimit) {
         if (loggingSizeLimit < -1) {
             throw new IllegalArgumentException("LoggingSizeLimit must be greater or equal to -1.");
@@ -1226,9 +1282,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return cookieHandler;
     }
 
-    /**
-     * Configure a cookie handler to maintain a HTTP session
-     */
     public void setCookieHandler(CookieHandler cookieHandler) {
         this.cookieHandler = cookieHandler;
     }
@@ -1267,9 +1320,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
     }
 
-    /**
-     * The service publish address.
-     */
     public void setAddress(String address) {
         super.setEndpointUri(UnsafeUriCharactersEncoder.encodeHttpURI(address));
         this.address = address;
@@ -1279,9 +1329,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return resolvePropertyPlaceholders(address);
     }
 
-    /**
-     * To enable MTOM (attachments). This requires to use POJO or PAYLOAD data format mode.
-     */
     public void setMtomEnabled(boolean mtomEnabled) {
         this.mtomEnabled = mtomEnabled;
     }
@@ -1294,9 +1341,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return password;
     }
 
-    /**
-     * This option is used to set the basic authentication information of password for the CXF client.
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -1305,9 +1349,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return username;
     }
 
-    /**
-     * This option is used to set the basic authentication information of username for the CXF client.
-     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -1523,9 +1564,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return resolvePropertyPlaceholders(bindingId);
     }
 
-    /**
-     * The bindingId for the service model to use.
-     */
     public void setBindingId(String bindingId) {
         this.bindingId = bindingId;
     }
@@ -1538,9 +1576,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return skipFaultLogging;
     }
 
-    /**
-     * This option controls whether the PhaseInterceptorChain skips logging the Fault that it catches.
-     */
     public void setSkipFaultLogging(boolean skipFaultLogging) {
         this.skipFaultLogging = skipFaultLogging;
     }
@@ -1549,12 +1584,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return muteException;
     }
 
-    /**
-     * If enabled and an Exchange failed processing on the consumer side, and the exception is not a SOAP fault the
-     * service contract declares, the SOAP fault returned to the caller won't contain the exception's class or message.
-     * Faults the route raises deliberately - a CXF {@code Fault}, an exception annotated {@code @WebFault}, or a
-     * {@code Throwable} set as the message body - are part of the contract and are always returned in full.
-     */
     public void setMuteException(boolean muteException) {
         this.muteException = muteException;
     }
@@ -1563,10 +1592,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return mergeProtocolHeaders;
     }
 
-    /**
-     * Whether to merge protocol headers. If enabled then propagating headers between Camel and CXF becomes more
-     * consistent and similar. For more details see CAMEL-6393.
-     */
     public void setMergeProtocolHeaders(boolean mergeProtocolHeaders) {
         this.mergeProtocolHeaders = mergeProtocolHeaders;
     }
@@ -1608,10 +1633,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return continuationTimeout;
     }
 
-    /**
-     * This option is used to set the CXF continuation timeout which could be used in CxfConsumer by default when the
-     * CXF server is using Jetty or Servlet transport.
-     */
     public void setContinuationTimeout(long continuationTimeout) {
         this.continuationTimeout = continuationTimeout;
     }
@@ -1620,9 +1641,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return sslContextParameters;
     }
 
-    /**
-     * The Camel SSL setting reference. Use the # notation to reference the SSL Context.
-     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -1631,9 +1649,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return hostnameVerifier;
     }
 
-    /**
-     * The hostname verifier to be used. Use the # notation to reference a HostnameVerifier from the registry.
-     */
     public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
         this.hostnameVerifier = hostnameVerifier;
     }

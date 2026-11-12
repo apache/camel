@@ -42,10 +42,16 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsComponent.class);
 
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Whether to use the global SSL context parameters of the CamelContext for each endpoint that the"
+                            + " component creates and that has no sslContextParameters. The producer uses them for the HTTPS"
+                            + " requests that it sends. The consumer does not use them.")
     private boolean useGlobalSslContextParameters;
     @Metadata(defaultValue = "false", label = "producer,advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+              description = "Whether to always process the exchange synchronously. If true, the producer sends each request"
+                            + " without an InvocationCallback and waits for the response, and the consumer runs the route"
+                            + " without a CXF continuation. The component sets the value on each endpoint that it creates,"
+                            + " unless the endpoint URI sets synchronous.")
     private boolean synchronous;
 
     public CxfRsComponent() {
@@ -170,9 +176,6 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
         return this.useGlobalSslContextParameters;
     }
 
-    /**
-     * Enable usage of global SSL context parameters.
-     */
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
