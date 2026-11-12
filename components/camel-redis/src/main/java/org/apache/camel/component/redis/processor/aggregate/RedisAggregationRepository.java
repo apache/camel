@@ -17,6 +17,7 @@
 package org.apache.camel.component.redis.processor.aggregate;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,7 @@ import org.apache.camel.util.StringHelper;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
+import org.redisson.api.RScript;
 import org.redisson.api.RTransaction;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.TransactionOptions;
@@ -57,6 +59,19 @@ public class RedisAggregationRepository extends ServiceSupport
     private Map<String, DefaultExchangeHolder> cache;
     private Map<String, DefaultExchangeHolder> persistedCache;
     private boolean shutdownRedisson;
+
+    private static final String OPTIMISTIC_REMOVE_SCRIPT = """
+            local current = redis.call('HGET', KEYS[1], ARGV[1])
+
+            if not current or current ~= ARGV[2] then
+                return 0
+            end
+
+            redis.call('HSET', KEYS[2], ARGV[3], ARGV[4])
+            redis.call('HDEL', KEYS[1], ARGV[1])
+
+            return 1
+            """;
 
     @Metadata(label = "advanced", description = "To use an existing Redis client to connect to Redis server")
     private RedissonClient redisson;
@@ -295,30 +310,46 @@ public class RedisAggregationRepository extends ServiceSupport
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
+
         if (optimistic) {
             LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.",
                     exchange.getExchangeId(), key);
 
             if (useRecovery) {
-                LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                LOG.trace("Atomically moving exchange with ID {} for key {} into recoverable storage.",
                         exchange.getExchangeId(), key);
 
-                persistedCache.put(exchange.getExchangeId(), holder);
+                RScript script = redisson.getScript();
 
-                LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
-                        exchange.getExchangeId(), key);
-            }
+                Long result = script.eval(
+                        RScript.Mode.READ_WRITE,
+                        OPTIMISTIC_REMOVE_SCRIPT,
+                        RScript.ReturnType.LONG,
+                        List.of(mapName, persistenceMapName),
+                        key,
+                        holder,
+                        exchange.getExchangeId(),
+                        holder);
 
-            if (!cache.remove(key, holder)) {
-                if (useRecovery) {
-                    persistedCache.remove(exchange.getExchangeId());
+                if (result == null || result.longValue() != 1L) {
+                    LOG.warn(
+                            "Optimistic locking failed for exchange with key {}: the active exchange does not match the expected exchange.",
+                            key);
+
+                    throw new OptimisticLockingException();
                 }
 
-                LOG.warn(
-                        "Optimistic locking failed for exchange with key {}: RMap#remove removed no Exchanges, while it's expected to remove one.",
-                        key);
+                LOG.trace("Successfully moved exchange with ID {} for key {} into recoverable storage.",
+                        exchange.getExchangeId(), key);
 
-                throw new OptimisticLockingException();
+            } else {
+                if (!cache.remove(key, holder)) {
+                    LOG.warn(
+                            "Optimistic locking failed for exchange with key {}: RMap#remove removed no Exchanges, while it's expected to remove one.",
+                            key);
+
+                    throw new OptimisticLockingException();
+                }
             }
 
             LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.",

@@ -218,6 +218,40 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
     }
 
     @Test
+    public void testOptimisticRemoveDoesNotCreateRecoveryEntryWhenLockingFails() {
+        String mapName = "optimisticRemoveConcurrentFailure";
+        RedisAggregationRepository repo = createRepo(mapName, true);
+
+        try {
+            Exchange original = createExchange("original");
+            repo.add(context, "key1", null, original);
+
+            Exchange a = repo.get(context, "key1");
+            Exchange b = repo.get(context, "key1");
+
+            assertNotNull(a);
+            assertNotNull(b);
+            assertEquals(a.getExchangeId(), b.getExchangeId());
+
+            repo.remove(context, "key1", a);
+
+            assertThrows(OptimisticLockingException.class,
+                    () -> repo.remove(context, "key1", b));
+
+            assertNull(repo.get(context, "key1"));
+
+            Exchange recovered = repo.recover(context, a.getExchangeId());
+
+            assertNotNull(recovered);
+            assertEquals(a.getExchangeId(), recovered.getExchangeId());
+            assertEquals("original", recovered.getIn().getBody(String.class));
+
+        } finally {
+            repo.stop();
+        }
+    }
+
+    @Test
     public void testPessimisticRemoveWithRecovery() {
         RedisAggregationRepository repo = createRepo("pessimisticRemoveRecovery", false);
         try {
