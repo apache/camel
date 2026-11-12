@@ -5129,6 +5129,15 @@ URI shows in:
   `https`, and the include and exclude patterns are matched against the new endpoint URI.
 * the `endpointName` tag of the Micrometer exchange event metrics.
 
+=== camel-netty-http - endpoint options are no longer sent to the server as query parameters
+
+The `netty-http` producer no longer sends some of its endpoint options, such as `cookieHandler`, `httpMethodRestrict`,
+`traceEnabled` and `exchangePattern`, to the HTTP server as query parameters. For example,
+`netty-http:http://localhost:8080/foo?bar=1&cookieHandler=#myCookieHandler` now calls
+`http://localhost:8080/foo?bar=1`. Before, the server also received the `cookieHandler` parameter. Only the
+query parameters that are not endpoint options are sent, as the documentation describes. To send a query parameter
+that has the same name as an endpoint option, set the query in the `CamelHttpQuery` header.
+
 === camel-netty - hostnameVerification verifies the host instead of failing
 
 `hostnameVerification=true` on a `netty` producer, or on a consumer with `clientMode=true`, now checks that the
