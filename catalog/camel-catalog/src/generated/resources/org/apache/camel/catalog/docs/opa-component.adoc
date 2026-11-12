@@ -487,7 +487,10 @@ separate process that a timeout can abandon.
 In `rest` mode the component talks to OPA over HTTP, and both waits are bounded:
 
 * `connectionTimeout` (default 10s) — establishing the connection.
-* `requestTimeout` (default 30s) — waiting for the decision once connected.
+* `requestTimeout` (default 30s) — receiving the complete response for each HTTP request, including its body.
+
+Receiving response headers does not end the request deadline: a server that sends headers and then stalls while
+writing the decision still times out. SDK retries, when applicable, make separate HTTP requests with the same limit.
 
 Neither is optional in practice. A refused connection fails immediately, but a server that *accepts* and then
 stops answering — wedged, mid-restart, or behind a load balancer holding the socket — would otherwise park the
