@@ -370,7 +370,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
                 //      same stored entry), so it would delete the winning thread's recovery entry during its own
                 //      cleanup on the compare-and-remove failure (CAMEL-26796).
                 //   2. If the JVM stops or persistedCache.put() throws after a successful cache.remove(), the group
-                //      is in neither map (CAMEL-26395).
+                //      is in neither map (CAMEL-26663).
                 // TransactionalMap.remove(key, value) is a compare-and-delete that enrolls the entry in the
                 // transaction: the loser sees the entry still present (or already gone), so its remove returns
                 // false, and it never reaches the recovery write.

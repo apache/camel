@@ -267,7 +267,7 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
      * succeeds, remove(b) throws {@link OptimisticLockingException}. After the failed remove, recover(exchangeId) must
      * still return the group so that downstream failures can be recovered.
      * <p>
-     * Note: the transaction also closes the crash-between-two-steps window that CAMEL-26395 originally fixed: if the
+     * Note: the transaction also closes the crash-between-two-steps window that CAMEL-26663 originally fixed: if the
      * JVM stops after the conditional remove but before the recovery write, the transaction is rolled back on restart
      * and the group re-appears in the operational repository.
      */
