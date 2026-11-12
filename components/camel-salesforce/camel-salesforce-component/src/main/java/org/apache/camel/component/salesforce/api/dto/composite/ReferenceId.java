@@ -77,7 +77,8 @@ public final class ReferenceId implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (errors == null ? 0 : errors.hashCode());
+        // getErrors(), not errors: equals() compares the normalized lists, so a null and an empty list must hash alike
+        result = prime * result + getErrors().hashCode();
         result = prime * result + (id == null ? 0 : id.hashCode());
         result = prime * result + (referenceId == null ? 0 : referenceId.hashCode());
         return result;
