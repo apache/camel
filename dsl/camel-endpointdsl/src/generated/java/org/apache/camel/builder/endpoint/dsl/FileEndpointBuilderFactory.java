@@ -1097,13 +1097,13 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to delay the release task for a period of millis. This can be
-         * used to delay the release tasks to expand the window when a file is
-         * regarded as read-locked, in an active/active cluster scenario with a
-         * shared idempotent repository, to ensure other nodes cannot
-         * potentially scan and acquire the same file, due to race-conditions.
-         * By expanding the time-window of the release tasks helps prevents
-         * these situations. Note delaying is only needed if you have configured
+         * How many millis to delay the release task. This can be used to delay
+         * the release tasks to expand the window when a file is regarded as
+         * read-locked, in an active/active cluster scenario with a shared
+         * idempotent repository, to ensure other nodes cannot potentially scan
+         * and acquire the same file, due to race-conditions. By expanding the
+         * time-window of the release tasks helps prevents these situations.
+         * Note delaying is only needed if you have configured
          * readLockRemoveOnCommit to true.
          * 
          * The option is a: <code>int</code> type.
@@ -1118,13 +1118,13 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to delay the release task for a period of millis. This can be
-         * used to delay the release tasks to expand the window when a file is
-         * regarded as read-locked, in an active/active cluster scenario with a
-         * shared idempotent repository, to ensure other nodes cannot
-         * potentially scan and acquire the same file, due to race-conditions.
-         * By expanding the time-window of the release tasks helps prevents
-         * these situations. Note delaying is only needed if you have configured
+         * How many millis to delay the release task. This can be used to delay
+         * the release tasks to expand the window when a file is regarded as
+         * read-locked, in an active/active cluster scenario with a shared
+         * idempotent repository, to ensure other nodes cannot potentially scan
+         * and acquire the same file, due to race-conditions. By expanding the
+         * time-window of the release tasks helps prevents these situations.
+         * Note delaying is only needed if you have configured
          * readLockRemoveOnCommit to true.
          * 
          * The option will be converted to a <code>int</code> type.

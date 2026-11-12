@@ -122,7 +122,7 @@ public interface InfluxDb2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if this operation is an insert of ping.
+         * Define if this operation is an insert or a ping.
          * 
          * The option is a:
          * <code>org.apache.camel.component.influxdb2.enums.Operation</code>
@@ -139,7 +139,7 @@ public interface InfluxDb2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if this operation is an insert of ping.
+         * Define if this operation is an insert or a ping.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.influxdb2.enums.Operation</code>

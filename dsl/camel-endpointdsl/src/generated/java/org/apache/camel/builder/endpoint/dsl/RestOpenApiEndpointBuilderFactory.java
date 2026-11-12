@@ -160,8 +160,8 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the consumer should fail,ignore or return a mock response for
-         * OpenAPI operations that are not mapped to a corresponding route.
+         * Whether the consumer should fail, ignore or return a mock response
+         * for OpenAPI operations that are not mapped to a corresponding route.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

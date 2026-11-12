@@ -133,7 +133,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     private boolean clientResponseValidation;
     @Metadata(label = "producer", description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
-    @Metadata(description = "Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
+    @Metadata(description = "Whether the consumer should fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
               label = "consumer", enums = "fail,ignore,mock", defaultValue = "fail")
     private String missingOperation;
     @Metadata(description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern."

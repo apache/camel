@@ -287,7 +287,7 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     }
 
     /**
-     * Whether to delay the release task for a period of millis.
+     * How many millis to delay the release task.
      */
     public void setReadLockIdempotentReleaseDelay(int readLockIdempotentReleaseDelay) {
         this.readLockIdempotentReleaseDelay = readLockIdempotentReleaseDelay;
