@@ -33,9 +33,9 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiAwait.await;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.awaitility.Awaitility.await;
 
 /**
  * The diagrams ask for the structure of the routes only when the routes change, and take the numbers from the status

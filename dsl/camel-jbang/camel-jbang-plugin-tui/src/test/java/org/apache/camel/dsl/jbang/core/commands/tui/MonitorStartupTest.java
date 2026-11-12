@@ -32,9 +32,9 @@ import org.apache.camel.test.AvailablePortFinder.Port;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiAwait.await;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.awaitility.Awaitility.await;
 
 /**
  * Tests for {@link MonitorStartup} that bind a real network port: isolated from parallel test forks to avoid port races
