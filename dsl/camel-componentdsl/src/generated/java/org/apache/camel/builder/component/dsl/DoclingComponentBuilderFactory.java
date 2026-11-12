@@ -937,16 +937,19 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
-         * Header name for API key authentication.
+         * Header name for API key authentication. Deprecation note: Not used:
+         * the docling-serve client always sends the API key in the X-Api-Key
+         * header.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: X-API-Key
+         * Default: X-Api-Key
          * Group: security
          * 
          * @param apiKeyHeader the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default DoclingComponentBuilder apiKeyHeader(java.lang.String apiKeyHeader) {
             doSetProperty("apiKeyHeader", apiKeyHeader);
             return this;

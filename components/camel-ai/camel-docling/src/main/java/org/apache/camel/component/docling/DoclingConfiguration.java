@@ -128,8 +128,10 @@ public class DoclingConfiguration implements Cloneable {
     private AuthenticationScheme authenticationScheme = AuthenticationScheme.NONE;
 
     @UriParam(label = "security")
-    @Metadata(description = "Header name for API key authentication", defaultValue = "X-API-Key")
-    private String apiKeyHeader = "X-API-Key";
+    @Metadata(description = "Header name for API key authentication", defaultValue = "X-Api-Key",
+              deprecationNote = "Not used: the docling-serve client always sends the API key in the X-Api-Key header")
+    @Deprecated
+    private String apiKeyHeader = "X-Api-Key";
 
     @UriParam(label = "advanced")
     @Metadata(description = "Use asynchronous conversion mode (docling-serve API only)", defaultValue = "false")
@@ -426,10 +428,22 @@ public class DoclingConfiguration implements Cloneable {
         this.authenticationScheme = authenticationScheme;
     }
 
+    /**
+     * Header name for API key authentication
+     *
+     * @deprecated not used: the docling-serve client always sends the API key in the {@code X-Api-Key} header
+     */
+    @Deprecated
     public String getApiKeyHeader() {
         return apiKeyHeader;
     }
 
+    /**
+     * Header name for API key authentication
+     *
+     * @deprecated not used: the docling-serve client always sends the API key in the {@code X-Api-Key} header
+     */
+    @Deprecated
     public void setApiKeyHeader(String apiKeyHeader) {
         this.apiKeyHeader = apiKeyHeader;
     }

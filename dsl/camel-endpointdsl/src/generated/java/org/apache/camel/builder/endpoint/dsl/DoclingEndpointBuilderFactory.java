@@ -1169,16 +1169,19 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
-         * Header name for API key authentication.
+         * Header name for API key authentication. Deprecation note: Not used:
+         * the docling-serve client always sends the API key in the X-Api-Key
+         * header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: X-API-Key
+         * Default: X-Api-Key
          * Group: security
          * 
          * @param apiKeyHeader the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default DoclingEndpointConsumerBuilder apiKeyHeader(String apiKeyHeader) {
             doSetProperty("apiKeyHeader", apiKeyHeader);
             return this;
@@ -2761,16 +2764,19 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
-         * Header name for API key authentication.
+         * Header name for API key authentication. Deprecation note: Not used:
+         * the docling-serve client always sends the API key in the X-Api-Key
+         * header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: X-API-Key
+         * Default: X-Api-Key
          * Group: security
          * 
          * @param apiKeyHeader the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default DoclingEndpointProducerBuilder apiKeyHeader(String apiKeyHeader) {
             doSetProperty("apiKeyHeader", apiKeyHeader);
             return this;
@@ -4246,16 +4252,19 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
-         * Header name for API key authentication.
+         * Header name for API key authentication. Deprecation note: Not used:
+         * the docling-serve client always sends the API key in the X-Api-Key
+         * header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: X-API-Key
+         * Default: X-Api-Key
          * Group: security
          * 
          * @param apiKeyHeader the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default DoclingEndpointBuilder apiKeyHeader(String apiKeyHeader) {
             doSetProperty("apiKeyHeader", apiKeyHeader);
             return this;
