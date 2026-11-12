@@ -62,7 +62,7 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
         this.camelContext = camelContext;
         this.rejectExecution = rejectExecution;
         this.correlationExpression = correlation;
-        this.maxRequestsExpression = ObjectHelper.notNull(maxRequestsExpression, "maxConcurrentRequestsExpression");
+        this.maxRequestsExpression = ObjectHelper.notNull(maxRequestsExpression, "maxRequestsExpression");
     }
 
     /**
@@ -165,8 +165,8 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
      * Sets the maximum number of concurrent requests.
      */
     @Override
-    public void setMaximumRequestsExpression(Expression maxConcurrentRequestsExpression) {
-        this.maxRequestsExpression = maxConcurrentRequestsExpression;
+    public void setMaximumRequestsExpression(Expression maxRequestsExpression) {
+        this.maxRequestsExpression = maxRequestsExpression;
     }
 
     public Expression getMaximumRequestsExpression() {

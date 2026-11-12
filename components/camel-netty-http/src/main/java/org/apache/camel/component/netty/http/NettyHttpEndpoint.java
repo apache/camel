@@ -337,7 +337,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
         if (securityConfiguration != null) {
             StringHelper.notEmpty(securityConfiguration.getRealm(), "realm", securityConfiguration);
-            StringHelper.notEmpty(securityConfiguration.getConstraint(), "restricted", securityConfiguration);
+            StringHelper.notEmpty(securityConfiguration.getConstraint(), "constraint", securityConfiguration);
 
             if (securityConfiguration.getSecurityAuthenticator() == null) {
                 // setup default JAAS authenticator if none was configured

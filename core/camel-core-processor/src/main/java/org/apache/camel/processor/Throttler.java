@@ -42,7 +42,7 @@ public interface Throttler extends Processor {
     /**
      * Expression for computing the maximum requests (can be dynamic and group based)
      */
-    void setMaximumRequestsExpression(Expression maxConcurrentRequestsExpression);
+    void setMaximumRequestsExpression(Expression maxRequestsExpression);
 
     /**
      * The current maximum number of requests

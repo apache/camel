@@ -57,7 +57,7 @@ public class ApplicationPkcs7MimeCompressedDataEntity extends MimeEntity {
         try {
             this.compressedData = createCompressedData(entity2Encrypt, dataGenerator, compressor);
         } catch (Exception e) {
-            throw new HttpException("Failed to create encrypted data");
+            throw new HttpException("Failed to create compressed data", e);
         }
     }
 
@@ -66,7 +66,7 @@ public class ApplicationPkcs7MimeCompressedDataEntity extends MimeEntity {
         super(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "compressed-data"),
                 new BasicNameValuePair("name", "smime.p7z")),
               compressedContentTransferEncoding);
-        this.compressedData = ObjectHelper.notNull(compressedData, "encryptedData");
+        this.compressedData = ObjectHelper.notNull(compressedData, "compressedData");
 
         addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
         setMainBody(isMainBody);
