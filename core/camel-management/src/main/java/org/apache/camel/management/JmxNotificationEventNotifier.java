@@ -74,9 +74,9 @@ public class JmxNotificationEventNotifier extends EventNotifierSupport implement
 
     /**
      * Sets the source to be used when broadcasting events. The source is just a readable identifier which helps the
-     * receiver see where the event is coming from. You can assign a value such a server or application name etc.
-     * <p/>
-     * By default <tt>Camel</tt> will be used as source.
+     * receiver see where the event is coming from. You can assign a value such as a server or application name etc.
+     * <p>
+     * By default <code>Camel</code> will be used as source.
      *
      * @param source the source
      */

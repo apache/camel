@@ -45,7 +45,7 @@ public class SmbProducerFileExistOverrideNoFileBeforeIT extends SmbServerTestSup
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Bye World",
-                        new String(copyFileContentFromContainer("/data/rw/notexistoverride/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/notexistoverride/hello.txt"))));
     }
 
     @Override

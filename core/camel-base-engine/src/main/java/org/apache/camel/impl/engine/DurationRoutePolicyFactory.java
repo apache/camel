@@ -26,13 +26,13 @@ import org.apache.camel.support.PatternHelper;
 
 /**
  * {@link org.apache.camel.spi.RoutePolicyFactory} which executes for a duration and then triggers an action.
- * <p/>
- * This can be used to stop a set of routes (or CamelContext) after they have processed a number of messages, or has
+ * <p>
+ * This can be used to stop a set of routes (or CamelContext) after they have processed a number of messages, or have
  * been running for N seconds.
  */
 @Metadata(label = "bean",
           description = "RoutePolicyFactory which executes for a duration and then triggers an action."
-                        + " This can be used to stop a set of routes after they have processed a number of messages, or has been running for N seconds.",
+                        + " This can be used to stop a set of routes after they have processed a number of messages, or have been running for N seconds.",
           annotations = { "interfaceName=org.apache.camel.spi.RoutePolicyFactory" })
 @Configurer(metadataOnly = true)
 public class DurationRoutePolicyFactory implements RoutePolicyFactory {

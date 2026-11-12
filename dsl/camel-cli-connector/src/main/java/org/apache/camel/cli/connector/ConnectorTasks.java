@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 final class ConnectorTasks {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConnectorTasks.class);
-    // an Error is logged as a warning once: the task runs every second, and may fail every time
+    // an Error is logged as a warning once: the tasks run every second or more often, and may fail every time
     private static final AtomicBoolean WARNED = new AtomicBoolean();
 
     private ConnectorTasks() {

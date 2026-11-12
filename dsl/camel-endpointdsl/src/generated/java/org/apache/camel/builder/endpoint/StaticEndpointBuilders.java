@@ -4377,10 +4377,17 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cxf:beanId:address</code>
      * 
      * Path parameter: beanId
-     * To lookup an existing configured CxfEndpoint. Must used bean: as prefix.
+     * The id of a CxfEndpoint bean in the registry to use as this endpoint.
+     * Written in the path of the endpoint URI in place of the service address,
+     * with the prefix bean:, for example bean:orderEndpoint. The component sets
+     * the options of the endpoint URI on that bean, so endpoint URIs with
+     * different options must not share one bean instance.
      * 
      * Path parameter: address
-     * The service publish address.
+     * The service address, for example http://localhost:9000/orders. The
+     * consumer receives requests at this address, and the producer sends
+     * requests to it. The CamelDestinationOverrideUrl header replaces this
+     * address for a request that the producer sends over HTTP.
      * 
      * @param path beanId:address
      * @return the dsl builder
@@ -4400,10 +4407,17 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cxf:beanId:address</code>
      * 
      * Path parameter: beanId
-     * To lookup an existing configured CxfEndpoint. Must used bean: as prefix.
+     * The id of a CxfEndpoint bean in the registry to use as this endpoint.
+     * Written in the path of the endpoint URI in place of the service address,
+     * with the prefix bean:, for example bean:orderEndpoint. The component sets
+     * the options of the endpoint URI on that bean, so endpoint URIs with
+     * different options must not share one bean instance.
      * 
      * Path parameter: address
-     * The service publish address.
+     * The service address, for example http://localhost:9000/orders. The
+     * consumer receives requests at this address, and the producer sends
+     * requests to it. The CamelDestinationOverrideUrl header replaces this
+     * address for a request that the producer sends over HTTP.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4425,11 +4439,21 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cxfrs:beanId:address</code>
      * 
      * Path parameter: beanId
-     * To lookup an existing configured CxfRsEndpoint. Must used bean: as
-     * prefix.
+     * The id of the registry bean that defines this endpoint. Written in the
+     * path of the endpoint URI in place of the service address, with the prefix
+     * bean:, for example bean:rsEndpoint. The bean is a CxfRsEndpoint, or, with
+     * camel-cxf-spring-rest, a CXF JAXRSServerFactoryBean for the consumer or a
+     * JAXRSClientFactoryBean for the producer, for example from a cxf:rsServer
+     * or cxf:rsClient element in Spring XML. The options of the endpoint URI
+     * are applied after the settings of the bean. On a CxfRsEndpoint bean, they
+     * are applied to the bean itself, so endpoint URIs with different options
+     * must not share one CxfRsEndpoint bean.
      * 
      * Path parameter: address
-     * The service publish address.
+     * The service address, for example http://localhost:9000/rest. The consumer
+     * receives requests at this address, and the producer sends requests to it.
+     * The CamelDestinationOverrideUrl header replaces this address for a
+     * request that the producer sends.
      * 
      * @param path beanId:address
      * @return the dsl builder
@@ -4449,11 +4473,21 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cxfrs:beanId:address</code>
      * 
      * Path parameter: beanId
-     * To lookup an existing configured CxfRsEndpoint. Must used bean: as
-     * prefix.
+     * The id of the registry bean that defines this endpoint. Written in the
+     * path of the endpoint URI in place of the service address, with the prefix
+     * bean:, for example bean:rsEndpoint. The bean is a CxfRsEndpoint, or, with
+     * camel-cxf-spring-rest, a CXF JAXRSServerFactoryBean for the consumer or a
+     * JAXRSClientFactoryBean for the producer, for example from a cxf:rsServer
+     * or cxf:rsClient element in Spring XML. The options of the endpoint URI
+     * are applied after the settings of the bean. On a CxfRsEndpoint bean, they
+     * are applied to the bean itself, so endpoint URIs with different options
+     * must not share one CxfRsEndpoint bean.
      * 
      * Path parameter: address
-     * The service publish address.
+     * The service address, for example http://localhost:9000/rest. The consumer
+     * receives requests at this address, and the producer sends requests to it.
+     * The CamelDestinationOverrideUrl header replaces this address for a
+     * request that the producer sends.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

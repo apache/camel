@@ -21,15 +21,15 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
- * A {@link PropertiesFunction} that lookup the property value from OS environment variables using the service idiom.
- * <p/>
- * A service is defined using two environment variables where name is name of the service:
+ * A {@link PropertiesFunction} that looks up the property value from OS environment variables using the service idiom.
+ * <p>
+ * A service is defined using two environment variables where NAME is the name of the service:
  * <ul>
- * <li><tt>NAME_SERVICE_HOST</tt></li>
- * <li><tt>NAME_SERVICE_PORT</tt></li>
+ * <li><code>NAME_SERVICE_HOST</code></li>
+ * <li><code>NAME_SERVICE_PORT</code></li>
  * </ul>
- * in other words the service uses <tt>_SERVICE_HOST</tt> and <tt>_SERVICE_PORT</tt> as prefix.
- * <p/>
+ * in other words the service uses <code>_SERVICE_HOST</code> and <code>_SERVICE_PORT</code> as suffix.
+ * <p>
  * This implementation is to return the host part only.
  *
  * @see ServicePropertiesFunction

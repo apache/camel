@@ -25,9 +25,9 @@ import org.apache.camel.util.StringHelper;
 
 /**
  * Default implementation of {@link ManagementNameStrategy}
- * <p/>
- * This implementation will by default use a name pattern as <tt>#name#</tt> and in case of a clash, then the pattern
- * will fallback to be using the counter as <tt>#name#-#counter#</tt>.
+ * <p>
+ * This implementation will by default use a name pattern as <code>#name#</code> and in case of a clash, then the
+ * pattern will fall back to using the counter as <code>#name#-#counter#</code>.
  */
 public class DefaultManagementNameStrategy implements ManagementNameStrategy {
 

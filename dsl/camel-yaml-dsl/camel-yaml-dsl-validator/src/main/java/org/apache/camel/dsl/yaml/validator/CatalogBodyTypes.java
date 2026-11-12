@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.BodyTypeModel;
@@ -36,6 +35,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.TransformerModel;
+import tools.jackson.databind.JsonNode;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
 
@@ -215,7 +215,7 @@ final class CatalogBodyTypes {
     }
 
     private Answer transformerSide(JsonNode step, String side) {
-        return transformerSide(step != null && step.isObject() && step.has("toType") ? step.get("toType").asText() : null,
+        return transformerSide(step != null && step.isObject() && step.has("toType") ? step.get("toType").asString("") : null,
                 side);
     }
 
@@ -258,8 +258,8 @@ final class CatalogBodyTypes {
             configurable.add(option.getName());
         }
         Map<String, String> set = values(node != null && node.isObject() ? node.get("parameters") : null);
-        String text = node != null && node.isTextual() ? node.asText()
-                : node != null && node.isObject() && node.has("uri") ? node.get("uri").asText() : null;
+        String text = node != null && node.isString() ? node.asString()
+                : node != null && node.isObject() && node.has("uri") ? node.get("uri").asString("") : null;
         set.putAll(query(text));
         readPath(uri, model, set, configurable);
         return answer(model.getBodyType(side), set, configurable);
@@ -312,10 +312,10 @@ final class CatalogBodyTypes {
     private static Map<String, String> values(JsonNode node) {
         Map<String, String> answer = new HashMap<>();
         if (node != null && node.isObject()) {
-            for (var it = node.fieldNames(); it.hasNext();) {
+            for (var it = node.propertyNames().iterator(); it.hasNext();) {
                 String key = it.next();
                 JsonNode value = node.get(key);
-                answer.put(camelCase(key), value.isValueNode() ? value.asText() : value.toString());
+                answer.put(camelCase(key), value.isValueNode() ? value.asString() : value.toString());
             }
         }
         return answer;
@@ -478,7 +478,7 @@ final class CatalogBodyTypes {
         if (names.size() > 1) {
             // json is jackson, gson, fastjson or jsonb: the library option names it
             JsonNode library = options != null && options.isObject() ? options.get("library") : null;
-            String wanted = library != null && library.isValueNode() ? library.asText() : defaultLibrary(key);
+            String wanted = library != null && library.isValueNode() ? library.asString() : defaultLibrary(key);
             name = names.stream().filter(n -> n.equalsIgnoreCase(wanted)).findFirst().orElse(null);
         }
         if (name == null) {

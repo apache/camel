@@ -18,7 +18,6 @@ package org.apache.camel.component.spiffe;
 
 import java.util.Arrays;
 
-import io.spiffe.exception.JwtSvidException;
 import io.spiffe.svid.jwtsvid.JwtSvid;
 import io.spiffe.svid.x509svid.X509Svid;
 import io.spiffe.workloadapi.WorkloadApiClient;
@@ -79,72 +78,13 @@ public class SpiffeProducer extends DefaultProducer {
     }
 
     private void validateJwtSvid(WorkloadApiClient client, Exchange exchange) throws Exception {
-        String token = exchange.getIn().getHeader(SpiffeConstants.TOKEN, String.class);
-        if (ObjectHelper.isEmpty(token)) {
-            // a JWT-SVID is presented over HTTP as "Authorization: Bearer <token>", so an HTTP route can validate it
-            // without a bean to strip the scheme; check it before the body so a request payload on a POST/PUT is not
-            // mistaken for the token
-            token = bearerToken(exchange.getIn().getHeader("Authorization", String.class));
+        boolean preserveBody = getEndpoint().getConfiguration().isPreserveBody();
+        JwtSvid svid = SpiffeJwtValidator.validate(
+                client, exchange, getEndpoint().getConfiguration().getAudience(), !preserveBody);
+        SpiffeJwtValidator.recordIdentity(exchange, svid, true);
+        if (!preserveBody) {
+            getMessageForResponse(exchange).setBody(svid);
         }
-        if (ObjectHelper.isEmpty(token)) {
-            token = exchange.getIn().getBody(String.class);
-        }
-        if (ObjectHelper.isEmpty(token)) {
-            throw new IllegalArgumentException(
-                    "A JWT-SVID token is required for validateJwtSvid (set the CamelSpiffeToken header, an"
-                                               + " Authorization: Bearer header, or the message body)");
-        }
-        // the audience is the check here, not a parameter: it is what binds the token to THIS workload, so it
-        // comes from the configuration only. Honouring CamelSpiffeAudience would let a caller validate a token
-        // minted for someone else against an audience of their choosing.
-        JwtSvid svid = validateAgainstAnyAudience(client, token, resolveConfiguredAudiences());
-        Message message = getMessageForResponse(exchange);
-        message.setBody(svid);
-        message.setHeader(SpiffeConstants.SPIFFE_ID, svid.getSpiffeId().toString());
-    }
-
-    /**
-     * Validates the token against the configured audiences, accepting it if <em>any</em> of them matches.
-     * <p/>
-     * The Workload API validates against one audience at a time, so a configured list has to be tried in turn. Taking
-     * only the first would silently enforce a narrower rule than the configuration asks for, which is the wrong failure
-     * mode for a check that decides whether a caller is authenticated.
-     */
-    private JwtSvid validateAgainstAnyAudience(WorkloadApiClient client, String token, String[] audiences)
-            throws JwtSvidException {
-        JwtSvidException failure = null;
-        for (String audience : audiences) {
-            try {
-                return client.validateJwtSvid(token, audience);
-            } catch (JwtSvidException e) {
-                // could be this audience, or the token itself; only once every audience has failed do we know
-                failure = e;
-            }
-        }
-        // resolveConfiguredAudiences never returns an empty array, so the loop ran and failure is set; be explicit
-        // rather than leaving a reader (or a static analyser) to prove it
-        if (failure == null) {
-            throw new IllegalStateException("No audience was configured to validate against");
-        }
-        throw failure;
-    }
-
-    /**
-     * Extracts the token from an {@code Authorization: Bearer <token>} value, matching the scheme case-insensitively
-     * and trimming the token. Returns {@code null} for a missing, empty or non-bearer value, so such a request falls
-     * through to the single "token required" error rather than a scheme-specific one.
-     */
-    private static String bearerToken(String authorization) {
-        if (ObjectHelper.isEmpty(authorization)) {
-            return null;
-        }
-        String value = authorization.trim();
-        String scheme = "Bearer ";
-        if (value.length() > scheme.length() && value.regionMatches(true, 0, scheme, 0, scheme.length())) {
-            String token = value.substring(scheme.length()).trim();
-            return token.isEmpty() ? null : token;
-        }
-        return null;
     }
 
     private SpiffeOperation determineOperation(Exchange exchange) {
@@ -168,26 +108,8 @@ public class SpiffeProducer extends DefaultProducer {
         return splitAudiences(audience, "set the audience option or the CamelSpiffeAudience header");
     }
 
-    /**
-     * Audience for a validation: taken from the configuration only, never from the message.
-     */
-    private String[] resolveConfiguredAudiences() {
-        // deliberately does not mention the header: it is ignored for validation
-        return splitAudiences(getEndpoint().getConfiguration().getAudience(), "set the audience option");
-    }
-
-    private String[] splitAudiences(String audience, String how) {
-        if (ObjectHelper.isEmpty(audience)) {
-            throw new IllegalArgumentException("At least one audience is required (" + how + ")");
-        }
-        String[] parts = Arrays.stream(audience.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .toArray(String[]::new);
-        if (parts.length == 0) {
-            throw new IllegalArgumentException("At least one non-blank audience is required (" + how + ")");
-        }
-        return parts;
+    private static String[] splitAudiences(String audience, String how) {
+        return SpiffeJwtValidator.audiences(audience, how);
     }
 
     private static Message getMessageForResponse(Exchange exchange) {

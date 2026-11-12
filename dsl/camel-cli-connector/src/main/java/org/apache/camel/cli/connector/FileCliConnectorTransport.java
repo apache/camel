@@ -46,6 +46,9 @@ import org.slf4j.LoggerFactory;
  * to <tt>{pid}-output*.json</tt>, and the snapshots to <tt>{pid}-status.json</tt>, <tt>{pid}-trace.json</tt> and so on.
  * Deleting the <tt>{pid}</tt> lock file shuts down the integration.
  * <p/>
+ * The snapshots are written every second (every 100 millis in debug mode), and the action files are looked for about
+ * every 100 millis in between, on the same thread, so an action does not wait up to a second for its answer.
+ * <p/>
  * An action with a request id (<tt>{pid}-action-{requestId}.json</tt>) always gets a reply in
  * <tt>{pid}-output-{requestId}.json</tt>: <tt>{"status":"failed","error":"..."}</tt> when it is unknown, throws or
  * reports an error (with <tt>"reason":"not-found"</tt> when what it was asked to work on does not exist, and the result
@@ -66,6 +69,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private ScheduledExecutorService executor;
     private volatile Thread pollThread;
     private ScheduledFuture<?> scheduledFuture;
+    private ScheduledFuture<?> actionFuture;
     private int delay = 1000;
     private long counter;
     private final Map<File, PendingAction> pending = new HashMap<>();
@@ -74,6 +78,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private static final long UNREADABLE_GRACE_MS = 2000;
     // how long a stop waits for the poll in flight before it removes the files
     private static final long STOP_POLL_TIMEOUT_MS = 5000;
+    // how often the action files are looked for between two snapshots
+    private static final int ACTION_POLL_MS = 100;
 
     private record PendingAction(File output, boolean replyAlways, CompletableFuture<CliActionOutcome> outcome) {
     }
@@ -133,8 +139,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             receiveFile = createLockFile(lockFile.getName() + "-receive.json");
             timelineFile = createLockFile(lockFile.getName() + "-timeline.json");
-            scheduledFuture = executor.scheduleWithFixedDelay(() -> ConnectorTasks.safely(this::task), 0, delay,
-                    TimeUnit.MILLISECONDS);
+            schedule();
             LOG.info("Camel CLI connector enabled");
         } else {
             LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel CLI connector.", getPid());
@@ -153,21 +158,34 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
                 // ignore
             }
         }
+        if (actionFuture != null) {
+            actionFuture.cancel(false);
+            actionFuture = null;
+        }
         boolean done = scheduledFuture == null || scheduledFuture.isDone();
         if (done) {
             this.delay = delay;
-            scheduledFuture = executor.scheduleWithFixedDelay(() -> ConnectorTasks.safely(this::task), 0, delay,
-                    TimeUnit.MILLISECONDS);
+            if (lockFile != null) {
+                schedule();
+            }
+        }
+    }
+
+    /**
+     * Schedules the poll, and the action poll between two polls when the poll is slower than it (CAMEL-25447). Both on
+     * the single thread of the executor, so the actions still run one at a time and in order.
+     */
+    private void schedule() {
+        scheduledFuture = executor.scheduleWithFixedDelay(() -> ConnectorTasks.safely(this::task), 0, delay,
+                TimeUnit.MILLISECONDS);
+        if (delay > ACTION_POLL_MS) {
+            actionFuture = executor.scheduleWithFixedDelay(() -> ConnectorTasks.safely(this::actionPollTask),
+                    ACTION_POLL_MS, ACTION_POLL_MS, TimeUnit.MILLISECONDS);
         }
     }
 
     protected void task() {
-        if (!lockFile.exists() && terminating.compareAndSet(false, true)) {
-            // if the lock file is deleted then trigger termination
-            shutdown.run();
-            return;
-        }
-        if (!statusFile.exists()) {
+        if (!polling()) {
             return;
         }
 
@@ -178,6 +196,28 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         if (++counter % 2 == 0) {
             traceTask();
         }
+    }
+
+    /**
+     * Looks for actions between two snapshots, so an action is answered in about 100 millis instead of up to a second.
+     */
+    protected void actionPollTask() {
+        if (polling()) {
+            actionTask();
+        }
+    }
+
+    /**
+     * Whether to poll: not when the status file is gone, nor once the lock file is deleted, which shuts down the
+     * integration.
+     */
+    private boolean polling() {
+        if (!lockFile.exists() && terminating.compareAndSet(false, true)) {
+            // if the lock file is deleted then trigger termination
+            shutdown.run();
+            return false;
+        }
+        return statusFile.exists();
     }
 
     protected synchronized void actionTask() {
@@ -447,6 +487,9 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         terminating.set(true);
         if (scheduledFuture != null) {
             scheduledFuture.cancel(false);
+        }
+        if (actionFuture != null) {
+            actionFuture.cancel(false);
         }
         awaitPoll();
         synchronized (this) {

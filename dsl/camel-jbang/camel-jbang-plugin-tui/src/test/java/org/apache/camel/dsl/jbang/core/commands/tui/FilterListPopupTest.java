@@ -25,6 +25,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.tui.event.MouseButton;
 import dev.tamboui.tui.event.MouseEvent;
 import org.junit.jupiter.api.Test;
@@ -132,5 +133,16 @@ class FilterListPopupTest {
         render(popup);
         popup.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 0, 0));
         assertThat(popup.isVisible()).isFalse();
+    }
+
+    @Test
+    void ctrlWDeletesTheLastWordOfTheFilter() {
+        WordPopup popup = new WordPopup();
+        popup.open();
+        type(popup, "log ti");
+
+        popup.handleKeyEvent(KeyEvent.ofChar('w', KeyModifiers.CTRL));
+
+        assertThat(popup.filter.filter()).isEqualTo("log ");
     }
 }

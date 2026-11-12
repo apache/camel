@@ -50,6 +50,20 @@ public class EndpointConsumersTest {
     }
 
     @Test
+    public void testLeadingZeroNumberDoesNotHideTheConsumer() {
+        // 08540 is no octal number: a file that fails to read would consume nothing
+        assertThat(EndpointConsumers.consumed("""
+                - route:
+                    from:
+                      uri: direct:orders
+                      steps:
+                        - setHeader:
+                            name: zip
+                            constant: 08540
+                """)).containsExactly("direct:orders");
+    }
+
+    @Test
     public void testAnotherFileConsumesIt() {
         // the routes of an application are spread over files: what the siblings consume is passed in
         assertThat(EndpointConsumers.check(SENDS_TO.formatted("direct:lookup?timeout=1000"), Set.of("direct:lookup")))

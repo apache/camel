@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -25,6 +26,10 @@ import jakarta.jms.JMSException;
 import jakarta.jms.MessageEOFException;
 import jakarta.jms.StreamMessage;
 
+/**
+ * An {@link InputStream} over the bytes of a received {@link StreamMessage}, as written by the producer: one or more
+ * {@code byte[]} fields, which are read one after the other.
+ */
 public class StreamMessageInputStream extends InputStream {
 
     private final Lock lock = new ReentrantLock();
@@ -37,27 +42,44 @@ public class StreamMessageInputStream extends InputStream {
 
     @Override
     public int read() throws IOException {
-        try {
-            return message.readByte();
-        } catch (MessageEOFException e) {
-            eof = true;
-            return -1;
-        } catch (JMSException e) {
-            throw new IOException(e);
-        }
+        // the message holds byte[] fields, which cannot be read with readByte, so read one byte through the array
+        byte[] single = new byte[1];
+        int num = read(single, 0, 1);
+        return num < 0 ? -1 : single[0] & 0xFF;
     }
 
     @Override
     public int read(byte[] array) throws IOException {
-        return doRead(array);
+        return read(array, 0, array.length);
+    }
+
+    @Override
+    public int read(byte[] array, int off, int len) throws IOException {
+        Objects.checkFromIndexSize(off, len, array.length);
+        if (len == 0) {
+            return 0;
+        }
+        if (off == 0 && len == array.length) {
+            return doRead(array);
+        }
+        // readBytes always fills from the start of the array, so read into a buffer and copy it to the offset
+        byte[] buffer = new byte[len];
+        int num = doRead(buffer);
+        if (num > 0) {
+            System.arraycopy(buffer, 0, array, off, num);
+        }
+        return num;
     }
 
     private int doRead(byte[] array) throws IOException {
+        if (eof) {
+            return -1;
+        }
         try {
             int num = message.readBytes(array);
-            if (num < 0) {
-                //the first 128K(FileUtil.BUFFER_SIZE/128K is used when sending JMS StreamMessage)
-                //buffer reached, give a chance to see if there is the next 128K buffer
+            if (num <= 0) {
+                // the end of the current byte[] field (the producer writes the payload in chunks)
+                // so continue with the next field, if there is one
                 num = message.readBytes(array);
             }
             eof = num < 0;
@@ -71,16 +93,11 @@ public class StreamMessageInputStream extends InputStream {
     }
 
     @Override
-    public int read(byte[] array, int off, int len) throws IOException {
-        // we cannot honor off and len, but assuming off is always 0
-        return doRead(array);
-    }
-
-    @Override
     public void reset() throws IOException {
         lock.lock();
         try {
             message.reset();
+            eof = false;
         } catch (JMSException e) {
             throw new IOException(e);
         } finally {

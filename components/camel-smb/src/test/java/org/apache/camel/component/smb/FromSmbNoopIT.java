@@ -53,7 +53,7 @@ public class FromSmbNoopIT extends SmbServerTestSupport {
         // assert the file is still there
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/noop/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/noop/hello.txt"))));
     }
 
     private void prepareSmbServer() throws Exception {

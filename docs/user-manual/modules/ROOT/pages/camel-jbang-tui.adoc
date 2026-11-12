@@ -147,6 +147,27 @@ a tape and converting it to a GIF
 | *Esc* | Close popup / go back / return to Overview
 |===
 
+=== Text Fields
+
+The text fields (filters, forms, the AI prompt, the source editor) share the same editing keys:
+
+[cols="2,5",options="header"]
+|===
+| Key | Action
+
+| *Left/Right*, *Home/End* | Move the cursor
+| *Backspace* / *Delete* | Delete a character
+| *Ctrl+Left/Right* | Move a word (*Alt+Left/Right* on macOS)
+| *Ctrl+Backspace* / *Ctrl+W* | Delete the word before the cursor (*Alt+Backspace* on macOS)
+| *Ctrl+Delete* | Delete the word after the cursor (*Alt+Delete* on macOS)
+|===
+
+The TUI asks the terminal for the https://sw.kovidgoyal.net/kitty/keyboard-protocol/[Kitty keyboard protocol], which
+Kitty, Ghostty, WezTerm, foot and iTerm2 support. It lets the terminal report keys together with their modifiers, such as
+*Shift+Enter* and *Ctrl+Backspace*, which a terminal without it sends as a plain *Enter* or *Backspace*. A terminal
+without the protocol ignores the request, and the keys that need it have an alternative (*Ctrl+W* for *Ctrl+Backspace*,
+*Ctrl+N* for *Shift+Enter* in the AI prompt).
+
 === Source Tab
 
 See the xref:camel-jbang-tui-source-editor.adoc#_keyboard_shortcuts[keyboard shortcuts] of the Source Editor.

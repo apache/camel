@@ -53,14 +53,14 @@ import org.slf4j.LoggerFactory;
  * <li>{@link Transformer}</li>
  * </ul>
  * ... and more.
- * <p/>
+ * <p>
  * This implementation executes this cross cutting functionality as a {@link CamelInternalProcessorAdvice} advice
  * (before and after advice) by executing the {@link CamelInternalProcessorAdvice#before(Exchange)} and
  * {@link CamelInternalProcessorAdvice#after(Exchange, Object)} callbacks in correct order during routing. This reduces
  * number of stack frames needed during routing, and reduce the number of lines in stacktraces, as well makes debugging
  * the routing engine easier for end users.
- * <p/>
- * <b>Debugging tips:</b> Camel end users whom want to debug their Camel applications with the Camel source code, then
+ * <p>
+ * <b>Debugging tips:</b> Camel end users who want to debug their Camel applications with the Camel source code, then
  * make sure to read the source code of this class about the debugging tips, which you can find in the
  * {@link #process(Exchange, AsyncCallback, AsyncProcessor, Processor)} method.
  */

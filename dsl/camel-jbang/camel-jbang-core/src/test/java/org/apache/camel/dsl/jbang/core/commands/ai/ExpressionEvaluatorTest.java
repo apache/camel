@@ -56,7 +56,7 @@ class ExpressionEvaluatorTest {
         assertEquals("true", predicate.getString("result"));
 
         JsonObject note = ExpressionEvaluator.evaluate(ctx, "simple", "${body.length()}", null);
-        assertTrue(note.getString("note").contains("empty body"));
+        assertEquals(ExpressionEvaluator.NO_BODY_NOTE, note.getString("note"));
 
         JsonObject error = ExpressionEvaluator.evaluate(ctx, "simple", "${header.foo ?: x}", null);
         assertEquals("error", error.getString("status"), "the fallback is not quoted");
@@ -85,7 +85,9 @@ class ExpressionEvaluatorTest {
         assertTrue(value.containsKey("result"));
         assertNull(value.get("result"));
         assertTrue(value.getBoolean("nullResult"));
-        assertEquals(ExpressionEvaluator.NULL_NOTE, value.getString("note"));
+        assertEquals("evaluated to null: the header missing is not set: an evaluation has only the headers passed in"
+                     + " headers",
+                value.getString("note"));
 
         JsonObject empty = ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${body}", null);
         assertNull(empty.get("nullResult"), "an empty body is a value");

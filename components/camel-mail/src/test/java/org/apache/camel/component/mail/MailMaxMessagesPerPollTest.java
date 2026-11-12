@@ -43,20 +43,18 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
     @Test
     public void testBatchConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.setResultWaitTime(2000);
-        mock.expectedMessageCount(3);
+        // the second poll may happen right after the first one, so verify both batches in a single expectation
+        mock.expectedMessageCount(5);
         mock.message(0).body().isEqualTo("Message 0");
         mock.message(1).body().isEqualTo("Message 1");
         mock.message(2).body().isEqualTo("Message 2");
-        mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 3);
-
-        MockEndpoint.assertIsSatisfied(context);
-
-        mock.reset();
-        mock.expectedMessageCount(2);
-        mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
-        mock.message(0).body().isEqualTo("Message 3");
-        mock.message(1).body().isEqualTo("Message 4");
+        mock.message(3).body().isEqualTo("Message 3");
+        mock.message(4).body().isEqualTo("Message 4");
+        mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(3);
+        mock.message(1).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(3);
+        mock.message(2).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(3);
+        mock.message(3).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(2);
+        mock.message(4).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(2);
 
         MockEndpoint.assertIsSatisfied(context);
     }

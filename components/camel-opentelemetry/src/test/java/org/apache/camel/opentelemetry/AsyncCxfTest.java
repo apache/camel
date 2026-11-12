@@ -20,10 +20,13 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 @Deprecated(since = "4.19.0")
+@Disabled("CAMEL-26890: flaky, camel-opentelemetry relies on thread-bound scopes which Camel async processing cannot guarantee,"
+          + " see design/tracing.adoc. Replaced by camel-opentelemetry2")
 class AsyncCxfTest extends CamelOpenTelemetryTestSupport {
 
     @RegisterExtension

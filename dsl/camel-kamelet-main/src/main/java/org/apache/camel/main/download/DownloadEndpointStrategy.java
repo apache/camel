@@ -55,6 +55,12 @@ public class DownloadEndpointStrategy implements EndpointStrategy {
             if (delegateUri != null) {
                 camelContext.getEndpoint(delegateUri);
             }
+        } else if (export && "webhook".equals(scheme) && endpoint instanceof StubEndpoint) {
+            // a stubbed webhook endpoint does not create its delegate endpoint, so resolve it here (CAMEL-26325)
+            String delegateUri = extractWebhookDelegateUri(uri);
+            if (delegateUri != null) {
+                camelContext.getEndpoint(delegateUri);
+            }
         }
         return endpoint;
     }
@@ -65,6 +71,15 @@ public class DownloadEndpointStrategy implements EndpointStrategy {
         String namespace = StringHelper.before(remaining, ":");
         String delegateUri = StringHelper.after(remaining, ":");
         if (ObjectHelper.isEmpty(namespace) || ObjectHelper.isEmpty(delegateUri)) {
+            return null;
+        }
+        return delegateUri;
+    }
+
+    // extracts the delegate uri the same way as WebhookComponent (the remaining part, with the query parameters)
+    private static String extractWebhookDelegateUri(String uri) {
+        String delegateUri = FileUtil.stripLeadingSeparator(StringHelper.after(uri, ":"));
+        if (ObjectHelper.isEmpty(StringHelper.before(delegateUri, "?", delegateUri))) {
             return null;
         }
         return delegateUri;

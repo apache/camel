@@ -41,12 +41,6 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.MissingNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.networknt.schema.Error;
 import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaLocation;
@@ -55,6 +49,7 @@ import com.networknt.schema.SchemaRegistryConfig;
 import com.networknt.schema.SpecificationVersion;
 import org.apache.camel.dsl.jbang.core.common.CitrusCatalogVersion;
 import org.apache.camel.dsl.yaml.validator.YamlPointerLines;
+import org.apache.camel.dsl.yaml.validator.YamlTrees;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
@@ -63,6 +58,13 @@ import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.ScalarNode;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.MissingNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.StringNode;
 
 /**
  * Checks a Citrus test, such as test/orders.citrus.it.yaml, against the JSON schema of a test from the Citrus catalog
@@ -84,9 +86,10 @@ public final class CitrusTestChecks {
     /** The items of the action lists of a container (sequential, parallel...), which the schema takes as any object. */
     private static final String NESTED_ACTION = "#/definitions/TestActionBuilder";
 
-    private static final ObjectMapper YAML = new ObjectMapper(new YAMLFactory());
-    private static final ObjectMapper JSON = new ObjectMapper();
-    private static final Pattern INTEGER = Pattern.compile("[-+]?\\d+");
+    private static final ObjectMapper YAML = YamlTrees.newMapper();
+    private static final ObjectMapper JSON = JsonMapper.builderWithJackson2Defaults().build();
+    /** The YAML 1.1 integers of SnakeYAML, which Citrus reads a test with: 1_000, 0x1F, 0b101, 0123. */
+    private static final Pattern INTEGER = Pattern.compile("[-+]?(?:0b[01_]+|0x[0-9a-fA-F_]+|[0-9][0-9_]*)");
     /** The words SnakeYAML, which Citrus reads a test with, takes as a boolean. */
     private static final Set<String> BOOLEAN_WORDS = Set.of("true", "false", "yes", "no", "on", "off");
 
@@ -160,7 +163,7 @@ public final class CitrusTestChecks {
         JsonNode tree;
         try {
             tree = YAML.readTree(content);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             return List.of();
         }
         if (tree == null || tree.isMissingNode()) {
@@ -273,7 +276,7 @@ public final class CitrusTestChecks {
     static TestSchema of(String version, String json) throws IOException {
         JsonNode model = JSON.readTree(json);
         Set<String> actions = new LinkedHashSet<>();
-        model.at("/definitions/TestActions/properties").fieldNames().forEachRemaining(actions::add);
+        model.at("/definitions/TestActions/properties").propertyNames().forEach(actions::add);
         if (actions.isEmpty()) {
             throw new IOException("the schema has no test actions");
         }
@@ -311,7 +314,7 @@ public final class CitrusTestChecks {
             return;
         }
         JsonNode r = node.get("$ref");
-        if (r != null && r.isTextual() && ref.test(r.asText())) {
+        if (r != null && r.isString() && ref.test(r.asString())) {
             if (!answer.contains(path)) {
                 answer.add(List.copyOf(path));
             }
@@ -346,14 +349,14 @@ public final class CitrusTestChecks {
         if (value.isNumber() || value.isBoolean()) {
             return expects(error, "string");
         }
-        if (value.isTextual()) {
-            String text = value.asText().trim();
+        if (value.isString()) {
+            String text = value.asString("").trim();
             if (expects(error, "integer")) {
                 return INTEGER.matcher(text).matches();
             }
             if (expects(error, "number")) {
                 try {
-                    Double.parseDouble(text);
+                    Double.parseDouble(text.replace("_", ""));
                     return true;
                 } catch (NumberFormatException e) {
                     return false;
@@ -369,13 +372,13 @@ public final class CitrusTestChecks {
         JsonNode node = error.getSchemaNode();
         if (node != null && node.isArray()) {
             for (JsonNode t : node) {
-                if (type.equals(t.asText())) {
+                if (type.equals(t.asString(""))) {
                     return true;
                 }
             }
             return false;
         }
-        return node != null && type.equals(node.asText());
+        return node != null && type.equals(node.asString(""));
     }
 
     /** The checks of one test: its tree for the schema, its YAML nodes for the lines and the keys of the actions. */
@@ -581,11 +584,11 @@ public final class CitrusTestChecks {
             for (String cli : List.of("cli", "jbang")) {
                 String pointer = at + "/camel/" + cli + "/verify/logMessage";
                 JsonNode value = tree.at(pointer);
-                if (!value.isTextual() || !hasPath(camel, cli, "verify", "logMessage")) {
+                if (!value.isString() || !hasPath(camel, cli, "verify", "logMessage")) {
                     continue;
                 }
                 List<String> escapes = new ArrayList<>();
-                String text = REGEX_ESCAPE.matcher(value.asText()).replaceAll(m -> {
+                String text = REGEX_ESCAPE.matcher(value.asString()).replaceAll(m -> {
                     boolean pair = "\\".equals(m.group(1));
                     if (!pair) {
                         escapes.add(m.group());
@@ -599,7 +602,7 @@ public final class CitrusTestChecks {
                                 + " integration logged a line that contains it as written, so the backslash"
                                 + (escapes.size() == 1 ? "" : "es") + " in " + and(escapes.stream().distinct().toList())
                                 + " would have to be in the log too.";
-                String written = keyLines(pointer, TextNode.valueOf(text));
+                String written = keyLines(pointer, StringNode.valueOf(text));
                 Node key = keyNode(pointer);
                 add(key != null ? line(key) : YamlPointerLines.line(root, pointer, null),
                         answer + (written != null ? written : " Write logMessage: " + quoted(text)));
@@ -657,13 +660,13 @@ public final class CitrusTestChecks {
                 }
                 if (!keys.isEmpty()) {
                     String answer = what + ": " + message + "; " + name(what) + " takes " + String.join(", ", keys);
-                    return isBody(keys) && tree.at(at).isValueNode() ? answer + bodyText(at, tree.at(at).asText()) : answer;
+                    return isBody(keys) && tree.at(at).isValueNode() ? answer + bodyText(at, tree.at(at).asString()) : answer;
                 }
             }
             if ("enum".equals(e.getKeyword()) && e.getSchemaNode() != null && e.getInstanceNode() != null) {
                 List<String> choices = new ArrayList<>();
-                e.getSchemaNode().forEach(c -> choices.add(c.asText()));
-                String value = e.getInstanceNode().asText();
+                e.getSchemaNode().forEach(c -> choices.add(c.asString("")));
+                String value = e.getInstanceNode().asString("");
                 String closest = QuickFixes.closest(value, choices);
                 return (what.isEmpty() ? "" : what + ": ") + value + " is not one of " + String.join(", ", choices)
                        + (closest != null ? " (did you mean " + closest + "?)" : "");
@@ -673,7 +676,7 @@ public final class CitrusTestChecks {
                 List<String> keys = new ArrayList<>();
                 e.getSchemaNode().forEach(branch -> {
                     if (branch.path("required").size() == 1) {
-                        keys.add(branch.path("required").get(0).asText());
+                        keys.add(branch.path("required").get(0).asString(""));
                     }
                 });
                 List<String> given = keys.stream().filter(e.getInstanceNode()::has).toList();
@@ -759,7 +762,7 @@ public final class CitrusTestChecks {
             if (key == null) {
                 return "";
             }
-            String text = node.get(key).asText();
+            String text = node.get(key).asString("");
             boolean contains = CONTAINS_KEYS.contains(key) || key.toLowerCase(Locale.ROOT).contains("contain");
             if (contains && isReceived(bodyAt)) {
                 String jsonPath = jsonPathCheck(bodyAt, Map.of("<field>", text));
@@ -885,7 +888,7 @@ public final class CitrusTestChecks {
                     }
                 }
                 return true;
-            } catch (IOException | RuntimeException e) {
+            } catch (RuntimeException e) {
                 return false;
             }
         }
@@ -982,8 +985,8 @@ public final class CitrusTestChecks {
             }
             List<JsonNode> more = new ArrayList<>();
             JsonNode ref = node.get("$ref");
-            if (ref != null && ref.isTextual() && ref.asText().startsWith("#")) {
-                more.add(schema.model().at(ref.asText().substring(1)));
+            if (ref != null && ref.isString() && ref.asString().startsWith("#")) {
+                more.add(schema.model().at(ref.asString("").substring(1)));
             }
             for (String composition : new String[] { "allOf", "anyOf", "oneOf" }) {
                 node.path(composition).forEach(more::add);
@@ -1071,36 +1074,37 @@ public final class CitrusTestChecks {
 
             private boolean place(String key, JsonNode value, String side) {
                 boolean forRequest = !"response".equals(side);
-                if (side == null && "client".equals(key) && value.isTextual()) {
-                    client = value.asText().strip();
-                } else if (side == null && "description".equals(key) && value.isTextual()) {
-                    description = value.asText();
+                if (side == null && "client".equals(key) && value.isString()) {
+                    client = value.asString("").strip();
+                } else if (side == null && "description".equals(key) && value.isString()) {
+                    description = value.asString("");
                 } else if (side == null && ("request".equals(key) || "response".equals(key)) && value.isObject()) {
                     value.properties().forEach(e -> add(e.getKey(), e.getValue(), key));
                 } else if (side == null && "sendRequest".equals(key) && value.isObject() && value.size() == 1
-                        && methods.contains(value.fieldNames().next()) && value.elements().next().isObject()) {
-                    method = value.fieldNames().next();
+                        && methods.contains(value.propertyNames().iterator().next())
+                        && value.values().iterator().next().isObject()) {
+                    method = value.propertyNames().iterator().next();
                     value.get(method).properties().forEach(e -> request.set(e.getKey(), e.getValue()));
                 } else if (side == null && "receiveResponse".equals(key) && value.path("response").isObject()
                         && value.size() == 1) {
                     value.get("response").properties().forEach(e -> response.set(e.getKey(), e.getValue()));
-                } else if (forRequest && URL_KEYS.contains(key) && value.isTextual()) {
-                    Matcher m = URL.matcher(value.asText().strip());
+                } else if (forRequest && URL_KEYS.contains(key) && value.isString()) {
+                    Matcher m = URL.matcher(value.asString("").strip());
                     if (m.matches()) {
                         client = m.group(1);
                         if (!m.group(2).isEmpty()) {
                             request.put("path", m.group(2));
                         }
                     } else {
-                        request.put("path", value.asText().strip());
+                        request.put("path", value.asString("").strip());
                     }
-                } else if (forRequest && METHOD_KEYS.contains(key) && value.isTextual()) {
-                    method = value.asText().strip().toUpperCase(Locale.ROOT);
-                } else if (forRequest && FILE_KEYS.contains(key) && value.isTextual()) {
-                    request.set("body", resource(fromTest(value.asText().strip())));
+                } else if (forRequest && METHOD_KEYS.contains(key) && value.isString()) {
+                    method = value.asString("").strip().toUpperCase(Locale.ROOT);
+                } else if (forRequest && FILE_KEYS.contains(key) && value.isString()) {
+                    request.set("body", resource(fromTest(value.asString("").strip())));
                 } else if (!"request".equals(side) && STATUS_KEYS.contains(key) && value.isValueNode()) {
-                    response.put("status", value.asText());
-                } else if (side == null && RESPONSE_BODY_KEYS.contains(key) && value.isTextual()) {
+                    response.put("status", value.asString(""));
+                } else if (side == null && RESPONSE_BODY_KEYS.contains(key) && value.isString()) {
                     response.set("body", body(value));
                 } else if ("body".equals(key) || forRequest && BODY_KEYS.contains(key)) {
                     JsonNode body = body(value);
@@ -1111,7 +1115,7 @@ public final class CitrusTestChecks {
                 } else if (value.isValueNode() && !value.isNull()
                         && (forRequest ? requestKeys : responseKeys).contains(key)) {
                     // contentType and path of the request, contentType of the response
-                    (forRequest ? request : response).put(key, value.asText());
+                    (forRequest ? request : response).put(key, value.asString(""));
                 } else {
                     return false;
                 }
@@ -1123,12 +1127,12 @@ public final class CitrusTestChecks {
              * map of one of data, resource or script.
              */
             private JsonNode body(JsonNode value) {
-                String file = value.isTextual() ? bodyFile(value.asText()) : null;
+                String file = value.isString() ? bodyFile(value.asString()) : null;
                 if (file != null) {
                     return resource(file);
                 }
                 if (value.isValueNode() && !value.isNull()) {
-                    return JSON.createObjectNode().put("data", value.asText());
+                    return JSON.createObjectNode().put("data", value.asString(""));
                 }
                 return value.isObject() && value.size() == 1
                         && (value.has("data") || value.has("resource") || value.has("script")) ? value : null;
@@ -1188,10 +1192,10 @@ public final class CitrusTestChecks {
             if (node == null || node.isMissingNode() || depth > 4) {
                 return;
             }
-            node.path("properties").fieldNames().forEachRemaining(answer::add);
+            node.path("properties").propertyNames().forEach(answer::add);
             JsonNode ref = node.get("$ref");
-            if (ref != null && ref.isTextual() && ref.asText().startsWith("#")) {
-                collectKeys(schema.model().at(ref.asText().substring(1)), answer, depth + 1);
+            if (ref != null && ref.isString() && ref.asString().startsWith("#")) {
+                collectKeys(schema.model().at(ref.asString("").substring(1)), answer, depth + 1);
             }
             for (String composition : new String[] { "allOf", "anyOf", "oneOf" }) {
                 for (JsonNode entry : node.path(composition)) {
@@ -1256,11 +1260,11 @@ public final class CitrusTestChecks {
             if (json != null && json.isObject()) {
                 json.properties().forEach(e -> {
                     if (e.getValue().isValueNode() && !e.getValue().isNull() && e.getKey().matches("[A-Za-z_]\\w*")) {
-                        answer.put(e.getKey(), e.getValue().asText());
+                        answer.put(e.getKey(), e.getValue().asString(""));
                     }
                 });
             }
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             // not JSON: no fields
         }
         return answer;
@@ -1281,7 +1285,7 @@ public final class CitrusTestChecks {
         JsonNode tree;
         try {
             tree = s.model() != null && content != null && !content.isBlank() ? YAML.readTree(content) : null;
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             tree = null;
         }
         if (tree == null || !tree.isObject()) {
@@ -1294,7 +1298,7 @@ public final class CitrusTestChecks {
             return "";
         }
         String name = camel.stream().map(c -> c.path(cli).path("verify").path("integration"))
-                .filter(JsonNode::isTextual).map(JsonNode::asText).findFirst().orElse(null);
+                .filter(JsonNode::isString).map(JsonNode::asString).findFirst().orElse(null);
         if (name == null && tree.findValues("http").isEmpty()) {
             return "";
         }
@@ -1362,15 +1366,15 @@ public final class CitrusTestChecks {
                         out.addAll(one);
                     }
                 }
-            } else if (v.asText().contains("\n")) {
-                String text = v.asText();
+            } else if (v.asString("").contains("\n")) {
+                String text = v.asString("");
                 boolean newline = text.endsWith("\n");
                 out.add(pad + e.getKey() + ": " + (newline ? "|" : "|-"));
                 for (String l : (newline ? text.substring(0, text.length() - 1) : text).split("\n", -1)) {
                     out.add(l.isEmpty() ? "" : pad + "  " + l);
                 }
             } else {
-                out.add(pad + e.getKey() + ": " + quoted(v.asText()));
+                out.add(pad + e.getKey() + ": " + quoted(v.asString("")));
             }
         });
     }

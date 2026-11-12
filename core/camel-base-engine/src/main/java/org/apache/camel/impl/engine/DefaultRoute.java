@@ -67,7 +67,7 @@ import org.apache.camel.util.TimeUtils;
 
 /**
  * Default implementation of {@link Route}.
- * <p/>
+ * <p>
  * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route, such as starting and
  * stopping using the {@link org.apache.camel.spi.RouteController#startRoute(String)} and
  * {@link org.apache.camel.spi.RouteController#stopRoute(String)} methods.

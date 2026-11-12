@@ -585,7 +585,7 @@ public final class SourceValidator {
     }
 
     public static String cleanValidationMessage(String msg) {
-        // strip FQCN prefix like "com.fasterxml...MarkedYAMLException: "
+        // strip FQCN prefix like "tools.jackson...JacksonYAMLParseException: "
         int colonSpace = msg.indexOf(": ");
         if (colonSpace > 0) {
             String prefix = msg.substring(0, colonSpace);
@@ -598,8 +598,8 @@ public final class SourceValidator {
         if (atSource > 0) {
             msg = msg.substring(0, atSource).stripTrailing();
         }
-        // strip "in 'reader', " prefix from snakeyaml messages
-        msg = msg.replace("in 'reader', ", "");
+        // strip the "in reader, " marker of snakeyaml-engine messages
+        msg = msg.replace("in reader, ", "");
         return msg;
     }
 

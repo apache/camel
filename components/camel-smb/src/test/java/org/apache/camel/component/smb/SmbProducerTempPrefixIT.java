@@ -37,6 +37,6 @@ public class SmbProducerTempPrefixIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/tempprefix.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/tempprefix.txt"))));
     }
 }

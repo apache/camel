@@ -346,9 +346,13 @@ public class HazelcastAggregationRepository extends ServiceSupport
     }
 
     /**
-     * This method performs transactional operation on removing the {@code exchange} from the operational storage and
-     * moving it into the persistent one if the {@link HazelcastAggregationRepository} runs in recoverable mode and
-     * {@code optimistic} is false. It will act at <u>your own</u> risk otherwise.
+     * Removes the {@code exchange} from the operational storage and moves it into the persistent one if the
+     * {@link HazelcastAggregationRepository} runs in recoverable mode. Both operations are applied atomically inside a
+     * Hazelcast transaction (ONE_PHASE): when {@code optimistic} is {@code true} and {@code useRecovery} is
+     * {@code true}, a {@link com.hazelcast.transaction.TransactionalMap#remove(Object, Object)} is used as the
+     * conditional compare-and-delete, so the losing thread's transaction sees the entry already gone, rolls back, and
+     * never touches the persistent map. When {@code optimistic} is {@code false} and {@code useRecovery} is
+     * {@code true}, the same transactional pattern is used without the conditional check.
      *
      * @param camelContext the current CamelContext
      * @param key          the correlation key
@@ -358,27 +362,65 @@ public class HazelcastAggregationRepository extends ServiceSupport
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
         if (optimistic) {
-            // put the exchange into the recoverable storage before removing it from the operational storage: the two
-            // maps cannot be updated atomically, and if the process stops in between, the group is sent twice
-            // instead of being lost
-            if (useRecovery) {
-                LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
-                        exchange.getExchangeId(), key);
-                persistedCache.put(exchange.getExchangeId(), holder);
-                LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
-                        exchange.getExchangeId(), key);
-            }
             LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
-            if (!cache.remove(key, holder)) {
-                LOG.error(
-                        "Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
-                        key);
-                if (useRecovery) {
-                    removeFromRecoverableStorage(exchange.getExchangeId(), key);
+            if (useRecovery) {
+                // Use a Hazelcast transaction to atomically apply the conditional remove and the recovery write.
+                // A plain two-step approach (in either order) has two failure modes:
+                //   1. put-then-remove (the pre-fix order): the two steps cannot be fenced: a concurrent thread
+                //      holds the same exchangeId (it read the same stored entry), so it would delete the winning
+                //      thread's recovery entry during its own cleanup on the compare-and-remove failure (CAMEL-26796).
+                //   2. remove-then-put: if the JVM stops or persistedCache.put() throws after a successful
+                //      cache.remove(), the group is in neither map (CAMEL-26663).
+                // TransactionalMap.remove(key, value) is a compare-and-delete that enrolls the entry in the
+                // transaction: the entry is gone or holds a different value from the loser's perspective, so
+                // its remove returns false, and it never reaches the recovery write.
+                TransactionOptions tOpts = new TransactionOptions();
+                tOpts.setTransactionType(TransactionOptions.TransactionType.ONE_PHASE);
+                TransactionContext tCtx = hazelcastInstance.newTransactionContext(tOpts);
+                try {
+                    tCtx.beginTransaction();
+
+                    TransactionalMap<String, DefaultExchangeHolder> tCache = tCtx.getMap(cache.getName());
+                    TransactionalMap<String, DefaultExchangeHolder> tPersistentCache = tCtx.getMap(persistedCache.getName());
+
+                    if (!tCache.remove(key, holder)) {
+                        tCtx.rollbackTransaction();
+                        LOG.error(
+                                "Optimistic locking failed for exchange with key {}: TransactionalMap#remove returned false (compare-and-delete found no matching entry).",
+                                key);
+                        throw new OptimisticLockingException();
+                    }
+                    LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                            exchange.getExchangeId(), key);
+                    // store the given exchange and not the removed entry: when a group is completed by an incoming
+                    // exchange, the last aggregated exchange is not added to the repository before it is removed
+                    tPersistentCache.put(exchange.getExchangeId(), holder);
+
+                    tCtx.commitTransaction();
+                    LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(),
+                            key);
+                    LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                            exchange.getExchangeId(), key);
+                } catch (OptimisticLockingException e) {
+                    throw e;
+                } catch (Exception exception) {
+                    tCtx.rollbackTransaction();
+
+                    final String msg = String.format(
+                            "Transaction with ID %s was rolled back for optimistic remove operation with a key %s and an Exchange ID %s.",
+                            tCtx.getTxnId(), key, exchange.getExchangeId());
+                    LOG.warn(msg, exception);
+                    throw new RuntimeCamelException(msg, exception);
                 }
-                throw new OptimisticLockingException();
+            } else {
+                if (!cache.remove(key, holder)) {
+                    LOG.error(
+                            "Optimistic locking failed for exchange with key {}: IMap#remove returned false (compare-and-delete found no matching entry).",
+                            key);
+                    throw new OptimisticLockingException();
+                }
+                LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
             }
-            LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
         } else {
             if (useRecovery) {
                 LOG.trace("Removing an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
@@ -420,18 +462,6 @@ public class HazelcastAggregationRepository extends ServiceSupport
             } else {
                 cache.remove(key);
             }
-        }
-    }
-
-    private void removeFromRecoverableStorage(String exchangeId, String key) {
-        try {
-            persistedCache.remove(exchangeId);
-        } catch (RuntimeException e) {
-            // still throw the optimistic locking failure: the recovery task may send the stale entry, which is a
-            // duplicate and not a loss
-            LOG.warn("Could not remove the exchange with ID {} for key {} from the recoverable storage after an"
-                     + " optimistic locking failure. The recovery task may send it.",
-                    exchangeId, key, e);
         }
     }
 

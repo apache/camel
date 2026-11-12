@@ -173,18 +173,17 @@ public class NettyHttpComponent extends NettyComponent
         // validate config
         config.validateConfiguration();
 
-        // create the address uri which includes the remainder parameters (which
-        // is not configuration parameters for this component)
-        URI u = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
-
-        String addressUri = URISupport.createRemainingURI(u, parameters).toString();
-
         // the endpoint uri is the full uri with the endpoint options, so endpoints that differ only in their options
         // are not equal, and the address uri is the http address to call
         NettyHttpEndpoint answer = new NettyHttpEndpoint(uri, this, config);
-        answer.setAddressUri(addressUri);
         answer.getConfiguration().setMuteException(muteException);
         setProperties(answer, parameters);
+
+        // create the address uri with the remainder parameters, after the endpoint options are bound
+        // (and removed), so only the query parameters that are not endpoint options are sent to the server
+        URI u = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
+        String addressUri = URISupport.createRemainingURI(u, parameters).toString();
+        answer.setAddressUri(addressUri);
 
         // must use a copy of the binding on the endpoint to avoid sharing same
         // instance that can cause side-effects

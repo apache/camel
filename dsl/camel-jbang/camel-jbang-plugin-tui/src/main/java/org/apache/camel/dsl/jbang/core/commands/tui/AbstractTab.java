@@ -169,7 +169,8 @@ abstract class AbstractTab implements MonitorTab {
     /**
      * Pulls the scroll offset of a table back when rows went away, so the rows fill the view. The table only scrolls to
      * keep the selected row in view: when the list shrinks (apps stopped, projects closed), rows that fit could stay
-     * above the top, and a running app looked gone.
+     * above the top, and a running app looked gone. Can go once TamboUI keeps the offset within the rows itself
+     * (tamboui/tamboui#507).
      */
     static void clampTableOffset(Table table, Rect tableArea, TableState tableState, int rowCount) {
         if (tableArea == null || table == null || tableState == null) {

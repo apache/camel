@@ -67,53 +67,53 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link org.apache.camel.spi.ShutdownStrategy} which uses graceful shutdown.
- * <p/>
+ * <p>
  * Graceful shutdown ensures that any inflight and pending messages will be taken into account and it will wait until
- * these exchanges has been completed.
- * <p/>
+ * these exchanges have been completed.
+ * <p>
  * This strategy will perform graceful shutdown in two steps:
  * <ul>
  * <li>Graceful - By suspending/stopping consumers, and let any in-flight exchanges complete</li>
  * <li>Forced - After a given period of time, a timeout occurred and if there are still pending exchanges to complete,
  * then a more aggressive forced strategy is performed.</li>
  * </ul>
- * The idea by the <tt>graceful</tt> shutdown strategy, is to stop taking in more new messages, and allow any existing
- * inflight messages to complete. Then when there is no more inflight messages then the routes can be fully shutdown.
- * This mean that if there is inflight messages then we will have to wait for these messages to complete. If they do not
- * complete after a period of time, then a timeout triggers. And then a more aggressive strategy takes over.
- * <p/>
- * The idea by the <tt>forced</tt> shutdown strategy, is to stop continue processing messages. And force routes and its
- * services to shutdown now. There is a risk when shutting down now, that some resources is not properly shutdown, which
- * can cause side effects. The timeout value is by default 45 seconds, but can be customized.
- * <p/>
- * As this strategy will politely wait until all exchanges has been completed it can potential wait for a long time, and
- * hence why a timeout value can be set. When the timeout triggers you can also specify whether the remainder consumers
- * should be shutdown now or ignore.
- * <p/>
+ * The idea by the <code>graceful</code> shutdown strategy, is to stop taking in more new messages, and allow any
+ * existing inflight messages to complete. Then when there are no more inflight messages then the routes can be fully
+ * shutdown. This means that if there are inflight messages then we will have to wait for these messages to complete. If
+ * they do not complete after a period of time, then a timeout triggers. And then a more aggressive strategy takes over.
+ * <p>
+ * The idea by the <code>forced</code> shutdown strategy, is to stop processing messages. And force routes and its
+ * services to shutdown now. There is a risk when shutting down now, that some resources are not properly shutdown,
+ * which can cause side effects. The timeout value is by default 45 seconds, but can be customized.
+ * <p>
+ * As this strategy will politely wait until all exchanges have been completed it can potentially wait for a long time,
+ * and hence why a timeout value can be set. When the timeout triggers you can also specify whether the remainder
+ * consumers should be shutdown now or ignore.
+ * <p>
  * Will by default use a timeout of 45 seconds by which it will shutdown now the remaining consumers. This ensures that
  * when shutting down Camel it at some point eventually will shutdown. This behavior can of course be configured using
  * the {@link #setTimeout(long)} and {@link #setShutdownNowOnTimeout(boolean)} methods.
- * <p/>
- * Routes will by default be shutdown in the reverse order of which they where started. You can customize this using the
+ * <p>
+ * Routes will by default be shutdown in the reverse order in which they were started. You can customize this using the
  * {@link #setShutdownRoutesInReverseOrder(boolean)} method.
- * <p/>
- * After route consumers have been shutdown, then any {@link ShutdownPrepared} services on the routes is being prepared
- * for shutdown, by invoking {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} which <tt>force=false</tt>.
- * <p/>
+ * <p>
+ * After route consumers have been shutdown, then any {@link ShutdownPrepared} services on the routes are being prepared
+ * for shutdown, by invoking {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} with <code>force=false</code>.
+ * <p>
  * Then if a timeout occurred and the strategy has been configured with shutdown-now on timeout, then the strategy
  * performs a more aggressive forced shutdown, by forcing all consumers to shutdown and then invokes
- * {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} with <tt>force=true</tt> on the services. This allows the
- * services to know they should force shutdown now.
- * <p/>
+ * {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} with <code>force=true</code> on the services. This allows
+ * the services to know they should force shutdown now.
+ * <p>
  * When timeout occurred and a forced shutdown is happening, then there may be threads/tasks which are still inflight
- * which may be rejected continued being routed. By default this can cause WARN and ERRORs to be logged. The option
+ * which may be rejected from being routed further. By default this can cause WARN and ERRORs to be logged. The option
  * {@link #setSuppressLoggingOnTimeout(boolean)} can be used to suppress these logs, so they are logged at TRACE level
  * instead.
- * <p/>
+ * <p>
  * Also when a timeout occurred then information about the inflight exchanges is logged, if
- * {@link #isLogInflightExchangesOnTimeout()} is enabled (is by default). This allows end users to known where these
+ * {@link #isLogInflightExchangesOnTimeout()} is enabled (is by default). This allows end users to know where these
  * inflight exchanges currently are in the route(s), and how long time they have been inflight.
- * <p/>
+ * <p>
  * This information can also be obtained from the {@link org.apache.camel.spi.InflightRepository} at all time during
  * runtime.
  */
@@ -398,8 +398,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     /**
-     * Future for the task of the shutdown that was started last, while that shutdown is in progress, or <tt>null</tt>.
-     * <p/>
+     * Future for the task of the shutdown that was started last, while that shutdown is in progress, or
+     * <code>null</code>.
+     * <p>
      * Important: This API is only for advanced use-cases.
      */
     public Future<?> getCurrentShutdownTaskFuture() {
@@ -921,7 +922,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     /**
      * Logs information about the inflight exchanges
      *
-     * @param infoLevel <tt>true</tt> to log at INFO level, <tt>false</tt> to log at DEBUG level
+     * @param infoLevel <code>true</code> to log at INFO level, <code>false</code> to log at DEBUG level
      */
     protected void logInflightExchanges(CamelContext camelContext, List<RouteStartupOrder> routes, boolean infoLevel) {
         // check if we need to log

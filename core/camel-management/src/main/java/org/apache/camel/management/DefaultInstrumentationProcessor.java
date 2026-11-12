@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * JMX enabled processor or advice that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for
  * instrumenting processing of exchanges.
- * <p/>
+ * <p>
  * This implementation has been optimised to work in dual mode, either as an advice or as a processor. The former is
  * faster and the latter is required when the error handler has been configured with redelivery enabled.
  */

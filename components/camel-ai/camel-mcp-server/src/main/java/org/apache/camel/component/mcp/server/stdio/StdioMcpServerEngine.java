@@ -101,7 +101,7 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
      * The JSON mapper of the MCP SDK, found with the service loader of the application class loader of Camel.
      * <p>
      * The MCP SDK finds the mapper with the thread context class loader. Camel CLI (camel run) loads the downloaded
-     * jars, such as mcp-json-jackson2, in the application context class loader of CamelContext, which is the thread
+     * jars, such as mcp-json-jackson3, in the application context class loader of CamelContext, which is the thread
      * context class loader while CamelContext starts, but not while Camel Main configures it and initializes this
      * engine.
      */

@@ -185,8 +185,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
     }
 
     /**
-     * Wraps the expression so a result that is a String starting with <tt>resource:</tt> is loaded and its content is
-     * the result (resolveResource=true, CAMEL-24884). A name without a scheme is a classpath resource. Applies to
+     * Wraps the expression so a result that is a String starting with <code>resource:</code> is loaded and its content
+     * is the result (resolveResource=true, CAMEL-24884). A name without a scheme is a classpath resource. Applies to
      * expressions only: a predicate answers true or false, there is no resource to load in its result.
      */
     private Expression resolveResourceResult(Expression delegate) {

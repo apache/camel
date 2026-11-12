@@ -28,7 +28,7 @@ import org.apache.camel.support.service.ServiceSupport;
 /**
  * A {@link org.apache.camel.spi.ClassResolver} which loads type converters from an instance that implements
  * {@link org.apache.camel.TypeConverters}.
- * <p/>
+ * <p>
  * This is used when adding converters manually using the
  * {@link org.apache.camel.impl.converter.BaseTypeConverterRegistry#addTypeConverters(org.apache.camel.TypeConverters)}
  * method.

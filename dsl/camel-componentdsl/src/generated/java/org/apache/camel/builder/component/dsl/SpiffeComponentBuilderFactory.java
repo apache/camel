@@ -133,6 +133,27 @@ public interface SpiffeComponentBuilderFactory {
     
         
         /**
+         * Whether validateJwtSvid leaves the application body untouched and
+         * publishes the verified identity through the CamelSpiffeJwtIdentity
+         * exchange property. In this mode the token must be in CamelSpiffeToken
+         * or an Authorization Bearer header: the body is never read as a token.
+         * The default returns the JwtSvid in the body as before.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param preserveBody the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder preserveBody(boolean preserveBody) {
+            doSetProperty("preserveBody", preserveBody);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -257,6 +278,7 @@ public interface SpiffeComponentBuilderFactory {
             case "configuration": ((SpiffeComponent) component).setConfiguration((org.apache.camel.component.spiffe.SpiffeConfiguration) value); return true;
             case "lazyStartProducer": ((SpiffeComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((SpiffeComponent) component).setOperation((org.apache.camel.component.spiffe.SpiffeOperation) value); return true;
+            case "preserveBody": getOrCreateConfiguration((SpiffeComponent) component).setPreserveBody((boolean) value); return true;
             case "autowiredEnabled": ((SpiffeComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "workloadApiClient": getOrCreateConfiguration((SpiffeComponent) component).setWorkloadApiClient((io.spiffe.workloadapi.WorkloadApiClient) value); return true;
             case "allowOperationHeader": getOrCreateConfiguration((SpiffeComponent) component).setAllowOperationHeader((boolean) value); return true;
