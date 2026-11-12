@@ -387,9 +387,10 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     /**
      * Auto-configures post-quantum named groups when the JVM supports them and the user hasn't explicitly configured
      * named groups or named groups filters.
-     * <p/>
-     * When a hybrid ML-KEM group is available (typically JDK 25+), this method sets the preferred named group ordering
-     * to prioritize post-quantum key exchange, protecting against harvest-now-decrypt-later attacks.
+     * <p>
+     * When a hybrid ML-KEM group is available (JDK 27 with JEP 527, or a build that backports it) and the JVM does not
+     * already lead with one, this method sets the preferred named group ordering to prioritize post-quantum key
+     * exchange, protecting against harvest-now-decrypt-later attacks.
      *
      * @param  context the initialized SSLContext to probe for available named groups
      * @return         {@code true} if PQC named groups were auto-configured, {@code false} otherwise
@@ -421,7 +422,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     /**
      * Orders the named groups available on this JVM so that the post-quantum hybrids come first, followed by the
      * classical fallbacks and then everything else, preserving the spelling the JVM uses.
-     * <p/>
+     * <p>
      * An order that already leads with a hybrid is left alone: it is either the default of the JVM, which this
      * reordering would only confirm, or one an operator chose through {@code jdk.tls.namedGroups}, such as a CNSA 2.0
      * setup that puts the P-384 hybrid first, which it must not rewrite.
@@ -489,7 +490,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         if (!pqcNamedGroupsUnavailableLogged) {
             pqcNamedGroupsUnavailableLogged = true;
             LOG.debug("This JVM offers no post-quantum TLS named group ({}), so the TLS key exchange stays classical;"
-                      + " a JDK that offers a hybrid ML-KEM group, such as JDK 25, enables it.",
+                      + " a JDK that offers a hybrid ML-KEM group, such as JDK 27 (JEP 527), enables it.",
                     String.join(", ", PQC_NAMED_GROUPS));
         }
     }

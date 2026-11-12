@@ -448,11 +448,12 @@ becomes available.
 === JDK Requirements
 
 PQC TLS support requires a JDK that implements post-quantum key exchange algorithms.
-JDK 25+ is expected to include support for `X25519MLKEM768`, a hybrid key exchange
-that combines the classical X25519 algorithm with the ML-KEM-768 post-quantum algorithm
-(NIST FIPS 203).
+JDK 27 includes them (JEP 527): `X25519MLKEM768`, a hybrid key exchange that combines the classical
+X25519 algorithm with the ML-KEM-768 post-quantum algorithm (NIST FIPS 203) and is enabled by default,
+and the NIST curve hybrids `SecP256r1MLKEM768` and `SecP384r1MLKEM1024`, which are enabled through the
+`jdk.tls.namedGroups` system property. Some vendor builds of earlier JDKs may backport `X25519MLKEM768`.
 
-To verify whether your JDK supports PQC named groups, you can inspect the available groups:
+To verify whether your JDK enables PQC named groups, you can inspect the enabled groups:
 
 [source,java]
 ----
@@ -460,33 +461,43 @@ SSLContext ctx = SSLContext.getDefault();
 SSLEngine engine = ctx.createSSLEngine();
 String[] groups = engine.getSSLParameters().getNamedGroups();
 System.out.println(Arrays.toString(groups));
-// Look for X25519MLKEM768 in the output
+// Look for X25519MLKEM768, SecP256r1MLKEM768 or SecP384r1MLKEM1024 in the output
 ----
 
 === Auto-Configuration (Zero-Config PQC)
 
-When running on a JDK that supports `X25519MLKEM768`, Camel *automatically* configures
-PQC-preferred named groups on all `SSLContextParameters` instances — no configuration is required.
+When running on a JDK that enables a hybrid ML-KEM group (`X25519MLKEM768`, `SecP256r1MLKEM768` or
+`SecP384r1MLKEM1024`), Camel *automatically* prefers it on all `SSLContextParameters` instances, without
+any configuration.
 
 The auto-configuration activates only when:
 
 * The user has *not* explicitly set `namedGroups` or `namedGroupsFilter`
-* The JVM's TLS provider reports `X25519MLKEM768` as an available named group
+* The JVM's TLS provider reports at least one of the hybrid groups among its enabled named groups
+* The enabled named groups do not already lead with a hybrid group
 
-When activated, Camel sets the following named group ordering:
+When activated, Camel sets the following named group ordering, keeping the groups the JVM offers and the
+spelling it uses:
 
 [source,text]
 ----
-X25519MLKEM768, x25519, secp256r1, secp384r1, [remaining JVM defaults...]
+X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024, x25519, secp256r1, secp384r1, [remaining JVM defaults...]
 ----
 
 This ensures post-quantum key exchange is preferred while maintaining backward compatibility
-with servers that do not yet support PQC. A log message confirms activation:
+with servers that do not yet support PQC. A log message confirms that the groups were reordered:
 
 [source,text]
 ----
 INFO  o.a.c.s.j.SSLContextParameters - Auto-configured PQC named groups: [X25519MLKEM768, x25519, secp256r1, secp384r1, ...]
 ----
+
+An order that already leads with a hybrid group is kept as it is, and that message is not logged: this is the
+case for the default order of JDK 27, which starts with `X25519MLKEM768`, and for an order chosen through the
+`jdk.tls.namedGroups` system property, for example a CNSA 2.0 setup that puts `SecP384r1MLKEM1024` first.
+A `DEBUG` message of `org.apache.camel.support.jsse.SSLContextParameters` says so, as it does on a JDK that
+enables no hybrid group at all. To verify which key exchange is preferred, read the named groups of a created
+`SSLEngine` or `SSLSocket` as shown above.
 
 === Explicit Configuration via application.properties
 
@@ -557,7 +568,7 @@ Or use a named groups filter:
 
 [source,properties]
 ----
-camel.ssl.namedGroupsExclude = X25519MLKEM768
+camel.ssl.namedGroupsExclude = X25519MLKEM768,SecP256r1MLKEM768,SecP384r1MLKEM1024
 ----
 
 === TLS-Layer PQC vs. Application-Layer PQC
@@ -581,15 +592,15 @@ Camel provides PQC protection at two distinct layers:
 | Data at rest and message payloads
 
 | *Algorithms*
-| X25519MLKEM768 (hybrid KEM)
+| X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024 (hybrid KEM)
 | ML-KEM, ML-DSA, SLH-DSA, LMS, XMSS, Falcon, and more
 
 | *JDK requirement*
-| JDK 25+ (for built-in PQC named groups)
+| JDK 27+ (for built-in PQC named groups)
 | JDK 21+ with Bouncy Castle provider
 
 | *User action*
-| Zero-config on JDK 25+ (auto-configured)
+| Zero-config on JDK 27+ (auto-configured)
 | Requires explicit component configuration
 |===
 
@@ -605,7 +616,7 @@ and xref:components:dataformats:pqc-dataformat.adoc[PQC Data Format].
 
 For users currently running classical TLS, migration to PQC TLS is straightforward:
 
-1. **Upgrade your JDK** to JDK 25+ (or a JDK that supports `X25519MLKEM768`)
+1. **Upgrade your JDK** to JDK 27+ (or a JDK build that backports `X25519MLKEM768`)
 2. **Upgrade Camel** to 4.19 or later
 3. **No configuration changes needed** — PQC named groups are auto-configured
 4. **Verify** that your TLS peers (servers, brokers, load balancers) support PQC key exchange or

@@ -763,7 +763,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         String[] controlNamedGroups = controlEngine.getSSLParameters().getNamedGroups();
 
         // default - no named groups configured
-        // When PQC groups are available (JDK 25+), auto-configuration reorders named groups
+        // When a hybrid group is enabled (JDK 27+), the auto-configuration keeps or puts it first
         SSLContextParameters scp = new SSLContextParameters();
         SSLContext context = scp.createSSLContext(null);
 
@@ -834,7 +834,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLEngine controlEngine = controlContext.createSSLEngine();
         String[] controlNamedGroups = controlEngine.getSSLParameters().getNamedGroups();
 
-        // default - no filter, keeps defaults (or PQC-reordered defaults on JDK 25+)
+        // default - no filter, keeps defaults (or hybrid-first defaults on JDK 27+)
         SSLContextParameters scp = new SSLContextParameters();
         SSLContext context = scp.createSSLContext(null);
 
