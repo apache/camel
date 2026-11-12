@@ -170,4 +170,43 @@ class AuthoringToolsRefusalFixesTest {
         assertThat(Files.readString(dir.resolve(FILE)))
                 .isEqualTo(content.replace("')][]\"", "')]\"").replace("constant:\n", "simple:\n"));
     }
+
+    @Test
+    void aSecondEipInAStepIsWrittenAsTheRefusalsSaid(@TempDir Path dir) throws IOException {
+        // CAMEL-26874, r32n-2 contracts-rest-code-first step 2 (shortened): setBody: in the column of the keys of
+        // - setHeader:, sent 20 times as it was; the refusal said to start it as its own item, with no line to write
+        String content = """
+                - route:
+                    id: get-order-by-id
+                    from:
+                      uri: direct:get-order-by-id
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} == null"
+                                steps:
+                                  - setHeader:
+                                      name: CamelHttpResponseCode
+                                      constant: "404"
+                                    setBody:
+                                      constant: '{"error": "unknown order"}'
+                            otherwise:
+                              steps:
+                                - log: "order ${body}"
+                """;
+        for (int i = 1; i <= 2; i++) {
+            JsonObject refused = write(dir, content);
+            assertThat(refused.getString("status")).as(String.valueOf(refused)).isEqualTo("invalid");
+            assertThat((JsonArray) refused.get("errors")).singleElement().asString()
+                    .startsWith("Line 10: ")
+                    .endsWith("(setBody: is another EIP: start it as its own item, - setBody:) Write line 13 as:\n"
+                              + "                  - setBody:");
+        }
+        JsonObject third = write(dir, content);
+        assertThat(third.getString("status")).as(String.valueOf(third)).isEqualTo("created");
+        assertThat((JsonArray) third.get("repaired")).containsExactly("line 13: written as the refusals said");
+        assertThat(third.getString("message"))
+                .contains("The same content came a third time, so the write made the fixes the refusals gave");
+        assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(content.replace("    setBody:", "  - setBody:"));
+    }
 }

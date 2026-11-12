@@ -2488,20 +2488,47 @@ public class YamlValidator {
 
     /** The options of an EIP as the YAML DSL schema lists them, or empty when the EIP is not known (CAMEL-25372). */
     Set<String> optionsOf(String eip) {
+        Set<String> answer = new LinkedHashSet<>();
+        for (JsonNode shape : shapesOf(eip)) {
+            shape.path("properties").fieldNames().forEachRemaining(answer::add);
+        }
+        return answer;
+    }
+
+    /**
+     * The type the YAML DSL schema gives an option of an EIP: array, object, string, boolean...; for an option that
+     * refers to a definition, the type of the definition; null when the EIP, the option or its type is not known. Three
+     * options are named as EIPs too, and their type says which one a key is: doCatch (an array) and doFinally (an
+     * object) of doTry, filter (a string) of claimCheck (CAMEL-26874).
+     */
+    String optionType(String eip, String option) {
+        for (JsonNode shape : shapesOf(eip)) {
+            JsonNode property = shape.path("properties").path(option);
+            if (property.isMissingNode()) {
+                continue;
+            }
+            JsonNode ref = property.path("$ref");
+            if (ref.isTextual() && ref.asText().startsWith("#")) {
+                property = model.at(ref.asText().substring(1));
+            }
+            JsonNode type = property.path("type");
+            return type.isTextual() ? type.asText() : null;
+        }
+        return null;
+    }
+
+    /** The definition of an EIP in the schema, and the shapes of its oneOf; empty when the EIP is not known. */
+    private List<JsonNode> shapesOf(String eip) {
         JsonNode ref = model.at("/items/definitions/org.apache.camel.model.ProcessorDefinition/properties/" + eip + "/$ref");
         JsonNode definition = ref.isTextual() ? model.at(ref.asText().substring(1)) : null;
-        Set<String> answer = new LinkedHashSet<>();
         if (definition == null || definition.isMissingNode()) {
-            return answer;
+            return List.of();
         }
         // the definition is an object, or a oneOf of a short form and an object
         List<JsonNode> shapes = new ArrayList<>();
         shapes.add(definition);
         definition.path("oneOf").forEach(shapes::add);
-        for (JsonNode shape : shapes) {
-            shape.path("properties").fieldNames().forEachRemaining(answer::add);
-        }
-        return answer;
+        return shapes;
     }
 
     /**
