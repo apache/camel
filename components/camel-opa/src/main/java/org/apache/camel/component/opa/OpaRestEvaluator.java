@@ -130,10 +130,8 @@ public class OpaRestEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
                 outcomes.put(entry.getKey(), new BatchElement(result.getValue(), null));
             } else {
                 Exception failure = result != null ? result.getException() : null;
-                if (failure == null) {
-                    failure = new IllegalStateException("no result returned for batch element " + entry.getKey());
-                }
-                outcomes.put(entry.getKey(), new BatchElement(null, failure));
+                // A missing result is different from an evaluation that reported a failure, even though both deny.
+                outcomes.put(entry.getKey(), failure != null ? new BatchElement(null, failure) : null);
             }
         }
         return outcomes;

@@ -43,7 +43,8 @@ public final class OpaConstants {
               description = "Set to true only when the exchange proceeded because failOpen is enabled and the policy"
                             + " could not be evaluated - nothing authorized it. Absent on every decision an actual"
                             + " policy made, so a route or an audit trail can tell the two apart rather than seeing"
-                            + " the same CamelOpaDecisionAllow=true for both.",
+                            + " the same CamelOpaDecisionAllow=true for both. For a batch, set when any element"
+                            + " proceeded because failOpen was enabled; CamelOpaBatchOutcomes identifies the elements.",
               javaType = "Boolean")
     public static final String DECISION_FAILED_OPEN = HEADER_PREFIX + "DecisionFailedOpen";
 
@@ -53,6 +54,13 @@ public final class OpaConstants {
                             + " whose evaluation could not be reached is denied, unless failOpen is set.",
               javaType = "java.util.List<Boolean>")
     public static final String BATCH_DECISION = HEADER_PREFIX + "BatchDecision";
+
+    @Metadata(label = "producer",
+              description = "Immutable per-element outcomes of a batch evaluation, parallel to the List body. Each"
+                            + " outcome exposes the effective allowed verdict, nullable Boolean policy decision,"
+                            + " failure category and failedOpen flag. Contains no exception or failure message.",
+              javaType = "java.util.List<org.apache.camel.component.opa.OpaBatchOutcome>")
+    public static final String BATCH_OUTCOMES = HEADER_PREFIX + "BatchOutcomes";
 
     private OpaConstants() {
     }

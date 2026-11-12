@@ -736,7 +736,9 @@ public interface OpaEndpointBuilderFactory {
          * enabled and the policy could not be evaluated - nothing authorized
          * it. Absent on every decision an actual policy made, so a route or an
          * audit trail can tell the two apart rather than seeing the same
-         * CamelOpaDecisionAllow=true for both.
+         * CamelOpaDecisionAllow=true for both. For a batch, set when any
+         * element proceeded because failOpen was enabled; CamelOpaBatchOutcomes
+         * identifies the elements.
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -761,6 +763,22 @@ public interface OpaEndpointBuilderFactory {
          */
         public String opaBatchDecision() {
             return "CamelOpaBatchDecision";
+        }
+        /**
+         * Immutable per-element outcomes of a batch evaluation, parallel to the
+         * List body. Each outcome exposes the effective allowed verdict,
+         * nullable Boolean policy decision, failure category and failedOpen
+         * flag. Contains no exception or failure message.
+         * 
+         * The option is a: {@code
+         * java.util.List<org.apache.camel.component.opa.OpaBatchOutcome>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpaBatchOutcomes}.
+         */
+        public String opaBatchOutcomes() {
+            return "CamelOpaBatchOutcomes";
         }
     }
     static OpaEndpointBuilder endpointBuilder(String componentName, String path) {
