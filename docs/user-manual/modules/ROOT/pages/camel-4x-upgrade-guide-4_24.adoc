@@ -4597,6 +4597,17 @@ in retry mode: 16 redeliveries and its default retry letter and dead letter topi
 `retryLetterTopic` and `deadLetterTopic` only apply when `maxRedeliverCount` is set. The consumer logs a WARN when it
 starts with one of these topics but no `maxRedeliverCount` (and for `retryLetterTopic` without `enableRetry`).
 
+=== camel-pulsar - the producer no longer sends a body with Java serialization
+
+The `pulsar` producer sends the body as a `byte[]`. A body that does not convert to one, such as a `Map`, a `List`, a
+number or a POJO, was sent with Java serialization, which only a Java client that deserializes it can read, and no body
+was sent as the bytes of a serialized `null`. Such a body, and no body, now fail with an `InvalidPayloadException`.
+Text, bytes, a stream and a file are sent as their content, as before.
+
+Marshal the body before the producer, for example with `marshal().json()`. To keep the old behaviour for now, set the
+new option `allowJavaSerializedObject=true` on the endpoint or the component. The option is deprecated from the start
+and will be removed in a future release.
+
 === camel-twitter - twitter-search applies its query options again
 
 Since Camel 4.0 (the upgrade to Twitter4J 4.1, whose `Query` is immutable) the `twitter-search` endpoint sent only the
