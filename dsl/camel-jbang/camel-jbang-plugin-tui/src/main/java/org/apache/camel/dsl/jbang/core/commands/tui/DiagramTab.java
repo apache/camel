@@ -819,6 +819,8 @@ class DiagramTab extends AbstractDiagramTab {
         if (idx < 0) {
             return false;
         }
+        // the route is selected in the topology, so that is the level shown, not the architecture over it
+        architecture.close();
         diagram.setSelectedNodeIndex(idx);
         diagram.scrollToSelectedNode();
         return true;
@@ -836,6 +838,9 @@ class DiagramTab extends AbstractDiagramTab {
             if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
                 return false;
             }
+            // the route is shown, not the architecture: while that is active the route is not drawn, and its node
+            // boxes stay those of the route drawn before (CAMEL-26864)
+            architecture.close();
             routeNavigationStack.clear();
             drillDownRouteId = routeId;
             topologyMode = false;
@@ -963,7 +968,8 @@ class DiagramTab extends AbstractDiagramTab {
             return null;
         }
         JsonObject result = new JsonObject();
-        result.put("diagramMode", topologyMode ? "topology" : "route");
+        // the level the screen shows: the architecture is drawn over the topology or route
+        result.put("diagramMode", level().name().toLowerCase(Locale.ROOT));
         result.put("zoom", zoomStateAsJson());
 
         if (!topologyMode && drillDownRouteId != null) {

@@ -44,6 +44,7 @@ final class Confirmations {
     private final List<Dialog> dialogs = new ArrayList<>();
     private final Queue<McpFacade.PendingKey> pendingKeys;
     private boolean delivering;
+    private boolean deliveringFromMcp;
 
     Confirmations(Queue<McpFacade.PendingKey> pendingKeys) {
         this.pendingKeys = pendingKeys;
@@ -118,10 +119,12 @@ final class Confirmations {
                 continue;
             }
             delivering = true;
+            deliveringFromMcp = key.fromMcp();
             try {
                 handler.accept(key.event());
             } finally {
                 delivering = false;
+                deliveringFromMcp = false;
             }
         }
         return taken;
@@ -134,5 +137,10 @@ final class Confirmations {
     /** Whether the key being handled was sent by an MCP client or a tape, not typed by the user. */
     boolean isDelivering() {
         return delivering;
+    }
+
+    /** Whether the key being handled was sent by an MCP client: it is for the active tab, not the AI panel's input. */
+    boolean isDeliveringMcpKey() {
+        return deliveringFromMcp;
     }
 }

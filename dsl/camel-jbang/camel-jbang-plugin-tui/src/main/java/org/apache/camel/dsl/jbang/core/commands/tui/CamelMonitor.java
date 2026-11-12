@@ -1227,7 +1227,7 @@ public class CamelMonitor extends CamelCommand {
             if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
                 return true;
             }
-            if (aiPanel.isOpen()) {
+            if (aiPanel.isOpen() && !confirmations.isDeliveringMcpKey()) {
                 if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
                     if (lastContentArea != null) {
                         aiPanel.cycleHeight(lastContentArea.height());

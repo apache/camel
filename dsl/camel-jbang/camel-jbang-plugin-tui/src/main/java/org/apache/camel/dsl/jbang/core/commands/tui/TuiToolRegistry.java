@@ -537,7 +537,8 @@ class TuiToolRegistry {
         int sent = facade.injectKeys(keys, delay);
 
         if (!wait) {
-            return "Queued " + sent + " key(s) with " + delay + "ms delay";
+            // for the active tab: the AI panel's input, when it is open, takes only what the user types
+            return "Queued " + sent + " key(s) with " + delay + "ms delay for the " + facade.getActiveTabName() + " tab";
         }
 
         long lastKeyFireAt = MonotonicClock.millis() + (long) (sent - 1) * delay;
@@ -563,6 +564,7 @@ class TuiToolRegistry {
         Buffer buf = facade.getLastBuffer();
         JsonObject result = new JsonObject();
         result.put("sent", sent);
+        result.put("activeTab", facade.getActiveTabName());
         result.put("delay", delay);
         result.put("waitedMs", MonotonicClock.millis() - start);
         if (buf != null) {

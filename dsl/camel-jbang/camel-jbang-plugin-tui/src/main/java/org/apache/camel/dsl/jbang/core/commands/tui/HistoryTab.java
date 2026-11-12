@@ -723,6 +723,7 @@ class HistoryTab extends AbstractTab {
         if (!historyEntries.isEmpty()) {
             historyTableState.select(0);
         }
+        redrawHistoryDiagram();
         traceDetailView = false;
         traceSelectedExchangeId = null;
         if (!traces.get().isEmpty()) {
@@ -740,8 +741,34 @@ class HistoryTab extends AbstractTab {
         if (historyRefreshRequested || historyFollow) {
             historyRefreshRequested = false;
             historyEntries = data.loadHistoryData(pids);
+            redrawHistoryDiagram();
         }
         data.refreshTraceData(pids);
+    }
+
+    /**
+     * The Diagram view draws the exchange of the history as it was when the view opened: when the history was read
+     * again and is another exchange now, the diagram is drawn for that one, so the screen and the table agree
+     * (CAMEL-26864).
+     */
+    private void redrawHistoryDiagram() {
+        if (!diagram.isShowDiagram() || !traces.get().isEmpty()) {
+            return;
+        }
+        if (isOtherExchange(diagramHistorySteps, reorderHistoryDepthFirst(historyEntries))) {
+            loadDiagramForCurrentView();
+        }
+    }
+
+    /**
+     * Whether the history now starts with another exchange than the one the Diagram view draws. Nothing drawn, or no
+     * history, is not another exchange: there is nothing to draw again.
+     */
+    static boolean isOtherExchange(List<HistoryEntry> shown, List<HistoryEntry> current) {
+        if (shown.isEmpty() || current.isEmpty()) {
+            return false;
+        }
+        return !Objects.equals(shown.get(0).exchangeId, current.get(0).exchangeId);
     }
 
     boolean isTraceDetailView() {
