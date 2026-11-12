@@ -84,7 +84,7 @@ public class ClusteredRouteController extends DefaultRouteController {
     // *******************************
 
     /**
-     * Add a filter used to to filter cluster aware routes.
+     * Add a filter used to filter cluster aware routes.
      */
     public void addFilter(ClusteredRouteFilter filter) {
         this.filters.add(filter);

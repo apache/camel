@@ -1184,7 +1184,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         boolean enabled = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isDefaultOrExtended();
         pc.setStatisticsEnabled(enabled);
 
-        // and add it as a a registered counter that will be used lazy when Camel
+        // and add it as a registered counter that will be used lazy when Camel
         // does the instrumentation of the route and adds the InstrumentationProcessor
         // that does the actual performance metrics gatherings at runtime
         registeredCounters.put(processor, pc);

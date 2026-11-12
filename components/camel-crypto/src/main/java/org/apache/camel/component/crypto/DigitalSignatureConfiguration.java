@@ -189,7 +189,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     /**
      * Set the PrivateKey that should be used to sign the exchange
      *
-     * @param privateKey the key with with to sign the exchange.
+     * @param privateKey the key with which to sign the exchange.
      */
     public void setPrivateKey(PrivateKey privateKey) {
         this.privateKey = privateKey;

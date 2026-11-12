@@ -1115,7 +1115,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * patterns is not {@code null}.</li>
      * <li>Match the include patterns in {@code defaultPatterns} and don't match the exclude patterns in
      * {@code defaultPatterns} if patterns is {@code null} and {@code applyDefaults} is true.</li>
-     * <li>Are provided in currentValues if if patterns is {@code null} and {@code applyDefaults} is false.</li>
+     * <li>Are provided in currentValues if patterns is {@code null} and {@code applyDefaults} is false.</li>
      * </ol>
      *
      * @param  explicitValues  the optional explicit values to use

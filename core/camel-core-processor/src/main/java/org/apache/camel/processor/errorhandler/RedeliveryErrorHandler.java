@@ -413,7 +413,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     }
 
     protected Predicate getDefaultHandledPredicate() {
-        // Default is not not handle errors
+        // Default is to not handle errors
         return null;
     }
 

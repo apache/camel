@@ -335,7 +335,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
     }
 
     /**
-     * Adds all the matching implementations from from the JAR entries to the classes.
+     * Adds all the matching implementations from the JAR entries to the classes.
      *
      * @param test    a Test used to filter the classes that are discovered
      * @param parent  the parent package under which classes must be in order to be considered

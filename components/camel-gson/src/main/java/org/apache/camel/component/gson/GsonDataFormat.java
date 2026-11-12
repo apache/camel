@@ -110,7 +110,7 @@ public class GsonDataFormat extends ServiceSupport
     }
 
     /**
-     * Use a custom Gson mapper and and unmarshal type
+     * Use a custom Gson mapper and unmarshal type
      *
      * @param gson          the custom mapper
      * @param unmarshalType the custom unmarshal type
@@ -130,7 +130,7 @@ public class GsonDataFormat extends ServiceSupport
     }
 
     /**
-     * Use a custom Gson mapper and and unmarshal token type
+     * Use a custom Gson mapper and unmarshal token type
      *
      * @param gson                 the custom mapper
      * @param unmarshalGenericType the custom unmarshal generic type
