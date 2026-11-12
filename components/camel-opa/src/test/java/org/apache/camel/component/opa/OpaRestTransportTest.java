@@ -48,6 +48,8 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -230,6 +232,33 @@ public class OpaRestTransportTest extends CamelTestSupport {
                 .hasRootCauseInstanceOf(HttpTimeoutException.class);
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
         assertThat(headersSent.getCount()).isZero();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    @Timeout(10)
+    void failsClosedWhenTheServerClosesAfterTruncatedJson(boolean failOpen) throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        server.createContext("/v1/data/authz/allow", exchange -> {
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, 1);
+            try (OutputStream body = exchange.getResponseBody()) {
+                body.write('{');
+            }
+        });
+        server.start();
+        open.add(() -> server.stop(0));
+
+        Exchange out = template.request(
+                "opa:authz/allow?serverUrl=http://localhost:" + server.getAddress().getPort()
+                                        + "&requestTimeout=1000&failOpen=" + failOpen,
+                e -> {
+                });
+
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getException()).hasRootCauseInstanceOf(com.fasterxml.jackson.core.JsonParseException.class);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
     }
 
     @Test
