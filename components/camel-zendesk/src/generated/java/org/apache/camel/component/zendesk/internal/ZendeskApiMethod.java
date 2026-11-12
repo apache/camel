@@ -642,6 +642,18 @@ public enum ZendeskApiMethod implements ApiMethod {
         "deleteUsers",
         arg("ids", long[].class)),
 
+    DOWNLOAD_ATTACHMENT(
+        java.nio.file.Path.class,
+        "downloadAttachment",
+        arg("attachment", org.zendesk.client.v2.model.Attachment.class),
+        arg("destination", java.nio.file.Path.class)),
+
+    DOWNLOAD_ATTACHMENT_1(
+        java.nio.file.Path.class,
+        "downloadAttachment",
+        arg("attachmentId", long.class),
+        arg("destination", java.nio.file.Path.class)),
+
     EXECUTE_VIEW(
         java.util.Optional.class,
         "executeView",

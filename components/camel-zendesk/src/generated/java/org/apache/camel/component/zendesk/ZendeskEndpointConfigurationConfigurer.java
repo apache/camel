@@ -29,6 +29,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("ArticleId", java.lang.Long.class);
         map.put("ArticleId0", java.lang.Long.class);
         map.put("Attachment", org.zendesk.client.v2.model.Attachment.class);
+        map.put("AttachmentId", java.lang.Long.class);
         map.put("Attachments", java.util.List.class);
         map.put("Audit", org.zendesk.client.v2.model.Audit.class);
         map.put("AuditId", java.lang.Long.class);
@@ -47,6 +48,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("ContentTag", org.zendesk.client.v2.model.hc.ContentTag.class);
         map.put("ContentTagId", java.lang.String.class);
         map.put("ContentType", java.lang.String.class);
+        map.put("Destination", java.nio.file.Path.class);
         map.put("Email", java.lang.String.class);
         map.put("EndTime", java.util.Date.class);
         map.put("ExternalId", java.lang.String.class);
@@ -169,6 +171,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "articleid0":
         case "articleId0": target.setArticleId0(property(camelContext, java.lang.Long.class, value)); return true;
         case "attachment": target.setAttachment(property(camelContext, org.zendesk.client.v2.model.Attachment.class, value)); return true;
+        case "attachmentid":
+        case "attachmentId": target.setAttachmentId(property(camelContext, java.lang.Long.class, value)); return true;
         case "attachments": target.setAttachments(property(camelContext, java.util.List.class, value)); return true;
         case "audit": target.setAudit(property(camelContext, org.zendesk.client.v2.model.Audit.class, value)); return true;
         case "auditid":
@@ -197,6 +201,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "contentTagId": target.setContentTagId(property(camelContext, java.lang.String.class, value)); return true;
         case "contenttype":
         case "contentType": target.setContentType(property(camelContext, java.lang.String.class, value)); return true;
+        case "destination": target.setDestination(property(camelContext, java.nio.file.Path.class, value)); return true;
         case "email": target.setEmail(property(camelContext, java.lang.String.class, value)); return true;
         case "endtime":
         case "endTime": target.setEndTime(property(camelContext, java.util.Date.class, value)); return true;
@@ -383,6 +388,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "articleid0":
         case "articleId0": return java.lang.Long.class;
         case "attachment": return org.zendesk.client.v2.model.Attachment.class;
+        case "attachmentid":
+        case "attachmentId": return java.lang.Long.class;
         case "attachments": return java.util.List.class;
         case "audit": return org.zendesk.client.v2.model.Audit.class;
         case "auditid":
@@ -411,6 +418,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "contentTagId": return java.lang.String.class;
         case "contenttype":
         case "contentType": return java.lang.String.class;
+        case "destination": return java.nio.file.Path.class;
         case "email": return java.lang.String.class;
         case "endtime":
         case "endTime": return java.util.Date.class;
@@ -593,6 +601,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "articleid0":
         case "articleId0": return target.getArticleId0();
         case "attachment": return target.getAttachment();
+        case "attachmentid":
+        case "attachmentId": return target.getAttachmentId();
         case "attachments": return target.getAttachments();
         case "audit": return target.getAudit();
         case "auditid":
@@ -621,6 +631,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "contentTagId": return target.getContentTagId();
         case "contenttype":
         case "contentType": return target.getContentType();
+        case "destination": return target.getDestination();
         case "email": return target.getEmail();
         case "endtime":
         case "endTime": return target.getEndTime();

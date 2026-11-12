@@ -24,13 +24,14 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(151);
+        Set<String> props = new HashSet<>(153);
         props.add("active");
         props.add("article");
         props.add("articleAttachments");
         props.add("articleId");
         props.add("articleId0");
         props.add("attachment");
+        props.add("attachmentId");
         props.add("attachments");
         props.add("audit");
         props.add("auditId");
@@ -54,6 +55,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("contentTagId");
         props.add("contentType");
         props.add("delay");
+        props.add("destination");
         props.add("email");
         props.add("endTime");
         props.add("exceptionHandler");
