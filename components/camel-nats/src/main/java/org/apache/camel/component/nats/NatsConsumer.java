@@ -113,6 +113,9 @@ public class NatsConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         final NatsConfiguration configuration = this.getEndpoint().getConfiguration();
+        // an interrupt during the flush is kept until the end: jnats drops a message to the server (an UNSUB) that is
+        // queued on an interrupted thread
+        boolean interrupted = false;
 
         if (this.pushConsumerKeeper != null) {
             this.pushConsumerKeeper.stop();
@@ -121,7 +124,19 @@ public class NatsConsumer extends DefaultConsumer {
 
         if (configuration.isFlushConnection() && ObjectHelper.isNotEmpty(this.connection)) {
             LOG.debug("Flushing Messages before stopping");
-            this.connection.flush(Duration.ofMillis(configuration.getFlushTimeout()));
+            try {
+                this.connection.flush(Duration.ofMillis(configuration.getFlushTimeout()));
+            } catch (InterruptedException e) {
+                interrupted = true;
+                LOG.warn("Interrupted while flushing the NATS connection before stopping the consumer of topic {}",
+                        configuration.getTopic());
+            } catch (Exception e) {
+                // best effort (jnats fails the flush of a connection that is not connected): the consumer must still
+                // end its subscriptions, its executor and its own connection
+                LOG.warn("Cannot flush the NATS connection before stopping the consumer of topic {} due to: {}",
+                        configuration.getTopic(), e.toString());
+                LOG.debug("Flush failure", e);
+            }
         }
 
         final Dispatcher stoppedDispatcher = this.dispatcher;
@@ -159,11 +174,17 @@ public class NatsConsumer extends DefaultConsumer {
             this.dispatcherHandler = null;
         }
 
-        if (ObjectHelper.isNotEmpty(this.jetStreamSubscription) && this.jetStreamSubscription.isActive()) {
+        final JetStreamSubscription stoppedSubscription = this.jetStreamSubscription;
+        if (ObjectHelper.isNotEmpty(stoppedSubscription) && stoppedSubscription.isActive()) {
             try {
-                this.jetStreamSubscription.unsubscribe();
+                stoppedSubscription.unsubscribe();
             } catch (final Exception e) {
-                this.getExceptionHandler().handleException("Error during unsubscribing", e);
+                if (stoppedSubscription.isActive()) {
+                    this.getExceptionHandler().handleException("Error during unsubscribing", e);
+                } else {
+                    // the consuming task ended it meanwhile, as it saw the stop after its subscribe
+                    LOG.debug("Not unsubscribing the subscription of the stopped consumer, as it is ended already", e);
+                }
             }
         }
 
@@ -182,6 +203,9 @@ public class NatsConsumer extends DefaultConsumer {
             if (!this.connection.getStatus().equals(Connection.Status.CLOSED)) {
                 this.connection.close();
             }
+        }
+        if (interrupted) {
+            Thread.currentThread().interrupt();
         }
         super.doStop();
     }
@@ -331,9 +355,16 @@ public class NatsConsumer extends DefaultConsumer {
                         configuration.getTopic(), configuration.getAckPolicy(), configuration.getAckWait(),
                         configuration.getNackWait(), configuration.getPullBatchSize(), configuration.getPullFetchTimeout());
 
-                NatsConsumer.this.jetStreamSubscription = this.connection.jetStream().subscribe(
+                JetStreamSubscription pullSubscription = this.connection.jetStream().subscribe(
                         NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
                         pullOptions);
+                NatsConsumer.this.jetStreamSubscription = pullSubscription;
+                if (!NatsConsumer.this.isRunAllowed()) {
+                    // stopped while subscribing: doStop may have run before the subscription was set, and then did
+                    // not end it
+                    unsubscribeStopped(pullSubscription);
+                    return;
+                }
 
                 NatsConsumer.this.setActive(true);
                 runPullFetchLoop(NatsConsumer.this.jetStreamSubscription, messageHandler, cc);
@@ -382,6 +413,25 @@ public class NatsConsumer extends DefaultConsumer {
                 }
 
                 NatsConsumer.this.setActive(true);
+            }
+        }
+
+        private void unsubscribeStopped(JetStreamSubscription subscription) {
+            // the stop interrupts this thread, and jnats drops a message to the server that is queued on an interrupted
+            // thread: clear the interrupt for the unsubscribe, and keep it afterwards
+            boolean interrupted = Thread.interrupted();
+            try {
+                if (subscription.isActive()) {
+                    subscription.unsubscribe();
+                }
+            } catch (Exception e) {
+                // doStop may have ended it meanwhile
+                LOG.debug("Cannot unsubscribe the pull subscription of the stopped consumer of topic {}",
+                        configuration.getTopic(), e);
+            } finally {
+                if (interrupted) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
 
