@@ -68,8 +68,8 @@ class SanitizerConfigurationPropertiesTest {
         try {
             PropertiesComponent pc = main.getCamelContext().getPropertiesComponent();
             assertEquals("false", pc.resolveProperty("camel.sanitizer.enabled").orElse(null));
-            // the default: rules R1 and R2
-            assertEquals("callback,commit", pc.resolveProperty("camel.sanitizer.checks").orElse(null));
+            // not published when not set: camel-sanitizer decides (R1 only, and R1 and R2 in a test)
+            assertFalse(pc.resolveProperty("camel.sanitizer.checks").isPresent());
             assertEquals("8", pc.resolveProperty("camel.sanitizer.stackDepth").orElse(null));
             assertEquals("false", pc.resolveProperty("camel.sanitizer.reportOnShutdown").orElse(null));
             assertEquals("0", pc.resolveProperty("camel.sanitizer.pendingTimeout").orElse(null));

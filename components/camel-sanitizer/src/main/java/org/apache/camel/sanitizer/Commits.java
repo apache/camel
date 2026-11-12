@@ -274,7 +274,9 @@ final class Commits {
         }
         if (c == null && takenIndex.containsKey(System.identityHashCode(s))) {
             // taken out (or ran after it was taken out): matched by the on completion only, as nothing tells which
-            // exchange runs it; an on completion shared by many exchanges can match the record of another exchange
+            // exchange runs it; an on completion shared by many exchanges can match the record of another exchange.
+            // The finds over taken and ran (and taken.remove) are linear in MAX_FOLLOWED and MAX_RAN, and only for
+            // an on completion whose identity hash is indexed: raising those bounds much needs an index by identity
             c = find(taken, s);
             if (c != null) {
                 // taken out and run once: no longer followed, but kept a while for a second run

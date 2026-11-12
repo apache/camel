@@ -103,6 +103,12 @@ class SanitizerCommitTest extends ContextTestSupport {
 
                 from("direct:nobody").routeId("nobody").to("seda:nobody").id("sendNobody");
 
+                from("direct:topic").routeId("topic")
+                        .loadBalance().topic()
+                            .to("seda:a")
+                            .to("mock:topic")
+                        .end();
+
                 from("donetwice:x").routeId("doneTwice").to("mock:doneTwice");
             }
         };
@@ -161,6 +167,20 @@ class SanitizerCommitTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         awaitRuns(1);
         assertEquals(List.of("parallel"), commit.routes);
+        assertNoViolations();
+    }
+
+    @Test
+    void theCommitOfAnExchangeWhoseTopicCopyIsSentToSedaRunsOnceWithTheExchange() throws Exception {
+        // the copies of the topic load balancer use the unit of work of the exchange, as parts with shareUnitOfWork
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:topic").expectedMessageCount(1);
+
+        template.send("direct:topic", e -> e.getExchangeExtension().addOnCompletion(commit));
+
+        assertMockEndpointsSatisfied();
+        awaitRuns(1);
+        assertEquals(List.of("topic"), commit.routes);
         assertNoViolations();
     }
 

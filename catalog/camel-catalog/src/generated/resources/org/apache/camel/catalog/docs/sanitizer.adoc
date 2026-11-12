@@ -152,10 +152,14 @@ threads that run the parts therefore take the same lock of the table at each ste
 held briefly, but it costs more when the parts run on several threads, and it orders those threads, which can hide a
 race between parts that is not synchronized otherwise. To hunt races between the parts of a parallel split, set
 `camel.sanitizer.pendingTimeout=0`: the other checks of R1 stay on, and the table and its lock are not used. R2 takes
-one lock of its records of the context when a part gets its unit of work and when it is done; set
+one lock of its records of the context when an exchange or a part gets its unit of work, at each add, handover and run
+of an on completion, and when an exchange is done; in a test, where R2 is on by default, set
 `camel.sanitizer.checks=callback` as well to leave that out too.
 
 === R2: each consumer commit runs exactly once, for the unit of work that owns it
+
+R2 is checked by default only in a test (a CamelContext built on a thread the JUnit extension marked); elsewhere, such
+as with `camel run` or profile `dev`, `camel.sanitizer.checks=callback,commit` turns it on.
 
 A _commit_ is the on completion (`Synchronization`) that a consumer adds to the exchange before it routes it
 (`exchange.getExchangeExtension().addOnCompletion(...)`), to commit or roll back its message when the exchange is done,
@@ -234,7 +238,9 @@ Without a profile it stays off unless enabled. It is installed when the `CamelCo
 are created, and logs a WARN that it is on (for a context tied to a test, once per JVM and then at DEBUG). A route
 created while the sanitizer was not installed is not checked.
 
-It does not support pooled exchanges (`exchangeFactory=pooled`, deprecated): it then stays off and logs a WARN.
+It does not support pooled exchanges (`exchangeFactory=pooled`, deprecated, or a pooled processor exchange factory
+alone): it then stays off and logs a WARN. A pooled exchange keeps its unit of work for its next message (it is reset,
+not replaced), and R2 follows the commits by unit of work.
 
 Violations are logged at WARN when they happen, and the report of a context, with the counts per kind since the context
 was created, is logged when the context stops if there was a violation (the counts and one line per violation at WARN,
@@ -258,15 +264,18 @@ The options are read from the properties component, and are camel-main options (
 
 |`camel.sanitizer.enabled` |`false` (`true` with profile `dev` or `@CamelSanitizer`) |Install the sanitizer. Ignored
 with profile `prod`.
-|`camel.sanitizer.checks` |`callback,commit` |The checks to run, separated by commas: `callback` (R1) and `commit`
-(R2); `none` installs nothing, and an empty value is the default. An unknown check stops the application from
-starting.
+|`camel.sanitizer.checks` |`callback` (`callback,commit` in a test) |The checks to run, separated by commas:
+`callback` (R1) and `commit` (R2); `none` installs nothing, and an empty value is the default. An unknown check stops
+the application from starting. R2 is on by default only for a CamelContext built on a thread the JUnit extension
+marked (a test with `@CamelSanitizer`, or the CI switch): it costs more per message than R1, and its records take one
+lock for the whole context.
 |`camel.sanitizer.stackDepth` |`32` |How many frames of each stack a report keeps; `0` keeps only the name of the
 thread, which costs least.
 |`camel.sanitizer.pendingTimeout` |`60s` |How long an exchange waits, with nothing happening in it, before its
 innermost pending call is reported as still pending (a warning, which never fails a test), such as `60s` or `500`
-(milliseconds). `0` turns the warning off; use it when hunting races between the parts of a parallel split, which
-share one lock of the table. It needs the `callback` check (R1): with `commit` only there is no warning.
+(milliseconds). `0` turns the warning off; use it, with `checks=callback`, when hunting races between the parts of a
+parallel split, which share one lock of the table (and of the records of R2). It needs the `callback` check (R1): with
+`commit` only there is no warning.
 |`camel.sanitizer.reportOnShutdown` |`true` |Log the report when the context stops, if there was a violation or a still
 pending warning, and the calls still pending then.
 |===

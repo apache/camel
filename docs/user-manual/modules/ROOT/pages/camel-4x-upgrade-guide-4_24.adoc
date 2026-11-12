@@ -832,7 +832,7 @@ Without `synchronous()`, the exchange never completed (fixed by the same change)
 A `watermarkExpression` that throws on an item now fails that item, so `stopOnException`, `maxFailedRecords` and
 `errorThreshold` apply as for any failed item.
 
-=== camel-core - shareUnitOfWork: a part sent to seda no longer takes the on completions of the parent exchange
+=== camel-core - shareUnitOfWork and the topic load balancer: a part sent to seda no longer takes the on completions of the parent exchange
 
 Since Camel 4.14 the parts of a Split, Multicast or Recipient List with `shareUnitOfWork` use the unit of work of the
 parent exchange. A part that sent to an asynchronous endpoint without waiting for a reply (such as `seda` with an
@@ -857,6 +857,10 @@ file that was not loaded yet with `convertBodyTo(String.class)` before sending t
 (moved, deleted, acknowledged) before the asynchronous processing is done: a failure of the seda route then fails the
 part, and so the split. The previous behaviour, where the consumer commits with the outcome of one seda copy, cannot be
 configured.
+
+The same applies to the copies that the topic load balancer (`loadBalance().topic()`) sends to each of its endpoints:
+they use the unit of work of the exchange too, and the first one sent to `seda` took the on completions of the exchange
+(such as the commit of the consumer), so they ran with the outcome of that copy. They now stay with the exchange.
 
 === camel-core - Tokenize: the token is literal text unless regex is true
 

@@ -60,7 +60,12 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
      */
     static final String CHECK_CALLBACK = "callback";
     static final String CHECK_COMMIT = "commit";
-    static final String DEFAULT_CHECKS = CHECK_CALLBACK + "," + CHECK_COMMIT;
+    /**
+     * The checks by default: R1 only, as R2 costs more per message (one lock of its records for the whole context);
+     * both in a test, that is a context built on a thread the JUnit extension marked, where the cost does not matter.
+     */
+    static final String DEFAULT_CHECKS = CHECK_CALLBACK;
+    static final String DEFAULT_CHECKS_IN_TESTS = CHECK_CALLBACK + "," + CHECK_COMMIT;
 
     private static final Logger LOG = LoggerFactory.getLogger(SanitizerContextServicePlugin.class);
 
@@ -125,7 +130,7 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                             ENABLED);
                     return;
                 }
-                String checks = orElse(property(pc, CHECKS), DEFAULT_CHECKS);
+                String checks = orElse(property(pc, CHECKS), session != null ? DEFAULT_CHECKS_IN_TESTS : DEFAULT_CHECKS);
                 callback = parseChecks(checks, CHECK_CALLBACK);
                 commit = parseChecks(checks, CHECK_COMMIT);
                 stackDepth = parseStackDepth(orElse(property(pc, STACK_DEPTH), "32"));
@@ -134,8 +139,12 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
             } catch (IllegalArgumentException e) {
                 throw new VetoCamelContextStartException("camel-sanitizer: " + e.getMessage(), e, context);
             }
-            if (context.getCamelContextExtension().getExchangeFactory().isPooled()) {
-                LOG.warn("camel-sanitizer stays off: it does not support pooled exchanges (exchangeFactory=pooled)");
+            if (context.getCamelContextExtension().getExchangeFactory().isPooled()
+                    || context.getCamelContextExtension().getProcessorExchangeFactory().isPooled()) {
+                // a pooled exchange keeps its unit of work for its next message (it is reset, not replaced), and R2
+                // follows the commits by unit of work; the processor exchange factory pools the copies of the EIPs too
+                LOG.warn("camel-sanitizer stays off: it does not support pooled exchanges (exchangeFactory=pooled, or a"
+                         + " pooled processor exchange factory)");
                 turnedOff(session);
                 return;
             }
@@ -203,10 +212,13 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
         public void onContextStopped(CamelContext context) {
             Sanitizer s = sanitizer;
             if (s != null) {
-                // the commits still in a copy that was never routed never run
-                s.contextStopped();
-                // the calls still pending when the context stops are listed
-                s.stopPendingCheck(reportOnShutdown);
+                try {
+                    // the commits still in a copy that was never routed never run
+                    s.contextStopped();
+                } finally {
+                    // the calls still pending when the context stops are listed, also when a report above failed
+                    s.stopPendingCheck(reportOnShutdown);
+                }
             }
             if (s != null && reportOnShutdown) {
                 if (s.hasViolations() || s.hasWarnings()) {
