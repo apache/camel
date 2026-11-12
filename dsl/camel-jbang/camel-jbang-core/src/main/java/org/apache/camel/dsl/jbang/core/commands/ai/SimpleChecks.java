@@ -812,10 +812,6 @@ final class SimpleChecks {
     }
 
     /**
-     * A function served by a language or a component that is not on the classpath of the check (${jsonpath(...)},
-     * ${a2a:text}): the route works when the dependency is there, which the check cannot know, so it is not reported.
-     */
-    /**
      * Whether the error is about something only the application has: a class of its own (${type:com.acme.Codes.OK},
      * which the classpath of the check does not have), or a custom function it registers (${function(name)}).
      */
@@ -823,6 +819,10 @@ final class SimpleChecks {
         return error.contains("ClassNotFoundException") || error.startsWith("No custom simple function");
     }
 
+    /**
+     * A function served by a language or a component that is not on the classpath of the check (${jsonpath(...)},
+     * ${a2a:text}): the route works when the dependency is there, which the check cannot know, so it is not reported.
+     */
     static boolean isMissingDependency(String error) {
         return error.startsWith("No language could be found for:")
                 || error.contains("requires camel-semantic")

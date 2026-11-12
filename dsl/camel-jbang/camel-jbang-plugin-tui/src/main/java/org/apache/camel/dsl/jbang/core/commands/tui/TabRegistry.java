@@ -483,8 +483,7 @@ class TabRegistry {
      * popup {@code label} carrying a {@value TuiIcons#MNEMONIC_MARKER} shortcut marker, and the tab instance. The
      * shortcut letter and its highlight offset are derived from {@code label} via
      * {@link TuiIcons#mnemonicIndex(String)}, so there is no separate index or shortcut list to keep aligned.
-     */
-    /**
+     *
      * @param requiredConsoles dev console IDs that must be present (any-of) for this tab to be active; empty = always
      *                         active
      * @param activeWhen       runtime predicate on IntegrationInfo; null = always active (after console check)
