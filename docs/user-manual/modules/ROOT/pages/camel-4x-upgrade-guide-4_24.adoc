@@ -8263,3 +8263,10 @@ property of the bucket -- so `InfluxDb2Producer` never reads the option or the h
 Both are now deprecated with a note that says so. Remove `retentionPolicy` from the endpoint URI and stop setting the
 header: they are silently ignored. To control how long the data is kept, set the retention period on the bucket the
 endpoint writes to.
+
+=== camel-language - the CamelLanguageScript header is used once and removed
+
+With `allowTemplateFromHeader=true`, a script from the `CamelLanguageScript` header is now used for that message only.
+Before, with `cacheScript=true` it could replace the cached script of the endpoint, so later messages without the header
+ran it too. The header is now removed after use, so a later language endpoint in the route runs its own script instead
+of the header's. Set the header again before each language endpoint that should use it.
