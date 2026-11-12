@@ -4054,6 +4054,11 @@ set to `endpoint,component` and its `configKey`, instead of twice, and `matchedO
 that only matches a word of an EIP title (such as `retry`) no longer returns that EIP: the answer is a not-found with
 suggestions.
 
+A comma in the `optionsFilter` of `camel_catalog_doc` now separates several terms, each matched on its own, instead
+of being matched as part of the text; a term that matches no option is listed in `unmatchedTerms`. For an EIP, the
+options of its elements that match the filter are now listed under `nestedOptions` also when options of the EIP
+itself match, not only when none does.
+
 === camel-wasm - the endpoint runs WASI command modules (Breaking change)
 
 The `wasm` endpoint now runs WASI Preview 1 command modules (the body is standard input, standard output becomes the
