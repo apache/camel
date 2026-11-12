@@ -36,7 +36,6 @@ import javax.xml.stream.XMLStreamReader;
  * <li>prefix:namespace mapping declared at root element</li>
  * <li>modeline declarations before root element</li>
  * </ul>
- * </p>
  *
  * <p>
  * While we can have any kind of XML document and the namespaced content may be available at various places in the

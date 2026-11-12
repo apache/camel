@@ -58,7 +58,7 @@ public class CacheReifier extends ExpressionReifier<CacheDefinition> {
 
     /**
      * Strategy method to resolve the {@link KeyValueRepository} to use.
-     * <p/>
+     * <p>
      * Resolution order:
      * <ol>
      * <li>Explicit bean set programmatically</li>
