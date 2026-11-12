@@ -17,6 +17,7 @@
 package org.apache.camel.component.keycloak;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -68,6 +69,8 @@ public class KeycloakProducerRevocationIT extends CamelTestSupport {
 
     private static final String TEST_USER = "test-user-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String TEST_PASSWORD = "password123";
+
+    private static final String ADMIN_API_CLIENT_SCOPE = "kc-admin-api";
 
     private static Keycloak keycloakAdminClient;
     private static RealmResource realmResource;
@@ -126,7 +129,16 @@ public class KeycloakProducerRevocationIT extends CamelTestSupport {
             realmResource.users().get(serviceAccount.getId()).roles().clientLevel(realmManagementId)
                     .add(realmResource.clients().get(realmManagementId).roles().list().stream()
                             .filter(r -> r.getName().equals("manage-realm") || r.getName().equals("manage-users"))
-                            .collect(java.util.stream.Collectors.toList()));
+                            .toList());
+
+            // From Keycloak 26.8.2 the Admin REST API only accepts tokens with the built-in kc-admin-api scope
+            // (it adds the Admin API audience), and the upgrade assigns it to admin-cli and security-admin-console
+            // only. The producer calls the Admin API with a token of this client, so the client needs the scope.
+            // Older Keycloak versions do not have the scope and accept the token without it.
+            realmResource.clientScopes().findAll().stream()
+                    .filter(scope -> ADMIN_API_CLIENT_SCOPE.equals(scope.getName()))
+                    .findFirst()
+                    .ifPresent(scope -> clientResource.addDefaultClientScope(scope.getId()));
         }
         // Create user
         UserRepresentation user = new UserRepresentation();
@@ -136,7 +148,7 @@ public class KeycloakProducerRevocationIT extends CamelTestSupport {
         user.setEmail(TEST_USER + "@test.com");
         user.setEnabled(true);
         user.setEmailVerified(true);
-        user.setRequiredActions(java.util.Collections.emptyList());
+        user.setRequiredActions(Collections.emptyList());
         CredentialRepresentation cred = new CredentialRepresentation();
         cred.setType(CredentialRepresentation.PASSWORD);
         cred.setValue(TEST_PASSWORD);
