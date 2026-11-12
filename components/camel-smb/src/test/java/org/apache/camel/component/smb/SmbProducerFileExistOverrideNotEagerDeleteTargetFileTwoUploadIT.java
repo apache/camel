@@ -38,12 +38,12 @@ public class SmbProducerFileExistOverrideNotEagerDeleteTargetFileTwoUploadIT ext
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/existOverrideTwoNotEagerDel/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/existOverrideTwoNotEagerDel/hello.txt"))));
 
         template.sendBodyAndHeader(getSmbUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Bye World",
-                        new String(copyFileContentFromContainer("/data/rw/existOverrideTwoNotEagerDel/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/existOverrideTwoNotEagerDel/hello.txt"))));
     }
 }

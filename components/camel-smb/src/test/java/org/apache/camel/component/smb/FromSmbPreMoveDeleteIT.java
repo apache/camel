@@ -63,7 +63,7 @@ public class FromSmbPreMoveDeleteIT extends SmbServerTestSupport {
                         // assert the file is pre moved
                         await().atMost(15, TimeUnit.SECONDS)
                                 .untilAsserted(() -> assertEquals("Hello World this file will be moved",
-                                        new String(copyFileContentFromContainer("/data/rw/premove/work/hello.txt"))));
+                                        new String(copyExistingFileContentFromContainer("/data/rw/premove/work/hello.txt"))));
 
                     }
                 }).to("mock:result");

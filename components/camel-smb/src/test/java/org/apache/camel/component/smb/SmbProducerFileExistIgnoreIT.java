@@ -50,7 +50,7 @@ public class SmbProducerFileExistIgnoreIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/existignore/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/existignore/hello.txt"))));
     }
 
     @Override

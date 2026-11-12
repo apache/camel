@@ -58,7 +58,7 @@ public class SmbDeleteFileIT extends SmbServerTestSupport {
         // assert file is created
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World this file will be deleted",
-                        new String(copyFileContentFromContainer("/data/rw/deletedfile/hello.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/deletedfile/hello.txt"))));
     }
 
     @Override
