@@ -280,6 +280,12 @@ public class Transcribe2Configuration implements Cloneable, AwsCommonConfigurati
     /**
      * The protocol to use when instantiating the Transcribe client
      */
+    /**
+     * The protocol to use when instantiating the Transcribe client
+     *
+     * @deprecated Not used: nothing reads this option when the Transcribe client is built
+     */
+    @Deprecated
     public void setProtocol(Protocol protocol) {
         this.protocol = protocol;
     }
