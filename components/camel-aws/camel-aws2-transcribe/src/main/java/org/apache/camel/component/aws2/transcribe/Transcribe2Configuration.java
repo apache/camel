@@ -56,6 +56,8 @@ public class Transcribe2Configuration implements Cloneable, AwsCommonConfigurati
     @UriParam
     private String profileCredentialsName;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @Metadata(deprecationNote = "Not used: nothing reads this option when the Transcribe client is built")
+    @Deprecated
     private Protocol protocol = Protocol.HTTPS;
     @UriParam(label = "producer")
     private Transcribe2Operations operation;
@@ -263,14 +265,14 @@ public class Transcribe2Configuration implements Cloneable, AwsCommonConfigurati
     }
 
     /**
-     * To define a proxy protocol when instantiating the Transcribe client
+     * The protocol to use when instantiating the Transcribe client
      */
     public Protocol getProtocol() {
         return protocol;
     }
 
     /**
-     * To define a proxy protocol when instantiating the Transcribe client
+     * The protocol to use when instantiating the Transcribe client
      */
     public void setProtocol(Protocol protocol) {
         this.protocol = protocol;
