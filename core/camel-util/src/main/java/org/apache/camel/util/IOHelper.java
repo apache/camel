@@ -166,10 +166,10 @@ public final class IOHelper {
     public static String toString(BufferedReader reader, long offset) throws IOException {
         StringBuilder sb = new StringBuilder(1024);
 
-        skipFully(reader, offset);
-
         char[] buf = new char[1024];
         try {
+            // inside the try, so the reader is closed when a stale offset runs past the end of the content
+            skipFully(reader, offset);
             int len;
             // read until we reach then end which is the -1 marker
             while ((len = reader.read(buf)) != -1) {

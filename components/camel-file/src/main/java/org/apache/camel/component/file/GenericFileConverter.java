@@ -124,9 +124,15 @@ public final class GenericFileConverter {
                     LOG.debug("Read file {} (no charset)", f);
                 }
                 InputStream inputStream = IOHelper.toInputStream(f, charset);
-                // skipNBytes, not skip: a single skip() is allowed to advance fewer bytes than asked for, which
-                // would leave the body starting in the middle of the data the offset was meant to skip over
-                inputStream.skipNBytes(file.getLastOffsetValue());
+                try {
+                    // skipNBytes, not skip: a single skip() is allowed to advance fewer bytes than asked for, which
+                    // would leave the body starting in the middle of the data the offset was meant to skip over
+                    inputStream.skipNBytes(file.getLastOffsetValue());
+                } catch (IOException e) {
+                    // the stream is not returned, so nothing else can close it
+                    IOHelper.close(inputStream);
+                    throw e;
+                }
 
                 return inputStream;
             }
@@ -204,7 +210,13 @@ public final class GenericFileConverter {
                 reader = IOHelper.toReader(f, ExchangeHelper.getCharsetName(exchange));
             }
 
-            IOHelper.skipFully(reader, file.getLastOffsetValue());
+            try {
+                IOHelper.skipFully(reader, file.getLastOffsetValue());
+            } catch (IOException e) {
+                // the reader is not returned, so nothing else can close it
+                IOHelper.close(reader);
+                throw e;
+            }
             return reader;
         }
         return null;
