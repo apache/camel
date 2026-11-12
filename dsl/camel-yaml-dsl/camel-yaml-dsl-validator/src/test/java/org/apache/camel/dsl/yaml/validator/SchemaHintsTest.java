@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml.validator;
 import java.text.MessageFormat;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import com.networknt.schema.path.NodePath;
 import com.networknt.schema.path.PathType;
@@ -111,6 +112,31 @@ public class SchemaHintsTest {
         assertThat(hinted.get(0).getMessage()).isEqualTo("an expression expected");
         assertThat(String.valueOf(hinted.get(1).getInstanceLocation())).isEqualTo("/0/onException/continued");
         assertThat(hinted.get(2)).isSameAs(errors.get(3));
+    }
+
+    @Test
+    public void testAnOptionWithTheNameOfAnEipIsMisplacedByTheShapeOfItsValue() throws Exception {
+        // CAMEL-26874: doCatch: and doFinally: of doTry, and filter: of claimCheck, are the names of EIPs too
+        YamlValidator validator = new YamlValidator();
+        validator.init();
+        assertThat(validator.optionType("doTry", "doCatch")).isEqualTo("array");
+        assertThat(validator.optionType("doTry", "doFinally")).isEqualTo("object");
+        assertThat(validator.optionType("claimCheck", "filter")).isEqualTo("string");
+        assertThat(validator.optionType("log", "doCatch")).isNull();
+
+        ObjectMapper mapper = new ObjectMapper();
+        assertThat(SchemaHints.misplacedOptions(
+                mapper.readTree("{\"doTry\": {\"steps\": []}, \"doCatch\": [], \"doFinally\": {\"steps\": []}}"),
+                validator)).containsExactly("doCatch", "doFinally");
+        assertThat(SchemaHints.misplacedOptions(
+                mapper.readTree("{\"claimCheck\": {\"operation\": \"Get\"}, \"filter\": \"header:order*\"}"), validator))
+                .containsExactly("filter");
+        // filter: with a mapping is the filter EIP, and log: is no option of setBody
+        assertThat(SchemaHints.misplacedOptions(
+                mapper.readTree("{\"claimCheck\": {\"operation\": \"Push\"}, \"filter\": {\"simple\": \"${header.vip}\"}}"),
+                validator)).isEmpty();
+        assertThat(SchemaHints.misplacedOptions(
+                mapper.readTree("{\"setBody\": {\"simple\": \"${body}\"}, \"log\": \"${body}\"}"), validator)).isEmpty();
     }
 
     @Test

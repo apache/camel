@@ -524,22 +524,42 @@ final class SchemaHints {
             if (k.equals(eip)) {
                 continue;
             }
-            if (steps.contains(k)) {
-                parts.add(k + ": is another EIP: start it as its own item, - " + k + ":");
-            } else if (options.contains(k) && sibling != null) {
+            // an option first: doCatch: is an option of doTry and an EIP too
+            boolean option = isOptionOf(eip, k, node.get(k), options, m.validator());
+            if (option && sibling != null) {
                 parts.add(k + ": lines up with " + eip + ":, so it is read as a second key of the - item; it is an"
                           + " option of " + eip + ": indent " + k + ": and the lines under it two spaces more, so " + k
                           + ": lines up with " + sibling + ":");
-            } else if (options.contains(k)) {
+            } else if (option) {
                 parts.add(k + ": lines up with " + eip + ":, so it is read as a second key of the - item; it is an"
                           + " option of " + eip + ": write the options of " + eip + ": on the lines under it, two"
                           + " spaces further right than " + eip + ":, with " + k + ": among them");
+            } else if (steps.contains(k)) {
+                parts.add(k + ": is another EIP: start it as its own item, - " + k + ":");
             } else {
                 // neither: say what a step is, without guessing where the key belongs
                 return generic;
             }
         }
         return parts.isEmpty() ? generic : String.join("; ", parts);
+    }
+
+    /**
+     * Whether a second key of a step is an option of the step's EIP, which goes under the EIP. Three options have the
+     * name of an EIP too: doCatch: and doFinally: of doTry, and filter: of claimCheck. Such a key is the option: in r32
+     * of the local-model benchmark, told that doCatch: at the column of doTry: is another EIP to start as its own -
+     * item, a model sent the same lines 19 times (CAMEL-26874). The exception is an option that takes a plain value, as
+     * filter: takes a text: with a mapping or a list, the key is the EIP.
+     */
+    private static boolean isOptionOf(String eip, String k, JsonNode value, Set<String> options, YamlValidator validator) {
+        if (!options.contains(k)) {
+            return false;
+        }
+        if (!validator.stepNames().contains(k) || value == null || !value.isContainerNode()) {
+            return true;
+        }
+        String type = validator.optionType(eip, k);
+        return type == null || "array".equals(type) || "object".equals(type);
     }
 
     /**
@@ -560,7 +580,7 @@ final class SchemaHints {
         Set<String> options = validator.optionsOf(eip);
         Set<String> answer = new LinkedHashSet<>();
         for (String k : keys) {
-            if (!k.equals(eip) && !steps.contains(k) && options.contains(k)) {
+            if (!k.equals(eip) && isOptionOf(eip, k, node.get(k), options, validator)) {
                 answer.add(k);
             }
         }
@@ -570,16 +590,23 @@ final class SchemaHints {
     /**
      * An option of a step's EIP at the column of the EIP fails twice: "at most 1 properties" (the hint above says where
      * it goes) and "property 'steps' is not defined" in the oneOf branch of the step, whose hint says to move the items
-     * up a level, the opposite. The second one is dropped.
+     * up a level, the opposite. The second one is dropped. An option with the name of an EIP fails as that EIP instead,
+     * at its own line: doCatch: with its list of catches gets "array found, object expected", as a - doCatch: step is a
+     * mapping. When the value has the shape of the option, that error is dropped too (CAMEL-26874).
      */
     static List<Error> dropMisplacedOptionRepeats(List<Error> errors, YamlValidator validator) {
         Set<String> repeats = new HashSet<>();
+        Set<String> readAsEip = new HashSet<>();
         for (Error e : errors) {
             if ("maxProperties".equals(e.getKeyword())) {
                 String at = String.valueOf(e.getInstanceLocation());
                 if (at.matches(".*/steps/\\d+")) {
-                    for (String k : misplacedOptions(e.getInstanceNode(), validator)) {
+                    JsonNode node = e.getInstanceNode();
+                    for (String k : misplacedOptions(node, validator)) {
                         repeats.add(at + " " + k);
+                        if (validator.stepNames().contains(k) && hasShapeOfOption(node, k, validator)) {
+                            readAsEip.add(at + "/" + k);
+                        }
                     }
                 }
             }
@@ -590,7 +617,31 @@ final class SchemaHints {
         List<Error> answer = new ArrayList<>(errors);
         answer.removeIf(e -> "additionalProperties".equals(e.getKeyword()) && e.getMessage() != null
                 && repeats.contains(e.getInstanceLocation() + " " + between(e.getMessage(), "property '", "'")));
+        answer.removeIf(e -> "type".equals(e.getKeyword())
+                && readAsEip.contains(String.valueOf(e.getInstanceLocation())));
         return answer;
+    }
+
+    /**
+     * Whether the value of the key k of a step has the shape of the option k of the step's EIP: a list for an array, a
+     * mapping for an object, a plain value for the others. A doFinally: with a list is wrong as an option too, so its
+     * error stays.
+     */
+    private static boolean hasShapeOfOption(JsonNode node, String k, YamlValidator validator) {
+        Set<String> steps = validator.stepNames();
+        List<String> keys = new ArrayList<>();
+        node.fieldNames().forEachRemaining(keys::add);
+        String eip = keys.stream().filter(steps::contains).findFirst().orElse(null);
+        String type = eip != null ? validator.optionType(eip, k) : null;
+        JsonNode value = node.get(k);
+        if (type == null || value == null) {
+            return false;
+        }
+        return switch (type) {
+            case "array" -> value.isArray();
+            case "object" -> value.isObject();
+            default -> value.isValueNode();
+        };
     }
 
     // -------------------------------------------------------------------------------------------------------------

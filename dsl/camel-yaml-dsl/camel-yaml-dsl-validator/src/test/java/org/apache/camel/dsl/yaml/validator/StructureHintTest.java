@@ -116,6 +116,110 @@ public class StructureHintTest {
                 .contains("to: is another EIP: start it as its own item, - to:"));
     }
 
+    @Test
+    public void doCatchAtTheColumnOfDoTry() {
+        // CAMEL-26874, r32n-4 route-batch-file step 2 (shortened): told that doCatch: is another EIP to start as its
+        // own - item, the model sent the same lines 19 times. doCatch: is an option of doTry, and an EIP too.
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - doTry:
+                            steps:
+                              - unmarshal:
+                                  csv:
+                                    useMaps: true
+                          doCatch:
+                            - exception:
+                                - java.lang.IllegalArgumentException
+                              steps:
+                                - log: "bad line ${body}"
+                """;
+        // doCatch: read as a - doCatch: step, which is a mapping, also gave "array found, object expected" at line 10
+        assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
+                .startsWith("Line 5: ")
+                .contains("doCatch: lines up with doTry:, so it is read as a second key of the - item; it is an option"
+                          + " of doTry: indent doCatch: and the lines under it two spaces more, so doCatch: lines up with"
+                          + " steps:")
+                .doesNotContain("another EIP"));
+    }
+
+    @Test
+    public void doFinallyAtTheColumnOfDoTry() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:batch
+                      steps:
+                        - doTry:
+                            steps:
+                              - to: file:out
+                          doFinally:
+                            steps:
+                              - log: "batch done"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
+                .contains("doFinally: lines up with doTry:, so it is read as a second key of the - item")
+                .doesNotContain("another EIP"));
+    }
+
+    @Test
+    public void aDoFinallyListIsWrongAsAnOptionToo() {
+        // the option is a mapping as well: the error of the list stays, with its own hint
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:batch
+                      steps:
+                        - doTry:
+                            steps:
+                              - to: file:out
+                          doFinally:
+                            - log: "batch done"
+                """;
+        assertThat(lines(yaml)).hasSize(2)
+                .anySatisfy(m -> assertThat(m).contains("doFinally: lines up with doTry:"))
+                .anySatisfy(m -> assertThat(m).startsWith("Line 9: ").contains("array found, object expected"));
+    }
+
+    @Test
+    public void aFilterTextAtTheColumnOfClaimCheck() {
+        // filter: of claimCheck takes a text; the errors of filter: read as the filter EIP go with it
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:claim
+                      steps:
+                        - claimCheck:
+                            operation: Get
+                            key: order
+                          filter: "header:order*"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
+                .contains("filter: lines up with claimCheck:, so it is read as a second key of the - item")
+                .contains("so filter: lines up with operation:"));
+    }
+
+    @Test
+    public void aFilterWithStepsAfterClaimCheckIsAnotherEip() {
+        // with a mapping, filter: is not the text option of claimCheck but the filter EIP
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:claim
+                      steps:
+                        - claimCheck:
+                            operation: Push
+                          filter:
+                            simple: "${header.vip}"
+                            steps:
+                              - to: log:vip
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
+                .contains("filter: is another EIP: start it as its own item, - filter:"));
+    }
+
     private static List<String> lines(String yaml) {
         try {
             return YamlValidator.describeAll(yaml, validator.validate(yaml));
