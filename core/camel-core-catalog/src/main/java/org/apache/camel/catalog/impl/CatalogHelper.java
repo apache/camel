@@ -95,9 +95,9 @@ public final class CatalogHelper {
     }
 
     /**
-     * Tests whether the value is <code>null</code> or an empty string.
+     * Tests whether the value is <code>null</code> or a blank string.
      *
-     * @param  value the value, if its a String it will be tested for text length as well
+     * @param  value the value, if it is a String it is also tested for being blank
      * @return       true if empty
      */
     public static boolean isEmpty(Object value) {
@@ -105,9 +105,9 @@ public final class CatalogHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <code>null</code> or an empty string.
+     * Tests whether the value is <b>not</b> <code>null</code> and not a blank string.
      *
-     * @param  value the value, if its a String it will be tested for text length as well
+     * @param  value the value, if it is a String it is also tested for being blank
      * @return       true if <b>not</b> empty
      */
     public static boolean isNotEmpty(Object value) {
