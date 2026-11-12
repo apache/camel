@@ -18,6 +18,8 @@
 package org.apache.camel.component.knative.http;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
@@ -28,6 +30,10 @@ import org.apache.camel.util.IOHelper;
 /**
  * OpenID connect service options implementation grants access to the OIDC token that should be used to verify client
  * requests.
+ * <p>
+ * The consumer accepts a request when its <code>Authorization</code> header is <code>Bearer</code> followed by the
+ * token mounted at the token path. The token is compared with the mounted one, it is not validated as an OIDC token
+ * (signature, issuer, audience or expiry).
  */
 public class KnativeOidcServiceOptions implements KnativeHttpServiceOptions {
     private static final String PROPERTY_PREFIX = "camel.knative.service.oidc.";
@@ -38,7 +44,7 @@ public class KnativeOidcServiceOptions implements KnativeHttpServiceOptions {
 
     private String oidcTokenPath;
 
-    private String oidcToken;
+    private volatile String oidcToken;
 
     private boolean cacheTokens = true;
 
@@ -81,17 +87,13 @@ public class KnativeOidcServiceOptions implements KnativeHttpServiceOptions {
      * Read OIDC token from given path. Caches the token for future usage.
      */
     public String retrieveOidcToken() {
-        if (oidcToken == null || !cacheTokens) {
-            try {
-                oidcToken = IOHelper
-                        .loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), oidcTokenPath))
-                        .trim();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        String token = oidcToken;
+        if (token == null || !cacheTokens) {
+            token = loadOidcToken();
+            oidcToken = token;
         }
 
-        return oidcToken;
+        return token;
     }
 
     /**
@@ -99,8 +101,44 @@ public class KnativeOidcServiceOptions implements KnativeHttpServiceOptions {
      * update.
      */
     public String renewOidcToken() {
-        oidcToken = null;
-        return retrieveOidcToken();
+        String token = loadOidcToken();
+        oidcToken = token;
+        return token;
+    }
+
+    /**
+     * Whether the given value of the <code>Authorization</code> header is <code>Bearer</code> followed by the token at
+     * the token path. The comparison takes the same time wherever the first difference is. When the cached token does
+     * not match, the token is read again, as Knative may have renewed the mounted token since it was read: the renewed
+     * token is then accepted, and the token it replaces is no longer accepted.
+     *
+     * @param  authorization the value of the <code>Authorization</code> header of the request, may be null
+     * @return               true when the request carries the token at the token path
+     */
+    public boolean isAuthorized(String authorization) {
+        if (authorization == null) {
+            return false;
+        }
+        if (matches(authorization, retrieveOidcToken())) {
+            return true;
+        }
+        // without the cache the token was just read
+        return cacheTokens && matches(authorization, renewOidcToken());
+    }
+
+    private static boolean matches(String authorization, String token) {
+        byte[] expected = ("Bearer " + token).getBytes(StandardCharsets.UTF_8);
+        return MessageDigest.isEqual(expected, authorization.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private String loadOidcToken() {
+        try {
+            return IOHelper
+                    .loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), oidcTokenPath))
+                    .trim();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void setOidcEnabled(boolean oidcEnabled) {

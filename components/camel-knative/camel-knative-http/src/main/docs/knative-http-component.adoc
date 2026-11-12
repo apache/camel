@@ -245,3 +245,36 @@ camel.knative.client.oidc.token.path=oidc/token
 camel.knative.client.oidc.renew.tokens.on.forbidden=false
 camel.knative.client.oidc.cache.tokens=false
 ----
+
+== Knative Http consumer factory
+
+=== OIDC request verification
+
+With OIDC enabled on the service side, the Knative Http consumer accepts a request only when its `Authorization` header is `Bearer` followed by the token mounted at the token path. Any other request, also one without the header, gets a `401` response and does not reach the route.
+
+The consumer compares the token of the request with the mounted token. It does not validate the token as an OIDC token: the signature, the issuer, the audience and the expiry of the token are not checked.
+
+The service options use the property key prefix `camel.knative.service.oidc.` (or the environment variables `CAMEL_KNATIVE_SERVICE_OIDC_<PROPERTY_NAME>`):
+
+[width="100%",cols="2,1,5",options="header"]
+|===
+| Property | Default | Description
+| `camel.knative.service.oidc.enabled` | `false` | Whether the consumer verifies the token of each request.
+| `camel.knative.service.oidc.token.path` | | The location of the mounted token, such as `file:/oidc/token`.
+| `camel.knative.service.oidc.cache.tokens` | `true` | Whether the token is kept after it is read. With `false`, the token is read for each request.
+|===
+
+.application.properties
+[source,properties]
+----
+camel.knative.service.oidc.enabled=true
+camel.knative.service.oidc.token.path=file:/oidc/token
+
+camel.component.knative.consumerFactory.serviceOptions=#class:org.apache.camel.component.knative.http.KnativeOidcServiceOptions
+----
+
+This instantiates `org.apache.camel.component.knative.http.KnativeOidcServiceOptions` and configures it from the properties and environment variables above.
+
+==== Token renewal
+
+When Knative eventing renews the token, the volume mount is updated with the new token. When the token of a request does not match the cached token, the consumer reads the token from the token path again before it refuses the request. So a request with the renewed token is accepted, and from then on the token it replaces is refused.
