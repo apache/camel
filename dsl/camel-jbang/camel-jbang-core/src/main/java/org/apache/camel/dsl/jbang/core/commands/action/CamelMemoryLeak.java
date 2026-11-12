@@ -42,8 +42,10 @@ import org.apache.camel.util.json.JsonObject;
                    generateHelp = true,
                    footer = {
                            "Note: Sizes are sampled during the recording window, not total heap usage.",
-                           "A longer recording captures more samples and shows larger totals for the same leak.",
-                           "Use values to compare classes relative to each other, not as absolute heap numbers.",
+                           "A longer recording captures more samples and shows larger totals for the same",
+                           "leak.",
+                           "Use values to compare classes relative to each other, not as absolute heap",
+                           "numbers.",
                            "",
                            "Examples:",
                            "  camel cmd memory-leak --start",
