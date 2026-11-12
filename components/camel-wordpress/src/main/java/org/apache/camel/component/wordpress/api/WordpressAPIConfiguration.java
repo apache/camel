@@ -78,13 +78,15 @@ public final class WordpressAPIConfiguration implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof WordpressAPIConfiguration other)) {
             return false;
         }
-        if (!WordpressAPIConfiguration.class.isAssignableFrom(obj.getClass())) {
-            return false;
-        }
-        return Objects.equals(this, obj);
+        return Objects.equals(this.apiUrl, other.apiUrl)
+                && Objects.equals(this.apiVersion, other.apiVersion)
+                && Objects.equals(this.authentication, other.authentication);
     }
 
 }
