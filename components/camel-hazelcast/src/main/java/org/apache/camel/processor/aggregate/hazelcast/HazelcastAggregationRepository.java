@@ -365,7 +365,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
             LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
             if (useRecovery) {
                 // Use a Hazelcast transaction to atomically apply the conditional remove and the recovery write.
-                // A plain cache.remove(key, holder) followed by persistedCache.put(...) has two failure modes:
+                // A plain persistedCache.put(...) followed by cache.remove(key, holder) (the pre-fix order) has two failure modes:
                 //   1. The two steps cannot be fenced: a concurrent thread holds the same exchangeId (it read the
                 //      same stored entry), so it would delete the winning thread's recovery entry during its own
                 //      cleanup on the compare-and-remove failure (CAMEL-26796).

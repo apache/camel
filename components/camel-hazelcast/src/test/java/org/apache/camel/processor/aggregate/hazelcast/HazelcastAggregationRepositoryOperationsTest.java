@@ -20,6 +20,7 @@ import java.util.Set;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionContext;
+import com.hazelcast.transaction.TransactionException;
 import com.hazelcast.transaction.TransactionOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -246,7 +247,7 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
         doAnswer(inv -> {
             TransactionContext ctx = mock(TransactionContext.class,
                     AdditionalAnswers.delegatesTo(real.newTransactionContext(inv.getArgument(0))));
-            doThrow(new com.hazelcast.transaction.TransactionException("Simulated commit failure"))
+            doThrow(new TransactionException("Simulated commit failure"))
                     .when(ctx).commitTransaction();
             return ctx;
         }).when(hz).newTransactionContext(any(TransactionOptions.class));
