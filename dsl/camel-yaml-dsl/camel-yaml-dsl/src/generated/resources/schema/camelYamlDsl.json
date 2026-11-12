@@ -829,7 +829,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -1331,7 +1330,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -1424,7 +1422,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -1560,7 +1557,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -1704,8 +1700,6 @@
               }, {
                 "required" : [ "mvel" ]
               }, {
-                "required" : [ "ognl" ]
-              }, {
                 "required" : [ "python" ]
               }, {
                 "required" : [ "python3" ]
@@ -1835,14 +1829,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "ognl" ],
-            "properties" : {
-              "ognl" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.OgnlExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "python" ],
             "properties" : {
               "python" : {
@@ -1946,7 +1932,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -2104,7 +2089,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -2311,7 +2295,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -2688,7 +2671,7 @@
             "logLanguage" : {
               "type" : "string",
               "title" : "Log Language",
-              "description" : "The language to use for evaluating the log message, such as simple, groovy, or ognl."
+              "description" : "The language to use for evaluating the log message, such as simple or groovy."
             },
             "logName" : {
               "type" : "string",
@@ -2811,7 +2794,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -3685,7 +3667,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -4148,7 +4129,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -4257,7 +4237,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -4420,7 +4399,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -4884,7 +4862,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -5567,7 +5544,6 @@
             "language" : { },
             "method" : { },
             "mvel" : { },
-            "ognl" : { },
             "python" : { },
             "python3" : { },
             "quickjs" : { },
@@ -5760,7 +5736,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -5831,7 +5806,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -5947,7 +5921,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -6061,7 +6034,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -6138,7 +6110,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -6232,8 +6203,6 @@
               }, {
                 "required" : [ "mvel" ]
               }, {
-                "required" : [ "ognl" ]
-              }, {
                 "required" : [ "python" ]
               }, {
                 "required" : [ "python3" ]
@@ -6310,7 +6279,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -6492,7 +6460,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -6971,7 +6938,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -7410,7 +7376,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -8032,7 +7997,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -8126,7 +8090,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -10167,7 +10130,7 @@
           "namingStrategy" : {
             "type" : "string",
             "title" : "Naming Strategy",
-            "description" : "If set then Jackson will use the the defined Property Naming Strategy.Possible values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE"
+            "description" : "If set then Jackson will use the defined Property Naming Strategy. Possible values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE"
           },
           "objectMapper" : {
             "type" : "string",
@@ -12123,14 +12086,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "ognl" ],
-            "properties" : {
-              "ognl" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.OgnlExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "python" ],
             "properties" : {
               "python" : {
@@ -12234,7 +12189,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
@@ -12727,47 +12681,6 @@
       "org.apache.camel.model.language.MvelExpression" : {
         "title" : "MVEL",
         "description" : "Evaluates a MVEL template",
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "additionalProperties" : false,
-          "properties" : {
-            "expression" : {
-              "type" : "string",
-              "title" : "Expression",
-              "description" : "The expression value in your chosen language syntax."
-            },
-            "id" : {
-              "type" : "string",
-              "title" : "Id",
-              "description" : "The id of this node."
-            },
-            "resolveResource" : {
-              "type" : "boolean",
-              "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
-              "default" : false
-            },
-            "resultType" : {
-              "type" : "string",
-              "title" : "Result Type",
-              "description" : "The class of the result type (type from output)."
-            },
-            "trim" : {
-              "type" : "boolean",
-              "title" : "Trim",
-              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-              "default" : true
-            }
-          }
-        } ],
-        "required" : [ "expression" ]
-      },
-      "org.apache.camel.model.language.OgnlExpression" : {
-        "title" : "OGNL",
-        "description" : "Evaluates an OGNL expression (Apache Commons OGNL)",
-        "deprecated" : true,
         "oneOf" : [ {
           "type" : "string"
         }, {
@@ -16770,14 +16683,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "ognl" ],
-            "properties" : {
-              "ognl" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.OgnlExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "python" ],
             "properties" : {
               "python" : {
@@ -16881,7 +16786,6 @@
           "language" : { },
           "method" : { },
           "mvel" : { },
-          "ognl" : { },
           "python" : { },
           "python3" : { },
           "quickjs" : { },
