@@ -37,6 +37,8 @@ import org.apache.camel.support.component.ApiMethodHelperTest.TestMethod;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -102,8 +104,19 @@ public class AbstractApiProducerTest extends ContextTestSupport {
         // must fail the exchange, not be lost in that thread
         Exchange out = template.send(endpoint, e -> e.getMessage().setBody("World"));
 
-        assertTrue(out.getException() instanceof CamelExecutionException, "Expected a failed exchange: " + out.getException());
-        assertSame(error, out.getException().getCause());
+        assertSame(error, assertInstanceOf(CamelExecutionException.class, out.getException()).getCause());
+    }
+
+    @Test
+    public void testVirtualMachineErrorCompletesTheExchangeAsBefore() throws Exception {
+        TestApiEndpoint endpoint = (TestApiEndpoint) createEndpoint("greetMe", "name");
+        endpoint.failWith = new StackOverflowError("test");
+
+        // left as before: the callback completes the exchange, and the error is thrown on to the executor thread. The
+        // current behaviour, not a contract
+        Exchange out = template.send(endpoint, e -> e.getMessage().setBody("World"));
+
+        assertNull(out.getException());
     }
 
     record TestName(String name) {

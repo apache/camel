@@ -32,9 +32,11 @@ import org.apache.camel.processor.transformer.DelegatingDataTypeProcessor;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -64,15 +66,21 @@ class SiblingProcessorsThrowErrorTest extends ContextTestSupport {
     @Test
     void dataTypeProcessorFailsTheExchangeWithAnError() throws Exception {
         DataTypeProcessor processor = dataTypeProcessor(ERROR);
-
-        assertCallbackCalledOnceWithTheError(processor);
+        try {
+            assertCallbackCalledOnceWithTheError(processor);
+        } finally {
+            ServiceHelper.stopService(processor);
+        }
     }
 
     @Test
     void dataTypeProcessorThrowsAVirtualMachineErrorOnAfterTheCallback() throws Exception {
         DataTypeProcessor processor = dataTypeProcessor(SOE);
-
-        assertVirtualMachineErrorThrownOnAfterTheCallback(processor);
+        try {
+            assertVirtualMachineErrorThrownOnAfterTheCallback(processor);
+        } finally {
+            ServiceHelper.stopService(processor);
+        }
     }
 
     @Test
@@ -82,15 +90,18 @@ class SiblingProcessorsThrowErrorTest extends ContextTestSupport {
         DelegatingDataTypeProcessor processor = new DelegatingDataTypeProcessor();
         processor.setCamelContext(context);
         processor.start();
+        try {
+            Exchange exchange = createExchangeWithBody("Hello");
+            exchange.setProperty("CamelDataType", "failing");
+            List<Boolean> calls = new ArrayList<>();
 
-        Exchange exchange = createExchangeWithBody("Hello");
-        exchange.setProperty("CamelDataType", "failing");
-        List<Boolean> calls = new ArrayList<>();
+            assertTrue(processor.process(exchange, calls::add));
 
-        assertTrue(processor.process(exchange, calls::add));
-
-        assertEquals(List.of(true), calls);
-        assertFailedWithTheError(exchange.getException());
+            assertEquals(List.of(true), calls);
+            assertFailedWithTheError(exchange.getException());
+        } finally {
+            ServiceHelper.stopService(processor);
+        }
     }
 
     @Test
@@ -98,14 +109,17 @@ class SiblingProcessorsThrowErrorTest extends ContextTestSupport {
         DelegatingDataTypeProcessor processor = new DelegatingDataTypeProcessor();
         processor.setCamelContext(context);
         processor.start();
+        try {
+            Exchange exchange = createExchangeWithBody("Hello");
+            List<Boolean> calls = new ArrayList<>();
 
-        Exchange exchange = createExchangeWithBody("Hello");
-        List<Boolean> calls = new ArrayList<>();
+            assertTrue(processor.process(exchange, calls::add));
 
-        assertTrue(processor.process(exchange, calls::add));
-
-        assertEquals(List.of(true), calls, "The callback must be called once");
-        assertTrue(exchange.getException() instanceof IllegalArgumentException);
+            assertEquals(List.of(true), calls, "The callback must be called once");
+            assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        } finally {
+            ServiceHelper.stopService(processor);
+        }
     }
 
     @Test
@@ -121,6 +135,23 @@ class SiblingProcessorsThrowErrorTest extends ContextTestSupport {
         assertNull(out.getException(), "onException must handle the Error");
         // the split completed its aggregation strategy (doDone), as for an exception
         assertNull(out.getProperty(ExchangePropertyKey.AGGREGATION_STRATEGY));
+        Throwable caught = out.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+        assertSame(ERROR, caught instanceof CamelExecutionException ? caught.getCause() : caught);
+    }
+
+    @Test
+    void synchronousSplitFailsTheExchangeWithAnErrorOfItsAggregationStrategy() throws Exception {
+        // the Error leaves the split task (which catches only exceptions) through the reactive executor and the await
+        // manager of the synchronous split, and reaches the catch around the await manager: the exchange fails instead
+        // of continuing after the callback (doDone of the split is skipped on this path, as before)
+        getMockEndpoint("mock:part").expectedBodiesReceived("a");
+        getMockEndpoint("mock:after").expectedMessageCount(0);
+        getMockEndpoint("mock:handled").expectedMessageCount(1);
+
+        Exchange out = template.send("direct:splitAggregate", e -> e.getMessage().setBody("a,b"));
+
+        assertMockEndpointsSatisfied();
+        assertNull(out.getException(), "onException must handle the Error");
         Throwable caught = out.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
         assertSame(ERROR, caught instanceof CamelExecutionException ? caught.getCause() : caught);
     }
@@ -185,8 +216,7 @@ class SiblingProcessorsThrowErrorTest extends ContextTestSupport {
 
     private static void assertFailedWithTheError(Exception exception) {
         // the exchange keeps an Error wrapped in a CamelExecutionException
-        assertTrue(exception instanceof CamelExecutionException, "Expected a CamelExecutionException: " + exception);
-        assertSame(ERROR, exception.getCause());
+        assertSame(ERROR, assertInstanceOf(CamelExecutionException.class, exception).getCause());
     }
 
     private static Expression throwingExpression(Error error) {
@@ -207,6 +237,15 @@ class SiblingProcessorsThrowErrorTest extends ContextTestSupport {
                         .onException(AssertionError.class).handled(true).to("mock:handled").end()
                         .split(throwingExpression(ERROR)).synchronous()
                             .to("mock:part")
+                        .end()
+                        .to("mock:after");
+
+                from("direct:splitAggregate")
+                        .onException(AssertionError.class).handled(true).to("mock:handled").end()
+                        .split(body().tokenize(","), (oldExchange, newExchange) -> {
+                            throw ERROR;
+                        }).synchronous()
+                        .to("mock:part")
                         .end()
                         .to("mock:after");
 

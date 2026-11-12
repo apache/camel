@@ -97,7 +97,11 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
                 } catch (Exception t) {
                     exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
                 } catch (VirtualMachineError e) {
-                    // left as before (thrown on after the callback), as in DelegateSyncProcessor
+                    // left as before (thrown on after the callback), as in DelegateSyncProcessor. On this thread of the
+                    // executor it is kept in the Future that nobody reads, so log it to make it visible at least
+                    log.error("Error invoking operation {} on exchange {}: the exchange completes as if the call succeeded,"
+                              + " and the error is thrown on to the executor thread, which drops it",
+                            method.getName(), exchange.getExchangeId(), e);
                     throw e;
                 } catch (Throwable e) {
                     // also an Error outside the reflective call of the API method (which wraps an Error of the method),
