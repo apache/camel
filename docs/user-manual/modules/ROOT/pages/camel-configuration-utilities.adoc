@@ -485,12 +485,15 @@ X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024, x25519, secp256r1, secp38
 ----
 
 This ensures post-quantum key exchange is preferred while maintaining backward compatibility
-with servers that do not yet support PQC. A log message confirms that the groups were reordered:
+with servers that do not yet support PQC. A log message confirms that the groups were reordered. It lists the groups
+that JVM enables, hybrids first, so its content varies by JVM:
 
 [source,text]
 ----
 INFO  o.a.c.s.j.SSLContextParameters - Auto-configured PQC named groups: [X25519MLKEM768, x25519, secp256r1, secp384r1, ...]
 ----
+
+A JVM restricted to the NIST curves logs `[SecP256r1MLKEM768, SecP384r1MLKEM1024, secp256r1, secp384r1]`, for example.
 
 An order that already leads with a hybrid group is kept as it is, and that message is not logged: this is the
 case for the default order of JDK 27, which starts with `X25519MLKEM768`, and for an order chosen through the
