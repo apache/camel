@@ -115,6 +115,7 @@ public final class KafkaExactlyOnceMetadata {
     private final AtomicReference<Throwable> secondarySendFailure = new AtomicReference<>();
     private final AtomicBoolean deadLetterSendFailed = new AtomicBoolean();
     private final AtomicBoolean asynchronousKafkaHandoff = new AtomicBoolean();
+    private final AtomicBoolean offsetsCommittedAfterHandledFailure = new AtomicBoolean();
 
     private void recordSendFailure(Throwable failure) {
         Throwable firstFailure = sendFailure.get();
@@ -159,6 +160,23 @@ public final class KafkaExactlyOnceMetadata {
     /** Whether an executed WireTap copy actually invoked a Kafka producer. */
     public boolean hasAsynchronousKafkaHandoff() {
         return asynchronousKafkaHandoff.get();
+    }
+
+    /**
+     * Mark that the transaction synchronization committed the source offsets alone after a handled failure: the record
+     * is skipped, even when the exchange is still rollback only (a doCatch restores the flag after it handled the
+     * failure).
+     */
+    public void markOffsetsCommittedAfterHandledFailure() {
+        offsetsCommittedAfterHandledFailure.set(true);
+    }
+
+    /**
+     * Whether the source offsets were committed alone after a handled failure (the record is skipped). Set at most once
+     * per record (one source transaction commits its offsets), so {@link #clearSendFailures()} does not reset it.
+     */
+    public boolean isOffsetsCommittedAfterHandledFailure() {
+        return offsetsCommittedAfterHandledFailure.get();
     }
 
     /** Clear failures that occurred before a new transaction synchronization took ownership of the offsets. */

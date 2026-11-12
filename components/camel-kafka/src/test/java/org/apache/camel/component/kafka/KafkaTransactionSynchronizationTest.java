@@ -37,6 +37,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -276,6 +278,25 @@ class KafkaTransactionSynchronizationTest {
         verify(exchange, never()).setException(Mockito.any());
         verify(exchange, never()).setProperty(KafkaExactlyOnceMetadata.TRANSACTION_ABORTED_PROPERTY, Boolean.TRUE);
         verify(owner).releaseExactlyOnceTransaction("source-exchange");
+        // the consumer must not report the skipped record as rolled back although the exchange is still rollback only
+        assertTrue(metadata.isOffsetsCommittedAfterHandledFailure());
+    }
+
+    @Test
+    void rejectedSendCaughtByDoCatchIsNotMarkedSkippedWhenTheOffsetCommitFails() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(true);
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY)).thenReturn(Boolean.TRUE);
+        KafkaExactlyOnceMetadata metadata = sourceMetadataWithSendFailure();
+        // the offset-only transaction fails at its commit: the record is replayed, so it is not marked skipped
+        Mockito.doThrow(new KafkaException("offset commit failed")).when(kafkaProducer).commitTransaction();
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, metadata, "source-exchange");
+
+        sync.onDone(exchange);
+
+        verify(kafkaProducer).sendOffsetsToTransaction(Mockito.anyMap(), Mockito.any(ConsumerGroupMetadata.class));
+        verify(exchange).setProperty(KafkaExactlyOnceMetadata.TRANSACTION_ABORTED_PROPERTY, Boolean.TRUE);
+        assertFalse(metadata.isOffsetsCommittedAfterHandledFailure());
     }
 
     @Test
@@ -284,7 +305,8 @@ class KafkaTransactionSynchronizationTest {
         when(exchange.getException()).thenReturn(null);
         when(exchange.isRollbackOnly()).thenReturn(true);
         when(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY)).thenReturn(Boolean.TRUE);
-        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, sourceMetadata(), "source-exchange");
+        KafkaExactlyOnceMetadata metadata = sourceMetadata();
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, metadata, "source-exchange");
 
         sync.onDone(exchange);
 
@@ -292,6 +314,7 @@ class KafkaTransactionSynchronizationTest {
         verify(kafkaProducer, never()).beginTransaction();
         verify(kafkaProducer, never()).commitTransaction();
         verify(owner).releaseExactlyOnceTransaction("source-exchange");
+        assertFalse(metadata.isOffsetsCommittedAfterHandledFailure());
     }
 
     @Test

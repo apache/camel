@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka.integration;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,7 +26,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.DefaultKafkaClientFactory;
+import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -543,6 +547,58 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
         LOG.info("Kafka sends before and after doTry/doCatch: out={}", out);
         assertEquals(List.of("m0", "m0", "m1", "m1", "m2", "m2"), out,
                 "Both Kafka sends must be treated as normal sends in the source transaction");
+    }
+
+    /**
+     * The send of big-1 fails in a route called from a doTry, its redelivery is rejected in the open transaction, and
+     * the doCatch of the calling route handles the failure: the record is skipped (not replayed), and the consumer does
+     * not report it as rolled back although the doCatch leaves the exchange rollback only. With exactlyOnce the
+     * consumer breaks on the first error, so such a report would show as a reconnect: a second Kafka consumer.
+     */
+    @Test
+    void rejectedRedeliveryCaughtByDoCatchOfCallingRouteSkipsTheRecord() throws Exception {
+        String in = topics("in", "out")[0];
+        String publishUri = "direct:" + id + "-publish";
+        AtomicInteger caught = new AtomicInteger();
+        AtomicInteger consumersCreated = new AtomicInteger();
+        CamelContext context = newContext();
+        context.getComponent("kafka", KafkaComponent.class).setKafkaClientFactory(new DefaultKafkaClientFactory() {
+            @Override
+            public Consumer getConsumer(Properties kafkaProps) {
+                // on the first connect, and on each reconnect after a record the consumer reports as failed
+                consumersCreated.incrementAndGet();
+                return super.getConsumer(kafkaProps);
+            }
+        });
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                errorHandler(defaultErrorHandler().maximumRedeliveries(1).redeliveryDelay(0));
+                from(source(in)).routeId(id).process(countAttempt())
+                        .doTry()
+                        .to(publishUri)
+                        .doCatch(Exception.class)
+                        .process(exchange -> caught.incrementAndGet())
+                        .end();
+
+                from(publishUri).routeId(id + "-publish").to(sink(id + "-out", "tx") + "&maxRequestSize=1024");
+            }
+        });
+        context.start();
+        contexts.add(context);
+
+        produce(in, poisonRecords());
+        boolean committed3 = awaitQuietly(() -> Long.valueOf(3).equals(committed(id, in)), 45);
+        List<String> out = readCommittedKeys(id + "-out");
+        LOG.info("Exactly-once rejected redelivery caught by doCatch of the calling route: committed3={} attempts={} "
+                 + "caught={} out={} consumersCreated={} failures={}",
+                committed3, attempts, caught.get(), out, consumersCreated.get(), sample());
+        assertTrue(committed3, "the poison record is never skipped: attempts=" + attempts);
+        assertEquals(List.of("small-0", "small-2"), out, "The output of the poison record must be aborted");
+        assertEquals(1, attempts("big-1"), "The record whose failure the doCatch handled must not be replayed");
+        assertEquals(1, caught.get());
+        assertEquals(1, consumersCreated.get(),
+                "The skipped record must not be reported as rolled back (which reconnects the consumer)");
     }
 
     @Test

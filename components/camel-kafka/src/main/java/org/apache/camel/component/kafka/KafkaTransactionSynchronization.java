@@ -124,10 +124,9 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
             // a send that the producer rejected in the open transaction after an earlier send failed (a redelivery, or
             // another send through the producer, such as in a loop), which marked the exchange rollback only, and whose
             // failure was handled: by an error handler, or by a doCatch (which leaves no exception but does not mark
-            // the exchange failure handled when the doTry failed in its own route, and, once CAMEL-26447 is merged, when
-            // it caught the failure of a route the doTry called). A rejection that nothing handled keeps its exception
-            // and is rolled back below
-            boolean handledRedeliveryRejection = exchange.getException() == null
+            // the exchange failure handled when the doTry failed in its own route, or when it caught the failure of a
+            // route the doTry called). A rejection that nothing handled keeps its exception and is rolled back below
+            boolean handledRejectedSend = exchange.getException() == null
                     && Boolean.TRUE.equals(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY))
                     && (failureHandled || sendFailure != null);
 
@@ -147,7 +146,7 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                 rollback(exchange);
                 markAborted(exchange);
             } else if (exchange.getException() != null
-                    || (exchange.isRollbackOnly() && !handledRedeliveryRejection)) {
+                    || (exchange.isRollbackOnly() && !handledRejectedSend)) {
                 rollback(exchange);
                 markAborted(exchange);
             } else if (offsetsToCommit != null && sendFailure != null && secondarySendFailure != null) {
@@ -170,7 +169,7 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                 if (sourceFailure == null) {
                     sourceFailure = new IllegalStateException("A handled route failure completed without an exception");
                 }
-                commitOffsetsAfterHandledFailure(exchange, sourceFailure);
+                commitOffsetsAfterHandledFailure(exchange, exchangeMetadata, sourceFailure);
             } else {
                 commit(exchange);
                 if (exchange.getException() != null) {
@@ -218,7 +217,8 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
         }
     }
 
-    private void commitOffsetsAfterHandledFailure(Exchange exchange, Throwable sourceFailure) {
+    private void commitOffsetsAfterHandledFailure(
+            Exchange exchange, KafkaExactlyOnceMetadata exchangeMetadata, Throwable sourceFailure) {
         try {
             kafkaProducer.abortTransaction();
         } catch (Exception abortFailure) {
@@ -242,6 +242,10 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
             kafkaProducer.beginTransaction();
             kafkaProducer.sendOffsetsToTransaction(offsetsToCommit, groupMetadata);
             kafkaProducer.commitTransaction();
+            if (exchangeMetadata != null) {
+                // the consumer must not report the skipped record as rolled back when a doCatch left it rollback only
+                exchangeMetadata.markOffsetsCommittedAfterHandledFailure();
+            }
             LOG.warn("Skipped source offset(s) in transaction {} after a handled source failure: {}",
                     transactionId, sourceFailure.toString());
         } catch (Exception offsetCommitFailure) {
