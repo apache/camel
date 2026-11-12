@@ -385,7 +385,7 @@ class PluginFilteringTest {
                 .doesNotContainKey("beta");
     }
 
-    // ---- A broken unrelated plugin should not break addPlugins for "run" ----
+    // ---- A broken legacy plugin should not break addPlugins for "run" or "cmd" ----
 
     @Test
     void brokenLegacyPluginDoesNotBreakAddPluginsForRun() throws Exception {
@@ -403,6 +403,23 @@ class PluginFilteringTest {
         commandLine.addSubcommand("run", new CommandTree(new NoOpCommand()));
 
         assertThatCode(() -> PluginHelper.addPlugins(commandLine, main, "run", "foo.yaml"))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void brokenLegacyPluginDoesNotBreakAddPluginsForCmd() throws Exception {
+        Path goodJar = tempDir.resolve("fake-good.jar");
+        FakePluginJar.write(goodJar, "good");
+
+        writeConfig(
+                buildEntry("good", camelVersion, goodJar, Files.getLastModifiedTime(goodJar).toMillis()),
+                buildBrokenEntry("broken"));
+
+        CamelJBangMain main = new CamelJBangMain().withPrinter(new StringPrinter());
+        CommandTree commandLine = new CommandTree(main);
+        commandLine.addSubcommand("cmd", new CommandTree(new NoOpCommand()));
+
+        assertThatCode(() -> PluginHelper.addPlugins(commandLine, main, "cmd"))
                 .doesNotThrowAnyException();
     }
 
