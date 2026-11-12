@@ -57,7 +57,7 @@ public class AntPathMatcherFileFilter implements FileFilter {
         if (excludes != null) {
             for (String exclude : excludes) {
                 if (matcher.match(exclude, path, caseSensitive)) {
-                    // something to exclude so we cant accept it
+                    // something to exclude so we can't accept it
                     LOG.trace("File is excluded: {}", path);
                     return false;
                 }

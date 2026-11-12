@@ -504,7 +504,7 @@ public class BeanInfo {
                 expression = strategy.getDefaultParameterTypeExpression(parameterType);
             }
             // this is not entirely correct as the parameter may be a default parameter type and not a custom annotation
-            // but we need to keep this logic for backwards compatability
+            // but we need to keep this logic for backwards compatibility
             hasCustomAnnotation |= expression != null;
 
             // whether this parameter is vararg which must be last parameter

@@ -566,7 +566,7 @@ public class MockValueBuilder implements Expression, Predicate {
     }
 
     /**
-     * Sorts the current value using the given comparator. The current value must be convertable to a {@link List} to
+     * Sorts the current value using the given comparator. The current value must be convertible to a {@link List} to
      * allow sorting using the comparator.
      *
      * @param  comparator the comparator used by sorting

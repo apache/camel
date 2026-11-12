@@ -27,12 +27,12 @@ public final class HexUtils {
     }
 
     /**
-     * Creates a string representation of the supplied byte array in Hexidecimal format
+     * Creates a string representation of the supplied byte array in Hexadecimal format
      *
      * @param  in     the byte array to convert to a hex string.
      * @param  start  where to begin in the array
-     * @param  length how many bytes from the array to include in the hexidecimal representation
-     * @return        a string containing the hexidecimal representation of the requested bytes from the array
+     * @param  length how many bytes from the array to include in the hexadecimal representation
+     * @return        a string containing the hexadecimal representation of the requested bytes from the array
      */
     public static String byteArrayToHexString(byte[] in, int start, int length) {
         String asHexString = null;
@@ -50,10 +50,10 @@ public final class HexUtils {
     }
 
     /**
-     * Creates a string representation of the supplied byte array in Hexidecimal format
+     * Creates a string representation of the supplied byte array in Hexadecimal format
      *
      * @param  in the byte array to convert to a hex string.
-     * @return    a string containing the hexidecimal representation of the array
+     * @return    a string containing the hexadecimal representation of the array
      */
     public static String byteArrayToHexString(byte[] in) {
         return byteArrayToHexString(in, 0, in.length);

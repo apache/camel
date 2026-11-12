@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 public interface ElementNameStrategy {
 
     /**
-     * Deterimine element name for given type
+     * Determine element name for given type
      *
      * @param  soapAction
      * @param  type

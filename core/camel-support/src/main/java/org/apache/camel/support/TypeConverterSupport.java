@@ -24,7 +24,7 @@ import org.apache.camel.TypeConverter;
 /**
  * Base class for {@link TypeConverter} implementations.
  * <p/>
- * Implementators need only to implement the {@link TypeConverter#convertTo(Class, org.apache.camel.Exchange, Object)}
+ * Implementers need only to implement the {@link TypeConverter#convertTo(Class, org.apache.camel.Exchange, Object)}
  * method, and can rely on the default implementations of the other methods from this support class.
  */
 public abstract class TypeConverterSupport implements TypeConverter {

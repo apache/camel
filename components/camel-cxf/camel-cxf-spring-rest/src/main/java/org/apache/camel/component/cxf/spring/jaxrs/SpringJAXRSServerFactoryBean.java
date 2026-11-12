@@ -64,7 +64,7 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean
         beanId = id;
     }
 
-    // add this mothod for testing
+    // add this method for testing
     List<String> getSchemaLocations() {
         return schemaLocations;
     }

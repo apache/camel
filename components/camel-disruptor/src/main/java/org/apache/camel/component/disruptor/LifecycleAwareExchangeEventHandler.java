@@ -67,7 +67,7 @@ interface LifecycleAwareExchangeEventHandler extends EventHandler<ExchangeEvent>
      *
      * @param  timeout              the maximum time to wait
      * @param  unit                 the time unit of the {@code timeout} argument
-     * @return                      {@code true} if the event hanlder is stopped and {@code false} if the waiting time
+     * @return                      {@code true} if the event handler is stopped and {@code false} if the waiting time
      *                              elapsed before the count reached zero
      * @throws InterruptedException if the current thread is interrupted while waiting
      */
@@ -113,7 +113,7 @@ interface LifecycleAwareExchangeEventHandler extends EventHandler<ExchangeEvent>
      *
      * @param  timeout              the maximum time to wait
      * @param  unit                 the time unit of the {@code timeout} argument
-     * @return                      {@code true} if the event hanlder is stopped and {@code false} if the waiting time
+     * @return                      {@code true} if the event handler is stopped and {@code false} if the waiting time
      *                              elapsed before the count reached zero
      * @throws InterruptedException if the current thread is interrupted while waiting
      */

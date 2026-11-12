@@ -104,7 +104,7 @@ public class EasyPredicateParser {
      * Splits the predicate into: left OP right
      *
      * @param  predicate the predicate
-     * @return           the splitted parts
+     * @return           the split parts
      */
     private static String[] tokens(String predicate) {
         List<String> list = new ArrayList<>();

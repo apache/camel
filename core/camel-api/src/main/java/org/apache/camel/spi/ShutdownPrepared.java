@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 /**
  * Allows a {@link org.apache.camel.Service} to prepare for shutdown.
  * <p/>
- * <b>Important: </b> Implementators of this interface must be a {@link org.apache.camel.Service} as well.
+ * <b>Important: </b> Implementers of this interface must be a {@link org.apache.camel.Service} as well.
  * <p/>
  * This allows {@link org.apache.camel.Processor}s to prepare for shutdown, such as when
  * {@link org.apache.camel.CamelContext} or a {@link org.apache.camel.Route} is shutting down. The

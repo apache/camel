@@ -393,9 +393,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * Configure an endpoint using the given parameters. In the usual cases, this is the only call needed after having
      * created the endpoint in the {@link #createEndpoint(String, String, Map)} method's implementation.
      *
-     * This method will call the {@link Endpoint#configureProperties(Map)} method which should delegate the the
-     * endpoint's {@link PropertyConfigurer} instance. In some rare cases, you need to override this method to
-     * explicitely set parameters in case a simple generated configurer can not be used.
+     * This method will call the {@link Endpoint#configureProperties(Map)} method which should delegate the endpoint's
+     * {@link PropertyConfigurer} instance. In some rare cases, you need to override this method to explicitly set
+     * parameters in case a simple generated configurer can not be used.
      *
      * @param endpoint   the endpoint
      * @param parameters properties to set
@@ -523,7 +523,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     public <T> T getAndRemoveOrResolveReferenceParameter(
             Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
-        // the parameter may be the the type already (such as from endpoint-dsl)
+        // the parameter may be the type already (such as from endpoint-dsl)
         Object value = parameters.remove(key);
         if (value instanceof String str) {
             if (EndpointHelper.isReferenceParameter(str)) {
@@ -580,7 +580,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws IllegalArgumentException if referenced object was not found in registry.
      */
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
-        // the parameter may be the the type already (such as from endpoint-dsl)
+        // the parameter may be the type already (such as from endpoint-dsl)
         Object value = parameters.remove(key);
         if (value instanceof String str) {
             if (EndpointHelper.isReferenceParameter(str)) {

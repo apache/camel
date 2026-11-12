@@ -79,7 +79,7 @@ public enum ReactiveStreamsBackpressureStrategy {
      * Updates the buffer and returns a list of discarded elements (if any).
      *
      * @param  buffer  the buffer to update
-     * @param  newItem the elment that should possibly be inserted
+     * @param  newItem the element that should possibly be inserted
      * @param  <T>     the generic type of the element
      * @return         the list of discarded elements
      */

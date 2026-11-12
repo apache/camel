@@ -69,7 +69,7 @@ public class BarcodeParameters {
      * <ul>
      * <li>image type: PNG</li>
      * <li>image width: 100px</li>
-     * <li>image heigth: 100px</li>
+     * <li>image height: 100px</li>
      * <li>format: QR-Code</li>
      * </ul>
      */

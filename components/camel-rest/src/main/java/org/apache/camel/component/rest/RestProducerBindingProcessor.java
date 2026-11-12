@@ -144,7 +144,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             // okay now we can continue routing to the producer
             return getProcessor().process(exchange, callback);
         } else {
-            // if its convertable to stream based then its not POJO based
+            // if its convertible to stream based then its not POJO based
             InputStream is = camelContext.getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
             if (is != null) {
                 exchange.getIn().setBody(is);

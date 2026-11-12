@@ -35,7 +35,7 @@ public class BeanRouterObserver implements BeanContextLifecycleObserver {
     private ExecutionContextExpressionEvaluator conditionEvaluator;
 
     /**
-     * Sole contructor.
+     * Sole constructor.
      *
      * @param beanRouter The bean router instance to be used for routing beans.
      * @param beanId     The beanId which is the beanId in the Smooks {@link BeanContext}.

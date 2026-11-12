@@ -24,7 +24,7 @@ import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 public interface Trait extends Comparable<Trait> {
 
     /**
-     * Evaluate if Trait configuration is ready to be applyed
+     * Evaluate if Trait configuration is ready to be applied
      *
      * @param  traitConfig trait configuration
      * @param  context     command traits context

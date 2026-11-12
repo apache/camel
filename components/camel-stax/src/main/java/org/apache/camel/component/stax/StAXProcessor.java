@@ -33,7 +33,7 @@ import org.apache.camel.util.IOHelper;
 /**
  * It uses SAX content handler to handle events.
  * <p/>
- * The {@link Exchange} is expected to contain a message body that is convertable to a {@link XMLStreamReader} (such as
+ * The {@link Exchange} is expected to contain a message body that is convertible to a {@link XMLStreamReader} (such as
  * text, a stream, a file or a {@link javax.xml.transform.Source}) or to an {@link InputStream} (such as bytes, a path
  * or a DOM document) to support StAX streaming.
  */

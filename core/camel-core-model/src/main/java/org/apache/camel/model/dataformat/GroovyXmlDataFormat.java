@@ -79,7 +79,7 @@ public class GroovyXmlDataFormat extends DataFormatDefinition {
 
         /**
          * To turn on or off attribute mapping. When enabled then keys that start with _ or @ character will be mapped
-         * to an XML attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses.
+         * to an XML attribute, and vice versa. This rule is what Jackson and other XML or JSon libraries uses.
          */
         public Builder attributeMapping(String attributeMapping) {
             this.attributeMapping = attributeMapping;
@@ -88,7 +88,7 @@ public class GroovyXmlDataFormat extends DataFormatDefinition {
 
         /**
          * To turn on or off attribute mapping. When enabled then keys that start with _ or @ character will be mapped
-         * to an XML attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses.
+         * to an XML attribute, and vice versa. This rule is what Jackson and other XML or JSon libraries uses.
          */
         public Builder attributeMapping(boolean attributeMapping) {
             this.attributeMapping = Boolean.toString(attributeMapping);

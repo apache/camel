@@ -226,7 +226,7 @@ public class MiloServerComponent extends DefaultComponent {
     private OpcUaServerConfigBuilder createDefaultConfiguration() {
         final OpcUaServerConfigBuilder cfg = OpcUaServerConfig.builder();
 
-        //        cfg.setCertificateManager(new DefaultCertificateManager()); // TODO there is already der CertificateManager intialization below
+        //        cfg.setCertificateManager(new DefaultCertificateManager()); // TODO there is already der CertificateManager initialization below
         //        cfg.setCertificateValidator(DenyAllCertificateValidator.INSTANCE); // TODO moved to createCertificateGroup
         cfg.setEndpoints(createEndpointConfigs(null));
         cfg.setApplicationName(LocalizedText.english(applicationName == null ? "Apache Camel Milo Server" : applicationName));

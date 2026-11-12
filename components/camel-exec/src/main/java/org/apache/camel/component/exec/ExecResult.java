@@ -74,20 +74,20 @@ public class ExecResult implements Serializable {
     }
 
     /**
-     * Returns the content of the standart output (stdout) of the executed command or <code>null</code>, if no output
+     * Returns the content of the standard output (stdout) of the executed command or <code>null</code>, if no output
      * was produced in the stdout.
      *
-     * @return The standart output (stdout) of the command executable.
+     * @return The standard output (stdout) of the command executable.
      */
     public InputStream getStdout() {
         return stdout;
     }
 
     /**
-     * Returns the content of the standart error output (stderr) of the executed command or <code>null</code>, if no
+     * Returns the content of the standard error output (stderr) of the executed command or <code>null</code>, if no
      * output was produced in the stderr.
      *
-     * @return The standart error output (stderr) of the command executable.
+     * @return The standard error output (stderr) of the command executable.
      */
     public InputStream getStderr() {
         return stderr;

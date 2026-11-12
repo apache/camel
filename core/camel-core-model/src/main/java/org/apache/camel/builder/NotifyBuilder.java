@@ -471,7 +471,7 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when tne <tt>n'th</tt> (by index) {@link Exchange} is done being processed.
+     * Sets a condition when the <tt>n'th</tt> (by index) {@link Exchange} is done being processed.
      * <p/>
      * The difference between <i>done</i> and <i>completed</i> is that done can also include failed messages, where as
      * completed is only successful processed messages.

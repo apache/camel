@@ -545,7 +545,7 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
             addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, keyManagers.getKeyPassword());
             KeyStoreParameters keyStore = keyManagers.getKeyStore();
             if (keyStore != null) {
-                // kakfa loads the resource itself and you cannot have a prefix
+                // kafka loads the resource itself and you cannot have a prefix
                 String location = keyStore.getResource();
                 if (ResourceHelper.hasScheme(location)) {
                     location = StringHelper.after(location, ":");
@@ -561,7 +561,7 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
             addPropertyIfNotNull(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, trustManagers.getAlgorithm());
             KeyStoreParameters keyStore = trustManagers.getKeyStore();
             if (keyStore != null) {
-                // kakfa loads the resource itself and you cannot have a prefix
+                // kafka loads the resource itself and you cannot have a prefix
                 String location = keyStore.getResource();
                 if (ResourceHelper.hasScheme(location)) {
                     location = StringHelper.after(location, ":");

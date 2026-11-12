@@ -1636,7 +1636,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         exchange);
             }
 
-            // emmit event we are doing redelivery
+            // emit event we are doing redelivery
             if (camelContext.getCamelContextExtension().isEventNotificationApplicable()) {
                 EventHelper.notifyExchangeRedelivery(exchange.getContext(), exchange, redeliveryCounter);
             }

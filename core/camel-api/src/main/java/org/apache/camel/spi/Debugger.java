@@ -125,7 +125,7 @@ public interface Debugger extends Service, CamelContextAware {
     void stopSingleStepExchange(String exchangeId);
 
     /**
-     * Callback invoked when an {@link Exchange} is about to be processed which allows implementators to notify
+     * Callback invoked when an {@link Exchange} is about to be processed which allows implementers to notify
      * breakpoints.
      *
      * @param  exchange   the exchange
@@ -136,7 +136,7 @@ public interface Debugger extends Service, CamelContextAware {
     boolean beforeProcess(Exchange exchange, Processor processor, NamedNode definition);
 
     /**
-     * Callback invoked when an {@link Exchange} has been processed which allows implementators to notify breakpoints.
+     * Callback invoked when an {@link Exchange} has been processed which allows implementers to notify breakpoints.
      *
      * @param  exchange   the exchange
      * @param  processor  the {@link Processor} which was processed
@@ -148,7 +148,7 @@ public interface Debugger extends Service, CamelContextAware {
     boolean afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken);
 
     /**
-     * Callback invoked when an {@link Exchange} is being processed which allows implementators to notify breakpoints.
+     * Callback invoked when an {@link Exchange} is being processed which allows implementers to notify breakpoints.
      *
      * @param  exchange the exchange
      * @param  event    the event (instance of {@link ExchangeEvent}

@@ -207,7 +207,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
             if (parsedBodyPartFields != null) {
                 // The 'writeTo' method is used when verifying the signature of the received MDN, and any alteration
-                // to the body part fields would mean that the signature would fail verification. Therefor return
+                // to the body part fields would mean that the signature would fail verification. Therefore return
                 // the fields parsed from the MDN entity if available so that the specific field
                 // ordering/formatting is maintained otherwise fall back to recreating each header, e.g. 'Reporting-UA',
                 // in the order prescribed in this method.

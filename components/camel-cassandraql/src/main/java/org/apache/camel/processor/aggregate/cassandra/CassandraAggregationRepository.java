@@ -149,7 +149,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     }
 
     /**
-     * Get aggregation key colum name.
+     * Get aggregation key column name.
      */
     private String getKeyColumn() {
         return pkColumns[pkColumns.length - 1];
