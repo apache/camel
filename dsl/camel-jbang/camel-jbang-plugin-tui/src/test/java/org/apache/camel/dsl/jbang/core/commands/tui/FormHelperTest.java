@@ -21,6 +21,8 @@ import java.util.List;
 
 import dev.tamboui.style.Modifier;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.bindings.BindingSets;
+import dev.tamboui.tui.bindings.Bindings;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
@@ -107,5 +109,38 @@ class FormHelperTest {
         List<Span> spans = new ArrayList<>();
         FormHelper.addCaretField(spans, state);
         assertThat(spans).extracting(Span::content).containsExactly("a", FAMILY, "b");
+    }
+
+    @Test
+    void wordKeysMoveAndDeleteAWord() {
+        TextInputState state = new TextInputState("from timer:tick");
+        Bindings bindings = BindingSets.standard();
+
+        FormHelper.handleTextInput(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.CTRL, bindings), state);
+        assertThat(state.cursorPosition()).isEqualTo("from timer:".length());
+
+        // Ctrl+W deletes the word before the cursor on every platform
+        FormHelper.handleTextInput(KeyEvent.ofChar('w', KeyModifiers.CTRL), state);
+        assertThat(state.text()).isEqualTo("from tick");
+    }
+
+    @Test
+    void shortcutsAndControlKeysTypeNothing() {
+        assertThat(FormHelper.typedText(KeyEvent.ofChar('a', KeyModifiers.CTRL))).isNull();
+        assertThat(FormHelper.typedText(KeyEvent.ofChar('x', KeyModifiers.ALT))).isNull();
+        assertThat(FormHelper.typedText(KeyEvent.ofKey(KeyCode.ENTER))).isNull();
+        assertThat(FormHelper.typedText(KeyEvent.ofChar('A', KeyModifiers.SHIFT))).isEqualTo("A");
+    }
+
+    @Test
+    void aTextAreaInPlaceLeavesEnterUpAndDownToTheForm() {
+        TextAreaState state = new TextAreaState("a\nb");
+        state.moveCursorToStart();
+
+        FormHelper.handleTextAreaInPlace(KeyEvent.ofKey(KeyCode.ENTER), state);
+        FormHelper.handleTextAreaInPlace(KeyEvent.ofKey(KeyCode.DOWN), state);
+        FormHelper.handleTextAreaInPlace(KeyEvent.ofChar('x'), state);
+
+        assertThat(state.text()).isEqualTo("xa\nb");
     }
 }

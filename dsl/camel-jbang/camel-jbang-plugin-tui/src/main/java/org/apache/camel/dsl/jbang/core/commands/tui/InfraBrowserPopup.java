@@ -37,6 +37,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
+import dev.tamboui.tui.event.TextEditing;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -452,21 +453,7 @@ class InfraBrowserPopup {
         if (portState == null) {
             return;
         }
-        if (ke.isDeleteBackward()) {
-            portState.deleteBackward();
-        } else if (ke.isDeleteForward()) {
-            portState.deleteForward();
-        } else if (ke.isLeft()) {
-            portState.moveCursorLeft();
-        } else if (ke.isRight()) {
-            portState.moveCursorRight();
-        } else if (ke.isHome()) {
-            portState.moveCursorToStart();
-        } else if (ke.isEnd()) {
-            portState.moveCursorToEnd();
-        } else if (FormHelper.typedText(ke) != null && Character.isDigit(ke.codePoint())) {
-            portState.insert(ke.string());
-        }
+        TextEditing.handle(portState, ke, Character::isDigit);
     }
 
     // ---- Launch ----

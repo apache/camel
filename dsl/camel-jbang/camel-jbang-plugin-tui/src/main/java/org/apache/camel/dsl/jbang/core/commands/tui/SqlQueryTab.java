@@ -31,6 +31,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.TextEditing;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -213,47 +214,8 @@ class SqlQueryTab extends AbstractTab {
                 return true;
             }
 
-            // cursor movement
-            if (ke.isUp()) {
-                sqlInput.moveCursorUp();
-                return true;
-            }
-            if (ke.isDown()) {
-                sqlInput.moveCursorDown();
-                return true;
-            }
-            if (ke.isLeft()) {
-                sqlInput.moveCursorLeft();
-                return true;
-            }
-            if (ke.isRight()) {
-                sqlInput.moveCursorRight();
-                return true;
-            }
-            if (ke.isHome()) {
-                sqlInput.moveCursorToLineStart();
-                return true;
-            }
-            if (ke.isEnd()) {
-                sqlInput.moveCursorToLineEnd();
-                return true;
-            }
-            if (ke.isDeleteBackward()) {
-                sqlInput.deleteBackward();
-                return true;
-            }
-            if (ke.isDeleteForward()) {
-                sqlInput.deleteForward();
-                return true;
-            }
-
-            // typed character
-            String typed = FormHelper.typedText(ke);
-            if (typed != null) {
-                sqlInput.insert(typed);
-                return true;
-            }
-
+            // cursor movement, deletion and typed text (Enter is the line break above)
+            TextEditing.handle(sqlInput, ke);
             return true;
         }
 

@@ -16,6 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import dev.tamboui.tui.bindings.BindingSets;
+import dev.tamboui.tui.bindings.Bindings;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.widgets.input.TextAreaState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -134,5 +139,25 @@ class SourceEditorNavigationTest {
 
         SourceEditorNavigation.deleteForwardTo(emoji, 20);
         assertThat(emoji.text()).isEqualTo("ab\nnext");
+    }
+
+    @Test
+    void wordKeysMoveAndDeleteAWordAndRecordTheEdit() {
+        TextAreaState state = new TextAreaState("  uri: timer:tick");
+        state.moveCursorToLineEnd();
+        Bindings bindings = BindingSets.standard();
+        int[] edits = new int[1];
+
+        assertThat(SourceEditorNavigation.handleWordKey(
+                KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.CTRL, bindings), state, () -> edits[0]++)).isTrue();
+        assertThat(edits[0]).isZero();
+
+        assertThat(SourceEditorNavigation.handleWordKey(
+                KeyEvent.ofChar('w', KeyModifiers.CTRL), state, () -> edits[0]++)).isTrue();
+        assertThat(state.getLine(0)).isEqualTo("  uri: tick");
+        assertThat(edits[0]).isOne();
+
+        assertThat(SourceEditorNavigation.handleWordKey(KeyEvent.ofKey(KeyCode.LEFT), state, () -> edits[0]++))
+                .isFalse();
     }
 }
