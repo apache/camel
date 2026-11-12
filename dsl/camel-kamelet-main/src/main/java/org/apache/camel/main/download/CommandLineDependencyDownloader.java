@@ -61,13 +61,8 @@ public class CommandLineDependencyDownloader extends ServiceSupport {
         }
 
         if (!gavs.isEmpty()) {
-            for (MavenGav gav : gavs) {
-                if (required) {
-                    downloader.downloadRequiredDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
-                } else {
-                    downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
-                }
-            }
+            // together, so they are downloaded in parallel
+            downloader.downloadDependencies(gavs, required);
         }
     }
 

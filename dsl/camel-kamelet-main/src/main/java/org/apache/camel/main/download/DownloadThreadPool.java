@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,15 +76,30 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
      *                 error
      */
     public void download(Logger log, Runnable task, String gav, boolean required) {
+        download(log, task, List.of(gav), required);
+    }
+
+    /**
+     * Downloads dependencies together, and waits for the download to complete.
+     *
+     * @param required whether to throw a {@link DownloadException} when the download fails, instead of logging the
+     *                 error
+     */
+    public void download(Logger log, Runnable task, List<String> gavs, boolean required) {
         Future<?> future = executorService.submit(task);
-        awaitCompletion(log, future, gav, required);
+        awaitCompletion(log, future, gavs, required);
     }
 
     void awaitCompletion(Logger log, Future<?> future, String gav) {
-        awaitCompletion(log, future, gav, false);
+        awaitCompletion(log, future, List.of(gav), false);
     }
 
     void awaitCompletion(Logger log, Future<?> future, String gav, boolean required) {
+        awaitCompletion(log, future, List.of(gav), required);
+    }
+
+    void awaitCompletion(Logger log, Future<?> future, List<String> gavs, boolean required) {
+        String gav = String.join(", ", gavs);
         StopWatch watch = new StopWatch();
         boolean done = false;
         while (!done) {
@@ -113,24 +129,26 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
             }
         }
 
-        MavenGav a = MavenGav.parseGav(gav);
-        DownloadRecord downloadRecord = downloader.getDownloadState(a.getGroupId(), a.getArtifactId(), a.getVersion());
-        if (downloadRecord != null) {
-            long taken = watch.taken();
-            String url = downloadRecord.repoUrl();
-            String id = downloadRecord.repoId();
-            String msg = "Downloaded: " + gav + " (took: "
-                         + TimeUtils.printDuration(taken, true) + ") from: " + id + "@" + url;
-            log.info(msg);
-        } else {
-            long taken = watch.taken();
-            String msg = "Resolved: " + gav + " (took: "
-                         + TimeUtils.printDuration(taken, true) + ")";
-            if (verbose || taken > 2000) {
-                // slow resolving then log
+        long taken = watch.taken();
+        for (String g : gavs) {
+            MavenGav a = MavenGav.parseGav(g);
+            DownloadRecord downloadRecord
+                    = downloader.getDownloadState(a.getGroupId(), a.getArtifactId(), a.getVersion());
+            if (downloadRecord != null) {
+                String url = downloadRecord.repoUrl();
+                String id = downloadRecord.repoId();
+                String msg = "Downloaded: " + g + " (took: "
+                             + TimeUtils.printDuration(taken, true) + ") from: " + id + "@" + url;
                 log.info(msg);
             } else {
-                log.debug(msg);
+                String msg = "Resolved: " + g + " (took: "
+                             + TimeUtils.printDuration(taken, true) + ")";
+                if (verbose || taken > 2000) {
+                    // slow resolving then log
+                    log.info(msg);
+                } else {
+                    log.debug(msg);
+                }
             }
         }
     }

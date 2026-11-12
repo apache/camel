@@ -23,6 +23,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenArtifactDescriptor;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.maven.RepositoryResolver;
 
 /**
@@ -169,6 +170,26 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      * @throws DownloadException when the dependency cannot be downloaded
      */
     void downloadRequiredDependency(String groupId, String artifactId, String version);
+
+    /**
+     * Downloads the dependencies incl transitive dependencies, resolved together as one dependency graph, so their JARs
+     * are downloaded in parallel. When they cannot be downloaded together, they are downloaded one at a time.
+     *
+     * @param  gavs              the dependencies
+     * @param  required          whether a dependency that cannot be downloaded fails, as
+     *                           {@link #downloadRequiredDependency(String, String, String)}, instead of logging the
+     *                           error
+     * @throws DownloadException when required and a dependency cannot be downloaded
+     */
+    default void downloadDependencies(List<MavenGav> gavs, boolean required) {
+        for (MavenGav gav : gavs) {
+            if (required) {
+                downloadRequiredDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+            } else {
+                downloadDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+            }
+        }
+    }
 
     /**
      * Downloads as hidden dependency that are not captured as a requirement

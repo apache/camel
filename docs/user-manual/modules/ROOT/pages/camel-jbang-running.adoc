@@ -348,6 +348,11 @@ To disable automatic downloading:
 camel run foo.java --download=false
 ----
 
+The dependencies given with `--dep` or `camel.jbang.dependencies` are resolved together, as one dependency graph, and
+Camel CLI resolves with the breadth-first collector of Maven Resolver, which downloads the POMs in parallel (10
+threads). Set the `aether.dependencyCollector.impl=df` system property to use the depth-first collector of Maven
+instead.
+
 A repository that cannot be connected to (the host does not resolve, refuses the connection, or does not answer
 within the connect timeout of 10 seconds) is logged once with a WARN and not used for the rest of the run, so each
 download does not wait for it again. A repository that stops sending data fails the download after 60 seconds.

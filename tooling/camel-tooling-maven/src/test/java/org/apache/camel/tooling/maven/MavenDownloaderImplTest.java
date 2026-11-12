@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -1243,5 +1244,18 @@ class MavenDownloaderImplTest {
                 new SocketTimeoutException("Read timed out")));
         assertNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(new IOException("Not found")));
         assertNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(null));
+    }
+
+    @Test
+    void testCamelDefaults() throws Exception {
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenSettingsLocation("false");
+            downloader.build();
+
+            Map<String, Object> config = downloader.getRepositorySystemSession().getConfigProperties();
+            assertEquals(60000, config.get("aether.connector.requestTimeout"));
+            assertEquals("bf", config.get("aether.dependencyCollector.impl"));
+            assertEquals(10, config.get("aether.dependencyCollector.bf.threads"));
+        }
     }
 }
