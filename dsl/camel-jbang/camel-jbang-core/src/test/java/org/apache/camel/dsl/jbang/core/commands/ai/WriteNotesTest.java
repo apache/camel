@@ -26,8 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The notes of a write for what works but is probably not what was asked: a to: that copies the files a file consumer
- * moves to .camel, a request-reply over JMS whose reply replaces the message, and a literal over a {{key}} placeholder
- * that leaves the key unused.
+ * moves to .camel, a to: that appends to a file with nothing between the messages, a request-reply over JMS whose reply
+ * replaces the message, and a literal over a {{key}} placeholder that leaves the key unused.
  */
 class WriteNotesTest {
 
@@ -121,6 +121,182 @@ class WriteNotesTest {
         assertThat(WriteNotes.fileCopyNotes(COPY.replace("directoryName: done", "directoryName: inbox"))).isEmpty();
         // not a file consumer
         assertThat(WriteNotes.fileCopyNotes(COPY.replace("uri: file\n      parameters:", "uri: direct:in\n      parameters:")))
+                .isEmpty();
+    }
+
+    /**
+     * route-batch-file step 2 of the local-model benchmark, as r32 wrote it: each line that cannot be read is appended
+     * to rejects/<file name>, with nothing between the lines.
+     */
+    private static final String APPEND = """
+            - route:
+                id: settlement
+                from:
+                  uri: file
+                  parameters:
+                    directoryName: inbox
+                    move: done
+                  steps:
+                    - split:
+                        expression:
+                          tokenize:
+                            token: "\\n"
+                            skipFirst: true
+                        streaming: true
+                        steps:
+                          - doTry:
+                              steps:
+                                - unmarshal:
+                                    csv:
+                                      header: "paymentId,orderId,customer,amount,currency"
+                                      useMaps: true
+                              doCatch:
+                                - exception:
+                                    - java.lang.Exception
+                                  steps:
+                                    - setHeader:
+                                        name: CamelFileName
+                                        expression:
+                                          simple: "rejects/${file:name}"
+                                    - setBody:
+                                        expression:
+                                          simple: "${variable.line}"
+                                    - to:
+                                        uri: file
+                                        parameters:
+                                          directoryName: .
+                                          fileExist: Append
+            """;
+
+    /** The to: of {@link #APPEND} replaced by the step given, which is written from column 0. */
+    private static String appendWith(String step) {
+        return APPEND.substring(0, APPEND.indexOf(" ".repeat(24) + "- to:\n")) + step.indent(24);
+    }
+
+    /** {@link #APPEND} with appendChars under the parameters: of its to:, its value written as given. */
+    private static String withAppendChars(String value) {
+        return APPEND + " ".repeat(30) + "appendChars: " + value + "\n";
+    }
+
+    @Test
+    void anAppendWithNothingBetweenTheMessages() {
+        assertThat(WriteNotes.fileAppendNotes(APPEND)).singleElement().isEqualTo(
+                "Line 33: fileExist Append adds each message right after the one before, with nothing between them. To"
+                                                                                 + " write one message per line, add appendChars: \"\\\\n\" under parameters: of"
+                                                                                 + " this to:, which writes a line break after each message.");
+        // the value in another case, as Camel reads it
+        assertThat(WriteNotes.fileAppendNotes(APPEND.replace("fileExist: Append", "fileExist: append"))).hasSize(1);
+    }
+
+    @Test
+    void anAppendInTheUriGetsTheUriToWrite() {
+        // as r32n-3 wrote it: %5Cn is right whatever the quotes of the uri
+        String uri = appendWith("- to: \"file:rejects?fileName=${header.fileName}&fileExist=Append\"");
+        assertThat(WriteNotes.fileAppendNotes(uri)).singleElement().isEqualTo(
+                "Line 33: fileExist Append adds each message right after the one before, with nothing between them. To"
+                                                                              + " write one message per line, write the uri of this to: as"
+                                                                              + " file:rejects?fileName=${header.fileName}&fileExist=Append&appendChars=%5Cn,"
+                                                                              + " which writes a line break after each message. %5Cn is \\n as a uri writes"
+                                                                              + " it.");
+        // the option names in another case, as Camel reads them
+        assertThat(WriteNotes.fileAppendNotes(uri.replace("fileExist=Append", "fileexist=APPEND"))).hasSize(1);
+    }
+
+    @Test
+    void aLineBreakAfterEachMessageHasNoNote() {
+        // appendChars as the file component reads it: the two characters \n, in each YAML form, and as a uri writes it
+        assertThat(WriteNotes.fileAppendNotes(withAppendChars("\"\\\\n\""))).isEmpty();
+        assertThat(WriteNotes.fileAppendNotes(withAppendChars("\\n"))).isEmpty();
+        assertThat(WriteNotes.fileAppendNotes(withAppendChars("\"%5Cn\""))).isEmpty();
+        assertThat(WriteNotes.fileAppendNotes(appendWith("- to: \"file:rejects?fileExist=Append&appendChars=\\\\n\"")))
+                .isEmpty();
+        assertThat(WriteNotes.fileAppendNotes(appendWith("- to: \"file:rejects?fileExist=Append&appendChars=%5Cn\"")))
+                .isEmpty();
+        // another separator is the route's choice
+        assertThat(WriteNotes.fileAppendNotes(withAppendChars("\";\""))).isEmpty();
+        // a body that ends with a line break already: \n in Simple, and a record of csv
+        assertThat(WriteNotes.fileAppendNotes(APPEND.replace("\"${variable.line}\"", "\"${variable.line}\\\\n\"")))
+                .isEmpty();
+        assertThat(WriteNotes.fileAppendNotes(APPEND.replace("""
+                - setBody:
+                    expression:
+                      simple: "${variable.line}"
+                """.indent(24), """
+                - marshal:
+                    csv: {}
+                """.indent(24)))).isEmpty();
+    }
+
+    @Test
+    void aLineBreakOfTheYamlAddsNothing() {
+        // the endpoint uri drops it, as the runtime logged for r32n-6: appendChars=&fileExist=Append
+        assertThat(WriteNotes.fileAppendNotes(withAppendChars("\"\\n\""))).singleElement().isEqualTo(
+                "Line 33: this appendChars is a line break in the YAML, and the endpoint uri drops line breaks, so"
+                                                                                                     + " fileExist Append adds each message right after the one before, with nothing"
+                                                                                                     + " between them. To write one message per line, write appendChars: \"\\\\n\""
+                                                                                                     + " under parameters: of this to:, which writes a line break after each message.");
+        // Simple trims a line break of the YAML at the end of the body, as r32n-7 wrote it: the note stays
+        assertThat(WriteNotes.fileAppendNotes(APPEND.replace("\"${variable.line}\"", "\"${variable.line}\\n\"")))
+                .singleElement().asString().startsWith("Line 33: fileExist Append adds each message");
+    }
+
+    @Test
+    void aToDWithAnExpressionGetsTheValueItKeeps() {
+        // as r32n-6 wrote it: the toD reads its uri as Simple, which turns \n into a line break the uri drops
+        String toD = appendWith("""
+                - toD:
+                    uri: "file:rejects/${header.fileName}"
+                    parameters:
+                      fileExist: Append
+                      appendChars: "\\n"
+                """);
+        String fix = "To write one message per line, write appendChars: \"%5Cn\" under parameters: of this toD:, which"
+                     + " writes a line break after each message. In a toD with ${...}, write \\n as %5Cn: the toD turns \\n"
+                     + " into a line break, which the uri drops.";
+        assertThat(WriteNotes.fileAppendNotes(toD)).singleElement().isEqualTo(
+                "Line 33: this appendChars is a line break in the YAML, and the endpoint uri drops line breaks, so"
+                                                                              + " fileExist Append adds each message right after the one before, with nothing"
+                                                                              + " between them. " + fix);
+        // the two characters \n become a line break in the toD too
+        assertThat(WriteNotes.fileAppendNotes(toD.replace("appendChars: \"\\n\"", "appendChars: \"\\\\n\"")))
+                .singleElement().isEqualTo("Line 33: fileExist Append adds each message right after the one before, with"
+                                           + " nothing between them. " + fix);
+        // ${...} in the directoryName of the parameters is in the uri of the toD too
+        assertThat(WriteNotes.fileAppendNotes(toD.replace("uri: \"file:rejects/${header.fileName}\"", "uri: file")
+                .replace("fileExist: Append\n",
+                        "directoryName: \"rejects/${header.dir}\"\n" + " ".repeat(30) + "fileExist: Append\n")
+                .replace("appendChars: \"\\n\"", "appendChars: \"\\\\n\""))).singleElement().isEqualTo(
+                        "Line 33: fileExist Append adds each message right after the one before, with nothing between"
+                                                                                                       + " them. " + fix);
+        // %5Cn is kept, and a toD without ${...} reads its uri as it is
+        assertThat(WriteNotes.fileAppendNotes(toD.replace("appendChars: \"\\n\"", "appendChars: \"%5Cn\""))).isEmpty();
+        assertThat(WriteNotes.fileAppendNotes(toD.replace("rejects/${header.fileName}", "rejects")
+                .replace("appendChars: \"\\n\"", "appendChars: \"\\\\n\""))).isEmpty();
+        // as r32n-7 wrote it: no appendChars, in the uri of a toD
+        assertThat(WriteNotes.fileAppendNotes(appendWith("- toD: \"file:${header.CamelFileName}?fileExist=Append\"")))
+                .singleElement().isEqualTo(
+                        "Line 33: fileExist Append adds each message right after the one before, with nothing between"
+                                           + " them. To write one message per line, write the uri of this toD: as"
+                                           + " file:${header.CamelFileName}?fileExist=Append&appendChars=%5Cn, which writes"
+                                           + " a line break after each message. In a toD with ${...}, write \\n as %5Cn:"
+                                           + " the toD turns \\n into a line break, which the uri drops.");
+    }
+
+    @Test
+    void aWriteThatDoesNotAppendHasNoNote() {
+        assertThat(WriteNotes.fileAppendNotes(APPEND.replace("fileExist: Append", "fileExist: Override"))).isEmpty();
+        assertThat(WriteNotes.fileAppendNotes(APPEND.replace("fileExist: Append", "fileExist: \"{{rejects.exist}}\"")))
+                .isEmpty();
+        // a file consumer writes nothing
+        assertThat(WriteNotes.fileAppendNotes("""
+                - route:
+                    from:
+                      uri: "file:rejects?fileExist=Append"
+                      steps:
+                        - log: "${body}"
+                """)).isEmpty();
+        // the remote file components have no appendChars
+        assertThat(WriteNotes.fileAppendNotes(appendWith("- to: \"sftp:files.example.com/rejects?fileExist=Append\"")))
                 .isEmpty();
     }
 

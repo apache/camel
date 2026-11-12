@@ -333,8 +333,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     /**
      * Creates the {@link CamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
-     * <p/>
-     * Use one of the other constructors to force use an explicit registry.
+     * <p>
+     * Use one of the other constructors to force the use of an explicit registry.
      */
     protected AbstractCamelContext() {
         this(true);
@@ -4785,8 +4785,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ModelToStructureDumper createModelToStructureDumper();
 
     /**
-     * The generator of the checksums of routes, or <tt>null</tt> without camel-xml-io on the classpath: then the routes
-     * have no checksum.
+     * The generator of the checksums of routes, or <code>null</code> without camel-xml-io on the classpath: then the
+     * routes have no checksum.
      */
     protected ModelChecksumGenerator createModelChecksumGenerator() {
         return ResolverHelper.resolveBootstrapService(getCamelContextReference(), ModelChecksumGenerator.FACTORY,

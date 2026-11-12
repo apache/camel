@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +29,8 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -99,9 +99,10 @@ class KameletValidationTest {
         assertThat(warnings).noneMatch(w -> w.contains("Unknown keyword"));
         // the validator warns once in a JVM, so the schema is checked as well: only keywords at its root
         YamlValidator validator = new YamlValidator();
-        JsonNode model = new ObjectMapper().readTree(YamlValidator.class.getResourceAsStream("/schema/camelYamlDsl.json"));
+        JsonNode model = new JsonMapper()
+                .readTree(YamlValidator.class.getResourceAsStream("/schema/camelYamlDsl.json"));
         List<String> keys = new ArrayList<>();
-        validator.kameletModel(model).fieldNames().forEachRemaining(keys::add);
+        validator.kameletModel(model).propertyNames().forEach(keys::add);
         assertThat(keys).containsOnly("$schema", "type", "additionalProperties", "properties", "definitions", "items");
     }
 

@@ -23,6 +23,7 @@ import java.util.Locale;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.text.WordBoundaries;
 
 /**
  * Reusable fuzzy filter for TUI list views. Manages filter state and provides utilities for fuzzy matching and
@@ -59,6 +60,11 @@ class FuzzyFilter {
         if (!filter.isEmpty()) {
             filter = filter.substring(0, TuiHelper.characterStart(filter, filter.length()));
         }
+    }
+
+    /** Removes the last word typed, and the spaces and punctuation after it, as Ctrl+W does in a shell. */
+    void deleteWord() {
+        filter = filter.substring(0, WordBoundaries.prevWord(filter, filter.length()));
     }
 
     void clearFilter() {

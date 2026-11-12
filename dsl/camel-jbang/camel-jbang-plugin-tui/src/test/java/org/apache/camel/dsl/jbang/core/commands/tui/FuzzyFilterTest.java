@@ -252,4 +252,19 @@ class FuzzyFilterTest {
         filter.deleteChar();
         assertEquals("a", filter.filter());
     }
+
+    @Test
+    void deleteWordRemovesTheLastWordAndWhatFollowsIt() {
+        FuzzyFilter filter = new FuzzyFilter();
+        filter.append("timer:tick ");
+
+        filter.deleteWord();
+        assertEquals("timer:", filter.filter());
+
+        filter.deleteWord();
+        assertEquals("", filter.filter());
+
+        filter.deleteWord();
+        assertEquals("", filter.filter());
+    }
 }

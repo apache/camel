@@ -58,7 +58,7 @@ public class SmbConsumerPartialReadNoPathIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello Uuid",
-                        new String(copyFileContentFromContainer("/data/rw/failed/" + uuid))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/failed/" + uuid))));
     }
 
     @Override

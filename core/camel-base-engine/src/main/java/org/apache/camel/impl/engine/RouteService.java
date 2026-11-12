@@ -93,9 +93,9 @@ public class RouteService extends ChildServiceSupport {
 
     /**
      * Gather all the endpoints this route service uses
-     * <p/>
+     * <p>
      * This implementation finds the endpoints by searching all the child services for {@link EndpointAware} processors
-     * which uses an endpoint.
+     * which use an endpoint.
      */
     public Set<Endpoint> gatherEndpoints() {
         Set<Endpoint> answer = new LinkedHashSet<>();
@@ -143,7 +143,7 @@ public class RouteService extends ChildServiceSupport {
 
     /**
      * Extracts a non-null, non-empty error message from the exception or its cause chain.
-     * <p/>
+     * <p>
      * {@link Throwable#getLocalizedMessage()} can return {@code null} for exceptions such as
      * {@link NullPointerException} that carry no message, which would cause {@link FailedToStartRouteException} to
      * throw {@link NullPointerException} from its own constructor (via {@code Objects.requireNonNull}) instead of

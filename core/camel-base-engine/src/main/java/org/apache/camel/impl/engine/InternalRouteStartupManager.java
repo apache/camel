@@ -155,7 +155,7 @@ final class InternalRouteStartupManager {
     /**
      * Starts the routes services in a proper manner which ensures the routes will be started in correct order, check
      * for clash and that the routes will also be shutdown in correct order as well.
-     * <p/>
+     * <p>
      * This method <b>must</b> be used to start routes in a safe manner.
      *
      * @param  checkClash     whether to check for startup order clash

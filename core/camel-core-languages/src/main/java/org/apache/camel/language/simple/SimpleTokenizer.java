@@ -124,7 +124,7 @@ public class SimpleTokenizer {
      * Does the expression include a simple function.
      *
      * @param  expression the expression
-     * @return            <tt>true</tt> if one or more simple function is included in the expression
+     * @return            <code>true</code> if one or more simple functions are included in the expression
      */
     public static boolean hasFunctionStartToken(String expression) {
         if (expression != null) {
@@ -134,10 +134,10 @@ public class SimpleTokenizer {
     }
 
     /**
-     * Does the expression include an escape tokens.
+     * Does the expression include any escape tokens.
      *
      * @param  expression the expression
-     * @return            <tt>true</tt> if one or more escape tokens is included in the expression
+     * @return            <code>true</code> if one or more escape tokens are included in the expression
      */
     public static boolean hasEscapeToken(String expression) {
         if (expression != null) {

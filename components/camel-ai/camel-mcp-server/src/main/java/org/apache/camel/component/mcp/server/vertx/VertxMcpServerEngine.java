@@ -64,7 +64,9 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Every request on the MCP endpoint that carries an {@code Origin} header must come from an allowed origin
  * ({@link McpServerInfo#allowedOrigins()}, loopback origins by default), or it is rejected with HTTP 403 before it
- * reaches the MCP server. Requests without an {@code Origin} header (MCP clients running as a process) are served.
+ * reaches the MCP server. Requests without an {@code Origin} header (MCP clients running as a process) are served. When
+ * allowed hosts are configured ({@link McpServerInfo#allowedHosts()}), every request must also carry a {@code Host}
+ * header from that list, or it is rejected with HTTP 421 in the same way.
  */
 @JdkService(McpServerConstants.MCP_SERVER_ENGINE_FACTORY)
 public class VertxMcpServerEngine extends ServiceSupport implements McpServerEngine {
@@ -148,7 +150,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                 jsonMapper, info.path(),
                 info.sessionKeepAliveIntervalMs(), info.sessionIdleTtlMs(), info.allowedOrigins(),
                 camelContext, oauthSecurity, info.requiredScopes(), info.resourceUri(),
-                authorizationServerIssuer, allowInsecureAuthorizationServer);
+                authorizationServerIssuer, allowInsecureAuthorizationServer, info.allowedHosts());
         McpServer.SyncSpecification<?> specification = McpServer.sync(transport)
                 .serverInfo(buildServerInfo(info))
                 // resources(subscribe, listChanged): per-resource subscriptions are not offered, but clients are

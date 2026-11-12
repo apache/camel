@@ -212,10 +212,12 @@ public interface HashicorpVaultEndpointBuilderFactory {
         /**
          * How to log in to HashiCorp Vault: token (a fixed token), approle (a
          * role ID and a secret ID), kubernetes (the service account token of
-         * the pod), jwt (a JWT, such as a workload identity token) or cert (the
-         * TLS client certificate of the keyStore). The token is renewed before
-         * it expires, and the endpoint logs in again when the token can no
-         * longer be renewed.
+         * the pod), jwt (a JWT, such as a workload identity token), cert (the
+         * TLS client certificate of the keyStore), aws-iam (the AWS credentials
+         * of the application), azure-msi (the Azure managed identity) or
+         * gcp-gce (the service account of the Google Compute Engine instance).
+         * The token is renewed before it expires, and the endpoint logs in
+         * again when the token can no longer be renewed.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -232,7 +234,8 @@ public interface HashicorpVaultEndpointBuilderFactory {
         /**
          * The path the login method is mounted at in HashiCorp Vault (without
          * auth/), when it is not the default path of the login method: approle,
-         * kubernetes or jwt.
+         * kubernetes, jwt, cert, aws (for aws-iam), azure (for azure-msi) or
+         * gcp (for gcp-gce).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -243,6 +246,87 @@ public interface HashicorpVaultEndpointBuilderFactory {
          */
         default HashicorpVaultEndpointBuilder authMountPath(String authMountPath) {
             doSetProperty("authMountPath", authMountPath);
+            return this;
+        }
+        /**
+         * The value of the X-Vault-AWS-IAM-Server-ID header of the aws-iam
+         * login, when the AWS login of HashiCorp Vault requires one
+         * (iam_server_id_header_value).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param awsIamServerId the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder awsIamServerId(String awsIamServerId) {
+            doSetProperty("awsIamServerId", awsIamServerId);
+            return this;
+        }
+        /**
+         * The AWS region the aws-iam login signs its request for, which must be
+         * the region of awsStsEndpoint. When not set: us-east-1 with the global
+         * endpoint, else the region of the AWS SDK default region chain (such
+         * as the AWS_REGION environment variable).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param awsRegion the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder awsRegion(String awsRegion) {
+            doSetProperty("awsRegion", awsRegion);
+            return this;
+        }
+        /**
+         * The AWS STS endpoint of the aws-iam login, which the AWS login of
+         * HashiCorp Vault must accept (its sts_endpoint). When not set, the
+         * global endpoint https://sts.amazonaws.com/.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param awsStsEndpoint the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder awsStsEndpoint(String awsStsEndpoint) {
+            doSetProperty("awsStsEndpoint", awsStsEndpoint);
+            return this;
+        }
+        /**
+         * The client ID of a user-assigned managed identity, for the azure-msi
+         * login. When not set, the system-assigned managed identity.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param azureClientId the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder azureClientId(String azureClientId) {
+            doSetProperty("azureClientId", azureClientId);
+            return this;
+        }
+        /**
+         * The resource (audience) of the managed identity token of the
+         * azure-msi login, which must be the resource of the Azure login of
+         * HashiCorp Vault.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: https://management.azure.com/
+         * Group: security
+         * 
+         * @param azureResource the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder azureResource(String azureResource) {
+            doSetProperty("azureResource", azureResource);
             return this;
         }
         /**
@@ -282,7 +366,8 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * The file with the TLS client certificate and its private key, which
          * the endpoint presents to HashiCorp Vault: for the cert login, or for
          * a Vault that requires client certificates. A PKCS12 or JKS key store,
-         * or PEM with the certificate and the PKCS#8 private key.
+         * or PEM with the certificate and its unencrypted private key, in
+         * PKCS#8 or, for an RSA key, in PKCS#1.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -311,9 +396,11 @@ public interface HashicorpVaultEndpointBuilderFactory {
             return this;
         }
         /**
-         * The HashiCorp Vault role to log in as, for the kubernetes and jwt
-         * logins. The jwt login can leave it out when the login method has a
-         * default role.
+         * The HashiCorp Vault role to log in as, for the kubernetes, jwt, cert,
+         * aws-iam, azure-msi and gcp-gce logins. The jwt login can leave it out
+         * when the login method has a default role, the aws-iam login to log in
+         * as the role named as the IAM principal, and the cert login to let
+         * Vault pick the certificate role that trusts the certificate.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

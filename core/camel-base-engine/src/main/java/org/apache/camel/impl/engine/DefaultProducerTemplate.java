@@ -48,7 +48,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
- * Template (named like Spring's TransactionTemplate & JmsTemplate et al) for working with Camel and sending
+ * Template (named like Spring's TransactionTemplate &amp; JmsTemplate et al) for working with Camel and sending
  * {@link Message} instances in an {@link Exchange} to an {@link Endpoint}.
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {

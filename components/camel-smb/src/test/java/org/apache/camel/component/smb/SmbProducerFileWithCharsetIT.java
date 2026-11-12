@@ -60,7 +60,9 @@ public class SmbProducerFileWithCharsetIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(payload,
-                        new String(copyFileContentFromContainer("/data/rw/charset/iso.txt"), StandardCharsets.ISO_8859_1)));
+                        new String(
+                                copyExistingFileContentFromContainer("/data/rw/charset/iso.txt"),
+                                StandardCharsets.ISO_8859_1)));
 
         byte[] data = copyFileContentFromContainer("/data/rw/charset/iso.txt");
 

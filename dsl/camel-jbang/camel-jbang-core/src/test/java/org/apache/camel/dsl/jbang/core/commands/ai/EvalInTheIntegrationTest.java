@@ -99,7 +99,27 @@ class EvalInTheIntegrationTest {
         assertThat(result.getString("status")).isEqualTo("ok");
         assertThat(result.get("result")).isNull();
         assertThat(result.getBoolean("nullResult")).isTrue();
-        assertThat(result.getString("note")).isEqualTo(ExpressionEvaluator.NULL_NOTE);
+        assertThat(result.getString("note")).startsWith("evaluated to null: the header missing is not set");
+    }
+
+    /**
+     * The integration evaluates with empty text as the body when none is passed, as the local context does: the error
+     * of a language that reads its document from the body names it (CAMEL-26411).
+     */
+    @Test
+    void aLanguageThatReadsTheBodyFailsWithTheNoteWhenNoneIsPassed() throws Exception {
+        try (FakeIntegration failing = new FakeIntegration(
+                PID + 1, root -> Map.of("status", "failed", "exception",
+                        Map.of("message", "java.lang.IllegalArgumentException: json string can not be null or empty")))) {
+            ToolContext ctx = new ToolContext();
+            ctx.selectProcess(PID + 1);
+
+            assertThatThrownBy(() -> ExpressionEvaluator.evaluate(ctx, "jsonpath", "$.lines", null))
+                    .isInstanceOf(ToolExecutionException.class)
+                    .hasMessage("java.lang.IllegalArgumentException: json string can not be null or empty; no body was"
+                                + " passed: jsonpath reads the JSON of the message body, so this was evaluated on empty"
+                                + " text; pass the JSON as body");
+        }
     }
 
     @Test

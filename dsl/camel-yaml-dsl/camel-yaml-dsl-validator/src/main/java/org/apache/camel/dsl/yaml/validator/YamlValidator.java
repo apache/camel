@@ -34,10 +34,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.networknt.schema.Error;
 import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaLocation;
@@ -62,6 +58,9 @@ import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.ScalarNode;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * YAML DSL validator that tooling can use to validate Camel source files if they can be parsed and are valid according
@@ -88,7 +87,7 @@ public class YamlValidator {
             "resequencerConfig", Set.of("resequence"),
             "loadBalancerType", Set.of("loadBalance"));
 
-    private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    private final ObjectMapper mapper = YamlTrees.newMapper();
     private final boolean canonical;
     private final String schemaJson;
     private CamelCatalog catalog;
@@ -420,7 +419,7 @@ public class YamlValidator {
                     .build();
         }
         String cleaned = msg.replace("\n", " ").replaceAll("\\s+", " ").trim();
-        int cut = cleaned.indexOf("in 'reader'");
+        int cut = cleaned.indexOf("in reader,");
         String head = cut > 0 ? cleaned.substring(0, cut).trim() : cleaned;
         return Error.builder()
                 .messageKey("parser")
@@ -524,7 +523,7 @@ public class YamlValidator {
         return false;
     }
 
-    private static final Pattern SNAKE_MARK = Pattern.compile("in 'reader', line (\\d+), column (\\d+):");
+    private static final Pattern SNAKE_MARK = Pattern.compile("in reader, line (\\d+), column (\\d+):");
     private static final Pattern ESCAPE_CHAR = Pattern.compile("found unknown escape character (.)\\(");
     private static final Pattern KEY_LINE = Pattern.compile("^\\s*[^-\\s#][^:]*:(\\s|$)");
 
@@ -1262,7 +1261,7 @@ public class YamlValidator {
         // template of a Kamelet is not: counter-source declares its bean beside its from, and 60 of the 250 kamelets
         // of the library do the same. Everything else about an entry still holds, and the $refs inside the copy point
         // at #/items/definitions/..., which is why the items node is kept as well.
-        ObjectNode template = routeModel.get("items").deepCopy();
+        ObjectNode template = (ObjectNode) routeModel.get("items").deepCopy();
         template.remove("maxProperties");
         root.putObject("definitions").set("templateEntry", template);
         root.set("items", routeModel.get("items"));
@@ -1295,7 +1294,7 @@ public class YamlValidator {
             return false;
         }
         JsonNode kind = target.get("kind");
-        return kind != null && kind.isTextual() && "Kamelet".equals(kind.asText());
+        return kind != null && kind.isString() && "Kamelet".equals(kind.asString());
     }
 
     private List<Error> validate(JsonNode target, ProjectFacts facts, boolean routesOnly, String content) {
@@ -1392,7 +1391,7 @@ public class YamlValidator {
     String languageForm(String language) {
         JsonNode ref = model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition/properties/"
                                 + language + "/$ref");
-        JsonNode properties = ref.isTextual() ? model.at(ref.asText().substring(1) + "/properties") : null;
+        JsonNode properties = ref.isString() ? model.at(ref.asString().substring(1) + "/properties") : null;
         String property = properties != null && properties.has("expression") ? "expression"
                 : properties != null && properties.has("token") ? "token" : "expression";
         return property + ": \"...\"";
@@ -1405,12 +1404,12 @@ public class YamlValidator {
         JsonNode ref = null;
         for (JsonNode value : model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition")
                 .findValues(language)) {
-            if (value.path("$ref").isTextual()) {
+            if (value.path("$ref").isString()) {
                 ref = value.path("$ref");
                 break;
             }
         }
-        JsonNode definition = ref != null ? model.at(ref.asText().substring(1)) : null;
+        JsonNode definition = ref != null ? model.at(ref.asString("").substring(1)) : null;
         Set<String> answer = new LinkedHashSet<>();
         if (definition == null || definition.isMissingNode()) {
             return answer;
@@ -1420,7 +1419,7 @@ public class YamlValidator {
         shapes.add(definition);
         definition.path("oneOf").forEach(shapes::add);
         for (JsonNode shape : shapes) {
-            shape.path("properties").fieldNames().forEachRemaining(answer::add);
+            shape.path("properties").propertyNames().forEach(answer::add);
         }
         answer.remove("expression");
         return answer;
@@ -1477,20 +1476,20 @@ public class YamlValidator {
         if (!node.isObject()) {
             return;
         }
-        if (node.has("name") && node.get("name").isTextual()
-                && node.get("name").asText().toLowerCase(Locale.ROOT).contains("template")) {
+        if (node.has("name") && node.get("name").isString()
+                && node.get("name").asString("").toLowerCase(Locale.ROOT).contains("template")) {
             template = true;
         }
-        var fields = node.fieldNames();
+        var fields = node.propertyNames().iterator();
         while (fields.hasNext()) {
             String name = fields.next();
             JsonNode value = node.get(name);
             String text = null;
             if (SCRIPT_LANGUAGES.contains(name)) {
-                if (value.isTextual()) {
-                    text = value.asText();
-                } else if (value.isObject() && value.has("expression") && value.get("expression").isTextual()) {
-                    text = value.get("expression").asText();
+                if (value.isString()) {
+                    text = value.asString("");
+                } else if (value.isObject() && value.has("expression") && value.get("expression").isString()) {
+                    text = value.get("expression").asString("");
                 }
             }
             String outsideQuotes
@@ -1541,10 +1540,10 @@ public class YamlValidator {
      */
     private static void checkConstantWithSimple(JsonNode value, NodePath path, List<Error> errors) {
         String text = null;
-        if (value.isTextual()) {
-            text = value.asText();
-        } else if (value.isObject() && value.has("expression") && value.get("expression").isTextual()) {
-            text = value.get("expression").asText();
+        if (value.isString()) {
+            text = value.asString("");
+        } else if (value.isObject() && value.has("expression") && value.get("expression").isString()) {
+            text = value.get("expression").asString("");
         }
         if (text == null || text.startsWith("resource:")) {
             return;
@@ -1571,7 +1570,7 @@ public class YamlValidator {
         if (!name.equals("jsonpath")) {
             return false;
         }
-        if (value.isObject() && value.has("allowSimple") && "false".equals(value.get("allowSimple").asText())) {
+        if (value.isObject() && value.has("allowSimple") && "false".equals(value.get("allowSimple").asString(""))) {
             return false;
         }
         return outsideQuotes.replaceAll("\\$\\{[^}]*}", "").contains("$");
@@ -1607,7 +1606,7 @@ public class YamlValidator {
             Set<String> headers = new HashSet<>();
             collectNames(entry, "setHeader", "name", headers);
             String routeId = entry.has("route") && entry.get("route").has("id")
-                    ? entry.get("route").get("id").asText()
+                    ? entry.get("route").get("id").asString("")
                     : null;
             reportVariableSend(entry, path.append(i), headers, variables, routeId, errors);
         }
@@ -1641,7 +1640,7 @@ public class YamlValidator {
             int line = YamlPointerLines.line(root, "/" + first, null);
             // the route below it is the one it was meant for
             JsonNode next = i + 1 < target.size() ? target.get(i + 1).get("route") : null;
-            String id = next != null && next.path("id").isTextual() ? next.get("id").asText() : null;
+            String id = next != null && next.path("id").isString() ? next.get("id").asString() : null;
             errors.add(Error.builder()
                     .keyword("type")
                     .instanceLocation(path.append(i))
@@ -1685,9 +1684,9 @@ public class YamlValidator {
                 for (int j = 0; j < operations.size(); j++) {
                     JsonNode p = operations.get(j).get("path");
                     // as RestDefinition: the verb alone when there is no path
-                    String key = p != null && p.isValueNode() ? ":" + p.asText() : "";
+                    String key = p != null && p.isValueNode() ? ":" + p.asString() : "";
                     if (!paths.add(key)) {
-                        String what = key.isEmpty() ? "no path:" : "the path " + p.asText();
+                        String what = key.isEmpty() ? "no path:" : "the path " + p.asString("");
                         errors.add(Error.builder()
                                 .keyword("type")
                                 .instanceLocation(path.append(i).append("rest").append(verb).append(j))
@@ -1710,7 +1709,7 @@ public class YamlValidator {
      * ({@link JsonPathText}).
      */
     void checkJsonPathText(JsonNode node, NodePath path, List<Error> errors) {
-        if (node == null || !node.isContainerNode()) {
+        if (node == null || !node.isContainer()) {
             return;
         }
         if (node.isArray()) {
@@ -1719,13 +1718,13 @@ public class YamlValidator {
             }
             return;
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String name = it.next();
             JsonNode value = node.get(name);
             if ("jsonpath".equals(name)) {
-                JsonNode text = value.isTextual() ? value : value.path("expression");
-                String problem = text.isTextual()
-                        ? JsonPathText.problem(text.asText(), value.isTextual() ? name : "expression") : null;
+                JsonNode text = value.isString() ? value : value.path("expression");
+                String problem = text.isString()
+                        ? JsonPathText.problem(text.asString(), value.isString() ? name : "expression") : null;
                 if (problem != null) {
                     errors.add(Error.builder()
                             .keyword("type")
@@ -1772,7 +1771,7 @@ public class YamlValidator {
     }
 
     private static void literalPathParameters(JsonNode node, NodePath path, Set<String> names, List<Error> errors) {
-        if (node == null || !node.isContainerNode()) {
+        if (node == null || !node.isContainer()) {
             return;
         }
         if (node.isArray()) {
@@ -1781,15 +1780,15 @@ public class YamlValidator {
             }
             return;
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String name = it.next();
             JsonNode value = node.get(name);
             boolean language = TEXT_LANGUAGES.contains(name);
             if (language || "log".equals(name)) {
                 // the short form holds the text itself, the long form under expression: (message: for a log)
-                String key = value.isTextual() ? name : language ? "expression" : "message";
-                JsonNode text = value.isTextual() ? value : value.path(key);
-                String message = text.isTextual() ? literalPathParameter(name, key, text.asText(), names) : null;
+                String key = value.isString() ? name : language ? "expression" : "message";
+                JsonNode text = value.isString() ? value : value.path(key);
+                String message = text.isString() ? literalPathParameter(name, key, text.asString(), names) : null;
                 if (message != null) {
                     errors.add(Error.builder()
                             .keyword("type")
@@ -1836,7 +1835,7 @@ public class YamlValidator {
 
     private static void reportVariableSend(
             JsonNode node, NodePath path, Set<String> headers, Set<String> variables, String routeId, List<Error> errors) {
-        if (node == null || !node.isContainerNode()) {
+        if (node == null || !node.isContainer()) {
             return;
         }
         if (node.isArray()) {
@@ -1846,7 +1845,7 @@ public class YamlValidator {
             return;
         }
         JsonNode send = node.get("variableSend");
-        String name = send != null && send.isTextual() ? send.asText().trim() : null;
+        String name = send != null && send.isString() ? send.asString().trim() : null;
         if (name != null && headers.contains(name) && !variables.contains(name)) {
             errors.add(Error.builder()
                     .keyword("type")
@@ -1860,7 +1859,7 @@ public class YamlValidator {
                                + " to the endpoint), or leave variableSend out to send the body")
                     .build());
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String key = it.next();
             reportVariableSend(node.get(key), path.append(key), headers, variables, routeId, errors);
         }
@@ -1868,29 +1867,29 @@ public class YamlValidator {
 
     /** The fixed names under a key such as setVariable: name: x, anywhere in the node. */
     private static void collectNames(JsonNode node, String key, String nameKey, Set<String> names) {
-        if (node == null || !node.isContainerNode()) {
+        if (node == null || !node.isContainer()) {
             return;
         }
         for (JsonNode child : node) {
             collectNames(child, key, nameKey, names);
         }
         JsonNode value = node.isObject() ? node.get(key) : null;
-        if (value != null && value.isObject() && value.get(nameKey) != null && value.get(nameKey).isTextual()) {
-            names.add(value.get(nameKey).asText().trim());
+        if (value != null && value.isObject() && value.get(nameKey) != null && value.get(nameKey).isString()) {
+            names.add(value.get(nameKey).asString("").trim());
         }
     }
 
     /** The values of a key such as variableReceive: x, anywhere in the node. */
     private static void collectValues(JsonNode node, String key, Set<String> values) {
-        if (node == null || !node.isContainerNode()) {
+        if (node == null || !node.isContainer()) {
             return;
         }
         for (JsonNode child : node) {
             collectValues(child, key, values);
         }
         JsonNode value = node.isObject() ? node.get(key) : null;
-        if (value != null && value.isTextual()) {
-            values.add(value.asText().trim());
+        if (value != null && value.isString()) {
+            values.add(value.asString("").trim());
         }
     }
 
@@ -1907,17 +1906,17 @@ public class YamlValidator {
         if (!node.isObject()) {
             return;
         }
-        var fields = node.fieldNames();
+        var fields = node.propertyNames().iterator();
         while (fields.hasNext()) {
             String name = fields.next();
             JsonNode value = node.get(name);
             if ("to".equals(name)) {
                 String uri = null;
                 NodePath at = path.append(name);
-                if (value.isTextual()) {
-                    uri = value.asText();
-                } else if (value.isObject() && value.has("uri") && value.get("uri").isTextual()) {
-                    uri = value.get("uri").asText();
+                if (value.isString()) {
+                    uri = value.asString("");
+                } else if (value.isObject() && value.has("uri") && value.get("uri").isString()) {
+                    uri = value.get("uri").asString("");
                     at = at.append("uri");
                 }
                 String expression = expressionInPath(uri);
@@ -1975,10 +1974,10 @@ public class YamlValidator {
         }
         JsonNode parameters = to != null && to.isObject() ? to.get("parameters") : null;
         if (parameters != null && parameters.isObject()) {
-            for (var it = parameters.fieldNames(); it.hasNext();) {
+            for (var it = parameters.propertyNames().iterator(); it.hasNext();) {
                 String name = it.next();
                 if (parameters.get(name).isValueNode()) {
-                    options.put(name, parameters.get(name).asText());
+                    options.put(name, parameters.get(name).asString(""));
                 }
             }
         }
@@ -2127,7 +2126,7 @@ public class YamlValidator {
         if (!node.isObject()) {
             return;
         }
-        var fields = node.fieldNames();
+        var fields = node.propertyNames().iterator();
         while (fields.hasNext()) {
             String name = fields.next();
             JsonNode value = node.get(name);
@@ -2322,7 +2321,7 @@ public class YamlValidator {
      */
     private void checkOneOfCardinality(JsonNode node, NodePath path, List<Error> errors) {
         if (node.isObject()) {
-            Iterator<Map.Entry<String, JsonNode>> it = node.fields();
+            Iterator<Map.Entry<String, JsonNode>> it = node.properties().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, JsonNode> entry = it.next();
                 String key = entry.getKey();
@@ -2352,7 +2351,7 @@ public class YamlValidator {
             return;
         }
         List<String> found = new ArrayList<>();
-        Iterator<String> names = container.fieldNames();
+        Iterator<String> names = container.propertyNames().iterator();
         while (names.hasNext()) {
             String name = names.next();
             if (group.alternatives().contains(name)) {
@@ -2429,7 +2428,7 @@ public class YamlValidator {
         if (instance == null) {
             return false;
         }
-        if (instance.isTextual() && hasPropertyPlaceholder(instance.asText())) {
+        if (instance.isString() && hasPropertyPlaceholder(instance.asString())) {
             // the runtime resolves the placeholder before it looks at the value, so neither its type nor its
             // membership of an enumeration can be told from here. A Kamelet template is made of them:
             // fhir-source has fhirVersion: "{{fhirVersion}}" where the schema lists the six versions
@@ -2439,8 +2438,8 @@ public class YamlValidator {
             // what follows is the leniency of a converted scalar, which is about types only
             return false;
         }
-        if (instance.isTextual()) {
-            String text = instance.asText();
+        if (instance.isString()) {
+            String text = instance.asString("");
             if (isExpectedType(error, "boolean")) {
                 return isBooleanText(text);
             }
@@ -2471,7 +2470,7 @@ public class YamlValidator {
      */
     Set<String> entriesOnly() {
         Set<String> answer = new LinkedHashSet<>(topLevelEntries);
-        model.at("/items/definitions/org.apache.camel.model.RouteConfigurationDefinition/properties").fieldNames()
+        model.at("/items/definitions/org.apache.camel.model.RouteConfigurationDefinition/properties").propertyNames().iterator()
                 .forEachRemaining(answer::remove);
         return answer;
     }
@@ -2490,7 +2489,7 @@ public class YamlValidator {
     Set<String> optionsOf(String eip) {
         Set<String> answer = new LinkedHashSet<>();
         for (JsonNode shape : shapesOf(eip)) {
-            shape.path("properties").fieldNames().forEachRemaining(answer::add);
+            shape.path("properties").propertyNames().forEach(answer::add);
         }
         return answer;
     }
@@ -2508,11 +2507,11 @@ public class YamlValidator {
                 continue;
             }
             JsonNode ref = property.path("$ref");
-            if (ref.isTextual() && ref.asText().startsWith("#")) {
-                property = model.at(ref.asText().substring(1));
+            if (ref.isString() && ref.asString().startsWith("#")) {
+                property = model.at(ref.asString().substring(1));
             }
             JsonNode type = property.path("type");
-            return type.isTextual() ? type.asText() : null;
+            return type.isString() ? type.asString() : null;
         }
         return null;
     }
@@ -2520,7 +2519,7 @@ public class YamlValidator {
     /** The definition of an EIP in the schema, and the shapes of its oneOf; empty when the EIP is not known. */
     private List<JsonNode> shapesOf(String eip) {
         JsonNode ref = model.at("/items/definitions/org.apache.camel.model.ProcessorDefinition/properties/" + eip + "/$ref");
-        JsonNode definition = ref.isTextual() ? model.at(ref.asText().substring(1)) : null;
+        JsonNode definition = ref.isString() ? model.at(ref.asString().substring(1)) : null;
         if (definition == null || definition.isMissingNode()) {
             return List.of();
         }
@@ -2550,8 +2549,8 @@ public class YamlValidator {
             return;
         }
         JsonNode ref = node.path("properties").path(kind).path("$ref");
-        if (ref.isTextual() && ref.asText().startsWith("#")) {
-            model.at(ref.asText().substring(1)).path("properties").fieldNames().forEachRemaining(answer::add);
+        if (ref.isString() && ref.asString().startsWith("#")) {
+            model.at(ref.asString("").substring(1)).path("properties").propertyNames().forEach(answer::add);
             return;
         }
         for (String composition : new String[] { "anyOf", "oneOf", "allOf" }) {
@@ -2638,11 +2637,11 @@ public class YamlValidator {
         }
         JsonNode props = node.get("properties");
         if (props != null) {
-            props.fieldNames().forEachRemaining(answer::add);
+            props.propertyNames().forEach(answer::add);
         }
         JsonNode ref = node.get("$ref");
-        if (ref != null && ref.isTextual() && ref.asText().startsWith("#")) {
-            collectProperties(model.at(ref.asText().substring(1)), answer, depth + 1);
+        if (ref != null && ref.isString() && ref.asString().startsWith("#")) {
+            collectProperties(model.at(ref.asString("").substring(1)), answer, depth + 1);
         }
         for (String composition : new String[] { "anyOf", "oneOf", "allOf" }) {
             JsonNode entries = node.get(composition);
@@ -2724,13 +2723,13 @@ public class YamlValidator {
         if (schemaNode == null) {
             return false;
         }
-        if (schemaNode.isTextual()) {
-            return type.equals(schemaNode.asText());
+        if (schemaNode.isString()) {
+            return type.equals(schemaNode.asString(""));
         }
         // "type" may also be declared as an array of accepted types
         if (schemaNode.isArray()) {
             for (JsonNode t : schemaNode) {
-                if (type.equals(t.asText())) {
+                if (type.equals(t.asString(""))) {
                     return true;
                 }
             }
@@ -2753,18 +2752,20 @@ public class YamlValidator {
                 ? mapper.readTree(schemaJson) : mapper.readTree(YamlValidator.class.getResourceAsStream(location));
         this.model = model;
         this.topLevelEntries = new LinkedHashSet<>();
-        model.at("/items/properties").fieldNames().forEachRemaining(topLevelEntries::add);
+        model.at("/items/properties").propertyNames().forEach(topLevelEntries::add);
         this.stepNames = new LinkedHashSet<>();
-        model.at("/items/definitions/org.apache.camel.model.ProcessorDefinition/properties").fieldNames()
+        model.at("/items/definitions/org.apache.camel.model.ProcessorDefinition/properties").propertyNames().iterator()
                 .forEachRemaining(stepNames::add);
         this.resilienceProperties = new LinkedHashSet<>();
-        model.at("/items/definitions/org.apache.camel.model.Resilience4jConfigurationDefinition/properties").fieldNames()
+        model.at("/items/definitions/org.apache.camel.model.Resilience4jConfigurationDefinition/properties").propertyNames()
+                .iterator()
                 .forEachRemaining(resilienceProperties::add);
         this.redeliveryPolicyProperties = new LinkedHashSet<>();
-        model.at("/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition/properties").fieldNames()
+        model.at("/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition/properties").propertyNames().iterator()
                 .forEachRemaining(redeliveryPolicyProperties::add);
         this.languageKeys = new LinkedHashSet<>();
-        model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition/properties").fieldNames()
+        model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition/properties").propertyNames()
+                .iterator()
                 .forEachRemaining(languageKeys::add);
         var version = getSpecificationVersion(model).orElse(SpecificationVersion.DRAFT_4);
         // no typeLoose: besides accepting quoted scalars it also accepts a single value where the schema expects a
@@ -2803,8 +2804,8 @@ public class YamlValidator {
 
     private static Optional<SpecificationVersion> getSpecificationVersion(JsonNode schemaNode) {
         var schemaField = schemaNode.get("$schema");
-        if (schemaField != null && schemaField.isTextual()) {
-            return SpecificationVersion.fromDialectId(schemaField.asText());
+        if (schemaField != null && schemaField.isString()) {
+            return SpecificationVersion.fromDialectId(schemaField.asString(""));
         }
         return Optional.empty();
     }

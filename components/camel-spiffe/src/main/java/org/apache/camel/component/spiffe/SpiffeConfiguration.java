@@ -37,6 +37,9 @@ public class SpiffeConfiguration implements Cloneable {
     @UriParam
     private String audience;
 
+    @UriParam(defaultValue = "false")
+    private boolean preserveBody;
+
     @UriParam(label = "security", defaultValue = "false", security = "insecure:dev")
     private boolean allowOperationHeader;
 
@@ -97,6 +100,19 @@ public class SpiffeConfiguration implements Cloneable {
 
     public void setAudience(String audience) {
         this.audience = audience;
+    }
+
+    public boolean isPreserveBody() {
+        return preserveBody;
+    }
+
+    /**
+     * Whether validateJwtSvid leaves the application body untouched and publishes the verified identity through the
+     * CamelSpiffeJwtIdentity exchange property. In this mode the token must be in CamelSpiffeToken or an Authorization
+     * Bearer header: the body is never read as a token. The default returns the JwtSvid in the body as before.
+     */
+    public void setPreserveBody(boolean preserveBody) {
+        this.preserveBody = preserveBody;
     }
 
     public boolean isAllowOperationHeader() {

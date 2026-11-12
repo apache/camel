@@ -2276,7 +2276,11 @@ public class CamelCatalogTest {
                 Arguments.of("SpiffeSecurityPolicy", "org.apache.camel.component.spiffe.SpiffeSecurityPolicy",
                         "camel-spiffe", "org.apache.camel.spi.AuthorizationPolicy", "acceptedSpiffeIds"),
                 Arguments.of("SpiffeSSLContextParameters", "org.apache.camel.component.spiffe.SpiffeSSLContextParameters",
-                        "camel-spiffe", "org.apache.camel.support.jsse.SSLContextParameters", "acceptedSpiffeIds"));
+                        "camel-spiffe", "org.apache.camel.support.jsse.SSLContextParameters", "acceptedSpiffeIds"),
+                Arguments.of("KeycloakSecurityPolicy", "org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy",
+                        "camel-keycloak", "org.apache.camel.spi.AuthorizationPolicy", "realm"),
+                Arguments.of("ShiroSecurityPolicy", "org.apache.camel.component.shiro.security.ShiroSecurityPolicy",
+                        "camel-shiro", "org.apache.camel.spi.AuthorizationPolicy", "passPhrase"));
     }
 
     // camel run looks up a bean class it cannot load by its simple name here, to find the jar to download

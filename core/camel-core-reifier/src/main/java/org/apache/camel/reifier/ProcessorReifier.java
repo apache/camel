@@ -359,13 +359,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     /**
      * Determines whether a new thread pool will be created or not.
-     * <p/>
+     * <p>
      * This is used to know if a new thread pool will be created, and therefore is not shared by others, and therefore
      * exclusive to the definition.
      *
      * @param  definition the node definition which may leverage executor service.
-     * @param  useDefault whether to fallback and use a default thread pool, if no explicit configured
-     * @return            <tt>true</tt> if a new thread pool will be created, <tt>false</tt> if not
+     * @param  useDefault whether to fallback and use a default thread pool, if none is explicitly configured
+     * @return            <code>true</code> if a new thread pool will be created, <code>false</code> if not
      * @see               #getConfiguredExecutorService(String, ExecutorServiceAwareDefinition, boolean)
      */
     public boolean willCreateNewThreadPool(ExecutorServiceAwareDefinition<?> definition, boolean useDefault) {
@@ -389,13 +389,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     /**
      * Will look up and get the configured {@link ExecutorService} from the given definition.
-     * <p/>
+     * <p>
      * This method will look up for configured thread pool in the following order
      * <ul>
-     * <li>from the definition if any explicit configured executor service.</li>
+     * <li>from the definition, if an executor service is explicitly configured.</li>
      * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
      * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
-     * <li>if none found, then <tt>null</tt> is returned.</li>
+     * <li>if none found, then <code>null</code> is returned.</li>
      * </ul>
      * The various {@link ExecutorServiceAwareDefinition} should use this helper method to ensure they support
      * configured executor services in the same coherent way.
@@ -403,8 +403,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * @param  name                     name which is appended to the thread name, when the {@link ExecutorService} is
      *                                  created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
      * @param  definition               the node definition which may leverage executor service.
-     * @param  useDefault               whether to fallback and use a default thread pool, if no explicit configured
-     * @return                          the configured executor service, or <tt>null</tt> if none was configured.
+     * @param  useDefault               whether to fallback and use a default thread pool, if none is explicitly
+     *                                  configured
+     * @return                          the configured executor service, or <code>null</code> if none was configured.
      * @throws IllegalArgumentException is thrown if lookup of executor service in {@link org.apache.camel.spi.Registry}
      *                                  was not found
      */
@@ -437,13 +438,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     /**
      * Will look up and get the configured {@link java.util.concurrent.ScheduledExecutorService} from the given
      * definition.
-     * <p/>
+     * <p>
      * This method will look up for configured thread pool in the following order
      * <ul>
-     * <li>from the definition if any explicit configured executor service.</li>
+     * <li>from the definition, if an executor service is explicitly configured.</li>
      * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
      * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
-     * <li>if none found, then <tt>null</tt> is returned.</li>
+     * <li>if none found, then <code>null</code> is returned.</li>
      * </ul>
      * The various {@link ExecutorServiceAwareDefinition} should use this helper method to ensure they support
      * configured executor services in the same coherent way.
@@ -451,8 +452,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * @param  name                     name which is appended to the thread name, when the {@link ExecutorService} is
      *                                  created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
      * @param  definition               the node definition which may leverage executor service.
-     * @param  useDefault               whether to fallback and use a default thread pool, if no explicit configured
-     * @return                          the configured executor service, or <tt>null</tt> if none was configured.
+     * @param  useDefault               whether to fallback and use a default thread pool, if none is explicitly
+     *                                  configured
+     * @return                          the configured executor service, or <code>null</code> if none was configured.
      * @throws IllegalArgumentException is thrown if the found instance is not a ScheduledExecutorService type, or
      *                                  lookup of executor service in {@link org.apache.camel.spi.Registry} was not
      *                                  found
@@ -491,20 +493,20 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     /**
      * Will lookup in {@link org.apache.camel.spi.Registry} for a {@link ScheduledExecutorService} registered with the
-     * given <tt>executorServiceRef</tt> name.
-     * <p/>
+     * given <code>executorServiceRef</code> name.
+     * <p>
      * This method will lookup for configured thread pool in the following order
      * <ul>
      * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
      * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
-     * <li>if none found, then <tt>null</tt> is returned.</li>
+     * <li>if none found, then <code>null</code> is returned.</li>
      * </ul>
      *
      * @param  name               name which is appended to the thread name, when the {@link ExecutorService} is created
      *                            based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
      * @param  source             the source to use the thread pool
      * @param  executorServiceRef reference name of the thread pool
-     * @return                    the executor service, or <tt>null</tt> if none was found.
+     * @return                    the executor service, or <code>null</code> if none was found.
      */
     public ScheduledExecutorService lookupScheduledExecutorServiceRef(
             String name, Object source,
@@ -525,20 +527,20 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     /**
      * Will lookup in {@link org.apache.camel.spi.Registry} for a {@link ExecutorService} registered with the given
-     * <tt>executorServiceRef</tt> name.
-     * <p/>
+     * <code>executorServiceRef</code> name.
+     * <p>
      * This method will lookup for configured thread pool in the following order
      * <ul>
      * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
      * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
-     * <li>if none found, then <tt>null</tt> is returned.</li>
+     * <li>if none found, then <code>null</code> is returned.</li>
      * </ul>
      *
      * @param  name               name which is appended to the thread name, when the {@link ExecutorService} is created
      *                            based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
      * @param  source             the source to use the thread pool
      * @param  executorServiceRef reference name of the thread pool
-     * @return                    the executor service, or <tt>null</tt> if none was found.
+     * @return                    the executor service, or <code>null</code> if none was found.
      */
     public ExecutorService lookupExecutorServiceRef(String name, Object source, String executorServiceRef) {
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
@@ -556,13 +558,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Is there any outputs in the given list.
-     * <p/>
-     * Is used for check if the route output has any real outputs (non abstracts)
+     * Are there any outputs in the given list.
+     * <p>
+     * Is used to check if the route output has any real outputs (non abstracts)
      *
      * @param  outputs         the outputs
      * @param  excludeAbstract whether or not to exclude abstract outputs (e.g. skip onException etc.)
-     * @return                 <tt>true</tt> if has outputs, otherwise <tt>false</tt> is returned
+     * @return                 <code>true</code> if has outputs, otherwise <code>false</code> is returned
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public boolean hasOutputs(List<ProcessorDefinition<?>> outputs, boolean excludeAbstract) {
@@ -601,8 +603,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     /**
      * Creates the child processor (outputs) from the current definition
      *
-     * @param  mandatory whether or not children is mandatory (ie the definition should have outputs)
-     * @return           the created children, or <tt>null</tt> if definition had no output
+     * @param  mandatory whether or not children are mandatory (ie the definition should have outputs)
+     * @return           the created children, or <code>null</code> if definition had no output
      * @throws Exception is thrown if error creating the child or if it was mandatory and there was no output defined on
      *                   definition
      */
@@ -911,15 +913,15 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     /**
      * Will lookup and get the configured {@link AggregationStrategy} from the given definition.
-     * <p/>
+     * <p>
      * This method will lookup for configured aggregation strategy in the following order
      * <ul>
-     * <li>from the definition if any explicit configured aggregation strategy.</li>
+     * <li>from the definition, if an aggregation strategy is explicitly configured.</li>
      * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
-     * <li>if none found, then <tt>null</tt> is returned.</li>
+     * <li>if none found, then <code>null</code> is returned.</li>
      * </ul>
      * The various {@link AggregationStrategyAwareDefinition} should use this helper method to ensure they support
-     * configured executor services in the same coherent way.
+     * configured aggregation strategies in the same coherent way.
      *
      * @param  definition               the node definition which may leverage aggregation strategy
      * @throws IllegalArgumentException is thrown if lookup of aggregation strategy in

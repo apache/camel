@@ -250,35 +250,7 @@ class SendMessagePopup {
                 }
                 return true;
             }
-            if (ke.isLeft()) {
-                bodyState.moveCursorLeft();
-                return true;
-            }
-            if (ke.isRight()) {
-                bodyState.moveCursorRight();
-                return true;
-            }
-            if (ke.isHome()) {
-                bodyState.moveCursorToLineStart();
-                return true;
-            }
-            if (ke.isEnd()) {
-                bodyState.moveCursorToLineEnd();
-                return true;
-            }
-            if (ke.isDeleteBackward()) {
-                bodyState.deleteBackward();
-                return true;
-            }
-            if (ke.isDeleteForward()) {
-                bodyState.deleteForward();
-                return true;
-            }
-            String typed = FormHelper.typedText(ke);
-            if (typed != null) {
-                bodyState.insert(typed);
-                return true;
-            }
+            FormHelper.handleTextAreaInPlace(ke, bodyState);
             return true;
         }
         if (selectedField == FIELD_ROUTE) {
@@ -398,6 +370,9 @@ class SendMessagePopup {
             } else {
                 editingHeaderKey = true;
             }
+            return true;
+        }
+        if (FormHelper.handleWordKey(ke, activeInput)) {
             return true;
         }
         if (ke.isDeleteBackward()) {

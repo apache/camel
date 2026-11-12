@@ -19,7 +19,9 @@ package org.apache.camel.component.hashicorp.vault;
 import java.nio.file.Path;
 import java.util.Map;
 
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.X509KeyManager;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hashicorp.vault.FakeVault.Request;
@@ -40,8 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p/>
  * The TLS material in tls/ was made with OpenSSL, valid for 100 years: a CA (ca.pem, also in the PKCS12 trust store
  * truststore.p12), the certificate of localhost (server.p12), and the client certificate camel-client with its RSA key
- * in PKCS#8 (client.pem), in PKCS#1 (client-rsa.pem) and in PKCS12 (client.p12). The password of the PKCS12 stores is
- * changeit.
+ * in PKCS#8 (client.pem), in PKCS#1 (client-rsa.pem) and in PKCS12 (client.p12), and a self-signed certificate with an
+ * EC key in PKCS#8 (client-ec.pem). The password of the PKCS12 stores is changeit.
  */
 class HashicorpVaultTlsTest {
 
@@ -148,6 +150,27 @@ class HashicorpVaultTlsTest {
         settings.setScheme("http");
         e = assertThrows(IllegalArgumentException.class, () -> HashicorpVaultClient.validate(settings));
         assertEquals("The cert login needs the https scheme", e.getMessage());
+    }
+
+    @Test
+    void readsAnEcKeyInPkcs8() {
+        KeyManager[] managers = HashicorpVaultTls.keyManagers(tlsFile("client-ec.pem"), null);
+
+        X509KeyManager manager = (X509KeyManager) managers[0];
+        assertEquals("EC", manager.getPrivateKey("client").getAlgorithm());
+        assertEquals("CN=camel-client-ec", manager.getCertificateChain("client")[0].getSubjectX500Principal().getName());
+    }
+
+    @Test
+    void reportsATrustStoreThatReadsAsEmptyWithoutItsPassword() {
+        HashicorpVaultClientSettings settings = token();
+        // the certificates of a PKCS12 trust store are encrypted
+        settings.setTrustStore(tlsFile("truststore.p12"));
+
+        IllegalArgumentException e
+                = assertThrows(IllegalArgumentException.class, () -> HashicorpVaultClient.create(context, this, settings));
+        assertTrue(e.getMessage().endsWith("no certificate in the trust store, which may need its trustStorePassword"),
+                e.getMessage());
     }
 
     @Test

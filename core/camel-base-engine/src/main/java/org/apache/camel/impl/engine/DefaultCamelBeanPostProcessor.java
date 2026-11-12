@@ -60,7 +60,7 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
  * <a href="http://camel.apache.org/recipientlist-annotation.html">a Recipient List router via annotations</a>.
  * {@link org.apache.camel.RoutingSlip} for creating <a href="http://camel.apache.org/routingslip-annotation.html">a
  * Routing Slip router via annotations</a>.
- * <p/>
+ * <p>
  * Components such as camel-spring can leverage this post-processor to hook in Camel bean post-processing into their
  * bean processing framework.
  */

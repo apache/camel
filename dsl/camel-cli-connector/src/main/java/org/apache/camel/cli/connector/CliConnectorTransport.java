@@ -41,7 +41,8 @@ public interface CliConnectorTransport extends Service {
             CamelContext camelContext, CliActionDispatcher dispatcher, CliSnapshotProducer snapshots, Runnable shutdown);
 
     /**
-     * Changes how often the transport polls for actions and updates snapshots, in millis.
+     * Changes how often the transport updates its snapshots, in millis. The file transport looks for actions every 100
+     * millis also when this is longer.
      */
     default void updateDelay(int delay) {
         // noop

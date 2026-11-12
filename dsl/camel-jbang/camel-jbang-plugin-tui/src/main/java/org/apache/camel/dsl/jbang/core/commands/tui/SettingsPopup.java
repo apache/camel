@@ -644,24 +644,7 @@ class SettingsPopup {
     }
 
     private void handleTextInput(KeyEvent ke, TextInputState active) {
-        if (ke.isDeleteBackward()) {
-            active.deleteBackward();
-        } else if (ke.isDeleteForward()) {
-            active.deleteForward();
-        } else if (ke.isLeft()) {
-            active.moveCursorLeft();
-        } else if (ke.isRight()) {
-            active.moveCursorRight();
-        } else if (ke.isHome()) {
-            active.moveCursorToStart();
-        } else if (ke.isEnd()) {
-            active.moveCursorToEnd();
-        } else {
-            String typed = FormHelper.typedText(ke);
-            if (typed != null) {
-                active.insert(typed);
-            }
-        }
+        FormHelper.handleTextInput(ke, active);
     }
 
     private static String stripControlChars(String s) {

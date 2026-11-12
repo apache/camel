@@ -20,10 +20,11 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,7 +38,7 @@ class YamlCompletionTreeTest {
 
     @BeforeAll
     static void loadTree() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonMapper.builder().build();
         try (InputStream is
                 = YamlCompletionTreeTest.class.getResourceAsStream("/schema/camelYamlDsl-model.json")) {
             assertThat(is).as("completion tree must be on classpath").isNotNull();
@@ -89,8 +90,8 @@ class YamlCompletionTreeTest {
     void splitNodeHasExpressionAndAttributes() {
         JsonNode split = nodes.get("split");
         assertThat(split).as("split node must exist").isNotNull();
-        assertThat(split.get("title").asText()).isEqualTo("Split");
-        assertThat(split.get("label").asText()).contains("routing");
+        assertThat(split.get("title").asString()).isEqualTo("Split");
+        assertThat(split.get("label").asString()).contains("routing");
 
         Set<String> names = childNames(split);
         assertThat(names).contains("expression", "delimiter", "streaming",
@@ -99,9 +100,9 @@ class YamlCompletionTreeTest {
         // expression child should have ref and be required
         JsonNode exprChild = findChild(split, "expression");
         assertThat(exprChild).isNotNull();
-        assertThat(exprChild.get("ref").asText()).isEqualTo("expression");
+        assertThat(exprChild.get("ref").asString()).isEqualTo("expression");
         assertThat(exprChild.get("required").asBoolean()).isTrue();
-        assertThat(exprChild.get("kind").asText()).isEqualTo("expression");
+        assertThat(exprChild.get("kind").asString()).isEqualTo("expression");
     }
 
     @Test
@@ -110,7 +111,7 @@ class YamlCompletionTreeTest {
         assertThat(split.has("aliases")).isTrue();
 
         Set<String> aliases = new HashSet<>();
-        split.get("aliases").forEach(a -> aliases.add(a.asText()));
+        split.get("aliases").forEach(a -> aliases.add(a.asString()));
         assertThat(aliases).contains("split");
     }
 
@@ -126,7 +127,7 @@ class YamlCompletionTreeTest {
         JsonNode exprChild = findChild(simple, "expression");
         assertThat(exprChild).isNotNull();
         assertThat(exprChild.get("required").asBoolean()).isTrue();
-        assertThat(exprChild.get("kind").asText()).isEqualTo("value");
+        assertThat(exprChild.get("kind").asString()).isEqualTo("value");
     }
 
     @Test
@@ -134,7 +135,7 @@ class YamlCompletionTreeTest {
         JsonNode parameter = nodes.get("param");
         JsonNode type = findChild(parameter, "type");
         assertThat(type).isNotNull();
-        assertThat(type.path("default").asText()).isEqualTo("path");
+        assertThat(type.path("default").asString()).isEqualTo("path");
         assertThat(type.path("required").asBoolean()).isFalse();
         assertThat(findChild(parameter, "name").path("required").asBoolean()).isTrue();
     }
@@ -142,13 +143,13 @@ class YamlCompletionTreeTest {
     @Test
     void beanEipMetadataIsNotOverwrittenByBeanLanguage() {
         JsonNode bean = nodes.get("bean");
-        assertThat(bean.get("title").asText()).isEqualTo("Bean");
-        assertThat(bean.get("description").asText()).startsWith("Invokes a method on a Java bean");
-        assertThat(bean.get("label").asText()).contains("eip").doesNotContain("language");
+        assertThat(bean.get("title").asString()).isEqualTo("Bean");
+        assertThat(bean.get("description").asString()).startsWith("Invokes a method on a Java bean");
+        assertThat(bean.get("label").asString()).contains("eip").doesNotContain("language");
         assertThat(childNames(bean)).contains("ref", "method", "scope");
         JsonNode language = findChild(nodes.get("expression"), "method");
-        assertThat(language.get("title").asText()).isEqualTo("Bean Method");
-        assertThat(language.get("label").asText()).contains("language").doesNotContain("eip");
+        assertThat(language.get("title").asString()).isEqualTo("Bean Method");
+        assertThat(language.get("label").asString()).contains("language").doesNotContain("eip");
     }
 
     @Test
@@ -164,7 +165,7 @@ class YamlCompletionTreeTest {
     void csvDataFormatNodeHasOptions() {
         JsonNode csv = nodes.get("csv");
         assertThat(csv).as("csv data format node must exist").isNotNull();
-        assertThat(csv.get("title").asText()).isEqualTo("CSV");
+        assertThat(csv.get("title").asString()).isEqualTo("CSV");
 
         Set<String> names = childNames(csv);
         assertThat(names).contains("delimiter");
@@ -198,7 +199,7 @@ class YamlCompletionTreeTest {
 
     @Test
     void allChildrenHaveNameAndType() {
-        nodes.fieldNames().forEachRemaining(nodeName -> {
+        nodes.propertyNames().forEach(nodeName -> {
             JsonNode node = nodes.get(nodeName);
             JsonNode children = node.get("children");
             if (children != null) {
@@ -207,7 +208,7 @@ class YamlCompletionTreeTest {
                             .as("child in node '%s' must have name", nodeName).isTrue();
                     assertThat(child.has("type"))
                             .as("child '%s' in node '%s' must have type",
-                                    child.get("name").asText(), nodeName)
+                                    child.get("name").asString(), nodeName)
                             .isTrue();
                 }
             }
@@ -229,16 +230,16 @@ class YamlCompletionTreeTest {
 
     @Test
     void childrenWithRefPointToExistingNodes() {
-        nodes.fieldNames().forEachRemaining(nodeName -> {
+        nodes.propertyNames().forEach(nodeName -> {
             JsonNode node = nodes.get(nodeName);
             JsonNode children = node.get("children");
             if (children != null) {
                 for (JsonNode child : children) {
                     if (child.has("ref")) {
-                        String ref = child.get("ref").asText();
+                        String ref = child.get("ref").asString();
                         assertThat(nodes.has(ref))
                                 .as("ref '%s' from child '%s' in node '%s' must point to existing node",
-                                        ref, child.get("name").asText(), nodeName)
+                                        ref, child.get("name").asString(), nodeName)
                                 .isTrue();
                     }
                 }
@@ -248,7 +249,7 @@ class YamlCompletionTreeTest {
 
     @Test
     void childrenWithIndexAreSorted() {
-        nodes.fieldNames().forEachRemaining(nodeName -> {
+        nodes.propertyNames().forEach(nodeName -> {
             JsonNode node = nodes.get(nodeName);
             JsonNode children = node.get("children");
             if (children != null) {
@@ -258,7 +259,7 @@ class YamlCompletionTreeTest {
                         int index = child.get("index").asInt();
                         assertThat(index)
                                 .as("children in node '%s' must be sorted by index (found %d after %d for '%s')",
-                                        nodeName, index, lastIndex, child.get("name").asText())
+                                        nodeName, index, lastIndex, child.get("name").asString())
                                 .isGreaterThanOrEqualTo(lastIndex);
                         lastIndex = index;
                     }
@@ -274,7 +275,7 @@ class YamlCompletionTreeTest {
         JsonNode children = node.get("children");
         if (children != null) {
             for (JsonNode child : children) {
-                names.add(child.get("name").asText());
+                names.add(child.get("name").asString());
             }
         }
         return names;
@@ -284,7 +285,7 @@ class YamlCompletionTreeTest {
         JsonNode children = node.get("children");
         if (children != null) {
             for (JsonNode child : children) {
-                if (name.equals(child.get("name").asText())) {
+                if (name.equals(child.get("name").asString())) {
                     return child;
                 }
             }

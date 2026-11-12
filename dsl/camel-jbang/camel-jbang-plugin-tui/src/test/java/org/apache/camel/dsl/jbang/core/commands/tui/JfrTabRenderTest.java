@@ -33,8 +33,8 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiAwait.await;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 class JfrTabRenderTest {
 

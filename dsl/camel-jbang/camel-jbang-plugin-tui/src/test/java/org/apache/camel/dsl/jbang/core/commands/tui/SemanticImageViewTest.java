@@ -36,8 +36,8 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiAwait.await;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 class SemanticImageViewTest {
     @Test

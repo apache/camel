@@ -19,16 +19,17 @@ package org.apache.camel.component.mcp.server.main;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.mcp.server.McpServerIcon;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Parses {@code camel.server.mcp-server-icons} JSON into {@link McpServerIcon} instances.
  */
 final class McpServerIconsParser {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private McpServerIconsParser() {
     }
@@ -67,7 +68,7 @@ final class McpServerIconsParser {
 
     private static String text(JsonNode node, String field) {
         JsonNode value = node.get(field);
-        return value != null && !value.isNull() ? value.asText() : null;
+        return value != null && !value.isNull() ? value.asString("") : null;
     }
 
     private static List<String> stringList(JsonNode node) {
@@ -79,7 +80,7 @@ final class McpServerIconsParser {
         }
         List<String> values = new ArrayList<>(node.size());
         for (JsonNode item : node) {
-            values.add(item.asText());
+            values.add(item.asString(""));
         }
         return List.copyOf(values);
     }

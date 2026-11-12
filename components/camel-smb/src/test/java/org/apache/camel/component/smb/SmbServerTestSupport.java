@@ -29,6 +29,8 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * Base class for unit testing using a SMBServer
  */
@@ -40,6 +42,16 @@ public abstract class SmbServerTestSupport extends CamelTestSupport {
 
     public byte[] copyFileContentFromContainer(String fileName) {
         return service.copyFileFromContainer(fileName, IOUtils::toByteArray);
+    }
+
+    /**
+     * Same as {@link #copyFileContentFromContainer(String)} but fails with an {@link AssertionError} when the file does
+     * not exist (yet), so it can be retried by Awaitility instead of causing a NullPointerException.
+     */
+    public byte[] copyExistingFileContentFromContainer(String fileName) {
+        byte[] content = copyFileContentFromContainer(fileName);
+        assertNotNull(content, "File should exist: " + fileName);
+        return content;
     }
 
     public void sendFile(String url, Object body, String fileName) {

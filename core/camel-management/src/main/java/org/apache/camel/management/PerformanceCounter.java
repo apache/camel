@@ -48,7 +48,7 @@ public interface PerformanceCounter {
 
     /**
      * Are statistics enabled?
-     * <p/>
+     * <p>
      * They can be enabled and disabled at runtime
      *
      * @return whether statistics are enabled or not
@@ -57,7 +57,7 @@ public interface PerformanceCounter {
 
     /**
      * Sets whether statistics are enabled.
-     * <p/>
+     * <p>
      * They can be enabled and disabled at runtime
      *
      * @param statisticsEnabled whether statistics are enabled or not

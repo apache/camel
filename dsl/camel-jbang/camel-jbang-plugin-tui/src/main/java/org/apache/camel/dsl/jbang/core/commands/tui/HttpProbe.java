@@ -436,6 +436,9 @@ class HttpProbe {
             }
             return true;
         }
+        if (FormHelper.handleWordKey(ke, activeInput)) {
+            return true;
+        }
         if (ke.isDeleteBackward()) {
             if (probeEditingQueryKey && current.keyInput().text().isEmpty()) {
                 probeQueryParams.remove(probeSelectedQueryParam);
@@ -539,35 +542,7 @@ class HttpProbe {
             }
             return true;
         }
-        if (ke.isLeft()) {
-            probeBodyState.moveCursorLeft();
-            return true;
-        }
-        if (ke.isRight()) {
-            probeBodyState.moveCursorRight();
-            return true;
-        }
-        if (ke.isHome()) {
-            probeBodyState.moveCursorToLineStart();
-            return true;
-        }
-        if (ke.isEnd()) {
-            probeBodyState.moveCursorToLineEnd();
-            return true;
-        }
-        if (ke.isDeleteBackward()) {
-            probeBodyState.deleteBackward();
-            return true;
-        }
-        if (ke.isDeleteForward()) {
-            probeBodyState.deleteForward();
-            return true;
-        }
-        String typed = FormHelper.typedText(ke);
-        if (typed != null) {
-            probeBodyState.insert(typed);
-            return true;
-        }
+        FormHelper.handleTextAreaInPlace(ke, probeBodyState);
         return true;
     }
 
@@ -627,6 +602,9 @@ class HttpProbe {
             } else {
                 probeEditingHeaderKey = true;
             }
+            return true;
+        }
+        if (FormHelper.handleWordKey(ke, activeInput)) {
             return true;
         }
         if (ke.isDeleteBackward()) {

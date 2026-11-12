@@ -20,8 +20,6 @@ import java.io.*;
 import java.net.*;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaLocation;
 import com.networknt.schema.SchemaRegistry;
@@ -29,10 +27,13 @@ import com.networknt.schema.SchemaRegistryConfig;
 import com.networknt.schema.SpecificationVersion;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class DefaultJsonUriSchemaLoader implements JsonUriSchemaLoader {
 
-    protected ObjectMapper mapper = new ObjectMapper();
+    protected ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
 
     protected SchemaRegistryConfig config = SchemaRegistryConfig.builder().build();
 
@@ -66,8 +67,8 @@ public class DefaultJsonUriSchemaLoader implements JsonUriSchemaLoader {
     static Optional<SpecificationVersion> getSpecificationVersion(JsonNode schemaNode) {
         if (schemaNode != null) {
             JsonNode schema = schemaNode.get("$schema");
-            if (schema != null && schema.isTextual()) {
-                return SpecificationVersion.fromDialectId(schema.asText());
+            if (schema != null && schema.isString()) {
+                return SpecificationVersion.fromDialectId(schema.asString());
             }
         }
         return Optional.empty();

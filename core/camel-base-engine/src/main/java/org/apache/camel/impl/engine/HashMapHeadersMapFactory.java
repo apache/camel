@@ -23,8 +23,8 @@ import org.apache.camel.spi.HeadersMapFactory;
 
 /**
  * HashMap {@link HeadersMapFactory} which uses a plain {@link java.util.HashMap}. Important: The map is case sensitive
- * which means headers such as <tt>content-type</tt> and <tt>Content-Type</tt> are two different keys which can be a
- * problem for some protocols such as HTTP based. Therefore use this implementation with care.
+ * which means headers such as <code>content-type</code> and <code>Content-Type</code> are two different keys which can
+ * be a problem for some protocols such as HTTP based. Therefore use this implementation with care.
  */
 public class HashMapHeadersMapFactory implements HeadersMapFactory {
 

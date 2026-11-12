@@ -16,12 +16,18 @@
  */
 package org.apache.camel.component.opa;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.SSLContext;
 
@@ -38,11 +44,13 @@ import org.apache.camel.util.ObjectHelper;
  * are the JDK default of "wait indefinitely". A server that accepts the connection and then goes quiet parks the
  * calling thread for ever - and a component that fails closed never reaches the point of denying, it simply stops.
  * {@code failOpen} does not help, because it sits downstream of a call that never returns.</li>
- * <li><b>It builds a client per request.</b> On the Java 17 baseline {@link HttpClient} is not {@link AutoCloseable},
- * so each one holds its selector thread and executor until it is collected - once per message, on the path an
- * {@code OpaSecurityPolicy} guards.</li>
+ * <li><b>It builds a client per request.</b> Each {@link HttpClient} holds its selector thread and executor until it is
+ * closed or collected - once per message, on the path an {@code OpaSecurityPolicy} guards.</li>
  * </ul>
- * One client is built here per evaluator and reused, and every request is re-issued carrying a timeout.
+ * One client is built here per evaluator and reused, and every request is re-issued carrying a timeout. The response
+ * body is buffered rather than streamed with {@code ofInputStream}: the timeout of a request only covers the wait for
+ * the response headers, so the whole response, body included, is awaited under {@code requestTimeout} here, and a
+ * server that stalls or drips its body is cut off like one that never answers.
  */
 public class OpaHttpClient implements HTTPClient, AutoCloseable {
 
@@ -85,6 +93,32 @@ public class OpaHttpClient implements HTTPClient, AutoCloseable {
         if (bearerToken != null) {
             builder.header(AUTHORIZATION, "Bearer " + bearerToken);
         }
-        return client.send(builder.build(), HttpResponse.BodyHandlers.ofInputStream());
+        // A streaming body handler completes as soon as headers arrive, leaving the SDK's subsequent body read
+        // outside HttpRequest.timeout(). Complete the body before returning its stream and bound that entire wait.
+        CompletableFuture<HttpResponse<InputStream>> response = client.sendAsync(builder.build(),
+                info -> HttpResponse.BodySubscribers.mapping(HttpResponse.BodySubscribers.ofByteArray(),
+                        bytes -> new ByteArrayInputStream(bytes)));
+        try {
+            return response.get(requestTimeout.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            response.cancel(true);
+            throw new HttpTimeoutException("Timed out waiting for the complete OPA response after " + requestTimeout);
+        } catch (InterruptedException e) {
+            response.cancel(true);
+            throw e;
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof Error error) {
+                // an OutOfMemoryError from buffering the body is not an HTTP failure; keep it what it is
+                throw error;
+            }
+            if (cause instanceof IOException io) {
+                throw io;
+            }
+            if (cause instanceof RuntimeException runtime) {
+                throw runtime;
+            }
+            throw new IOException("OPA HTTP request failed", cause);
+        }
     }
 }

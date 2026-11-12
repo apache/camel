@@ -26,6 +26,7 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.TextEditing;
 import dev.tamboui.widgets.input.TextAreaState;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
@@ -41,63 +42,56 @@ final class FormHelper {
 
     /**
      * The text a key types into a field: the whole character, also one outside the basic plane such as an emoji (where
-     * {@code KeyEvent.character()} gives U+FFFD and {@code string().charAt(0)} half of it). Null when the key types
-     * nothing: it is no character, a control character, or a character pressed with Ctrl or Alt (Ctrl+A is no "a").
+     * {@code KeyEvent.character()} gives U+FFFD and {@code string().charAt(0)} half of it), and a keypad digit. Null
+     * when the key types nothing: it is no character, a control character, or a shortcut pressed with Ctrl or Alt
+     * (Ctrl+A is no "a"). Follows {@link KeyEvent#isTyping()}, as {@link TextEditing} does.
      */
     static String typedText(KeyEvent ke) {
-        if (ke.code() != KeyCode.CHAR || ke.hasCtrl() || ke.hasAlt()) {
-            return null;
-        }
-        int cp = ke.codePoint();
-        return cp < 0x20 || cp == 0x7F ? null : ke.string();
+        return ke.isTyping() && !ke.isRelease() ? ke.string() : null;
     }
 
+    /**
+     * Edits a single-line field with a key: typed text, Backspace, Delete, Left, Right, Home, End, and the word-wise
+     * keys of the bindings (Ctrl+Left/Right, Ctrl+Backspace/Delete and Ctrl+W, Alt instead of Ctrl on macOS).
+     */
     static void handleTextInput(KeyEvent ke, TextInputState state) {
-        if (ke.isDeleteBackward()) {
-            state.deleteBackward();
-        } else if (ke.isDeleteForward()) {
-            state.deleteForward();
-        } else if (ke.isLeft()) {
-            state.moveCursorLeft();
-        } else if (ke.isRight()) {
-            state.moveCursorRight();
-        } else if (ke.isHome()) {
-            state.moveCursorToStart();
-        } else if (ke.isEnd()) {
-            state.moveCursorToEnd();
-        } else {
-            String typed = typedText(ke);
-            if (typed != null) {
-                state.insert(typed);
-            }
+        TextEditing.handle(state, ke);
+    }
+
+    /**
+     * Edits a multi-line field with a key, as {@link #handleTextInput}, and Enter, Up and Down by the rows on screen.
+     */
+    static void handleTextArea(KeyEvent key, TextAreaState editor) {
+        TextEditing.handle(editor, key, Overflow.WRAP_WORD);
+    }
+
+    /**
+     * Edits a multi-line field that moves the focus itself on Enter, Up and Down: the editing keys of
+     * {@link #handleTextArea} but these.
+     */
+    static void handleTextAreaInPlace(KeyEvent key, TextAreaState editor) {
+        if (!key.isKey(KeyCode.ENTER) && !key.isUp() && !key.isDown()) {
+            TextEditing.handle(editor, key, Overflow.WRAP_WORD);
         }
     }
 
-    static void handleTextArea(KeyEvent key, TextAreaState editor) {
-        if (key.isConfirm()) {
-            editor.insert('\n');
-        } else if (key.isUp()) {
-            editor.moveCursorUp(editor.lastRenderedWidth(), Overflow.WRAP_WORD);
-        } else if (key.isDown()) {
-            editor.moveCursorDown(editor.lastRenderedWidth(), Overflow.WRAP_WORD);
-        } else if (key.isLeft()) {
-            editor.moveCursorLeft();
-        } else if (key.isRight()) {
-            editor.moveCursorRight();
-        } else if (key.isHome()) {
-            editor.moveCursorToLineStart();
-        } else if (key.isEnd()) {
-            editor.moveCursorToLineEnd();
-        } else if (key.isDeleteBackward()) {
-            editor.deleteBackward();
-        } else if (key.isDeleteForward()) {
-            editor.deleteForward();
+    /**
+     * The word-wise keys of the bindings in a single-line field that handles its other keys itself; true when the key
+     * was one of them.
+     */
+    static boolean handleWordKey(KeyEvent ke, TextInputState state) {
+        if (ke.isWordLeft()) {
+            state.moveCursorToPreviousWord();
+        } else if (ke.isWordRight()) {
+            state.moveCursorToNextWord();
+        } else if (ke.isDeleteWordBackward()) {
+            state.deleteWordBackward();
+        } else if (ke.isDeleteWordForward()) {
+            state.deleteWordForward();
         } else {
-            String typed = typedText(key);
-            if (typed != null) {
-                editor.insert(typed);
-            }
+            return false;
         }
+        return true;
     }
 
     /**

@@ -61,7 +61,7 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
 
     /**
      * Strategy method to resolve the {@link org.apache.camel.spi.IdempotentRepository} to use.
-     * <p/>
+     * <p>
      * If no explicit {@link IdempotentRepository} is configured (neither as a bean reference nor inline), this method
      * falls back to looking up a {@link KeyValueRepository} from the Camel registry and wrapping it in a
      * {@link KeyValueIdempotentRepository} adapter.

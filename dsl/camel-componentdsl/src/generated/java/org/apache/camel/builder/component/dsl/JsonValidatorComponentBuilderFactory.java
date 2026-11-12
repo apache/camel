@@ -94,8 +94,8 @@ public interface JsonValidatorComponentBuilderFactory {
     
         
         /**
-         * Whether to lookup and use default Jackson ObjectMapper from the
-         * registry.
+         * Whether to lookup and use the default Jackson 3 (tools.jackson)
+         * ObjectMapper from the registry.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -133,7 +133,8 @@ public interface JsonValidatorComponentBuilderFactory {
         }
     
         /**
-         * Lookup and use the existing ObjectMapper with the given id.
+         * Lookup and use the existing Jackson 3 (tools.jackson) ObjectMapper
+         * with the given id.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

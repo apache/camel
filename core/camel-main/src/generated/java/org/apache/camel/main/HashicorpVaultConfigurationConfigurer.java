@@ -27,8 +27,18 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "authmountpath":
         case "authMountPath": target.setAuthMountPath(property(camelContext, java.lang.String.class, value)); return true;
         case "authentication": target.setAuthentication(property(camelContext, java.lang.String.class, value)); return true;
+        case "awsiamserverid":
+        case "awsIamServerId": target.setAwsIamServerId(property(camelContext, java.lang.String.class, value)); return true;
+        case "awsregion":
+        case "awsRegion": target.setAwsRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "awsstsendpoint":
+        case "awsStsEndpoint": target.setAwsStsEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "awsvaultconfiguration":
         case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
+        case "azureclientid":
+        case "azureClientId": target.setAzureClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "azureresource":
+        case "azureResource": target.setAzureResource(property(camelContext, java.lang.String.class, value)); return true;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
         case "cloud": target.setCloud(property(camelContext, boolean.class, value)); return true;
@@ -82,8 +92,18 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "authmountpath":
         case "authMountPath": return java.lang.String.class;
         case "authentication": return java.lang.String.class;
+        case "awsiamserverid":
+        case "awsIamServerId": return java.lang.String.class;
+        case "awsregion":
+        case "awsRegion": return java.lang.String.class;
+        case "awsstsendpoint":
+        case "awsStsEndpoint": return java.lang.String.class;
         case "awsvaultconfiguration":
         case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
+        case "azureclientid":
+        case "azureClientId": return java.lang.String.class;
+        case "azureresource":
+        case "azureResource": return java.lang.String.class;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
         case "cloud": return boolean.class;
@@ -138,8 +158,18 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "authmountpath":
         case "authMountPath": return target.getAuthMountPath();
         case "authentication": return target.getAuthentication();
+        case "awsiamserverid":
+        case "awsIamServerId": return target.getAwsIamServerId();
+        case "awsregion":
+        case "awsRegion": return target.getAwsRegion();
+        case "awsstsendpoint":
+        case "awsStsEndpoint": return target.getAwsStsEndpoint();
         case "awsvaultconfiguration":
         case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
+        case "azureclientid":
+        case "azureClientId": return target.getAzureClientId();
+        case "azureresource":
+        case "azureResource": return target.getAzureResource();
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
         case "cloud": return target.isCloud();

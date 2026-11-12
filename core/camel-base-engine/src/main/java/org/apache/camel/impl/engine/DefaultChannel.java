@@ -56,9 +56,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * DefaultChannel is the default {@link Channel}.
- * <p/>
+ * <p>
  * The current implementation is just a composite containing the interceptors and error handler that beforehand was
- * added to the route graph directly. <br/>
+ * added to the route graph directly. <br>
  * With this {@link Channel} we can in the future implement better strategies for routing the {@link Exchange} in the
  * route graph, as we have a {@link Channel} between each and every node in the graph.
  */

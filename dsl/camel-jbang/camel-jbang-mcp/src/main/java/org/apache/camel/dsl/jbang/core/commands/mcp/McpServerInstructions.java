@@ -73,7 +73,8 @@ public class McpServerInstructions implements InitialResponseInfo {
             calling it done.
 
             Which tool:
-            - options, URI syntax, headers of a component, EIP, data format or language: camel_catalog_doc
+            - options, URI syntax, headers of a component, EIP, data format or language: camel_catalog_doc \
+            (optionsFilter checks several options in one call: a,b,c)
             - which component for a protocol or product: camel_catalog_find
             - a validated YAML sample and where it goes: camel_catalog_sample
             - complete example projects: camel_catalog_examples

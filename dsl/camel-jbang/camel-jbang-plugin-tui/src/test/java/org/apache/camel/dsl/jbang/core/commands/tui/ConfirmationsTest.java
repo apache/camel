@@ -26,9 +26,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.tabs.TabsState;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Test;
@@ -54,7 +57,8 @@ class ConfirmationsTest {
         pending.add(due(KeyEvent.ofChar('b')));
         List<String> delivered = new ArrayList<>();
 
-        boolean taken = confirmations.deliverDue(0, key -> {
+        boolean taken = confirmations.deliverDue(0, event -> {
+            KeyEvent key = (KeyEvent) event;
             assertThat(confirmations.isDelivering()).isTrue();
             delivered.add(key.string());
         });
@@ -71,7 +75,8 @@ class ConfirmationsTest {
         pending.add(due(KeyEvent.ofChar('b')));
         List<String> fromMcp = new ArrayList<>();
 
-        confirmations.deliverDue(0, key -> {
+        confirmations.deliverDue(0, event -> {
+            KeyEvent key = (KeyEvent) event;
             if (confirmations.isDeliveringMcpKey()) {
                 fromMcp.add(key.string());
             }
@@ -97,7 +102,8 @@ class ConfirmationsTest {
         pending.add(new McpFacade.PendingKey(KeyEvent.ofChar('x'), 1000));
         List<String> delivered = new ArrayList<>();
 
-        confirmations.deliverDue(0, key -> {
+        confirmations.deliverDue(0, event -> {
+            KeyEvent key = (KeyEvent) event;
             delivered.add(key.isKey(KeyCode.ENTER) ? "Enter" : key.string());
             if (key.isChar('q')) {
                 quitDialog.set(true);
@@ -110,8 +116,29 @@ class ConfirmationsTest {
 
         // the user answered it: later keys are delivered again
         quitDialog.set(false);
-        confirmations.deliverDue(1000, key -> delivered.add(key.string()));
+        confirmations.deliverDue(1000, event -> delivered.add(((KeyEvent) event).string()));
         assertThat(delivered).containsExactly("q", "x");
+    }
+
+    @Test
+    void theClicksOfATapeAreDeliveredInOrderWithItsKeysAndDroppedWhileADialogAsksToConfirm() {
+        // CAMEL-26861: a tape clicks and scrolls through the same queue as its keys
+        pending.add(due(KeyEvent.ofChar('a')));
+        pending.add(new McpFacade.PendingKey(MouseEvent.press(MouseButton.LEFT, 3, 4), 0));
+        pending.add(new McpFacade.PendingKey(MouseEvent.scrollDown(3, 4), 0));
+        List<Event> delivered = new ArrayList<>();
+
+        confirmations.deliverDue(0, event -> {
+            delivered.add(event);
+            if (event instanceof MouseEvent me && me.isPress()) {
+                quitDialog.set(true);
+            }
+        });
+
+        assertThat(delivered).hasSize(2);
+        assertThat(delivered.get(0)).isInstanceOf(KeyEvent.class);
+        assertThat(delivered.get(1)).isEqualTo(MouseEvent.press(MouseButton.LEFT, 3, 4));
+        assertThat(pending).isEmpty();
     }
 
     @Test
@@ -138,7 +165,8 @@ class ConfirmationsTest {
         pending.add(due(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE)));
         List<String> delivered = new ArrayList<>();
 
-        chaos.deliverDue(0, key -> {
+        chaos.deliverDue(0, event -> {
+            KeyEvent key = (KeyEvent) event;
             delivered.add(key.isKey(KeyCode.ESCAPE) ? "Esc" : key.string());
             chaosConfirm.set(false);
         });

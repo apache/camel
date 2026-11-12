@@ -17,12 +17,10 @@
 package org.apache.camel.component.jsonvalidator;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import com.networknt.schema.Schema;
 import org.apache.camel.Category;
@@ -38,6 +36,11 @@ import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Validate JSON payloads using NetworkNT JSON Schema.
@@ -78,7 +81,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     @UriParam(label = "advanced",
               description = "Comma-separated list of Jackson DeserializationFeature enum values which will be disabled for parsing exchange body")
     private String disabledDeserializationFeatures;
-    @UriParam(label = "advanced", description = "The used Jackson object mapper")
+    @UriParam(label = "advanced", description = "The Jackson 3 (tools.jackson) object mapper used to parse the JSON")
     private ObjectMapper objectMapper;
 
     public JsonValidatorEndpoint(String endpointUri, Component component, String resourceUri) {
@@ -100,20 +103,43 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     protected void doInit() throws Exception {
         super.doInit();
         if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
+            // the Jackson 2 defaults, so the same bodies pass or fail as before Jackson 3
+            objectMapper = JsonMapper.builderWithJackson2Defaults().build();
         }
-        if (enabledDeserializationFeatures != null) {
-            for (var featureName : enabledDeserializationFeatures.split(",")) {
-                var feature = DeserializationFeature.valueOf(featureName);
-                objectMapper.enable(feature);
+        if (enabledDeserializationFeatures != null || disabledDeserializationFeatures != null) {
+            // a Jackson 3 mapper is immutable: configure a copy
+            MapperBuilder<?, ?> builder = objectMapper.rebuild();
+            for (DeserializationFeature feature : features(enabledDeserializationFeatures)) {
+                builder.enable(feature);
+            }
+            for (DeserializationFeature feature : features(disabledDeserializationFeatures)) {
+                builder.disable(feature);
+            }
+            objectMapper = builder.build();
+        }
+    }
+
+    private static List<DeserializationFeature> features(String names) {
+        List<DeserializationFeature> answer = new ArrayList<>();
+        if (names == null) {
+            return answer;
+        }
+        for (String name : names.split(",")) {
+            name = name.trim();
+            if (name.isEmpty()) {
+                continue;
+            }
+            try {
+                answer.add(DeserializationFeature.valueOf(name));
+            } catch (IllegalArgumentException e) {
+                // Jackson 3 moved some features, such as READ_ENUMS_USING_TO_STRING, to EnumFeature or DateTimeFeature
+                throw new IllegalArgumentException(
+                        "Unknown deserialization feature: " + name + ". Use the names of "
+                                                   + DeserializationFeature.class.getName(),
+                        e);
             }
         }
-        if (disabledDeserializationFeatures != null) {
-            for (var featureName : disabledDeserializationFeatures.split(",")) {
-                var feature = DeserializationFeature.valueOf(featureName);
-                objectMapper.disable(feature);
-            }
-        }
+        return answer;
     }
 
     @Override

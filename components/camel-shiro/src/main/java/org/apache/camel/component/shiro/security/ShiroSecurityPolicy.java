@@ -23,6 +23,8 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.spi.AuthorizationPolicy;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.crypto.cipher.AesCipherService;
@@ -32,16 +34,44 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Metadata(label = "bean",
+          description = "An authorization policy that authenticates the caller with Apache Shiro, from the encrypted"
+                        + " ShiroSecurityToken sent with the message, and checks its permissions and roles. Create it with"
+                        + " the Shiro INI resource as its constructor argument, or set securityManager.",
+          annotations = { "interfaceName=org.apache.camel.spi.AuthorizationPolicy" })
+@Configurer(metadataOnly = true)
 public class ShiroSecurityPolicy implements AuthorizationPolicy {
     private static final Logger LOG = LoggerFactory.getLogger(ShiroSecurityPolicy.class);
+    @Metadata(label = "advanced",
+              description = "The cipher service that decrypts the ShiroSecurityToken sent with the message. AES by default;"
+                            + " Shiro also ships a Blowfish one.")
     private CipherService cipherService;
+    @Metadata(label = "security", security = "secret",
+              description = "The key the ShiroSecurityToken sent with the message is decrypted with.")
     private byte[] passPhrase;
+    @Metadata(description = "The Shiro security manager that authenticates and authorizes the caller. The constructors build"
+                            + " it from a Shiro INI resource; set it when the security manager comes from elsewhere.")
     private SecurityManager securityManager;
+    @Metadata(description = "The permissions an authenticated caller needs to continue on the route. Any one of them is"
+                            + " enough unless allPermissionsRequired is set. When they are set, rolesList is not checked.")
     private List<Permission> permissionsList;
+    @Metadata(description = "The roles an authenticated caller needs to continue on the route, checked only when"
+                            + " permissionsList is empty. Any one of them is enough unless allRolesRequired is set.")
     private List<String> rolesList;
+    @Metadata(defaultValue = "true",
+              description = "Whether to log the caller out after every exchange. When false, the authenticated subject"
+                            + " stays bound to the worker thread for the next exchange on that thread; the token of every"
+                            + " exchange is still authenticated.")
     private boolean alwaysReauthenticate;
+    @Metadata(defaultValue = "false",
+              description = "Whether the ShiroSecurityToken header is a base64 string rather than the token object, which lets"
+                            + " it travel over JMS and other transports.")
     private boolean base64;
+    @Metadata(defaultValue = "false",
+              description = "Whether the caller needs all the permissions in permissionsList, rather than any one of them.")
     private boolean allPermissionsRequired;
+    @Metadata(defaultValue = "false",
+              description = "Whether the caller needs all the roles in rolesList, rather than any one of them.")
     private boolean allRolesRequired;
 
     public ShiroSecurityPolicy() {

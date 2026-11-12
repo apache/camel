@@ -21,7 +21,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
+
 class TapeRecorder {
+
+    /** The pause between the steps of a {@code Drag} when the tape gives none, as in TamboUI. */
+    static final long DRAG_STEP_MILLIS = 30;
 
     private static final Set<String> SPECIAL_KEYS = Set.of(
             "enter", "tab", "space", "backspace", "delete", "escape", "esc",
@@ -35,6 +42,20 @@ class TapeRecorder {
     private int keyCount;
     private boolean active;
     private int preKeyPosition = -1;
+    // the index of the line after the Set lines, where stop() notes the screen size of the mouse commands
+    private int headerEnd;
+    // a button pressed and not released yet: its release writes it as a click or a drag
+    private MouseEvent pressed;
+    private long pressedAt;
+    private boolean dragged;
+    // a MouseDown was written for a press that something else came before the release of
+    private boolean buttonHeld;
+    // the last line is a scroll, which the next scroll in the same direction at the same cell adds to
+    private int scrollLine = -1;
+    private MouseEvent scroll;
+    private int scrollCount;
+    private int screenWidth;
+    private int screenHeight;
 
     void start(String title) {
         lines.clear();
@@ -48,6 +69,10 @@ class TapeRecorder {
         lines.add("Set CursorBlink false");
         lines.add("Set Theme \"Aardvark Blue\"");
         lines.add("");
+        headerEnd = lines.size();
+        pressed = null;
+        buttonHeld = false;
+        scrollLine = -1;
         startTime = MonotonicClock.millis();
         lastEventTime = startTime;
         keyCount = 0;
@@ -58,12 +83,10 @@ class TapeRecorder {
         if (!active || key == null) {
             return;
         }
+        flushPress();
         preKeyPosition = lines.size();
         long now = MonotonicClock.millis();
-        long elapsed = now - lastEventTime;
-        if (elapsed > 200) {
-            lines.add("Sleep " + formatSleep(elapsed));
-        }
+        addSleep(now);
         String tapeCmd = toTapeCommand(key);
         if (tapeCmd != null) {
             lines.add(tapeCmd);
@@ -79,9 +102,149 @@ class TapeRecorder {
     }
 
     void trimTo(int position) {
+        // the press of a click that closed the menu goes too, and its release is not written
+        pressed = null;
         if (position >= 0 && position < lines.size()) {
             lines.subList(position, lines.size()).clear();
             lastEventTime = MonotonicClock.millis();
+        }
+        if (scrollLine >= lines.size()) {
+            scrollLine = -1;
+        }
+    }
+
+    /**
+     * Records a mouse event of the user, in the tape commands of TamboUI: a press and its release are a {@code Click},
+     * {@code RightClick} or {@code MiddleClick}, or a {@code Drag} when the mouse moved in between, and the wheel is
+     * {@code ScrollUp}, {@code ScrollDown}, {@code ScrollLeft} or {@code ScrollRight} with a count. Moving the mouse
+     * with no button held only hovers, and is not recorded. The width and height are those of the screen, which the
+     * positions are cells of.
+     */
+    void recordMouse(MouseEvent me, int width, int height) {
+        if (!active || me == null) {
+            return;
+        }
+        long now = MonotonicClock.millis();
+        switch (me.kind()) {
+            case PRESS -> {
+                flushPress();
+                scrollLine = -1;
+                preKeyPosition = lines.size();
+                addSleep(now);
+                pressed = me;
+                pressedAt = now;
+                dragged = false;
+                lastEventTime = now;
+            }
+            case DRAG -> dragged |= pressed != null;
+            case RELEASE -> release(me, now);
+            case SCROLL_UP, SCROLL_DOWN, SCROLL_LEFT, SCROLL_RIGHT -> recordScroll(me, now);
+            default -> {
+                return;
+            }
+        }
+        if (me.kind() != MouseEventKind.DRAG) {
+            screenWidth = width;
+            screenHeight = height;
+        }
+    }
+
+    /** Whether a press was recorded and its release not yet. */
+    boolean isPressPending() {
+        return pressed != null;
+    }
+
+    /**
+     * Drops the press being recorded, as it pressed a key (a footer hint) that is recorded instead: the key plays the
+     * same at any screen size. Its release is not written either.
+     */
+    void dropPress() {
+        pressed = null;
+    }
+
+    private void release(MouseEvent me, long now) {
+        if (pressed == null) {
+            if (buttonHeld) {
+                lines.add("MouseUp " + me.x() + " " + me.y());
+                buttonHeld = false;
+                lastEventTime = now;
+            }
+            // else the release of a press before the recording started, or of a dropped one
+            return;
+        }
+        MouseEvent press = pressed;
+        pressed = null;
+        boolean moved = dragged || me.x() != press.x() || me.y() != press.y();
+        if (press.button() == MouseButton.LEFT && moved) {
+            // the pause between the steps of the drag, so it plays as long as it took
+            int steps = dragSteps(press.x(), press.y(), me.x(), me.y());
+            long delay = Math.max(10, (now - pressedAt) / steps / 10 * 10);
+            lines.add("Drag" + (delay != DRAG_STEP_MILLIS ? "@" + delay + "ms" : "") + " " + press.x() + " " + press.y()
+                      + " " + me.x() + " " + me.y());
+            lastEventTime = now;
+        } else {
+            // the time the button was held is in the next Sleep
+            lines.add(clickCommand(press.button()) + " " + press.x() + " " + press.y());
+        }
+    }
+
+    private void recordScroll(MouseEvent me, long now) {
+        flushPress();
+        if (scrollLine >= 0 && scrollLine == lines.size() - 1 && now - lastEventTime <= 200
+                && scroll.kind() == me.kind() && scroll.x() == me.x() && scroll.y() == me.y()) {
+            scrollCount++;
+        } else {
+            preKeyPosition = lines.size();
+            addSleep(now);
+            lines.add("");
+            scrollLine = lines.size() - 1;
+            scroll = me;
+            scrollCount = 1;
+        }
+        String command = switch (me.kind()) {
+            case SCROLL_UP -> "ScrollUp";
+            case SCROLL_DOWN -> "ScrollDown";
+            case SCROLL_LEFT -> "ScrollLeft";
+            default -> "ScrollRight";
+        };
+        lines.set(scrollLine, command + (scrollCount > 1 ? " " + scrollCount : "") + " " + me.x() + " " + me.y());
+        lastEventTime = now;
+    }
+
+    /**
+     * Writes the press being recorded before something else comes: the left button as a {@code MouseDown}, whose
+     * release is then a {@code MouseUp}, and the other buttons as a click.
+     */
+    private void flushPress() {
+        if (pressed == null) {
+            return;
+        }
+        if (pressed.button() == MouseButton.LEFT) {
+            lines.add("MouseDown " + pressed.x() + " " + pressed.y());
+            buttonHeld = true;
+        } else {
+            lines.add(clickCommand(pressed.button()) + " " + pressed.x() + " " + pressed.y());
+        }
+        pressed = null;
+    }
+
+    private static String clickCommand(MouseButton button) {
+        return switch (button) {
+            case RIGHT -> "RightClick";
+            case MIDDLE -> "MiddleClick";
+            default -> "Click";
+        };
+    }
+
+    /** The motion steps of a drag between two cells, as TamboUI plays it: one per cell, at most 60. */
+    static int dragSteps(int x1, int y1, int x2, int y2) {
+        return Math.max(1, Math.min(60, Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1))));
+    }
+
+    private void addSleep(long now) {
+        long elapsed = now - lastEventTime;
+        if (elapsed > 200) {
+            lines.add("Sleep " + formatSleep(elapsed));
         }
     }
 
@@ -90,10 +253,7 @@ class TapeRecorder {
             return;
         }
         long now = MonotonicClock.millis();
-        long elapsed = now - lastEventTime;
-        if (elapsed > 200) {
-            lines.add("Sleep " + formatSleep(elapsed));
-        }
+        addSleep(now);
 
         StringBuilder charBatch = new StringBuilder();
         for (int i = 0; i < keys.size(); i++) {
@@ -150,8 +310,19 @@ class TapeRecorder {
     }
 
     String stop() {
+        flushPress();
         active = false;
+        if (lines.stream().anyMatch(TapeRecorder::isMouseCommand)) {
+            lines.add(headerEnd, "# Mouse positions are cells of a " + screenWidth + "x" + screenHeight
+                                 + " screen: play the tape with --record-size=" + screenWidth + "x" + screenHeight);
+        }
         return String.join("\n", lines) + "\n";
+    }
+
+    private static boolean isMouseCommand(String line) {
+        String command = line.split("[\\s@]", 2)[0];
+        return command.endsWith("Click") || command.startsWith("Mouse") || command.startsWith("Scroll")
+                || "Drag".equals(command);
     }
 
     boolean isActive() {

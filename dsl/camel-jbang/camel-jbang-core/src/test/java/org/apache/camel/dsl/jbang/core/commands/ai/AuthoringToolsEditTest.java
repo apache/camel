@@ -471,6 +471,89 @@ class AuthoringToolsEditTest {
     }
 
     /**
+     * route-batch-file step 2 of the local-model benchmark (r32): asked to append each line that cannot be read to
+     * rejects/<file name>, one per line, the model wrote fileExist Append with nothing between the lines, and the lines
+     * ran together. The write goes through, with a note that says what to add.
+     */
+    @Test
+    void anAppendWithNothingBetweenTheMessagesIsANoteOfTheWrite(@TempDir Path dir) {
+        String route = """
+                - route:
+                    id: settlement
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: inbox
+                        move: done
+                      steps:
+                        - split:
+                            expression:
+                              tokenize:
+                                token: "\\n"
+                                skipFirst: true
+                            streaming: true
+                            steps:
+                              - doTry:
+                                  steps:
+                                    - setVariable:
+                                        name: amount
+                                        expression:
+                                          simple:
+                                            expression: "${body}"
+                                            resultType: java.math.BigDecimal
+                                  doCatch:
+                                    - exception:
+                                        - java.lang.Exception
+                                      steps:
+                                        - to:
+                                            uri: file
+                                            parameters:
+                                              directoryName: rejects
+                                              fileName: "${file:name}"
+                                              fileExist: Append
+                """;
+
+        JsonObject result = AuthoringTools.writeFile(new ToolContext(), dir, "batch-file.camel.yaml", route, true);
+
+        assertThat(result.getString("status")).as(result.toJson()).isEqualTo("created");
+        assertThat(((JsonArray) result.get("notes"))).singleElement().isEqualTo(
+                "Line 28: fileExist Append adds each message right after the one before, with nothing between them. To"
+                                                                                + " write one message per line, add appendChars: \"\\\\n\" under parameters: of"
+                                                                                + " this to:, which writes a line break after each message.");
+        assertThat(result.getString("message"))
+                .endsWith("Note: fileExist Append adds the messages to the file with nothing between them; appendChars on"
+                          + " the to: adds a line break after each (see notes).");
+
+        // appendChars as the note gives it: the write is valid, with no note
+        JsonObject fixed = AuthoringTools.writeFile(new ToolContext(), dir, "batch-file.camel.yaml",
+                route.replace("fileExist: Append", "fileExist: Append\n" + " ".repeat(30) + "appendChars: \"\\\\n\""), true);
+        assertThat(fixed.getString("status")).as(fixed.toJson()).isEqualTo("overwritten");
+        assertThat(fixed.get("notes")).as(fixed.toJson()).isNull();
+        assertThat(fixed.getString("message")).doesNotContain("Note:");
+
+        // a toD with ${...} and %5Cn, as the note gives it for a toD: valid, with no note
+        String toD = route.replace("""
+                - to:
+                    uri: file
+                    parameters:
+                      directoryName: rejects
+                      fileName: "${file:name}"
+                      fileExist: Append
+                """.indent(24), """
+                - toD:
+                    uri: file:rejects
+                    parameters:
+                      fileName: "${file:name}"
+                      fileExist: Append
+                      appendChars: "%5Cn"
+                """.indent(24));
+        assertThat(toD).contains("- toD:");
+        JsonObject dynamic = AuthoringTools.writeFile(new ToolContext(), dir, "batch-file.camel.yaml", toD, true);
+        assertThat(dynamic.getString("status")).as(dynamic.toJson()).isEqualTo("overwritten");
+        assertThat(dynamic.get("notes")).as(dynamic.toJson()).isNull();
+    }
+
+    /**
      * run-nightly-report step 4 of the local-model benchmark (r24, r25): asked to change the schedule, the model wrote
      * the cron in the route over {{report.schedule}}, and application.properties kept the old one, unused.
      */

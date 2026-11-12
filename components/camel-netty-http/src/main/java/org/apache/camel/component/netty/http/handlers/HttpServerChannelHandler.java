@@ -18,8 +18,8 @@ package org.apache.camel.component.netty.http.handlers;
 
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -30,7 +30,6 @@ import javax.security.auth.login.LoginException;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderResult;
-import io.netty.handler.codec.base64.Base64;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -379,21 +378,25 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             String constraint = StringHelper.before(auth, " ");
             if (constraint != null) {
                 if ("Basic".equalsIgnoreCase(constraint.trim())) {
-                    String decoded = StringHelper.after(auth, " ");
-                    // the decoded part is base64 encoded, so we need to decode that
-                    ByteBuf buf = NettyConverter.toByteBuffer(decoded.getBytes());
-                    ByteBuf out = Base64.decode(buf);
+                    String encoded = StringHelper.after(auth, " ");
+                    byte[] credentials;
                     try {
-                        String userAndPw = out.toString(Charset.defaultCharset());
-                        String username = StringHelper.before(userAndPw, ":");
-                        String password = StringHelper.after(userAndPw, ":");
-                        HttpPrincipal principal = new HttpPrincipal(username, password);
-                        LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
-                        return principal;
-                    } finally {
-                        buf.release();
-                        out.release();
+                        // the value is base64 encoded, so we need to decode that
+                        credentials = Base64.getDecoder().decode(encoded.trim());
+                    } catch (IllegalArgumentException e) {
+                        // a client sent something that is not base64 at all: no principal, so the request is
+                        // answered with 401 rather than an error
+                        LOG.debug("Cannot decode the Basic Auth header, it is not valid base64");
+                        return null;
                     }
+                    // RFC 7617: the credentials are encoded with UTF-8, so the platform default charset must not
+                    // decide how a non-ASCII user name or password is read back
+                    String userAndPw = new String(credentials, StandardCharsets.UTF_8);
+                    String username = StringHelper.before(userAndPw, ":");
+                    String password = StringHelper.after(userAndPw, ":");
+                    HttpPrincipal principal = new HttpPrincipal(username, password);
+                    LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
+                    return principal;
                 }
             }
         }

@@ -446,6 +446,10 @@ none, leaving the connect phase bounded only by the operating system.
 
 == Health checks
 
+Each check owns its HTTP client and releases it when the check stops. The five-second
+health deadline includes the complete response body; a stalled body reports DOWN and
+the outstanding request is cancelled.
+
 Both the producer and `OpenFgaSecurityPolicy` register a readiness check that probes OpenFGA's `/healthz`
 endpoint. Because the component fails closed, a route that is up but cannot reach OpenFGA fails every message, so
 it is not ready — and this makes that visible before traffic arrives rather than only in the error logs afterwards.

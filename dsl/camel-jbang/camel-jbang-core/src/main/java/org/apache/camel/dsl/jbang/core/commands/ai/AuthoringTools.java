@@ -1570,7 +1570,8 @@ public final class AuthoringTools {
      * What a file does that works but is not right, which does not refuse a write: a camel: dependency a Kamelet's
      * template does not use (CAMEL-25403), a {expression} in the text of an XSLT element, a JMS reply header set by
      * hand in a route that sends nothing InOut, a to: that copies each file its file consumer then moves to .camel, a
-     * request-reply over JMS whose reply replaces the message that was sent.
+     * request-reply over JMS whose reply replaces the message that was sent, a to: that appends to a file with nothing
+     * between the messages.
      */
     private static void putFileNotes(JsonObject result, String file, String content) {
         String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
@@ -1587,10 +1588,11 @@ public final class AuthoringTools {
             }
         } else if ((name.endsWith(".yaml") || name.endsWith(".yml")) && !SourceValidator.isCitrusTest(name)) {
             // a JMS reply header set by hand, with nothing sent InOut; a to: that copies the file a consumer moves; a
-            // JMS reply that replaces the message that was sent
+            // JMS reply that replaces the message that was sent; a file appended to with nothing between the messages
             List<String> notes = new ArrayList<>(HeaderChecks.replyHeaderNotes(content));
             notes.addAll(WriteNotes.fileCopyNotes(content));
             notes.addAll(WriteNotes.requestReplyNotes(content));
+            notes.addAll(WriteNotes.fileAppendNotes(content));
             if (!notes.isEmpty()) {
                 result.put("notes", new JsonArray(notes));
             }
@@ -1891,6 +1893,7 @@ public final class AuthoringTools {
         boolean replyByHand = false;
         boolean copies = false;
         boolean replyReplaces = false;
+        boolean appends = false;
         List<WriteNotes.UnusedProperty> unusedProperties = List.of();
         if (validate && !citrusTest) {
             putFileNotes(result, file, content);
@@ -1900,6 +1903,7 @@ public final class AuthoringTools {
             replyByHand = yaml && !HeaderChecks.replyHeaderNotes(content).isEmpty();
             copies = yaml && !kamelet && !WriteNotes.fileCopyNotes(content).isEmpty();
             replyReplaces = yaml && !kamelet && !WriteNotes.requestReplyNotes(content).isEmpty();
+            appends = yaml && !kamelet && !WriteNotes.fileAppendNotes(content).isEmpty();
             // a literal written over a {{key}} that leaves the key of application.properties unused
             unusedProperties = WriteNotes.unusedProperties(dir, file, before, content);
             if (!unusedProperties.isEmpty()) {
@@ -1970,6 +1974,11 @@ public final class AuthoringTools {
             result.put("message", result.getString("message") + " Note: after a request-reply (InOut) the body is the"
                                   + " reply, not the message that was sent; variableReceive on the to: keeps the"
                                   + " message (see notes).");
+        }
+        if (appends) {
+            result.put("message", result.getString("message") + " Note: fileExist Append adds the messages to the file"
+                                  + " with nothing between them; appendChars on the to: adds a line break after each"
+                                  + " (see notes).");
         }
         if (!repaired.isEmpty()) {
             result.put("repaired", new JsonArray(repaired));

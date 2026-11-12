@@ -43,12 +43,14 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.net.HostAndPort;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.SecurityPolicyHandler;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.mcp.server.McpServerHosts;
 import org.apache.camel.component.mcp.server.McpServerOrigins;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
 import org.apache.camel.http.base.OAuthHttpSecuritySupport;
@@ -70,6 +72,10 @@ import reactor.core.publisher.Mono;
  * Every request carrying an {@code Origin} header is checked against the allowed origins before any other handling, as
  * the MCP streamable HTTP transport requires; a request from an origin that is not allowed gets HTTP 403 with a
  * JSON-RPC error and never reaches the MCP session. Requests without an {@code Origin} header are served.
+ * <p>
+ * When allowed hosts are configured, the {@code Host} header is checked in the same handler: a request whose
+ * {@code Host} is missing or not allowed gets HTTP 421 (Misdirected Request), which protects a server on a private
+ * address against DNS rebinding. Without allowed hosts the {@code Host} header is not checked.
  */
 public class VertxMcpStreamableServerTransportProvider implements McpStreamableServerTransportProvider {
 
@@ -86,6 +92,9 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     private static final String APPLICATION_JSON = "application/json";
     private static final String TEXT_EVENT_STREAM = "text/event-stream";
     private static final String ORIGIN = "Origin";
+    private static final String HOST = "Host";
+    // the status the MCP SDK validator answers a Host that is not allowed with
+    private static final int MISDIRECTED_REQUEST = 421;
 
     /**
      * The origins allowed when none are configured: loopback hosts on any port, so browser-based tools on the same
@@ -158,6 +167,32 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                                                      String resourceUri,
                                                      String authorizationServerIssuer,
                                                      boolean allowInsecureAuthorizationServer) {
+        this(jsonMapper, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs, allowedOrigins, camelContext,
+             oauthSecurity, requiredScopes, resourceUri, authorizationServerIssuer, allowInsecureAuthorizationServer,
+             null);
+    }
+
+    /**
+     * Creates the transport with allowed hosts.
+     *
+     * @param allowedHosts the hosts allowed in the {@code Host} header, each exact (e.g. {@code mcp.example.com}) or
+     *                     with a wildcard port (e.g. {@code localhost:*}, which also allows a {@code Host} without a
+     *                     port), normalized with {@link McpServerHosts#normalizeAllowedHost(String)}; {@code null} to
+     *                     not check the {@code Host} header
+     */
+    public VertxMcpStreamableServerTransportProvider(
+                                                     McpJsonMapper jsonMapper,
+                                                     String path,
+                                                     long sessionKeepAliveIntervalMs,
+                                                     long sessionIdleTtlMs,
+                                                     List<String> allowedOrigins,
+                                                     CamelContext camelContext,
+                                                     OAuthHttpSecuritySupport oauthSecurity,
+                                                     String requiredScopes,
+                                                     String resourceUri,
+                                                     String authorizationServerIssuer,
+                                                     boolean allowInsecureAuthorizationServer,
+                                                     List<String> allowedHosts) {
         this.jsonMapper = jsonMapper;
         this.path = path;
         this.sessionKeepAliveIntervalMs = sessionKeepAliveIntervalMs;
@@ -175,7 +210,24 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                 .allowedOrigins(allowedOrigins != null
                         ? allowedOrigins.stream().map(McpServerOrigins::normalizeAllowedOrigin).toList()
                         : DEFAULT_ALLOWED_ORIGINS)
+                .allowedHosts(allowedHosts != null ? hostPatterns(allowedHosts) : List.of())
                 .build();
+    }
+
+    /**
+     * The hosts as the MCP SDK validator matches them: a {@code host:*} entry matches only a {@code Host} with a port
+     * there, so the host without a port (the default port of the scheme) is added next to it.
+     */
+    private static List<String> hostPatterns(List<String> allowedHosts) {
+        List<String> answer = new ArrayList<>();
+        for (String entry : allowedHosts) {
+            String host = McpServerHosts.normalizeAllowedHost(entry);
+            answer.add(host);
+            if (host.endsWith(":*")) {
+                answer.add(host.substring(0, host.length() - 2));
+            }
+        }
+        return answer;
     }
 
     @Override
@@ -262,19 +314,28 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     }
 
     /**
-     * Serves a request without an {@code Origin} header or from an allowed origin; answers any other with HTTP 403 and
-     * a JSON-RPC error that has no {@code id}. Runs on the event loop before any other handler of the route.
+     * Serves a request without an {@code Origin} header or from an allowed origin, and, when allowed hosts are
+     * configured, with an allowed {@code Host}; answers any other with HTTP 403 (origin) or 421 (host) and a JSON-RPC
+     * error that has no {@code id}. Runs on the event loop before any other handler of the route.
      */
     private void checkOrigin(RoutingContext ctx) {
         try {
             originValidator.validate(new VertxHeaderAccessor(ctx));
         } catch (ServerTransportSecurityException e) {
-            LOG.debug("Rejected MCP {} request on {}: origin {} is not allowed", ctx.request().method(), path,
-                    ctx.request().getHeader(ORIGIN));
+            String message;
+            if (e.getStatusCode() == MISDIRECTED_REQUEST) {
+                LOG.debug("Rejected MCP {} request on {}: host {} is not allowed", ctx.request().method(), path,
+                        ctx.request().authority());
+                message = "Host not allowed";
+            } else {
+                LOG.debug("Rejected MCP {} request on {}: origin {} is not allowed", ctx.request().method(), path,
+                        ctx.request().getHeader(ORIGIN));
+                message = "Origin not allowed";
+            }
             ctx.response()
                     .setStatusCode(e.getStatusCode())
                     .putHeader("Content-Type", APPLICATION_JSON)
-                    .end(errorBody(McpSchema.ErrorCodes.INVALID_REQUEST, "Origin not allowed"));
+                    .end(errorBody(McpSchema.ErrorCodes.INVALID_REQUEST, message));
             return;
         }
         ctx.next();
@@ -789,6 +850,19 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
         @Override
         public List<String> getHeader(String name) {
+            if (HOST.equalsIgnoreCase(name)) {
+                // the authority of the request: the Host header on HTTP/1.1, :authority on HTTP/2
+                HostAndPort authority = ctx.request().authority();
+                if (authority == null) {
+                    return List.of();
+                }
+                String host = authority.host();
+                if (host.indexOf(':') >= 0 && !host.startsWith("[")) {
+                    host = "[" + host + "]";
+                }
+                String value = authority.port() >= 0 ? host + ":" + authority.port() : host;
+                return List.of(McpServerHosts.normalizeHost(value));
+            }
             List<String> values = ctx.request().headers().getAll(name);
             if (ORIGIN.equalsIgnoreCase(name)) {
                 // compare in the form the allowed origins are kept in: lower-case scheme and host, no default port

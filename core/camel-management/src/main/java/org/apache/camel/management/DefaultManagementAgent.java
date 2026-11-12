@@ -401,7 +401,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     /**
      * Gets the names of the registered processor mbeans that belong to the given route.
-     * <p/>
+     * <p>
      * This avoids querying (and reading the route id of) every processor mbean of the CamelContext, which is slow when
      * there are many routes.
      *
@@ -416,7 +416,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     /**
      * Gets the managed object of the registered processor mbean with the given id.
-     * <p/>
+     * <p>
      * This avoids walking every route to find the processor and its definition, which is slow when there are many
      * routes.
      *

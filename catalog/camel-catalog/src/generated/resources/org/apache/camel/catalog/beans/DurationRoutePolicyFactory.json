@@ -5,7 +5,7 @@
     "javaType": "org.apache.camel.impl.engine.DurationRoutePolicyFactory",
     "interfaceType": "org.apache.camel.spi.RoutePolicyFactory",
     "title": "Duration Route Policy Factory",
-    "description": "RoutePolicyFactory which executes for a duration and then triggers an action. This can be used to stop a set of routes after they have processed a number of messages, or has been running for N seconds.",
+    "description": "RoutePolicyFactory which executes for a duration and then triggers an action. This can be used to stop a set of routes after they have processed a number of messages, or have been running for N seconds.",
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-base-engine",

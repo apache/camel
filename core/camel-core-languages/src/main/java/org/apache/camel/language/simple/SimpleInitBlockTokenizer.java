@@ -52,7 +52,7 @@ public class SimpleInitBlockTokenizer extends SimpleTokenizer {
      * Does the expression include a simple init block.
      *
      * @param  expression the expression
-     * @return            <tt>true</tt> if init block exists
+     * @return            <code>true</code> if init block exists
      */
     public static boolean hasInitBlock(String expression) {
         if (expression != null) {

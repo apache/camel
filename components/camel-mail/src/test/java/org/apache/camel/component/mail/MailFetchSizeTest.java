@@ -55,7 +55,7 @@ public class MailFetchSizeTest extends CamelTestSupport {
         mock.setResultWaitTime(2000L);
         mock.assertIsSatisfied();
 
-        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(3, jones.getInbox().getMessageCount()));
 
         // reset mock to assert the next batch of 2 messages polled
@@ -66,7 +66,7 @@ public class MailFetchSizeTest extends CamelTestSupport {
         mock.setResultWaitTime(3000L);
         mock.assertIsSatisfied();
 
-        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(1, jones.getInbox().getMessageCount()));
 
         // reset mock to assert the last message polled

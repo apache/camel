@@ -50,8 +50,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.
- * <p/>
- * This tracer allows to store message tracers per node in the Camel routes. The tracers is stored in a backlog queue
+ * <p>
+ * This tracer allows to store message tracers per node in the Camel routes. The tracers are stored in a backlog queue
  * (FIFO based) which allows to pull the traced messages on demand.
  */
 public class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.SyntheticBacklogTracer {
@@ -117,7 +117,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
      *
      * @param  definition the processor definition
      * @param  exchange   the exchange
-     * @return            <tt>true</tt> to trace, <tt>false</tt> to skip tracing
+     * @return            <code>true</code> to trace, <code>false</code> to skip tracing
      */
     @Override
     public boolean shouldTrace(NamedNode definition, Exchange exchange) {

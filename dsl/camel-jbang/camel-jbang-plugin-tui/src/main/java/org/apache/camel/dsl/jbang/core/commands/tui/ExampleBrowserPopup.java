@@ -457,15 +457,14 @@ class ExampleBrowserPopup {
     }
 
     private List<ListItem> buildListItems(int width) {
-        if (currentFolder != null) {
-            return buildFolderItems(width);
-        }
-        return buildTopLevelItems(width);
+        List<ListItem> items = currentFolder != null ? buildFolderItems(width) : buildTopLevelItems(width);
+        // the rows the list draws for each item, a blank spacer included, to map a click to its item
+        this.itemHeights = items.stream().mapToInt(ListItem::height).toArray();
+        return items;
     }
 
     private List<ListItem> buildTopLevelItems(int width) {
         List<ListItem> items = new ArrayList<>();
-        List<Integer> heights = new ArrayList<>();
         List<Object> data = new ArrayList<>();
         // the ladder: one row per group in reading order, the number is the hotkey
         Map<String, List<JsonObject>> groups = grouped;
@@ -483,57 +482,47 @@ class ExampleBrowserPopup {
             String padded = String.format("%-" + labelCol + "s", TuiHelper.truncate(label, labelCol));
             Line line = Line.from(Span.raw(padded + " "), Span.styled(TuiHelper.truncate(intro, introCol), Style.EMPTY.dim()));
             items.add(ListItem.from(Text.from(line)));
-            heights.add(1);
             data.add(level);
         }
         items.add(ListItem.from(""));
-        heights.add(1);
         data.add(null);
         items.add(ListItem.from(" Enter opens a group, a number jumps to it, d shows what the group is about")
                 .style(Style.EMPTY.dim()));
-        heights.add(1);
         data.add(null);
-        this.itemHeights = heights.stream().mapToInt(Integer::intValue).toArray();
         this.itemData = data;
         return items;
     }
 
     private List<ListItem> buildFolderItems(int width) {
         List<ListItem> items = new ArrayList<>();
-        List<Integer> heights = new ArrayList<>();
         List<Object> data = new ArrayList<>();
         // a folder: ".." goes back up, then the group's introduction as a header, then its examples
         items.add(ListItem.from(" " + TuiIcons.FOLDER + " ..").style(Style.EMPTY.dim()));
-        heights.add(1);
         data.add(BACK_MARKER);
         String intro = ExampleHelper.getGroupIntro(currentFolder);
         if (!intro.isEmpty()) {
             items.add(ListItem.from(" " + intro).style(Style.EMPTY.dim()));
-            heights.add(1);
             data.add(null);
         }
         List<JsonObject> entries = grouped.get(currentFolder);
         if (entries != null) {
             for (JsonObject ex : entries) {
-                addExampleItem(items, heights, data, ex, width);
+                addExampleItem(items, data, ex, width);
             }
         }
         items.add(ListItem.from(""));
-        heights.add(1);
         data.add(null);
         items.add(ListItem.from(" " + TuiIcons.BUNDLED + " = bundled  " + TuiIcons.ONLINE + " = online  "
                                 + TuiIcons.DOCKER + " = Docker  " + TuiIcons.INFRA + " = infra services  " + TuiIcons.CITRUS
                                 + " = Citrus tests   .. or Esc = back to the groups")
                 .style(Style.EMPTY.dim()));
-        heights.add(1);
         data.add(null);
-        this.itemHeights = heights.stream().mapToInt(Integer::intValue).toArray();
         this.itemData = data;
         return items;
     }
 
     private void addExampleItem(
-            List<ListItem> items, List<Integer> heights, List<Object> data,
+            List<ListItem> items, List<Object> data,
             JsonObject ex, int width) {
         String name = ExampleHelper.getShortName(ex);
         String desc = ex.getStringOrDefault("description", "");
@@ -553,7 +542,6 @@ class ExampleBrowserPopup {
         String needs = ExampleHelper.getNeeds(ex);
         if (desc.length() <= descCol && needs == null) {
             items.add(ListItem.from(prefix + desc).style(style));
-            heights.add(1);
         } else {
             String indent = " ".repeat(prefix.length());
             List<Line> lines = new ArrayList<>();
@@ -569,7 +557,6 @@ class ExampleBrowserPopup {
                 }
             }
             items.add(ListItem.from(Text.from(lines.toArray(Line[]::new))).style(style));
-            heights.add(lines.size());
         }
         data.add(ex);
     }
