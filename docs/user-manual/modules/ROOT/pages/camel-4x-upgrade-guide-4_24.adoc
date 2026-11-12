@@ -8401,3 +8401,14 @@ in the version that was loaded first, for the components that are loaded later, 
 Maven project would. Before, a later component that depended on another version of the library added that version as
 well, so the classpath could hold, for example, three versions of Netty, and a class was loaded from whichever JAR
 came first. Use `--verbose` to see the JARs added for each dependency.
+
+=== camel-jbang - camel run stops when a dependency it was given cannot be downloaded
+
+`camel run` now stops with exit code 1 when a dependency given with `--dep`, `camel.jbang.dependencies`, a `//DEPS`
+line or the dependencies of a Kamelet cannot be downloaded, and prints why on one line, such as
+`ERROR: Cannot download dependency: com.acme:foo:1.0 due to: ... Could not find artifact com.acme:foo:jar:1.0 in central (...)`.
+Before, it logged the error with the stack trace, started the routes without the dependency, and exited with 0.
+In dev mode (`--dev`), a reload with a `//DEPS` line that cannot be downloaded fails, and the routes keep running as
+they were. Other commands of the Camel CLI that fail to download a dependency also exit with 1 and print one line,
+instead of exiting with 70 and printing the stack trace (use `--verbose` for the stack trace). `camel export` still
+writes the dependency to the exported project.

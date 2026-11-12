@@ -277,6 +277,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         doDownloadDependency(groupId, artifactId, version, transitively, false, null);
     }
 
+    @Override
+    public void downloadRequiredDependency(String groupId, String artifactId, String version) {
+        doDownloadDependencyWithParent(null, groupId, artifactId, version, true, false, null, true);
+    }
+
     protected void doDownloadDependency(
             String groupId, String artifactId, String version, boolean transitively,
             boolean hidden, String extraRepos) {
@@ -287,6 +292,17 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             String parentGav,
             String groupId, String artifactId, String version, boolean transitively,
             boolean hidden, String extraRepos) {
+        doDownloadDependencyWithParent(parentGav, groupId, artifactId, version, transitively, hidden, extraRepos, false);
+    }
+
+    /**
+     * @param required whether to throw a {@link DownloadException} when the dependency cannot be downloaded, instead of
+     *                 logging the error
+     */
+    protected void doDownloadDependencyWithParent(
+            String parentGav,
+            String groupId, String artifactId, String version, boolean transitively,
+            boolean hidden, String extraRepos, boolean required) {
 
         if (versionResolver != null && version != null) {
             version = versionResolver.resolve(version);
@@ -391,7 +407,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 }
             }
 
-        }, gav);
+        }, gav, required);
     }
 
     @Override
