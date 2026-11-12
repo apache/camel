@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * RFC 7617 encodes the Basic credentials with UTF-8, so what the server reads back must not depend on the JVM's
- * default charset.
+ * RFC 7617 encodes the Basic credentials with UTF-8, so what the server reads back must not depend on the JVM's default
+ * charset.
  */
 class HttpServerChannelHandlerBasicAuthTest {
 
