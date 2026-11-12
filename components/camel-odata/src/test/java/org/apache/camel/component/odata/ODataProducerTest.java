@@ -40,6 +40,7 @@ import javax.net.ssl.SSLException;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -213,6 +214,10 @@ public class ODataProducerTest extends CamelTestSupport {
 
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals(1L, exchange.getMessage().getHeader(ODataConstants.COUNT));
+        assertNull(exchange.getMessage().getHeader(Exchange.HTTP_URI));
+        assertNull(exchange.getMessage().getHeader(Exchange.HTTP_QUERY));
+        assertNull(exchange.getMessage().getHeader(HttpConstants.HTTP_METHOD));
+        assertNull(exchange.getMessage().getHeader("Accept"));
 
         wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
                 .withQueryParam("$filter", matching(".*Name.*Laptop.*"))
@@ -263,6 +268,8 @@ public class ODataProducerTest extends CamelTestSupport {
         exchange.getMessage().setHeader(Exchange.HTTP_URI, "http://malicious.example/other");
         exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/wrong/path");
         exchange.getMessage().setHeader(Exchange.HTTP_QUERY, "unexpected=true");
+        exchange.getMessage().setHeader(HttpConstants.HTTP_METHOD, "POST");
+        exchange.getMessage().setHeader("Accept", "text/plain");
         exchange.getMessage().setHeader(Exchange.HTTP_RAW_QUERY, "rawUnexpected=true");
         exchange.getMessage().setHeader("CamelRestHttpUri", "http://malicious.example/rest");
 
@@ -270,7 +277,13 @@ public class ODataProducerTest extends CamelTestSupport {
 
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
-        wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products")));
+        assertEquals("http://malicious.example/other", exchange.getMessage().getHeader(Exchange.HTTP_URI));
+        assertEquals("unexpected=true", exchange.getMessage().getHeader(Exchange.HTTP_QUERY));
+        assertEquals("POST", exchange.getMessage().getHeader(HttpConstants.HTTP_METHOD));
+        assertEquals("text/plain", exchange.getMessage().getHeader("Accept"));
+
+        wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
+                .withHeader("Accept", equalTo("application/json")));
     }
 
     @Test
