@@ -36,6 +36,7 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
 import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
@@ -62,16 +63,14 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 class McpFacade {
 
     /**
-     * Pending key event queued for injection into the TUI event loop, by an MCP client or a tape. It fires on the first
-     * tick at or after fireAt, a {@link MonotonicClock} time.
+     * A key (or a mouse event of a tape) queued for injection into the TUI event loop, by an MCP client or a tape. It
+     * fires on the first tick at or after fireAt, a {@link MonotonicClock} time. One from an MCP client
+     * ({@code fromMcp}) is for the active tab: the AI panel's input takes only what the user types (CAMEL-26864). One
+     * from a tape is as the user typed or clicked it.
      */
-    /**
-     * A key sent to the monitor. One from an MCP client ({@code fromMcp}) is for the active tab: the AI panel's input
-     * takes only what the user types (CAMEL-26864). One from a tape is as the user typed it.
-     */
-    record PendingKey(KeyEvent event, long fireAt, boolean fromMcp) {
+    record PendingKey(Event event, long fireAt, boolean fromMcp) {
 
-        PendingKey(KeyEvent event, long fireAt) {
+        PendingKey(Event event, long fireAt) {
             this(event, fireAt, false);
         }
 

@@ -24,11 +24,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BooleanSupplier;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
 
 /**
  * Manages screenshot capture, tape recording, keystroke display, and screen buffer tracking. Extracted from
@@ -52,6 +54,7 @@ class RecordingManager {
     private final List<KeyRecord> recentKeys = new ArrayList<>();
     private TuiEventLog eventLog;
     private int menuTapePosition = -1;
+    private boolean keyOfClick;
 
     RecordingManager(CaptionOverlay captionOverlay) {
         this.captionOverlay = captionOverlay;
@@ -75,8 +78,34 @@ class RecordingManager {
             }
             TapeRecorder tr = tapeRecorderRef.get();
             if (tr != null && tr.isActive() && !mcpInjected) {
+                if (keyOfClick) {
+                    // the tape has the key, not the click that pressed it
+                    tr.dropPress();
+                }
                 tr.recordKey(label);
             }
+        }
+    }
+
+    /** Records a mouse event of the user to the tape, if one records; not one a tape plays ({@code injected}). */
+    void recordMouse(MouseEvent me, boolean injected) {
+        TapeRecorder tr = tapeRecorderRef.get();
+        Buffer screen = lastBuffer;
+        if (tr != null && tr.isActive() && !injected && screen != null) {
+            tr.recordMouse(me, screen.area().width(), screen.area().height());
+        }
+    }
+
+    /**
+     * Handles the key a click pressed, such as a key hint of the footer: the tape records the key rather than the
+     * click, so it plays the same at any screen size.
+     */
+    boolean pressedByClick(BooleanSupplier handler) {
+        keyOfClick = true;
+        try {
+            return handler.getAsBoolean();
+        } finally {
+            keyOfClick = false;
         }
     }
 
