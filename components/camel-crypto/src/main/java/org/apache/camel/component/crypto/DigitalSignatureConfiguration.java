@@ -389,7 +389,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     public void setSecureRandomName(String randomName) {
         if (context != null && randomName != null) {
             SecureRandom random = context.getRegistry().lookupByNameAndType(randomName, SecureRandom.class);
-            if (keystore != null) {
+            if (random != null) {
                 setSecureRandom(random);
             }
         }
