@@ -115,4 +115,39 @@ module.exports = {
     }
     return parts.join('\n\n')
   },
+
+  // the fake worlds of the deterministic simulation tests (CAMEL-26438, CAMEL-26609): one row per world of the
+  // dstWorlds section. The world is a test class in no JAR, so it is shown by its simple name, not linked.
+  dstWorld: (name, value) => {
+    const parts = ['`' + name + '`']
+    if (value.fake) {
+      parts.push('Fake: ' + module.exports.dstEscape(value.fake))
+    }
+    if (value.tests && value.tests.length) {
+      parts.push('Tests: ' + value.tests.map((test) => '`' + test + '`').join(', '))
+    }
+    return parts.join('\n\n')
+  },
+
+  // what the world covers, the faults it injects and the invariants it checks, each as a list
+  dstChecks: (value) => {
+    const list = (title, items) => (items && items.length)
+      ? `*${title}:*\n\n` + items.map((item) => '* ' + module.exports.dstEscape(item)).join('\n')
+      : ''
+    return [list('Covers', value.covers), list('Faults', value.faults), list('Invariants', value.invariants)]
+      .filter((part) => part)
+      .join('\n\n')
+  },
+
+  // the JIRA issues of the world, as links
+  dstIssues: (value) => {
+    return (value.issues || [])
+      .map((issue) => `https://issues.apache.org/jira/browse/${issue}[${issue}]`)
+      .join('\n\n')
+  },
+
+  // what reads as an attribute reference ({name}), and the cell separator
+  dstEscape: (text) => {
+    return text.replace(/\{(\w[\w-]*)\}/g, '\\{$1}').split('|').join('\\|')
+  },
 }
