@@ -258,13 +258,6 @@ is skipped. Before, the source transaction was rolled back and the record replay
 the route of the send (for example with `direct`) behaves the same way, as it did in 4.23. To replay the record, throw
 the exception again in the `doCatch` block, or end it with `rollback()`.
 
-=== camel-whatsapp - the response body is logged at DEBUG instead of INFO
-
-The WhatsApp producer previously logged the full provider response body at `INFO`. It now logs only the response
-status code at `INFO`, and the full body at `DEBUG`. Enable `DEBUG` logging for
-`org.apache.camel.component.whatsapp.service.WhatsAppServiceRestAPIAdapter` to see the response body. The parsed
-response is unchanged and is still set as the message body for the route.
-
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
