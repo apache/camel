@@ -372,8 +372,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
                 //   2. If the JVM stops or persistedCache.put() throws after a successful cache.remove(), the group
                 //      is in neither map (CAMEL-26663).
                 // TransactionalMap.remove(key, value) is a compare-and-delete that enrolls the entry in the
-                // transaction: the loser sees the entry still present (or already gone), so its remove returns
-                // false, and it never reaches the recovery write.
+                // transaction: the entry is gone or holds a different value from the loser's perspective, so
+                // its remove returns false, and it never reaches the recovery write.
                 TransactionOptions tOpts = new TransactionOptions();
                 tOpts.setTransactionType(TransactionOptions.TransactionType.ONE_PHASE);
                 TransactionContext tCtx = hazelcastInstance.newTransactionContext(tOpts);

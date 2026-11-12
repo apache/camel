@@ -18,15 +18,14 @@ package org.apache.camel.processor.aggregate.hazelcast;
 
 import java.util.Set;
 
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
-import com.hazelcast.transaction.TransactionalMap;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException;
-import org.apache.camel.support.DefaultExchangeHolder;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalAnswers;
 
 import static org.apache.camel.test.junit6.TestSupport.assertCollectionSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,6 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggregationRepositoryCamelTestSupport {
 
@@ -214,40 +217,54 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
     }
 
     /**
-     * Regression test for CAMEL-26395 / CAMEL-26663: when the transaction that atomically removes the entry from the
-     * operational cache and writes the recovery entry is rolled back (due to any failure), the group must still be
-     * present in the operational map so it can be retried — it must not be silently lost.
+     * Regression test for CAMEL-26663: when the transaction that atomically removes the entry from the operational
+     * cache and writes the recovery entry fails to commit, the group must still be present in the operational map so it
+     * can be retried — it must not be silently lost.
      * <p>
-     * The original test for this guarantee (from CAMEL-26663) used Mockito to inject a mock {@code persistedCache} IMap
-     * that throws on {@code put}. With the transaction-based fix for CAMEL-26796, the code path goes through a
-     * {@link TransactionalMap} obtained from the {@code TransactionContext}, which bypasses a mock on the plain
-     * {@code persistedCache} field. This test therefore uses a subclass that simulates a failure mid-transaction by
-     * rolling back explicitly after the conditional remove succeeds, confirming that the transaction rollback restores
-     * the entry to the operational map.
+     * This test drives the production {@code remove()} via a Mockito delegate that intercepts
+     * {@link com.hazelcast.core.HazelcastInstance#newTransactionContext} and makes {@code commitTransaction()} throw,
+     * so that if the production code were changed back to a plain remove-then-put, this test would still catch the
+     * regression.
      */
     @Test
     public void checkOptimisticRemoveKeepsTheGroupWhenTheTransactionFails() throws Exception {
         final String persistentRepoName = "optimisticRemoveTxFailsRepo-completed";
-        HazelcastAggregationRepository repo
-                = new RollbackAfterRemoveRepository("optimisticRemoveTxFailsRepo", persistentRepoName, getFirstInstance());
 
+        // Add the group using the real instance
+        HazelcastAggregationRepository realRepo
+                = new HazelcastAggregationRepository(
+                        "optimisticRemoveTxFailsRepo", persistentRepoName, true, getFirstInstance());
+        realRepo.doStart();
+        final String key = "optimisticRemoveTxFailsKey";
+        Exchange ex = createExchangeWithBody("This group must not be lost.");
+        realRepo.add(context(), key, null, ex);
+        realRepo.doStop();
+
+        // Wrap the real instance with a Mockito delegate that makes commitTransaction() throw
+        HazelcastInstance real = getFirstInstance();
+        HazelcastInstance hz = mock(HazelcastInstance.class, AdditionalAnswers.delegatesTo(real));
+        doAnswer(inv -> {
+            TransactionContext ctx = mock(TransactionContext.class,
+                    AdditionalAnswers.delegatesTo(real.newTransactionContext(inv.getArgument(0))));
+            doThrow(new com.hazelcast.transaction.TransactionException("Simulated commit failure"))
+                    .when(ctx).commitTransaction();
+            return ctx;
+        }).when(hz).newTransactionContext(any(TransactionOptions.class));
+
+        // Drive the production remove() — the commit will fail, triggering rollback and RuntimeCamelException
+        HazelcastAggregationRepository repo
+                = new HazelcastAggregationRepository("optimisticRemoveTxFailsRepo", persistentRepoName, true, hz);
         try {
             repo.doStart();
-
-            final String key = "optimisticRemoveTxFailsKey";
-            Exchange ex = createExchangeWithBody("This group must not be lost.");
-            repo.add(context(), key, null, ex);
-
-            // The subclass rolls the transaction back after the conditional remove, simulating a commit failure.
             assertThrows(RuntimeCamelException.class, () -> repo.remove(context(), key, ex));
 
-            // The group must still be in the operational map — the rollback restored it.
-            Exchange getBackEx = repo.get(context(), key);
+            // The group must still be in the operational map — the rollback restored it
+            Exchange getBackEx = realRepo.get(context(), key);
             assertNotNull(getBackEx, "the group must still be in the repository after a failed transaction");
             assertEquals(ex.getIn().getBody(), getBackEx.getIn().getBody());
 
-            // No recovery entry must have been written — the transaction was rolled back before the put.
-            assertTrue(repo.scan(context()).isEmpty(),
+            // No recovery entry must have been written — the transaction was rolled back before the put
+            assertTrue(realRepo.scan(context()).isEmpty(),
                     "no recovery entry must have been written after a rolled-back transaction");
         } finally {
             repo.doStop();
@@ -311,37 +328,4 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
         }
     }
 
-    /**
-     * A test-only subclass that simulates a transaction failure mid-way through the optimistic remove: it starts the
-     * Hazelcast transaction, executes the conditional remove (which succeeds), then rolls back the transaction before
-     * the recovery write — just like a crash or infrastructure failure between the two steps. After the rollback the
-     * entry is restored to the operational map, so the group is not lost.
-     */
-    private static final class RollbackAfterRemoveRepository extends HazelcastAggregationRepository {
-
-        RollbackAfterRemoveRepository(String repoName, String persistentRepoName, com.hazelcast.core.HazelcastInstance hz) {
-            super(repoName, persistentRepoName, true, hz);
-        }
-
-        @Override
-        public void remove(CamelContext camelContext, String key, Exchange exchange) {
-            DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, false);
-            TransactionOptions tOpts = new TransactionOptions();
-            tOpts.setTransactionType(TransactionOptions.TransactionType.ONE_PHASE);
-            TransactionContext tCtx = hazelcastInstance.newTransactionContext(tOpts);
-            tCtx.beginTransaction();
-            try {
-                TransactionalMap<String, DefaultExchangeHolder> tCache = tCtx.getMap(cache.getName());
-                tCache.remove(key, holder); // succeeds inside the transaction
-                // Simulate a failure before the recovery write and before commit
-                tCtx.rollbackTransaction();
-                throw new RuntimeCamelException("Simulated failure mid-transaction");
-            } catch (RuntimeCamelException e) {
-                throw e;
-            } catch (Exception e) {
-                tCtx.rollbackTransaction();
-                throw new RuntimeCamelException("Unexpected exception in test subclass", e);
-            }
-        }
-    }
 }
