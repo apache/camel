@@ -8186,3 +8186,15 @@ The `apiKeyHeader` option never had any effect: the name of the header that carr
 docling-serve client, which always sends it as `X-Api-Key`, and the producer never read the option. It is now
 deprecated, with a `deprecationNote` that says so. Remove `apiKeyHeader` from the endpoint URI or the configuration:
 with `authenticationScheme=API_KEY` and `authenticationToken` set, the key is still sent, as `X-Api-Key`.
+
+=== camel-docling - the CamelDoclingEnableOCR and CamelDoclingOCRLanguage headers are read
+
+The `CamelDoclingEnableOCR` and `CamelDoclingOCRLanguage` headers were declared and documented as per-message
+overrides of `enableOCR` and `ocrLanguage`, but the component never read them: the message was OCRed the way the
+endpoint was configured. They now override those two settings for the message, on the docling CLI path and on the
+docling-serve path, as `CamelDoclingUseAsyncMode` already overrode `useAsyncMode`. A header that turns OCR off does
+not pass a language on; a language header alone turns OCR on, unless the endpoint has disabled it with
+`enableOCR=false`, which keeps winning over the header.
+
+The language itself is passed to docling untouched, in both forms: it is docling's own identifier (language codes such
+as `en,de`, BCP-47 tags such as `iso:zh-Hant`, or `script/Latin`), and docling validates it.

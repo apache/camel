@@ -335,7 +335,7 @@ public class DoclingProducer extends DefaultProducer {
     private void processConvertToJSON(Exchange exchange) throws Exception {
         String inputPath = getInputPath(exchange);
         if (configuration.isUseDoclingServe()) {
-            ConvertDocumentRequest request = buildConvertRequest(inputPath, "json");
+            ConvertDocumentRequest request = buildConvertRequest(inputPath, "json", resolveOcrSettings(exchange));
             exchange.getIn().setBody(convertToDoclingDocument(request, exchange));
         } else {
             String result = executeDoclingCommand(inputPath, "json", exchange);
@@ -357,7 +357,7 @@ public class DoclingProducer extends DefaultProducer {
     private void processExtractStructuredData(Exchange exchange) throws Exception {
         String inputPath = getInputPath(exchange);
         if (configuration.isUseDoclingServe()) {
-            ConvertDocumentRequest request = buildStructuredDataRequest(inputPath);
+            ConvertDocumentRequest request = buildStructuredDataRequest(inputPath, resolveOcrSettings(exchange));
             exchange.getIn().setBody(convertToDoclingDocument(request, exchange));
         } else {
             String result = executeDoclingCommand(inputPath, "json", exchange);
@@ -382,7 +382,7 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         // Start async conversion
-        ConvertDocumentRequest request = buildConvertRequest(inputPath, outputFormat);
+        ConvertDocumentRequest request = buildConvertRequest(inputPath, outputFormat, resolveOcrSettings(exchange));
         CompletableFuture<ConvertDocumentResponse> asyncResult
                 = doclingServeApi.convertSourceAsync(request).toCompletableFuture();
 
@@ -524,7 +524,7 @@ public class DoclingProducer extends DefaultProducer {
 
         if (configuration.isUseDoclingServe()) {
             // Use docling-serve API for metadata extraction
-            metadata = extractMetadataUsingApi(inputPath);
+            metadata = extractMetadataUsingApi(inputPath, exchange);
         } else {
             // Use CLI for metadata extraction
             metadata = extractMetadataUsingCLI(inputPath, exchange);
@@ -665,11 +665,11 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private DocumentMetadata extractMetadataUsingApi(String inputPath) throws IOException {
+    private DocumentMetadata extractMetadataUsingApi(String inputPath, Exchange exchange) throws IOException {
         LOG.debug("Extracting metadata using docling-java: {}", inputPath);
 
         // Convert the document to JSON format to get structured data including metadata
-        ConvertDocumentRequest request = buildConvertRequest(inputPath, "json");
+        ConvertDocumentRequest request = buildConvertRequest(inputPath, "json", resolveOcrSettings(exchange));
         ConvertDocumentResponse response;
         try {
             response = doclingServeApi.convertSource(request);
@@ -876,9 +876,14 @@ public class DoclingProducer extends DefaultProducer {
             useAsync = asyncModeHeader;
         }
 
+        // The OCR headers are read here, on the thread that owns the exchange: the workers below run in parallel and
+        // an exchange must not be shared between threads.
+        OcrSettings ocrSettings = resolveOcrSettings(exchange);
+
         // Process batch
         BatchProcessingResults results = convertDocumentsBatch(
-                documentPaths, outputFormat, batchSize, parallelism, failOnFirstError, useAsync, batchTimeout);
+                documentPaths, outputFormat, batchSize, parallelism, failOnFirstError, useAsync, batchTimeout,
+                ocrSettings);
 
         // Check if we should split results into individual exchanges
         boolean splitResults = configuration.isSplitBatchResults();
@@ -912,7 +917,7 @@ public class DoclingProducer extends DefaultProducer {
 
     private BatchProcessingResults convertDocumentsBatch(
             List<String> inputSources, String outputFormat, int batchSize, int parallelism,
-            boolean failOnFirstError, boolean useAsync, long batchTimeout) {
+            boolean failOnFirstError, boolean useAsync, long batchTimeout, OcrSettings ocrSettings) {
 
         LOG.info(
                 "Starting batch conversion of {} documents with batchSize={}, parallelism={}, failOnFirstError={}, timeout={}ms",
@@ -964,9 +969,9 @@ public class DoclingProducer extends DefaultProducer {
 
                             String converted;
                             if (useAsync) {
-                                converted = convertDocumentAsyncAndWait(inputSource, outputFormat);
+                                converted = convertDocumentAsyncAndWait(inputSource, outputFormat, ocrSettings);
                             } else {
-                                converted = convertDocumentSync(inputSource, outputFormat);
+                                converted = convertDocumentSync(inputSource, outputFormat, ocrSettings);
                             }
 
                             result.setResult(converted);
@@ -1185,12 +1190,13 @@ public class DoclingProducer extends DefaultProducer {
             }
         }
 
+        OcrSettings ocrSettings = resolveOcrSettings(exchange);
         if (useAsync) {
             LOG.debug("Using async mode for conversion");
-            return convertDocumentAsyncAndWait(inputPath, outputFormat);
+            return convertDocumentAsyncAndWait(inputPath, outputFormat, ocrSettings);
         } else {
             LOG.debug("Using sync mode for conversion");
-            return convertDocumentSync(inputPath, outputFormat);
+            return convertDocumentSync(inputPath, outputFormat, ocrSettings);
         }
     }
 
@@ -1282,9 +1288,13 @@ public class DoclingProducer extends DefaultProducer {
             useAsync = asyncModeHeader;
         }
 
+        // The OCR headers are read here, on the thread that owns the exchange: the workers below run in parallel and
+        // an exchange must not be shared between threads.
+        OcrSettings ocrSettings = resolveOcrSettings(exchange);
+
         // Process batch using structured data extraction
         BatchProcessingResults results = convertStructuredDataBatch(
-                documentPaths, batchSize, parallelism, failOnFirstError, useAsync, batchTimeout);
+                documentPaths, batchSize, parallelism, failOnFirstError, useAsync, batchTimeout, ocrSettings);
 
         // Check if we should split results
         boolean splitResults = configuration.isSplitBatchResults();
@@ -1313,7 +1323,7 @@ public class DoclingProducer extends DefaultProducer {
 
     private BatchProcessingResults convertStructuredDataBatch(
             List<String> inputSources, int batchSize, int parallelism,
-            boolean failOnFirstError, boolean useAsync, long batchTimeout) {
+            boolean failOnFirstError, boolean useAsync, long batchTimeout, OcrSettings ocrSettings) {
 
         LOG.info(
                 "Starting batch structured data extraction of {} documents with batchSize={}, parallelism={}, failOnFirstError={}, timeout={}ms",
@@ -1363,7 +1373,7 @@ public class DoclingProducer extends DefaultProducer {
                             LOG.debug("Extracting structured data from document {} (index {}): {}", documentId,
                                     currentIndex, inputSource);
 
-                            ConvertDocumentRequest request = buildStructuredDataRequest(inputSource);
+                            ConvertDocumentRequest request = buildStructuredDataRequest(inputSource, ocrSettings);
                             String converted;
                             if (useAsync) {
                                 converted = convertDocumentAsyncAndWait(request);
@@ -1458,10 +1468,11 @@ public class DoclingProducer extends DefaultProducer {
         return results;
     }
 
-    private String convertDocumentSync(String inputSource, String outputFormat) throws IOException {
+    private String convertDocumentSync(String inputSource, String outputFormat, OcrSettings ocrSettings)
+            throws IOException {
         LOG.debug("Converting document using docling-java (sync): {}", inputSource);
 
-        ConvertDocumentRequest request = buildConvertRequest(inputSource, outputFormat);
+        ConvertDocumentRequest request = buildConvertRequest(inputSource, outputFormat, ocrSettings);
 
         try {
             ConvertDocumentResponse response = doclingServeApi.convertSource(request);
@@ -1482,10 +1493,11 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private String convertDocumentAsyncAndWait(String inputSource, String outputFormat) throws IOException {
+    private String convertDocumentAsyncAndWait(String inputSource, String outputFormat, OcrSettings ocrSettings)
+            throws IOException {
         LOG.debug("Converting document using docling-java (async): {}", inputSource);
 
-        ConvertDocumentRequest request = buildConvertRequest(inputSource, outputFormat);
+        ConvertDocumentRequest request = buildConvertRequest(inputSource, outputFormat, ocrSettings);
 
         try {
             CompletionStage<ConvertDocumentResponse> asyncResult = doclingServeApi.convertSourceAsync(request);
@@ -1532,7 +1544,9 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private ConvertDocumentRequest buildConvertRequest(String inputSource, String outputFormat) throws IOException {
+    // package-private so DoclingOcrHeadersTest can assert the OCR options of the request without reflection
+    ConvertDocumentRequest buildConvertRequest(String inputSource, String outputFormat, OcrSettings ocrSettings)
+            throws IOException {
         ConvertDocumentRequest.Builder requestBuilder = ConvertDocumentRequest.builder();
 
         addSourceToRequest(requestBuilder, inputSource);
@@ -1542,13 +1556,14 @@ public class DoclingProducer extends DefaultProducer {
         if (outputFormat != null && !outputFormat.isEmpty()) {
             optionsBuilder.toFormat(mapToOutputFormat(outputFormat));
         }
-        applyConfigurationToOptions(optionsBuilder);
+        applyConfigurationToOptions(optionsBuilder, ocrSettings);
         requestBuilder.options(optionsBuilder.build());
 
         return requestBuilder.build();
     }
 
-    private ConvertDocumentRequest buildStructuredDataRequest(String inputSource) throws IOException {
+    private ConvertDocumentRequest buildStructuredDataRequest(String inputSource, OcrSettings ocrSettings)
+            throws IOException {
         ConvertDocumentRequest.Builder requestBuilder = ConvertDocumentRequest.builder();
 
         addSourceToRequest(requestBuilder, inputSource);
@@ -1561,7 +1576,7 @@ public class DoclingProducer extends DefaultProducer {
                 .doTableStructure(true);
 
         // Apply user configuration (can enable additional enrichment features)
-        applyConfigurationToOptions(optionsBuilder);
+        applyConfigurationToOptions(optionsBuilder, ocrSettings);
         requestBuilder.options(optionsBuilder.build());
 
         return requestBuilder.build();
@@ -1600,18 +1615,58 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private void applyConfigurationToOptions(ConvertDocumentOptions.Builder optionsBuilder) {
+    /**
+     * Resolves the OCR decisions of one message from the endpoint configuration and the two per-message headers.
+     * <p>
+     * The headers are read here, on the calling thread, and not where the request is built: a batch reads them once and
+     * hands the result down to its workers, which run in parallel and must not share the exchange. Package-private so
+     * that DoclingOcrHeadersTest can resolve them the way the producer does.
+     */
+    OcrSettings resolveOcrSettings(Exchange exchange) {
         // Send doOcr only when explicitly configured via the doOcr property,
         // or when enableOCR has been explicitly disabled. When both are at their
         // defaults (doOcr=null, enableOCR=true), let the server use its own defaults
         // to preserve backward compatibility.
-        if (configuration.getDoOcr() != null) {
-            optionsBuilder.doOcr(configuration.getDoOcr());
-            if (configuration.getDoOcr() && configuration.getOcrLanguage() != null) {
-                optionsBuilder.ocrLang(configuration.getOcrLanguage());
+        Boolean doOcr = configuration.getDoOcr();
+        String ocrLanguage = configuration.getOcrLanguage();
+        if (doOcr == null && !configuration.isEnableOCR()) {
+            doOcr = Boolean.FALSE;
+        }
+
+        // The per-message headers win over the endpoint configuration, as they do on the CLI path: a scanned
+        // attachment in an otherwise text-based route, or a foreign-language one, can then be OCRed without a
+        // second endpoint.
+        if (exchange != null) {
+            Boolean headerEnableOcr = exchange.getIn().getHeader(DoclingHeaders.ENABLE_OCR, Boolean.class);
+            if (headerEnableOcr != null) {
+                doOcr = headerEnableOcr;
+                if (!headerEnableOcr) {
+                    // an explicit "no OCR" must not carry a language along
+                    ocrLanguage = null;
+                }
             }
-        } else if (!configuration.isEnableOCR()) {
-            optionsBuilder.doOcr(false);
+
+            String headerOcrLanguage = exchange.getIn().getHeader(DoclingHeaders.OCR_LANGUAGE, String.class);
+            if (ObjectHelper.isNotEmpty(headerOcrLanguage)) {
+                ocrLanguage = headerOcrLanguage;
+                if (doOcr == null) {
+                    // asking for a language is asking for OCR
+                    doOcr = Boolean.TRUE;
+                }
+            }
+        }
+
+        return new OcrSettings(doOcr, ocrLanguage);
+    }
+
+    private void applyConfigurationToOptions(ConvertDocumentOptions.Builder optionsBuilder, OcrSettings ocrSettings) {
+        Boolean doOcr = ocrSettings.getDoOcr();
+        String ocrLanguage = ocrSettings.getOcrLanguage();
+        if (doOcr != null) {
+            optionsBuilder.doOcr(doOcr);
+            if (doOcr && ObjectHelper.isNotEmpty(ocrLanguage)) {
+                optionsBuilder.ocrLang(ocrLanguage);
+            }
         }
 
         if (configuration.getForceOcr() != null) {
@@ -2152,7 +2207,7 @@ public class DoclingProducer extends DefaultProducer {
         addOutputFormatArguments(command, outputFormat);
 
         // OCR configuration
-        addOcrArguments(command);
+        addOcrArguments(command, exchange);
 
         // Layout information
         addLayoutArguments(command);
@@ -2287,12 +2342,26 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private void addOcrArguments(List<String> command) {
-        if (!configuration.isEnableOCR()) {
+    /**
+     * Adds the OCR arguments, honouring the per-message headers when they are set: a scanned attachment in an otherwise
+     * text-based route, or a foreign-language one, can then be OCRed without a second endpoint.
+     */
+    private void addOcrArguments(List<String> command, Exchange exchange) {
+        Boolean enableOcr = exchange.getIn().getHeader(DoclingHeaders.ENABLE_OCR, Boolean.class);
+        if (enableOcr == null) {
+            enableOcr = configuration.isEnableOCR();
+        }
+
+        String ocrLanguage = exchange.getIn().getHeader(DoclingHeaders.OCR_LANGUAGE, String.class);
+        if (ObjectHelper.isEmpty(ocrLanguage)) {
+            ocrLanguage = configuration.getOcrLanguage();
+        }
+
+        if (!enableOcr) {
             command.add("--no-ocr");
-        } else if (configuration.getOcrLanguage() != null) {
+        } else if (ObjectHelper.isNotEmpty(ocrLanguage)) {
             command.add("--ocr-lang");
-            command.add(configuration.getOcrLanguage());
+            command.add(ocrLanguage);
         }
     }
 
@@ -2352,6 +2421,33 @@ public class DoclingProducer extends DefaultProducer {
                 return "text";
             default:
                 return "md"; // Default to markdown
+        }
+    }
+
+    /**
+     * The OCR decisions of one message, resolved from the endpoint configuration and the two OCR headers by
+     * {@link #resolveOcrSettings(Exchange)}.
+     * <p>
+     * A {@code null} {@code doOcr} means "not decided here, leave it to the docling-serve defaults". The CLI path
+     * reaches the same outcome through {@link #addOcrArguments(List, Exchange)}, which renders it as {@code --no-ocr} /
+     * {@code --ocr-lang}.
+     */
+    static final class OcrSettings {
+
+        private final Boolean doOcr;
+        private final String ocrLanguage;
+
+        OcrSettings(Boolean doOcr, String ocrLanguage) {
+            this.doOcr = doOcr;
+            this.ocrLanguage = ocrLanguage;
+        }
+
+        Boolean getDoOcr() {
+            return doOcr;
+        }
+
+        String getOcrLanguage() {
+            return ocrLanguage;
         }
     }
 
