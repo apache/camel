@@ -183,7 +183,7 @@ public interface FileWatchComponentBuilderFactory {
         
         /**
          * Maximum size of queue between WatchService and consumer. Unbounded by
-         * default.
+         * default. When the queue is full, file events are dropped.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 

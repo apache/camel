@@ -69,7 +69,8 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
               defaultValue = "**")
     private String antInclude;
     @UriParam(label = "advanced",
-              description = "Maximum size of queue between WatchService and consumer. Unbounded by default.",
+              description = "Maximum size of queue between WatchService and consumer. Unbounded by default."
+                            + " When the queue is full, file events are dropped.",
               defaultValue = "" + Integer.MAX_VALUE)
     private int queueSize;
     @UriParam(label = "advanced",

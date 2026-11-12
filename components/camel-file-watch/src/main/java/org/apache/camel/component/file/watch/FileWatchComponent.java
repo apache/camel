@@ -37,7 +37,8 @@ public class FileWatchComponent extends DefaultComponent {
     private int concurrentConsumers = 1;
 
     @Metadata(label = "advanced",
-              description = "Maximum size of queue between WatchService and consumer. Unbounded by default.",
+              description = "Maximum size of queue between WatchService and consumer. Unbounded by default."
+                            + " When the queue is full, file events are dropped.",
               defaultValue = "" + Integer.MAX_VALUE)
     private int queueSize = Integer.MAX_VALUE;
 
