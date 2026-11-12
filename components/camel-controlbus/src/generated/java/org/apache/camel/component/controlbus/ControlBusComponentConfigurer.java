@@ -24,6 +24,8 @@ public class ControlBusComponentConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ControlBusComponent target = (ControlBusComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowedlanguages":
+        case "allowedLanguages": target.setAllowedLanguages(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -35,6 +37,8 @@ public class ControlBusComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowedlanguages":
+        case "allowedLanguages": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "lazystartproducer":
@@ -47,6 +51,8 @@ public class ControlBusComponentConfigurer extends PropertyConfigurerSupport imp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ControlBusComponent target = (ControlBusComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowedlanguages":
+        case "allowedLanguages": return target.getAllowedLanguages();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "lazystartproducer":

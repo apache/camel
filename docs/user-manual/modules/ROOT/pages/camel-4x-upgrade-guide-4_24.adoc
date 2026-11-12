@@ -20,6 +20,18 @@ was unavailable and `failOpen=true`. Previously this marker was set only for sin
 that inspect the marker after a batch should account for it applying to any element; the per-element outcome
 list identifies the affected elements. The existing `CamelOpaBatchDecision` Boolean list is unchanged.
 
+=== camel-controlbus - the language command is off by default
+
+The `language` command of the control bus (`controlbus:language:<name>`) evaluates the message body as an expression of the named language.
+It is now off by default: a `controlbus:language` endpoint fails when it is created unless its language is listed in the new `allowedLanguages` option, on the component or on the endpoint:
+
+[source,properties]
+----
+camel.component.controlbus.allowed-languages = simple
+----
+
+The `route` command (`controlbus:route?action=...`) is not affected.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
