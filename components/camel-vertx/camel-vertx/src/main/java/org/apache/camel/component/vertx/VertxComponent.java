@@ -202,7 +202,10 @@ public class VertxComponent extends DefaultComponent {
                     // the build is still running: a node that joins the cluster after we gave up would keep its
                     // event-loop threads alive with nobody left to close it. onSuccess also fires at once if the
                     // future completed between the await and this registration, so no window is left open
-                    clusteredVertx.onSuccess(Vertx::close);
+                    clusteredVertx.onSuccess(v -> {
+                        LOG.warn("A Vert.x instance arrived after the timeout — closing it to prevent resource leak");
+                        v.close();
+                    });
                     throw new IllegalStateException(
                             "The Vert.x EventBus was not ready within the timeout of " + timeout + " seconds");
                 }
