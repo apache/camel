@@ -36,13 +36,23 @@ public class Utils {
     private static final String HMAC_HASHING_ALGORITHM = "HmacSHA256";
 
     public static String computeMessageHMAC(String message, String key) {
+        // ClickUp signs the raw request body, so neither side of the HMAC may depend on the platform default charset
+        return computeMessageHMAC(message.getBytes(StandardCharsets.UTF_8), key);
+    }
+
+    /**
+     * Computes the HMAC of the message exactly as it arrived, without decoding and re-encoding it first.
+     *
+     * @param  message the raw message bytes, as they were received
+     * @param  key     the webhook's shared secret
+     * @return         the HMAC as an upper-case hexadecimal string
+     */
+    public static String computeMessageHMAC(byte[] message, String key) {
         try {
             Mac mac = Mac.getInstance(HMAC_HASHING_ALGORITHM);
-            // ClickUp signs the raw UTF-8 request body, so neither side of the HMAC may depend on the
-            // platform default charset
             mac.init(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), HMAC_HASHING_ALGORITHM));
 
-            byte[] hash = mac.doFinal(message.getBytes(StandardCharsets.UTF_8));
+            byte[] hash = mac.doFinal(message);
 
             return DatatypeConverter.printHexBinary(hash);
         } catch (NoSuchAlgorithmException e) {

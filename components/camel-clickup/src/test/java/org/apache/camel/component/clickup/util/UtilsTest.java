@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.clickup.util;
 
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The webhook signature has to be reproducible on any JVM: ClickUp computes it over the raw UTF-8 request body, so the
