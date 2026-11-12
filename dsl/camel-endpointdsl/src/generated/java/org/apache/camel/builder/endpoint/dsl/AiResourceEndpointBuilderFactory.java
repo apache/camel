@@ -79,14 +79,12 @@ public interface AiResourceEndpointBuilderFactory {
             return this;
         }
         /**
-         * The resource uri clients use to read this resource, for example
-         * camel:///config/app.json or s3://reports/latest.pdf. It must be
-         * unique within the CamelContext and is what an MCP client sends in a
-         * resources/read request.
+         * The fixed resource uri clients use to read this resource. Configure
+         * this or uriTemplate, but not both. The uri must be unique within the
+         * CamelContext.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: consumer
          * 
          * @param resourceUri the value to set
@@ -126,6 +124,22 @@ public interface AiResourceEndpointBuilderFactory {
          */
         default AiResourceEndpointBuilder title(String title) {
             doSetProperty("title", title);
+            return this;
+        }
+        /**
+         * RFC 6570 level 1 URI template. Each variable must occupy a whole path
+         * segment, for example crm://customers/{id}. Configure this or
+         * resourceUri, but not both.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param uriTemplate the value to set
+         * @return the dsl builder
+         */
+        default AiResourceEndpointBuilder uriTemplate(String uriTemplate) {
+            doSetProperty("uriTemplate", uriTemplate);
             return this;
         }
     }
