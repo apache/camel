@@ -8198,3 +8198,10 @@ not pass a language on; a language header alone turns OCR on, unless the endpoin
 
 The language itself is passed to docling untouched, in both forms: it is docling's own identifier (language codes such
 as `en,de`, BCP-47 tags such as `iso:zh-Hant`, or `script/Latin`), and docling validates it.
+
+=== camel-docling - html_split_page is rejected by docling-serve
+
+`outputFormat=html_split_page` produced an empty body on the docling-serve path: the request asked docling-serve for
+the split pages, whose content it does not return in the response, so every content field of the reply was empty. It
+now fails with an `IllegalArgumentException` that names the reason and the way out, `outputFormat=html` to get the
+HTML of the whole document.
