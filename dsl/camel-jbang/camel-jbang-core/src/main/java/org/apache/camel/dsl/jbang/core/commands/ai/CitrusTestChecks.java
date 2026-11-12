@@ -45,6 +45,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.networknt.schema.Error;
 import com.networknt.schema.Schema;
@@ -105,6 +106,11 @@ public final class CitrusTestChecks {
             "matches", "match", "regex", "pattern", "like", "startsWith", "endsWith");
     /** A URL: the client part (scheme, host and port), and the path. */
     private static final Pattern URL = Pattern.compile("^([A-Za-z][\\w+.-]*://[^/?#]+)(.*)$");
+    /**
+     * A backslash before a character of a regular expression, such as \( in line\(s\), or before a second backslash:
+     * the two backslashes are taken as a pair, so the character after them is not escaped.
+     */
+    private static final Pattern REGEX_ESCAPE = Pattern.compile("\\\\([\\\\()\\[\\]{}.*+?^$|])");
 
     private static volatile TestSchema schema;
 
@@ -526,6 +532,9 @@ public final class CitrusTestChecks {
             String name = scalar(keys.get(0).getKeyNode());
             items.put(at, name);
             itemNodes.put(at, item);
+            if ("camel".equals(name)) {
+                checkLogMessage(at);
+            }
             JsonNode action = tree.at(at);
             if (nested && !action.isMissingNode()) {
                 describe(schema.action().validate(action), at);
@@ -548,14 +557,53 @@ public final class CitrusTestChecks {
             }
             if (camelCaseWords(name).contains("log") && schema.actions().contains("echo")
                     && schema.actions().contains("camel")) {
-                // log:, assert-log: or assertLog: in 8 of the 11 tests a local model wrote (test-citrus-orders)
+                // log:, assert-log: or assertLog: in 8 of the 11 tests a local model wrote (test-citrus-orders); a
+                // model that wrote assert-log: {pattern: ...} kept the escapes of the pattern in logMessage (r32)
                 String cli = schema.model().at("/definitions/TestActions/properties/camel/properties/cli").isMissingNode()
                         ? "jbang" : "cli";
                 return answer + ": echo: {message: \"...\"} writes a message to the test log, and camel: {" + cli
                        + ": {verify: {integration: \"<name>\", logMessage: \"...\"}}} checks that the integration"
-                       + " logged a line";
+                       + " logged a line that contains that text as written (plain text, not a pattern)";
             }
             return answer + "; the actions are " + String.join(", ", schema.actions());
+        }
+
+        /**
+         * The logMessage of a camel cli (or jbang) verify action is plain text: Citrus checks that the integration
+         * logged a line that contains it as written. In r32 of the local-model benchmark, three of seven runs of
+         * test-citrus-orders step 1 wrote it as a regular expression, line\(s\) for line(s), and camel test run waited
+         * 60 attempts for a line with the backslashes in it (the model had first written assert-log: {pattern: ...},
+         * which is not a Citrus action, and kept the escapes). The line to write has the text without the backslash of
+         * each escape. A backslash before another character, as in a Windows path or an escaped quote, is left alone.
+         */
+        private void checkLogMessage(String at) {
+            JsonNode camel = schema.model().at("/definitions/TestActions/properties/camel");
+            for (String cli : List.of("cli", "jbang")) {
+                String pointer = at + "/camel/" + cli + "/verify/logMessage";
+                JsonNode value = tree.at(pointer);
+                if (!value.isTextual() || !hasPath(camel, cli, "verify", "logMessage")) {
+                    continue;
+                }
+                List<String> escapes = new ArrayList<>();
+                String text = REGEX_ESCAPE.matcher(value.asText()).replaceAll(m -> {
+                    boolean pair = "\\".equals(m.group(1));
+                    if (!pair) {
+                        escapes.add(m.group());
+                    }
+                    return Matcher.quoteReplacement(pair ? m.group() : m.group(1));
+                });
+                if (escapes.isEmpty()) {
+                    continue;
+                }
+                String answer = where(pointer) + " is plain text, not a regular expression: Citrus checks that the"
+                                + " integration logged a line that contains it as written, so the backslash"
+                                + (escapes.size() == 1 ? "" : "es") + " in " + and(escapes.stream().distinct().toList())
+                                + " would have to be in the log too.";
+                String written = keyLines(pointer, TextNode.valueOf(text));
+                Node key = keyNode(pointer);
+                add(key != null ? line(key) : YamlPointerLines.line(root, pointer, null),
+                        answer + (written != null ? written : " Write logMessage: " + quoted(text)));
+            }
         }
 
         /**

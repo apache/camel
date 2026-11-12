@@ -25,6 +25,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
@@ -44,11 +46,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CitrusTestChecksTest {
 
     private static final Path ORDERS = Path.of("src/test/resources/citrus-orders");
+    private static final ObjectMapper YAML = new ObjectMapper(new YAMLFactory());
 
     /** What is said of an action named log: what to write to log a message, and to check the log of the integration. */
     private static final String LOG_HINT = "echo: {message: \"...\"} writes a message to the test log, and camel: {cli:"
                                            + " {verify: {integration: \"<name>\", logMessage: \"...\"}}} checks that the"
-                                           + " integration logged a line";
+                                           + " integration logged a line that contains that text as written (plain"
+                                           + " text, not a pattern)";
 
     /** What is said of the request and its response written as one http action, before the lines to write. */
     private static final String TWO_ACTIONS = ". An http action of a client either sends the request (sendRequest) or"
@@ -483,6 +487,85 @@ class CitrusTestChecksTest {
         lines.subList(first - 1, last).clear();
         lines.addAll(first - 1, List.of(message.substring(m.end()).split("\n")));
         return String.join("\n", lines);
+    }
+
+    /** A test that checks the log of the integration: the key of the camel action, and the logMessage as written. */
+    private static final String VERIFY_LOG = """
+            name: orders.citrus.it
+            actions:
+              - camel:
+                  %s:
+                    verify:
+                      integration: "orders"
+                      logMessage: %s
+            """;
+
+    static Stream<Arguments> logMessagesWithRegexEscapes() {
+        return Stream.of(
+                // as the model wrote it in r32
+                Arguments.of("cli", "\"Order ORD-1001 accepted for C-482 with 2 line\\\\(s\\\\)\""),
+                // in single quotes and without quotes, the backslash is written once
+                Arguments.of("cli", "'Order ORD-1001 accepted for C-482 with 2 line\\(s\\)'"),
+                Arguments.of("cli", "Order ORD-1001 accepted for C-482 with 2 line\\(s\\)"),
+                // jbang is the key Citrus had before cli
+                Arguments.of("jbang", "'Order ORD-1001 accepted for C-482 with 2 line\\(s\\)'"));
+    }
+
+    /**
+     * r32 of the local-model benchmark, test-citrus-orders step 1: in three of seven runs the model checked the log
+     * line with a regular expression, logMessage: "... line\\(s\\)" (it had first written assert-log: {pattern: ...}),
+     * and camel test run waited 60 attempts for a line with the backslashes in it. logMessage is plain text: the line
+     * to write has the text without them, and written, the test is valid.
+     */
+    @ParameterizedTest(name = "{0}: {1}")
+    @MethodSource("logMessagesWithRegexEscapes")
+    void aLogMessageWithRegexEscapesIsPlainText(String cli, String value) throws Exception {
+        String test = VERIFY_LOG.formatted(cli, value);
+        List<String> msgs = CitrusTestChecks.validate(test);
+
+        assertThat(msgs).containsExactly("Line 7: camel." + cli + ".verify.logMessage is plain text, not a regular"
+                                         + " expression: Citrus checks that the integration logged a line that contains"
+                                         + " it as written, so the backslashes in \\( and \\) would have to be in the"
+                                         + " log too. Write line 7 as:\n"
+                                         + "          logMessage: \"Order ORD-1001 accepted for C-482 with 2 line(s)\"");
+        String fixed = written(test, msgs.get(0));
+        assertThat(CitrusTestChecks.validate(fixed)).isEmpty();
+        assertThat(YAML.readTree(fixed).at("/actions/0/camel/" + cli + "/verify/logMessage").asText())
+                .isEqualTo("Order ORD-1001 accepted for C-482 with 2 line(s)");
+    }
+
+    /**
+     * The line to write keeps a backslash before another character, as in a Windows path; the text is then in single
+     * quotes, where YAML takes a backslash as written.
+     */
+    @Test
+    void theLineToWriteKeepsTheOtherBackslashes() throws Exception {
+        String test = VERIFY_LOG.formatted("cli", "'Wrote ORD-1001\\.json to C:\\orders\\out'");
+        List<String> msgs = CitrusTestChecks.validate(test);
+
+        assertThat(msgs).containsExactly("Line 7: camel.cli.verify.logMessage is plain text, not a regular expression:"
+                                         + " Citrus checks that the integration logged a line that contains it as"
+                                         + " written, so the backslash in \\. would have to be in the log too. Write"
+                                         + " line 7 as:\n"
+                                         + "          logMessage: 'Wrote ORD-1001.json to C:\\orders\\out'");
+        String fixed = written(test, msgs.get(0));
+        assertThat(CitrusTestChecks.validate(fixed)).isEmpty();
+        assertThat(YAML.readTree(fixed).at("/actions/0/camel/cli/verify/logMessage").asText())
+                .isEqualTo("Wrote ORD-1001.json to C:\\orders\\out");
+    }
+
+    /**
+     * Text without a regular expression escape is checked as written: a backslash before another character (a Windows
+     * path, an escaped quote), and two backslashes before a (, as JSON text in the log has them.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "\"Order ORD-1001 accepted for C-482 with 2 line(s)\"",
+            "'Wrote ORD-1001.json to C:\\orders\\out'",
+            "'Order \\\"ORD-1001\\\" accepted'",
+            "'{\"file\": \"C:\\\\orders\\\\(old)\"}'" })
+    void aLogMessageWithoutRegexEscapesIsValid(String value) {
+        assertThat(CitrusTestChecks.validate(VERIFY_LOG.formatted("cli", value))).isEmpty();
     }
 
     @Test
