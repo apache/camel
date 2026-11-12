@@ -688,8 +688,16 @@ steps without replaying those steps. `maximumRedeliveries` may cause Camel to in
 each in-transaction retry is rejected; the Kafka send is not retried in a fresh transaction. After those rejected attempts,
 a failure handler such as a `deadLetterChannel` or an `onException(...).handled(true)` clause can handle the original
 failure. When a supported non-Kafka failure-handler delivery succeeds, Camel skips the source record using the offset-only
-transaction described below. With `maximumRedeliveries(2)`, for example, the two retries are rejected and the
-failure-handler destination is invoked once; they are not two new Kafka send attempts.
+transaction described below. With `maximumRedeliveries(2)`, for example, the first retry is rejected, which marks the
+exchange rollback-only and ends the redeliveries, and the failure-handler destination is invoked once; there is no new
+Kafka send attempt.
+
+Any later send through the source producer in that transaction is rejected the same way, also one that is not a
+redelivery, such as a second send in a `loop` or in another `doTry` block. When a `doCatch` catches such a rejected
+send, in the route of the send or in a route that called it from a `doTry` (for example with `direct`), the failure is
+handled too, and Camel skips the source record using the offset-only transaction. To replay the record instead, throw
+the exception again in the `doCatch` block, or end it with `rollback()`: `markRollbackOnly()` is not told apart from
+the rejected send.
 
 When a Kafka send failure, or another route failure, is handled successfully while the source-output transaction is
 already open, Camel aborts the source-output transaction and commits only the source offsets in a new transaction. This

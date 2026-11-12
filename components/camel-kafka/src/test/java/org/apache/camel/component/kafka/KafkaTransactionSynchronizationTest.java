@@ -37,6 +37,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -253,6 +255,105 @@ class KafkaTransactionSynchronizationTest {
     }
 
     @Test
+    void redeliveryRejectionCaughtByDoCatchOfCallingRouteCommitsOffsetsAfterAbortingOutput() {
+        // a send failed and the next send in the transaction was rejected (its redelivery in a route called from a
+        // doTry, or a second send in the route), and a doCatch caught the failure: no exception is left, but the
+        // exchange is not failure handled
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(true);
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY)).thenReturn(Boolean.TRUE);
+        KafkaExactlyOnceMetadata metadata = sourceMetadataWithSendFailure();
+        Map<TopicPartition, OffsetAndMetadata> offsets = metadata.getOffsetsToCommit();
+        ConsumerGroupMetadata group = metadata.getConsumerGroupMetadata();
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, metadata, "source-exchange");
+
+        sync.onDone(exchange);
+
+        var order = inOrder(kafkaProducer);
+        order.verify(kafkaProducer).abortTransaction();
+        order.verify(kafkaProducer).beginTransaction();
+        order.verify(kafkaProducer).sendOffsetsToTransaction(offsets, group);
+        order.verify(kafkaProducer).commitTransaction();
+        verify(kafkaProducer, never()).close();
+        verify(exchange, never()).setException(Mockito.any());
+        verify(exchange, never()).setProperty(KafkaExactlyOnceMetadata.TRANSACTION_ABORTED_PROPERTY, Boolean.TRUE);
+        verify(owner).releaseExactlyOnceTransaction("source-exchange");
+        // the consumer must not report the skipped record as rolled back although the exchange is still rollback only
+        assertTrue(metadata.isOffsetsCommittedAfterHandledFailure());
+    }
+
+    @Test
+    void rejectedSendCaughtByDoCatchIsNotMarkedSkippedWhenTheOffsetCommitFails() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(true);
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY)).thenReturn(Boolean.TRUE);
+        KafkaExactlyOnceMetadata metadata = sourceMetadataWithSendFailure();
+        // the offset-only transaction fails at its commit: the record is replayed, so it is not marked skipped
+        Mockito.doThrow(new KafkaException("offset commit failed")).when(kafkaProducer).commitTransaction();
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, metadata, "source-exchange");
+
+        sync.onDone(exchange);
+
+        verify(kafkaProducer).sendOffsetsToTransaction(Mockito.anyMap(), Mockito.any(ConsumerGroupMetadata.class));
+        verify(exchange).setProperty(KafkaExactlyOnceMetadata.TRANSACTION_ABORTED_PROPERTY, Boolean.TRUE);
+        assertFalse(metadata.isOffsetsCommittedAfterHandledFailure());
+    }
+
+    @Test
+    void redeliveryRejectionMarkerWithoutRecordedSendFailureRollsBack() {
+        // control: the marker alone, with no recorded send failure and not failure handled, does not commit the output
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(true);
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY)).thenReturn(Boolean.TRUE);
+        KafkaExactlyOnceMetadata metadata = sourceMetadata();
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, metadata, "source-exchange");
+
+        sync.onDone(exchange);
+
+        verify(kafkaProducer).abortTransaction();
+        verify(kafkaProducer, never()).beginTransaction();
+        verify(kafkaProducer, never()).commitTransaction();
+        verify(owner).releaseExactlyOnceTransaction("source-exchange");
+        assertFalse(metadata.isOffsetsCommittedAfterHandledFailure());
+    }
+
+    @Test
+    void redeliveryRejectionThatNothingHandledRollsBack() {
+        // control: the rejected retry fails the exchange, nothing caught it
+        when(exchange.getException()).thenReturn(new IllegalStateException("retry rejected"));
+        when(exchange.isRollbackOnly()).thenReturn(true);
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY)).thenReturn(Boolean.TRUE);
+        KafkaExactlyOnceMetadata metadata = sourceMetadataWithSendFailure();
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, metadata, "source-exchange");
+
+        sync.onDone(exchange);
+
+        verify(kafkaProducer).abortTransaction();
+        verify(kafkaProducer, never()).beginTransaction();
+        verify(kafkaProducer, never()).sendOffsetsToTransaction(Mockito.anyMap(), Mockito.any(ConsumerGroupMetadata.class));
+        verify(kafkaProducer, never()).commitTransaction();
+        verify(owner).releaseExactlyOnceTransaction("source-exchange");
+    }
+
+    @Test
+    void rollbackOnlyWithoutRetryMarkerAfterDoCatchRollsBack() {
+        // control: a route that asks for a rollback after a doCatch, without a rejected retry, is rolled back
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(true);
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY)).thenReturn(null);
+        KafkaExactlyOnceMetadata metadata = sourceMetadataWithSendFailure();
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, metadata, "source-exchange");
+
+        sync.onDone(exchange);
+
+        verify(kafkaProducer).abortTransaction();
+        verify(kafkaProducer, never()).beginTransaction();
+        verify(kafkaProducer, never()).sendOffsetsToTransaction(Mockito.anyMap(), Mockito.any(ConsumerGroupMetadata.class));
+        verify(kafkaProducer, never()).commitTransaction();
+        verify(owner).releaseExactlyOnceTransaction("source-exchange");
+    }
+
+    @Test
     void firstExactlyOnceKafkaDeadLetterProducerCommitsRecordAndSourceOffsetsTogether() {
         when(exchange.getException()).thenReturn(null);
         when(exchange.isRollbackOnly()).thenReturn(false);
@@ -456,6 +557,15 @@ class KafkaTransactionSynchronizationTest {
         // abort failed, so the producer is unusable and must be rebuilt rather than left wedged
         verify(kafkaProducer).close();
         verify(owner).markProducerClosedForRecreation();
+    }
+
+    private KafkaExactlyOnceMetadata sourceMetadataWithSendFailure() {
+        // the first send failure is recorded on the source metadata, as KafkaProducer does before it rejects the retry
+        KafkaExactlyOnceMetadata metadata = sourceMetadata();
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class))
+                .thenReturn(metadata);
+        KafkaExactlyOnceMetadata.recordSendFailure(exchange, new KafkaException("the record is too large"));
+        return metadata;
     }
 
     private static KafkaExactlyOnceMetadata sourceMetadata() {

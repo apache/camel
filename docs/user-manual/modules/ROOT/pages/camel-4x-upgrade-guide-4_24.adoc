@@ -233,6 +233,16 @@ support it on the path, the component lists the directory as before. `readLock=c
 modification time of a symbolic link itself, as the directory listing reported them. See the
 xref:components::sftp-component.adoc[SFTP component].
 
+=== camel-kafka - exactlyOnce: a rejected send that a doCatch catches skips the record
+
+With `exactlyOnce`, a Kafka send through the source producer after an earlier send failed in the same transaction is
+rejected and marks the exchange rollback-only (a redelivery of the failed send, or another send such as in a `loop`).
+When a `doCatch` catches that rejected send in the route of the send, the failure now counts as handled, as when an
+error handler handles it: the output transaction is aborted and the source offsets are committed alone, so the record
+is skipped. Before, the source transaction was rolled back and the record replayed. A `doCatch` of a route that called
+the route of the send (for example with `direct`) behaves the same way, as it did in 4.23. To replay the record, throw
+the exception again in the `doCatch` block, or end it with `rollback()`.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.

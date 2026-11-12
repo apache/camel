@@ -31,9 +31,11 @@ import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
+import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
@@ -43,9 +45,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -90,6 +96,56 @@ class KafkaRecordStreamingProcessorTest {
         proc.processExchange(kafkaConsumer, topicPartition, false, false, record);
 
         verify(commitManager).recordOffset(topicPartition, 42L);
+    }
+
+    @Test
+    void recordSkippedAfterAHandledFailureIsNotReportedAsRolledBackWhenStillRollbackOnly() throws Exception {
+        // a doCatch handled the failure of a send, the transaction synchronization aborted the output and committed the
+        // source offsets alone, and the doCatch restored rollbackOnly
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+
+        ProcessingResult result = processExactlyOnce(exchange, true);
+
+        assertNull(exchange.getException(), "the skipped record must not be reported as rolled back");
+        assertFalse(result.isBreakOnErrorHit(), "the consumer must not break (seek back and reconnect)");
+        assertFalse(result.isFailed());
+        verify(commitManager).recordOffset(topicPartition, 42L);
+        verify(commitManager, never()).commit(any(TopicPartition.class));
+    }
+
+    @Test
+    void rollbackOnlyRecordIsReportedAsRolledBack() throws Exception {
+        // control: rollbackOnly without the offset-only commit is a rollback, and the record is replayed
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+
+        ProcessingResult result = processExactlyOnce(exchange, false);
+
+        assertInstanceOf(IllegalStateException.class, exchange.getException());
+        assertTrue(exchange.getException().getMessage().contains("rolled back"), exchange.getException().getMessage());
+        assertTrue(result.isBreakOnErrorHit());
+        verify(commitManager, never()).recordOffset(topicPartition, 42L);
+    }
+
+    private ProcessingResult processExactlyOnce(Exchange exchange, boolean offsetsCommittedAfterHandledFailure)
+            throws Exception {
+        // exactlyOnce needs breakOnFirstError
+        when(configuration.isExactlyOnce()).thenReturn(true);
+        when(configuration.isBreakOnFirstError()).thenReturn(true);
+        when(kafkaConsumer.createExchange(false)).thenReturn(exchange);
+        KafkaExactlyOnceMetadata metadata = newMetadata();
+        doAnswer(invocation -> {
+            Exchange e = invocation.getArgument(0);
+            e.setProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, metadata);
+            metadata.claim(e.getExchangeId());
+            if (offsetsCommittedAfterHandledFailure) {
+                metadata.markOffsetsCommittedAfterHandledFailure();
+            }
+            e.setRollbackOnly(true);
+            return null;
+        }).when(processor).process(any(Exchange.class));
+
+        KafkaRecordStreamingProcessor proc = new KafkaRecordStreamingProcessor(configuration, processor, commitManager);
+        return proc.processExchange(kafkaConsumer, topicPartition, false, false, record);
     }
 
     @ParameterizedTest

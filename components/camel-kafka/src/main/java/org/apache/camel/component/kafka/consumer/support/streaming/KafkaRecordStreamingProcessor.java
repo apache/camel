@@ -191,7 +191,10 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
 
         boolean transactionAborted = Boolean.TRUE.equals(
                 exchange.getProperty(KafkaExactlyOnceMetadata.TRANSACTION_ABORTED_PROPERTY));
-        if (transactionAborted || exchange.isRollbackOnly()) {
+        // the transaction synchronization committed the source offsets alone after a handled failure (the record is
+        // skipped): a doCatch restores rollbackOnly after it handled the failure, which is not a rollback here
+        boolean skipped = metadata != null && metadata.isOffsetsCommittedAfterHandledFailure();
+        if (transactionAborted || (exchange.isRollbackOnly() && !skipped)) {
             if (exchange.getException() == null) {
                 exchange.setException(new IllegalStateException(
                         "The Kafka exactlyOnce transaction was rolled back; the source record must be replayed"));
