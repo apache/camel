@@ -25,10 +25,10 @@
  * The helpers below:
  *  1. query ${JENKINS_URL}/computer/api/json and parse it via Python 3 in sh (to avoid Jenkins sandbox
  *     approval issues with Groovy JSON parsers),
- *  2. find the online agents of a platform that are running a Camel Core job and still have idle executors,
- *  3. (only while the platform has not reached its maximum number of agents) build one parallel branch
- *     per idle executor that holds the executor with a 10 minutes sleep, so that Jenkins sees no free
- *     capacity for the label and provisions a new agent.
+ *  2. inspect every registered agent, logging its status, active jobs, and idle executors to stderr,
+ *  3. find the online agents of a platform that are running a Camel Core job and still have idle executors,
+ *  4. build one parallel branch per idle executor that holds the executor with a 10 minutes sleep, so that
+ *     Jenkins sees no free capacity for the label and provisions a new agent.
  *
  * Usage: loaded by Jenkinsfile.occupier, which is triggered by the Camel Jenkinsfiles with wait: false.
  * It must NOT be run inside a job using the 'camel' throttle, as the occupier branches allocate the
@@ -68,55 +68,70 @@ List<Map> fetchAndPlanOccupiers(String jenkinsUrl, Collection<String> platforms)
 curl --fail --silent --show-error --globoff --max-time 30 '${base}computer/api/json?tree=${ALT_ARCH_COMPUTER_TREE}' | python3 -c '
 import json, sys
 
-max_nodes = {"ppc64le": 3, "s390x": 6}
 target_platforms = set(p.strip() for p in sys.argv[1].split(",") if p.strip())
 
 try:
     data = json.load(sys.stdin)
-except Exception:
+except Exception as e:
+    sys.stderr.write(f"Failed to parse Jenkins /computer/api/json: {e}\\n")
+    sys.stderr.flush()
     sys.exit(0)
 
 computers = data.get("computer", [])
 if not isinstance(computers, list):
     sys.exit(0)
 
-for platform in target_platforms:
-    max_count = max_nodes.get(platform)
-    if max_count is None:
-        continue
-
-    online = [
+for platform in sorted(target_platforms):
+    matching = [
         c for c in computers
-        if not c.get("offline") and any(lbl.get("name") == platform for lbl in (c.get("assignedLabels") or []))
+        if any(lbl.get("name") == platform for lbl in (c.get("assignedLabels") or []))
     ]
-    if len(online) >= max_count:
-        continue
+    sys.stderr.write(f"--> [Alt-Arch Inspector] Evaluating platform \\"{platform}\\": found {len(matching)} registered node(s)\\n")
 
-    for c in online:
+    for c in matching:
+        node_name = c.get("displayName", "unknown")
+        is_offline = c.get("offline", False)
         executors = c.get("executors") or []
         idle_count = sum(1 for e in executors if e.get("idle"))
 
+        active_jobs = []
         runs_camel_core = False
         for e in executors:
-            executable = e.get("currentExecutable") or {}
-            url = (executable.get("url") or "").lower()
-            if "/job/camel/" in url or "/job/camel%20" in url:
-                if not any(excl in url for excl in ["occupier", "kamelet", "quarkus", "spring-boot", "karaf"]):
-                    runs_camel_core = True
-                    break
+            if not e.get("idle"):
+                executable = e.get("currentExecutable") or {}
+                url = executable.get("url") or "unknown"
+                active_jobs.append(url)
+                url_lower = url.lower()
+                if "/job/camel/" in url_lower or "/job/camel%20" in url_lower:
+                    if not any(excl in url_lower for excl in ["occupier", "kamelet", "quarkus", "spring-boot", "karaf"]):
+                        runs_camel_core = True
 
-        if idle_count > 0 and runs_camel_core:
-            node_name = c.get("displayName", "")
-            if node_name:
-                print(f"{platform}\\t{node_name}\\t{idle_count}")
+        status_str = "offline" if is_offline else f"online ({len(executors)} executors: {idle_count} idle, {len(active_jobs)} active)"
+        sys.stderr.write(f"    * Node \\"{node_name}\\": {status_str}\\n")
+        for job_url in active_jobs:
+            sys.stderr.write(f"        - Running job: {job_url}\\n")
+
+        if not is_offline and idle_count > 0 and runs_camel_core:
+            sys.stderr.write(f"        => TARGET FOR OCCUPIER: {idle_count} idle executor(s) on busy Camel Core node\\n")
+            print(f"{platform}|{node_name}|{idle_count}", flush=True)
+        elif not is_offline and idle_count > 0 and not runs_camel_core:
+            sys.stderr.write(f"        => Skipped: has idle executor(s) but not running a throttled Camel Core job\\n")
+        elif not is_offline and idle_count == 0:
+            sys.stderr.write(f"        => Skipped: 0 idle executors (all busy)\\n")
+
+sys.stderr.flush()
 ' "${platformsArg}"
 """
         String output = sh(returnStdout: true, script: script).trim()
         if (output) {
-            output.eachLine { line ->
-                def parts = line.split('\t')
-                if (parts.length == 3) {
-                    plan << [platform: parts[0], node: parts[1], idleExecutors: parts[2] as int]
+            String[] lines = output.split('\n')
+            for (String line : lines) {
+                line = line.trim()
+                if (line) {
+                    def parts = line.split('\\|')
+                    if (parts.size() == 3) {
+                        plan << [platform: parts[0], node: parts[1], idleExecutors: parts[2] as int]
+                    }
                 }
             }
         }
