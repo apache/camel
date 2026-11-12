@@ -17,8 +17,10 @@
 package org.apache.camel.component.milo.server;
 
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 import java.util.Set;
 
+import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.eclipse.milo.opcua.sdk.server.EndpointConfig;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
@@ -70,8 +72,11 @@ public class ServerSetSecurityPoliciesTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBasic256Sha256HasBothATcpAndAnHttpsEndpoint() throws IOException {
+    public void testBasic256Sha256HasBothATcpAndAnHttpsEndpoint() throws Exception {
         try (final MiloServerComponent component = new MiloServerComponent()) {
+            // a secured policy cannot be built without one: EndpointConfig.Builder.build() rejects it
+            component.setCertificate(loadTestCertificate());
+
             final Set<EndpointConfig> endpoints
                     = component.createEndpointConfigs(null, Set.of(SecurityPolicy.Basic256Sha256));
 
@@ -87,8 +92,10 @@ public class ServerSetSecurityPoliciesTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoneAndBasic256Sha256HaveEndpointsForBothPolicies() throws IOException {
+    public void testNoneAndBasic256Sha256HaveEndpointsForBothPolicies() throws Exception {
         try (final MiloServerComponent component = new MiloServerComponent()) {
+            component.setCertificate(loadTestCertificate());
+
             final Set<EndpointConfig> endpoints
                     = component.createEndpointConfigs(null, Set.of(SecurityPolicy.None, SecurityPolicy.Basic256Sha256));
 
@@ -109,6 +116,14 @@ public class ServerSetSecurityPoliciesTest extends CamelTestSupport {
                             MessageSecurityMode.Sign),
                     "expected an HTTPS endpoint with Basic256Sha256 / Sign");
         }
+    }
+
+    private static X509Certificate loadTestCertificate() throws Exception {
+        final KeyStoreLoader loader = new KeyStoreLoader();
+        loader.setUrl("file:src/test/resources/keystore");
+        loader.setKeyStorePassword("testtest");
+        loader.setKeyPassword("test");
+        return loader.load().getCertificate();
     }
 
     /**
