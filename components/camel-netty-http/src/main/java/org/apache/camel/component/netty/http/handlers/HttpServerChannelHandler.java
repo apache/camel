@@ -18,7 +18,6 @@ package org.apache.camel.component.netty.http.handlers;
 
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Locale;
@@ -381,10 +380,12 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                 if ("Basic".equalsIgnoreCase(constraint.trim())) {
                     String decoded = StringHelper.after(auth, " ");
                     // the decoded part is base64 encoded, so we need to decode that
-                    ByteBuf buf = NettyConverter.toByteBuffer(decoded.getBytes());
+                    ByteBuf buf = NettyConverter.toByteBuffer(decoded.getBytes(StandardCharsets.US_ASCII));
                     ByteBuf out = Base64.decode(buf);
                     try {
-                        String userAndPw = out.toString(Charset.defaultCharset());
+                        // RFC 7617: the credentials are encoded with UTF-8, so the platform default charset must
+                        // not decide how a non-ASCII user name or password is read back
+                        String userAndPw = out.toString(StandardCharsets.UTF_8);
                         String username = StringHelper.before(userAndPw, ":");
                         String password = StringHelper.after(userAndPw, ":");
                         HttpPrincipal principal = new HttpPrincipal(username, password);
