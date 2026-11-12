@@ -499,15 +499,26 @@ public class KubernetesConfiguration implements Cloneable {
     public String toString() {
         return "KubernetesConfiguration [masterUrl=" + masterUrl + ", category=" + category + ", kubernetesClient="
                + kubernetesClient + ", username=" + username + ", password="
-               + password + ", operation=" + operation + ", apiVersion=" + apiVersion + ", caCertData=" + caCertData
+               + mask(password) + ", operation=" + operation + ", apiVersion=" + apiVersion + ", caCertData="
+               + mask(caCertData)
                + ", caCertFile=" + caCertFile + ", clientCertData="
-               + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo + ", clientKeyData="
-               + clientKeyData + ", clientKeyFile="
-               + clientKeyFile + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts="
+               + mask(clientCertData) + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo
+               + ", clientKeyData="
+               + mask(clientKeyData) + ", clientKeyFile="
+               + clientKeyFile + ", clientKeyPassphrase=" + mask(clientKeyPassphrase) + ", oauthToken="
+               + mask(oauthToken) + ", trustCerts="
                + trustCerts + ", namespace=" + namespace
                + ", labelKey=" + labelKey + ", labelValue=" + labelValue + ", resourceName=" + resourceName + ", portName="
                + portName + ", dnsDomain=" + dnsDomain + ", poolSize="
                + poolSize + ", connectionTimeout=" + connectionTimeout + "]";
+    }
+
+    /**
+     * Masks a credential so that logging or a JMX attribute of this configuration cannot leak it. {@code xxxxxx} is the
+     * mask Camel uses when it sanitizes a URI, and whether the value was set at all is still visible.
+     */
+    private static String mask(Object secret) {
+        return secret != null ? "xxxxxx" : "null";
     }
 
 }

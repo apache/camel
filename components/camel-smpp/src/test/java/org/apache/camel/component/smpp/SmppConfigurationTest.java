@@ -31,8 +31,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConfiguration</code>
@@ -238,6 +240,21 @@ public class SmppConfigurationTest {
                           + "interfaceVersion=3.4]";
 
         assertEquals(expected, configuration.toString());
+    }
+
+    @Test
+    public void toStringShouldNotLeakCredentials() {
+        configuration.setPassword("s3cret");
+        configuration.setHttpProxyPassword("proxyS3cret");
+
+        String actual = configuration.toString();
+
+        assertFalse(actual.contains("s3cret"), actual);
+        assertFalse(actual.contains("proxyS3cret"), actual);
+        assertTrue(actual.contains("password=xxxxxx"), actual);
+        assertTrue(actual.contains("httpProxyPassword=xxxxxx"), actual);
+        // the systemId is not a credential, and stays readable
+        assertTrue(actual.contains("systemId=smppclient"), actual);
     }
 
     private void setNoneDefaultValues(SmppConfiguration config) {

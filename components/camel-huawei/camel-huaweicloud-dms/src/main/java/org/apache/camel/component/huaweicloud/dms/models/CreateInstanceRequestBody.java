@@ -505,14 +505,14 @@ public class CreateInstanceRequestBody {
                ", storageSpace=" + storageSpace +
                ", partitionNum=" + partitionNum +
                ", accessUser='" + accessUser + '\'' +
-               ", password='" + password + '\'' +
+               ", password='" + mask(password) + '\'' +
                ", vpcId='" + vpcId + '\'' +
                ", securityGroupId='" + securityGroupId + '\'' +
                ", subnetId='" + subnetId + '\'' +
                ", availableZones=" + availableZones +
                ", productId='" + productId + '\'' +
                ", kafkaManagerUser='" + kafkaManagerUser + '\'' +
-               ", kafkaManagerPassword='" + kafkaManagerPassword + '\'' +
+               ", kafkaManagerPassword='" + mask(kafkaManagerPassword) + '\'' +
                ", maintainBegin='" + maintainBegin + '\'' +
                ", maintainEnd='" + maintainEnd + '\'' +
                ", enablePublicip=" + enablePublicip +
@@ -525,5 +525,13 @@ public class CreateInstanceRequestBody {
                ", storageSpecCode='" + storageSpecCode + '\'' +
                ", enterpriseProjectId='" + enterpriseProjectId + '\'' +
                '}';
+    }
+
+    /**
+     * Masks a credential so that logging this request body cannot leak it. {@code xxxxxx} is the mask Camel uses when
+     * it sanitizes a URI, and whether the value was set at all is still visible.
+     */
+    private static String mask(Object secret) {
+        return secret != null ? "xxxxxx" : "null";
     }
 }

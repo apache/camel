@@ -774,7 +774,7 @@ public class SmppConfiguration implements Cloneable {
                + ", hostnameVerification=" + hostnameVerification
                + ", enquireLinkTimer=" + enquireLinkTimer
                + ", host=" + host
-               + ", password=" + password
+               + ", password=" + mask(password)
                + ", port=" + port
                + ", systemId=" + systemId
                + ", systemType=" + systemType
@@ -807,10 +807,18 @@ public class SmppConfiguration implements Cloneable {
                + ", httpProxyHost=" + httpProxyHost
                + ", httpProxyPort=" + httpProxyPort
                + ", httpProxyUsername=" + httpProxyUsername
-               + ", httpProxyPassword=" + httpProxyPassword
+               + ", httpProxyPassword=" + mask(httpProxyPassword)
                + ", splittingPolicy=" + splittingPolicy
                + ", proxyHeaders=" + proxyHeaders
                + ", interfaceVersion=" + interfaceVersion
                + "]";
+    }
+
+    /**
+     * Masks a credential so that logging or a JMX attribute of this configuration cannot leak it. {@code xxxxxx} is the
+     * mask Camel uses when it sanitizes a URI, and whether the value was set at all is still visible.
+     */
+    private static String mask(Object secret) {
+        return secret != null ? "xxxxxx" : "null";
     }
 }
