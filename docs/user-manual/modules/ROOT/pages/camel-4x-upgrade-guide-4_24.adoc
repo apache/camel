@@ -3887,6 +3887,20 @@ a `NoNodeException`, as it did without `create=true`.
 With `listChildren=true`, a failed write or delete of an InOut exchange now fails the exchange, instead of being
 replaced by the listing of the child _znodes_.
 
+=== camel-zookeeper-master - MasterRoutePolicy and route removal, and the consumer of a slave
+
+A `MasterRoutePolicy` stayed in the ZooKeeper group until the CamelContext stopped, also after its route was removed
+(with `removeRoute`, or by a route reload), so no other node became the master and the route ran nowhere in the
+cluster. The policy now leaves the group when its route is removed, so another node takes over, and joins it again when
+the route is added again. So a route reloaded on the master can now move to another node.
+
+On a node that is not the master, the policy now stops the consumer of its route again right after the route was
+started or resumed (from JMX, the controlbus or a route policy), and starts it when the node becomes the master. Before,
+the consumer of such a route kept running next to the one of the master. This includes a route left at
+`autoStartup=true`: it now consumes only once its node is the master, also when the CamelContext starts, so it does not
+consume while the node cannot reach ZooKeeper. Setting the route to `autoStartup=false` is still recommended, so the
+consumer does not run for a moment when the CamelContext starts.
+
 === camel-milo - each client connection has thread pools of its own
 
 A `milo-client` or `milo-browse` connection now handles the outcome of its write, method call, read and browse
