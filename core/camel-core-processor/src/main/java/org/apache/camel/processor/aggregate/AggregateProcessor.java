@@ -1669,7 +1669,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             try {
                 doOnEviction(key, exchangeId);
                 forgetRetry(key);
-            } catch (Exception e) {
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled here
+                throw e;
+            } catch (Throwable e) {
+                // also an Error of the aggregation strategy (its timeout or onCompletion), as for an exception
                 // the entry is no longer in the timeout map, and the timeout map ignores errors of its listeners, so
                 // without a new entry a group the repository could not read or remove would never time out (an entry
                 // that a new message for the key has put in the meantime is kept)
@@ -1788,7 +1792,11 @@ public class AggregateProcessor extends BaseProcessorSupport
                         lock.unlock();
                     }
                 }
-            } catch (Exception e) {
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled, and ends the interval task
+                throw e;
+            } catch (Throwable e) {
+                // also an Error (such as of the aggregation strategy), which would otherwise end the interval task
                 LOG.warn("Error during completion interval task. This exception is ignored.", e);
             }
 
@@ -1912,7 +1920,9 @@ public class AggregateProcessor extends BaseProcessorSupport
                                     // not exhaust so resubmit the recovered exchange
                                     try {
                                         onSubmitCompletion(key, exchange);
-                                    } catch (RuntimeException e) {
+                                    } catch (VirtualMachineError e) {
+                                        throw e;
+                                    } catch (RuntimeException | Error e) {
                                         // it has been failed and passed to the exception handler, and is recovered
                                         // again on a later run, so go on with the other exchanges
                                         LOG.debug("Error resubmitting recovered exchange with id: {}", exchangeId, e);
@@ -1924,8 +1934,11 @@ public class AggregateProcessor extends BaseProcessorSupport
                         recoverLock.unlock();
                     }
                 }
-            } catch (Exception e) {
-                // must catch and log exception otherwise the executor will not schedule next recover task
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled, and ends the recover task
+                throw e;
+            } catch (Throwable e) {
+                // must catch and log exception (also an Error) otherwise the executor will not schedule next recover task
                 LOG.warn("Error during recover task. This exception is ignored.", e);
             } finally {
                 recoveryInProgress.set(false);
