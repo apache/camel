@@ -31,6 +31,18 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-ai-tool-starter - MCP hints that are not configured are no longer published
+
+With `camel-ai-tool-starter`, a tool whose route sets none of the MCP hints `readOnlyHint`, `destructiveHint`,
+`idempotentHint` and `openWorldHint` was published with each of them set to `false`, because the starter copied the
+documented default `false` onto the component. These hints, and `returnDirect`, are now left unset unless they are
+configured, so the MCP `tools/list` response omits them, as it does without Spring Boot.
+
+Under the MCP specification an omitted `destructiveHint` or `openWorldHint` means `true`, so an MCP client may now
+treat such a tool as destructive and open-world. To keep advertising a tool as read-only or non-destructive, configure
+the hint on the endpoint, for example `ai-tool:myTool?destructiveHint=false`, or for all tools with
+`camel.component.ai-tool.destructive-hint=false`.
+
 === camel-as2 - server/listen - signature and MIC over the message as received
 
 The signature of a `multipart/signed` message is now verified over the signed part exactly as it was received, its
