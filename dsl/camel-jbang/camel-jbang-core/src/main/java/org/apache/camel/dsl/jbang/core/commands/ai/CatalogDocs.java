@@ -97,10 +97,8 @@ public final class CatalogDocs {
               + " or for simple: functions, operators, ognl, advanced";
     /** The optionsFilter argument of camel_catalog_doc. */
     public static final String OPTIONS_FILTER_DESC
-            = "Word or option name to match in option names or descriptions, all matches listed in full. Several,"
-              + " comma-separated (logStackTrace,maximumRedeliveries), check them all in one call: unmatchedTerms says"
-              + " what each one that matches no option is instead. For an EIP, the options of its elements are"
-              + " searched too (nestedOptions)";
+            = "Words to match in option names or descriptions, comma-separated (logStackTrace,maximumRedeliveries),"
+              + " all matches in full; for an EIP its elements' options too (nestedOptions)";
     /** The limit argument of camel_catalog_doc. */
     public static final String OPTIONS_LIMIT_DESC
             = "Options of a component listed in full (default 20, the rest by name; all with optionsFilter)";
