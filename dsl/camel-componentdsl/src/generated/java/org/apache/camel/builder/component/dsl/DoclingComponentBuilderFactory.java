@@ -172,7 +172,10 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
-         * Output format for document conversion.
+         * Output format of the SUBMIT_ASYNC_CONVERSION operation; the other
+         * operations always use their own format. The html_split_page value is
+         * rejected, as docling-serve does not return the split pages; use html
+         * instead.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
