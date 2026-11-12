@@ -199,8 +199,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
               description = "The JAX-RS providers to add to the server that the consumer creates and to each client that the"
                             + " producer creates, for example a MessageBodyReader and MessageBodyWriter for JSON. Written in"
                             + " the endpoint URI as bean ids with the prefix #, separated by commas, for example"
-                            + " #jsonProvider, or as the id of one List bean, for example #myProviders. The built-in CXF"
-                            + " providers stay registered.")
+                            + " #jsonProvider,#xmlProvider. The built-in CXF providers stay registered.")
     private List<Object> providers = new LinkedList<>();
     private String providersRef;
     @UriParam

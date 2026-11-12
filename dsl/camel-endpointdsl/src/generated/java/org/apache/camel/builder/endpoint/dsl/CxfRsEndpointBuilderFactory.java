@@ -111,8 +111,8 @@ public interface CxfRsEndpointBuilderFactory {
          * and to each client that the producer creates, for example a
          * MessageBodyReader and MessageBodyWriter for JSON. Written in the
          * endpoint URI as bean ids with the prefix #, separated by commas, for
-         * example #jsonProvider, or as the id of one List bean, for example
-         * #myProviders. The built-in CXF providers stay registered.
+         * example #jsonProvider,#xmlProvider. The built-in CXF providers stay
+         * registered.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -910,8 +910,8 @@ public interface CxfRsEndpointBuilderFactory {
          * and to each client that the producer creates, for example a
          * MessageBodyReader and MessageBodyWriter for JSON. Written in the
          * endpoint URI as bean ids with the prefix #, separated by commas, for
-         * example #jsonProvider, or as the id of one List bean, for example
-         * #myProviders. The built-in CXF providers stay registered.
+         * example #jsonProvider,#xmlProvider. The built-in CXF providers stay
+         * registered.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1864,8 +1864,8 @@ public interface CxfRsEndpointBuilderFactory {
          * and to each client that the producer creates, for example a
          * MessageBodyReader and MessageBodyWriter for JSON. Written in the
          * endpoint URI as bean ids with the prefix #, separated by commas, for
-         * example #jsonProvider, or as the id of one List bean, for example
-         * #myProviders. The built-in CXF providers stay registered.
+         * example #jsonProvider,#xmlProvider. The built-in CXF providers stay
+         * registered.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
