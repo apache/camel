@@ -129,9 +129,10 @@ public final class CatalogDocs {
      * @param  endpoint       an endpoint URI to validate instead of documenting an artifact
      * @param  kind           component, dataformat, language, eip, bean or api; null to detect
      * @param  optionsFilter  keyword to match in option names, descriptions and groups; also picks the simple functions
-     *                        and operators to list in full. When no option of a component matches, its message headers
-     *                        are searched; when no function of simple matches, the file: functions; when nothing
-     *                        matches, the answer says where an option or header of that name is
+     *                        and operators to list in full, and the exchange properties of an EIP (by name and
+     *                        description). When no option of a component matches, its message headers are searched;
+     *                        when no function of simple matches, the file: functions; when nothing matches, the answer
+     *                        says where an option or header of that name is
      * @param  includeOptions which options to list: {@code common} (the default; without the deprecated and advanced
      *                        ones), {@code required}, {@code all} or {@code false}; {@code true} is {@code common}. A
      *                        filter searches all options
@@ -2342,14 +2343,18 @@ public final class CatalogDocs {
         }
     }
 
-    /** Whether a filter matched nothing in the answer: no option, nested option, header, function or operator. */
+    /**
+     * Whether a filter matched nothing in the answer: no option, nested option, header, exchange property, function or
+     * operator.
+     */
     private static boolean matchedNothing(JsonObject answer) {
         return answer.getIntegerOrDefault("matchedOptions", -1) == 0
                 && answer.getIntegerOrDefault("omittedOptions", 0) == 0
                 && answer.getIntegerOrDefault("matchedHeaders", 0) == 0
                 && answer.getIntegerOrDefault("matchedFunctions", 0) == 0
                 && answer.getIntegerOrDefault("matchedOperators", 0) == 0
-                && !answer.containsKey("nestedOptions") && !answer.containsKey("mainOptions");
+                && !answer.containsKey("nestedOptions") && !answer.containsKey("mainOptions")
+                && !answer.containsKey("exchangeProperties");
     }
 
     /**
@@ -3051,10 +3056,67 @@ public final class CatalogDocs {
         if (scope != OptionScope.NONE) {
             putOptions(result, model.getOptions(), filter, scope);
         }
+        putExchangeProperties(result, model, filter);
         if (doc != null) {
-            result.put("doc", doc);
+            result.put("doc", withExchangeProperties(doc, model));
         }
         return result;
+    }
+
+    /**
+     * The exchange properties of an EIP, such as CamelSplitSize of split, listed the way the message headers of a
+     * component are. A model asked for split in 3 of 7 runs of a step, also with optionsFilter=Camel and includeDoc,
+     * and no answer named CamelSplitSize, which a streaming split sets on its last message only (r32 of the local-model
+     * benchmark, route-batch-file step 3). They are few and short, so an EIP lists them by default. A filter matches
+     * their names and descriptions, as it does for the options.
+     */
+    private static void putExchangeProperties(JsonObject result, EipModel model, String filter) {
+        JsonArray properties = new JsonArray();
+        for (EipModel.EipOptionModel p : model.getExchangeProperties()) {
+            if (filter == null || p.getName().toLowerCase(Locale.ROOT).contains(filter)
+                    || (p.getDescription() != null && p.getDescription().toLowerCase(Locale.ROOT).contains(filter))) {
+                properties.add(exchangePropertyToJson(p));
+            }
+        }
+        if (!properties.isEmpty()) {
+            result.put("exchangeProperties", properties);
+        }
+    }
+
+    /** One exchange property of an EIP as the tools return it, like a header: its name, type and description. */
+    private static JsonObject exchangePropertyToJson(BaseOptionModel p) {
+        JsonObject jo = new JsonObject();
+        jo.put("name", p.getName());
+        if (p.getJavaType() != null) {
+            jo.put("javaType", p.getJavaType());
+        }
+        if (p.getDescription() != null) {
+            jo.put("description", p.getDescription());
+        }
+        return jo;
+    }
+
+    /** The line of an EIP page that the website renders as the table of its exchange properties. */
+    private static final String EXCHANGE_PROPERTIES_INCLUDE = "include::partial$eip-exchangeProperties.adoc[]";
+
+    /**
+     * The page of an EIP with its exchange properties where the website shows them. The page in the catalog has only
+     * the include line there, so includeDoc=true for split returned an Exchange properties section with nothing but
+     * that line in it (r32 of the local-model benchmark). An EIP without exchange properties says so, as its page on
+     * the website does.
+     */
+    private static String withExchangeProperties(String doc, EipModel model) {
+        if (!doc.contains(EXCHANGE_PROPERTIES_INCLUDE)) {
+            return doc;
+        }
+        List<String> lines = new ArrayList<>();
+        for (EipModel.EipOptionModel p : model.getExchangeProperties()) {
+            lines.add("* " + p.getName() + (p.getJavaType() != null ? " (" + p.getJavaType() + ")" : "")
+                      + (p.getDescription() != null ? ": " + p.getDescription() : ""));
+        }
+        String text = lines.isEmpty()
+                ? "The " + model.getTitle() + " EIP has no exchange properties." : String.join("\n", lines);
+        return doc.replace(EXCHANGE_PROPERTIES_INCLUDE, text);
     }
 
     /**
