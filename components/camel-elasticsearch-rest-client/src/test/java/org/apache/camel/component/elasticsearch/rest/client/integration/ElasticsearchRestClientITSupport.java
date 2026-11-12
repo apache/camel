@@ -26,6 +26,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
@@ -44,6 +45,10 @@ public class ElasticsearchRestClientITSupport extends CamelTestSupport {
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
+        if (restClient != null) {
+            // one client for all the tests of the class, as the routes of the class are bound to it
+            return;
+        }
         String scheme = service.getSslContext().isPresent() ? "https" : "http";
         HttpHost host
                 = new HttpHost(service.getElasticSearchHost(), service.getPort(), scheme);
@@ -62,11 +67,11 @@ public class ElasticsearchRestClientITSupport extends CamelTestSupport {
         restClient = builder.build();
     }
 
-    @Override
-    protected void cleanupResources() throws Exception {
-        super.cleanupResources();
+    @AfterAll
+    void closeRestClient() throws Exception {
         if (restClient != null) {
             restClient.close();
+            restClient = null;
         }
     }
 
