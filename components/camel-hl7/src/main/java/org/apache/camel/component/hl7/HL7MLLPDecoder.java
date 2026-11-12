@@ -36,6 +36,8 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
     private static final Logger LOG = LoggerFactory.getLogger(HL7MLLPDecoder.class);
     private static final String DECODER_STATE = HL7MLLPDecoder.class.getName() + ".STATE";
     private static final String CHARSET_DECODER = HL7MLLPDecoder.class.getName() + ".charsetdecoder";
+    // the previous byte when there is none that could be an end byte 1 (the bytes are compared unsigned, 0 to 0xFF)
+    private static final int NO_PREVIOUS_BYTE = -1;
 
     private HL7MLLPConfig config;
 
@@ -113,6 +115,10 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
                 }
                 // Check if we are at the start of an HL7 message
                 if (current == config.getStartByte()) {
+                    if (!state.isStarted()) {
+                        // an end byte 1 before the start byte does not end the message with the end byte 2 after it
+                        state.markPrevious(NO_PREVIOUS_BYTE);
+                    }
                     state.markStart(previousPosition);
                 } else {
                     // Remember previous byte in state object because the buffer could
@@ -151,7 +157,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
             if (current == config.getEndByte2() && state.previous() == config.getEndByte1()) {
                 LOG.debug("End of the discarded message at position {}", in.position() - 1);
                 state.stopDiscarding();
-                state.markPrevious(0);
+                state.markPrevious(NO_PREVIOUS_BYTE);
                 state.markDataStart(in.position());
                 return true;
             }
@@ -276,8 +282,8 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
     private static class DecoderState {
         private int startPos = -1;
         private int currentPos;
-        // unsigned (0 to 0xFF)
-        private int previousByte;
+        // unsigned (0 to 0xFF), or NO_PREVIOUS_BYTE
+        private int previousByte = NO_PREVIOUS_BYTE;
         // where the data of the current message starts in the buffer: after the end bytes of the previous message
         private int dataStartPos;
         // whether the rest of a message that was too long is being skipped
@@ -286,7 +292,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         void reset() {
             startPos = -1;
             currentPos = 0;
-            previousByte = 0;
+            previousByte = NO_PREVIOUS_BYTE;
         }
 
         void markStart(int position) {
