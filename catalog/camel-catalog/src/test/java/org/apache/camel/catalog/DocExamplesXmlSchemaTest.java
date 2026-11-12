@@ -87,7 +87,7 @@ class DocExamplesXmlSchemaTest {
                                                                    + "convertBodyTo|validate|enrich|pollEnrich|threads|threadPool|"
                                                                    + "propertyPlaceholder|globalOptions|streamCaching|jmxAgent|"
                                                                    + "sslContextParameters|xpath|simple|csimple|jsonpath|jq|"
-                                                                   + "xtokenize|tokenize|xquery|groovy|datasonnet|mvel|ognl)"
+                                                                   + "xtokenize|tokenize|xquery|groovy|datasonnet|mvel)"
                                                                    + "[\\s/>]");
 
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";

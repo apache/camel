@@ -83,11 +83,12 @@ class OpaInputDocumentTest extends CamelTestSupport {
             e.getMessage().setHeader(OpaConstants.DECISION_ALLOW, true);
             e.getMessage().setHeader(OpaConstants.DECISION, Map.of("allow", true));
             e.getMessage().setHeader(OpaConstants.POLICY_PATH, "authz/some-other-policy");
+            e.getMessage().setHeader(OpaConstants.BATCH_OUTCOMES, "claimed outcome");
         });
 
         assertThat(headersOf(input)).containsEntry("user", "alice");
         assertThat(headersOf(input)).doesNotContainKeys(
-                OpaConstants.DECISION_ALLOW, OpaConstants.DECISION, OpaConstants.POLICY_PATH);
+                OpaConstants.DECISION_ALLOW, OpaConstants.DECISION, OpaConstants.POLICY_PATH, OpaConstants.BATCH_OUTCOMES);
     }
 
     @Test

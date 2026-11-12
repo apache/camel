@@ -30,7 +30,7 @@
         <camel:route id="myRoute">
             <!-- read input from the console using the stream component -->
             <!-- transform the input to upper case using the simple language -->
-            <!-- you can also use other languages such as groovy, ognl, mvel, javascript etc. -->
+            <!-- you can also use other languages such as groovy, mvel, javascript etc. -->
             <camel:from id="_from1" uri="stream:in?promptMessage=Enter something: "/>
             <!-- and then print to the console -->
             <camel:transform id="_transform1">

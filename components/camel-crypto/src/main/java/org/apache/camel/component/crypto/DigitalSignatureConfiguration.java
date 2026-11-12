@@ -249,7 +249,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
 
     /**
      * Set the Certificate that should be used to verify the signature in the exchange. If a {@link KeyStore} has been
-     * configured then this will attempt to retrieve the {@link Certificate}from it using hte supplied alias. If either
+     * configured then this will attempt to retrieve the {@link Certificate}from it using the supplied alias. If either
      * the alias or the Keystore is invalid then the configured certificate will be returned
      *
      * @param alias the alias used to retrieve the Certificate from the keystore.
@@ -389,7 +389,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     public void setSecureRandomName(String randomName) {
         if (context != null && randomName != null) {
             SecureRandom random = context.getRegistry().lookupByNameAndType(randomName, SecureRandom.class);
-            if (keystore != null) {
+            if (random != null) {
                 setSecureRandom(random);
             }
         }

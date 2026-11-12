@@ -399,9 +399,8 @@ public class XmlStreamReader extends Reader {
     /**
      * Returns the default encoding to use if none is set in HTTP content-type, XML prolog and the rules based on
      * content-type are not adequate.
-     * <p/>
+     * <p>
      * If it is NULL the content-type based rules are used.
-     * <p/>
      *
      * @return the default encoding to use.
      */
@@ -412,11 +411,10 @@ public class XmlStreamReader extends Reader {
     /**
      * Sets the default encoding to use if none is set in HTTP content-type, XML prolog and the rules based on
      * content-type are not adequate.
-     * <p/>
+     * <p>
      * If it is set to NULL the content-type based rules are used.
-     * <p/>
+     * <p>
      * By default it is NULL.
-     * <p/>
      *
      * @param encoding charset encoding to default to.
      */

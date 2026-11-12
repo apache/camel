@@ -184,16 +184,6 @@ public class MockExpressionClauseSupport<T> {
     }
 
     /**
-     * Evaluates an <a href="http://camel.apache.org/ognl.html">OGNL expression</a>
-     *
-     * @param  text the expression to be evaluated
-     * @return      the builder to continue processing the DSL
-     */
-    public T ognl(String text) {
-        return expression(ExpressionBuilder.languageExpression("ognl", text));
-    }
-
-    /**
      * Evaluates a <a href="http://camel.apache.org/mvel.html">MVEL expression</a>
      *
      * @param  text the expression to be evaluated

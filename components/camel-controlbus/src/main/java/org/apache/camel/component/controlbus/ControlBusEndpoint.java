@@ -66,7 +66,7 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     @UriPath(description = "Command can be either route or language", enums = "route,language")
     @Metadata(required = true)
     private String command;
-    @UriPath(enums = "bean,constant,datasonnet,exchangeProperty,file,groovy,header,hl7terser,java,joor,jq,jsonpath,mvel,ognl,python,ref,simple,spel,tokenize,xpath,xquery,xtokenize")
+    @UriPath(enums = "bean,constant,datasonnet,exchangeProperty,file,groovy,header,hl7terser,java,joor,jq,jsonpath,mvel,python,ref,simple,spel,tokenize,xpath,xquery,xtokenize")
     private Language language;
     @UriParam
     private String routeId;

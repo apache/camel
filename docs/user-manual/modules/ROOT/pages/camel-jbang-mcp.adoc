@@ -109,8 +109,9 @@ questions that no tool answers and that agents otherwise go hunting for:
   source that passes the schema can still fail at runtime, so run it and read the log.
 * Which tool answers which question, by tool name: `camel_catalog_doc`, `camel_catalog_find`,
   `camel_catalog_sample`, `camel_catalog_examples`, `camel_dependency_for_class`, `camel_validate_source`,
-  `camel_run`, `camel_get_log`, `camel_get_errors` and `camel_project_overview`; and that a Citrus test runs with
-  `camel test run` in the project directory, not with `camel_run`.
+  `camel_run`, `camel_get_log`, `camel_get_errors` and `camel_project_overview`; that the `optionsFilter` of
+  `camel_catalog_doc` checks several options in one call; and that a Citrus test runs with `camel test run` in the
+  project directory, not with `camel_run`.
 
 The first line is self-contained, as some hosts show only that line.
 
@@ -348,9 +349,14 @@ passed as the file name, is answered with the argument the source goes in.
   `includeOptions` picks the options listed: `common` (the default) leaves out the deprecated and advanced
   ones and says how many with `omittedOptions`, `required` lists the required ones, `all` everything, `false`
   none; `optionsFilter` matches a keyword in the option names, descriptions and groups and searches all
-  options. When it matches none of an EIP's own options, the options of the EIP's elements are searched and
-  listed under `nestedOptions` with the YAML key of the element they go under (`logStackTrace` of `onException`
-  is an option of its `redeliveryPolicy`; the template parameters of `routeTemplate` go under `parameters`). For
+  options. It takes several terms separated by comma (`logStackTrace,logExhausted,maximumRedeliveries`), so one
+  call checks all the options a step is about to write: the answer lists what any of them matches, and
+  `unmatchedTerms` names each term that matches no option, with what the answer for that term alone says (the
+  message header it is, where an option of that name is, or the closest options). For an EIP, the options of
+  its elements are searched too and listed under `nestedOptions` with the YAML key of the element they go under
+  (`logStackTrace` of `onException` is an option of its `redeliveryPolicy`; the template parameters of
+  `routeTemplate` go under `parameters`), also when options of the EIP itself match (`redelivery` gives the
+  `redeliveryPolicy` of `onException` and its `redeliveryDelay`). For
   an element written as one of several kinds, the options of the kinds are searched: `deadLetterUri` of
   `errorHandler` goes under `deadLetterChannel`, and an option that several kinds have lists the others in
   `alsoUnder`. An element written as one of several kinds has `oneOf` with the kinds and a

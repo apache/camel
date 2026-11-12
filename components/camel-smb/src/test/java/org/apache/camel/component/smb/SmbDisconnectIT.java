@@ -45,7 +45,7 @@ public class SmbDisconnectIT extends SmbServerTestSupport {
         TrackingSocketFactory socketFactory = createAndBindSocketTrackingSmbConfig();
         sendFile(getSmbUrl(), "Hello World", "hello.txt");
 
-        assertEquals("Hello World", new String(copyFileContentFromContainer("/data/rw/disconnect/hello.txt")));
+        assertEquals("Hello World", new String(copyExistingFileContentFromContainer("/data/rw/disconnect/hello.txt")));
         assertSocketsAreClosed(socketFactory, 1, "There should be one tracked and closed socket (producer)");
     }
 

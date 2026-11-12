@@ -380,7 +380,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
      * After {@link CamelContext} has been enlisted in JMX using
      * {@link #onContextStarted(org.apache.camel.CamelContext)} then we can enlist any pre-registered services as well,
      * as we had to wait for {@link CamelContext} to be enlisted first.
-     * <p/>
+     * <p>
      * A component/endpoint/service etc. can be pre-registered when using dependency injection and annotations such as
      * {@link org.apache.camel.Produce}, {@link org.apache.camel.EndpointInject}. Therefore, we need to capture those
      * registrations up front, and then afterward enlist in JMX when {@link CamelContext} is being started.
@@ -1106,8 +1106,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
     /**
      * Removes the wrapped processors for the given routes, as they are no longer in use.
-     * <p/>
-     * This is needed to avoid accumulating memory, if a lot of routes is being added and removed.
+     * <p>
+     * This is needed to avoid accumulating memory, if a lot of routes are being added and removed.
      *
      * @param routes the routes
      */
@@ -1265,14 +1265,14 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
     /**
      * Whether to register the mbean.
-     * <p/>
-     * The {@link ManagementAgent} has options which controls when to register. This allows us to only register mbeans
-     * accordingly. For example by default any dynamic endpoints is not registered. This avoids to register excessive
+     * <p>
+     * The {@link ManagementAgent} has options which control when to register. This allows us to only register mbeans
+     * accordingly. For example by default any dynamic endpoints are not registered. This avoids registering excessive
      * mbeans, which most often is not desired.
      *
      * @param  service the object to register
-     * @param  route   an optional route the mbean is associated with, can be <tt>null</tt>
-     * @return         <tt>true</tt> to register, <tt>false</tt> to skip registering
+     * @param  route   an optional route the mbean is associated with, can be <code>null</code>
+     * @return         <code>true</code> to register, <code>false</code> to skip registering
      */
     protected boolean shouldRegister(Object service, Route route) {
         // the agent hasn't been started

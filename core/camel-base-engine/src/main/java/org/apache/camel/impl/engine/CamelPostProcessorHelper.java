@@ -490,8 +490,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         }
         for (String key : props.stringPropertyNames()) {
             String uKey = key.toUpperCase(Locale.US);
-            // need to ignore case
-            if (uKey.startsWith(uRootKey)) {
+            // need to ignore case; match the key itself or the prefix up to a '.' boundary so a
+            // sibling such as "database" is not captured for prefix "db"
+            if (uKey.equals(uRootKey) || uKey.startsWith(uRootKey + ".")) {
                 // strip prefix
                 String sKey = key.substring(rootKey.length());
                 if (sKey.startsWith(".")) {
@@ -701,7 +702,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      * Implementations can override this method to determine if the bean is singleton.
      *
      * @param  bean the bean
-     * @return      <tt>true</tt> if its singleton scoped, for prototype scoped <tt>false</tt> is returned.
+     * @return      <code>true</code> if it is singleton scoped, for prototype scoped <code>false</code> is returned.
      */
     protected boolean isSingleton(Object bean, String beanName) {
         if (bean instanceof IsSingleton singleton) {

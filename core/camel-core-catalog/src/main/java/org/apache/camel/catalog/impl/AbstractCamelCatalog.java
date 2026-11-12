@@ -364,7 +364,7 @@ public abstract class AbstractCamelCatalog {
 
                 // is duration
                 if (!multiValue && !valuePlaceholder && !lookup && "duration".equals(row.getType())) {
-                    // value must be convertable to a duration
+                    // value must be convertible to a duration
                     boolean valid = validateDuration(value);
                     if (!valid) {
                         result.addInvalidDuration(name, value);
@@ -1363,7 +1363,7 @@ public abstract class AbstractCamelCatalog {
 
             // is duration
             if (!optionPlaceholder && !lookup && "duration".equals(row.getType())) {
-                // value must be convertable to a duration
+                // value must be convertible to a duration
                 boolean valid = validateDuration(value);
                 if (!valid) {
                     result.addInvalidDuration(longKey, value);
@@ -1500,11 +1500,11 @@ public abstract class AbstractCamelCatalog {
      * The placeholders cannot be resolved during validation as we do not run the actual Camel application with the
      * property placeholders setup, and the languages are parsed after the placeholders have been resolved at runtime.
      *
-     * A placeholder that is already inside a quoted literal is replaced by <tt>{{XXX}}</tt> to <tt>~^XXX^~</tt>, and
-     * otherwise by <tt>{{XXX}}</tt> to <tt>'~XXX~'</tt>. The quotes are needed because the languages do not accept a
-     * bare unquoted literal as operand, such as in <tt>${body} >= {{threshold}}</tt>. Both dummies have the same length
-     * as the placeholder they replace, so the position reported in a parser error still points at the same location in
-     * the original text.
+     * A placeholder <code>{{XXX}}</code> that is already inside a quoted literal is replaced by <code>~^XXX^~</code>,
+     * and otherwise by <code>'~XXX~'</code>. The quotes are needed because the languages do not accept a bare unquoted
+     * literal as operand, such as in <code>${body} &gt;= {{threshold}}</code>. Both dummies have the same length as the
+     * placeholder they replace, so the position reported in a parser error still points at the same location in the
+     * original text.
      *
      * @param  text the text
      * @return      the text with the property placeholders replaced by a dummy value

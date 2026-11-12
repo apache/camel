@@ -338,7 +338,7 @@ public final class JmsMessageHelper {
      * For a given message, evaluates what is the redelivery state for it and gives the appropriate {@link MessageTrait}
      * for that redelivery state
      *
-     * @param  message the message to evalute
+     * @param  message the message to evaluate
      * @return         The appropriate MessageTrait for the redelivery state (one of MessageTrait.UNDEFINED_REDELIVERY,
      *                 MessageTrait.IS_REDELIVERY or MessageTrait.NON_REDELIVERY).
      */

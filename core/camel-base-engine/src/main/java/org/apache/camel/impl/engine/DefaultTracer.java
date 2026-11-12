@@ -45,7 +45,7 @@ import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 /**
  * Default {@link Tracer} implementation that will log traced messages to the logger named
- * <tt>org.apache.camel.Tracing</tt>.
+ * <code>org.apache.camel.Tracing</code>.
  */
 public class DefaultTracer extends ServiceSupport implements CamelContextAware, Tracer {
 

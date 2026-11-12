@@ -576,7 +576,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     @SuppressWarnings("unchecked")
     public <T extends Enum<T>> T getEnum(final String key) throws ClassNotFoundException {
         /*
-         * Supressing the unchecked warning because the returnType is
+         * Suppressing the unchecked warning because the returnType is
          * dynamically identified and could lead to a ClassCastException when
          * returnType is cast to Class<T>, which is expected by the method's
          * contract.
@@ -647,7 +647,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     @SuppressWarnings("unchecked")
     public <T extends Enum<T>> T getEnumOrDefault(final String key, final T defaultValue) throws ClassNotFoundException {
         /*
-         * Supressing the unchecked warning because the returnType is
+         * Suppressing the unchecked warning because the returnType is
          * dynamically identified and could lead to a ClassCastException when
          * returnType is cast to Class<T>, which is expected by the method's
          * contract.

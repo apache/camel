@@ -29,7 +29,7 @@ public interface ShutdownAware extends ShutdownPrepared {
 
     /**
      * To defer shutdown during first phase of shutdown. This allows any pending exchanges to be completed and therefore
-     * ensure a graceful shutdown without loosing messages. At the very end when there are no more inflight and pending
+     * ensure a graceful shutdown without losing messages. At the very end when there are no more inflight and pending
      * messages the consumer could then safely be shutdown.
      * <p/>
      * This is needed by {@link org.apache.camel.component.seda.SedaConsumer}.

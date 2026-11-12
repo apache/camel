@@ -815,7 +815,7 @@ public class MailBinding {
         exchange.getIn().removeHeader(configuration.getAlternativeBodyHeader());
         multipartAlternative.addBodyPart(plainText);
 
-        // if there are no attachments, add the body to the same mulitpart message
+        // if there are no attachments, add the body to the same multipart message
         if (!exchange.getIn(AttachmentMessage.class).hasAttachments()) {
             addBodyToMultipart(configuration, multipartAlternative, exchange);
         } else {

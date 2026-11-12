@@ -28,7 +28,7 @@ import org.xbill.DNS.SimpleResolver;
 import org.xbill.DNS.Type;
 
 /**
- * A producer for dig-like operations over DNS adresses.
+ * A producer for dig-like operations over DNS addresses.
  * <p/>
  * Inspired from Dig.java coming with the distribution of dnsjava, though most if not all options are unsupported.
  */

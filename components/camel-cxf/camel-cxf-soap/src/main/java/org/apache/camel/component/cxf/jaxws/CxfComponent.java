@@ -39,12 +39,25 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfComponent.class);
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Whether to allow CXF to keep the last message part of an incoming SOAP message as a"
+                            + " javax.xml.transform.Source read from the stream, instead of parsing it into a DOM. Only used"
+                            + " when dataFormat is PAYLOAD. The component sets the value on each endpoint that it creates,"
+                            + " including a bean: endpoint, unless the endpoint URI sets allowStreaming. If not set, an"
+                            + " endpoint that has no allowStreaming value uses the JVM system property"
+                            + " org.apache.camel.component.cxf.streaming, and allows streaming when that property is not set"
+                            + " either.")
     private Boolean allowStreaming;
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Whether to use the global SSL context parameters of the CamelContext for each endpoint that the"
+                            + " component creates and that has no sslContextParameters. The producer uses them for the HTTPS"
+                            + " requests that it sends. The consumer does not use them.")
     private boolean useGlobalSslContextParameters;
     @Metadata(defaultValue = "false", label = "producer,advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+              description = "Whether to always process the exchange synchronously. If true, the producer invokes the CXF"
+                            + " Client without a callback and waits until the invocation returns, and the consumer runs the"
+                            + " route without a CXF continuation. The component sets the value on each endpoint that it"
+                            + " creates, including a bean: endpoint, unless the endpoint URI sets synchronous.")
     private boolean synchronous;
 
     private final Map<String, BeanCacheEntry> beanCache = new HashMap<>();
@@ -56,11 +69,6 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
         super(context);
     }
 
-    /**
-     * This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming
-     * messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming
-     * in some cases.
-     */
     public void setAllowStreaming(Boolean allowStreaming) {
         this.allowStreaming = allowStreaming;
     }
@@ -74,9 +82,6 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
         return this.useGlobalSslContextParameters;
     }
 
-    /**
-     * Enable usage of global SSL context parameters.
-     */
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;

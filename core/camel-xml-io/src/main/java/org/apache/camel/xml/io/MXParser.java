@@ -576,7 +576,7 @@ public class MXParser implements XmlPullParser {
         }
         ++entityEnd;
         // TODO disallow < or & in entity replacement text (or ]]>???)
-        // TOOD keepEntityNormalizedForAttributeValue cached as well ...
+        // TODO keepEntityNormalizedForAttributeValue cached as well ...
     }
 
     public int getNamespaceCount(int depth) throws XmlPullParserException {
@@ -1350,7 +1350,7 @@ public class MXParser implements XmlPullParser {
                     } while (ch != '<' && ch != '&');
                     posEnd = pos - 1;
                     continue MAIN_LOOP; // skip ch = more() from below - we are
-                                       // alreayd ahead ...
+                                       // already ahead ...
                 }
                 ch = more();
             } // endless while(true)
@@ -2539,7 +2539,7 @@ public class MXParser implements XmlPullParser {
         final int versionEnd = pos - 1;
         parseXmlDeclWithVersion(versionStart, versionEnd);
         preventBufferCompaction = false; // alow again buffer commpaction - pos
-                                        // MAY chnage
+                                        // MAY change
     }
     // protected String xmlDeclVersion;
 

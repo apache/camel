@@ -63,7 +63,7 @@ public class JsonStream extends FilterInputStream {
      *
      * @param  in                       input stream must contain a JSON content
      * @throws IOException              if an error occurs during the determination of the encoding
-     * @throws CharConversionException  if the UCS4 endianess 2143 or 3412 is used
+     * @throws CharConversionException  if the UCS4 endianness 2143 or 3412 is used
      * @throws IllegalArgumentException if the input stream is <code>null</code>
      */
     public JsonStream(InputStream in) throws IOException {

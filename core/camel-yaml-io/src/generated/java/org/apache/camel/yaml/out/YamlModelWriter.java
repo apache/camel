@@ -610,9 +610,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeMvelExpression(MvelExpression def) {
         return wrapNode("mvel", doWriteMvelExpression(def));
     }
-    public JsonObject writeOgnlExpression(OgnlExpression def) {
-        return wrapNode("ognl", doWriteOgnlExpression(def));
-    }
     public JsonObject writePython3Expression(Python3Expression def) {
         return wrapNode("python3", doWritePython3Expression(def));
     }
@@ -3065,12 +3062,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteNamespaceAwareExpressionElements(jo, def);
         return jo;
     }
-    protected JsonObject doWriteOgnlExpression(OgnlExpression def) {
-        JsonObject jo = new JsonObject();
-        doWriteTypedExpressionDefinitionAttributes(jo, def);
-        doWriteValue(jo, def.getExpression());
-        return jo;
-    }
     protected JsonObject doWritePython3Expression(Python3Expression def) {
         JsonObject jo = new JsonObject();
         doWriteTypedExpressionDefinitionAttributes(jo, def);
@@ -3989,7 +3980,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "LanguageExpression" -> wrapNode("language", doWriteLanguageExpression((LanguageExpression) v));
                 case "MethodCallExpression" -> wrapNode("method", doWriteMethodCallExpression((MethodCallExpression) v));
                 case "MvelExpression" -> wrapNode("mvel", doWriteMvelExpression((MvelExpression) v));
-                case "OgnlExpression" -> wrapNode("ognl", doWriteOgnlExpression((OgnlExpression) v));
                 case "Python3Expression" -> wrapNode("python3", doWritePython3Expression((Python3Expression) v));
                 case "PythonExpression" -> wrapNode("python", doWritePythonExpression((PythonExpression) v));
                 case "QuickjsExpression" -> wrapNode("quickjs", doWriteQuickjsExpression((QuickjsExpression) v));

@@ -40,6 +40,7 @@ import javax.net.ssl.SSLException;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -125,6 +126,7 @@ public class ODataProducerTest extends CamelTestSupport {
         producer.process(exchange);
 
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertNull(exchange.getMessage().getHeader("Authorization"));
         Map<?, ?> body = exchange.getMessage().getBody(Map.class);
         assertNotNull(body);
         assertTrue(body.containsKey("value"));
@@ -212,6 +214,10 @@ public class ODataProducerTest extends CamelTestSupport {
 
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals(1L, exchange.getMessage().getHeader(ODataConstants.COUNT));
+        assertNull(exchange.getMessage().getHeader(Exchange.HTTP_URI));
+        assertNull(exchange.getMessage().getHeader(Exchange.HTTP_QUERY));
+        assertNull(exchange.getMessage().getHeader(HttpConstants.HTTP_METHOD));
+        assertNull(exchange.getMessage().getHeader("Accept"));
 
         wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
                 .withQueryParam("$filter", matching(".*Name.*Laptop.*"))
@@ -262,6 +268,8 @@ public class ODataProducerTest extends CamelTestSupport {
         exchange.getMessage().setHeader(Exchange.HTTP_URI, "http://malicious.example/other");
         exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/wrong/path");
         exchange.getMessage().setHeader(Exchange.HTTP_QUERY, "unexpected=true");
+        exchange.getMessage().setHeader(HttpConstants.HTTP_METHOD, "POST");
+        exchange.getMessage().setHeader("Accept", "text/plain");
         exchange.getMessage().setHeader(Exchange.HTTP_RAW_QUERY, "rawUnexpected=true");
         exchange.getMessage().setHeader("CamelRestHttpUri", "http://malicious.example/rest");
 
@@ -269,7 +277,13 @@ public class ODataProducerTest extends CamelTestSupport {
 
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
-        wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products")));
+        assertEquals("http://malicious.example/other", exchange.getMessage().getHeader(Exchange.HTTP_URI));
+        assertEquals("unexpected=true", exchange.getMessage().getHeader(Exchange.HTTP_QUERY));
+        assertEquals("POST", exchange.getMessage().getHeader(HttpConstants.HTTP_METHOD));
+        assertEquals("text/plain", exchange.getMessage().getHeader("Accept"));
+
+        wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
+                .withHeader("Accept", equalTo("application/json")));
     }
 
     @Test
@@ -698,7 +712,10 @@ public class ODataProducerTest extends CamelTestSupport {
                     .willReturn(aResponse()
                             .withStatus(200)
                             .withHeader("Content-Type", "application/json")
-                            .withBody("{\"value\":[]}")));
+                            .withHeader("ETag", "W/\"collection-v1\"")
+                            .withHeader("X-Response", "response-value")
+                            .withBody("{\"value\":[],\"@odata.count\":2,"
+                                      + "\"@odata.nextLink\":\"http://localhost/odata/Products?$skip=2\"}")));
 
             // Priority 10: Fallback HTTP Basic 401 challenge with WWW-Authenticate header
             wireMock.stubFor(get(urlPathEqualTo("/odata/Products"))
@@ -708,9 +725,23 @@ public class ODataProducerTest extends CamelTestSupport {
                             .withHeader("WWW-Authenticate", "Basic realm=\"OData Test Realm\"")));
 
             Exchange exchange = authEndpoint.createExchange();
+            exchange.getMessage().setHeader("X-Caller", "caller-value");
+            // keeps WireMock from gzipping the body, so the response headers are the plain ones
+            exchange.getMessage().setHeader("Accept-Encoding", "identity");
             authProducer.process(exchange);
 
             assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+            assertNull(exchange.getMessage().getHeader("Authorization"));
+            // the headers of the delegated HTTP request are not part of the result either
+            assertNull(exchange.getMessage().getHeader(Exchange.HTTP_URI));
+            assertNull(exchange.getMessage().getHeader(Exchange.HTTP_QUERY));
+            assertNull(exchange.getMessage().getHeader(Exchange.HTTP_METHOD));
+            assertNull(exchange.getMessage().getHeader("Accept"));
+            assertEquals("caller-value", exchange.getMessage().getHeader("X-Caller"));
+            assertEquals("response-value", exchange.getMessage().getHeader("X-Response"));
+            assertEquals("W/\"collection-v1\"", exchange.getMessage().getHeader(ODataConstants.ETAG));
+            assertEquals(2L, exchange.getMessage().getHeader(ODataConstants.COUNT));
+            assertEquals("http://localhost/odata/Products?$skip=2", exchange.getMessage().getHeader(ODataConstants.NEXT_LINK));
             wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
                     .withHeader("Authorization", equalTo(expectedHeader)));
         } finally {
@@ -742,6 +773,7 @@ public class ODataProducerTest extends CamelTestSupport {
             Exchange exchange1 = authEndpoint.createExchange();
             authProducer.process(exchange1);
             assertEquals(200, exchange1.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+            assertNull(exchange1.getMessage().getHeader("Authorization"));
             wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
                     .withHeader("Authorization", equalTo("Bearer " + configuredToken)));
 
@@ -757,10 +789,76 @@ public class ODataProducerTest extends CamelTestSupport {
             exchange2.getMessage().setHeader("Authorization", explicitHeaderToken);
             authProducer.process(exchange2);
             assertEquals(200, exchange2.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+            assertEquals(explicitHeaderToken, exchange2.getMessage().getHeader("Authorization"));
             wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
                     .withHeader("Authorization", equalTo(explicitHeaderToken)));
         } finally {
             authProducer.stop();
+        }
+    }
+
+    @Test
+    void testConfiguredRequestHeadersWithEmptyResponse() throws Exception {
+        String configuredToken = "configuredToken";
+        ODataEndpoint configuredEndpoint = context.getEndpoint(
+                "odata:http://localhost:" + wireMock.getPort()
+                                                               + "/odata/Products?authBearerToken=" + configuredToken,
+                ODataEndpoint.class);
+        Producer configuredProducer = configuredEndpoint.createProducer();
+        configuredProducer.start();
+
+        try {
+            wireMock.stubFor(get(urlPathEqualTo("/odata/Products"))
+                    .withHeader("Authorization", equalTo("Bearer " + configuredToken))
+                    .willReturn(aResponse()
+                            .withStatus(204)
+                            .withHeader("ETag", "W/\"collection-v2\"")
+                            .withHeader("X-Response", "response-value")));
+
+            Exchange exchange = configuredEndpoint.createExchange();
+            exchange.getMessage().setHeader("X-Caller", "caller-value");
+            configuredProducer.process(exchange);
+
+            assertEquals(204, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+            assertNull(exchange.getMessage().getBody());
+            assertNull(exchange.getMessage().getHeader("Authorization"));
+            assertEquals("caller-value", exchange.getMessage().getHeader("X-Caller"));
+            assertEquals("response-value", exchange.getMessage().getHeader("X-Response"));
+            assertEquals("W/\"collection-v2\"", exchange.getMessage().getHeader(ODataConstants.ETAG));
+            wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
+                    .withHeader("Authorization", equalTo("Bearer " + configuredToken)));
+        } finally {
+            configuredProducer.stop();
+        }
+    }
+
+    @Test
+    void testConfiguredRequestHeadersWhenHttpRequestFails() throws Exception {
+        String configuredToken = "configuredToken";
+        ODataEndpoint configuredEndpoint = context.getEndpoint(
+                "odata:http://localhost:" + wireMock.getPort()
+                                                               + "/odata/Products?authBearerToken=" + configuredToken,
+                ODataEndpoint.class);
+        Producer configuredProducer = configuredEndpoint.createProducer();
+        configuredProducer.start();
+
+        try {
+            wireMock.stubFor(get(urlPathEqualTo("/odata/Products"))
+                    .withHeader("Authorization", equalTo("Bearer " + configuredToken))
+                    .willReturn(aResponse().withStatus(500)));
+
+            Exchange exchange = configuredEndpoint.createExchange();
+            exchange.getMessage().setHeader("X-Caller", "caller-value");
+            HttpOperationFailedException exception = assertThrows(
+                    HttpOperationFailedException.class, () -> configuredProducer.process(exchange));
+
+            assertEquals(500, exception.getStatusCode());
+            assertNull(exchange.getMessage().getHeader("Authorization"));
+            assertEquals("caller-value", exchange.getMessage().getHeader("X-Caller"));
+            wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
+                    .withHeader("Authorization", equalTo("Bearer " + configuredToken)));
+        } finally {
+            configuredProducer.stop();
         }
     }
 

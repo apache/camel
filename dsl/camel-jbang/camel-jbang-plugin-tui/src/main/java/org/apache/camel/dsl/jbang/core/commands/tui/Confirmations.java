@@ -22,6 +22,7 @@ import java.util.Queue;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
@@ -103,13 +104,13 @@ final class Confirmations {
     }
 
     /**
-     * Delivers the keys an MCP client or a tape sent that are due now, one by one, as a key can open a dialog. A key
-     * that comes while a dialog asks to confirm is dropped: only the user answers it. An Esc that only cancels the
-     * dialog gets through.
+     * Delivers the keys an MCP client or a tape sent that are due now, one by one, as a key can open a dialog, and the
+     * mouse events of a tape with them. A key or a click that comes while a dialog asks to confirm is dropped: only the
+     * user answers it. An Esc that only cancels the dialog gets through.
      *
      * @return whether a key was taken from the queue
      */
-    boolean deliverDue(long now, Consumer<KeyEvent> handler) {
+    boolean deliverDue(long now, Consumer<Event> handler) {
         boolean taken = false;
         McpFacade.PendingKey key;
         while ((key = pendingKeys.peek()) != null && key.isDue(now)) {
@@ -130,8 +131,8 @@ final class Confirmations {
         return taken;
     }
 
-    private static boolean isEsc(KeyEvent ke) {
-        return ke.isKey(KeyCode.ESCAPE) && !ke.hasCtrl() && !ke.hasAlt() && !ke.hasShift();
+    private static boolean isEsc(Event event) {
+        return event instanceof KeyEvent ke && ke.isKey(KeyCode.ESCAPE) && !ke.hasCtrl() && !ke.hasAlt() && !ke.hasShift();
     }
 
     /** Whether the key being handled was sent by an MCP client or a tape, not typed by the user. */

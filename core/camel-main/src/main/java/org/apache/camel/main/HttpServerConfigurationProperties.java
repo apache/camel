@@ -91,6 +91,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private long mcpSessionIdleTtl = 300000;
     @Metadata
     private String mcpAllowedOrigins;
+    @Metadata
+    private String mcpAllowedHosts;
     @Metadata(label = "security")
     private String mcpOauthProfile;
     @Metadata(label = "security")
@@ -560,6 +562,23 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.mcpAllowedOrigins = mcpAllowedOrigins;
     }
 
+    public String getMcpAllowedHosts() {
+        return mcpAllowedHosts;
+    }
+
+    /**
+     * Comma-separated list of hosts allowed in the Host header of a request to the MCP endpoint on the Vert.x
+     * streamable transport, such as mcp.example.com or localhost:*. Each entry is a host, or a host and a port, where
+     * the port may be an asterisk to match any port (or none). The host is compared ignoring case. When set, a request
+     * whose Host header is missing or not in the list is rejected with HTTP 421 (Misdirected Request), before its body
+     * is read and before any session is created; this protects a server on a private address against DNS rebinding. An
+     * entry with a scheme, a path or a wildcard for all hosts fails the startup. When not set, the Host header is not
+     * checked.
+     */
+    public void setMcpAllowedHosts(String mcpAllowedHosts) {
+        this.mcpAllowedHosts = mcpAllowedHosts;
+    }
+
     public String getMcpOauthProfile() {
         return mcpOauthProfile;
     }
@@ -910,6 +929,15 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpAllowedOrigins(String mcpAllowedOrigins) {
         this.mcpAllowedOrigins = mcpAllowedOrigins;
+        return this;
+    }
+
+    /**
+     * Comma-separated list of hosts allowed in the Host header of a request to the MCP endpoint on the Vert.x
+     * streamable transport. When not set, the Host header is not checked.
+     */
+    public HttpServerConfigurationProperties withMcpAllowedHosts(String mcpAllowedHosts) {
+        this.mcpAllowedHosts = mcpAllowedHosts;
         return this;
     }
 

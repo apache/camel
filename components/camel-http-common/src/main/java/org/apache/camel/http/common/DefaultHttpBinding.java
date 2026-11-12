@@ -555,7 +555,7 @@ public class DefaultHttpBinding implements HttpBinding {
             if (is == null) {
                 // convert the body only: message.getBody(InputStream.class) falls back to converting the HTTP message,
                 // which gives the request stream (already read), so a Map, List, POJO or number body would be written
-                // as an empty response. A body that is not convertable as a stream is written as a String below
+                // as an empty response. A body that is not convertible as a stream is written as a String below
                 is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, message.getBody());
             }
         } else {
@@ -606,7 +606,7 @@ public class DefaultHttpBinding implements HttpBinding {
                 copyStream(is, os, response.getBufferSize());
             }
         } else {
-            // not convertable as a stream so fallback as a String
+            // not convertible as a stream so fallback as a String
             // a String body is written in the charset of the content type, other bodies are converted to a String
             // with the charset of the exchange and written in that charset
             Charset contentTypeCharset = message.getBody() instanceof String ? getContentTypeCharset(contentType) : null;
@@ -704,7 +704,7 @@ public class DefaultHttpBinding implements HttpBinding {
                 bytes = ((String) body).getBytes(contentTypeCharset);
             } else {
                 // convert the body only: message.getBody(byte[].class) falls back to converting the HTTP message, which
-                // gives the request stream. A body that is not convertable as bytes (a Map, List, POJO or number) is
+                // gives the request stream. A body that is not convertible as bytes (a Map, List, POJO or number) is
                 // written as a String in the charset of the exchange
                 bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, body);
                 if (bytes == null) {

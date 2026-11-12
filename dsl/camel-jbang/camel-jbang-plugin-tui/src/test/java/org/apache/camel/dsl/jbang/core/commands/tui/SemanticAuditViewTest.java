@@ -36,8 +36,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiAwait.await;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 class SemanticAuditViewTest {
     private static final Instant START = Instant.parse("2026-10-14T12:00:00Z");

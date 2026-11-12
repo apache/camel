@@ -349,8 +349,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     /**
      * Dumps the event message as XML using the {@link #ROOT_TAG} as root tag.
-     * <p/>
-     * The <tt>timestamp</tt> tag is formatted in the format defined by {@link #TIMESTAMP_FORMAT}
+     * <p>
+     * The <code>timestamp</code> tag is formatted in the format defined by {@link #TIMESTAMP_FORMAT}
      *
      * @return xml representation of this event
      */

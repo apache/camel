@@ -5134,7 +5134,7 @@
 												"properties": {
 													"id": {
 														"type": "string",
-														"description": "The processor ID"
+														"description": "The processor ID (the id of the from for the route input, as in the trace and message history)"
 													},
 													"type": {
 														"type": "string",
@@ -5175,7 +5175,7 @@
 															"properties": {
 																"id": {
 																	"type": "string",
-																	"description": "The processor ID"
+																	"description": "The processor ID (the id of the from for the route input, as in the trace and message history)"
 																},
 																"type": {
 																	"type": "string",

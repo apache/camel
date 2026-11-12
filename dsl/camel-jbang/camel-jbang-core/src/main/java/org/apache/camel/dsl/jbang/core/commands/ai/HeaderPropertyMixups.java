@@ -400,7 +400,7 @@ final class HeaderPropertyMixups {
 
     /** The languages that run code, which can set a header of any name. */
     private static final Set<String> SCRIPTS = Set.of("groovy", "js", "javascript", "python", "java", "joor", "jsh",
-            "mvel", "ognl", "spel", "jactl", "quickjs", "method", "bean", "csimple", "datasonnet", "wasm");
+            "mvel", "spel", "jactl", "quickjs", "method", "bean", "csimple", "datasonnet", "wasm");
 
     /** split: ${body[lines]}, ${body.lines} or the jsonpath $.lines: the field of the data whose elements it gives. */
     private static final Pattern SPLIT_FIELD = Pattern.compile(

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class replicates the essential parts of the String class in order to aid proper work for Unicode chars in the
- * presense of UTF-16. So for all operations please see {@link String} with the same signature. This class is equally
+ * presence of UTF-16. So for all operations please see {@link String} with the same signature. This class is equally
  * immutable.
  */
 public class UnicodeHelper implements Serializable {
@@ -57,7 +57,7 @@ public class UnicodeHelper implements Serializable {
      * Create instance.
      *
      * @param input  String, that is to be wrapped.
-     * @param method Method, that is used to determin "chars" of string.
+     * @param method Method, that is used to determine "chars" of string.
      */
     public UnicodeHelper(final String input, final Method method) {
         this.input = input;

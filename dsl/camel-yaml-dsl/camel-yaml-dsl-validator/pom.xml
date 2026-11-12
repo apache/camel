@@ -63,6 +63,14 @@
             <artifactId>json-schema-validator</artifactId>
             <version>${networknt-json-schema-validator-version}</version>
         </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>

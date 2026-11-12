@@ -107,7 +107,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses Avro data format with tje given library and schema
+     * Uses Avro data format with the given library and schema
      */
     public T avro(AvroLibrary library, Object schema) {
         AvroDataFormat dataFormat = new AvroDataFormat();

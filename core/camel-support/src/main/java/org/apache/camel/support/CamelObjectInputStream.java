@@ -67,7 +67,7 @@ public class CamelObjectInputStream extends ObjectInputStream {
         if (classLoader != null) {
             return Class.forName(desc.getName(), false, classLoader);
         } else {
-            // If the application classloader is not set we just fallback to use old behaivor
+            // If the application classloader is not set we just fallback to use old behavior
             return super.resolveClass(desc);
         }
     }

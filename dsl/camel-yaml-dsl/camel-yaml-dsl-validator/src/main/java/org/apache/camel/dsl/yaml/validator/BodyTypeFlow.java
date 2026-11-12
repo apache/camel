@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.networknt.schema.Error;
 import com.networknt.schema.path.NodePath;
+import tools.jackson.databind.JsonNode;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.Route;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.endpointOf;
@@ -169,7 +169,7 @@ final class BodyTypeFlow {
         }
         String wanted = normalize(target.fromUri());
         for (JsonNode step : steps) {
-            for (var it = step.fieldNames(); it.hasNext();) {
+            for (var it = step.propertyNames().iterator(); it.hasNext();) {
                 String name = it.next();
                 JsonNode value = step.get(name);
                 if (sendsToTheRoute(name, value, wanted)) {
@@ -225,7 +225,7 @@ final class BodyTypeFlow {
 
     /** The first key of a step, which is the EIP it is. */
     private static String firstName(JsonNode step) {
-        var it = step.fieldNames();
+        var it = step.propertyNames().iterator();
         return it.hasNext() ? it.next() : "";
     }
 
@@ -234,7 +234,7 @@ final class BodyTypeFlow {
      * (variableSend). Null when nothing does.
      */
     private static String readsTheBody(JsonNode step, CatalogBodyTypes bodyTypes) {
-        for (var it = step.fieldNames(); it.hasNext();) {
+        for (var it = step.propertyNames().iterator(); it.hasNext();) {
             String name = it.next();
             if (STEPS_THAT_NEED_THE_BODY.contains(name) && !bodyTypes.needsNoBody(name, step.get(name))) {
                 return name;
@@ -266,7 +266,7 @@ final class BodyTypeFlow {
         if (!node.isObject()) {
             return false;
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String name = it.next();
             if (bodyTypes.isEip(name) && bodyTypes.maySetTheBody(name)
                     && !bodyTypes.keepsTheBody(name, node.get(name))) {
@@ -296,7 +296,7 @@ final class BodyTypeFlow {
         if (!node.isObject()) {
             return null;
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String name = it.next();
             if (READS_THE_BODY.contains(name)) {
                 return name;
@@ -320,7 +320,7 @@ final class BodyTypeFlow {
             if (rest == null || !rest.isObject()) {
                 continue;
             }
-            for (var it = rest.fieldNames(); it.hasNext();) {
+            for (var it = rest.propertyNames().iterator(); it.hasNext();) {
                 String verb = it.next();
                 if (!VERBS_WITHOUT_BODY.contains(verb)) {
                     continue;

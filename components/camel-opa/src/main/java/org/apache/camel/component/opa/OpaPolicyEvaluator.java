@@ -177,12 +177,15 @@ public abstract class OpaPolicyEvaluator {
 
     /**
      * Authorizes a list in one call and records the per-element verdicts in {@link OpaConstants#BATCH_DECISION}, a
-     * {@code List<Boolean>} parallel to the input.
+     * {@code List<Boolean>} parallel to the input, and the per-element {@link OpaBatchOutcome}s in
+     * {@link OpaConstants#BATCH_OUTCOMES}, which also say why an element has no decision.
+     * {@link OpaConstants#DECISION_FAILED_OPEN} is set when any element proceeded because it failed open.
      * <p/>
      * Fail-closed is per element: an element whose evaluation failed is denied while the others decide normally, and
      * under {@code failOpen} it is allowed only when its decision point was unavailable. Only a batch call that fails
      * as a whole denies every element - or, under {@code failOpen}, allows every element when the server could not be
-     * reached.
+     * reached. The outcomes report that case like an element whose own decision point was unavailable: every element is
+     * {@code UNAVAILABLE} and failed open; they do not say which of the two happened.
      */
     public List<Boolean> evaluateBatch(Exchange exchange, List<?> elements) throws OpaPolicyEvaluationException {
         clearDecisionHeaders(exchange);
@@ -191,7 +194,7 @@ public abstract class OpaPolicyEvaluator {
         // failure - and so, fail-closed, into an error thrown for an empty list. Answer it deterministically instead.
         if (elements.isEmpty()) {
             List<Boolean> verdicts = List.of();
-            setBatchDecisionHeaders(exchange, verdicts);
+            setBatchDecisionHeaders(exchange, verdicts, List.of());
             return verdicts;
         }
         Map<String, Map<String, Object>> inputs = new LinkedHashMap<>();
@@ -199,11 +202,11 @@ public abstract class OpaPolicyEvaluator {
             inputs.put(Integer.toString(i), buildInput(exchange, elements.get(i), true));
         }
 
-        List<Boolean> verdicts = new ArrayList<>(elements.size());
+        List<OpaBatchOutcome> outcomes = new ArrayList<>(elements.size());
         try {
             Map<String, BatchElement> results = evaluateBatchDecisions(inputs);
             for (int i = 0; i < elements.size(); i++) {
-                verdicts.add(verdictFor(i, results != null ? results.get(Integer.toString(i)) : null));
+                outcomes.add(outcomeFor(i, results != null ? results.get(Integer.toString(i)) : null));
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -220,32 +223,48 @@ public abstract class OpaPolicyEvaluator {
             LOG.warn("Batch policy {} could not be evaluated, allowing all {} elements because failOpen is enabled."
                      + " Reason: {}",
                     getPolicyPath(), elements.size(), e.getMessage());
+            outcomes.clear();
             for (int i = 0; i < elements.size(); i++) {
-                verdicts.add(Boolean.TRUE);
+                outcomes.add(OpaBatchOutcome.failure(OpaBatchOutcome.FailureCategory.UNAVAILABLE, true));
             }
         }
 
-        setBatchDecisionHeaders(exchange, verdicts);
+        List<Boolean> verdicts = new ArrayList<>(outcomes.size());
+        for (OpaBatchOutcome outcome : outcomes) {
+            verdicts.add(outcome.isAllowed());
+        }
+        setBatchDecisionHeaders(exchange, verdicts, outcomes);
         return verdicts;
     }
 
-    private boolean verdictFor(int index, BatchElement element) {
-        if (element != null && element.succeeded()) {
-            return isAllowed(element.decision());
+    private OpaBatchOutcome outcomeFor(int index, BatchElement element) {
+        if (element == null) {
+            return OpaBatchOutcome.failure(OpaBatchOutcome.FailureCategory.MISSING_RESULT, false);
         }
-        if (element != null && element.failure() != null) {
-            restoreInterruptIfWrapped(element.failure());
+        if (element.succeeded()) {
+            return OpaBatchOutcome.decision(isAllowed(element.decision()));
         }
-        // a single element failed: deny it without failing the whole batch, unless failOpen is set and its decision
-        // point was unavailable
-        if (failOpen && element != null && element.failure() != null && isDecisionPointUnavailable(element.failure())) {
-            String reason = element.failure().getMessage();
+        Exception failure = element.failure();
+        restoreInterruptIfWrapped(failure);
+        OpaBatchOutcome.FailureCategory category = failureCategory(failure);
+        // Keep the same narrow fail-open scope as a single evaluation: a server that answered did not go away.
+        boolean failedOpen = failOpen && category == OpaBatchOutcome.FailureCategory.UNAVAILABLE;
+        if (failedOpen) {
             LOG.warn("Batch element {} of policy {} could not be evaluated, allowing it because failOpen is enabled."
                      + " Reason: {}",
-                    index, getPolicyPath(), reason);
-            return true;
+                    index, getPolicyPath(), failure.getMessage());
         }
-        return false;
+        return OpaBatchOutcome.failure(category, failedOpen);
+    }
+
+    private OpaBatchOutcome.FailureCategory failureCategory(Exception failure) {
+        for (Throwable cause = failure; cause != null; cause = cause.getCause()) {
+            if (cause instanceof InterruptedException) {
+                return OpaBatchOutcome.FailureCategory.INTERRUPTED;
+            }
+        }
+        return isDecisionPointUnavailable(failure)
+                ? OpaBatchOutcome.FailureCategory.UNAVAILABLE : OpaBatchOutcome.FailureCategory.EVALUATION_ERROR;
     }
 
     /**
@@ -393,6 +412,7 @@ public abstract class OpaPolicyEvaluator {
         // fail-open read as a decision a policy actually made
         message.removeHeader(OpaConstants.DECISION_FAILED_OPEN);
         message.removeHeader(OpaConstants.BATCH_DECISION);
+        message.removeHeader(OpaConstants.BATCH_OUTCOMES);
     }
 
     private void setDecisionHeaders(Exchange exchange, Object decision, boolean allowed) {
@@ -408,9 +428,13 @@ public abstract class OpaPolicyEvaluator {
      * As in {@link #evaluate}, a fail-closed batch failure never reaches here, leaving the exchange carrying no
      * verdict.
      */
-    private void setBatchDecisionHeaders(Exchange exchange, List<Boolean> verdicts) {
+    private void setBatchDecisionHeaders(Exchange exchange, List<Boolean> verdicts, List<OpaBatchOutcome> outcomes) {
         exchange.getMessage().setHeader(OpaConstants.BATCH_DECISION, verdicts);
+        exchange.getMessage().setHeader(OpaConstants.BATCH_OUTCOMES, List.copyOf(outcomes));
         exchange.getMessage().setHeader(OpaConstants.POLICY_PATH, policyPath);
+        if (outcomes.stream().anyMatch(OpaBatchOutcome::isFailedOpen)) {
+            exchange.getMessage().setHeader(OpaConstants.DECISION_FAILED_OPEN, true);
+        }
     }
 
     private static boolean isIncluded(Set<String> filter, String name) {
@@ -442,7 +466,8 @@ public abstract class OpaPolicyEvaluator {
                 || OpaConstants.DECISION.equalsIgnoreCase(name)
                 || OpaConstants.POLICY_PATH.equalsIgnoreCase(name)
                 || OpaConstants.DECISION_FAILED_OPEN.equalsIgnoreCase(name)
-                || OpaConstants.BATCH_DECISION.equalsIgnoreCase(name);
+                || OpaConstants.BATCH_DECISION.equalsIgnoreCase(name)
+                || OpaConstants.BATCH_OUTCOMES.equalsIgnoreCase(name);
     }
 
     /**

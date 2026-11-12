@@ -291,7 +291,7 @@ public class PGPDataFormat extends DataFormatDefinition {
          * User ID of the key in the PGP keyring used for signing (during encryption) or signature verification (during
          * decryption). During the signature verification process the specified User ID restricts the public keys from
          * the public keyring which can be used for the verification. If no User ID is specified for the signature
-         * verficiation then any public key in the public keyring can be used for the verification. Can also be only a
+         * verification then any public key in the public keyring can be used for the verification. Can also be only a
          * part of a user ID. For example, if the user ID is "Test User <test@camel.com>" then you can use the part
          * "Test User" or "<test@camel.com>" to address the User ID.
          */

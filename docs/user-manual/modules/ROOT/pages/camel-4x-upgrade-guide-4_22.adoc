@@ -31,6 +31,18 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-ai-tool-starter - MCP hints that are not configured are no longer published
+
+With `camel-ai-tool-starter`, a tool whose route sets none of the MCP hints `readOnlyHint`, `destructiveHint`,
+`idempotentHint` and `openWorldHint` was published with each of them set to `false`, because the starter copied the
+documented default `false` onto the component. These hints, and `returnDirect`, are now left unset unless they are
+configured, so the MCP `tools/list` response omits them, as it does without Spring Boot.
+
+Under the MCP specification an omitted `destructiveHint` or `openWorldHint` means `true`, so an MCP client may now
+treat such a tool as destructive and open-world. To keep advertising a tool as read-only or non-destructive, configure
+the hint on the endpoint, for example `ai-tool:myTool?destructiveHint=false`, or for all tools with
+`camel.component.ai-tool.destructive-hint=false`.
+
 === camel-as2 - server/listen - signature and MIC over the message as received
 
 The signature of a `multipart/signed` message is now verified over the signed part exactly as it was received, its
@@ -233,6 +245,18 @@ The `user` and `password` are now offered only to the nodes the client talks to:
 when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Previously they were
 registered for any host. A request to another host, including the host of a node with another scheme or port, is now
 sent without them. A client set with the `restClient` option is not changed.
+
+=== camel-elasticsearch-rest-client - the document id and the index name are each sent as one path segment
+
+The producer now percent-encodes the document id and the index name, so each is sent as one path segment of the
+request and Elasticsearch takes it literally. Before, they were placed into the path as given: a `/`, `?` or `#` in
+the value changed the path of the request, and a space or a `%` made the request fail. A route that put extra path
+segments or request parameters into the document id or the index name must change.
+
+A document id of `.` or `..` is now rejected, as is an index name that is empty, `.` or `..`, or that contains `\`,
+`/`, `?`, `"`, `<`, `>`, `|`, `#` or a space. A comma separated list of index names and patterns, such as
+`logs-*,my_index`, still works. A `GET_BY_ID` response without the source of the document now gives a `null` body
+instead of failing with a `NullPointerException`.
 
 === camel-smooks - allowExternalEntities applies to Smooks Source bodies and to a reader declared without a class
 

@@ -362,10 +362,10 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * Path parameter: languageName (required)
          * Sets the name of the language to use
-         * There are 26 enums and the value can be one of: bean, constant,
+         * There are 25 enums and the value can be one of: bean, constant,
          * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-         * joor, jq, js, jsonpath, mvel, ognl, python, python3, quickjs, ref,
-         * simple, spel, tokenize, variable, xpath, xquery, xtokenize
+         * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref, simple,
+         * spel, tokenize, variable, xpath, xquery, xtokenize
          * 
          * Path parameter: resourceUri
          * Path to the resource, or a reference to lookup a bean in the Registry
@@ -391,10 +391,10 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * Path parameter: languageName (required)
          * Sets the name of the language to use
-         * There are 26 enums and the value can be one of: bean, constant,
+         * There are 25 enums and the value can be one of: bean, constant,
          * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-         * joor, jq, js, jsonpath, mvel, ognl, python, python3, quickjs, ref,
-         * simple, spel, tokenize, variable, xpath, xquery, xtokenize
+         * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref, simple,
+         * spel, tokenize, variable, xpath, xquery, xtokenize
          * 
          * Path parameter: resourceUri
          * Path to the resource, or a reference to lookup a bean in the Registry
@@ -424,7 +424,9 @@ public interface LanguageEndpointBuilderFactory {
 
         /**
          * The script to execute provided in the header. Takes precedence over
-         * script configured on the endpoint.
+         * script configured on the endpoint. The script is used for this
+         * message only, it is never cached as the script of the endpoint (also
+         * with cacheScript=true), and the header is removed after use.
          * 
          * The option is a: {@code String or Expression} type.
          * 

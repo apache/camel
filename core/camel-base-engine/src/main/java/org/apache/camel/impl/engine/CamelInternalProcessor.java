@@ -100,17 +100,17 @@ import static org.apache.camel.impl.engine.DefaultChannel.getOrCreateBacklogTrac
  * <li>{@link Transformer}</li>
  * </ul>
  * ... and more.
- * <p/>
+ * <p>
  * This implementation executes this cross cutting functionality as a {@link CamelInternalProcessorAdvice} advice
  * (before and after advice) by executing the {@link CamelInternalProcessorAdvice#before(org.apache.camel.Exchange)} and
  * {@link CamelInternalProcessorAdvice#after(org.apache.camel.Exchange, Object)} callbacks in correct order during
  * routing. This reduces number of stack frames needed during routing, and reduce the number of lines in stacktraces, as
  * well makes debugging the routing engine easier for end users.
- * <p/>
- * <b>Debugging tips:</b> Camel end users whom want to debug their Camel applications with the Camel source code, then
+ * <p>
+ * <b>Debugging tips:</b> Camel end users who want to debug their Camel applications with the Camel source code, then
  * make sure to read the source code of this class about the debugging tips, which you can find in the
  * {@link #process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method.
- * <p/>
+ * <p>
  * The added advices can implement {@link Ordered} to control in which order the advices are executed.
  */
 public class CamelInternalProcessor extends DelegateAsyncProcessor implements InternalProcessor {
@@ -697,7 +697,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
          * Strategy to determine if this policy is allowed to run
          *
          * @param  policy the policy
-         * @return        <tt>true</tt> to run
+         * @return        <code>true</code> to run
          */
         boolean isRoutePolicyRunAllowed(RoutePolicy policy) {
             if (policy instanceof StatefulService ss) {

@@ -2113,9 +2113,9 @@ public class CamelCatalogTest {
         Assertions.assertInstanceOf(ComponentModel.class, am);
         Assertions.assertEquals("Upload and download files to/from FTP servers.", am.getDescription());
 
-        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-ognl", catalog.getCatalogVersion());
+        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-jq", catalog.getCatalogVersion());
         Assertions.assertInstanceOf(LanguageModel.class, am);
-        Assertions.assertEquals("Evaluates an OGNL expression (Apache Commons OGNL)", am.getDescription());
+        Assertions.assertEquals("Evaluates a JQ expression against a JSON message body", am.getDescription());
 
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-bindy", catalog.getCatalogVersion());
         Assertions.assertInstanceOf(DataFormatModel.class, am);
@@ -2276,7 +2276,11 @@ public class CamelCatalogTest {
                 Arguments.of("SpiffeSecurityPolicy", "org.apache.camel.component.spiffe.SpiffeSecurityPolicy",
                         "camel-spiffe", "org.apache.camel.spi.AuthorizationPolicy", "acceptedSpiffeIds"),
                 Arguments.of("SpiffeSSLContextParameters", "org.apache.camel.component.spiffe.SpiffeSSLContextParameters",
-                        "camel-spiffe", "org.apache.camel.support.jsse.SSLContextParameters", "acceptedSpiffeIds"));
+                        "camel-spiffe", "org.apache.camel.support.jsse.SSLContextParameters", "acceptedSpiffeIds"),
+                Arguments.of("KeycloakSecurityPolicy", "org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy",
+                        "camel-keycloak", "org.apache.camel.spi.AuthorizationPolicy", "realm"),
+                Arguments.of("ShiroSecurityPolicy", "org.apache.camel.component.shiro.security.ShiroSecurityPolicy",
+                        "camel-shiro", "org.apache.camel.spi.AuthorizationPolicy", "passPhrase"));
     }
 
     // camel run looks up a bean class it cannot load by its simple name here, to find the jar to download

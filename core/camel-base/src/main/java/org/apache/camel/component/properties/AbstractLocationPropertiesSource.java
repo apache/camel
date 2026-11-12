@@ -117,7 +117,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
 
     /**
      * Strategy to prepare loaded properties before being used by Camel.
-     * <p/>
+     * <p>
      * This implementation will ensure values are trimmed, as loading properties from a file with values having trailing
      * spaces is not automatically trimmed by the Properties API from the JDK.
      *

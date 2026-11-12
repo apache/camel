@@ -27,6 +27,16 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
         case "authmountpath":
         case "authMountPath": target.getConfiguration().setAuthMountPath(property(camelContext, java.lang.String.class, value)); return true;
         case "authentication": target.getConfiguration().setAuthentication(property(camelContext, java.lang.String.class, value)); return true;
+        case "awsiamserverid":
+        case "awsIamServerId": target.getConfiguration().setAwsIamServerId(property(camelContext, java.lang.String.class, value)); return true;
+        case "awsregion":
+        case "awsRegion": target.getConfiguration().setAwsRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "awsstsendpoint":
+        case "awsStsEndpoint": target.getConfiguration().setAwsStsEndpoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "azureclientid":
+        case "azureClientId": target.getConfiguration().setAzureClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "azureresource":
+        case "azureResource": target.getConfiguration().setAzureResource(property(camelContext, java.lang.String.class, value)); return true;
         case "cloud": target.getConfiguration().setCloud(property(camelContext, boolean.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "jwt": target.getConfiguration().setJwt(property(camelContext, java.lang.String.class, value)); return true;
@@ -71,6 +81,16 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
         case "authmountpath":
         case "authMountPath": return java.lang.String.class;
         case "authentication": return java.lang.String.class;
+        case "awsiamserverid":
+        case "awsIamServerId": return java.lang.String.class;
+        case "awsregion":
+        case "awsRegion": return java.lang.String.class;
+        case "awsstsendpoint":
+        case "awsStsEndpoint": return java.lang.String.class;
+        case "azureclientid":
+        case "azureClientId": return java.lang.String.class;
+        case "azureresource":
+        case "azureResource": return java.lang.String.class;
         case "cloud": return boolean.class;
         case "host": return java.lang.String.class;
         case "jwt": return java.lang.String.class;
@@ -111,6 +131,16 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
         case "authmountpath":
         case "authMountPath": return target.getConfiguration().getAuthMountPath();
         case "authentication": return target.getConfiguration().getAuthentication();
+        case "awsiamserverid":
+        case "awsIamServerId": return target.getConfiguration().getAwsIamServerId();
+        case "awsregion":
+        case "awsRegion": return target.getConfiguration().getAwsRegion();
+        case "awsstsendpoint":
+        case "awsStsEndpoint": return target.getConfiguration().getAwsStsEndpoint();
+        case "azureclientid":
+        case "azureClientId": return target.getConfiguration().getAzureClientId();
+        case "azureresource":
+        case "azureResource": return target.getConfiguration().getAzureResource();
         case "cloud": return target.getConfiguration().isCloud();
         case "host": return target.getConfiguration().getHost();
         case "jwt": return target.getConfiguration().getJwt();

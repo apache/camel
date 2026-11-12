@@ -77,7 +77,7 @@ public class IggyConsumer extends DefaultConsumer {
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
 
         // For now, we'll just have one consumer task. This can be extended later if Iggy supports partitioned consumption.
-        // TODO Handle streams, once tehy will be implemented in the java client
+        // TODO Handle streams, once they will be implemented in the java client
         IggyFetchRecords task = new IggyFetchRecords(
                 this,
                 endpoint,

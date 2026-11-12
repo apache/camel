@@ -34,8 +34,6 @@ import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWith
  * {@code ${isNumeric}}, {@code ${not}}, {@code ${kindOfType}}, {@code ${throwException}}, {@code ${assert}},
  * {@code ${convertTo}}, {@code ${messageHistory}}, {@code ${uuid}}, {@code ${hash}}, {@code ${empty}},
  * {@code ${newEmpty}}, {@code ${iif}}, {@code ${load}}.
- *
- * <p>
  */
 public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory {
 

@@ -147,7 +147,15 @@ public class ZendeskConfiguration {
     public String toString() {
         return String.format(
                 "ZendeskConfiguration:[methodName=%s, serverUrl=%s, username=%s, password=%s, token=%s, oauthToken=%s]",
-                methodName, serverUrl, username, password, token, oauthToken);
+                methodName, serverUrl, username, mask(password), mask(token), mask(oauthToken));
+    }
+
+    /**
+     * Masks a credential so that logging or a JMX attribute of this configuration cannot leak it. {@code xxxxxx} is the
+     * mask Camel uses when it sanitizes a URI, and whether the value was set at all is still visible.
+     */
+    private static String mask(Object secret) {
+        return secret != null ? "xxxxxx" : "null";
     }
 
     @Override

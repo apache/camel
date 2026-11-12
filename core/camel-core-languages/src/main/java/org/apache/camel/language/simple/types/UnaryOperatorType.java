@@ -18,8 +18,8 @@ package org.apache.camel.language.simple.types;
 
 /**
  * Types of unary operators supported.
- * <p/>
- * An unary operator can only work on the left hand side, which means the operator should be defined directly
+ * <p>
+ * A unary operator can only work on the left hand side, which means the operator should be defined directly
  * <i>after</i> the function it should work upon.
  */
 public enum UnaryOperatorType {

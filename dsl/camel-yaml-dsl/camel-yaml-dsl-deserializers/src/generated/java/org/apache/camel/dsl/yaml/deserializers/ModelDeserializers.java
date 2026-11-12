@@ -195,7 +195,6 @@ import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
-import org.apache.camel.model.language.OgnlExpression;
 import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.QuickjsExpression;
@@ -9297,7 +9296,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "logLanguage", type = "string", description = "The language to use for evaluating the log message, such as simple, groovy, or ognl.", displayName = "Log Language"),
+                    @YamlProperty(name = "logLanguage", type = "string", description = "The language to use for evaluating the log message, such as simple or groovy.", displayName = "Log Language"),
                     @YamlProperty(name = "logName", type = "string", description = "The logger name to use. By default the route id is used.", displayName = "Log Name"),
                     @YamlProperty(name = "logger", type = "string", description = "Reference to a custom SLF4J logger instance to use.", displayName = "Logger"),
                     @YamlProperty(name = "loggingLevel", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF", defaultValue = "INFO", description = "Sets the logging level to use for the log message. Available levels: TRACE, DEBUG, INFO, WARN, ERROR, OFF.", displayName = "Logging Level"),
@@ -10484,85 +10483,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "ognl",
-            inline = true,
-            types = org.apache.camel.model.language.OgnlExpression.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "OGNL",
-            description = "Evaluates an OGNL expression (Apache Commons OGNL)",
-            deprecated = true,
-            properties = {
-                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
-                    @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.", displayName = "Resolve Resource"),
-                    @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
-            }
-    )
-    public static class OgnlExpressionDeserializer extends YamlDeserializerBase<OgnlExpression> {
-        public OgnlExpressionDeserializer() {
-            super(OgnlExpression.class);
-        }
-
-        @Override
-        protected OgnlExpression newInstance() {
-            return new OgnlExpression();
-        }
-
-        @Override
-        protected OgnlExpression newInstance(String value) {
-            return new OgnlExpression(value);
-        }
-
-        @Override
-        protected boolean setProperty(OgnlExpression target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "expression": {
-                    String val = asText(node);
-                    target.setExpression(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "resolveResource": {
-                    String val = asText(node);
-                    target.setResolveResource(val);
-                    break;
-                }
-                case "resultType": {
-                    String val = asText(node);
-                    target.setResultTypeName(val);
-                    break;
-                }
-                case "trim": {
-                    String val = asText(node);
-                    target.setTrim(val);
-                    break;
-                }
-                default: {
-                    ExpressionDefinition ed = target.getExpressionType();
-                    if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
-                    }
-                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
-                    if (ed != null) {
-                        target.setExpressionType(ed);
-                        warnCompactNotation(node);
-                    } else {
-                        return false;
-                    }
                 }
             }
             return true;

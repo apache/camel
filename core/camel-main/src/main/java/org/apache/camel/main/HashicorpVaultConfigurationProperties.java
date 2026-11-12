@@ -58,7 +58,7 @@ public class HashicorpVaultConfigurationProperties extends HashicorpVaultConfigu
     }
 
     /**
-     * How to log in to Hashicorp Vault: token, approle, kubernetes, jwt or cert
+     * How to log in to Hashicorp Vault: token, approle, kubernetes, jwt, cert, aws-iam, azure-msi or gcp-gce
      */
     public HashicorpVaultConfigurationProperties withAuthentication(String authentication) {
         setAuthentication(authentication);
@@ -82,7 +82,7 @@ public class HashicorpVaultConfigurationProperties extends HashicorpVaultConfigu
     }
 
     /**
-     * The Hashicorp Vault role to log in as, for the kubernetes and jwt logins
+     * The Hashicorp Vault role to log in as, for the kubernetes, jwt, cert, aws-iam, azure-msi and gcp-gce logins
      */
     public HashicorpVaultConfigurationProperties withRole(String role) {
         setRole(role);
@@ -143,6 +143,46 @@ public class HashicorpVaultConfigurationProperties extends HashicorpVaultConfigu
      */
     public HashicorpVaultConfigurationProperties withKeyStorePassword(String keyStorePassword) {
         setKeyStorePassword(keyStorePassword);
+        return this;
+    }
+
+    /**
+     * The value of the X-Vault-AWS-IAM-Server-ID header of the aws-iam login
+     */
+    public HashicorpVaultConfigurationProperties withAwsIamServerId(String awsIamServerId) {
+        setAwsIamServerId(awsIamServerId);
+        return this;
+    }
+
+    /**
+     * The AWS region the aws-iam login signs its request for
+     */
+    public HashicorpVaultConfigurationProperties withAwsRegion(String awsRegion) {
+        setAwsRegion(awsRegion);
+        return this;
+    }
+
+    /**
+     * The AWS STS endpoint of the aws-iam login
+     */
+    public HashicorpVaultConfigurationProperties withAwsStsEndpoint(String awsStsEndpoint) {
+        setAwsStsEndpoint(awsStsEndpoint);
+        return this;
+    }
+
+    /**
+     * The resource (audience) of the managed identity token of the azure-msi login
+     */
+    public HashicorpVaultConfigurationProperties withAzureResource(String azureResource) {
+        setAzureResource(azureResource);
+        return this;
+    }
+
+    /**
+     * The client ID of a user-assigned managed identity, for the azure-msi login
+     */
+    public HashicorpVaultConfigurationProperties withAzureClientId(String azureClientId) {
+        setAzureClientId(azureClientId);
         return this;
     }
 

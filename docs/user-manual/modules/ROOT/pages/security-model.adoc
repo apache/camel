@@ -52,8 +52,8 @@ application, not a multi-tenant managed service. Its trust model reflects that.
 | Route authors (the people writing Camel routes in Java, XML or YAML DSL)
 | Fully trusted
 | Execute arbitrary Java code in `.bean()`, `.process()` and `Class` references;
-  evaluate arbitrary expressions in `simple`, `groovy`, `jexl`, `mvel`, `xpath`,
-  `ognl` and friends; reach any class on the classpath; configure any component
+  evaluate arbitrary expressions in `simple`, `groovy`, `jexl`, `mvel`, `xpath`
+  and friends; reach any class on the classpath; configure any component
   option. Code execution by a route author is by design and is not a
   vulnerability in the framework.
 
@@ -482,8 +482,8 @@ routed to "X was not built to do Y" rather than re-argued case by case.
 
 * *No sandboxing of the route or the JVM running it.* Route authors execute
   arbitrary Java in `.bean()`, `.process()` and class references; evaluate
-  arbitrary expressions in `simple`, `groovy`, `jexl`, `mvel`, `xpath`,
-  `ognl`; reach any class on the classpath; and configure any component
+  arbitrary expressions in `simple`, `groovy`, `jexl`, `mvel`, `xpath`;
+  reach any class on the classpath; and configure any component
   option. Camel does not constrain what route code is allowed to do
   (see the route-author entry in _Roles_).
 * *No availability guarantee under attacker-influenced volume or resource

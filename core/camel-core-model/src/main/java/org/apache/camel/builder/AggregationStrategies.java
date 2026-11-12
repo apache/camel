@@ -72,7 +72,7 @@ public final class AggregationStrategies {
     /**
      * Use the original exchange.
      *
-     * @param propagateException whether to propgate exception if errors was thrown during processing split messages.
+     * @param propagateException whether to propagate exception if errors was thrown during processing split messages.
      * @see                      org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy
      */
     public static AggregationStrategy useOriginal(boolean propagateException) {

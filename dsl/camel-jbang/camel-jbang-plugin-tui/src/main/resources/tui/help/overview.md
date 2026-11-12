@@ -198,9 +198,10 @@ Two panels can be opened on top of any tab. Opening one closes the other.
   per question, and how much time went to the model versus tool calls),
   `Ctrl+P` switches provider or model, `Ctrl+Y` copies the last answer
   (just the code when the answer has a code block, with a picker when it
-  has several) and `Ctrl+E` exports the conversation. `Ctrl+N` starts a new
-  line in the question (terminals send Shift+Enter as plain Enter), pasted
-  text keeps its line breaks, and `Up`/`Down` move between the lines before
+  has several) and `Ctrl+E` exports the conversation. `Shift+Enter` (or
+  `Alt+Enter`) starts a new line in the question (`Ctrl+N` in a terminal
+  without the Kitty keyboard protocol, such as macOS Terminal), pasted text
+  keeps its line breaks, and `Up`/`Down` move between the lines before
   they recall earlier prompts. The AI can also edit
   the source files of the selected integration; a dialog asks you to confirm
   each write (`Enter` applies, `d` shows the diff, `Esc` rejects) unless you

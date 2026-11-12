@@ -94,7 +94,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     private volatile String id;
     // to help detecting whether ZK Group update failed
     private final AtomicBoolean creating = new AtomicBoolean();
-    // flag indicating that ephemeral node could be created in registry, but exact sequence ID is uknown
+    // flag indicating that ephemeral node could be created in registry, but exact sequence ID is unknown
     // this status means we may have (temporary - for the period of ZK session) duplication of nodes
     private final AtomicBoolean unstable = new AtomicBoolean();
     private volatile T state;

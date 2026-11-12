@@ -199,6 +199,13 @@ A message-level `Authorization` header can also be supplied.
 
 When an `Authorization` header is present, it takes precedence over authentication configured on the OData endpoint.
 
+Authentication configured on the endpoint is applied only to the delegated HTTP request and does not add an
+`Authorization` header to the result. A caller-supplied `Authorization` header remains on the exchange.
+
+The `CamelHttpUri`, `CamelHttpQuery`, `CamelHttpMethod` and `Accept` headers that the OData producer sets for the
+delegated HTTP request are also excluded from the result. Caller-supplied values for these headers remain on the
+exchange.
+
 If the OData route is exposed to an upstream HTTP consumer, such as `platform-http`, take care that an inbound `Authorization` header may be forwarded to the OData service.
 
 If the upstream authorization credentials must not be forwarded, remove the header before sending the exchange to the OData component.

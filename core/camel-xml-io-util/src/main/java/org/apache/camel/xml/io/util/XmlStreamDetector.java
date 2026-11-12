@@ -36,7 +36,6 @@ import javax.xml.stream.XMLStreamReader;
  * <li>prefix:namespace mapping declared at root element</li>
  * <li>modeline declarations before root element</li>
  * </ul>
- * </p>
  *
  * <p>
  * While we can have any kind of XML document and the namespaced content may be available at various places in the
@@ -131,7 +130,7 @@ public class XmlStreamDetector {
                             String value = reader.getAttributeValue(at);
                             String localPart = qn.getLocalPart();
                             if (nsURI.isEmpty() || prefix.isEmpty()) {
-                                // according to XML spec, this attribut is not namespaced, not in default namespace
+                                // according to XML spec, this attribute is not namespaced, not in default namespace
                                 // https://www.w3.org/TR/xml-names/#defaulting
                                 // > The namespace name for an unprefixed attribute name always has no value.
                                 information.attributes.put(localPart, value);

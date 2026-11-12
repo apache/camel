@@ -167,7 +167,7 @@ public final class SshHelper {
 
             // for now only two channel types are supported
             // shell option is added for specific purpose for now
-            // may need further maintainance for further use cases
+            // may need further maintenance for further use cases
             if (Channel.CHANNEL_EXEC.equals(endpoint.getChannelType())) {
                 channel = session.createChannel(Channel.CHANNEL_EXEC, command);
                 in = new ByteArrayInputStream(new byte[] { 0 });

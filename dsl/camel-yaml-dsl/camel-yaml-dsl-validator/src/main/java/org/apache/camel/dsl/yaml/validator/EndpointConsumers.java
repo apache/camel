@@ -22,9 +22,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.endpointOf;
 
@@ -47,7 +46,7 @@ public final class EndpointConsumers {
     /** The top-level entries that are not routes, nor have steps that send: the beans of the file. */
     private static final Set<String> NOT_STEPS = Set.of("beans", "dataFormats");
 
-    private static final ObjectMapper MAPPER = new ObjectMapper(new YAMLFactory());
+    private static final ObjectMapper MAPPER = YamlTrees.newMapper();
 
     private EndpointConsumers() {
     }
@@ -173,7 +172,7 @@ public final class EndpointConsumers {
     private static List<String> sends(JsonNode entry) {
         List<String> answer = new ArrayList<>();
         if (entry.isObject()) {
-            for (var it = entry.fieldNames(); it.hasNext();) {
+            for (var it = entry.propertyNames().iterator(); it.hasNext();) {
                 String name = it.next();
                 if (!NOT_STEPS.contains(name)) {
                     collect(entry.get(name), EndpointRules.SENDERS, answer);
@@ -196,7 +195,7 @@ public final class EndpointConsumers {
         if (!node.isObject()) {
             return;
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String name = it.next();
             JsonNode value = node.get(name);
             if (keys.contains(name)) {
@@ -221,14 +220,14 @@ public final class EndpointConsumers {
             if (constant != null && constant.isObject()) {
                 constant = constant.get("expression");
             }
-            return constant != null && constant.isTextual() ? constant.asText() : null;
+            return constant != null && constant.isString() ? constant.asString() : null;
         }
         return endpointOf(value);
     }
 
     private static String routeId(JsonNode entry) {
         JsonNode route = entry.get("route");
-        return route != null && route.has("id") ? route.get("id").asText() : null;
+        return route != null && route.has("id") ? route.get("id").asString("") : null;
     }
 
     /**
@@ -240,7 +239,7 @@ public final class EndpointConsumers {
             return target;
         }
         if (target.isObject()) {
-            String kind = target.path("kind").asText();
+            String kind = target.path("kind").asString("");
             if (UNKNOWN_KINDS.contains(kind)) {
                 return null;
             }

@@ -228,8 +228,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.rest.OAuth2Definition": return new ModelDeserializers.OAuth2DefinitionDeserializer();
             case "ocsf": return new ModelDeserializers.OcsfDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.OcsfDataFormat": return new ModelDeserializers.OcsfDataFormatDeserializer();
-            case "ognl": return new ModelDeserializers.OgnlExpressionDeserializer();
-            case "org.apache.camel.model.language.OgnlExpression": return new ModelDeserializers.OgnlExpressionDeserializer();
             case "onCompletion": return new ModelDeserializers.OnCompletionDefinitionDeserializer();
             case "org.apache.camel.model.OnCompletionDefinition": return new ModelDeserializers.OnCompletionDefinitionDeserializer();
             case "onException": return new ModelDeserializers.OnExceptionDefinitionDeserializer();

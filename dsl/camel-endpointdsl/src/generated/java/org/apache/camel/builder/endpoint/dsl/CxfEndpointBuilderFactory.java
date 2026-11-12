@@ -89,10 +89,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The WSDL style that describes how parameters are represented in the
-         * SOAP body. If the value is false, CXF will chose the document-literal
-         * unwrapped style, If the value is true, CXF will chose the
-         * document-literal wrapped style.
+         * Whether to use the document-literal wrapped style instead of the
+         * document-literal bare style for the operations of serviceClass. Not
+         * used for RPC-style operations or when serviceClass is a Provider.
+         * Otherwise, if not set, CXF uses the parameterStyle of the SOAPBinding
+         * annotation, and the wrapped style when there is none. The consumer
+         * does not use it when dataFormat is CXF_MESSAGE.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -107,10 +109,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The WSDL style that describes how parameters are represented in the
-         * SOAP body. If the value is false, CXF will chose the document-literal
-         * unwrapped style, If the value is true, CXF will chose the
-         * document-literal wrapped style.
+         * Whether to use the document-literal wrapped style instead of the
+         * document-literal bare style for the operations of serviceClass. Not
+         * used for RPC-style operations or when serviceClass is a Provider.
+         * Otherwise, if not set, CXF uses the parameterStyle of the SOAPBinding
+         * annotation, and the wrapped style when there is none. The consumer
+         * does not use it when dataFormat is CXF_MESSAGE.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -126,12 +130,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * If enabled and an Exchange failed processing on the consumer side,
-         * and the exception is not a SOAP fault the service contract declares,
-         * the SOAP fault returned to the caller won't contain the exception's
-         * class or message. Faults the route raises deliberately - a CXF Fault,
-         * an exception annotated WebFault, or a Throwable set as the message
-         * body - are part of the contract and are always returned in full.
+         * Whether to hide the exception of a failed exchange from the client.
+         * If true, the fault that the consumer returns does not contain the
+         * class or the message of the exception. This does not apply to a CXF
+         * Fault or an exception with the WebFault annotation, nor to a Camel
+         * message body that is a Throwable or a CxfPayload with a soap:Fault.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -146,12 +149,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * If enabled and an Exchange failed processing on the consumer side,
-         * and the exception is not a SOAP fault the service contract declares,
-         * the SOAP fault returned to the caller won't contain the exception's
-         * class or message. Faults the route raises deliberately - a CXF Fault,
-         * an exception annotated WebFault, or a Throwable set as the message
-         * body - are part of the contract and are always returned in full.
+         * Whether to hide the exception of a failed exchange from the client.
+         * If true, the fault that the consumer returns does not contain the
+         * class or the message of the exception. This does not apply to a CXF
+         * Fault or an exception with the WebFault annotation, nor to a Camel
+         * message body that is a Throwable or a CxfPayload with a soap:Fault.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -166,8 +168,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound SOAP messages to log.
+         * Whether to add a LoggingFeature, which writes the incoming and
+         * outgoing SOAP messages of the endpoint to the log. The LoggingFeature
+         * writes them with SLF4J at INFO level to loggers whose names start
+         * with org.apache.cxf.services.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -182,8 +186,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound SOAP messages to log.
+         * Whether to add a LoggingFeature, which writes the incoming and
+         * outgoing SOAP messages of the endpoint to the log. The LoggingFeature
+         * writes them with SLF4J at INFO level to loggers whose names start
+         * with org.apache.cxf.services.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -198,8 +204,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled and -1 for no limit.
+         * The size limit at which CXF truncates a SOAP message in the log. Sets
+         * the limit of the LoggingFeature that the endpoint adds when
+         * loggingFeatureEnabled is true. Use -1 for no limit.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -214,8 +221,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled and -1 for no limit.
+         * The size limit at which CXF truncates a SOAP message in the log. Sets
+         * the limit of the LoggingFeature that the endpoint adds when
+         * loggingFeatureEnabled is true. Use -1 for no limit.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -230,8 +238,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option controls whether the PhaseInterceptorChain skips logging
-         * the Fault that it catches.
+         * Whether to skip the log entry that the PhaseInterceptorChain writes
+         * when an interceptor throws an exception, for example the exception of
+         * a failed exchange of the consumer. Sets the CXF property
+         * org.apache.cxf.logging.FaultListener to a FaultListener that skips
+         * this log entry.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -246,8 +257,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option controls whether the PhaseInterceptorChain skips logging
-         * the Fault that it catches.
+         * Whether to skip the log entry that the PhaseInterceptorChain writes
+         * when an interceptor throws an exception, for example the exception of
+         * a failed exchange of the consumer. Sets the CXF property
+         * org.apache.cxf.logging.FaultListener to a FaultListener that skips
+         * this log entry.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -262,8 +276,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the basic authentication information of
-         * password for the CXF client.
+         * The password for HTTP Basic authentication. The producer puts it,
+         * together with the user name, in the protocol header Authorization of
+         * its HTTP requests. Only used when the username option is set. Not
+         * used for reading the WSDL that wsdlURL points to. The consumer does
+         * not use it.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -277,8 +294,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the basic authentication information of
-         * username for the CXF client.
+         * The user name for HTTP Basic authentication. The producer puts it,
+         * together with the password, in the protocol header Authorization of
+         * its HTTP requests. Only used when the password option is set. Not
+         * used for reading the WSDL that wsdlURL points to. The consumer does
+         * not use it.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -292,7 +312,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The bindingId for the service model to use.
+         * The id of the CXF binding, which is a namespace URI, for example
+         * http://cxf.apache.org/bindings/xformat for the XML binding without a
+         * SOAP envelope. If not set, CXF uses the binding of the wsdl:port. The
+         * id http://schemas.xmlsoap.org/wsdl/soap12/ selects SOAP 1.2 when
+         * there is no WSDL.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -340,8 +364,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The class name of the SEI (Service Endpoint Interface) class which
-         * could have JSR181 annotation or not.
+         * The Java class of the service, for example a service endpoint
+         * interface or a class that implements one. Written as a fully
+         * qualified class name, for example org.example.orders.OrderService.
+         * Required when dataFormat is POJO, which is the default. Without a
+         * WSDL, CXF builds the service from this class.
          * 
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
@@ -356,8 +383,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The class name of the SEI (Service Endpoint Interface) class which
-         * could have JSR181 annotation or not.
+         * The Java class of the service, for example a service endpoint
+         * interface or a class that implements one. Written as a fully
+         * qualified class name, for example org.example.orders.OrderService.
+         * Required when dataFormat is POJO, which is the default. Without a
+         * WSDL, CXF builds the service from this class.
          * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
@@ -532,10 +562,14 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option controls whether the CXF component, when running in
-         * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
-         * or keep the payload as a javax.xml.transform.Source object that would
-         * allow streaming in some cases.
+         * Whether to allow CXF to keep the last message part of an incoming
+         * SOAP message as a javax.xml.transform.Source read from the stream,
+         * instead of parsing it into a DOM. Only used when dataFormat is
+         * PAYLOAD. The component sets it to the value of its own allowStreaming
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -550,10 +584,14 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option controls whether the CXF component, when running in
-         * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
-         * or keep the payload as a javax.xml.transform.Source object that would
-         * allow streaming in some cases.
+         * Whether to allow CXF to keep the last message part of an incoming
+         * SOAP message as a javax.xml.transform.Source read from the stream,
+         * instead of parsing it into a DOM. Only used when dataFormat is
+         * PAYLOAD. The component sets it to the value of its own allowStreaming
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -598,9 +636,13 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the CXF continuation timeout which could
-         * be used in CxfConsumer by default when the CXF server is using Jetty
-         * or Servlet transport.
+         * The timeout in milliseconds of the CXF continuation that the consumer
+         * uses to process the exchange asynchronously. If it expires before the
+         * route has completed, the consumer returns a fault to the client and
+         * sets an ExchangeTimedOutException on the exchange. Use 0 for no
+         * timeout. Not used when synchronous is true or when the consumer gets
+         * no continuation from the transport, for example with the JMS
+         * transport.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -615,9 +657,13 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the CXF continuation timeout which could
-         * be used in CxfConsumer by default when the CXF server is using Jetty
-         * or Servlet transport.
+         * The timeout in milliseconds of the CXF continuation that the consumer
+         * uses to process the exchange asynchronously. If it expires before the
+         * route has completed, the consumer returns a fault to the client and
+         * sets an ExchangeTimedOutException on the exchange. Use 0 for no
+         * timeout. Not used when synchronous is true or when the consumer gets
+         * no continuation from the transport, for example with the JMS
+         * transport.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -768,9 +814,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to merge protocol headers. If enabled then propagating
-         * headers between Camel and CXF becomes more consistent and similar.
-         * For more details see CAMEL-6393.
+         * Whether to copy a protocol header to the Camel message as one String
+         * instead of a List when it has more than one value. The values are
+         * joined by a comma and a space. This applies to the request that the
+         * consumer receives and to the response that the producer receives.
+         * Sets the exchange property CamelCxfProtocolHeadersMerged to true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -785,9 +833,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to merge protocol headers. If enabled then propagating
-         * headers between Camel and CXF becomes more consistent and similar.
-         * For more details see CAMEL-6393.
+         * Whether to copy a protocol header to the Camel message as one String
+         * instead of a List when it has more than one value. The values are
+         * joined by a comma and a space. This applies to the request that the
+         * consumer receives and to the response that the producer receives.
+         * Sets the exchange property CamelCxfProtocolHeadersMerged to true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -802,8 +852,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
-         * data format mode.
+         * Whether to send SOAP messages with MTOM, so that CXF writes them as
+         * XOP packages. Sets the exchange property mtom-enabled to the value of
+         * this option. The producer copies the property to the CXF request
+         * message, and the consumer copies it to the CXF response message. When
+         * dataFormat is RAW, CXF does not write the Camel message body as an
+         * XOP package.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -818,8 +872,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
-         * data format mode.
+         * Whether to send SOAP messages with MTOM, so that CXF writes them as
+         * XOP packages. Sets the exchange property mtom-enabled to the value of
+         * this option. The producer copies the property to the CXF request
+         * message, and the consumer copies it to the CXF response message. When
+         * dataFormat is RAW, CXF does not write the Camel message body as an
+         * XOP package.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -877,8 +935,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable schema validation for request and response. Disabled by
-         * default for performance reason.
+         * Whether to validate the incoming and outgoing SOAP messages of the
+         * endpoint against the XML schema of the service. Sets the CXF property
+         * schema-validation-enabled to the value of this option. If not set,
+         * CXF validates only when another setting enables validation, for
+         * example the SchemaValidation annotation on serviceClass. When
+         * dataFormat is RAW, CXF does not validate the messages.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -893,8 +955,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable schema validation for request and response. Disabled by
-         * default for performance reason.
+         * Whether to validate the incoming and outgoing SOAP messages of the
+         * endpoint against the XML schema of the service. Sets the CXF property
+         * schema-validation-enabled to the value of this option. If not set,
+         * CXF validates only when another setting enables validation, for
+         * example the SchemaValidation annotation on serviceClass. When
+         * dataFormat is RAW, CXF does not validate the messages.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -913,7 +979,9 @@ public interface CxfEndpointBuilderFactory {
          * Whether to skip the check that each element in the SOAP body matches
          * the message part that the operation declares. Sets the CXF property
          * soap.no.validate.parts to true. This is not XML schema validation,
-         * which schemaValidationEnabled controls.
+         * which schemaValidationEnabled controls. If dataFormat is PAYLOAD and
+         * neither wsdlURL nor serviceClass is set, the producer sets this
+         * option to true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -931,7 +999,9 @@ public interface CxfEndpointBuilderFactory {
          * Whether to skip the check that each element in the SOAP body matches
          * the message part that the operation declares. Sets the CXF property
          * soap.no.validate.parts to true. This is not XML schema validation,
-         * which schemaValidationEnabled controls.
+         * which schemaValidationEnabled controls. If dataFormat is PAYLOAD and
+         * neither wsdlURL nor serviceClass is set, the producer sets this
+         * option to true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1002,10 +1072,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The WSDL style that describes how parameters are represented in the
-         * SOAP body. If the value is false, CXF will chose the document-literal
-         * unwrapped style, If the value is true, CXF will chose the
-         * document-literal wrapped style.
+         * Whether to use the document-literal wrapped style instead of the
+         * document-literal bare style for the operations of serviceClass. Not
+         * used for RPC-style operations or when serviceClass is a Provider.
+         * Otherwise, if not set, CXF uses the parameterStyle of the SOAPBinding
+         * annotation, and the wrapped style when there is none. The consumer
+         * does not use it when dataFormat is CXF_MESSAGE.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -1020,10 +1092,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The WSDL style that describes how parameters are represented in the
-         * SOAP body. If the value is false, CXF will chose the document-literal
-         * unwrapped style, If the value is true, CXF will chose the
-         * document-literal wrapped style.
+         * Whether to use the document-literal wrapped style instead of the
+         * document-literal bare style for the operations of serviceClass. Not
+         * used for RPC-style operations or when serviceClass is a Provider.
+         * Otherwise, if not set, CXF uses the parameterStyle of the SOAPBinding
+         * annotation, and the wrapped style when there is none. The consumer
+         * does not use it when dataFormat is CXF_MESSAGE.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -1039,7 +1113,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configure a cookie handler to maintain a HTTP session.
+         * To use a custom org.apache.camel.http.base.cookie.CookieHandler to
+         * keep the cookies of an HTTP session between the requests that the
+         * producer sends. An InstanceCookieHandler keeps the cookies in the
+         * handler itself, and an ExchangeCookieHandler keeps them in an
+         * exchange property. The consumer does not use it.
          * 
          * The option is a:
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
@@ -1054,7 +1132,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configure a cookie handler to maintain a HTTP session.
+         * To use a custom org.apache.camel.http.base.cookie.CookieHandler to
+         * keep the cookies of an HTTP session between the requests that the
+         * producer sends. An InstanceCookieHandler keeps the cookies in the
+         * handler itself, and an ExchangeCookieHandler keeps them in an
+         * exchange property. The consumer does not use it.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
@@ -1069,8 +1151,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option will set the default operationName that will be used by
-         * the CxfProducer which invokes the remote service.
+         * The name of the operation that the producer invokes. Used when the
+         * Camel message has no CamelCxfOperationName header. If neither the
+         * CamelCxfOperationName header nor this option is set, the producer
+         * invokes the first operation that CXF returns for the service, in an
+         * order that is not defined. If neither wsdlURL nor serviceClass is
+         * set, the producer sets this option to Invoke.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1084,8 +1170,14 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option will set the default operationNamespace that will be used
-         * by the CxfProducer which invokes the remote service.
+         * The namespace of the operation named by the CamelCxfOperationName
+         * header or by defaultOperationName. Used when the Camel message has no
+         * CamelCxfOperationNamespace header. If neither the
+         * CamelCxfOperationNamespace header nor this option is set, the
+         * producer uses the namespace of the service, which is the namespace of
+         * serviceName when serviceName is set. If neither wsdlURL nor
+         * serviceClass is set, the producer sets this option to
+         * http://camel.apache.org/cxf/jaxws/dispatch.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1099,8 +1191,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The hostname verifier to be used. Use the # notation to reference a
-         * HostnameVerifier from the registry.
+         * To use a custom javax.net.ssl.HostnameVerifier for the HTTPS requests
+         * that the producer sends. Not used for reading the WSDL that wsdlURL
+         * points to. The consumer does not use it.
          * 
          * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
@@ -1114,8 +1207,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The hostname verifier to be used. Use the # notation to reference a
-         * HostnameVerifier from the registry.
+         * To use a custom javax.net.ssl.HostnameVerifier for the HTTPS requests
+         * that the producer sends. Not used for reading the WSDL that wsdlURL
+         * points to. The consumer does not use it.
          * 
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.
@@ -1130,8 +1224,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The Camel SSL setting reference. Use the # notation to reference the
-         * SSL Context.
+         * To use a custom org.apache.camel.support.jsse.SSLContextParameters
+         * for the HTTPS requests that the producer sends. If not set, the
+         * component sets it to the global SSL context parameters when it
+         * creates the endpoint and its own useGlobalSslContextParameters option
+         * is true. Not used for reading the WSDL that wsdlURL points to. The
+         * consumer does not use it.
          * 
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
@@ -1146,8 +1244,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The Camel SSL setting reference. Use the # notation to reference the
-         * SSL Context.
+         * To use a custom org.apache.camel.support.jsse.SSLContextParameters
+         * for the HTTPS requests that the producer sends. If not set, the
+         * component sets it to the global SSL context parameters when it
+         * creates the endpoint and its own useGlobalSslContextParameters option
+         * is true. Not used for reading the WSDL that wsdlURL points to. The
+         * consumer does not use it.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
@@ -1162,7 +1264,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which kind of operation that CXF endpoint producer will invoke.
+         * Whether to invoke a document-literal wrapped operation in its wrapped
+         * form instead of its unwrapped form. If true and dataFormat is POJO,
+         * the Camel message body of the request must hold the wrapper object in
+         * place of the parameters of the operation. The consumer does not use
+         * it.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1177,7 +1283,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which kind of operation that CXF endpoint producer will invoke.
+         * Whether to invoke a document-literal wrapped operation in its wrapped
+         * form instead of its unwrapped form. If true and dataFormat is POJO,
+         * the Camel message body of the request must hold the wrapper object in
+         * place of the parameters of the operation. The consumer does not use
+         * it.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1192,8 +1302,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound SOAP messages to log.
+         * Whether to add a LoggingFeature, which writes the incoming and
+         * outgoing SOAP messages of the endpoint to the log. The LoggingFeature
+         * writes them with SLF4J at INFO level to loggers whose names start
+         * with org.apache.cxf.services.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1208,8 +1320,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound SOAP messages to log.
+         * Whether to add a LoggingFeature, which writes the incoming and
+         * outgoing SOAP messages of the endpoint to the log. The LoggingFeature
+         * writes them with SLF4J at INFO level to loggers whose names start
+         * with org.apache.cxf.services.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1224,8 +1338,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled and -1 for no limit.
+         * The size limit at which CXF truncates a SOAP message in the log. Sets
+         * the limit of the LoggingFeature that the endpoint adds when
+         * loggingFeatureEnabled is true. Use -1 for no limit.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1240,8 +1355,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled and -1 for no limit.
+         * The size limit at which CXF truncates a SOAP message in the log. Sets
+         * the limit of the LoggingFeature that the endpoint adds when
+         * loggingFeatureEnabled is true. Use -1 for no limit.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1256,8 +1372,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option controls whether the PhaseInterceptorChain skips logging
-         * the Fault that it catches.
+         * Whether to skip the log entry that the PhaseInterceptorChain writes
+         * when an interceptor throws an exception, for example the exception of
+         * a failed exchange of the consumer. Sets the CXF property
+         * org.apache.cxf.logging.FaultListener to a FaultListener that skips
+         * this log entry.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1272,8 +1391,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option controls whether the PhaseInterceptorChain skips logging
-         * the Fault that it catches.
+         * Whether to skip the log entry that the PhaseInterceptorChain writes
+         * when an interceptor throws an exception, for example the exception of
+         * a failed exchange of the consumer. Sets the CXF property
+         * org.apache.cxf.logging.FaultListener to a FaultListener that skips
+         * this log entry.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1288,8 +1410,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the basic authentication information of
-         * password for the CXF client.
+         * The password for HTTP Basic authentication. The producer puts it,
+         * together with the user name, in the protocol header Authorization of
+         * its HTTP requests. Only used when the username option is set. Not
+         * used for reading the WSDL that wsdlURL points to. The consumer does
+         * not use it.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1303,8 +1428,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the basic authentication information of
-         * username for the CXF client.
+         * The user name for HTTP Basic authentication. The producer puts it,
+         * together with the password, in the protocol header Authorization of
+         * its HTTP requests. Only used when the password option is set. Not
+         * used for reading the WSDL that wsdlURL points to. The consumer does
+         * not use it.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1318,7 +1446,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The bindingId for the service model to use.
+         * The id of the CXF binding, which is a namespace URI, for example
+         * http://cxf.apache.org/bindings/xformat for the XML binding without a
+         * SOAP envelope. If not set, CXF uses the binding of the wsdl:port. The
+         * id http://schemas.xmlsoap.org/wsdl/soap12/ selects SOAP 1.2 when
+         * there is no WSDL.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1366,8 +1498,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The class name of the SEI (Service Endpoint Interface) class which
-         * could have JSR181 annotation or not.
+         * The Java class of the service, for example a service endpoint
+         * interface or a class that implements one. Written as a fully
+         * qualified class name, for example org.example.orders.OrderService.
+         * Required when dataFormat is POJO, which is the default. Without a
+         * WSDL, CXF builds the service from this class.
          * 
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
@@ -1382,8 +1517,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The class name of the SEI (Service Endpoint Interface) class which
-         * could have JSR181 annotation or not.
+         * The Java class of the service, for example a service endpoint
+         * interface or a class that implements one. Written as a fully
+         * qualified class name, for example org.example.orders.OrderService.
+         * Required when dataFormat is POJO, which is the default. Without a
+         * WSDL, CXF builds the service from this class.
          * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
@@ -1486,7 +1624,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used.
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1501,7 +1644,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used.
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1516,10 +1664,14 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option controls whether the CXF component, when running in
-         * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
-         * or keep the payload as a javax.xml.transform.Source object that would
-         * allow streaming in some cases.
+         * Whether to allow CXF to keep the last message part of an incoming
+         * SOAP message as a javax.xml.transform.Source read from the stream,
+         * instead of parsing it into a DOM. Only used when dataFormat is
+         * PAYLOAD. The component sets it to the value of its own allowStreaming
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -1534,10 +1686,14 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option controls whether the CXF component, when running in
-         * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
-         * or keep the payload as a javax.xml.transform.Source object that would
-         * allow streaming in some cases.
+         * Whether to allow CXF to keep the last message part of an incoming
+         * SOAP message as a javax.xml.transform.Source read from the stream,
+         * instead of parsing it into a DOM. Only used when dataFormat is
+         * PAYLOAD. The component sets it to the value of its own allowStreaming
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -1582,9 +1738,13 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the CXF continuation timeout which could
-         * be used in CxfConsumer by default when the CXF server is using Jetty
-         * or Servlet transport.
+         * The timeout in milliseconds of the CXF continuation that the consumer
+         * uses to process the exchange asynchronously. If it expires before the
+         * route has completed, the consumer returns a fault to the client and
+         * sets an ExchangeTimedOutException on the exchange. Use 0 for no
+         * timeout. Not used when synchronous is true or when the consumer gets
+         * no continuation from the transport, for example with the JMS
+         * transport.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1599,9 +1759,13 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the CXF continuation timeout which could
-         * be used in CxfConsumer by default when the CXF server is using Jetty
-         * or Servlet transport.
+         * The timeout in milliseconds of the CXF continuation that the consumer
+         * uses to process the exchange asynchronously. If it expires before the
+         * route has completed, the consumer returns a fault to the client and
+         * sets an ExchangeTimedOutException on the exchange. Use 0 for no
+         * timeout. Not used when synchronous is true or when the consumer gets
+         * no continuation from the transport, for example with the JMS
+         * transport.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1752,9 +1916,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to merge protocol headers. If enabled then propagating
-         * headers between Camel and CXF becomes more consistent and similar.
-         * For more details see CAMEL-6393.
+         * Whether to copy a protocol header to the Camel message as one String
+         * instead of a List when it has more than one value. The values are
+         * joined by a comma and a space. This applies to the request that the
+         * consumer receives and to the response that the producer receives.
+         * Sets the exchange property CamelCxfProtocolHeadersMerged to true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1769,9 +1935,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to merge protocol headers. If enabled then propagating
-         * headers between Camel and CXF becomes more consistent and similar.
-         * For more details see CAMEL-6393.
+         * Whether to copy a protocol header to the Camel message as one String
+         * instead of a List when it has more than one value. The values are
+         * joined by a comma and a space. This applies to the request that the
+         * consumer receives and to the response that the producer receives.
+         * Sets the exchange property CamelCxfProtocolHeadersMerged to true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1786,8 +1954,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
-         * data format mode.
+         * Whether to send SOAP messages with MTOM, so that CXF writes them as
+         * XOP packages. Sets the exchange property mtom-enabled to the value of
+         * this option. The producer copies the property to the CXF request
+         * message, and the consumer copies it to the CXF response message. When
+         * dataFormat is RAW, CXF does not write the Camel message body as an
+         * XOP package.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1802,8 +1974,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
-         * data format mode.
+         * Whether to send SOAP messages with MTOM, so that CXF writes them as
+         * XOP packages. Sets the exchange property mtom-enabled to the value of
+         * this option. The producer copies the property to the CXF request
+         * message, and the consumer copies it to the CXF response message. When
+         * dataFormat is RAW, CXF does not write the Camel message body as an
+         * XOP package.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1861,8 +2037,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable schema validation for request and response. Disabled by
-         * default for performance reason.
+         * Whether to validate the incoming and outgoing SOAP messages of the
+         * endpoint against the XML schema of the service. Sets the CXF property
+         * schema-validation-enabled to the value of this option. If not set,
+         * CXF validates only when another setting enables validation, for
+         * example the SchemaValidation annotation on serviceClass. When
+         * dataFormat is RAW, CXF does not validate the messages.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -1877,8 +2057,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable schema validation for request and response. Disabled by
-         * default for performance reason.
+         * Whether to validate the incoming and outgoing SOAP messages of the
+         * endpoint against the XML schema of the service. Sets the CXF property
+         * schema-validation-enabled to the value of this option. If not set,
+         * CXF validates only when another setting enables validation, for
+         * example the SchemaValidation annotation on serviceClass. When
+         * dataFormat is RAW, CXF does not validate the messages.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -1897,7 +2081,9 @@ public interface CxfEndpointBuilderFactory {
          * Whether to skip the check that each element in the SOAP body matches
          * the message part that the operation declares. Sets the CXF property
          * soap.no.validate.parts to true. This is not XML schema validation,
-         * which schemaValidationEnabled controls.
+         * which schemaValidationEnabled controls. If dataFormat is PAYLOAD and
+         * neither wsdlURL nor serviceClass is set, the producer sets this
+         * option to true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1915,7 +2101,9 @@ public interface CxfEndpointBuilderFactory {
          * Whether to skip the check that each element in the SOAP body matches
          * the message part that the operation declares. Sets the CXF property
          * soap.no.validate.parts to true. This is not XML schema validation,
-         * which schemaValidationEnabled controls.
+         * which schemaValidationEnabled controls. If dataFormat is PAYLOAD and
+         * neither wsdlURL nor serviceClass is set, the producer sets this
+         * option to true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1987,10 +2175,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The WSDL style that describes how parameters are represented in the
-         * SOAP body. If the value is false, CXF will chose the document-literal
-         * unwrapped style, If the value is true, CXF will chose the
-         * document-literal wrapped style.
+         * Whether to use the document-literal wrapped style instead of the
+         * document-literal bare style for the operations of serviceClass. Not
+         * used for RPC-style operations or when serviceClass is a Provider.
+         * Otherwise, if not set, CXF uses the parameterStyle of the SOAPBinding
+         * annotation, and the wrapped style when there is none. The consumer
+         * does not use it when dataFormat is CXF_MESSAGE.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -2005,10 +2195,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The WSDL style that describes how parameters are represented in the
-         * SOAP body. If the value is false, CXF will chose the document-literal
-         * unwrapped style, If the value is true, CXF will chose the
-         * document-literal wrapped style.
+         * Whether to use the document-literal wrapped style instead of the
+         * document-literal bare style for the operations of serviceClass. Not
+         * used for RPC-style operations or when serviceClass is a Provider.
+         * Otherwise, if not set, CXF uses the parameterStyle of the SOAPBinding
+         * annotation, and the wrapped style when there is none. The consumer
+         * does not use it when dataFormat is CXF_MESSAGE.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -2024,8 +2216,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound SOAP messages to log.
+         * Whether to add a LoggingFeature, which writes the incoming and
+         * outgoing SOAP messages of the endpoint to the log. The LoggingFeature
+         * writes them with SLF4J at INFO level to loggers whose names start
+         * with org.apache.cxf.services.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2040,8 +2234,10 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound SOAP messages to log.
+         * Whether to add a LoggingFeature, which writes the incoming and
+         * outgoing SOAP messages of the endpoint to the log. The LoggingFeature
+         * writes them with SLF4J at INFO level to loggers whose names start
+         * with org.apache.cxf.services.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2056,8 +2252,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled and -1 for no limit.
+         * The size limit at which CXF truncates a SOAP message in the log. Sets
+         * the limit of the LoggingFeature that the endpoint adds when
+         * loggingFeatureEnabled is true. Use -1 for no limit.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2072,8 +2269,9 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled and -1 for no limit.
+         * The size limit at which CXF truncates a SOAP message in the log. Sets
+         * the limit of the LoggingFeature that the endpoint adds when
+         * loggingFeatureEnabled is true. Use -1 for no limit.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2088,8 +2286,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option controls whether the PhaseInterceptorChain skips logging
-         * the Fault that it catches.
+         * Whether to skip the log entry that the PhaseInterceptorChain writes
+         * when an interceptor throws an exception, for example the exception of
+         * a failed exchange of the consumer. Sets the CXF property
+         * org.apache.cxf.logging.FaultListener to a FaultListener that skips
+         * this log entry.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2104,8 +2305,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option controls whether the PhaseInterceptorChain skips logging
-         * the Fault that it catches.
+         * Whether to skip the log entry that the PhaseInterceptorChain writes
+         * when an interceptor throws an exception, for example the exception of
+         * a failed exchange of the consumer. Sets the CXF property
+         * org.apache.cxf.logging.FaultListener to a FaultListener that skips
+         * this log entry.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2120,8 +2324,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the basic authentication information of
-         * password for the CXF client.
+         * The password for HTTP Basic authentication. The producer puts it,
+         * together with the user name, in the protocol header Authorization of
+         * its HTTP requests. Only used when the username option is set. Not
+         * used for reading the WSDL that wsdlURL points to. The consumer does
+         * not use it.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2135,8 +2342,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the basic authentication information of
-         * username for the CXF client.
+         * The user name for HTTP Basic authentication. The producer puts it,
+         * together with the password, in the protocol header Authorization of
+         * its HTTP requests. Only used when the password option is set. Not
+         * used for reading the WSDL that wsdlURL points to. The consumer does
+         * not use it.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2150,7 +2360,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The bindingId for the service model to use.
+         * The id of the CXF binding, which is a namespace URI, for example
+         * http://cxf.apache.org/bindings/xformat for the XML binding without a
+         * SOAP envelope. If not set, CXF uses the binding of the wsdl:port. The
+         * id http://schemas.xmlsoap.org/wsdl/soap12/ selects SOAP 1.2 when
+         * there is no WSDL.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2198,8 +2412,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The class name of the SEI (Service Endpoint Interface) class which
-         * could have JSR181 annotation or not.
+         * The Java class of the service, for example a service endpoint
+         * interface or a class that implements one. Written as a fully
+         * qualified class name, for example org.example.orders.OrderService.
+         * Required when dataFormat is POJO, which is the default. Without a
+         * WSDL, CXF builds the service from this class.
          * 
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
@@ -2214,8 +2431,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * The class name of the SEI (Service Endpoint Interface) class which
-         * could have JSR181 annotation or not.
+         * The Java class of the service, for example a service endpoint
+         * interface or a class that implements one. Written as a fully
+         * qualified class name, for example org.example.orders.OrderService.
+         * Required when dataFormat is POJO, which is the default. Without a
+         * WSDL, CXF builds the service from this class.
          * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
@@ -2275,10 +2495,14 @@ public interface CxfEndpointBuilderFactory {
         }
 
         /**
-         * This option controls whether the CXF component, when running in
-         * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
-         * or keep the payload as a javax.xml.transform.Source object that would
-         * allow streaming in some cases.
+         * Whether to allow CXF to keep the last message part of an incoming
+         * SOAP message as a javax.xml.transform.Source read from the stream,
+         * instead of parsing it into a DOM. Only used when dataFormat is
+         * PAYLOAD. The component sets it to the value of its own allowStreaming
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -2293,10 +2517,14 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option controls whether the CXF component, when running in
-         * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
-         * or keep the payload as a javax.xml.transform.Source object that would
-         * allow streaming in some cases.
+         * Whether to allow CXF to keep the last message part of an incoming
+         * SOAP message as a javax.xml.transform.Source read from the stream,
+         * instead of parsing it into a DOM. Only used when dataFormat is
+         * PAYLOAD. The component sets it to the value of its own allowStreaming
+         * option when it creates the endpoint, including a bean: endpoint,
+         * unless the endpoint URI sets it. If not set, the endpoint uses the
+         * JVM system property org.apache.camel.component.cxf.streaming, and
+         * allows streaming when that property is not set either.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -2341,9 +2569,13 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the CXF continuation timeout which could
-         * be used in CxfConsumer by default when the CXF server is using Jetty
-         * or Servlet transport.
+         * The timeout in milliseconds of the CXF continuation that the consumer
+         * uses to process the exchange asynchronously. If it expires before the
+         * route has completed, the consumer returns a fault to the client and
+         * sets an ExchangeTimedOutException on the exchange. Use 0 for no
+         * timeout. Not used when synchronous is true or when the consumer gets
+         * no continuation from the transport, for example with the JMS
+         * transport.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -2358,9 +2590,13 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option is used to set the CXF continuation timeout which could
-         * be used in CxfConsumer by default when the CXF server is using Jetty
-         * or Servlet transport.
+         * The timeout in milliseconds of the CXF continuation that the consumer
+         * uses to process the exchange asynchronously. If it expires before the
+         * route has completed, the consumer returns a fault to the client and
+         * sets an ExchangeTimedOutException on the exchange. Use 0 for no
+         * timeout. Not used when synchronous is true or when the consumer gets
+         * no continuation from the transport, for example with the JMS
+         * transport.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -2511,9 +2747,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to merge protocol headers. If enabled then propagating
-         * headers between Camel and CXF becomes more consistent and similar.
-         * For more details see CAMEL-6393.
+         * Whether to copy a protocol header to the Camel message as one String
+         * instead of a List when it has more than one value. The values are
+         * joined by a comma and a space. This applies to the request that the
+         * consumer receives and to the response that the producer receives.
+         * Sets the exchange property CamelCxfProtocolHeadersMerged to true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2528,9 +2766,11 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to merge protocol headers. If enabled then propagating
-         * headers between Camel and CXF becomes more consistent and similar.
-         * For more details see CAMEL-6393.
+         * Whether to copy a protocol header to the Camel message as one String
+         * instead of a List when it has more than one value. The values are
+         * joined by a comma and a space. This applies to the request that the
+         * consumer receives and to the response that the producer receives.
+         * Sets the exchange property CamelCxfProtocolHeadersMerged to true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2545,8 +2785,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
-         * data format mode.
+         * Whether to send SOAP messages with MTOM, so that CXF writes them as
+         * XOP packages. Sets the exchange property mtom-enabled to the value of
+         * this option. The producer copies the property to the CXF request
+         * message, and the consumer copies it to the CXF response message. When
+         * dataFormat is RAW, CXF does not write the Camel message body as an
+         * XOP package.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2561,8 +2805,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
-         * data format mode.
+         * Whether to send SOAP messages with MTOM, so that CXF writes them as
+         * XOP packages. Sets the exchange property mtom-enabled to the value of
+         * this option. The producer copies the property to the CXF request
+         * message, and the consumer copies it to the CXF response message. When
+         * dataFormat is RAW, CXF does not write the Camel message body as an
+         * XOP package.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2620,8 +2868,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable schema validation for request and response. Disabled by
-         * default for performance reason.
+         * Whether to validate the incoming and outgoing SOAP messages of the
+         * endpoint against the XML schema of the service. Sets the CXF property
+         * schema-validation-enabled to the value of this option. If not set,
+         * CXF validates only when another setting enables validation, for
+         * example the SchemaValidation annotation on serviceClass. When
+         * dataFormat is RAW, CXF does not validate the messages.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -2636,8 +2888,12 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable schema validation for request and response. Disabled by
-         * default for performance reason.
+         * Whether to validate the incoming and outgoing SOAP messages of the
+         * endpoint against the XML schema of the service. Sets the CXF property
+         * schema-validation-enabled to the value of this option. If not set,
+         * CXF validates only when another setting enables validation, for
+         * example the SchemaValidation annotation on serviceClass. When
+         * dataFormat is RAW, CXF does not validate the messages.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -2656,7 +2912,9 @@ public interface CxfEndpointBuilderFactory {
          * Whether to skip the check that each element in the SOAP body matches
          * the message part that the operation declares. Sets the CXF property
          * soap.no.validate.parts to true. This is not XML schema validation,
-         * which schemaValidationEnabled controls.
+         * which schemaValidationEnabled controls. If dataFormat is PAYLOAD and
+         * neither wsdlURL nor serviceClass is set, the producer sets this
+         * option to true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2674,7 +2932,9 @@ public interface CxfEndpointBuilderFactory {
          * Whether to skip the check that each element in the SOAP body matches
          * the message part that the operation declares. Sets the CXF property
          * soap.no.validate.parts to true. This is not XML schema validation,
-         * which schemaValidationEnabled controls.
+         * which schemaValidationEnabled controls. If dataFormat is PAYLOAD and
+         * neither wsdlURL nor serviceClass is set, the producer sets this
+         * option to true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2717,11 +2977,18 @@ public interface CxfEndpointBuilderFactory {
          * Syntax: <code>cxf:beanId:address</code>
          * 
          * Path parameter: beanId
-         * To lookup an existing configured CxfEndpoint. Must used bean: as
-         * prefix.
+         * The id of a CxfEndpoint bean in the registry to use as this endpoint.
+         * Written in the path of the endpoint URI in place of the service
+         * address, with the prefix bean:, for example bean:orderEndpoint. The
+         * component sets the options of the endpoint URI on that bean, so
+         * endpoint URIs with different options must not share one bean
+         * instance.
          * 
          * Path parameter: address
-         * The service publish address.
+         * The service address, for example http://localhost:9000/orders. The
+         * consumer receives requests at this address, and the producer sends
+         * requests to it. The CamelDestinationOverrideUrl header replaces this
+         * address for a request that the producer sends over HTTP.
          * 
          * @param path beanId:address
          * @return the dsl builder
@@ -2741,11 +3008,18 @@ public interface CxfEndpointBuilderFactory {
          * Syntax: <code>cxf:beanId:address</code>
          * 
          * Path parameter: beanId
-         * To lookup an existing configured CxfEndpoint. Must used bean: as
-         * prefix.
+         * The id of a CxfEndpoint bean in the registry to use as this endpoint.
+         * Written in the path of the endpoint URI in place of the service
+         * address, with the prefix bean:, for example bean:orderEndpoint. The
+         * component sets the options of the endpoint URI on that bean, so
+         * endpoint URIs with different options must not share one bean
+         * instance.
          * 
          * Path parameter: address
-         * The service publish address.
+         * The service address, for example http://localhost:9000/orders. The
+         * consumer receives requests at this address, and the producer sends
+         * requests to it. The CamelDestinationOverrideUrl header replaces this
+         * address for a request that the producer sends over HTTP.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -2780,7 +3054,11 @@ public interface CxfEndpointBuilderFactory {
             return "CamelCxfOperationName";
         }
         /**
-         * The operation namespace.
+         * The namespace of the operation named by the CamelCxfOperationName
+         * header or by defaultOperationName. The producer uses it in place of
+         * defaultOperationNamespace to find the operation to invoke. The
+         * consumer sets it to the namespace of the operation of the request. It
+         * is not set when dataFormat is RAW.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2792,7 +3070,9 @@ public interface CxfEndpointBuilderFactory {
             return "CamelCxfOperationNamespace";
         }
         /**
-         * The destination override url.
+         * The address that the producer sends the request to, in place of the
+         * service address. With the cxf component, the HTTP transport of CXF
+         * uses it, and the Camel transport does not.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2804,7 +3084,14 @@ public interface CxfEndpointBuilderFactory {
             return "CamelDestinationOverrideUrl";
         }
         /**
-         * The response context.
+         * The CXF response context, as a Map. The producer sets it on the Camel
+         * message of the response. It holds the CXF properties of the CXF
+         * response message, for example the response code. The consumer copies
+         * its entries to the CXF response message, but exchange properties and
+         * values from the Camel message headers replace entries with the same
+         * key. The entry org.apache.cxf.message.Message.PROTOCOL_HEADERS is not
+         * used, because the consumer builds the protocol headers from the Camel
+         * message headers.
          * 
          * The option is a: {@code Map<String, Object>} type.
          * 
@@ -2816,7 +3103,10 @@ public interface CxfEndpointBuilderFactory {
             return "ResponseContext";
         }
         /**
-         * The authentication.
+         * The authenticated user of the request, as a Subject. The consumer
+         * sets it from the SecurityContext of the CXF request message: the
+         * Subject of a LoginSecurityContext, or else a new Subject with the
+         * user Principal.
          * 
          * The option is a: {@code javax.security.auth.Subject} type.
          * 
@@ -2828,7 +3118,12 @@ public interface CxfEndpointBuilderFactory {
             return "CamelAuthentication";
         }
         /**
-         * The request context.
+         * The entries to add to the CXF request context, as a Map. The producer
+         * copies them to the CXF request context, but exchange properties and
+         * values from the Camel message headers replace entries with the same
+         * key. The entry org.apache.cxf.message.Message.PROTOCOL_HEADERS is not
+         * used, because the producer builds the protocol headers from the Camel
+         * message headers.
          * 
          * The option is a: {@code Object} type.
          * 

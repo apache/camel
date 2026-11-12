@@ -39,7 +39,7 @@ public class HashicorpVaultConfiguration implements Cloneable {
     private String scheme = "https";
     @UriParam
     private String secretPath;
-    @UriParam(label = "security", defaultValue = "token", enums = "token,approle,kubernetes,jwt,cert")
+    @UriParam(label = "security", defaultValue = "token", enums = "token,approle,kubernetes,jwt,cert,aws-iam,azure-msi,gcp-gce")
     private String authentication = "token";
     @UriParam(label = "security", security = "secret")
     private String token;
@@ -63,6 +63,16 @@ public class HashicorpVaultConfiguration implements Cloneable {
     private String keyStore;
     @UriParam(label = "security", security = "secret")
     private String keyStorePassword;
+    @UriParam(label = "security")
+    private String awsIamServerId;
+    @UriParam(label = "security")
+    private String awsRegion;
+    @UriParam(label = "security")
+    private String awsStsEndpoint;
+    @UriParam(label = "security", defaultValue = "https://management.azure.com/")
+    private String azureResource = "https://management.azure.com/";
+    @UriParam(label = "security")
+    private String azureClientId;
     @UriParam
     private boolean cloud;
     @UriParam
@@ -95,9 +105,10 @@ public class HashicorpVaultConfiguration implements Cloneable {
 
     /**
      * How to log in to HashiCorp Vault: token (a fixed token), approle (a role ID and a secret ID), kubernetes (the
-     * service account token of the pod), jwt (a JWT, such as a workload identity token) or cert (the TLS client
-     * certificate of the keyStore). The token is renewed before it expires, and the endpoint logs in again when the
-     * token can no longer be renewed.
+     * service account token of the pod), jwt (a JWT, such as a workload identity token), cert (the TLS client
+     * certificate of the keyStore), aws-iam (the AWS credentials of the application), azure-msi (the Azure managed
+     * identity) or gcp-gce (the service account of the Google Compute Engine instance). The token is renewed before it
+     * expires, and the endpoint logs in again when the token can no longer be renewed.
      */
     public String getAuthentication() {
         return authentication;
@@ -141,8 +152,10 @@ public class HashicorpVaultConfiguration implements Cloneable {
     }
 
     /**
-     * The HashiCorp Vault role to log in as, for the kubernetes and jwt logins. The jwt login can leave it out when the
-     * login method has a default role.
+     * The HashiCorp Vault role to log in as, for the kubernetes, jwt, cert, aws-iam, azure-msi and gcp-gce logins. The
+     * jwt login can leave it out when the login method has a default role, the aws-iam login to log in as the role
+     * named as the IAM principal, and the cert login to let Vault pick the certificate role that trusts the
+     * certificate.
      */
     public String getRole() {
         return role;
@@ -178,7 +191,7 @@ public class HashicorpVaultConfiguration implements Cloneable {
 
     /**
      * The path the login method is mounted at in HashiCorp Vault (without auth/), when it is not the default path of
-     * the login method: approle, kubernetes or jwt
+     * the login method: approle, kubernetes, jwt, cert, aws (for aws-iam), azure (for azure-msi) or gcp (for gcp-gce)
      */
     public String getAuthMountPath() {
         return authMountPath;
@@ -215,7 +228,7 @@ public class HashicorpVaultConfiguration implements Cloneable {
     /**
      * The file with the TLS client certificate and its private key, which the endpoint presents to HashiCorp Vault: for
      * the cert login, or for a Vault that requires client certificates. A PKCS12 or JKS key store, or PEM with the
-     * certificate and the PKCS#8 private key.
+     * certificate and its unencrypted private key, in PKCS#8 or, for an RSA key, in PKCS#1.
      */
     public String getKeyStore() {
         return keyStore;
@@ -234,6 +247,67 @@ public class HashicorpVaultConfiguration implements Cloneable {
 
     public void setKeyStorePassword(String keyStorePassword) {
         this.keyStorePassword = keyStorePassword;
+    }
+
+    /**
+     * The value of the X-Vault-AWS-IAM-Server-ID header of the aws-iam login, when the AWS login of HashiCorp Vault
+     * requires one (iam_server_id_header_value)
+     */
+    public String getAwsIamServerId() {
+        return awsIamServerId;
+    }
+
+    public void setAwsIamServerId(String awsIamServerId) {
+        this.awsIamServerId = awsIamServerId;
+    }
+
+    /**
+     * The AWS region the aws-iam login signs its request for, which must be the region of awsStsEndpoint. When not set:
+     * us-east-1 with the global endpoint, else the region of the AWS SDK default region chain (such as the AWS_REGION
+     * environment variable).
+     */
+    public String getAwsRegion() {
+        return awsRegion;
+    }
+
+    public void setAwsRegion(String awsRegion) {
+        this.awsRegion = awsRegion;
+    }
+
+    /**
+     * The AWS STS endpoint of the aws-iam login, which the AWS login of HashiCorp Vault must accept (its sts_endpoint).
+     * When not set, the global endpoint https://sts.amazonaws.com/.
+     */
+    public String getAwsStsEndpoint() {
+        return awsStsEndpoint;
+    }
+
+    public void setAwsStsEndpoint(String awsStsEndpoint) {
+        this.awsStsEndpoint = awsStsEndpoint;
+    }
+
+    /**
+     * The resource (audience) of the managed identity token of the azure-msi login, which must be the resource of the
+     * Azure login of HashiCorp Vault
+     */
+    public String getAzureResource() {
+        return azureResource;
+    }
+
+    public void setAzureResource(String azureResource) {
+        this.azureResource = azureResource;
+    }
+
+    /**
+     * The client ID of a user-assigned managed identity, for the azure-msi login. When not set, the system-assigned
+     * managed identity.
+     */
+    public String getAzureClientId() {
+        return azureClientId;
+    }
+
+    public void setAzureClientId(String azureClientId) {
+        this.azureClientId = azureClientId;
     }
 
     /**

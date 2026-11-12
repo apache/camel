@@ -23,7 +23,7 @@ import io.netty.channel.ChannelPipeline;
 /**
  * Factory to create {@link ChannelPipeline} for clients, eg {@link NettyProducer}.
  * <p/>
- * Implementators must support creating a new instance of this factory which is associated to the given
+ * Implementers must support creating a new instance of this factory which is associated to the given
  * {@link NettyProducer} using the {@link #createPipelineFactory(NettyProducer)} method.
  *
  * @see ChannelInitializer

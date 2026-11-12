@@ -331,7 +331,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             if (boi != null) {
                 camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
                 LOG.trace("Set exchange property: BindingOperationInfo: {}", boi);
-                // set the message exchange patter with the boi
+                // set the message exchange pattern with the boi
                 if (boi.getOperationInfo().isOneWay()) {
                     camelExchange.setPattern(ExchangePattern.InOnly);
                 }

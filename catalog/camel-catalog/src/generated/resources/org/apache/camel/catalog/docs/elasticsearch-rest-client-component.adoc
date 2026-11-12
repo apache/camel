@@ -74,6 +74,12 @@ You can set the message exchange body to a `Map` of `String` keys & values for t
 
 |===
 
+The document id and the index name are each sent as one path segment of the request, with reserved characters such as
+`/`, `?`, `#`, `%` and spaces percent-encoded, so Elasticsearch takes them literally. A document id of `.` or `..` is
+rejected, as is an index name that contains a character Elasticsearch does not allow in an index name (`\`, `/`, `?`,
+`"`, `<`, `>`, `|`, `#` or a space). A comma separated list of index names and patterns, such as `logs-*,my_index`, can
+be used to search several indexes.
+
 == Examples
 
 === Index Content Example

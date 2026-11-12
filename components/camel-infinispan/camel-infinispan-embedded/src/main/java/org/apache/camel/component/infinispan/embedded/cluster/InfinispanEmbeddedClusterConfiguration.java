@@ -22,7 +22,7 @@ import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.manager.EmbeddedCacheManager;
 
 @SuppressWarnings("unused")
-// NOTE, altough redundant, the Cloneable interface is required during sources generation process, so it must stay.
+// NOTE, although redundant, the Cloneable interface is required during sources generation process, so it must stay.
 public class InfinispanEmbeddedClusterConfiguration
         extends InfinispanClusterConfiguration<InfinispanEmbeddedConfiguration>
         implements Cloneable {

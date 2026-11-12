@@ -23,8 +23,11 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Modifier;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.tui.bindings.BindingSets;
+import dev.tamboui.tui.bindings.Bindings;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -142,5 +145,21 @@ class AiInputLineTest {
         Buffer buffer = Buffer.empty(area);
         input.render(Frame.forTesting(buffer), area, "> ", false, text -> Optional.empty());
         return buffer;
+    }
+
+    @Test
+    void wordKeysMoveAndDeleteAWord() {
+        AiInputLine input = new AiInputLine();
+        input.insert("explain the route");
+        Bindings bindings = BindingSets.standard();
+
+        input.handleEditKey(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.CTRL, bindings));
+        input.handleEditKey(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.CTRL, bindings));
+        input.handleEditKey(KeyEvent.ofKey(KeyCode.DELETE, KeyModifiers.CTRL, bindings));
+        assertThat(input.text()).isEqualTo("explain route");
+
+        input.handleEditKey(KeyEvent.ofKey(KeyCode.RIGHT, KeyModifiers.CTRL, bindings));
+        input.handleEditKey(KeyEvent.ofChar('w', KeyModifiers.CTRL));
+        assertThat(input.text()).isEqualTo("explain ");
     }
 }

@@ -17,6 +17,8 @@
 package org.apache.camel.component.elasticsearch.rest.client;
 
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
@@ -67,6 +69,9 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
     public static final String DELETE = "DELETE";
     public static final String POST = "POST";
     public static final String GET = "GET";
+
+    // the characters that an index name must not contain, besides the comma and the wildcard of a list or pattern
+    private static final String INVALID_INDEX_NAME_CHARS = "\\/?\"<>|# ";
 
     private ElasticsearchRestClientEndpoint endpoint;
     private RestClient restClient;
@@ -205,7 +210,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
      * Generate the Request for operation CREATE_INDEX
      */
     private Request createIndexRequest(String indexName, Exchange exchange) {
-        var endpoint = String.format("/%s", indexName);
+        var endpoint = "/" + indexPath(indexName);
         var request = new Request(PUT, endpoint);
         var additionalParameters
                 = exchange.getMessage().getHeader(ElasticSearchRestClientConstant.INDEX_SETTINGS, String.class);
@@ -219,7 +224,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
      * Generate the Request for operation DELETE_INDEX
      */
     private Request deleteIndexRequest(String indexName) {
-        var endpoint = String.format("/%s", indexName);
+        var endpoint = "/" + indexPath(indexName);
         return new Request(DELETE, endpoint);
     }
 
@@ -229,12 +234,12 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
     private Request indexRequest(String indexName, Exchange exchange) throws InvalidPayloadException {
         var jsonBody = exchange.getMessage().getMandatoryBody(String.class);
 
-        var endpoint = String.format("/%s/_doc", indexName);
+        var endpoint = "/" + indexPath(indexName) + "/_doc";
 
         // Gets the id of the document if specified
-        var id = exchange.getMessage().getHeader(ElasticSearchRestClientConstant.ID);
+        var id = exchange.getMessage().getHeader(ElasticSearchRestClientConstant.ID, String.class);
         if (ObjectHelper.isNotEmpty(id)) {
-            endpoint = String.format("%s/%s", endpoint, id);
+            endpoint = endpoint + "/" + documentIdPath(id);
         }
 
         Request request = new Request(POST, endpoint);
@@ -256,7 +261,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
                         "id value is mandatory when performing GET_BY_ID operation");
             }
         }
-        var endpoint = String.format("/%s/_doc/%s", indexName, id);
+        var endpoint = "/" + indexPath(indexName) + "/_doc/" + documentIdPath(id);
         return new Request(GET, endpoint);
     }
 
@@ -273,7 +278,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
                         "id value is mandatory when performing DELETE operation");
             }
         }
-        var endpoint = String.format("/%s/_doc/%s", indexName, id);
+        var endpoint = "/" + indexPath(indexName) + "/_doc/" + documentIdPath(id);
         return new Request(DELETE, endpoint);
     }
 
@@ -281,7 +286,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
      * Generate the Request for operation SEARCH
      */
     private Request search(String indexName, Exchange exchange) {
-        var endpoint = String.format("/%s/_search", indexName);
+        var endpoint = "/" + indexPath(indexName) + "/_search";
         // Create Request : at this stage this one get all results
         Request request = new Request(GET, endpoint);
 
@@ -290,7 +295,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isNotEmpty(advancedQuery)) {
             request.setJsonEntity(advancedQuery);
         } else {
-            // check if we have criterias in the body for simple matches, to create the query Json request
+            // check if we have criteria in the body for simple matches, to create the query Json request
             var queryParameters = exchange.getMessage().getBody(Map.class);
             if (ObjectHelper.isNotEmpty(queryParameters)) {
                 var jsonRequest = createQueryFromMap(queryParameters);
@@ -305,6 +310,40 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         }
 
         return request;
+    }
+
+    /**
+     * The index name, or the comma separated list of index names, as one path segment of the request. Each name is
+     * checked against the characters Elasticsearch does not allow in an index name, except the wildcard ({@code *}) of
+     * an index pattern.
+     */
+    private static String indexPath(String indexName) {
+        for (String name : indexName.split(",", -1)) {
+            if (name.isEmpty() || ".".equals(name) || "..".equals(name)
+                    || name.chars().anyMatch(c -> INVALID_INDEX_NAME_CHARS.indexOf(c) >= 0)) {
+                throw new IllegalArgumentException(
+                        "Invalid index name: " + indexName + " (an index name must not be empty, . or .., and must not contain"
+                                                   + " \\ / ? \" < > | # or a space)");
+            }
+        }
+        return pathSegment(indexName);
+    }
+
+    /**
+     * The document id as one path segment of the request
+     */
+    private static String documentIdPath(String id) {
+        if (".".equals(id) || "..".equals(id)) {
+            throw new IllegalArgumentException("Invalid document id: " + id);
+        }
+        return pathSegment(id);
+    }
+
+    /**
+     * Encodes the value, so it is sent as one path segment, with the reserved characters percent-encoded
+     */
+    private static String pathSegment(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8).replace("+", "%20");
     }
 
     /**
@@ -357,6 +396,10 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
     String extractDocument(JsonObject doc) {
         // the document exists: for a missing document the server answers 404, which fails the request before
         Map<String, Object> map = doc.getMap("_source");
+        if (map == null) {
+            // a response without the source of the document
+            return null;
+        }
         JsonObject jsonObject = new JsonObject(map);
 
         return jsonObject.toJson();

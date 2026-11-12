@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Search criterias.
+ * Search criteria.
  */
 public class SearchCriteria implements Serializable {
 

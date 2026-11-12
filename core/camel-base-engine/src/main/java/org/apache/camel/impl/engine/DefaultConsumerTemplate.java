@@ -236,12 +236,12 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     /**
      * Extracts the body from the given result.
-     * <p/>
+     * <p>
      * If the exchange pattern is provided it will try to honor it and retrieve the body from either IN or OUT according
      * to the pattern.
      *
      * @param  result the result
-     * @return        the result, can be <tt>null</tt>.
+     * @return        the result, can be <code>null</code>.
      */
     protected Object extractResultBody(Exchange result) {
         Object answer = null;

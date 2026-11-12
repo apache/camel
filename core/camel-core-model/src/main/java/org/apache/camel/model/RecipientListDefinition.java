@@ -460,7 +460,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
 
     /**
      * Sets the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be used send using a fluent
-     * buidler.
+     * builder.
      */
     public ProcessClause<RecipientListDefinition<Type>> onPrepare() {
         ProcessClause<RecipientListDefinition<Type>> clause = new ProcessClause<>(this);

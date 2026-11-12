@@ -280,7 +280,7 @@ public class RestOpenApiReader {
         verbs.sort(new VerbOrdering(camelContext));
 
         // we need to group the operations within the same tag, so use the path as default if not configured
-        // Multi tag support for a comma delimeted tag
+        // Multi tag support for a comma delimited tag
         String[] pathAsTags = null != rest.getTag()
                 ? getValue(camelContext, rest.getTag()).split(",")
                 : null != rest.getPath()
@@ -1191,12 +1191,12 @@ public class RestOpenApiReader {
         public int compare(VerbDefinition a, VerbDefinition b) {
             String u1 = "";
             if (a.getPath() != null) {
-                // replace { with _ which comes before a when soring by char
+                // replace { with _ which comes before a when sorting by char
                 u1 = getValue(camelContext, a.getPath()).replace("{", "_");
             }
             String u2 = "";
             if (b.getPath() != null) {
-                // replace { with _ which comes before a when soring by char
+                // replace { with _ which comes before a when sorting by char
                 u2 = getValue(camelContext, b.getPath()).replace("{", "_");
             }
 

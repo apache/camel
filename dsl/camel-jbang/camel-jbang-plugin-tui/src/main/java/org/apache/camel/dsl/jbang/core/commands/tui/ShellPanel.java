@@ -669,7 +669,25 @@ class ShellPanel {
         };
     }
 
+    /**
+     * The bytes a terminal sends for a key, as xterm encodes it: Alt puts an Esc before the key, Ctrl+letter is the
+     * control character, and the arrows, Home, End, PgUp/PgDn, Delete and the function keys carry their modifiers
+     * ({@code ESC [1;5D} is Ctrl+Left), so readline's word keys (Alt+B, Alt+F, Alt+Backspace) and Ctrl+arrows work in
+     * the shell. The keys arrive with their modifiers since TamboUI 0.7, from the legacy keys and the Kitty keyboard
+     * protocol alike.
+     */
     static byte[] encodeKeyEvent(KeyEvent ke) {
+        byte[] bytes = encodeKey(ke);
+        if (bytes != null && ke.hasAlt() && bytes.length > 0 && bytes[0] != 0x1b) {
+            byte[] withEsc = new byte[bytes.length + 1];
+            withEsc[0] = 0x1b;
+            System.arraycopy(bytes, 0, withEsc, 1, bytes.length);
+            return withEsc;
+        }
+        return bytes;
+    }
+
+    private static byte[] encodeKey(KeyEvent ke) {
         if (ke.code() == KeyCode.CHAR) {
             String s = ke.string();
             if (ke.hasCtrl() && s.length() == 1) {
@@ -684,35 +702,46 @@ class ShellPanel {
             }
             return s.getBytes(StandardCharsets.UTF_8);
         }
-
-        return switch (ke.code()) {
-            case ENTER -> new byte[] { '\r' };
-            case BACKSPACE -> new byte[] { 0x7f };
-            case TAB -> new byte[] { '\t' };
-            case UP -> "\033OA".getBytes(StandardCharsets.UTF_8);
-            case DOWN -> "\033OB".getBytes(StandardCharsets.UTF_8);
-            case RIGHT -> "\033OC".getBytes(StandardCharsets.UTF_8);
-            case LEFT -> "\033OD".getBytes(StandardCharsets.UTF_8);
-            case HOME -> "\033OH".getBytes(StandardCharsets.UTF_8);
-            case END -> "\033OF".getBytes(StandardCharsets.UTF_8);
-            case PAGE_UP -> "\033[5~".getBytes(StandardCharsets.UTF_8);
-            case PAGE_DOWN -> "\033[6~".getBytes(StandardCharsets.UTF_8);
-            case INSERT -> "\033[2~".getBytes(StandardCharsets.UTF_8);
-            case DELETE -> "\033[3~".getBytes(StandardCharsets.UTF_8);
-            case F1 -> "\033OP".getBytes(StandardCharsets.UTF_8);
-            case F2 -> "\033OQ".getBytes(StandardCharsets.UTF_8);
-            case F3 -> "\033OR".getBytes(StandardCharsets.UTF_8);
-            case F4 -> "\033OS".getBytes(StandardCharsets.UTF_8);
-            case F5 -> "\033[15~".getBytes(StandardCharsets.UTF_8);
-            case F6 -> "\033[17~".getBytes(StandardCharsets.UTF_8);
-            case F7 -> "\033[18~".getBytes(StandardCharsets.UTF_8);
-            case F8 -> "\033[19~".getBytes(StandardCharsets.UTF_8);
-            case F9 -> "\033[20~".getBytes(StandardCharsets.UTF_8);
-            case F10 -> "\033[21~".getBytes(StandardCharsets.UTF_8);
-            case F11 -> "\033[23~".getBytes(StandardCharsets.UTF_8);
-            case F12 -> "\033[24~".getBytes(StandardCharsets.UTF_8);
+        // xterm's modifier parameter: 1 + Shift 1 + Alt 2 + Ctrl 4; 1 (none) is left out
+        int mod = 1 + (ke.hasShift() ? 1 : 0) + (ke.hasAlt() ? 2 : 0) + (ke.hasCtrl() ? 4 : 0);
+        String seq = switch (ke.code()) {
+            case ENTER -> "\r";
+            case BACKSPACE -> "\u007f";
+            case TAB -> ke.hasShift() ? "\033[Z" : "\t";
+            case UP -> cursorKey('A', mod);
+            case DOWN -> cursorKey('B', mod);
+            case RIGHT -> cursorKey('C', mod);
+            case LEFT -> cursorKey('D', mod);
+            case HOME -> cursorKey('H', mod);
+            case END -> cursorKey('F', mod);
+            case PAGE_UP -> tildeKey(5, mod);
+            case PAGE_DOWN -> tildeKey(6, mod);
+            case INSERT -> tildeKey(2, mod);
+            case DELETE -> tildeKey(3, mod);
+            case F1 -> cursorKey('P', mod);
+            case F2 -> cursorKey('Q', mod);
+            case F3 -> cursorKey('R', mod);
+            case F4 -> cursorKey('S', mod);
+            case F5 -> tildeKey(15, mod);
+            case F6 -> tildeKey(17, mod);
+            case F7 -> tildeKey(18, mod);
+            case F8 -> tildeKey(19, mod);
+            case F9 -> tildeKey(20, mod);
+            case F10 -> tildeKey(21, mod);
+            case F11 -> tildeKey(23, mod);
+            case F12 -> tildeKey(24, mod);
             default -> null;
         };
+        return seq != null ? seq.getBytes(StandardCharsets.UTF_8) : null;
+    }
+
+    // Esc O A without modifiers (application cursor keys), Esc [ 1 ; m A with them
+    private static String cursorKey(char key, int mod) {
+        return mod == 1 ? "\033O" + key : "\033[1;" + mod + key;
+    }
+
+    private static String tildeKey(int number, int mod) {
+        return mod == 1 ? "\033[" + number + "~" : "\033[" + number + ";" + mod + "~";
     }
 
     private static class DelegateOutputStream extends OutputStream {

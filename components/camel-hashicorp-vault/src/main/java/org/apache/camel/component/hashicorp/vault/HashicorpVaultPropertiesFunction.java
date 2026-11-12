@@ -42,16 +42,23 @@ import org.springframework.vault.support.VaultResponse;
  * <li><tt>CAMEL_HASHICORP_VAULT_HOST</tt></li>
  * <li><tt>CAMEL_HASHICORP_VAULT_PORT</tt></li>
  * <li><tt>CAMEL_HASHICORP_VAULT_SCHEME</tt></li>
- * <li><tt>CAMEL_HASHICORP_VAULT_AUTHENTICATION</tt>: token (the default), approle, kubernetes, jwt or cert</li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_AUTHENTICATION</tt>: token (the default), approle, kubernetes, jwt, cert, aws-iam,
+ * azure-msi or gcp-gce</li>
  * <li><tt>CAMEL_HASHICORP_VAULT_TOKEN</tt>, for the token login</li>
  * <li><tt>CAMEL_HASHICORP_VAULT_ROLE_ID</tt> and <tt>CAMEL_HASHICORP_VAULT_SECRET_ID</tt>, for the approle login</li>
- * <li><tt>CAMEL_HASHICORP_VAULT_ROLE</tt>, <tt>CAMEL_HASHICORP_VAULT_JWT</tt> and
- * <tt>CAMEL_HASHICORP_VAULT_JWT_FILE</tt>, for the kubernetes and jwt logins</li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_ROLE</tt>, the Vault role to log in as, for the kubernetes, jwt, cert and cloud
+ * logins</li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_JWT</tt> and <tt>CAMEL_HASHICORP_VAULT_JWT_FILE</tt>, for the kubernetes and jwt
+ * logins</li>
  * <li><tt>CAMEL_HASHICORP_VAULT_AUTH_MOUNT_PATH</tt>, when the login method is not at its default path</li>
  * <li><tt>CAMEL_HASHICORP_VAULT_TRUST_STORE</tt> and <tt>CAMEL_HASHICORP_VAULT_TRUST_STORE_PASSWORD</tt>, the
  * certificates to trust for TLS</li>
  * <li><tt>CAMEL_HASHICORP_VAULT_KEY_STORE</tt> and <tt>CAMEL_HASHICORP_VAULT_KEY_STORE_PASSWORD</tt>, the TLS client
  * certificate, for the cert login</li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_AWS_IAM_SERVER_ID</tt>, <tt>CAMEL_HASHICORP_VAULT_AWS_REGION</tt> and
+ * <tt>CAMEL_HASHICORP_VAULT_AWS_STS_ENDPOINT</tt>, for the aws-iam login</li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_AZURE_RESOURCE</tt> and <tt>CAMEL_HASHICORP_VAULT_AZURE_CLIENT_ID</tt>, for the
+ * azure-msi login</li>
  * </ul>
  * <p/>
  *
@@ -69,6 +76,9 @@ import org.springframework.vault.support.VaultResponse;
  * <li><tt>camel.vault.hashicorp.authMountPath</tt></li>
  * <li><tt>camel.vault.hashicorp.trustStore</tt> and <tt>camel.vault.hashicorp.trustStorePassword</tt></li>
  * <li><tt>camel.vault.hashicorp.keyStore</tt> and <tt>camel.vault.hashicorp.keyStorePassword</tt></li>
+ * <li><tt>camel.vault.hashicorp.awsIamServerId</tt>, <tt>camel.vault.hashicorp.awsRegion</tt> and
+ * <tt>camel.vault.hashicorp.awsStsEndpoint</tt></li>
+ * <li><tt>camel.vault.hashicorp.azureResource</tt> and <tt>camel.vault.hashicorp.azureClientId</tt></li>
  * </ul>
  * <p/>
  *

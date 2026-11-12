@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.functions;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -157,11 +159,7 @@ public class FunctionsProducer extends DefaultProducer {
         String httpMethod = configProxy.getHttpMethod(exchange);
         Map<String, String> headers = configProxy.getHttpHeaders(exchange);
 
-        if (ObjectHelper.isEmpty(functionName)) {
-            throw new IllegalArgumentException("Function name is required for invokeFunction operation");
-        }
-
-        String url = String.format("https://%s.azurewebsites.net/api/%s", functionApp, functionName);
+        String url = functionUri(functionApp, functionName).toASCIIString();
 
         // GET and DELETE send no body
         Object body = null;
@@ -190,6 +188,49 @@ public class FunctionsProducer extends DefaultProducer {
                     url, statusCode, null, null, toSingleValues(response.getHeaders()), response.getBody());
         }
         message.setBody(response.getBody());
+    }
+
+    /**
+     * The URI of the function: https://&lt;functionApp&gt;.azurewebsites.net/api/&lt;functionName&gt;. The function app
+     * must be an app name, and the function name a path relative to /api/ of one or more segments (a function with a
+     * custom route, such as products/42, has several). Characters that are not allowed in a path are encoded.
+     */
+    static URI functionUri(String functionApp, String functionName) throws URISyntaxException {
+        if (ObjectHelper.isEmpty(functionApp)) {
+            throw new IllegalArgumentException("Function app is required for invokeFunction operation");
+        }
+        if (!FunctionsEndpoint.isFunctionAppName(functionApp)) {
+            throw new IllegalArgumentException(
+                    "Function app must be an app name of letters, digits and hyphens, at most 60 characters, but was: "
+                                               + functionApp);
+        }
+        if (ObjectHelper.isEmpty(functionName)) {
+            throw new IllegalArgumentException("Function name is required for invokeFunction operation");
+        }
+        if (!isFunctionPath(functionName)) {
+            throw new IllegalArgumentException(
+                    "Function name must be a path of segments separated by /, without empty, . or .. segments,"
+                                               + " and without ?, #, \\ or %, but was: " + functionName);
+        }
+
+        String host = functionApp + ".azurewebsites.net";
+        URI uri = new URI("https", host, "/api/" + functionName, null);
+        if (!host.equalsIgnoreCase(uri.getHost())) {
+            throw new IllegalArgumentException("Function app " + functionApp + " does not give the host " + host);
+        }
+        return uri;
+    }
+
+    private static boolean isFunctionPath(String functionName) {
+        if (functionName.chars().anyMatch(c -> c == '?' || c == '#' || c == '\\' || c == '%')) {
+            return false;
+        }
+        for (String segment : functionName.split("/", -1)) {
+            if (segment.isEmpty() || ".".equals(segment) || "..".equals(segment)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean hasContentType(Map<String, String> headers) {

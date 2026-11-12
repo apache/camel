@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 
 /**
  * <code>ZookeeperConfiguration</code> encapsulates the configuration used to interact with a ZooKeeper cluster. Most
- * typically it is parsed from endpoint uri but may also be configured programatically and applied to a
+ * typically it is parsed from endpoint uri but may also be configured programmatically and applied to a
  * {@link ZooKeeperComponent}. A copy of this component's configuration will be injected into any
  * {@link ZooKeeperEndpoint}s the component creates.
  */

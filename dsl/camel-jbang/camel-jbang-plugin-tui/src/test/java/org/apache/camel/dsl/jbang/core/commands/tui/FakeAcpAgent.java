@@ -44,7 +44,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-import static org.awaitility.Awaitility.await;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiAwait.await;
 
 /**
  * In-memory ACP agent for tests. Talks newline-delimited JSON-RPC over pipes. Request handlers run on their own thread

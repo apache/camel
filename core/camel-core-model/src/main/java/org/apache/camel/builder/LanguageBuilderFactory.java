@@ -30,7 +30,6 @@ import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
-import org.apache.camel.model.language.OgnlExpression;
 import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.QuickjsExpression;
@@ -290,22 +289,6 @@ public final class LanguageBuilderFactory {
         builder.expression(expression);
         return builder;
 
-    }
-
-    /**
-     * Uses the OGNL language
-     */
-    public OgnlExpression.Builder ognl() {
-        return new OgnlExpression.Builder();
-    }
-
-    /**
-     * Uses the OGNL language
-     */
-    public OgnlExpression.Builder ognl(String expression) {
-        var builder = ognl();
-        builder.expression(expression);
-        return builder;
     }
 
     /**

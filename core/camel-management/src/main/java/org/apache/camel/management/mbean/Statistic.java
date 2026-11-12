@@ -18,10 +18,10 @@ package org.apache.camel.management.mbean;
 
 /**
  * Base implementation of {@link Statistic}
- * <p/>
- * The following modes is available:
+ * <p>
+ * The following modes are available:
  * <ul>
- * <li>VALUE - A statistic with this update mode is a simple value that is a straight forward representation of the
+ * <li>VALUE - A statistic with this update mode is a simple value that is a straightforward representation of the
  * updated value.</li>
  * <li>DELTA - A statistic with this update mode is a value that represents the delta between the last two recorded
  * values (or the initial value if two updates have not been recorded). This value can be negative if the delta goes up
@@ -32,9 +32,10 @@ package org.apache.camel.management.mbean;
  * values applied to this statistic.</li>
  * <li>MINIMUM - A statistic with this update mode is a value that represents the minimum value amongst the update
  * values applied to this statistic.</li>
- * <ul>
+ * </ul>
+ * <p>
  * The MAXIMUM and MINIMUM modes are not 100% thread-safe as there can be a lost-update problem. This is on purpose
- * because the performance overhead to ensure atomic updates costs to much on CPU and memory footprint. The other modes
+ * because the performance overhead to ensure atomic updates costs too much on CPU and memory footprint. The other modes
  * are thread-safe.
  */
 public abstract class Statistic {

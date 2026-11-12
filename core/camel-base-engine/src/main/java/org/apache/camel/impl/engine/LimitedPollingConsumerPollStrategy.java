@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.spi.PollingConsumerPollStrategy} which supports suspending consumers if they failed for X
  * number of times in a row.
- * <p/>
- * If Camel cannot successfully consumer from a given consumer, then after X consecutive failed attempts the consumer
+ * <p>
+ * If Camel cannot successfully consume from a given consumer, then after X consecutive failed attempts the consumer
  * will be suspended/stopped. This prevents the log to get flooded with failed attempts, for example during nightly
  * runs.
  */
@@ -46,8 +46,8 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
     }
 
     /**
-     * Sets the limit for how many straight rollbacks causes this strategy to suspend the fault consumer.
-     * <p/>
+     * Sets the limit for how many straight rollbacks cause this strategy to suspend the faulty consumer.
+     * <p>
      * When the consumer has been suspended, it has to be manually resumed/started to be active again. The limit is by
      * default 3.
      *
@@ -107,7 +107,7 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
      *
      * @param  consumer  the consumer
      * @param  endpoint  the endpoint
-     * @return           whether to retry immediately, is default <tt>false</tt>
+     * @return           whether to retry immediately, is <code>false</code> by default
      * @throws Exception can be thrown in case something goes wrong
      */
     protected boolean onRollback(Consumer consumer, Endpoint endpoint) throws Exception {

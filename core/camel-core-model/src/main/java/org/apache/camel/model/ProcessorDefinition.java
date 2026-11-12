@@ -555,7 +555,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a> set the {@link ExchangePattern} into
      * the {@link Exchange}.
      * <p/>
-     * The pattern set on the {@link Exchange} will be changed from this point going foward.
+     * The pattern set on the {@link Exchange} will be changed from this point going forward.
      *
      * @param  exchangePattern instance of {@link ExchangePattern}
      * @return                 the builder
@@ -569,7 +569,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a> set the {@link ExchangePattern} into
      * the {@link Exchange}.
      * <p/>
-     * The pattern set on the {@link Exchange} will be changed from this point going foward.
+     * The pattern set on the {@link Exchange} will be changed from this point going forward.
      *
      * @param  exchangePattern the exchange pattern
      * @return                 the builder
@@ -3320,7 +3320,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sorts the expression using a default sorting based on toString representation.
      *
-     * @param  expression the expression, must be convertable to {@link List}
+     * @param  expression the expression, must be convertible to {@link List}
      * @return            the builder
      */
     public Type sort(Expression expression) {
@@ -3330,7 +3330,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sorts the expression using the given comparator
      *
-     * @param  expression the expression, must be convertable to {@link List}
+     * @param  expression the expression, must be convertible to {@link List}
      * @param  comparator the comparator to use for sorting
      * @return            the builder
      */

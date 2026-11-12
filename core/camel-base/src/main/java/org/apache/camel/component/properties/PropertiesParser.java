@@ -41,7 +41,7 @@ public interface PropertiesParser {
 
     /**
      * While parsing the uri using parseUri method each parsed property found invokes this callback.
-     * <p/>
+     * <p>
      * This strategy method allows you to hook into the parsing and do custom lookup and return the actual value to use.
      *
      * @param  key        the key
@@ -55,7 +55,7 @@ public interface PropertiesParser {
      * Allow custom providers to attempt to lookup the property
      *
      * @param  key the key
-     * @return     the value if found or <tt>null</tt> if none found
+     * @return     the value if found or <code>null</code> if none found
      */
     default String customLookup(String key) {
         return null;

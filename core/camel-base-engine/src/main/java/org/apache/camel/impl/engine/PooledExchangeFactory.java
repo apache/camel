@@ -98,7 +98,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
 
     /**
      * Releases the exchange back into the pool.
-     * <p/>
+     * <p>
      * An exchange created with auto release is put into the pool when it is done. If it is not done yet (it was given
      * back without being routed) this method does that and returns whether the pool took it, so false when the pool was
      * full and the exchange was discarded. If it is already done, its unit of work has handed it to the pool before,
