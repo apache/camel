@@ -27,6 +27,9 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -241,6 +244,31 @@ class ConsumersTabRenderTest {
         // none failed: blank
         assertThat(ConsumersTab.ago(null)).isEmpty();
         assertThat(ConsumersTab.ago("-")).isEmpty();
+    }
+
+    @Test
+    void anEventDrivenConsumerHasTheTotalOfItsRoute() throws Exception {
+        // CAMEL-26864: the direct consumer of route seven received 200 messages, but had no POLLS and no count at all
+        JsonObject root = (JsonObject) Jsoner.deserialize("""
+                {"context": {"name": "hello"},
+                 "routes": [{"routeId": "seven", "statistics": {"exchangesTotal": 200}},
+                            {"routeId": "hello", "statistics": {"exchangesTotal": 1131}}],
+                 "consumers": {"consumers": [
+                    {"id": "seven", "uri": "direct://seven", "state": "Started"},
+                    {"id": "hello", "uri": "timer://tick", "state": "Started", "totalCounter": 1131}]}}
+                """);
+        IntegrationInfo parsed = StatusParser.parseIntegration(ProcessHandle.current(), root);
+        info.consumers.addAll(parsed.consumers);
+
+        ConsumersTab tab = new ConsumersTab(ctx);
+        String rendered = TuiTestHelper.renderToString(tab, 200, 10);
+        assertThat(rendered).contains("TOTAL");
+        String seven = rendered.lines().filter(l -> l.contains("direct://seven")).findFirst().orElseThrow();
+        assertThat(seven).contains(" 200 ");
+        JsonObject row = (JsonObject) ((JsonArray) tab.getTableDataAsJson().get("rows")).get(1);
+        assertThat(row.getString("id")).isEqualTo("seven");
+        assertThat(row.getLong("total")).isEqualTo(200L);
+        assertThat(row.containsKey("totalCounter")).as("a direct consumer does not poll").isFalse();
     }
 
     private ConsumerInfo addConsumer(String id, String uri, String state, String className) {

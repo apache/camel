@@ -42,7 +42,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 class ConsumersTab extends AbstractTableTab {
 
     ConsumersTab(MonitorContext ctx) {
-        super(ctx, "id", "status", "type", "remote", "inflight", "polls", "uri");
+        super(ctx, "id", "status", "type", "remote", "inflight", "polls", "total", "uri");
     }
 
     @Override
@@ -82,7 +82,7 @@ class ConsumersTab extends AbstractTableTab {
 
             // the URI gets the rest of the width: the borders, ">> ", 8 gaps and the other columns; a long id or URI
             // ends with an ellipsis where it is cut
-            int uriWidth = Math.max(0, area.width() - 2 - 3 - 9 - (20 + 10 + 16 + 8 + 8 + 22 + 8 + 10 + 10));
+            int uriWidth = Math.max(0, area.width() - 2 - 3 - 10 - (20 + 10 + 16 + 8 + 8 + 22 + 8 + 8 + 10 + 10));
             rows.add(Row.from(
                     Cell.from(Span.styled(" " + TuiHelper.truncate(ci.id, 19), Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(statusText, statusStyle)),
@@ -91,6 +91,7 @@ class ConsumersTab extends AbstractTableTab {
                     rightCell(String.valueOf(ci.inflight), 8),
                     Cell.from(schedule),
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
+                    rightCell(ci.total >= 0 ? String.valueOf(ci.total) : "", 8),
                     rightCell(last, 10),
                     lastFail.isEmpty() ? rightCell("", 10) : rightCell(lastFail, 10, Theme.error()),
                     Cell.from(Span.styled(TuiHelper.truncate(uri, uriWidth), healthDown ? Theme.error() : Style.EMPTY))));
@@ -110,6 +111,7 @@ class ConsumersTab extends AbstractTableTab {
                         rightCell(sortLabel("INFLIGHT", "inflight"), 8, sortStyle("inflight")),
                         Cell.from(Span.styled("SCHEDULE", Style.EMPTY.bold())),
                         rightCell(sortLabel("POLLS", "polls"), 8, sortStyle("polls")),
+                        rightCell(sortLabel("TOTAL", "total"), 8, sortStyle("total")),
                         rightCell("LAST", 10, Style.EMPTY.bold()),
                         rightCell("LAST FAIL", 10, Style.EMPTY.bold()),
                         Cell.from(Span.styled(sortLabel("URI", "uri"), sortStyle("uri")))))
@@ -120,6 +122,7 @@ class ConsumersTab extends AbstractTableTab {
                         Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(22),
+                        Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(10),
                         Constraint.length(10),
@@ -154,6 +157,7 @@ class ConsumersTab extends AbstractTableTab {
                 long lb = b.totalCounter != null ? b.totalCounter : 0;
                 yield Long.compare(lb, la);
             }
+            case "total" -> Long.compare(b.total, a.total);
             case "uri" -> {
                 String ua = a.uri != null ? a.uri : "";
                 String ub = b.uri != null ? b.uri : "";
@@ -355,6 +359,9 @@ class ConsumersTab extends AbstractTableTab {
             row.put("inflight", ci.inflight);
             if (ci.totalCounter != null) {
                 row.put("totalCounter", ci.totalCounter);
+            }
+            if (ci.total >= 0) {
+                row.put("total", ci.total);
             }
             if (ci.polling != null) {
                 row.put("polling", ci.polling);

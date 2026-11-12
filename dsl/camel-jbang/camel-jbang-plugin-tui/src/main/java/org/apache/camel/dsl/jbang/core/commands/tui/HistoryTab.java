@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.layout.Alignment;
@@ -1008,7 +1009,7 @@ class HistoryTab extends AbstractTab {
             routeId = e.routeId;
             nodeId = e.nodeId;
             processor = e.processor;
-            direction = e.direction;
+            direction = stepKind(e.first, e.last, e.remoteEndpoint, e.stubEndpoint);
             timestamp = e.timestamp;
             threadName = e.threadName;
             elapsed = e.elapsed;
@@ -1032,7 +1033,7 @@ class HistoryTab extends AbstractTab {
             routeId = e.routeId;
             nodeId = e.nodeId;
             processor = e.processor;
-            direction = e.direction;
+            direction = stepKind(e.first, e.last, e.remoteEndpoint, e.stubEndpoint);
             timestamp = e.timestamp;
             threadName = e.threadName;
             elapsed = e.elapsed;
@@ -1118,12 +1119,7 @@ class HistoryTab extends AbstractTab {
         boolean propsChanged = changes.length() > 2 && changes.charAt(2) == 'P';
         boolean varsChanged = changes.length() > 3 && changes.charAt(3) == 'V';
 
-        List<Span> changeSpans = new ArrayList<>();
-        changeSpans.add(Span.styled(" Changed:  ", Theme.muted()));
-        if (!changes.isBlank()) {
-            changeSpans.addAll(buildChangeSpans(changes));
-        }
-        lines.add(Line.from(changeSpans));
+        lines.add(Line.from(Span.styled(" Changed:  ", Theme.muted()), changedWords(changes, stepIdx == 0)));
 
         boolean isTraceMode = !diagramTraceSteps.isEmpty();
         boolean showBody = isTraceMode ? showTraceBody : showHistoryBody;
@@ -1956,6 +1952,35 @@ class HistoryTab extends AbstractTab {
                 Cell.from(TuiHelper.truncate(indent + display, processorWidth(areaWidth))),
                 Cell.from(Line.from(changeSpans)),
                 rightCell(elapsedStr, 10));
+    }
+
+    /**
+     * What a step is, in words, for the Info panel; the table has the markers of camel get history ({@code *->},
+     * {@code <-*}, {@code --->}, {@code ~-->}) in a column of its own. Empty for a step inside the route.
+     */
+    static String stepKind(boolean first, boolean last, boolean remote, boolean stub) {
+        String where = stub ? " (stub)" : remote ? " (remote)" : "";
+        if (first) {
+            return "message in" + where;
+        } else if (last) {
+            return "message out" + where;
+        }
+        return stub ? "to a stub" : remote ? "to a remote endpoint" : "";
+    }
+
+    /** What the step changed, in words (the table has the letters B, H, P and V): "body, headers", or nothing. */
+    static Span changedWords(String changes, boolean firstStep) {
+        if (firstStep) {
+            return Span.styled("(first step)", Style.EMPTY.dim());
+        }
+        String[] words = { "body", "headers", "properties", "variables" };
+        StringJoiner sj = new StringJoiner(", ");
+        for (int i = 0; i < Math.min(changes.length(), words.length); i++) {
+            if (changes.charAt(i) != ' ') {
+                sj.add(words[i]);
+            }
+        }
+        return sj.length() > 0 ? Span.styled(sj.toString(), Theme.change()) : Span.styled("nothing", Style.EMPTY.dim());
     }
 
     private static List<Span> buildChangeSpans(String changes) {

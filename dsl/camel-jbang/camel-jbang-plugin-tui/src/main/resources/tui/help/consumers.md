@@ -17,6 +17,7 @@ There are two types of consumers:
 - **STATUS** — Consumer state: `Started` (running normally), `Polling` (currently in a poll cycle). Shows a health warning icon if the consumer health check is `DOWN`
 - **TYPE** — The Camel component type (e.g., `kafka`, `file`, `timer`, `cron`, `seda`)
 - **POLLS** — Total number of poll cycles the scheduler has executed. This counts poll **attempts**, not messages received — a poll may check for new files and find none. For event-driven consumers (like `seda`), this column is empty
+- **TOTAL** — The messages the consumer received: the exchanges of its route. It is there for every consumer, also an event-driven one (`direct`, `seda`) that has no POLLS
 - **SCHEDULE** — How often the consumer polls: a fixed interval like `1s` or `5000ms`, or a cron expression like `0 0/5 * * *`. Only shown for polling consumers
 - **LAST** — How long ago the consumer's last exchange completed (or started, when none has completed yet). A consumer that should be busy but has a long LAST is stale
 - **LAST FAIL** — How long ago its last exchange failed, in red; blank when none did
@@ -25,13 +26,13 @@ There are two types of consumers:
 ## Example Screen
 
 ```
- ROUTE           STATUS   TYPE     POLLS  SCHEDULE      LAST  LAST FAIL  URI
- timer-to-log    Started  timer    17     2s          1s ago             timer://hello?period=2000
- timer-to-seda   Started  timer    12     3s          0s ago    5m ago   timer://pump?period=3000
- seda-consumer   Started  seda                        0s ago             seda://queue
+ ROUTE           STATUS   TYPE   REMOTE  INFLIGHT  SCHEDULE  POLLS  TOTAL    LAST  LAST FAIL  URI
+ timer-to-log    Started  timer                 0  2s           17     17  1s ago             timer://hello?period=2000
+ timer-to-seda   Started  timer                 0  3s           12     12  0s ago     5m ago  timer://pump?period=3000
+ seda-consumer   Started  seda                  0                      12  0s ago             seda://queue
 ```
 
-Notice that `seda-consumer` has no POLLS or SCHEDULE because it is
+Notice that `seda-consumer` has no POLLS or SCHEDULE, only a TOTAL, because it is
 event-driven — it reacts immediately when a message is put into the
 SEDA queue by another route.
 
