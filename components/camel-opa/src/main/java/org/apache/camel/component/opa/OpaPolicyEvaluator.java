@@ -177,12 +177,15 @@ public abstract class OpaPolicyEvaluator {
 
     /**
      * Authorizes a list in one call and records the per-element verdicts in {@link OpaConstants#BATCH_DECISION}, a
-     * {@code List<Boolean>} parallel to the input.
+     * {@code List<Boolean>} parallel to the input, and the per-element {@link OpaBatchOutcome}s in
+     * {@link OpaConstants#BATCH_OUTCOMES}, which also say why an element has no decision.
+     * {@link OpaConstants#DECISION_FAILED_OPEN} is set when any element proceeded because it failed open.
      * <p/>
      * Fail-closed is per element: an element whose evaluation failed is denied while the others decide normally, and
      * under {@code failOpen} it is allowed only when its decision point was unavailable. Only a batch call that fails
      * as a whole denies every element - or, under {@code failOpen}, allows every element when the server could not be
-     * reached.
+     * reached. The outcomes report that case like an element whose own decision point was unavailable: every element is
+     * {@code UNAVAILABLE} and failed open; they do not say which of the two happened.
      */
     public List<Boolean> evaluateBatch(Exchange exchange, List<?> elements) throws OpaPolicyEvaluationException {
         clearDecisionHeaders(exchange);

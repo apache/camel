@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.opa;
 
+import java.io.Serializable;
+
 /**
  * An immutable batch element outcome, distinguishing a policy decision from a failure to obtain one.
  * <p/>
  * The decision is the normalized Boolean policy verdict, not the raw decision document. Failure messages and exceptions
  * are deliberately omitted: they can contain request data or credentials.
+ * <p/>
+ * Serializable, so that the header holding the outcomes survives an aggregation repository that stores headers.
  */
-public final class OpaBatchOutcome {
+public final class OpaBatchOutcome implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public enum FailureCategory {
         NONE,
@@ -70,5 +76,11 @@ public final class OpaBatchOutcome {
     /** Whether the element proceeded only because failOpen was enabled and its decision point was unavailable. */
     public boolean isFailedOpen() {
         return failedOpen;
+    }
+
+    @Override
+    public String toString() {
+        return "OpaBatchOutcome[allowed=" + allowed + ", decision=" + decision + ", failureCategory=" + failureCategory
+               + ", failedOpen=" + failedOpen + "]";
     }
 }

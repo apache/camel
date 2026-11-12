@@ -324,7 +324,9 @@ These outcomes contain no exception objects or failure messages. A genuine polic
 `failureCategory=NONE` and `failedOpen=false`. An unavailable element allowed under `failOpen` has
 `allowed=true`, `decision=null`, `failureCategory=UNAVAILABLE` and `failedOpen=true`.
 `CamelOpaDecisionFailedOpen=true` marks a batch whenever *any* element failed open; inspect the outcomes to identify
-which ones. Empty batches return empty verdict and outcome lists. A whole-batch failure that fails closed carries
+which ones. A call that could not reach the server at all is reported like an element whose own decision point was
+unavailable: under `failOpen` every element is `UNAVAILABLE` and `failedOpen=true`, and the outcomes do not say which
+of the two happened, since the route proceeds the same way in both cases. Empty batches return empty verdict and outcome lists. A whole-batch failure that fails closed carries
 neither list. The outcome header and aggregate marker are cleared before every evaluation, including a subsequent
 single-element evaluation.
 
