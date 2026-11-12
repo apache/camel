@@ -153,8 +153,9 @@ public class HashicorpVaultConfiguration implements Cloneable {
 
     /**
      * The HashiCorp Vault role to log in as, for the kubernetes, jwt, cert, aws-iam, azure-msi and gcp-gce logins. The
-     * jwt login can leave it out when the login method has a default role, and the cert login to let Vault pick the
-     * certificate role that trusts the certificate.
+     * jwt login can leave it out when the login method has a default role, the aws-iam login to log in as the role
+     * named as the IAM principal, and the cert login to let Vault pick the certificate role that trusts the
+     * certificate.
      */
     public String getRole() {
         return role;
@@ -261,8 +262,8 @@ public class HashicorpVaultConfiguration implements Cloneable {
     }
 
     /**
-     * The AWS region the aws-iam login signs its request for, which must be the region of awsStsEndpoint: us-east-1 for
-     * the global endpoint. When not set, the region of the AWS SDK default region chain (such as the AWS_REGION
+     * The AWS region the aws-iam login signs its request for, which must be the region of awsStsEndpoint. When not set:
+     * us-east-1 with the global endpoint, else the region of the AWS SDK default region chain (such as the AWS_REGION
      * environment variable).
      */
     public String getAwsRegion() {

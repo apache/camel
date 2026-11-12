@@ -18,6 +18,8 @@ package org.apache.camel.component.hashicorp.vault;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +30,14 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.vault.authentication.AzureMsiAuthenticationOptions;
 import org.springframework.vault.authentication.GcpComputeAuthenticationOptions;
 import org.springframework.vault.support.VaultResponse;
 import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,7 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class HashicorpVaultCloudLoginTest {
 
     // the AWS SDK default chain reads the credentials and the region from these system properties first
-    private static final List<String> AWS_PROPERTIES = List.of("aws.accessKeyId", "aws.secretAccessKey", "aws.region");
+    private static final List<String> AWS_PROPERTIES
+            = List.of("aws.accessKeyId", "aws.secretAccessKey", "aws.region", "aws.webIdentityTokenFile");
 
     private final Map<String, String> savedProperties = new HashMap<>();
     private FakeVault vault;
@@ -110,7 +115,9 @@ class HashicorpVaultCloudLoginTest {
     }
 
     @Test
-    void awsIamSignsForTheGlobalEndpointAndTheRegionOfTheAwsSdkByDefault() {
+    void awsIamSignsForUsEast1WithTheGlobalEndpointByDefault() {
+        // the region of the application, which the global endpoint would refuse
+        System.setProperty("aws.region", "eu-west-1");
         vault.on("auth/my-aws/login", request -> FakeVault.login("aws-token", 3600));
         HashicorpVaultClientSettings settings = settings("aws-iam");
         settings.setRole("camel");
@@ -125,6 +132,48 @@ class HashicorpVaultCloudLoginTest {
         assertNull(headers.get("X-Vault-AWS-IAM-Server-ID"));
         String authorization = ((List<?>) headers.get("Authorization")).get(0).toString();
         assertTrue(authorization.contains("/us-east-1/sts/aws4_request"), authorization);
+    }
+
+    @Test
+    void awsIamSignsForTheRegionOfTheAwsSdkWithARegionalEndpoint() {
+        System.setProperty("aws.region", "eu-central-1");
+        vault.on("auth/aws/login", request -> FakeVault.login("aws-token", 3600));
+        HashicorpVaultClientSettings settings = settings("aws-iam");
+        settings.setRole("camel");
+        settings.setAwsStsEndpoint("https://sts.eu-central-1.amazonaws.com");
+        client = HashicorpVaultClient.create(context, this, settings);
+
+        assertEquals("pw", readPassword());
+
+        Map<?, ?> login = vault.requests("auth/aws/login").get(0).json();
+        assertEquals("https://sts.eu-central-1.amazonaws.com", decode(login.get("iam_request_url")));
+        Map<?, ?> headers = JsonMapper.builder().build().readValue(decode(login.get("iam_request_headers")), Map.class);
+        String authorization = ((List<?>) headers.get("Authorization")).get(0).toString();
+        assertTrue(authorization.contains("/eu-central-1/sts/aws4_request"), authorization);
+    }
+
+    @Test
+    void awsIamLogsInWithoutRoleAsTheRoleOfTheIamPrincipal() {
+        vault.on("auth/aws/login", request -> FakeVault.login("aws-token", 3600));
+        client = HashicorpVaultClient.create(context, this, settings("aws-iam"));
+
+        assertEquals("pw", readPassword());
+        assertFalse(vault.requests("auth/aws/login").get(0).json().containsKey("role"));
+    }
+
+    @Test
+    void awsIamWithAWebIdentityTokenNeedsTheStsModuleOfTheAwsSdk(@TempDir Path dir) throws Exception {
+        // the test classpath has the auth module of the AWS SDK, but not its sts module
+        Path token = dir.resolve("token");
+        Files.writeString(token, "web-identity-jwt");
+        System.setProperty("aws.webIdentityTokenFile", token.toString());
+        HashicorpVaultClientSettings settings = settings("aws-iam");
+
+        IllegalArgumentException e
+                = assertThrows(IllegalArgumentException.class, () -> HashicorpVaultClient.validate(settings));
+        assertEquals("The aws-iam login with a web identity token (AWS_WEB_IDENTITY_TOKEN_FILE) needs the sts module of the"
+                     + " AWS SDK: add the software.amazon.awssdk:sts dependency",
+                e.getMessage());
     }
 
     @Test
@@ -169,8 +218,8 @@ class HashicorpVaultCloudLoginTest {
     }
 
     @Test
-    void theCloudLoginsNeedARole() {
-        for (String login : List.of("aws-iam", "azure-msi", "gcp-gce")) {
+    void theAzureAndGcpLoginsNeedARole() {
+        for (String login : List.of("azure-msi", "gcp-gce")) {
             HashicorpVaultClientSettings settings = settings(login);
             IllegalArgumentException e
                     = assertThrows(IllegalArgumentException.class, () -> HashicorpVaultClient.validate(settings));

@@ -176,9 +176,7 @@ public final class HashicorpVaultClient implements Closeable {
                 }
             }
             case KUBERNETES -> {
-                if (ObjectHelper.isEmpty(settings.getRole())) {
-                    throw new IllegalArgumentException("The kubernetes login needs a role");
-                }
+                validateRole(settings, "kubernetes");
                 validateJwt(settings, "kubernetes");
             }
             case JWT -> {
@@ -197,11 +195,12 @@ public final class HashicorpVaultClient implements Closeable {
                 }
             }
             case AWS_IAM -> {
-                validateRole(settings, "aws-iam");
+                // no role: Vault takes the role named as the IAM principal
                 if (ObjectHelper.loadClass(AWS_SDK_CLASS, HashicorpVaultClient.class.getClassLoader()) == null) {
                     throw new IllegalArgumentException(
                             "The aws-iam login needs the AWS SDK: add the software.amazon.awssdk:auth dependency");
                 }
+                HashicorpVaultAwsIam.validate();
             }
             case AZURE_MSI -> validateRole(settings, "azure-msi");
             case GCP_GCE -> validateRole(settings, "gcp-gce");

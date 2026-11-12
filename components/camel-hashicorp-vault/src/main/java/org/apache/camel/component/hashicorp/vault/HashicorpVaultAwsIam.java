@@ -26,6 +26,7 @@ import org.springframework.vault.authentication.ClientAuthentication;
 import org.springframework.vault.client.VaultClient;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.core.SdkSystemSetting;
 import software.amazon.awssdk.regions.Region;
 
 /**
@@ -34,13 +35,35 @@ import software.amazon.awssdk.regions.Region;
  */
 final class HashicorpVaultAwsIam {
 
+    // the class of the sts module of the AWS SDK that the web identity provider of the default chain loads
+    private static final String STS_WEB_IDENTITY_FACTORY
+            = "software.amazon.awssdk.services.sts.internal.StsWebIdentityCredentialsProviderFactory";
+
     private HashicorpVaultAwsIam() {
     }
 
     /**
+     * Checks that the AWS SDK can use the web identity token of the application, when it has one: without the sts
+     * module, the default chain skips the web identity token and goes on to other credentials, such as those of the
+     * instance, so the application would log in to Vault as another identity than its own.
+     *
+     * @throws IllegalArgumentException when a web identity token is set and the sts module is missing
+     */
+    static void validate() {
+        // read as the web identity provider of the AWS SDK reads it: system property, then environment variable
+        if (SdkSystemSetting.AWS_WEB_IDENTITY_TOKEN_FILE.getStringValue().isPresent()
+                && ObjectHelper.loadClass(STS_WEB_IDENTITY_FACTORY, HashicorpVaultAwsIam.class.getClassLoader()) == null) {
+            throw new IllegalArgumentException(
+                    "The aws-iam login with a web identity token (AWS_WEB_IDENTITY_TOKEN_FILE) needs the sts module of the"
+                                               + " AWS SDK: add the software.amazon.awssdk:sts dependency");
+        }
+    }
+
+    /**
      * The aws-iam login, which signs its request with the credentials of the AWS SDK default chain: environment
-     * variables, system properties, web identity token (such as IAM roles for service accounts on EKS), profile,
-     * container (ECS) or instance profile (EC2).
+     * variables, system properties, web identity token (such as IAM roles for service accounts on EKS, with the sts
+     * module of the AWS SDK), profile (with the sso and ssooidc modules for an SSO profile), container (ECS) or
+     * instance profile (EC2).
      *
      * @param closeOnStop takes the credentials provider, to close with the client
      */
@@ -53,10 +76,16 @@ final class HashicorpVaultAwsIam {
 
     static AwsIamAuthenticationOptions options(HashicorpVaultClientSettings settings, AwsCredentialsProvider credentials) {
         AwsIamAuthenticationOptions.AwsIamAuthenticationOptionsBuilder builder = AwsIamAuthenticationOptions.builder()
-                .credentialsProvider(credentials)
-                .role(settings.getRole());
+                .credentialsProvider(credentials);
+        if (ObjectHelper.isNotEmpty(settings.getRole())) {
+            // without a role, Vault takes the role named as the IAM principal
+            builder.role(settings.getRole());
+        }
         if (ObjectHelper.isNotEmpty(settings.getAwsRegion())) {
             builder.region(Region.of(settings.getAwsRegion()));
+        } else if (ObjectHelper.isEmpty(settings.getAwsStsEndpoint())) {
+            // the global endpoint takes requests signed for us-east-1, whatever the region of the application
+            builder.region(Region.US_EAST_1);
         }
         if (ObjectHelper.isNotEmpty(settings.getAwsStsEndpoint())) {
             builder.endpointUri(URI.create(settings.getAwsStsEndpoint()));
