@@ -362,8 +362,10 @@ public interface InfluxDb2EndpointBuilderFactory {
             return "CamelInfluxDB2MeasurementName";
         }
         /**
-         * The string that defines the retention policy to the data created by
-         * the endpoint.
+         * (deprecated) Never read: InfluxDB 2.x has no per-write retention
+         * policy. Deprecation note: Never read by the component: the InfluxDB
+         * 2.x write API has no retention policy, retention is a property of the
+         * bucket.
          * 
          * The option is a: {@code String} type.
          * 
@@ -371,6 +373,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * 
          * @return the name of the header {@code InfluxDB.RetentionPolicy}.
          */
+        @Deprecated
         public String influxdbRetentionpolicy() {
             return "camelInfluxDB.RetentionPolicy";
         }
