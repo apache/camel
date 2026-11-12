@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import eu.maveniverse.maven.mima.context.Context;
@@ -58,6 +59,8 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.DependencyCollectionContext;
+import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.metadata.DefaultMetadata;
@@ -78,6 +81,7 @@ import org.eclipse.aether.resolution.MetadataRequest;
 import org.eclipse.aether.resolution.MetadataResult;
 import org.eclipse.aether.transfer.MetadataNotFoundException;
 import org.eclipse.aether.transfer.RepositoryOfflineException;
+import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.repository.SimpleArtifactDescriptorPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -577,12 +581,64 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             List<String> dependencyGAVs, Set<String> extraRepositories,
             boolean transitively, boolean useApacheSnapshots)
             throws MavenResolutionException {
+        return resolveArtifacts(rootGav, dependencyGAVs, extraRepositories, transitively, useApacheSnapshots, null);
+    }
+
+    @Override
+    public List<MavenArtifact> resolveArtifacts(
+            String rootGav,
+            List<String> dependencyGAVs, Set<String> extraRepositories,
+            boolean transitively, boolean useApacheSnapshots, Predicate<MavenGav> available)
+            throws MavenResolutionException {
 
         // When preferLocal is enabled, what is already in the local repository is used as is: SNAPSHOT
         // metadata is not checked again remotely, while anything missing is still downloaded
         RepositorySystemSession session = preferLocal && !fresh ? getPreferLocalSession() : repositorySystemSession;
+        if (available != null && transitively) {
+            // leave out what is already available, with its dependencies, so it is not downloaded
+            DefaultRepositorySystemSession availableSession = new DefaultRepositorySystemSession(session);
+            availableSession.setDependencySelector(AndDependencySelector.newInstance(
+                    session.getDependencySelector(), new AvailableDependencySelector(available)));
+            session = availableSession;
+        }
         return doResolveArtifacts(rootGav, dependencyGAVs, extraRepositories,
                 transitively, useApacheSnapshots, session);
+    }
+
+    /**
+     * Leaves out the dependencies that are already available, such as on the classpath, together with their own
+     * dependencies.
+     */
+    static final class AvailableDependencySelector implements DependencySelector {
+
+        private final Predicate<MavenGav> available;
+
+        AvailableDependencySelector(Predicate<MavenGav> available) {
+            this.available = available;
+        }
+
+        @Override
+        public boolean selectDependency(Dependency dependency) {
+            Artifact a = dependency.getArtifact();
+            return !available.test(MavenGav.fromCoordinates(a.getGroupId(), a.getArtifactId(), a.getBaseVersion(),
+                    a.getExtension(), a.getClassifier()));
+        }
+
+        @Override
+        public DependencySelector deriveChildSelector(DependencyCollectionContext context) {
+            return this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            // the collector caches by selector
+            return o instanceof AvailableDependencySelector other && available == other.available;
+        }
+
+        @Override
+        public int hashCode() {
+            return System.identityHashCode(available);
+        }
     }
 
     private RepositorySystemSession getPreferLocalSession() {
