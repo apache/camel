@@ -19,6 +19,7 @@ package org.apache.camel.component.vertx;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxBuilder;
@@ -162,6 +163,7 @@ public class VertxComponent extends DefaultComponent {
             createdVertx = true;
 
             final CountDownLatch latch = new CountDownLatch(1);
+            final AtomicReference<Throwable> failure = new AtomicReference<>();
 
             // lets using a host / port if a host name is specified
             if (clustered) {
@@ -170,8 +172,7 @@ public class VertxComponent extends DefaultComponent {
                 // use the async api as we want to wait for the eventbus to be ready before we are in started state
                 vertxFactory.buildClustered().onComplete(event -> {
                     if (event.cause() != null) {
-                        LOG.warn("Error creating Clustered Vertx {}:{} due {}", host, port,
-                                event.cause().getMessage(), event.cause());
+                        failure.set(event.cause());
                     } else if (event.succeeded()) {
                         vertx = event.result();
                         LOG.info("EventBus is ready: {}", vertx);
@@ -188,7 +189,20 @@ public class VertxComponent extends DefaultComponent {
 
             if (latch.getCount() > 0) {
                 LOG.info("Waiting for EventBus to be ready using {} sec as timeout", timeout);
-                latch.await(timeout, TimeUnit.SECONDS);
+                if (!latch.await(timeout, TimeUnit.SECONDS)) {
+                    throw new IllegalStateException(
+                            "The Vert.x EventBus was not ready within the timeout of " + timeout + " seconds");
+                }
+            }
+
+            // the component must not reach the started state with a half-built Vert.x: every endpoint created
+            // afterwards would dereference it
+            if (failure.get() != null) {
+                throw new IllegalStateException(
+                        "Error creating Clustered Vertx " + host + ":" + port, failure.get());
+            }
+            if (vertx == null) {
+                throw new IllegalStateException("The Vert.x instance was not created");
             }
         } else {
             LOG.debug("Using Vertx instance set on the component level.");
