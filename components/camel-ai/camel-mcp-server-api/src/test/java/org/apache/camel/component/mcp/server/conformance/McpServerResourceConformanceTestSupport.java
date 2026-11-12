@@ -112,7 +112,7 @@ public abstract class McpServerResourceConformanceTestSupport extends CamelTestS
                 from("ai-resource:slow_resource?resourceUri=camel:///slow&tags=" + CONFORMANCE_TAG
                      + "&description=Exceeds the resource timeout")
                         .routeId("slow-resource-route")
-                        .delay(RESOURCE_TIMEOUT_MILLIS * 3)
+                        .delay(RESOURCE_TIMEOUT_MILLIS + 1000)
                         .setBody(constant("done"));
 
                 from("ai-resource:hidden_resource?resourceUri=camel:///hidden"
