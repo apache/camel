@@ -106,28 +106,39 @@ class PluginFilteringTest {
                 .containsKey("beta");
     }
 
-    // ---- Legacy plugins without appliesTo are loaded for built-in commands (backward compat) ----
+    // ---- Legacy plugins without appliesTo: backward compat only for CliExportContext ----
 
     @Test
-    void legacyPluginWithoutAppliesToIsLoadedForRunTarget() throws Exception {
+    void legacyPluginIsLoadedForRunTargetWithLegacyContributors() throws Exception {
         writeTwoPluginConfig("alpha", "beta");
 
         CamelJBangMain main = new CamelJBangMain();
-        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "run");
+        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "run", true);
 
         assertThat(plugins).containsKey("alpha")
                 .containsKey("beta");
     }
 
     @Test
-    void legacyPluginWithoutAppliesToIsLoadedForExportTarget() throws Exception {
+    void legacyPluginIsLoadedForExportTargetWithLegacyContributors() throws Exception {
         writeTwoPluginConfig("alpha", "beta");
 
         CamelJBangMain main = new CamelJBangMain();
-        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "export");
+        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "export", true);
 
         assertThat(plugins).containsKey("alpha")
                 .containsKey("beta");
+    }
+
+    @Test
+    void legacyPluginIsSkippedForRunTargetWithoutLegacyContributors() throws Exception {
+        writeTwoPluginConfig("alpha", "beta");
+
+        CamelJBangMain main = new CamelJBangMain();
+        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "run");
+
+        assertThat(plugins).doesNotContainKey("alpha")
+                .doesNotContainKey("beta");
     }
 
     // ---- A broken unrelated plugin should not break the "run" target ----
@@ -256,6 +267,47 @@ class PluginFilteringTest {
         assertThat(runPlugins).doesNotContainKey("test");
     }
 
+    // ---- resolved.appliesTo is only trusted when the Camel version matches ----
+
+    @Test
+    void resolvedAppliesToIsUsedWhenCamelVersionMatches() throws Exception {
+        Path jar = tempDir.resolve("fake-exporter.jar");
+        FakePluginJar.write(jar, "exporter");
+
+        // entry with resolved block matching the current Camel version, appliesTo: ["export"]
+        JsonObject entry = buildEntry("exporter", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
+        JsonObject resolved = (JsonObject) entry.getMap("resolved");
+        resolved.put("appliesTo", jsonArray("export"));
+        writeConfig(entry);
+
+        CamelJBangMain main = new CamelJBangMain();
+
+        // resolved.appliesTo says "export" and the version matches — plugin is skipped for "run"
+        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "run", true);
+        assertThat(plugins).doesNotContainKey("exporter");
+    }
+
+    @Test
+    void staleResolvedAppliesToIsIgnored() throws Exception {
+        // entry with resolved block from a DIFFERENT Camel version, appliesTo: ["export"]
+        // No valid jar — resolution will fail, proving the plugin was NOT filtered out.
+        JsonObject entry = buildBrokenEntry("exporter");
+        JsonObject resolved = new JsonObject();
+        resolved.put("camelVersion", "0.0.0-stale");
+        resolved.put("appliesTo", jsonArray("export"));
+        entry.put("resolved", resolved);
+        writeConfig(entry);
+
+        CamelJBangMain main = new CamelJBangMain();
+
+        // The resolved.appliesTo says "export", but the camelVersion is stale so it is ignored.
+        // With legacyContributors=true, the plugin passes the filter for "run" (treated as legacy).
+        // Resolution fails — the exception proves the stale appliesTo did not filter it out.
+        assertThatThrownBy(() -> PluginHelper.getActivePlugins(main, null, "run", true))
+                .isInstanceOf(CliException.class)
+                .hasMessageContaining("camel-jbang-plugin-exporter not found");
+    }
+
     // ---- CliExportContext should not resolve unrelated plugins (with explicit appliesTo) ----
 
     @Test
@@ -336,23 +388,20 @@ class PluginFilteringTest {
     // ---- A broken unrelated plugin should not break addPlugins for "run" ----
 
     @Test
-    void brokenUnrelatedPluginDoesNotBreakAddPluginsForRun() throws Exception {
+    void brokenLegacyPluginDoesNotBreakAddPluginsForRun() throws Exception {
         Path goodJar = tempDir.resolve("fake-good.jar");
         FakePluginJar.write(goodJar, "good");
 
-        // broken plugin with empty appliesTo — explicitly not related to "run"
-        JsonObject brokenEntry = buildBrokenEntry("broken");
-        brokenEntry.put("appliesTo", jsonArray());
-
+        // broken plugin without appliesTo — legacy entry; addPlugins uses the default
+        // non-legacy path, so this plugin is skipped for "run"
         writeConfig(
                 buildEntry("good", camelVersion, goodJar, Files.getLastModifiedTime(goodJar).toMillis()),
-                brokenEntry);
+                buildBrokenEntry("broken"));
 
         CamelJBangMain main = new CamelJBangMain().withPrinter(new StringPrinter());
         CommandTree commandLine = new CommandTree(main);
         commandLine.addSubcommand("run", new CommandTree(new NoOpCommand()));
 
-        // addPlugins for "run" should skip the broken plugin since its appliesTo excludes "run"
         assertThatCode(() -> PluginHelper.addPlugins(commandLine, main, "run", "foo.yaml"))
                 .doesNotThrowAnyException();
     }

@@ -1185,12 +1185,13 @@ A CLI plugin can now declare which built-in commands it participates in beyond i
 `@CamelJBangPlugin(name = "...", firstVersion = "...", appliesTo = {"export"})` so it is loaded during `camel export`
 but not during `camel run`.
 
-Existing plugins that do not declare `appliesTo` are loaded for all built-in commands as before (backward compatible).
-Once a plugin declares `appliesTo` (even an empty array), only the declared commands load it.
+Existing plugins that do not declare `appliesTo` are loaded for `camel run` and `camel export` as before (backward
+compatible). A plugin opts in to filtering by listing at least one command in `appliesTo`; in the plugin configuration
+file, an empty `appliesTo: []` array means the plugin is only loaded for its own command.
 
-When adding a plugin via `camel plugin add`, the `appliesTo` value from the `@CamelJBangPlugin` annotation (for known
-Camel plugins) or from the plugin's metadata is stored in the configuration. After a plugin is downloaded for the first
-time, its `appliesTo` is learned from its annotation and cached for subsequent invocations.
+When adding a plugin via `camel plugin add`, the `appliesTo` value from the list of known Camel plugins is stored in
+the configuration. After a plugin is downloaded for the first time, its `appliesTo` is learned from its
+`@CamelJBangPlugin` annotation and cached for subsequent invocations.
 
 === camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
 

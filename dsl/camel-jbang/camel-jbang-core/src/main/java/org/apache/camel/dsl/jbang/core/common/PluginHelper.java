@@ -345,6 +345,19 @@ public final class PluginHelper {
      * @throws CliException (exit code 1) when a plugin is not found, or needs a newer Camel CLI
      */
     public static Map<String, Plugin> getActivePlugins(CamelJBangMain main, String repos, String target) {
+        return getActivePlugins(main, repos, target, false);
+    }
+
+    /**
+     * Gets the active plugins, with an option to load legacy plugins (those without {@code appliesTo}) for run and
+     * export targets. {@code CliExportContext} passes {@code true} so that third-party plugins that predate
+     * {@code appliesTo} keep their run customizers and exporters. {@code addPlugins} passes {@code false} to avoid
+     * resolving and customizing unrelated plugins at CLI startup.
+     *
+     * @param legacyContributors when true and target is "run" or "export", plugins without appliesTo are loaded
+     */
+    public static Map<String, Plugin> getActivePlugins(
+            CamelJBangMain main, String repos, String target, boolean legacyContributors) {
         Map<String, Plugin> activePlugins = new HashMap<>();
         JsonObject config = getPluginConfig();
         if (config != null) {
@@ -363,12 +376,13 @@ public final class PluginHelper {
 
                 // skip plugins that don't match the target command to avoid unnecessary downloads
                 if (target != null && !"shell".equals(target) && !target.equals(command)) {
-                    Collection<?> appliesTo = effectiveAppliesTo(properties, name);
+                    Collection<?> appliesTo = effectiveAppliesTo(properties, name, version);
                     if (appliesTo != null) {
                         if (!appliesTo.contains(target)) {
                             continue;
                         }
-                    } else if (!PLUGIN_CONSUMING_BUILTINS.contains(target)) {
+                    } else if (!legacyContributors
+                            || !("run".equals(target) || "export".equals(target))) {
                         continue;
                     }
                 }
@@ -627,17 +641,17 @@ public final class PluginHelper {
 
     /**
      * Returns the effective {@code appliesTo} for a plugin entry, checking (in order) the top-level config, the
-     * {@code resolved} block from a previous download, and the {@link PluginType} enum for known Camel plugins. Returns
-     * {@code null} when no {@code appliesTo} information is available — the caller treats this as a legacy plugin that
-     * should be loaded for all targets.
+     * {@code resolved} block from a previous download (only when its Camel version matches), and the {@link PluginType}
+     * enum for known Camel plugins. Returns {@code null} when no {@code appliesTo} information is available — the
+     * caller treats this as a legacy plugin.
      */
-    private static Collection<?> effectiveAppliesTo(JsonObject properties, String name) {
+    private static Collection<?> effectiveAppliesTo(JsonObject properties, String name, String camelVersion) {
         Object obj = properties.get("appliesTo");
         if (obj instanceof Collection<?> list) {
             return list;
         }
         JsonObject resolved = properties.getMap("resolved");
-        if (resolved != null) {
+        if (resolved != null && sameCamelVersion(asString(resolved.get("camelVersion")), camelVersion)) {
             Object resolvedObj = resolved.get("appliesTo");
             if (resolvedObj instanceof Collection<?> list) {
                 return list;

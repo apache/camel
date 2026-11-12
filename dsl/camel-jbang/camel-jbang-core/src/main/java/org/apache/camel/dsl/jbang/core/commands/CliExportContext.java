@@ -59,7 +59,7 @@ public final class CliExportContext {
             T context, CamelJBangMain main, Printer printer, boolean yes, String target) {
         context.withPrinter(printer)
                 .withPlugins(repos -> {
-                    Collection<Plugin> plugins = PluginHelper.getActivePlugins(main, repos, target).values();
+                    Collection<Plugin> plugins = PluginHelper.getActivePlugins(main, repos, target, true).values();
                     return new ExportContext.ActivePlugins(
                             plugins.stream().map(Plugin::getRunCustomizer).flatMap(Optional::stream).toList(),
                             plugins.stream().map(Plugin::getExporter).flatMap(Optional::stream).toList());
