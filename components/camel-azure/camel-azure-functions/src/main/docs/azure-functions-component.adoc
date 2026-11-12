@@ -61,6 +61,14 @@ Where:
 - `functionApp` is the name of your Azure Function App
 - `functionName` is the name of the function within the app (required for `invokeFunction` operation)
 
+The `invokeFunction` operation calls `+https://<functionApp>.azurewebsites.net/api/<functionName>+`. The function app,
+from the endpoint or the `CamelAzureFunctionsFunctionApp` header, must be an app name: letters, digits and hyphens, not
+starting or ending with a hyphen, at most 60 characters. The function name, from the endpoint or the
+`CamelAzureFunctionsFunctionName` header, is the path after `/api/`: one or more segments separated by `/`, so a
+function with a custom route, such as `products/42`, can be called. Characters that are not allowed in a URL path, such
+as a space, are encoded. A function name with `?`, `#`, `\`, `%`, an empty segment, or a `.` or `..` segment is
+rejected, and so is a function app that is not an app name: the exchange fails with an `IllegalArgumentException`.
+
 == Usage
 
 === Authentication Information

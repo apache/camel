@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.functions;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -134,6 +135,8 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " the tags as a Map, and true for delete, start, stop and restart"))
 public class FunctionsEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
+    private static final Pattern FUNCTION_APP_NAME = Pattern.compile("[A-Za-z0-9](?:[A-Za-z0-9-]{0,58}[A-Za-z0-9])?");
+
     @UriParam
     private FunctionsConfiguration configuration;
 
@@ -162,10 +165,18 @@ public class FunctionsEndpoint extends DefaultEndpoint implements EndpointServic
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(configuration.getFunctionApp())) {
-            return String.format("https://%s.azurewebsites.net", configuration.getFunctionApp());
+        if (isFunctionAppName(configuration.getFunctionApp())) {
+            return "https://" + configuration.getFunctionApp() + ".azurewebsites.net";
         }
         return null;
+    }
+
+    /**
+     * Whether the value is an Azure app name: letters, digits and hyphens, not starting or ending with a hyphen, at
+     * most 60 characters.
+     */
+    static boolean isFunctionAppName(String functionApp) {
+        return functionApp != null && FUNCTION_APP_NAME.matcher(functionApp).matches();
     }
 
     @Override
