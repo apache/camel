@@ -32,6 +32,7 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.TextEditing;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -977,24 +978,7 @@ class RunOptionsForm {
     }
 
     private void handleTextInput(KeyEvent ke, TextInputState active, boolean digitsOnly) {
-        if (ke.isDeleteBackward()) {
-            active.deleteBackward();
-        } else if (ke.isDeleteForward()) {
-            active.deleteForward();
-        } else if (ke.isLeft()) {
-            active.moveCursorLeft();
-        } else if (ke.isRight()) {
-            active.moveCursorRight();
-        } else if (ke.isHome()) {
-            active.moveCursorToStart();
-        } else if (ke.isEnd()) {
-            active.moveCursorToEnd();
-        } else {
-            String typed = FormHelper.typedText(ke);
-            if (typed != null && (!digitsOnly || Character.isDigit(typed.codePointAt(0)))) {
-                active.insert(typed);
-            }
-        }
+        TextEditing.handle(active, ke, digitsOnly ? Character::isDigit : null);
     }
 
     private void renderLabel(Frame frame, int x, int y, int w, String label, boolean selected) {

@@ -432,7 +432,9 @@ The template of a Kamelet is a route of the project: *g* lists it under the name
 | *Ctrl+D* | Duplicate block
 | *Ctrl+K* | Delete current line
 | *Ctrl+/* | Comment out the current block, or bring it back (`#` in YAML and properties, `//` in Java)
-| *Ctrl+Left/Right* | Word navigation
+| *Ctrl+Left/Right* | Word navigation (also *Alt+Left/Right* on macOS)
+| *Ctrl+Backspace* / *Ctrl+W* | Delete the word before the cursor (*Alt+Backspace* on macOS)
+| *Ctrl+Delete* | Delete the word after the cursor (*Alt+Delete* on macOS)
 | *Home* | Smart home (content indent / column 0)
 | *Ctrl+R* | Refactoring menu: replace URI, extract to property, extract a step to a new file (YAML, XML)
 | *F9* | Next problem

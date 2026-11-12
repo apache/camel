@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.List;
 
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.input.TextAreaState;
 
 /**
@@ -68,6 +70,29 @@ final class SourceEditorNavigation {
             pos++;
         }
         return pos;
+    }
+
+    /**
+     * Ctrl+Left/Right moves a word, as do the word-wise keys of the bindings (Alt+Left/Right on macOS), and
+     * Ctrl+Backspace, Ctrl+W and Ctrl+Delete (Alt on macOS) delete one; true when the key was one of them.
+     *
+     * @param beforeEdit runs before a word is deleted, to record the change for undo
+     */
+    static boolean handleWordKey(KeyEvent ke, TextAreaState state, Runnable beforeEdit) {
+        if (ke.isWordLeft() || ke.isKey(KeyCode.LEFT) && ke.hasCtrl()) {
+            moveWordLeft(state);
+        } else if (ke.isWordRight() || ke.isKey(KeyCode.RIGHT) && ke.hasCtrl()) {
+            moveWordRight(state);
+        } else if (ke.isDeleteWordBackward()) {
+            beforeEdit.run();
+            deleteWordBackward(state);
+        } else if (ke.isDeleteWordForward()) {
+            beforeEdit.run();
+            deleteWordForward(state);
+        } else {
+            return false;
+        }
+        return true;
     }
 
     static void moveWordLeft(TextAreaState state) {

@@ -31,6 +31,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.TextEditing;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -213,47 +214,8 @@ class SqlQueryTab extends AbstractTab {
                 return true;
             }
 
-            // cursor movement
-            if (ke.isUp()) {
-                sqlInput.moveCursorUp();
-                return true;
-            }
-            if (ke.isDown()) {
-                sqlInput.moveCursorDown();
-                return true;
-            }
-            if (ke.isLeft()) {
-                sqlInput.moveCursorLeft();
-                return true;
-            }
-            if (ke.isRight()) {
-                sqlInput.moveCursorRight();
-                return true;
-            }
-            if (ke.isHome()) {
-                sqlInput.moveCursorToLineStart();
-                return true;
-            }
-            if (ke.isEnd()) {
-                sqlInput.moveCursorToLineEnd();
-                return true;
-            }
-            if (ke.isDeleteBackward()) {
-                sqlInput.deleteBackward();
-                return true;
-            }
-            if (ke.isDeleteForward()) {
-                sqlInput.deleteForward();
-                return true;
-            }
-
-            // typed character
-            String typed = FormHelper.typedText(ke);
-            if (typed != null) {
-                sqlInput.insert(typed);
-                return true;
-            }
-
+            // cursor movement, deletion and typed text (Enter is the line break above)
+            TextEditing.handle(sqlInput, ke);
             return true;
         }
 
@@ -497,33 +459,7 @@ class SqlQueryTab extends AbstractTab {
                 .borderStyle(tableBorderStyle)
                 .build();
 
-        int[] widths = computeColumnWidths(area.width() - 2);
-
-        Row header = Row.from(buildHeaderCells());
-        header.style(Theme.label());
-
-        List<Row> dataRows = new ArrayList<>();
-        for (JsonObject row : resultRows) {
-            List<Cell> cells = new ArrayList<>();
-            for (String col : columnNames) {
-                Object val = row.get(col);
-                String s = val != null ? String.valueOf(val) : "null";
-                Style style = val == null ? Theme.muted() : Style.EMPTY.fg(Theme.baseFg());
-                cells.add(Cell.from(Span.styled(s, style)));
-            }
-            dataRows.add(Row.from(cells));
-        }
-
-        Constraint[] colConstraints = new Constraint[widths.length];
-        for (int i = 0; i < widths.length; i++) {
-            // Add 1 extra char to the last column for trailing padding before the border
-            colConstraints[i] = Constraint.length(widths[i] + (i == widths.length - 1 ? 1 : 0));
-        }
-
-        Table table = Table.builder()
-                .header(header)
-                .rows(dataRows)
-                .widths(colConstraints)
+        Table table = resultTable(columnNames, columnIsPk, resultRows)
                 .block(tableBlock)
                 .highlightStyle(Theme.selectionBg())
                 .build();
@@ -549,44 +485,40 @@ class SqlQueryTab extends AbstractTab {
         return false;
     }
 
-    private Cell[] buildHeaderCells() {
-        Cell[] cells = new Cell[columnNames.length];
+    /**
+     * The result grid. Each column is as wide as its name or its widest value, measured as shown on screen (a wide
+     * character takes two columns); when they do not all fit, the narrow columns keep their width and the wide ones
+     * share the rest. Three spaces between the columns keep the values apart.
+     */
+    static Table.Builder resultTable(String[] columnNames, boolean[] columnIsPk, List<JsonObject> resultRows) {
+        Cell[] headerCells = new Cell[columnNames.length];
+        Constraint[] widths = new Constraint[columnNames.length];
         for (int i = 0; i < columnNames.length; i++) {
             String label = columnNames[i];
             if (columnIsPk != null && columnIsPk[i]) {
                 label = label + " " + TuiIcons.KEY;
             }
-            cells[i] = Cell.from(Span.styled(label, Theme.label().bold()));
+            headerCells[i] = Cell.from(Span.styled(label, Theme.label().bold()));
+            widths[i] = Constraint.fit();
         }
-        return cells;
-    }
 
-    private int[] computeColumnWidths(int availableWidth) {
-        int colCount = columnNames.length;
-        int[] widths = new int[colCount];
-
-        for (int i = 0; i < colCount; i++) {
-            widths[i] = columnNames[i].length();
-            if (columnIsPk != null && columnIsPk[i]) {
-                widths[i] += 3;
+        List<Row> dataRows = new ArrayList<>();
+        for (JsonObject row : resultRows) {
+            List<Cell> cells = new ArrayList<>();
+            for (String col : columnNames) {
+                Object val = row.get(col);
+                String s = val != null ? String.valueOf(val) : "null";
+                Style style = val == null ? Theme.muted() : Style.EMPTY.fg(Theme.baseFg());
+                cells.add(Cell.from(Span.styled(s, style)));
             }
-        }
-        if (resultRows != null) {
-            for (JsonObject row : resultRows) {
-                for (int i = 0; i < colCount; i++) {
-                    Object val = row.get(columnNames[i]);
-                    int len = val != null ? String.valueOf(val).length() : 4;
-                    widths[i] = Math.max(widths[i], len);
-                }
-            }
+            dataRows.add(Row.from(cells));
         }
 
-        // cap each column to reasonable max
-        int maxColWidth = Math.max(10, availableWidth / Math.max(1, colCount));
-        for (int i = 0; i < colCount; i++) {
-            widths[i] = Math.min(widths[i] + 2, maxColWidth);
-        }
-        return widths;
+        return Table.builder()
+                .header(Row.from(headerCells))
+                .rows(dataRows)
+                .widths(widths)
+                .columnSpacing(3);
     }
 
     // ---- Edit row popup ----

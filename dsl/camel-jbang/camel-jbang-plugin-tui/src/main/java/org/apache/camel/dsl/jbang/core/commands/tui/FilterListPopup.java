@@ -243,10 +243,14 @@ abstract class FilterListPopup<T> {
             listState.selectLast(size);
         } else if (ke.isConfirm()) {
             confirm();
+        } else if (ke.isDeleteWordBackward()) {
+            // before Backspace: Ctrl+Backspace (Alt+Backspace on macOS) is a Backspace key too
+            filter.deleteWord();
+            refilter();
         } else if (ke.isKey(KeyCode.BACKSPACE)) {
             filter.deleteChar();
             refilter();
-        } else if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
+        } else if (FormHelper.typedText(ke) != null) {
             filter.append(ke.string());
             refilter();
         }

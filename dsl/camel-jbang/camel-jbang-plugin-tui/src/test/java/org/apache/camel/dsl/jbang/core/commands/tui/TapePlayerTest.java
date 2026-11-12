@@ -31,6 +31,9 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -174,6 +177,10 @@ class TapePlayerTest {
             }
 
             @Override
+            public void mouse(MouseEvent event) {
+            }
+
+            @Override
             public String screen() {
                 return screen.get();
             }
@@ -216,6 +223,10 @@ class TapePlayerTest {
             }
 
             @Override
+            public void mouse(MouseEvent event) {
+            }
+
+            @Override
             public String screen() {
                 return "Loading";
             }
@@ -236,12 +247,116 @@ class TapePlayerTest {
     }
 
     @Test
+    void parsesTheMouseCommandsOfTamboUi() {
+        List<TapePlayer.Step> steps = player.parse(List.of(
+                "Click 3 4", "RightClick 5 6", "MiddleClick 7 8", "MouseDown 1 2", "MouseMove 9 9", "MouseUp 1 3"));
+
+        assertThat(mouse(steps)).containsExactly(
+                MouseEvent.press(MouseButton.LEFT, 3, 4), MouseEvent.release(MouseButton.LEFT, 3, 4),
+                MouseEvent.press(MouseButton.RIGHT, 5, 6), MouseEvent.release(MouseButton.RIGHT, 5, 6),
+                MouseEvent.press(MouseButton.MIDDLE, 7, 8), MouseEvent.release(MouseButton.MIDDLE, 7, 8),
+                MouseEvent.press(MouseButton.LEFT, 1, 2), MouseEvent.move(9, 9),
+                MouseEvent.release(MouseButton.LEFT, 1, 3));
+        assertThat(warnings).isEmpty();
+    }
+
+    @Test
+    void dragsCellByCellWithItsPause() {
+        List<TapePlayer.Step> steps = player.parse(List.of("Drag@40ms 2 10 2 13"));
+
+        assertThat(mouse(steps)).containsExactly(
+                MouseEvent.press(MouseButton.LEFT, 2, 10),
+                MouseEvent.drag(MouseButton.LEFT, 2, 11), MouseEvent.drag(MouseButton.LEFT, 2, 12),
+                MouseEvent.drag(MouseButton.LEFT, 2, 13),
+                MouseEvent.release(MouseButton.LEFT, 2, 13));
+        assertThat(steps).filteredOn(s -> s instanceof TapePlayer.SleepStep)
+                .extracting(s -> ((TapePlayer.SleepStep) s).millis())
+                .containsExactly(40L, 40L, 40L, TapePlayer.DEFAULT_TYPING_MILLIS);
+    }
+
+    @Test
+    void scrollsWithACountAtACellOrTheCentreOfTheScreen() {
+        List<TapePlayer.Step> steps = player.parse(List.of(
+                "ScrollDown", "ScrollUp 2", "ScrollLeft 4 5", "ScrollRight 2 6 7"));
+
+        assertThat(mouse(steps)).containsExactly(
+                MouseEvent.scrollDown(-1, -1),
+                MouseEvent.scrollUp(-1, -1), MouseEvent.scrollUp(-1, -1),
+                MouseEvent.scrollLeft(4, 5),
+                MouseEvent.scrollRight(6, 7), MouseEvent.scrollRight(6, 7));
+        // a scroll with no cell plays at the centre of the screen, as in TamboUI; the width is in cells
+        assertThat(TapePlayer.atScreen(MouseEvent.scrollDown(-1, -1), "世界ab\nline\nline"))
+                .isEqualTo(MouseEvent.scrollDown(3, 1));
+        assertThat(TapePlayer.atScreen(MouseEvent.scrollLeft(4, 5), "ab")).isEqualTo(MouseEvent.scrollLeft(4, 5));
+        assertThat(warnings).isEmpty();
+    }
+
+    @Test
+    void reportsAMouseCommandWithoutItsCoordinates() {
+        List<TapePlayer.Step> steps = player.parse(List.of(
+                "Click 3", "Drag 1 2 3", "MouseMove x 2", "ScrollDown 1 2 3 4", "ScrollUp up", "Click 1 2"));
+
+        assertThat(mouse(steps)).extracting(MouseEvent::kind)
+                .containsExactly(MouseEventKind.PRESS, MouseEventKind.RELEASE);
+        assertThat(warnings).hasSize(5);
+        assertThat(warnings.get(0)).isEqualTo("Needs exactly 2 integer coordinates: Click 3");
+        assertThat(warnings.get(1)).isEqualTo("Needs exactly 4 integer coordinates: Drag 1 2 3");
+        assertThat(warnings.get(3)).startsWith("Scroll takes a count, a cell (x y) or both");
+    }
+
+    @Test
+    void playsTheMouseEventsInOrderWithTheKeys() throws Exception {
+        List<Object> played = new ArrayList<>();
+        TapePlayer.Driver driver = new TapePlayer.Driver() {
+            @Override
+            public void key(KeyEvent event) {
+                played.add(event.code());
+            }
+
+            @Override
+            public void mouse(MouseEvent event) {
+                played.add(event);
+            }
+
+            @Override
+            public String screen() {
+                return "abcd\nefgh";
+            }
+
+            @Override
+            public String tool(String name, Map<String, Object> args) {
+                return "ok";
+            }
+
+            @Override
+            public void quit() {
+            }
+        };
+
+        player.play(player.parse(List.of("F2", "Click 1 1", "ScrollDown", "Enter")), driver);
+
+        assertThat(played).containsExactly(
+                KeyCode.F2, MouseEvent.press(MouseButton.LEFT, 1, 1), MouseEvent.release(MouseButton.LEFT, 1, 1),
+                MouseEvent.scrollDown(2, 1), KeyCode.ENTER);
+    }
+
+    @Test
     void screenTextLeavesOutTheContinuationOfWideCharacters() {
         Buffer buffer = Buffer.empty(new Rect(0, 0, 4, 2));
         buffer.setString(0, 0, "世a", Style.EMPTY);
         buffer.setString(0, 1, "ok", Style.EMPTY);
 
         assertThat(TapePlayer.screenText(buffer)).isEqualTo("世a \nok  ");
+    }
+
+    private static List<MouseEvent> mouse(List<TapePlayer.Step> steps) {
+        List<MouseEvent> events = new ArrayList<>();
+        for (TapePlayer.Step step : steps) {
+            if (step instanceof TapePlayer.MouseStep m) {
+                events.add(m.event());
+            }
+        }
+        return events;
     }
 
     private static List<KeyEvent> keys(List<TapePlayer.Step> steps) {
