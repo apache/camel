@@ -421,6 +421,26 @@ The protected `RedeliveryErrorHandler.defensiveCopyExchangeIfNeeded(Exchange)` m
 A custom error handler that overrides it to change what is redelivered must change the message before the redelivery
 instead, for example with `onRedelivery`.
 
+=== camel-core - the post-quantum TLS named groups: the NIST hybrids count, and an order that already leads with a hybrid is kept
+
+`SSLContextParameters` prefers a hybrid post-quantum key exchange on a JVM that offers one, when no named groups and no
+named groups filter are configured (see the
+xref:camel-configuration-utilities.adoc#_auto_configuration_zero_config_pqc[auto-configuration of the JSSE utility]).
+Three things changed:
+
+* Only `X25519MLKEM768` was recognized. `SecP256r1MLKEM768` and `SecP384r1MLKEM1024` now count too, so a JVM or a crypto
+  policy restricted to the NIST curves, which enables only those two, gets the post-quantum preference it did not get
+  before.
+* An order that already leads with a hybrid group is kept as it is. It was rewritten to `X25519MLKEM768, x25519,
+  secp256r1, secp384r1, ...` before. An operator who put another hybrid first through `jdk.tls.namedGroups`, for example
+  a CNSA 2.0 setup with `SecP384r1MLKEM1024` first, keeps that order, and the default order of JDK 27 (JEP 527), which
+  leads with `X25519MLKEM768`, is no longer rewritten.
+* The `INFO` line `Auto-configured PQC named groups: [...]` is therefore logged only when Camel reorders the groups. On a
+  JVM whose order already leads with a hybrid, and on one that enables no hybrid at all, a `DEBUG` line of
+  `org.apache.camel.support.jsse.SSLContextParameters` says why nothing was done. Anything that relied on the `INFO` line
+  as the confirmation that a post-quantum key exchange is preferred should read the named groups of a created
+  `SSLEngine` or `SSLSocket` instead: `getSSLParameters().getNamedGroups()`.
+
 === camel-core - the documented default of skipBindingOnErrorCode is true
 
 The `skipBindingOnErrorCode` option of the Rest DSL (on `restConfiguration`, `rest`, its verbs and `restBinding`) is now
