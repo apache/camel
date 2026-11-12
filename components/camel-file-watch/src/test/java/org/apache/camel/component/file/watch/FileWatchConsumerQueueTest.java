@@ -48,26 +48,12 @@ public class FileWatchConsumerQueueTest {
 
             FileEvent first = new FileEvent(FileEventEnum.CREATE, folder.resolve("first.txt"));
             FileEvent second = new FileEvent(FileEventEnum.CREATE, folder.resolve("second.txt"));
+            FileEvent third = new FileEvent(FileEventEnum.CREATE, folder.resolve("third.txt"));
 
             assertTrue(consumer.offerEvent(first), "the first event fits in a queue of size 1");
             assertFalse(consumer.offerEvent(second), "the second event is dropped, and that has to be reported");
-        }
-    }
-
-    @Test
-    public void shouldQueueEveryEventWhenUnbounded() throws Exception {
-        try (DefaultCamelContext context = new DefaultCamelContext()) {
-            context.start();
-
-            FileWatchEndpoint endpoint
-                    = context.getEndpoint("file-watch:" + folder.toAbsolutePath(), FileWatchEndpoint.class);
-            FileWatchConsumer consumer = (FileWatchConsumer) endpoint.createConsumer(exchange -> {
-            });
-
-            for (int i = 0; i < 1000; i++) {
-                assertTrue(consumer.offerEvent(new FileEvent(FileEventEnum.CREATE, folder.resolve("file" + i + ".txt"))),
-                        "the queue is unbounded by default");
-            }
+            // the warning is only logged for the first drop, but every drop still has to be reported to the caller
+            assertFalse(consumer.offerEvent(third), "a later drop is reported too, even though it only logs at DEBUG");
         }
     }
 

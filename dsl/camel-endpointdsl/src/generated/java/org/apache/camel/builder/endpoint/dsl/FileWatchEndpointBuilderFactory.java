@@ -411,7 +411,7 @@ public interface FileWatchEndpointBuilderFactory {
         }
         /**
          * Maximum size of queue between WatchService and consumer. Unbounded by
-         * default.
+         * default. When the queue is full, file events are dropped.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -427,7 +427,7 @@ public interface FileWatchEndpointBuilderFactory {
         }
         /**
          * Maximum size of queue between WatchService and consumer. Unbounded by
-         * default.
+         * default. When the queue is full, file events are dropped.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

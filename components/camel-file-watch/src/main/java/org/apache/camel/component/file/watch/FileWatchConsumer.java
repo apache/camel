@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.methvin.watcher.DirectoryChangeEvent;
 import io.methvin.watcher.DirectoryChangeListener;
@@ -55,6 +56,7 @@ public class FileWatchConsumer extends DefaultConsumer {
     private Path baseDirectory;
     private AntPathMatcher antPathMatcher;
     private DirectoryWatcher watcher;
+    private final AtomicBoolean queueFullWarned = new AtomicBoolean();
 
     public FileWatchConsumer(FileWatchEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -81,6 +83,9 @@ public class FileWatchConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // so that a restarted consumer warns again about a queue that fills up
+        queueFullWarned.set(false);
 
         if (!Files.exists(baseDirectory)) {
             if (getEndpoint().isAutoCreate()) {
@@ -235,9 +240,16 @@ public class FileWatchConsumer extends DefaultConsumer {
             return true;
         }
 
-        LOG.warn("Dropping {} event for {}: the event queue is full at its configured size of {}."
-                 + " Consider increasing the option 'queueSize'.",
-                fileEvent.getEventType(), fileEvent.getEventPath(), getEndpoint().getQueueSize());
+        // a full queue means a burst the polling threads are behind on, so warn once rather than once per lost
+        // event: thousands of identical warnings would add log I/O exactly when the consumer is already overloaded
+        if (queueFullWarned.compareAndSet(false, true)) {
+            LOG.warn("The event queue is full at its configured size of {}, so file events are dropped (first: {} {})."
+                     + " Consider increasing the option 'queueSize'. Further dropped events are logged at DEBUG level.",
+                    getEndpoint().getQueueSize(), fileEvent.getEventType(), fileEvent.getEventPath());
+        } else {
+            LOG.debug("Dropping {} event for {}: the event queue is full",
+                    fileEvent.getEventType(), fileEvent.getEventPath());
+        }
         return false;
     }
 
