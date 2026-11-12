@@ -217,7 +217,8 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
                         return;
                     }
                     int statusCode = response.statusCode();
-                    LOG.info("Response received with status {} and body {}", statusCode, response.body());
+                    LOG.info("Response received with status {}", statusCode);
+                    LOG.debug("Response received with status {} and body {}", statusCode, response.body());
                     final boolean success = statusCode >= 200 && statusCode < 300;
                     if (success) {
                         final Object result = mapper.readValue(response.body(), resultClass);
