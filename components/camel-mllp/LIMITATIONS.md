@@ -6,7 +6,7 @@ The MllpTcpClientConsumer is not implemented yet
 
 The MllpTcpServerProducer is not implemented yet
 
-idleTimeout is not enforced yet - connections can remain open indefinately
+idleTimeout is not enforced yet - connections can remain open indefinitely
 
 maxConnections are not enforced yet - an unlimited number of connections are allowed
 

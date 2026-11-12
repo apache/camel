@@ -74,9 +74,9 @@ frame.  The current implementation is based on the Netty DelimiterBasedFrameDeco
 single byte terminator and MLLP uses two bytes to terminate it's frame.  Additionally, the second terminating byte of the
 MLLP frame can't be used alone because that byte is also contained in HL7 messages (it is the HL7 Segment Delimiter).
 An implementation resembling the Netty LineBasedFrameDecoder was written at it correctly handled the MLLP framing issues,
-but the timout issues were never addressed.
+but the timeout issues were never addressed.
 
-For MLLP Consumers, the decoder needs to dynamically install a timeout handler whenver a partial MLLP frame is received, 
+For MLLP Consumers, the decoder needs to dynamically install a timeout handler whenever a partial MLLP frame is received, 
 and then remove it when the frame is completed.  For MLLP Producers, the decoder would need to install a timeout handler 
 at some point to enable detecting a missing acknowledgement in addition to the timeout handler to deal with the 
 partial/incomplete acknowledgement.
@@ -86,8 +86,8 @@ The MLLP protocol is inherently synchronous because external systems almost alwa
 maintained (i.e. FIFO delivery).
 
 When a MLLP-Producer sends a message to an external system, it is required to wait for 
-an HL7 Acknowledgement before sending the next message.  Additionally, the content of the acknowlegement must be examined
-to determine the specific type of the acknowlegement before the next message can be transmitted.  If the acknowledgement 
+an HL7 Acknowledgement before sending the next message.  Additionally, the content of the acknowledgement must be examined
+to determine the specific type of the acknowledgement before the next message can be transmitted.  If the acknowledgement 
 is a HL7 Application Error Acknowledgement, the MLLP-Producer should retransmit the message a few times (the number of 
 redelivery attempts is application specific).  If the acknowledgment is a HL7 Application Reject Acknowledgement, there 
 is something wrong with the message and redelivery will never succeed.  The HL7 Messages acknowledged with an HL7 Application
@@ -106,7 +106,7 @@ NOTE:  Some external systems do not handle HL7 NACKS ( HL7 Application Reject Ac
 Acknowledgements) - they do not interrogate the HL7 Acknowledgment to determine if it is a negative acknowledgement and 
 assume any acknowledgement received is an HL7 ACK (HL7 Application Accept Acknowledgement).  In order to prevent message 
 loss when dealing with external systems that behave in this fashion, the MLLP-Consumer must be capable of closing the 
-TCP connection in lew of sending and HL7 NACK, which will force the external system to resend the message.  Additionally,
+TCP connection in lieu of sending an HL7 NACK, which will force the external system to resend the message.  Additionally,
 the MLLP-Consumer may be required to behave differently for each type of HL7 NACK - it may need to close the TCP connection
 instead of sending HL7 Application Error Acknowledgements, and route the messages that would be normally not be persisted 
 to an alternate durable store before sending the HL7 Application Reject acknowledgement.

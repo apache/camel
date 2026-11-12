@@ -11,7 +11,7 @@ For linux/osx you download the .tar distro, and untar it, and then
     sudo ./make check
     sudo ./make install
 
-If its succesful, you can type
+If it's successful, you can type
 
     protoc --version
 
