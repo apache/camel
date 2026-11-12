@@ -36,17 +36,17 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(firstVersion = "2.19.0", scheme = "sjms2", extendsScheme = "sjms", title = "Simple JMS2",
              syntax = "sjms2:destinationType:destinationName", category = { Category.MESSAGING },
              headersClass = SjmsConstants.class)
-@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.MAP, Carrier.POJO, Carrier.NULL },
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.MAP, Carrier.STREAM, Carrier.NULL },
                                    byOption = {
                                            @BodyType.When(option = "mapJmsMessage", value = "false", carriers = Carrier.POJO,
                                                           javaType = "jakarta.jms.Message"),
                                            @BodyType.When(option = "objectMessageEnabled", value = "true",
                                                           carriers = {
-                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.MAP, Carrier.VALUE,
-                                                                  Carrier.LIST, Carrier.POJO, Carrier.NULL }) },
+                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.MAP, Carrier.STREAM,
+                                                                  Carrier.VALUE, Carrier.LIST, Carrier.POJO, Carrier.NULL }) },
                                    description = "By the JMS message received: a String for a TextMessage, a byte array for a"
-                                                 + " BytesMessage, a Map for a MapMessage, the jakarta.jms.StreamMessage itself"
-                                                 + " for a StreamMessage, and null for a plain Message. An ObjectMessage fails"
+                                                 + " BytesMessage, a Map for a MapMessage, an InputStream for a StreamMessage,"
+                                                 + " and null for a plain Message. An ObjectMessage fails"
                                                  + " unless objectMessageEnabled"),
            consumerReply = @BodyType(value = {
                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP,
