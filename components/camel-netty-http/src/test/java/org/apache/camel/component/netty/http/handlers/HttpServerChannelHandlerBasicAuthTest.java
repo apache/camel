@@ -58,6 +58,14 @@ class HttpServerChannelHandlerBasicAuthTest {
         assertNull(extract("Bearer c2NvdHQ6dGlnZXI="));
     }
 
+    @Test
+    void shouldIgnoreAValueThatIsNotBase64() {
+        // a client can send anything: no principal, so the request is answered with 401 rather than an error.
+        // Note the JDK decoder does not require the trailing padding, so an unpadded value is still decoded
+        assertNull(extract("Basic %%%"));
+        assertNull(extract("Basic not base64!"));
+    }
+
     private static HttpPrincipal extract(String authorization) {
         HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "/");
         request.headers().set("Authorization", authorization);
