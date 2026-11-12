@@ -26,6 +26,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RepeatedToolCallsTest {
 
+    /** What the note says after the next step, on the third identical call. */
+    private static final String ASKED_3_TIMES = "You asked this 3 times now with the same arguments, and the answer is"
+                                                + " the same each time: it is in your earlier tool result.";
+
     private final RepeatedToolCalls calls = new RepeatedToolCalls();
     private final ToolDescriptor catalogDoc = ToolRegistry.findTool("camel_catalog_doc");
 
@@ -47,11 +51,73 @@ class RepeatedToolCallsTest {
         assertThat(note.getBoolean("repeated")).isTrue();
         assertThat(note.getString("tool")).isEqualTo("camel_catalog_doc");
         assertThat(note.getInteger("timesAsked")).isEqualTo(3);
-        assertThat(note.getString("note")).contains("2 times");
+        // the next step first, then the fact, with the count of timesAsked (CAMEL-26875)
+        assertThat(note.getString("note"))
+                .startsWith("Go on with the options the earlier answer gave: write the file with camel_write_file")
+                .endsWith(ASKED_3_TIMES);
         // a page that was cut was not answered in full: the note says how to get the sections it left out
         assertThat(note.getString("note")).doesNotContain("in full").contains("docPage=<section title>");
 
-        assertThat(calls.repeatOf(catalogDoc, sql).getInteger("timesAsked")).isEqualTo(4);
+        JsonObject fourth = calls.repeatOf(catalogDoc, sql);
+        assertThat(fourth.getInteger("timesAsked")).isEqualTo(4);
+        assertThat(fourth.getString("note")).contains("You asked this 4 times now");
+    }
+
+    /**
+     * r32, a Citrus test step: camel_catalog_sample had no sample of 'send message' as an EIP, and the model asked the
+     * same 11 or 12 more times, until its tool calls were spent, without writing the test. The note starts with the
+     * next step: write the file, whose checks say what to change (CAMEL-26875).
+     */
+    @Test
+    void aRepeatedSampleCallIsToldToWriteTheFile() {
+        ToolDescriptor sample = ToolRegistry.findTool("camel_catalog_sample");
+        Map<String, String> sendMessage = Map.of("name", "send message", "kind", "eip");
+        successfulCall(sample, sendMessage);
+        successfulCall(sample, sendMessage);
+
+        JsonObject note = calls.repeatOf(sample, sendMessage);
+        assertThat(note.getString("tool")).isEqualTo("camel_catalog_sample");
+        assertThat(note.getInteger("timesAsked")).isEqualTo(3);
+        assertThat(note.getString("note")).isEqualTo("Write the file now with camel_write_file: when the earlier answer"
+                                                     + " had no sample, asking again gives none either. The write checks"
+                                                     + " the file, and its answer says what to change (for a Citrus test:"
+                                                     + " which actions it takes). " + ASKED_3_TIMES);
+    }
+
+    @Test
+    void aRepeatedFindIsToldToUseAMatchOrAnotherTerm() {
+        ToolDescriptor find = ToolRegistry.findTool("camel_catalog_find");
+        Map<String, String> term = Map.of("term", "send message");
+        successfulCall(find, term);
+        successfulCall(find, term);
+
+        assertThat(calls.repeatOf(find, term).getString("note"))
+                .isEqualTo("Use a match from the earlier answer, or ask with another term; then write the file with"
+                           + " camel_write_file. " + ASKED_3_TIMES);
+    }
+
+    @Test
+    void aToolWithoutAHintIsToldToGoOnWithTheTask() {
+        ToolDescriptor diagnose = ToolRegistry.findTool("camel_error_diagnose");
+        assertThat(diagnose.repeatHint()).isNull();
+        Map<String, String> error = Map.of("error", "No endpoint could be found for: xyz:test");
+        successfulCall(diagnose, error);
+        successfulCall(diagnose, error);
+
+        assertThat(calls.repeatOf(diagnose, error).getString("note"))
+                .isEqualTo("Go on with the next step of your task. " + ASKED_3_TIMES);
+    }
+
+    /** The note starts with the hint of the tool, and a sentence of its own follows: a hint is whole sentences. */
+    @Test
+    void everyHintIsWholeSentences() {
+        for (ToolDescriptor tool : ToolRegistry.allTools()) {
+            String hint = tool.repeatHint();
+            if (hint != null) {
+                assertThat(Character.isUpperCase(hint.charAt(0))).as(tool.name() + ": " + hint).isTrue();
+                assertThat(hint).as(tool.name()).endsWith(".");
+            }
+        }
     }
 
     /**
@@ -68,10 +134,8 @@ class RepeatedToolCallsTest {
         successfulCall(eval, args);
         JsonObject note = calls.repeatOf(eval, args);
         assertThat(note).isNotNull();
-        assertThat(note.getString("note")).startsWith("camel_eval_expression was already called with these same arguments 2"
-                                                      + " times")
-                .endsWith("The same expression on the same message gives the same result: change the expression or the"
-                          + " message (body, headers, variables) to learn something new.");
+        assertThat(note.getString("note")).isEqualTo("Change the expression or the message (body, headers, variables) to"
+                                                     + " learn something new. " + ASKED_3_TIMES);
         // another message is another question
         assertThat(calls.repeatOf(eval, Map.of("expression", "body.getClass().getName()", "language", "groovy", "body",
                 "[]"))).isNull();
@@ -152,7 +216,7 @@ class RepeatedToolCallsTest {
         successfulCall(validate, args);
         JsonObject note = calls.repeatOf(validate, args);
         assertThat(note).isNotNull();
-        assertThat(note.getString("note")).contains("change the line the error names");
+        assertThat(note.getString("note")).startsWith("Change the line the error names");
 
         Map<String, String> fromDisk = Map.of("file", "route.camel.yaml");
         for (int i = 0; i < 4; i++) {
