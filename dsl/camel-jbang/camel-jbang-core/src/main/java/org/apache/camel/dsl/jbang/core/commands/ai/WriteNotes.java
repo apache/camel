@@ -119,7 +119,7 @@ final class WriteNotes {
         Object doc;
         try {
             doc = new Yaml(new SafeConstructor(new LoaderOptions())).load(content);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return notes;
         }
         if (!(doc instanceof List<?> items)) {
