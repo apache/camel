@@ -30,6 +30,7 @@ public final class CamelHome {
     public static final String CAMEL_JBANG_WORK_DIR = ".camel-jbang";
 
     private static volatile Path homeDir = Paths.get(HomeHelper.resolveHomeDir());
+    private static volatile Path workDir;
 
     private CamelHome() {
     }
@@ -63,11 +64,31 @@ public final class CamelHome {
     }
 
     /**
-     * Gets the Camel CLI working directory.
+     * Gets the Camel CLI working directory. By default this is the {@value #CAMEL_JBANG_WORK_DIR} directory in the
+     * current working directory; it can be overridden with {@link #useWorkDir(Path)} so that parallel test instances
+     * each have an isolated directory of their own.
      *
      * @return file pointing to the working directory.
      */
     public static Path getWorkDir() {
-        return Paths.get(CAMEL_JBANG_WORK_DIR);
+        Path override = workDir;
+        return override != null ? override : Paths.get(CAMEL_JBANG_WORK_DIR);
+    }
+
+    /**
+     * Override the working directory. Unit tests call this in {@code @BeforeEach} to give each test instance an
+     * isolated directory, then call {@link #resetWorkDir()} in {@code @AfterEach} to restore the default.
+     *
+     * @param workDir the working directory to use.
+     */
+    public static void useWorkDir(Path workDir) {
+        CamelHome.workDir = workDir;
+    }
+
+    /**
+     * Reset the working directory to the default ({@value #CAMEL_JBANG_WORK_DIR} in the current working directory).
+     */
+    public static void resetWorkDir() {
+        CamelHome.workDir = null;
     }
 }

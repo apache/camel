@@ -37,14 +37,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@UsesWorkingDirectory
-class ExportMainJkubeTest {
+class ExportMainJkubeTest extends CamelCommandBaseTestSupport {
 
     private File workingDir;
     private File profile = new File(".", "application.properties");
 
     @BeforeEach
-    public void setup() throws IOException {
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestWorkDir();
         workingDir = Files.createTempDirectory("camel-export").toFile();
     }
 

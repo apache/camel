@@ -66,7 +66,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * the difference.
  */
 @UsesWorkingDirectory
-class RunExportGoldenTest {
+class RunExportGoldenTest extends CamelCommandBaseTestSupport {
 
     private static final Path GOLDEN = Path.of("src/test/resources/golden");
     private static final Path EXPECTED = GOLDEN.resolve("expected");
