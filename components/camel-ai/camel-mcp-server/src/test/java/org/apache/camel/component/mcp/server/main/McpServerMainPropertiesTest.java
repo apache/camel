@@ -125,6 +125,43 @@ class McpServerMainPropertiesTest {
     }
 
     @Test
+    void testMcpAllowedHostsFromProperties() throws Exception {
+        int port = AvailablePortFinder.getNextAvailable();
+
+        Main main = new Main();
+        main.addInitialProperty("camel.server.enabled", "true");
+        main.addInitialProperty("camel.server.port", String.valueOf(port));
+        main.addInitialProperty("camel.server.mcp-enabled", "true");
+        main.addInitialProperty("camel.server.mcp-tags", "crm");
+        main.addInitialProperty("camel.server.mcp-allowed-hosts", "LocalHost:*");
+        main.start();
+
+        try {
+            assertThat(initialize(URI.create("http://localhost:" + port + "/mcp"), null)).isEqualTo(200);
+            assertThat(initialize(URI.create("http://127.0.0.1:" + port + "/mcp"), null)).isEqualTo(421);
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void testMcpAllowedHostWithSchemeFailsFast() {
+        Main main = new Main();
+        main.addInitialProperty("camel.server.enabled", "true");
+        main.addInitialProperty("camel.server.port", String.valueOf(AvailablePortFinder.getNextAvailable()));
+        main.addInitialProperty("camel.server.mcp-enabled", "true");
+        main.addInitialProperty("camel.server.mcp-tags", "crm");
+        main.addInitialProperty("camel.server.mcp-allowed-hosts", "http://localhost:8080");
+
+        try {
+            assertThatThrownBy(main::start)
+                    .hasStackTraceContaining("Invalid MCP allowed host 'http://localhost:8080'");
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
     void testMcpAllowedOriginWildcardFailsFast() {
         Main main = new Main();
         main.addInitialProperty("camel.server.enabled", "true");
@@ -142,8 +179,12 @@ class McpServerMainPropertiesTest {
     }
 
     private static int initialize(int port, String origin) throws Exception {
+        return initialize(URI.create("http://localhost:" + port + "/mcp"), origin);
+    }
+
+    private static int initialize(URI uri, String origin) throws Exception {
         HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/mcp"))
+                .uri(uri)
                 .timeout(Duration.ofSeconds(10))
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json, text/event-stream")

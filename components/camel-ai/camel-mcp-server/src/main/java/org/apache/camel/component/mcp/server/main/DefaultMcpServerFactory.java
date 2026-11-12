@@ -61,6 +61,7 @@ public class DefaultMcpServerFactory implements McpServerFactory {
         mcpConfiguration.setSessionKeepAliveInterval(configuration.getMcpSessionKeepAliveInterval());
         mcpConfiguration.setSessionIdleTtl(configuration.getMcpSessionIdleTtl());
         mcpConfiguration.setAllowedOrigins(configuration.getMcpAllowedOrigins());
+        mcpConfiguration.setAllowedHosts(configuration.getMcpAllowedHosts());
         // OAuth options have no meaning on stdio. Keep the historical warn-and-ignore behavior here,
         // while programmatic bridge configurations fail closed on engines that do not support OAuth.
         if (!isStdioTransport(configuration.getMcpTransport())) {

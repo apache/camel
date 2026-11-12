@@ -158,7 +158,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 configuration.getServerIcons(),
                 McpServerOrigins.parseAllowedOrigins(configuration.getAllowedOrigins()),
                 configuration.getOauthProfile(), configuration.getRequiredScopes(),
-                configuration.getResourceUri()));
+                configuration.getResourceUri(),
+                McpServerHosts.parseAllowedHosts(configuration.getAllowedHosts())));
 
         if (!engine.consumesServingConfiguration()) {
             if (!McpServerConstants.DEFAULT_PATH.equals(configuration.getPath())) {
@@ -169,6 +170,11 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             if (isSet(configuration.getAllowedOrigins())) {
                 LOG.warn("The MCP allowed origins option is ignored by engine {}: the runtime's native MCP server "
                          + "configuration decides which origins are allowed",
+                        engine.getClass().getSimpleName());
+            }
+            if (isSet(configuration.getAllowedHosts())) {
+                LOG.warn("The MCP allowed hosts option is ignored by engine {}: the runtime's native MCP server "
+                         + "configuration decides which hosts are allowed",
                         engine.getClass().getSimpleName());
             }
             if (hasServerMetadataConfiguration()) {

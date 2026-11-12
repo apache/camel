@@ -197,7 +197,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 40 options, which are listed below.
+The camel.server supports 41 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -217,6 +217,7 @@ The camel.server supports 40 options, which are listed below.
 | `camel.server.jwtKeystorePath` | Path to the keystore file used for JWT tokens validation. |  | String
 | `camel.server.jwtKeystoreType` | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | `camel.server.maxBodySize` | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
+| `camel.server.mcpAllowedHosts` | Comma-separated list of hosts allowed in the Host header of a request to the MCP endpoint on the Vert.x streamable transport, such as mcp.example.com or localhost:*. Each entry is a host, or a host and a port, where the port may be an asterisk to match any port (or none). The host is compared ignoring case. When set, a request whose Host header is missing or not in the list is rejected with HTTP 421 (Misdirected Request), before its body is read and before any session is created; this protects a server on a private address against DNS rebinding. An entry with a scheme, a path or a wildcard for all hosts fails the startup. When not set, the Host header is not checked. |  | String
 | `camel.server.mcpAllowedOrigins` | Comma-separated list of origins allowed to call the MCP endpoint on the Vert.x streamable transport. Each entry is an exact origin (scheme, host and port), or ends with a colon and an asterisk to match any port. Scheme and host are compared ignoring case, and a default port (80 for http, 443 for https) may be left out. A wildcard for all origins is not supported: an entry that is not of the form scheme://host or scheme://host:port fails the startup. A request without an Origin header is always served; a request with an Origin header that is not allowed is rejected with HTTP 403. When not set, only loopback origins are allowed (localhost, 127.0.0.1 and ::1 on any port). |  | String
 | `camel.server.mcpEnabled` | Whether to expose ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP prompts. Requires camel-mcp-server on the classpath. Use setMcpTransport(String) to choose streamable HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is not enabled. | false | boolean
 | `camel.server.mcpInstructions` | Top-level MCP instructions returned to clients on initialize. |  | String
