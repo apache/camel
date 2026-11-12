@@ -19,11 +19,17 @@ package org.apache.camel.cluster;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,6 +37,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRouteController;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.apache.camel.impl.engine.DefaultRouteController;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
@@ -371,9 +380,159 @@ public class ClusteredEdgeCasesTest {
         }
     }
 
+    @Test
+    public void testRouteThatFailsToStartIsStartedAgain() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        context.addService(cs);
+        // the first start of the consumer of route a fails (a broker that is not reachable yet)
+        AtomicInteger failures = new AtomicInteger(1);
+        context.addComponent("failing", new FailingStartComponent(failures));
+        ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace("my-ns");
+        policy.setRetryDelay(Duration.ofMillis(100));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("failing:a").routeId("a").routePolicy(policy).to("mock:a");
+                from("seda:b").routeId("b").routePolicy(policy).to("mock:b");
+            }
+        });
+        context.start();
+        try {
+            cs.getView().setLeader(true);
+
+            // both routes run on the leader: the other one right away, the failed one once its start is tried again
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("b"));
+                assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("a"));
+            });
+            assertEquals(-1, failures.get(), "The start of route a did not fail once");
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRetryDoesNotStartARouteOnAFollower() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        context.addService(cs);
+        // the consumer of route a cannot start for now
+        AtomicInteger failures = new AtomicInteger(Integer.MAX_VALUE);
+        FailingStartComponent component = new FailingStartComponent(failures);
+        context.addComponent("failing", component);
+        ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace("my-ns");
+        policy.setRetryDelay(Duration.ofMillis(100));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("failing:a").routeId("a").routePolicy(policy).to("mock:a");
+            }
+        });
+        context.start();
+        try {
+            cs.getView().setLeader(true);
+            // the leader tries again
+            await().atMost(10, TimeUnit.SECONDS).until(() -> component.attempts.get() >= 2);
+
+            // the node loses the leadership, and the consumer could start now: the retry must not start the route
+            cs.getView().setLeader(false);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !policy.isLeader());
+            failures.set(0);
+            await().during(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("a")));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRouteThatFailsToStopIsStartedAgainOnTheNextLeadership() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        context.addService(cs);
+        ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace("my-ns");
+        // the first stop of route a fails (in a route policy, after the route stopped)
+        AtomicInteger stopFailures = new AtomicInteger(1);
+        RoutePolicySupport failingStop = new RoutePolicySupport() {
+            @Override
+            public void onStop(Route route) {
+                if ("a".equals(route.getId()) && stopFailures.getAndDecrement() > 0) {
+                    throw new IllegalStateException("Cannot stop route a");
+                }
+            }
+        };
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("seda:a").routeId("a").routePolicy(policy, failingStop).to("mock:a");
+                from("seda:b").routeId("b").routePolicy(policy, failingStop).to("mock:b");
+            }
+        });
+        context.start();
+        try {
+            cs.getView().setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("a"));
+                assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("b"));
+            });
+
+            // the other route is stopped too
+            cs.getView().setLeader(false);
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("b"));
+                assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("a"));
+            });
+            assertEquals(0, stopFailures.get(), "The stop of route a did not fail once");
+
+            // and both are started on the next leadership
+            cs.getView().setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("a"));
+                assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("b"));
+            });
+        } finally {
+            context.stop();
+        }
+    }
+
     // *********************************
     // Helpers
     // *********************************
+
+    // a consumer whose start fails as many times as failures says
+    private static final class FailingStartComponent extends DefaultComponent {
+        private final AtomicInteger failures;
+        private final AtomicInteger attempts = new AtomicInteger();
+
+        FailingStartComponent(AtomicInteger failures) {
+            this.failures = failures;
+        }
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            return new DefaultEndpoint(uri, this) {
+                @Override
+                public Producer createProducer() {
+                    throw new UnsupportedOperationException("No producer");
+                }
+
+                @Override
+                public Consumer createConsumer(Processor processor) {
+                    return new DefaultConsumer(this, processor) {
+                        @Override
+                        protected void doStart() throws Exception {
+                            attempts.incrementAndGet();
+                            if (failures.getAndDecrement() > 0) {
+                                throw new IllegalStateException("Cannot start the consumer yet");
+                            }
+                            super.doStart();
+                        }
+                    };
+                }
+            };
+        }
+    }
 
     private static class TestClusterView extends AbstractCamelClusterView {
         private volatile boolean leader;
