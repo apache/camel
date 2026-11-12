@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
@@ -256,7 +257,15 @@ public class InfraRun extends InfraBaseCommand {
             printer().println("Starting service " + testService + prefix + " (PID: " + RuntimeUtil.getPid() + ")");
         }
 
-        actualService.getClass().getMethod("initialize").invoke(actualService);
+        try {
+            actualService.getClass().getMethod("initialize").invoke(actualService);
+        } catch (InvocationTargetException e) {
+            String message = portInUseMessage(testService, e.getCause());
+            if (message != null) {
+                throw CliException.failure(message);
+            }
+            throw e;
+        }
 
         Method[] serviceMethods = cl.loadClass(serviceInterface).getDeclaredMethods();
         Map<String, Object> properties = new TreeMap<>();
@@ -357,6 +366,27 @@ public class InfraRun extends InfraBaseCommand {
         shutdownInfra(closed, logFile, jsonFile, actualService, replacedProperties);
 
         return 0;
+    }
+
+    /**
+     * The one line for a service that did not start because a port it maps on the host is taken, naming the running
+     * infra service that has it, instead of the stack trace of the container runtime.
+     *
+     * @param  service the service that did not start
+     * @param  failure why it did not start
+     * @return         the line, or {@code null} when the failure is not about a port in use
+     */
+    String portInUseMessage(String service, Throwable failure) {
+        int port = InfraPortInUse.port(failure);
+        if (port < 0) {
+            return null;
+        }
+        for (RunningService running : findRunningServices(null)) {
+            if (InfraPortInUse.hasPort(readServiceData(running.pidFile()), port)) {
+                return InfraPortInUse.message(service, port, running.alias(), running.pid());
+            }
+        }
+        return InfraPortInUse.message(service, port, null, null);
     }
 
     /**
