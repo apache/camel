@@ -142,7 +142,7 @@ class SpiffeWorkloadApiIT extends CamelTestSupport {
     }
 
     @Test
-    void jwtPolicyPreservesThePostBodyAndRejectsTheWrongAudienceAcrossRouteRestart() throws Exception {
+    void jwtPolicyPreservesThePostBodyRejectsTheWrongAudienceAndValidatesAgainAfterRouteRestart() throws Exception {
         String token = template.requestBody("direct:jwt", null, String.class);
         byte[] payload = "{\"order\":123}".getBytes(StandardCharsets.UTF_8);
 

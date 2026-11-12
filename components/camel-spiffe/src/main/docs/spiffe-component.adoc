@@ -247,7 +247,7 @@ YAML::
 
 The successful policy publishes the same token-free `CamelSpiffeJwtIdentity` property, and nothing else: unlike the
 producer, it sets no `CamelSpiffeSpiffeId` or `CamelSpiffeExpiry` header, so the identity is a value the route
-established, which a sender cannot put on the message and which later steps cannot change, and it does not travel to
+established, which a sender cannot put on the message, and it does not travel to
 outbound producers. Check the property, not a header, further down the route. Extract verified fields into
 exchange properties to compose with OPA or OpenFGA; for example, copy its `spiffeId` into `subject`, use
 `includeProperties=subject` with OPA, or a configured OpenFGA `user` expression based on that property. Choosing
