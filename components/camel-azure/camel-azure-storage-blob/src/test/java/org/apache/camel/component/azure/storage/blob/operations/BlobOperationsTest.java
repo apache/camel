@@ -239,6 +239,42 @@ class BlobOperationsTest extends CamelTestSupport {
         assertTrue((boolean) response.getBody());
     }
 
+    @Test
+    void testCopyBlobValidatesSourceNames() {
+        when(client.copyBlob(any(), any(), any(), any())).thenReturn("copyId");
+        final BlobOperations operations = new BlobOperations(configuration, client);
+
+        for (String account : new String[] { "abc", "account1", "a23456789012345678901234" }) {
+            for (String container : new String[] { "abc", "container-1", "$root", "$web", "a".repeat(63) }) {
+                assertEquals("copyId", operations.copyBlob(copyBlobExchange(account, container)).getBody());
+            }
+        }
+
+        // invalid account names: URL injection (host/path, query, fragment, userinfo, port), length, uppercase, hyphen
+        for (String account : new String[] {
+                "ab", "a234567890123456789012345", "Account", "acc.ount", "acc/ount", "acc?x", "acc#x", "user@acc",
+                "acc:8080", "acc-1" }) {
+            assertThrows(IllegalArgumentException.class,
+                    () -> operations.copyBlob(copyBlobExchange(account, "container")), account);
+        }
+        // invalid container names: URL injection (path, query, fragment, userinfo, port), length, uppercase, hyphens, $logs
+        for (String container : new String[] {
+                "ab", "a".repeat(64), "Container", "con.tainer", "con/tainer", "con?x", "con#x", "con@x", "con:80",
+                "-container", "container-", "con--tainer", "$logs" }) {
+            assertThrows(IllegalArgumentException.class,
+                    () -> operations.copyBlob(copyBlobExchange("account", container)), container);
+        }
+        verify(client, times(15)).copyBlob(any(), any(), any(), any());
+    }
+
+    private Exchange copyBlobExchange(String accountName, String containerName) {
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader(BlobConstants.BLOB_NAME, "blob");
+        exchange.getMessage().setHeader(BlobConstants.SOURCE_BLOB_ACCOUNT_NAME, accountName);
+        exchange.getMessage().setHeader(BlobConstants.SOURCE_BLOB_CONTAINER_NAME, containerName);
+        return exchange;
+    }
+
     private BlobProperties createBlobProperties() {
         return new BlobProperties(
                 OffsetDateTime.now(), null, null, 0L, null, null, null, null, null,
