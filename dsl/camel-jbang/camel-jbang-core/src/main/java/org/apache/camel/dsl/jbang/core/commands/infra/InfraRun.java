@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
@@ -47,6 +48,8 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelCLICommand;
 
@@ -57,6 +60,8 @@ import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelCLIComm
                            "  camel infra run kafka --background",
                            "  camel infra run ollama --property ollama.model=qwen2.5:0.5b" })
 public class InfraRun extends InfraBaseCommand {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InfraRun.class);
 
     @Arguments(required = true, description = "Service name")
     private List<String> serviceName;
@@ -437,7 +442,12 @@ public class InfraRun extends InfraBaseCommand {
     private static Object invokeQuietly(Object target, String methodName) {
         try {
             return target.getClass().getMethod(methodName).invoke(target);
+        } catch (InvocationTargetException e) {
+            // the service has the method, but it failed, such as when docker cannot be reached
+            LOG.debug("{}#{} failed", target.getClass().getSimpleName(), methodName, e.getCause());
+            return null;
         } catch (Exception e) {
+            // not a container service
             return null;
         }
     }
