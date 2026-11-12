@@ -784,6 +784,10 @@ that exchange is rolled back once before its redelivery is filtered as a
 duplicate. The `JdbcMessageIdRepository`, and several nodes sharing the
 table, behave the same way.
 
+A `remove` or `clear` in a transaction takes the key (or the keys) out of
+the cache again when that transaction commits, and an add that read the
+row before it was deleted does not keep the key in the cache.
+
 === Using the JDBC based aggregation repository
 
 `JdbcAggregationRepository` is an `AggregationRepository` which on the

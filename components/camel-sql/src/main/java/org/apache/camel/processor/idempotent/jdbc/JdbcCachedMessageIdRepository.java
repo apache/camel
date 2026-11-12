@@ -19,6 +19,7 @@ package org.apache.camel.processor.idempotent.jdbc;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.sql.DataSource;
 
@@ -39,6 +40,9 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
     private volatile Map<String, Integer> cache = new ConcurrentHashMap<>();
     private final AtomicInteger hitCount = new AtomicInteger();
     private final AtomicInteger missCount = new AtomicInteger();
+    // bumped by every eviction after a delete, before the key leaves the cache: an add that read the row before the
+    // delete committed sees the change after caching the key, and removes it again
+    private final AtomicLong evictions = new AtomicLong();
     private String queryAllString = DEFAULT_QUERY_ALL_STRING;
 
     public JdbcCachedMessageIdRepository() {
@@ -73,17 +77,18 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
 
     @Override
     public boolean add(final String key) {
-        Integer previousValue = cache.getOrDefault(key, 0);
-        if (previousValue != 0) {
-            cache.merge(key, 1, Integer::sum);
+        // one atomic step: a key evicted meanwhile by a remove on another thread is not put back
+        if (cache.computeIfPresent(key, (k, count) -> count + 1) != null) {
             hitCount.incrementAndGet();
             return false;
         }
         missCount.incrementAndGet();
+        // read before the row is: a remove or clear that deletes it after this read changes the counter
+        long seen = evictions.get();
         boolean added = super.add(key);
         // only remember the key after the database insert succeeded, otherwise a failed insert
         // would leave the key cached and every redelivery would be rejected as a duplicate
-        cacheAfterCommit(key);
+        cacheAfterCommit(key, seen);
         return added;
     }
 
@@ -103,10 +108,15 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
         cache.remove(key);
         cancelCacheAfterCommit(key);
         boolean removed = super.remove(key);
-        // and again after the delete: an add of the key on another thread whose transaction committed while this delete
-        // waited for its row lock may have cached it meanwhile. This narrows the window in which the cache keeps a
-        // deleted key; it does not close it, as that add's afterCommit can still run after this line.
-        cache.remove(key);
+        if (removed) {
+            // and again after the delete: an add of the key on another thread that read the row before the delete
+            // committed may have cached it meanwhile, or caches it later and then sees the changed counter (see cacheKey)
+            evict(key);
+            // in a transaction of the caller the row is deleted when it commits: until then another thread still sees
+            // the row and caches the key (its add is a duplicate), so the key is removed from the cache again after the
+            // commit
+            evictAfterCommit(key);
+        }
         return removed;
     }
 
@@ -117,8 +127,9 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
         hitCount.set(0);
         missCount.set(0);
         super.clear();
-        // and again after the delete, as in remove
-        cache.clear();
+        // and again after the delete, and after the commit of a transaction of the caller, as in remove
+        evict(null);
+        evictAfterCommit(null);
     }
 
     /**
@@ -126,11 +137,41 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
      * (for example a transacted route), the row is gone, and a cached key would make the redelivery of the message a
      * duplicate. Without a transaction with synchronization the key is cached at once.
      */
-    private void cacheAfterCommit(String key) {
+    private void cacheAfterCommit(String key, long seen) {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            TransactionSynchronizationManager.registerSynchronization(new CacheAfterCommit(this, key));
+            // a remove of the key earlier in the same transaction does not evict it at the commit: the row is there again
+            cancelEvictAfterCommit(key);
+            TransactionSynchronizationManager.registerSynchronization(new CacheAfterCommit(this, key, seen));
         } else {
-            cache.merge(key, 1, Integer::sum);
+            cacheKey(key, seen);
+        }
+    }
+
+    /**
+     * Caches the key, unless a remove or clear evicted keys since the add read the row: that delete may have removed
+     * the row, and its eviction may have run before this merge. Either the eviction runs after the merge and removes
+     * the key, or it has changed the counter before the check below, so a read of the row before a delete committed
+     * does not leave its key in the cache (with read committed: a snapshot of a transaction of the caller older than
+     * the counter is not covered). An add that runs alongside a remove or clear of any key is therefore not cached,
+     * which costs one SELECT later.
+     */
+    private void cacheKey(String key, long seen) {
+        cache.merge(key, 1, Integer::sum);
+        if (evictions.get() != seen) {
+            cache.remove(key);
+        }
+    }
+
+    /**
+     * Removes the key (or every key when the key is null) from the cache after its row was deleted. The counter changes
+     * first, so an add that cached the key meanwhile either sees the change or is removed here.
+     */
+    private void evict(String key) {
+        evictions.incrementAndGet();
+        if (key == null) {
+            cache.clear();
+        } else {
+            cache.remove(key);
         }
     }
 
@@ -149,13 +190,39 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
         }
     }
 
-    private static final class CacheAfterCommit implements TransactionSynchronization {
+    /**
+     * Removes the key (or every key when the key is null) from the cache again once the transaction of the caller that
+     * deleted its row commits. Without a transaction with synchronization the delete has committed already. When the
+     * transaction of the caller is of another transaction manager (another DataSource, JMS), the delete committed in a
+     * transaction of its own already, and this only costs a cache miss.
+     */
+    private void evictAfterCommit(String key) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new EvictAfterCommit(this, key));
+        }
+    }
+
+    /**
+     * An add of the key later in the same transaction cancels its eviction after the commit, as the row is there again
+     * when the transaction commits. The eviction of a clear is kept: the add is then not cached, which costs one
+     * SELECT.
+     */
+    private void cancelEvictAfterCommit(String key) {
+        for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
+            if (synchronization instanceof EvictAfterCommit pending && pending.repository == this
+                    && key.equals(pending.key)) {
+                pending.cancelled = true;
+            }
+        }
+    }
+
+    private static final class EvictAfterCommit implements TransactionSynchronization {
         private final JdbcCachedMessageIdRepository repository;
         private final String key;
         // set and read by the thread of the transaction
         private boolean cancelled;
 
-        private CacheAfterCommit(JdbcCachedMessageIdRepository repository, String key) {
+        private EvictAfterCommit(JdbcCachedMessageIdRepository repository, String key) {
             this.repository = repository;
             this.key = key;
         }
@@ -163,7 +230,28 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
         @Override
         public void afterCommit() {
             if (!cancelled) {
-                repository.cache.merge(key, 1, Integer::sum);
+                repository.evict(key);
+            }
+        }
+    }
+
+    private static final class CacheAfterCommit implements TransactionSynchronization {
+        private final JdbcCachedMessageIdRepository repository;
+        private final String key;
+        private final long seen;
+        // set and read by the thread of the transaction
+        private boolean cancelled;
+
+        private CacheAfterCommit(JdbcCachedMessageIdRepository repository, String key, long seen) {
+            this.repository = repository;
+            this.key = key;
+            this.seen = seen;
+        }
+
+        @Override
+        public void afterCommit() {
+            if (!cancelled) {
+                repository.cacheKey(key, seen);
             }
         }
     }
@@ -185,6 +273,8 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
     }
 
     public void reload() {
+        // a remove or clear while the keys are read may delete a row the query saw (as for an add, see cacheKey)
+        long seen = evictions.get();
         transactionTemplate.execute(status -> {
             try {
                 cache = jdbcTemplate.query(getQueryAllString(), resultSet -> {
@@ -204,6 +294,10 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
             return Boolean.TRUE;
 
         });
+        if (evictions.get() != seen) {
+            // the loaded keys may include a deleted row: start empty instead (only misses until they are cached again)
+            cache.clear();
+        }
     }
 
 }
