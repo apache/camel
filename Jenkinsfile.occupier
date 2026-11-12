@@ -23,7 +23,7 @@
  *
  * IMPORTANT: this job MUST NOT use throttleJobProperty / throttle() with the 'camel' category. The occupier
  * has to allocate node(<busy agent>), which a throttled job could not do while a Camel build runs on that agent,
- * and it would hit the very same Jenkins bug. A Jenkins administrator has to create this job (pipeline from
+ * and it would hit the very same Jenkins bug. A Jenkins administrator has to create this job (multibranch pipeline from
  * SCM, script path 'Jenkinsfile.occupier') next to the Camel jobs.
  */
 def occupierBranches = [:]
