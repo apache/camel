@@ -63,7 +63,7 @@ public final class DefaultResourceResolvers {
 
     /**
      * Resolves a timeout from the properties component, falling back to the given default.
-     * <p/>
+     * <p>
      * Resolution happens per resource rather than once per resolver because a resolver is a long-lived service while
      * the properties it reads can be reloaded underneath it.
      */
@@ -430,7 +430,7 @@ public final class DefaultResourceResolvers {
 
         /**
          * Opens the connection with both timeouts applied.
-         * <p/>
+         * <p>
          * The read timeout is per read rather than for the transfer as a whole, so a large resource arriving slowly is
          * not cut off as long as bytes keep coming; it bounds the wait on a server that accepts the connection and then
          * says nothing, which is the case that otherwise stalls the caller forever.

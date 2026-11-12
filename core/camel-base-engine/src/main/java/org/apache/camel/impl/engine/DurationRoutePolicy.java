@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link org.apache.camel.spi.RoutePolicy} which executes for a duration and then triggers an action.
- * <p/>
+ * <p>
  * This can be used to stop the route after it has processed a number of messages, or has been running for N seconds.
  */
 @Metadata(label = "bean",

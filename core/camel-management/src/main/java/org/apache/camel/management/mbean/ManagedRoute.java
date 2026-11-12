@@ -1086,7 +1086,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
 
     /**
      * Gets the names of the processor (or step) mbeans of this route.
-     * <p/>
+     * <p>
      * The default management agent knows the mbeans of each route, otherwise all the processor mbeans of the
      * CamelContext are queried, which is slow with many routes as the route id of each mbean must be read.
      */

@@ -41,7 +41,7 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 
 /**
  * An XML parser that uses SAX to enrich route stats in the route dump.
- * <p/>
+ * <p>
  * The coverage details:
  * <ul>
  * <li>exchangesTotal - Total number of exchanges</li>

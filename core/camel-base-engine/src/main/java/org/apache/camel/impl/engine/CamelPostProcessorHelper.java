@@ -701,7 +701,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      * Implementations can override this method to determine if the bean is singleton.
      *
      * @param  bean the bean
-     * @return      <tt>true</tt> if its singleton scoped, for prototype scoped <tt>false</tt> is returned.
+     * @return      <code>true</code> if it is singleton scoped, for prototype scoped <code>false</code> is returned.
      */
     protected boolean isSingleton(Object bean, String beanName) {
         if (bean instanceof IsSingleton singleton) {
