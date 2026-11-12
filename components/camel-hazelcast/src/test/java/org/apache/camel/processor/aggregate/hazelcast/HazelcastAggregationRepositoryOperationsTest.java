@@ -268,8 +268,8 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
      * still return the group so that downstream failures can be recovered.
      * <p>
      * Note: the transaction also closes the crash-between-two-steps window that CAMEL-26663 originally fixed: if the
-     * JVM stops after the conditional remove but before the recovery write, the transaction is rolled back on restart
-     * and the group re-appears in the operational repository.
+     * JVM stops after the conditional remove but before the recovery write, the transaction is rolled back on the
+     * cluster side (owner failure or timeout) and the group re-appears in the operational repository.
      */
     @Test
     public void checkOptimisticRemoveRaceDoesNotDeleteWinnersRecoveryEntry() throws Exception {

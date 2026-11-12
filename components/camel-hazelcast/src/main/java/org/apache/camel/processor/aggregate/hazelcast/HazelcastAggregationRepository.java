@@ -386,7 +386,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
                     if (!tCache.remove(key, holder)) {
                         tCtx.rollbackTransaction();
                         LOG.error(
-                                "Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
+                                "Optimistic locking failed for exchange with key {}: TransactionalMap#remove returned false (compare-and-delete found no matching entry).",
                                 key);
                         throw new OptimisticLockingException();
                     }
@@ -415,7 +415,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
             } else {
                 if (!cache.remove(key, holder)) {
                     LOG.error(
-                            "Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
+                            "Optimistic locking failed for exchange with key {}: IMap#remove returned false (compare-and-delete found no matching entry).",
                             key);
                     throw new OptimisticLockingException();
                 }
