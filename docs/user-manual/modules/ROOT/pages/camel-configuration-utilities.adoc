@@ -620,7 +620,7 @@ and xref:components:dataformats:pqc-dataformat.adoc[PQC Data Format].
 For users currently running classical TLS, migration to PQC TLS is straightforward:
 
 1. **Upgrade your JDK** to JDK 27+ (or a JDK build that backports `X25519MLKEM768`)
-2. **Upgrade Camel** to 4.19 or later
+2. **Upgrade Camel** to 4.19 or later (4.24 for the NIST hybrids)
 3. **No configuration changes needed** — PQC named groups are auto-configured
 4. **Verify** that your TLS peers (servers, brokers, load balancers) support PQC key exchange or
 at least accept the classical fallback groups (`x25519`, `secp256r1`)
