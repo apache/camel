@@ -81,8 +81,8 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
                             + " password credentials grant, rather than with clientId and clientSecret.")
     private boolean useResourceOwnerPasswordCredentials = false;
     @Metadata(label = "security",
-              description = "The public key to verify token signatures with, instead of the keys autoFetchPublicKey fetches"
-                            + " from the realm.")
+              description = "The public key to verify token signatures with. Used only when autoFetchPublicKey is false,"
+                            + " which it is not by default.")
     private PublicKey publicKey;
     /**
      * Enable OAuth 2.0 token introspection for real-time token validation. When enabled, tokens are validated by
@@ -103,7 +103,8 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
      * Time-to-live for cached introspection results in seconds. Default is 60 seconds.
      */
     @Metadata(label = "advanced", defaultValue = "60",
-              description = "How long, in seconds, a cached introspection result is kept.")
+              description = "How long a cached introspection result is kept, in seconds, given as a plain number rather"
+                            + " than a time pattern such as 5m.")
     private long introspectionCacheTtl = 60;
     /**
      * Enable validation that tokens are bound to specific sessions. When enabled, tokens from headers must match the
@@ -156,15 +157,17 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
      * Cache refresh interval for Keycloak JWKS public keys in seconds. Default is 300 seconds (5 minutes).
      */
     @Metadata(label = "advanced", defaultValue = "300",
-              description = "How often, in seconds, the cached JWKS keys are refreshed.")
+              description = "How often the cached JWKS keys are refreshed, in seconds, given as a plain number rather than"
+                            + " a time pattern such as 5m.")
     private long jwksRefreshInterval = 300;
     /**
      * Minimum cooldown interval in seconds between remote JWKS refreshes when an unknown key ID (kid) is encountered.
      * This rate-limits outbound calls and prevents JWKS cache stampede. Default is 10 seconds.
      */
     @Metadata(label = "advanced", defaultValue = "10",
-              description = "The minimum time, in seconds, between two JWKS refreshes triggered by an unknown key id, which"
-                            + " rate-limits the calls to Keycloak.")
+              description = "The minimum time between two JWKS refreshes triggered by an unknown key id, which"
+                            + " rate-limits the calls to Keycloak, in seconds, given as a plain number rather than a time"
+                            + " pattern such as 5m.")
     private long minJwksRefreshInterval = 10;
     /**
      * Comma-separated list of expected audiences for token validation. When set, tokens whose "aud" claim does not

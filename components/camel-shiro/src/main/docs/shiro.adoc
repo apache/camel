@@ -120,9 +120,10 @@ acquired from the file system, classpath, or URLs when prefixed with
 |`passPhrase` |`An AES 128 based key` |byte[] |A passPhrase to decrypt ShiroSecurityToken(s) sent along with Message
 Exchanges
 
-|`alwaysReauthenticate` |`true` |boolean |Setting to ensure re-authentication on every request. If set
-to false, the user is authenticated and locked such than only requests
-from the same user going forward are authenticated.
+|`alwaysReauthenticate` |`true` |boolean |Whether to log the caller out after every exchange. If set
+to false, the authenticated subject stays bound to the worker thread for
+the next exchange on that thread. The token of every exchange is
+authenticated either way.
 
 |`permissionsList` |`none` |List<Permission> |A List of permissions required in order for an authenticated user to be
 authorized to perform further action i.e., continue further on the route.
@@ -136,7 +137,8 @@ user to be authorized to perform further action i.e., continue further on
 the route. If no roles list or permissions list (see above) is provided
 to the ShiroSecurityPolicy object, then authorization is deemed as not
 required. Note that the default is that authorization is granted if any
-of the roles in the list are applicable.
+of the roles in the list are applicable. The roles are checked only when
+no permissions list is set: when both are set, the permissions decide.
 
 |`cipherService` |`AES` |org.apache.shiro.crypto.CipherService |Shiro ships with AES & Blowfish-based CipherServices. You may use one of
 these or pass in your own Cipher implementation

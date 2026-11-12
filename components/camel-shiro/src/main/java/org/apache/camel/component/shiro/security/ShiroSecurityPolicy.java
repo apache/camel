@@ -53,14 +53,15 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
                             + " it from a Shiro INI resource; set it when the security manager comes from elsewhere.")
     private SecurityManager securityManager;
     @Metadata(description = "The permissions an authenticated caller needs to continue on the route. Any one of them is"
-                            + " enough unless allPermissionsRequired is set.")
+                            + " enough unless allPermissionsRequired is set. When they are set, rolesList is not checked.")
     private List<Permission> permissionsList;
-    @Metadata(description = "The roles an authenticated caller needs to continue on the route. Any one of them is enough"
-                            + " unless allRolesRequired is set.")
+    @Metadata(description = "The roles an authenticated caller needs to continue on the route, checked only when"
+                            + " permissionsList is empty. Any one of them is enough unless allRolesRequired is set.")
     private List<String> rolesList;
     @Metadata(defaultValue = "true",
-              description = "Whether to authenticate the caller on every exchange. When false, the first caller is"
-                            + " authenticated once and only exchanges from that same user are let through afterwards.")
+              description = "Whether to log the caller out after every exchange. When false, the authenticated subject"
+                            + " stays bound to the worker thread for the next exchange on that thread; the token of every"
+                            + " exchange is still authenticated.")
     private boolean alwaysReauthenticate;
     @Metadata(defaultValue = "false",
               description = "Whether the ShiroSecurityToken header is a base64 string rather than the token object, which lets"

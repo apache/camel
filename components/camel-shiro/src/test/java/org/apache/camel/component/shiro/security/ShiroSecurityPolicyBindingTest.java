@@ -23,12 +23,15 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -50,6 +53,12 @@ class ShiroSecurityPolicyBindingTest {
 
             ShiroSecurityPolicy policy = new ShiroSecurityPolicy("classpath:securityconfig.ini");
             PropertyBindingSupport.setPropertiesOnTarget(context, policy, properties);
+
+            // the generated configurer binds the options, not reflection: it is found by the class name
+            PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
+                    .resolvePropertyConfigurer(ShiroSecurityPolicy.class.getName(), context);
+            assertNotNull(configurer);
+            assertEquals("ShiroSecurityPolicyConfigurer", configurer.getClass().getSimpleName());
 
             assertArrayEquals("CamelSecureRoute".getBytes(StandardCharsets.UTF_8), policy.getPassPhrase());
             assertFalse(policy.isAlwaysReauthenticate());
