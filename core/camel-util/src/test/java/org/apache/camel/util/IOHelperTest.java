@@ -18,9 +18,13 @@ package org.apache.camel.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.FilterReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -138,6 +142,38 @@ public class IOHelperTest {
             assertEquals("FILE_INDEX", IOHelper.normalizeEnvironmentVariable("file.index"));
         } finally {
             Locale.setDefault(before);
+        }
+    }
+
+    @Test
+    public void testSkipFullyWithAReaderThatSkipsInSmallSteps() throws IOException {
+        Reader reader = new OneAtATimeSkipReader(new StringReader("0123456789"));
+
+        IOHelper.skipFully(reader, 4);
+
+        assertEquals("456789", IOHelper.toString(reader));
+    }
+
+    @Test
+    public void testSkipFullyPastTheEnd() {
+        Reader reader = new OneAtATimeSkipReader(new StringReader("0123"));
+
+        assertThrows(EOFException.class, () -> IOHelper.skipFully(reader, 10));
+    }
+
+    /**
+     * A reader that skips one character per call, which {@link Reader#skip(long)} is free to do and which a single
+     * unchecked call therefore has to cope with.
+     */
+    private static final class OneAtATimeSkipReader extends FilterReader {
+
+        private OneAtATimeSkipReader(Reader in) {
+            super(in);
+        }
+
+        @Override
+        public long skip(long n) throws IOException {
+            return n <= 0 ? 0 : super.skip(1);
         }
     }
 
