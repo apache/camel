@@ -8235,10 +8235,10 @@ as `en,de`, BCP-47 tags such as `iso:zh-Hant`, or `script/Latin`), and docling v
 
 === camel-vertx - the component fails to start when the clustered Vert.x is not created
 
-When the component builds its own clustered Vert.x (an endpoint `host` or `port` is set), it waits for the EventBus to be
-ready before it reports itself started. That wait used to be ineffective: the result of the bounded wait was discarded and a
-failed build only logged a warning, so the component started with no Vert.x instance and the first endpoint, producer or
-consumer to use it failed with a `NullPointerException`.
+When the component builds its own clustered Vert.x (the component `host` or `port` option is set and no `vertxOptions` is
+given), it waits for the EventBus to be ready before it reports itself started. That wait used to be ineffective: the
+result of the bounded wait was discarded and a failed build only logged a warning, so the component started with no
+Vert.x instance and the first endpoint, producer or consumer to use it failed with a `NullPointerException`.
 
 The component now fails to start, with the cause attached, when the clustered Vert.x cannot be built or is not ready within
 the `timeout` option. An application whose cluster join is slower than `timeout` (60 seconds by default) has to raise it.

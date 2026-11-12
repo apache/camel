@@ -80,12 +80,10 @@ public class VertxStartupTest {
 
             assertThrows(Exception.class, component::start);
 
-            // the cluster join finishes a moment after the component gave up on it
+            // the cluster join finishes a moment after the component gave up on it. A context-less promise runs its
+            // listeners on the completing thread, so close() has been called by the time complete() returns
             buildClustered.complete(recordingVertx(closed));
 
-            for (int i = 0; i < 100 && !closed.get(); i++) {
-                Thread.sleep(10);
-            }
             assertTrue(closed.get(), "a Vert.x that joins the cluster after the timeout has to be closed again");
         }
     }
