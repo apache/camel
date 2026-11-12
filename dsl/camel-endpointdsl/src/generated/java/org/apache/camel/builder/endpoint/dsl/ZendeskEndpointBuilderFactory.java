@@ -1057,7 +1057,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What operation to use
-         * There are 383 enums and the value can be one of:
+         * There are 385 enums and the value can be one of:
          * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
          * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD,
          * CREATE_ARTICLE, CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION,
@@ -1101,7 +1101,8 @@ public interface ZendeskEndpointBuilderFactory {
          * DELETE_TRIGGER, DELETE_UPLOAD, DELETE_UPLOAD_1, DELETE_USER,
          * DELETE_USER_1, DELETE_USER_IDENTITY, DELETE_USER_IDENTITY_1,
          * DELETE_USER_IDENTITY_2, DELETE_USER_SEGMENT, DELETE_USER_SEGMENT_1,
-         * DELETE_USERS, EXECUTE_VIEW, GET_ACTIVE_TRIGGERS, GET_ARTICLE,
+         * DELETE_USERS, DOWNLOAD_ATTACHMENT, DOWNLOAD_ATTACHMENT_1,
+         * EXECUTE_VIEW, GET_ACTIVE_TRIGGERS, GET_ARTICLE,
          * GET_ARTICLE_FROM_SEARCH, GET_ARTICLE_FROM_SEARCH_1,
          * GET_ARTICLE_SUBSCRIPTIONS, GET_ARTICLE_SUBSCRIPTIONS_1,
          * GET_ARTICLE_TRANSLATIONS, GET_ARTICLES, GET_ARTICLES_1,
@@ -1220,7 +1221,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What operation to use
-         * There are 383 enums and the value can be one of:
+         * There are 385 enums and the value can be one of:
          * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
          * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD,
          * CREATE_ARTICLE, CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION,
@@ -1264,7 +1265,8 @@ public interface ZendeskEndpointBuilderFactory {
          * DELETE_TRIGGER, DELETE_UPLOAD, DELETE_UPLOAD_1, DELETE_USER,
          * DELETE_USER_1, DELETE_USER_IDENTITY, DELETE_USER_IDENTITY_1,
          * DELETE_USER_IDENTITY_2, DELETE_USER_SEGMENT, DELETE_USER_SEGMENT_1,
-         * DELETE_USERS, EXECUTE_VIEW, GET_ACTIVE_TRIGGERS, GET_ARTICLE,
+         * DELETE_USERS, DOWNLOAD_ATTACHMENT, DOWNLOAD_ATTACHMENT_1,
+         * EXECUTE_VIEW, GET_ACTIVE_TRIGGERS, GET_ARTICLE,
          * GET_ARTICLE_FROM_SEARCH, GET_ARTICLE_FROM_SEARCH_1,
          * GET_ARTICLE_SUBSCRIPTIONS, GET_ARTICLE_SUBSCRIPTIONS_1,
          * GET_ARTICLE_TRANSLATIONS, GET_ARTICLES, GET_ARTICLES_1,
