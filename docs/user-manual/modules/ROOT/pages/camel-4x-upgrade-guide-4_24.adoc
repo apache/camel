@@ -875,6 +875,11 @@ exchange as an exception does (wrapped in a `CamelExecutionException`), also whe
   thrown to the caller of the route without the end of the unit of work, so the exchange could stay inflight;
 * by a plain `Processor` of a transacted exchange in a step without an error handler of its own (such as in a `doTry`,
   `doCatch` or `doFinally` block). Before, a `doCatch` did not get it, and it was thrown to the caller.
+* by the `AggregationStrategy` of an `enrich` or `pollEnrich` (as a `CamelExchangeException` caused by it, as for an
+  exception of the strategy), and the resource is released as failed. Before, for `enrich` the `Error` was thrown to the
+  caller and the exchange stayed inflight; for `pollEnrich` the resource (such as a polled file) was not released;
+* by the watermark expression of a `split`: it fails that item, as an exception does. Before, it was thrown to the
+  caller and the split exchange stayed inflight.
 
 A `VirtualMachineError` is left as before. See the next section.
 
