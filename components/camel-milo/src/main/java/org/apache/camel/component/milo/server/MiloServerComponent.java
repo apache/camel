@@ -255,7 +255,8 @@ public class MiloServerComponent extends DefaultComponent {
         return createEndpointConfigs(userTokenPolicies, securityPolicies);
     }
 
-    private Set<EndpointConfig> createEndpointConfigs(
+    // package private for testing
+    Set<EndpointConfig> createEndpointConfigs(
             List<UserTokenPolicy> userTokenPolicies, Set<SecurityPolicy> securityPolicies) {
         Set<EndpointConfig> endpointConfigs = new LinkedHashSet<>();
 
@@ -298,14 +299,15 @@ public class MiloServerComponent extends DefaultComponent {
 
                     endpointConfigs.add(buildTcpEndpoint(noSecurityBuilder));
                     endpointConfigs.add(buildHttpsEndpoint(noSecurityBuilder));
-                } else if (securityPolicies.contains(SecurityPolicy.Basic256Sha256)) {
+                }
 
+                if (securityPolicies != null && securityPolicies.contains(SecurityPolicy.Basic256Sha256)) {
                     // TCP Basic256Sha256 / SignAndEncrypt
                     endpointConfigs.add(buildTcpEndpoint(
                             builder.copy()
                                     .setSecurityPolicy(SecurityPolicy.Basic256Sha256)
                                     .setSecurityMode(MessageSecurityMode.SignAndEncrypt)));
-                } else if (securityPolicies.contains(SecurityPolicy.Basic256Sha256)) {
+
                     // HTTPS Basic256Sha256 / Sign (SignAndEncrypt not allowed for HTTPS)
                     endpointConfigs.add(buildHttpsEndpoint(
                             builder.copy()
