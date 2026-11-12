@@ -224,6 +224,23 @@ public class FileWatchConsumer extends DefaultConsumer {
         return (FileWatchEndpoint) super.getEndpoint();
     }
 
+    /**
+     * Hands a matched event over to the polling threads.
+     *
+     * @param  fileEvent the event to queue
+     * @return           {@code false} when the queue was full and the event was dropped
+     */
+    boolean offerEvent(FileEvent fileEvent) {
+        if (eventQueue.offer(fileEvent)) {
+            return true;
+        }
+
+        LOG.warn("Dropping {} event for {}: the event queue is full at its configured size of {}."
+                 + " Consider increasing the option 'queueSize'.",
+                fileEvent.getEventType(), fileEvent.getEventPath(), getEndpoint().getQueueSize());
+        return false;
+    }
+
     class FileWatchDirectoryChangeListener implements DirectoryChangeListener {
         @Override
         public void onEvent(DirectoryChangeEvent directoryChangeEvent) {
@@ -233,7 +250,7 @@ public class FileWatchConsumer extends DefaultConsumer {
             }
             FileEvent fileEvent = new FileEvent(directoryChangeEvent);
             if (matchFilters(fileEvent)) {
-                eventQueue.offer(fileEvent);
+                offerEvent(fileEvent);
             }
         }
 
