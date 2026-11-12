@@ -97,6 +97,44 @@ public interface SpiffeEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether validateJwtSvid leaves the application body untouched and
+         * publishes the verified identity through the CamelSpiffeJwtIdentity
+         * exchange property. In this mode the token must be in CamelSpiffeToken
+         * or an Authorization Bearer header: the body is never read as a token.
+         * The default returns the JwtSvid in the body as before.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param preserveBody the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder preserveBody(boolean preserveBody) {
+            doSetProperty("preserveBody", preserveBody);
+            return this;
+        }
+        /**
+         * Whether validateJwtSvid leaves the application body untouched and
+         * publishes the verified identity through the CamelSpiffeJwtIdentity
+         * exchange property. In this mode the token must be in CamelSpiffeToken
+         * or an Authorization Bearer header: the body is never read as a token.
+         * The default returns the JwtSvid in the body as before.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param preserveBody the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder preserveBody(String preserveBody) {
+            doSetProperty("preserveBody", preserveBody);
+            return this;
+        }
+        /**
          * Whether the CamelSpiffeOperation header may override the configured
          * operation. Disabled by default: the operation decides whether this
          * endpoint validates a token or mints one, so a message that can set it
@@ -412,8 +450,9 @@ public interface SpiffeEndpointBuilderFactory {
             return "CamelSpiffeSpiffeId";
         }
         /**
-         * The expiry of the returned SVID: the token expiry for fetchJwtSvid,
-         * or the leaf certificate's notAfter for fetchX509Svid.
+         * The expiry of the returned SVID: the token expiry for fetchJwtSvid or
+         * validateJwtSvid, or the leaf certificate's notAfter for
+         * fetchX509Svid.
          * 
          * The option is a: {@code java.util.Date} type.
          * 
