@@ -4045,8 +4045,8 @@ public class StaticEndpointBuilders {
      * is put in the message body.
      * There are 21 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-     * joor, jq, jsonpath, mvel, python, ref, simple, spel, tokenize,
-     * xpath, xquery, xtokenize
+     * joor, jq, jsonpath, mvel, python, ref, simple, spel, tokenize, xpath,
+     * xquery, xtokenize
      * 
      * @param path command:language
      * @return the dsl builder
@@ -4074,8 +4074,8 @@ public class StaticEndpointBuilders {
      * is put in the message body.
      * There are 21 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-     * joor, jq, jsonpath, mvel, python, ref, simple, spel, tokenize,
-     * xpath, xquery, xtokenize
+     * joor, jq, jsonpath, mvel, python, ref, simple, spel, tokenize, xpath,
+     * xquery, xtokenize
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -11440,8 +11440,8 @@ public class StaticEndpointBuilders {
      * Sets the name of the language to use
      * There are 25 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-     * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref,
-     * simple, spel, tokenize, variable, xpath, xquery, xtokenize
+     * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref, simple,
+     * spel, tokenize, variable, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
@@ -11469,8 +11469,8 @@ public class StaticEndpointBuilders {
      * Sets the name of the language to use
      * There are 25 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-     * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref,
-     * simple, spel, tokenize, variable, xpath, xquery, xtokenize
+     * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref, simple,
+     * spel, tokenize, variable, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to

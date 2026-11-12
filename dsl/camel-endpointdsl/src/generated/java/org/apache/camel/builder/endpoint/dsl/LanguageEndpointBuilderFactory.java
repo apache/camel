@@ -364,8 +364,8 @@ public interface LanguageEndpointBuilderFactory {
          * Sets the name of the language to use
          * There are 25 enums and the value can be one of: bean, constant,
          * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-         * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref,
-         * simple, spel, tokenize, variable, xpath, xquery, xtokenize
+         * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref, simple,
+         * spel, tokenize, variable, xpath, xquery, xtokenize
          * 
          * Path parameter: resourceUri
          * Path to the resource, or a reference to lookup a bean in the Registry
@@ -393,8 +393,8 @@ public interface LanguageEndpointBuilderFactory {
          * Sets the name of the language to use
          * There are 25 enums and the value can be one of: bean, constant,
          * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-         * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref,
-         * simple, spel, tokenize, variable, xpath, xquery, xtokenize
+         * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref, simple,
+         * spel, tokenize, variable, xpath, xquery, xtokenize
          * 
          * Path parameter: resourceUri
          * Path to the resource, or a reference to lookup a bean in the Registry
