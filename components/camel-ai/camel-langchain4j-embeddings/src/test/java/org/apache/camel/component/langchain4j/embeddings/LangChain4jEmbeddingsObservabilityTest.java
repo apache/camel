@@ -89,6 +89,7 @@ class LangChain4jEmbeddingsObservabilityTest extends CamelTestSupport {
         assertThat(tags.get(GenAiAttributes.OPERATION_NAME)).isEqualTo("embeddings");
         assertThat(tags.get(GenAiAttributes.REQUEST_MODEL)).isEqualTo("text-embedding-3-small");
         assertThat(tags.get(GenAiAttributes.CAMEL_COMPONENT)).isEqualTo("langchain4j-embeddings");
+        assertThat(tags.get(GenAiAttributes.RESPONSE_MODEL)).isEqualTo("text-embedding-3-small");
     }
 
     @Test

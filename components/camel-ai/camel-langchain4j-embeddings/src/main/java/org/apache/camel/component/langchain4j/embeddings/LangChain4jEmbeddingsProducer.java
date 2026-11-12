@@ -92,7 +92,7 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
                     result.tokenUsage() != null ? result.tokenUsage().inputTokenCount() : null,
                     result.tokenUsage() != null ? result.tokenUsage().outputTokenCount() : null,
                     null,
-                    null));
+                    result.modelName()));
         } catch (RuntimeException e) {
             GenAiErrorSupport.apply(exchange, e);
             observation.recordError(e);
@@ -126,7 +126,7 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
                     result.tokenUsage() != null ? result.tokenUsage().inputTokenCount() : null,
                     result.tokenUsage() != null ? result.tokenUsage().outputTokenCount() : null,
                     null,
-                    null));
+                    result.modelName()));
         } catch (RuntimeException e) {
             GenAiErrorSupport.apply(exchange, e);
             observation.recordError(e);
@@ -186,6 +186,7 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
     private static void removeResultHeaders(Message message) {
         message.removeHeader(LangChain4jEmbeddingsHeaders.REQUEST_MODEL);
         message.removeHeader(LangChain4jEmbeddingsHeaders.FINISH_REASON);
+        message.removeHeader(LangChain4jEmbeddingsHeaders.RESPONSE_MODEL);
         message.removeHeader(LangChain4jEmbeddingsHeaders.INPUT_TOKEN_COUNT);
         message.removeHeader(LangChain4jEmbeddingsHeaders.OUTPUT_TOKEN_COUNT);
         message.removeHeader(LangChain4jEmbeddingsHeaders.TOTAL_TOKEN_COUNT);
@@ -212,6 +213,9 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
             message.setHeader(LangChain4jEmbeddingsHeaders.TOTAL_TOKEN_COUNT, result.tokenUsage().totalTokenCount());
         }
 
+        if (result.embeddings() == null || result.embeddings().isEmpty()) {
+            throw new IllegalStateException("The embedding model returned no embedding");
+        }
         Embedding embedding = result.embeddings().get(0);
         message.setHeader(LangChain4jEmbeddingsHeaders.VECTOR, embedding.vector());
         message.setHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, textSegment);
