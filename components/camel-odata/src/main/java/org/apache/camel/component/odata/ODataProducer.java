@@ -26,6 +26,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.support.DefaultProducer;
@@ -125,6 +126,7 @@ public class ODataProducer extends DefaultProducer {
         // Manage Authentication Headers Precedence
         String authHeader = exchange.getMessage().getHeader("Authorization", String.class);
         ODataConfiguration config = endpoint.getConfiguration();
+        boolean generatedAuthorization = false;
 
         if (authHeader == null && config != null) {
             if ("Basic".equalsIgnoreCase(config.getAuthMethod())
@@ -133,8 +135,10 @@ public class ODataProducer extends DefaultProducer {
                 String credentials = config.getAuthUsername() + ":" + config.getAuthPassword();
                 String encoded = Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
                 httpExchange.getMessage().setHeader("Authorization", "Basic " + encoded);
+                generatedAuthorization = true;
             } else if (config.getAuthBearerToken() != null) {
                 httpExchange.getMessage().setHeader("Authorization", "Bearer " + config.getAuthBearerToken());
+                generatedAuthorization = true;
             }
         }
 
@@ -180,7 +184,19 @@ public class ODataProducer extends DefaultProducer {
             return;
         }
 
-        MessageHelper.copyHeaders(httpExchange.getMessage(), exchange.getMessage(), true);
+        Message result = httpExchange.getMessage();
+        // These headers were set above for the delegated request only and are not part of the OData result: copied
+        // back, a later HTTP step in the route would send its request to the OData target, with the OData method.
+        // Removing them from the HTTP exchange keeps any value of them the caller has on the exchange.
+        result.removeHeader(Exchange.HTTP_URI);
+        result.removeHeader(Exchange.HTTP_QUERY);
+        result.removeHeader(HttpConstants.HTTP_METHOD);
+        result.removeHeader("Accept");
+        if (generatedAuthorization) {
+            // Endpoint authentication belongs to the internal HTTP request, not the mapped result.
+            result.removeHeader("Authorization");
+        }
+        MessageHelper.copyHeaders(result, exchange.getMessage(), true);
 
         Integer responseCode = httpExchange.getMessage().getHeader(
                 Exchange.HTTP_RESPONSE_CODE, Integer.class);

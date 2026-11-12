@@ -3278,6 +3278,19 @@ now answers with HTTP Status 500 and closes the connection. The body is empty, o
 
 A `List` reply is now written as its `toString()`, as a `Map` or a POJO already was. Before, no response was sent.
 
+=== camel-odata - result headers
+
+The OData producer no longer adds an `Authorization` header to the result when authentication comes from the
+endpoint's `authMethod`, `authUsername`, `authPassword` or `authBearerToken` options. A caller-supplied
+`Authorization` header keeps its existing precedence and remains on the exchange.
+
+Routes that need an `Authorization` header after the OData step should set it explicitly in the route.
+
+The `CamelHttpUri`, `CamelHttpQuery` and `CamelHttpMethod` headers and the `Accept` header that the producer sets for
+its own HTTP request are no longer copied to the result either. Before, a later HTTP step in the same route reused
+them and sent its request to the OData target, with the OData method. A value of these headers that the caller has on
+the exchange is kept.
+
 === camel-odata - the body of CREATE and UPDATE, and a response that is not a JSON object
 
 `CREATE` and `UPDATE` send JSON text given as a byte array, a stream or a file as it is, as they do for a `String`.
