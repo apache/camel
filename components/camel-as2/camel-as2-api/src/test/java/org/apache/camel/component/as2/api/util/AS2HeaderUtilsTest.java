@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.as2.api.util;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import org.apache.camel.component.as2.api.AS2Header;
@@ -27,8 +26,10 @@ import org.apache.hc.core5.http.message.ParserCursor;
 import org.apache.hc.core5.util.CharArrayBuffer;
 import org.junit.jupiter.api.Test;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class AS2HeaderUtilsTest {
 
@@ -69,9 +70,12 @@ public class AS2HeaderUtilsTest {
 
         AS2HeaderUtils.addAuthorizationHeader(message, "user", password, null);
 
-        // RFC 7617 asks for UTF-8, and the platform default charset must not decide what goes on the wire
-        final String expected
-                = "Basic " + Base64.getEncoder().encodeToString(("user:" + password).getBytes(StandardCharsets.UTF_8));
-        assertEquals(expected, message.getFirstHeader(AS2Header.AUTHORIZATION).getValue());
+        // the expected value is written out rather than recomputed the way the code does it, so the assertion says
+        // what has to go on the wire whatever the JVM's default charset is: RFC 7617 asks for UTF-8
+        assertEquals("Basic dXNlcjpww6Rzc3dvcmQ=", message.getFirstHeader(AS2Header.AUTHORIZATION).getValue());
+
+        // what the default charset would have produced instead, had it not been UTF-8
+        assertNotEquals("Basic " + Base64.getEncoder().encodeToString(("user:" + password).getBytes(ISO_8859_1)),
+                message.getFirstHeader(AS2Header.AUTHORIZATION).getValue());
     }
 }
