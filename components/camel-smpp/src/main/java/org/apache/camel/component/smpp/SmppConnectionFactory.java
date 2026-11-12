@@ -53,6 +53,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 
@@ -171,33 +172,33 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             InputStream in = socket.getInputStream();
 
             String connectString = "CONNECT " + host + ":" + port + " HTTP/1.0\r\n";
-            out.write(connectString.getBytes());
+            out.write(connectString.getBytes(StandardCharsets.UTF_8));
 
             String username = config.getHttpProxyUsername();
             String password = config.getHttpProxyPassword();
 
             if (username != null && password != null) {
                 String usernamePassword = username + ":" + password;
-                byte[] code = Base64.getEncoder().encode(usernamePassword.getBytes());
-                out.write("Proxy-Authorization: Basic ".getBytes());
+                byte[] code = Base64.getEncoder().encode(usernamePassword.getBytes(StandardCharsets.UTF_8));
+                out.write("Proxy-Authorization: Basic ".getBytes(StandardCharsets.UTF_8));
                 out.write(code);
-                out.write("\r\n".getBytes());
+                out.write("\r\n".getBytes(StandardCharsets.UTF_8));
             }
 
             Map<String, String> proxyHeaders = config.getProxyHeaders();
             if (proxyHeaders != null) {
                 for (Map.Entry<String, String> entry : proxyHeaders.entrySet()) {
-                    out.write((entry.getKey() + ": " + entry.getValue()).getBytes());
-                    out.write("\r\n".getBytes());
+                    out.write((entry.getKey() + ": " + entry.getValue()).getBytes(StandardCharsets.UTF_8));
+                    out.write("\r\n".getBytes(StandardCharsets.UTF_8));
                 }
             }
 
-            out.write("\r\n".getBytes());
+            out.write("\r\n".getBytes(StandardCharsets.UTF_8));
             out.flush();
 
             int ch = 0;
 
-            BufferedReader reader = IOHelper.buffered(new InputStreamReader(in));
+            BufferedReader reader = IOHelper.buffered(new InputStreamReader(in, StandardCharsets.UTF_8));
             String response = reader.readLine();
             if (response == null) {
                 throw new RuntimeCamelException("Empty response to CONNECT request to host " + host + ":" + port);

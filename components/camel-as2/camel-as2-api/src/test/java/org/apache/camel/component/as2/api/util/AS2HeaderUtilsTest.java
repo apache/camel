@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.as2.api.util;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
+import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils.Parameter;
+import org.apache.hc.core5.http.HttpMessage;
+import org.apache.hc.core5.http.message.BasicHttpRequest;
 import org.apache.hc.core5.http.message.ParserCursor;
 import org.apache.hc.core5.util.CharArrayBuffer;
 import org.junit.jupiter.api.Test;
@@ -55,4 +61,17 @@ public class AS2HeaderUtilsTest {
         assertArrayEquals(SIGNED_RECEIPT_MICALG_VALUES, parameter.getValues(), "Unexpected value for parameter values");
     }
 
+    @Test
+    public void addAuthorizationHeaderEncodesCredentialsAsUtf8() {
+        // a password outside US-ASCII: "pa(diaeresis)ssword"
+        final String password = "p\u00e4ssword";
+        final HttpMessage message = new BasicHttpRequest("POST", "/");
+
+        AS2HeaderUtils.addAuthorizationHeader(message, "user", password, null);
+
+        // RFC 7617 asks for UTF-8, and the platform default charset must not decide what goes on the wire
+        final String expected
+                = "Basic " + Base64.getEncoder().encodeToString(("user:" + password).getBytes(StandardCharsets.UTF_8));
+        assertEquals(expected, message.getFirstHeader(AS2Header.AUTHORIZATION).getValue());
+    }
 }
