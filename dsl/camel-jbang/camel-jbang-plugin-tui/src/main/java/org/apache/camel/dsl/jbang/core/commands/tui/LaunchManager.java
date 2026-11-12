@@ -270,8 +270,12 @@ class LaunchManager {
         launchInfra(alias, cmd);
     }
 
-    /** Runs the command that starts the given infra service, and watches it until the service is up. */
-    void launchInfra(String alias, List<String> cmd) throws IOException {
+    /**
+     * Runs the command that starts the given infra service, and watches it until the service is up.
+     *
+     * @return the started process
+     */
+    Process launchInfra(String alias, List<String> cmd) throws IOException {
         Path outputFile = createSecureTempFile("camel-infra-", ".log");
         outputFile.toFile().deleteOnExit();
         ProcessBuilder pb = new ProcessBuilder(cmd);
@@ -281,6 +285,7 @@ class LaunchManager {
         PendingLaunch pl = new PendingLaunch(alias, process, outputFile, MonotonicClock.millis());
         pl.infraAlias = serviceOf(alias);
         pendingLaunches.add(pl);
+        return process;
     }
 
     /**

@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.util.json.JsonObject;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,6 +36,16 @@ class LaunchManagerInfraTest {
 
     private final List<InfraInfo> running = new ArrayList<>();
     private final LaunchManager lm = new LaunchManager(() -> running);
+    // the processes this test started: only these are stopped, as other tests run processes of their own
+    private final List<Process> processes = new ArrayList<>();
+
+    @AfterEach
+    void stopProcesses() {
+        for (Process p : processes) {
+            p.descendants().forEach(ProcessHandle::destroy);
+            p.destroy();
+        }
+    }
 
     @Test
     void theServiceOfAnEntryWithItsImplementation() {
@@ -59,7 +70,7 @@ class LaunchManagerInfraTest {
         lm.setNotificationCallback((msg, error) -> notices.add(msg));
         AtomicBoolean launched = new AtomicBoolean();
         // a first start pulls the image: the infra takes a while
-        lm.launchInfra("kafka", List.of("sleep", "30"));
+        processes.add(lm.launchInfra("kafka", List.of("sleep", "30")));
         lm.deferUntilInfra(List.of("kafka"), "kafka-orders", () -> launched.set(true));
 
         lm.tick(MonotonicClock.millis());
@@ -70,16 +81,13 @@ class LaunchManagerInfraTest {
         lm.tick(MonotonicClock.millis());
         assertThat(launched).isTrue();
         assertThat(notices).contains("Started: kafka");
-        ProcessHandle.current().children()
-                .filter(p -> p.info().command().map(c -> c.endsWith("sleep")).orElse(false))
-                .forEach(ProcessHandle::destroy);
     }
 
     @Test
     void aLaunchThatNeedsAServiceWithItsImplementationRunsOnceTheServiceIsUp() throws Exception {
         AtomicBoolean launched = new AtomicBoolean();
         // camel infra run aws sqs runs as the aws service
-        lm.launchInfra("aws sqs", List.of("sleep", "30"));
+        processes.add(lm.launchInfra("aws sqs", List.of("sleep", "30")));
         lm.deferUntilInfra(List.of("aws sqs"), "aws-sqs", () -> launched.set(true));
 
         lm.tick(MonotonicClock.millis());
@@ -88,9 +96,6 @@ class LaunchManagerInfraTest {
         running.add(infra("aws"));
         lm.tick(MonotonicClock.millis());
         assertThat(launched).isTrue();
-        ProcessHandle.current().children()
-                .filter(p -> p.info().command().map(c -> c.endsWith("sleep")).orElse(false))
-                .forEach(ProcessHandle::destroy);
     }
 
     @Test
@@ -101,7 +106,7 @@ class LaunchManagerInfraTest {
         lm.setFailureLogCallback((name, log) -> failures.add(name));
         AtomicBoolean launched = new AtomicBoolean();
         // the container cannot bind its port: camel infra run ends with an error
-        lm.launchInfra("mosquitto", List.of("sh", "-c", "echo port is already allocated; exit 1"));
+        processes.add(lm.launchInfra("mosquitto", List.of("sh", "-c", "echo port is already allocated; exit 1")));
         lm.deferUntilInfra(List.of("mosquitto"), "mqtt", () -> launched.set(true));
         await().atMost(10, TimeUnit.SECONDS).pollInterval(50, TimeUnit.MILLISECONDS).pollInSameThread().until(() -> {
             lm.tick(MonotonicClock.millis());
@@ -137,8 +142,8 @@ class LaunchManagerInfraTest {
     void theProgressOfAPullIsShownWhileTheInfraStarts() throws Exception {
         List<String> notices = new ArrayList<>();
         lm.setNotificationCallback((msg, error) -> notices.add(msg));
-        lm.launchInfra("ollama", List.of("sh", "-c",
-                "echo 'Pulling image layers:  3 pending,  2 downloaded,  0 extracted, (1.2 GB/3.4 GB)'; sleep 30"));
+        processes.add(lm.launchInfra("ollama", List.of("sh", "-c",
+                "echo 'Pulling image layers:  3 pending,  2 downloaded,  0 extracted, (1.2 GB/3.4 GB)'; sleep 30")));
         await().atMost(10, TimeUnit.SECONDS).pollInterval(50, TimeUnit.MILLISECONDS).pollInSameThread().until(() -> {
             lm.tick(MonotonicClock.millis());
             return !notices.isEmpty();
@@ -148,12 +153,6 @@ class LaunchManagerInfraTest {
         // the same progress is not shown again
         lm.tick(MonotonicClock.millis());
         assertThat(notices).hasSize(1);
-        ProcessHandle.current().children()
-                .filter(p -> p.info().command().map(c -> c.endsWith("sh")).orElse(false))
-                .forEach(ph -> {
-                    ph.descendants().forEach(ProcessHandle::destroy);
-                    ph.destroy();
-                });
     }
 
     private static InfraInfo infra(String alias) {
