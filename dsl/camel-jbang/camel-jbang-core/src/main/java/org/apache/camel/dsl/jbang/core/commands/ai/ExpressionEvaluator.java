@@ -218,12 +218,15 @@ public final class ExpressionEvaluator {
             "python", "java", "joor", "jactl");
 
     /** The languages that read their document from the body, and what that document is. */
-    private static final Map<String, String> BODY_DOCUMENT = Map.of("jsonpath", "JSON", "jq", "JSON", "xpath", "XML");
+    private static final Map<String, String> BODY_DOCUMENT
+            = Map.of("jsonpath", "JSON", "jq", "JSON", "xpath", "XML", "xquery", "XML");
 
-    // a header or exchange property that simple reads by name: ${header.foo}, ${headers:foo}, ${header[foo]},
-    // ${headerAs(foo, Integer)}, ${exchangeProperty.foo}
+    // a header, exchange property or variable that simple reads by name: ${header.foo}, ${headers:foo},
+    // ${header[foo]}, ${headerAs(foo, Integer)}, ${exchangeProperty.foo}, ${variable.foo}. A name in brackets or in
+    // quotes is the whole name, as for simple: ${header['kafka.KEY']} reads the header kafka.KEY, not kafka
     private static final Pattern READS_BY_NAME = Pattern.compile(
-            "\\$\\{\\s*(?:in\\.)?(header|exchangeProperty)s?(?:[.:\\[]|As\\()\\s*['\"]?([\\w-]+)");
+            "\\$\\{\\s*(?:in\\.)?(header|exchangeProperty|variable)s?(?:[.:\\[]|As\\()\\s*['\"]?"
+                                                                 + "((?<=\\[)[^\\]'\"]+|(?<=['\"])[^'\"]+|[\\w-]+)");
 
     /** The headers the error handler sets from the first redelivery on. */
     private static final Set<String> REDELIVERY_HEADERS
@@ -247,27 +250,39 @@ public final class ExpressionEvaluator {
     }
 
     /**
-     * Why a simple expression evaluated to null when it reads a header or an exchange property the evaluation does not
-     * have, else {@link #NULL_NOTE}. r24 to r26 fail-well-error-handling step 2: ${header.CamelRedeliveryCounter} was
-     * null, and the model looked for it as an exchange property, or in 11 lookups of the Exchange API, and wrote
-     * nothing.
+     * Why a simple expression evaluated to null when it reads a header, an exchange property or a variable the
+     * evaluation does not have, else {@link #NULL_NOTE}. r24 to r26 fail-well-error-handling step 2:
+     * ${header.CamelRedeliveryCounter} was null, and the model looked for it as an exchange property, or in 11 lookups
+     * of the Exchange API, and wrote nothing.
      */
-    static String nullNote(String lang, String expression, Map<String, Object> headers) {
+    static String nullNote(
+            String lang, String expression, Map<String, Object> headers, Map<String, Object> variables) {
         Matcher m = "simple".equals(lang) && expression != null ? READS_BY_NAME.matcher(expression) : null;
         while (m != null && m.find()) {
-            String name = m.group(2);
+            String name = m.group(2).strip();
             boolean redelivery = REDELIVERY_HEADERS.contains(name);
             if ("exchangeProperty".equals(m.group(1))) {
                 return "evaluated to null: the exchange property " + name + " is not set: an evaluation has no exchange"
                        + " properties" + (redelivery ? "; " + name + " is a header: ${header." + name + "}" : "");
+            }
+            if ("variable".equals(m.group(1))) {
+                // a scoped variable, such as ${variable.global:foo}, keeps the generic note
+                if (!expression.startsWith(":", m.end()) && (variables == null || !variables.containsKey(name))) {
+                    return "evaluated to null: the variable " + name + " is not set: an evaluation has only the"
+                           + " variables passed in variables";
+                }
+                continue;
             }
             // the headers of a message do not tell case
             if (headers == null || headers.keySet().stream().noneMatch(name::equalsIgnoreCase)) {
                 return "evaluated to null: the header " + name + " is not set: an evaluation has only the headers"
                        + " passed in headers"
                        + (redelivery
-                               ? "; the error handler sets it from the first redelivery on, so it is not set on the"
-                                 + " first attempt, and onException has it only after a redelivery"
+                               ? "; the error handler sets it on the message it redelivers, from the first redelivery"
+                                 + " on (the redelivered step and onRedelivery see it), so it is not set on the first"
+                                 + " attempt; an onException that handles or continues the exchange, and a dead"
+                                 + " letter channel, do not see it, because the error handler removes it before they"
+                                 + " run"
                                : "");
             }
         }
@@ -388,7 +403,8 @@ public final class ExpressionEvaluator {
             result.put("nullResult", true);
         }
         String elvis = elvisNote(ctx, r.language(), r.expression());
-        String note = elvis != null ? elvis : isNull ? nullNote(r.language(), r.expression(), r.headers()) : null;
+        String note
+                = elvis != null ? elvis : isNull ? nullNote(r.language(), r.expression(), r.headers(), r.variables()) : null;
         if (note != null) {
             result.put("note", result.containsKey("note") ? result.getString("note") + "; " + note : note);
         }

@@ -39,6 +39,10 @@ class ExpressionEvaluatorNotesTest {
 
         JsonObject body = ExpressionEvaluator.evaluate(new ToolContext(), "xpath", "/order/id", "<order><id>1</id></order>");
         assertThat(body.get("note")).isNull();
+
+        assertThat(ExpressionEvaluator.noBodyNote("xquery", "/order/id", null))
+                .isEqualTo("no body was passed: xquery reads the XML of the message body, so this was evaluated on"
+                           + " empty text; pass the XML as body");
     }
 
     /**
@@ -50,14 +54,42 @@ class ExpressionEvaluatorNotesTest {
         assertThat(ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${header.CamelRedeliveryCounter}", null)
                 .getString("note")).isEqualTo(
                         "evaluated to null: the header CamelRedeliveryCounter is not set: an evaluation has only the"
-                                              + " headers passed in headers; the error handler sets it from the first"
-                                              + " redelivery on, so it is not set on the first attempt, and onException"
-                                              + " has it only after a redelivery");
-        assertThat(ExpressionEvaluator.nullNote("simple", "${exchangeProperty.CamelRedeliveryCounter}", null))
+                                              + " headers passed in headers; the error handler sets it on the message"
+                                              + " it redelivers, from the first redelivery on (the redelivered step and"
+                                              + " onRedelivery see it), so it is not set on the first attempt; an"
+                                              + " onException that handles or continues the exchange, and a dead"
+                                              + " letter channel, do not see it, because the error handler removes it"
+                                              + " before they run");
+        assertThat(ExpressionEvaluator.nullNote("simple", "${exchangeProperty.CamelRedeliveryCounter}", null, null))
                 .isEqualTo("evaluated to null: the exchange property CamelRedeliveryCounter is not set: an evaluation has"
                            + " no exchange properties; CamelRedeliveryCounter is a header: ${header.CamelRedeliveryCounter}");
         // a header that was passed: what is null is something else
-        assertThat(ExpressionEvaluator.nullNote("simple", "${header.order[missing]}", Map.of("order", Map.of())))
+        assertThat(ExpressionEvaluator.nullNote("simple", "${header.order[missing]}", Map.of("order", Map.of()), null))
+                .isEqualTo(ExpressionEvaluator.NULL_NOTE);
+    }
+
+    /** A name in brackets is the whole name, as for simple: camel-kafka's headers have a dot in it. */
+    @Test
+    void aHeaderNameInBracketsIsTheWholeName() {
+        String note = "evaluated to null: the header kafka.KEY is not set: an evaluation has only the headers passed in"
+                      + " headers";
+        assertThat(ExpressionEvaluator.nullNote("simple", "${header['kafka.KEY']}", null, null)).isEqualTo(note);
+        assertThat(ExpressionEvaluator.nullNote("simple", "${header[kafka.KEY]}", null, null)).isEqualTo(note);
+        assertThat(ExpressionEvaluator.nullNote("simple", "${header['kafka.KEY']}", Map.of("kafka.KEY", ""), null))
+                .isEqualTo(ExpressionEvaluator.NULL_NOTE);
+    }
+
+    @Test
+    void anUnsetVariableSaysHowToPassIt() {
+        assertThat(ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${variable.orderId}", null)
+                .getString("note"))
+                .isEqualTo("evaluated to null: the variable orderId is not set: an evaluation has only the variables"
+                           + " passed in variables");
+        // a variable that was passed: what is null is something else
+        assertThat(ExpressionEvaluator.nullNote("simple", "${variable.order[missing]}", null, Map.of("order", Map.of())))
+                .isEqualTo(ExpressionEvaluator.NULL_NOTE);
+        // a scoped variable keeps the generic note
+        assertThat(ExpressionEvaluator.nullNote("simple", "${variable.global:orderId}", null, null))
                 .isEqualTo(ExpressionEvaluator.NULL_NOTE);
     }
 }
