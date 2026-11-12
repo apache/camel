@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.wordpress.api.auth;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.cxf.common.util.Base64Utility;
 import org.apache.cxf.jaxrs.client.ClientConfiguration;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -51,8 +53,9 @@ public class WordpressBasicAuthentication extends BaseWordpressAuthentication {
     @Override
     public void configureAuthentication(Object api) {
         if (isCredentialsSet()) {
-            final String authorizationHeader = String.format("Basic %s",
-                    Base64Utility.encode(String.format("%s:%s", this.username, this.password).getBytes()));
+            final String credentials = String.format("%s:%s", this.username, this.password);
+            final String authorizationHeader
+                    = String.format("Basic %s", Base64Utility.encode(credentials.getBytes(StandardCharsets.UTF_8)));
             LOGGER.info("Credentials set for user {}", username);
             WebClient.client(api).header("Authorization", authorizationHeader);
         } else {

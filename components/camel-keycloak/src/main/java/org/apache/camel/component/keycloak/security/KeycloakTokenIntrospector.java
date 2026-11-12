@@ -17,6 +17,7 @@
 package org.apache.camel.component.keycloak.security;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -142,7 +143,7 @@ public class KeycloakTokenIntrospector {
 
         // Add Basic authentication header
         String auth = clientId + ":" + clientSecret;
-        String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+        String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
         request.setHeader("Authorization", "Basic " + encodedAuth);
         request.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
