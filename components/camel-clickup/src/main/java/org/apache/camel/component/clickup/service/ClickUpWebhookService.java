@@ -18,6 +18,7 @@ package org.apache.camel.component.clickup.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.Set;
 
@@ -82,7 +83,7 @@ public class ClickUpWebhookService {
 
         String messageBody;
         try (InputStream body = message.getBody(InputStream.class)) {
-            messageBody = new String(body.readAllBytes());
+            messageBody = new String(body.readAllBytes(), StandardCharsets.UTF_8);
 
             LOG.debug("Message body {} to be validated against the given signature {}", messageBody, signature);
 
