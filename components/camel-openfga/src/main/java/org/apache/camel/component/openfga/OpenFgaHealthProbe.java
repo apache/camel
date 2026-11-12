@@ -20,7 +20,12 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
@@ -82,6 +87,33 @@ public final class OpenFgaHealthProbe implements AutoCloseable {
     }
 
     /**
+     * The client this probe holds, without creating one. For the tests of the probe's lifecycle.
+     */
+    synchronized HttpClient currentClient() {
+        return client;
+    }
+
+    /**
+     * Sends the request and waits for the whole response, body included, for at most {@link #TIMEOUT}. The timeout of
+     * the request itself only covers the wait for the response headers, so a server that stalls while sending the body
+     * would otherwise hold the thread that runs the health check for as long as it likes.
+     */
+    private <T> HttpResponse<T> sendBounded(HttpRequest request, HttpResponse.BodyHandler<T> handler) throws Exception {
+        CompletableFuture<HttpResponse<T>> call = client().sendAsync(request, handler);
+        try {
+            return call.get(TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            call.cancel(true);
+            throw new HttpTimeoutException("Timed out waiting for the OpenFGA health endpoint after " + TIMEOUT);
+        } catch (InterruptedException e) {
+            call.cancel(true);
+            throw e;
+        } catch (ExecutionException e) {
+            throw e.getCause() instanceof Exception cause ? cause : e;
+        }
+    }
+
+    /**
      * Probes the OpenFGA server's health endpoint and records the outcome on the builder.
      * <p/>
      * An unreachable server, a server answering with an error, and a server answering that it is not serving are
@@ -117,8 +149,7 @@ public final class OpenFgaHealthProbe implements AutoCloseable {
         }
 
         try {
-            HttpResponse<String> response
-                    = client().send(request.build(), HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = sendBounded(request.build(), HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
                 builder.down();
                 builder.message("OpenFGA answered its health endpoint with HTTP " + response.statusCode());

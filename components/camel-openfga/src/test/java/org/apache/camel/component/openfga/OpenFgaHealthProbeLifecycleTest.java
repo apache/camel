@@ -122,9 +122,7 @@ class OpenFgaHealthProbeLifecycleTest {
     private static HttpClient client(HealthCheck check) throws Exception {
         Field probe = check.getClass().getDeclaredField("probe");
         probe.setAccessible(true);
-        Object owner = probe.get(check);
-        Field client = owner.getClass().getDeclaredField("client");
-        client.setAccessible(true);
-        return (HttpClient) client.get(owner);
+        // the probe exposes its client to this package, so a rename there is a compile error, not a surprise
+        return ((OpenFgaHealthProbe) probe.get(check)).currentClient();
     }
 }
