@@ -36,8 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Installing a provider other than the default, and putting the default back, is logged at INFO with the class of the
- * provider: the provider is static, so in a shared runtime it applies to every CamelContext.
+ * Installing a provider other than the default, and putting the default back, is logged with the class of the provider:
+ * the provider is static, so in a shared runtime it applies to every CamelContext. The first time for each provider
+ * class at INFO, then at DEBUG, as a test harness installs its provider for each test or seed. Each test uses provider
+ * classes of its own, as what was logged at INFO is kept for the JVM.
  */
 @Isolated
 class TimeSourceLogTest {
@@ -45,7 +47,7 @@ class TimeSourceLogTest {
     private static final String LOGGER = TimeSource.class.getName();
 
     /** A provider of a test harness (only its class matters here). */
-    private static final class HarnessClock implements TimeSource.Provider {
+    private abstract static class HarnessClock implements TimeSource.Provider {
         @Override
         public long currentTimeMillis() {
             return 0;
@@ -60,6 +62,24 @@ class TimeSourceLogTest {
         public void sleep(long millis) {
             // virtual
         }
+    }
+
+    private static final class FirstClock extends HarnessClock {
+    }
+
+    private static final class RepeatedClock extends HarnessClock {
+    }
+
+    private static final class ResetClock extends HarnessClock {
+    }
+
+    private static final class ReplacedClock extends HarnessClock {
+    }
+
+    private static final class ReplacingClock extends HarnessClock {
+    }
+
+    private static final class QuietClock extends HarnessClock {
     }
 
     private final List<LogEvent> events = new CopyOnWriteArrayList<>();
@@ -77,8 +97,8 @@ class TimeSourceLogTest {
         appender.start();
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         Configuration config = ctx.getConfiguration();
-        LoggerConfig loggerConfig = new LoggerConfig(LOGGER, Level.INFO, true);
-        loggerConfig.addAppender(appender, Level.INFO, null);
+        LoggerConfig loggerConfig = new LoggerConfig(LOGGER, Level.DEBUG, true);
+        loggerConfig.addAppender(appender, Level.DEBUG, null);
         config.addLogger(LOGGER, loggerConfig);
         ctx.updateLoggers();
     }
@@ -98,19 +118,36 @@ class TimeSourceLogTest {
 
     @Test
     void installingAndPuttingTheDefaultBackAreLoggedWithTheProviderClass() {
-        TimeSource.Provider previous = TimeSource.install(new HarnessClock());
+        TimeSource.Provider previous = TimeSource.install(new FirstClock());
         TimeSource.install(previous);
 
-        List<String> messages = messages();
-        assertEquals(2, messages.size(), messages.toString());
-        assertEquals("INFO Installed TimeSource provider: " + HarnessClock.class.getName(), messages.get(0));
-        assertEquals("INFO Installed default TimeSource provider (replacing: " + HarnessClock.class.getName() + ")",
-                messages.get(1));
+        assertEquals(List.of(
+                "INFO Installed TimeSource provider: " + FirstClock.class.getName(),
+                "INFO Installed default TimeSource provider (replacing: " + FirstClock.class.getName() + ")"),
+                messages());
+    }
+
+    @Test
+    void theNextInstallsOfTheSameProviderClassAreLoggedAtDebug() {
+        for (int i = 0; i < 3; i++) {
+            TimeSource.install(new RepeatedClock());
+            TimeSource.reset();
+        }
+
+        String name = RepeatedClock.class.getName();
+        assertEquals(List.of(
+                "INFO Installed TimeSource provider: " + name,
+                "INFO Installed default TimeSource provider (replacing: " + name + ")",
+                "DEBUG Installed TimeSource provider: " + name,
+                "DEBUG Installed default TimeSource provider (replacing: " + name + ")",
+                "DEBUG Installed TimeSource provider: " + name,
+                "DEBUG Installed default TimeSource provider (replacing: " + name + ")"),
+                messages());
     }
 
     @Test
     void resetIsLoggedLikeInstallingTheDefault() {
-        TimeSource.install(new HarnessClock());
+        TimeSource.install(new ResetClock());
         TimeSource.reset();
 
         List<String> messages = messages();
@@ -119,9 +156,21 @@ class TimeSourceLogTest {
     }
 
     @Test
+    void replacingAProviderOtherThanTheDefaultSaysWhatItReplaced() {
+        TimeSource.install(new ReplacedClock());
+        TimeSource.install(new ReplacingClock());
+
+        assertEquals(List.of(
+                "INFO Installed TimeSource provider: " + ReplacedClock.class.getName(),
+                "INFO Installed TimeSource provider: " + ReplacingClock.class.getName() + " (replacing: "
+                                                                                        + ReplacedClock.class.getName() + ")"),
+                messages());
+    }
+
+    @Test
     void nothingIsLoggedWhenTheDefaultStaysInstalled() {
         TimeSource.reset();
-        TimeSource.install(TimeSource.install(new HarnessClock()));
+        TimeSource.install(TimeSource.install(new QuietClock()));
         events.clear();
 
         TimeSource.reset();
