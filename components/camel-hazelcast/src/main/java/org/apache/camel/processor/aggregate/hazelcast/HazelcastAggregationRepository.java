@@ -346,9 +346,13 @@ public class HazelcastAggregationRepository extends ServiceSupport
     }
 
     /**
-     * This method performs transactional operation on removing the {@code exchange} from the operational storage and
-     * moving it into the persistent one if the {@link HazelcastAggregationRepository} runs in recoverable mode and
-     * {@code optimistic} is false. It will act at <u>your own</u> risk otherwise.
+     * Removes the {@code exchange} from the operational storage and moves it into the persistent one if the
+     * {@link HazelcastAggregationRepository} runs in recoverable mode. Both operations are applied atomically inside a
+     * Hazelcast transaction (ONE_PHASE): when {@code optimistic} is {@code true} and {@code useRecovery} is
+     * {@code true}, a {@link com.hazelcast.transaction.TransactionalMap#remove(Object, Object)} is used as the
+     * conditional compare-and-delete, so the losing thread's transaction sees the entry already gone, rolls back, and
+     * never touches the persistent map. When {@code optimistic} is {@code false} and {@code useRecovery} is
+     * {@code true}, the same transactional pattern is used without the conditional check.
      *
      * @param camelContext the current CamelContext
      * @param key          the correlation key
