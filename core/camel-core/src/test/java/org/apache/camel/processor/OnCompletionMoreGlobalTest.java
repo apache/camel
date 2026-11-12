@@ -73,7 +73,7 @@ public class OnCompletionMoreGlobalTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 // define a global on completion that is invoked when the
-                // exchage is complete
+                // exchange is complete
                 onCompletion().to("log:global").to("mock:sync");
 
                 // we can define multiple on completion as we like as this is

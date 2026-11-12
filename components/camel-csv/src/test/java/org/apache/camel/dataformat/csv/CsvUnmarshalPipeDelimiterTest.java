@@ -75,7 +75,7 @@ public class CsvUnmarshalPipeDelimiterTest extends CamelTestSupport {
             @Override
             public void configure() {
                 @SuppressWarnings("resource")
-                // resource will be managed by framework lifecyle
+                // resource will be managed by framework lifecycle
                 CsvDataFormat csv = new CsvDataFormat().setDelimiter('|');
 
                 from("direct:start").unmarshal(csv)

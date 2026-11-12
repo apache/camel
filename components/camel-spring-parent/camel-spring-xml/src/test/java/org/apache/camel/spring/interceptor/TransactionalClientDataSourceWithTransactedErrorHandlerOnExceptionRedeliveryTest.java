@@ -36,7 +36,7 @@ public class TransactionalClientDataSourceWithTransactedErrorHandlerOnExceptionR
                 // Camel in case you have multiple TX managers
                 errorHandler(transactionErrorHandler().maximumRedeliveries(6));
 
-                // speical for this exception we only want to do it at most 4 times
+                // special for this exception we only want to do it at most 4 times
                 onException(IllegalArgumentException.class).maximumRedeliveries(4);
 
                 from("direct:okay")

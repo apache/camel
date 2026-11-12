@@ -489,7 +489,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     @Test
     void testSignatureVerificationOptionIgnore() throws Exception {
 
-        // encryptor is sending a PGP message with signature! Decryptor is ignoreing the signature
+        // encryptor is sending a PGP message with signature! Decryptor is ignoring the signature
         decryptor.setSignatureVerificationOption(PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_IGNORE);
         decryptor.setSignatureKeyUserids(null);
         decryptor.setSignatureKeyFileName(null); // no public keyring! --> no signature validation possible
@@ -659,7 +659,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                         .unmarshal(pgpVerifyAndDecryptSeveralSignerKeys).to("mock:unencrypted");
                 // END SNIPPET: pgp-format-several-signer-keys
 
-                // test encryption by several key and signing by serveral keys where the keys are specified by one User ID part
+                // test encryption by several key and signing by several keys where the keys are specified by one User ID part
                 PGPDataFormat pgpSignAndEncryptOneUserIdWithServeralKeys = new PGPDataFormat();
                 pgpSignAndEncryptOneUserIdWithServeralKeys.setEncryptionKeyRing(getPublicKeyRing());
                 pgpSignAndEncryptOneUserIdWithServeralKeys.setSignatureKeyRing(getSecKeyRing());

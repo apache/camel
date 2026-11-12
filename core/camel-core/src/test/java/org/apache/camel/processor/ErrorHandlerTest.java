@@ -46,7 +46,7 @@ public class ErrorHandlerTest extends ContextTestSupport {
         MockEndpoint error = getMockEndpoint("mock:error");
         MockEndpoint result = getMockEndpoint("mock:result");
         error.expectedMessageCount(1);
-        // we exepect the orignal input when moved to the DLC queue
+        // we expect the original input when moved to the DLC queue
         error.expectedBodiesReceived("Boom");
         result.expectedMessageCount(0);
 

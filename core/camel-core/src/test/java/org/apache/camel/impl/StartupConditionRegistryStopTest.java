@@ -33,7 +33,7 @@ public class StartupConditionRegistryStopTest extends ContextTestSupport {
     @Test
     public void testVetoCamelContextStart() {
         context.start();
-        // vetod - should not be able to start and stop camel
+        // vetoed - should not be able to start and stop camel
         Assertions.assertTrue(context.getStatus().isStopped());
         Assertions.assertTrue(context.isVetoStarted());
     }

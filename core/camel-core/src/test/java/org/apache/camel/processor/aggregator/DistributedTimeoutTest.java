@@ -106,7 +106,7 @@ class DistributedTimeoutTest extends AbstractDistributedTest {
             // we assert
             // about the expected values directly inside the test method itself.
             // other than that
-            // asserting inside a thread other than the main thread dosen't make
+            // asserting inside a thread other than the main thread doesn't make
             // much sense as
             // junit would not realize the failed assertion!
             receivedExchange = oldExchange;

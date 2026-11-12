@@ -29,7 +29,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test the cahce when reloading .tm files in the classpath
+ * Unit test the cache when reloading .tm files in the classpath
  */
 public class StringTemplateContentCacheTest extends CamelTestSupport {
 

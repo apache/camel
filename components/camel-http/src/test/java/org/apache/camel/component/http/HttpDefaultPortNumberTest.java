@@ -128,7 +128,7 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
 
         context.start();
 
-        //server is runnning, but connecting to other port
+        //server is running, but connecting to other port
         Exchange exchange = template.request("direct:start", null);
 
         assertRefused(exchange, ":80");

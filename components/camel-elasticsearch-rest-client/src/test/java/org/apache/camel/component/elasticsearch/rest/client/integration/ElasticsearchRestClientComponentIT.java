@@ -141,7 +141,7 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
             assertEquals(expectedResult, allDocuments);
         });
 
-        // fetch one single document  with criterias
+        // fetch one single document  with criteria
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             Map<String, String> criterias = new HashMap<>();
             criterias.put("title", "Elastic");
@@ -153,7 +153,7 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
             assertEquals(expectedResult, allDocuments);
         });
 
-        // fetch multiple documents  with criterias
+        // fetch multiple documents  with criteria
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             Map<String, String> criterias = new HashMap<>();
             criterias.put("title", "Elastic");
@@ -165,7 +165,7 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
             assertEquals(expectedResult, allDocuments);
         });
 
-        // fetch inexisting document with criterias
+        // fetch non-existing document with criteria
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             Map<String, String> criterias = new HashMap<>();
             criterias.put("title", "Apache");
@@ -237,7 +237,7 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
             assertEquals(expectedResult, allDocuments);
         });
 
-        // DELETE a document by inexisting ID
+        // DELETE a document by non-existing ID
         mockErrorHandler.reset();
         mockErrorHandler.expectedMessageCount(1);
 

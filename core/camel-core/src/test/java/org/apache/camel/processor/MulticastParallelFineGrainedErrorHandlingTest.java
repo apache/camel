@@ -62,7 +62,7 @@ public class MulticastParallelFineGrainedErrorHandlingTest extends ContextTestSu
         context.start();
 
         getMockEndpoint("mock:a").expectedMessageCount(1);
-        // stop on exception can cause tasks which hasnt been started yet to not
+        // stop on exception can cause tasks which hasn't been started yet to not
         // run
         // so it can either be 0 or 1 message
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);

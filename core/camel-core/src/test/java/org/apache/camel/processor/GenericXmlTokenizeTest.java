@@ -26,7 +26,7 @@ public class GenericXmlTokenizeTest extends ContextTestSupport {
     @Test
     public void testSendClosedTagMessageToTokenize() throws Exception {
         String message = "<?xml version='1.0' encoding='UTF-8' ?><parent><child anotherAttr='' some_attr=''></child></parent>";
-        // the result is formated
+        // the result is formatted
         String expectedMessage = "<child anotherAttr=\"\" some_attr=\"\"/>";
 
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -41,7 +41,7 @@ public class GenericXmlTokenizeTest extends ContextTestSupport {
     public void testSendSelfClosingTagMessageToTokenize() throws Exception {
         String message
                 = "<?xml version='1.0' encoding='UTF-8' ?><parent xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><child some_attr='' anotherAttr='' /></parent>";
-        // the result is formated
+        // the result is formatted
         String expectedMessage = "<child anotherAttr=\"\" some_attr=\"\"/>";
 
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");

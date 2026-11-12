@@ -93,7 +93,7 @@ public class SplitterPojoTest extends ContextTestSupport {
     public static class MySplitterBean {
 
         /**
-         * The split body method returns something that is iteratable such as a java.util.List.
+         * The split body method returns something that is iterable such as a java.util.List.
          *
          * @param  body the payload of the incoming message
          * @return      a list containing each part split
@@ -110,7 +110,7 @@ public class SplitterPojoTest extends ContextTestSupport {
         }
 
         /**
-         * The split message method returns something that is iteratable such as a java.util.List.
+         * The split message method returns something that is iterable such as a java.util.List.
          *
          * @param  header the header of the incoming message with the name user
          * @param  body   the payload of the incoming message

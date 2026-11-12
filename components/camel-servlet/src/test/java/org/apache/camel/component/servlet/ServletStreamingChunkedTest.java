@@ -45,7 +45,7 @@ public class ServletStreamingChunkedTest extends ServletCamelRouterTestSupport {
         final CountDownLatch latch1 = new CountDownLatch(1);
         final CountDownLatch latch2 = new CountDownLatch(1);
 
-        // use background thread to write to stream that camel-servlet uses as reponse
+        // use background thread to write to stream that camel-servlet uses as response
         context.getExecutorServiceManager().newSingleThreadExecutor(this, "writer").execute(() -> {
             try {
                 LOG.info(">>>> sleeping <<<<");

@@ -125,7 +125,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                         // will not be returned until Jetty makes it available -
                         // currently the content-type
                         // returned is just the default for FileDataHandler (for
-                        // the implentation being used)
+                        // the implementation being used)
                         // assertEquals("Get a wrong content type",
                         // "text/plain", data.getContentType());
                         assertEquals("log4j2.properties", data.getName(), "Got the wrong name");

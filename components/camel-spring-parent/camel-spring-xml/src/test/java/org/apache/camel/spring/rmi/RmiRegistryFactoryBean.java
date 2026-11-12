@@ -127,7 +127,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
             throws RemoteException {
 
         if (registryHost != null) {
-            // Host explictly specified: only lookup possible.
+            // Host explicitly specified: only lookup possible.
             if (logger.isInfoEnabled()) {
                 logger.info("Looking for RMI registry at port '" + registryPort + "' of host [" + registryHost + "]");
             }

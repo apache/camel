@@ -49,7 +49,7 @@ public class Handler extends ResourceResolverSupport {
                                                  "    <xsd:element name=\"TestMessage\" type=\"TestMessage\" />" +
                                                  "</xsd:schema>";
 
-    // correct element name, the validation will be corerct
+    // correct element name, the validation will be correct
     private static final String XSD_TEMPLATE_2 = XSD_TEMPLATE_1.replace("\"Content\"", "\"MessageContent\"");
 
     private final AtomicInteger counter;

@@ -52,7 +52,7 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
         // the dead letter queue
         allEndpoint.expectedMessageCount(1);
 
-        // regular error handler is disbled for try .. catch .. finally
+        // regular error handler is disabled for try .. catch .. finally
         deadEndpoint.expectedMessageCount(0);
 
         assertThrows(Exception.class,

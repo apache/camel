@@ -40,7 +40,7 @@ public class InterceptFromSimpleLogTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                // intercept all incomming routes and log it
+                // intercept all incoming routes and log it
                 interceptFrom().to("log:received");
 
                 // and here we have a couple of routes

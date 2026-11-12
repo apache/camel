@@ -75,7 +75,7 @@ public class OnCompletionTest extends ContextTestSupport {
                         .to("log:sync").to("mock:sync")
                         // must use end to denote the end of the onCompletion route
                         .end()
-                        // here the original route contiues
+                        // here the original route continues
                         .process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }

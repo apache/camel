@@ -288,7 +288,7 @@ public class GitProducerTest extends GitTestSupport {
         // Test camel-git commit (with no changes)
         template.requestBodyAndHeader("direct:commit", "", GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
 
-        // Check that it has been commited twice
+        // Check that it has been committed twice
         validateGitLogs(git, commitMessage, commitMessage);
         git.close();
     }
@@ -887,7 +887,7 @@ public class GitProducerTest extends GitTestSupport {
         // Test camel-git commit (with no changes)
         template.requestBodyAndHeader("direct:commit", "", GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
 
-        // Check that it has been commited twice
+        // Check that it has been committed twice
         validateGitLogs(git, commitMessage, commitMessage);
 
         // Test camel-git add

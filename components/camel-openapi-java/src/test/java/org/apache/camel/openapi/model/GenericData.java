@@ -17,7 +17,7 @@
 package org.apache.camel.openapi.model;
 
 /**
- * Generic interface used to validate that inheritance and generics also works with the camel open-api compoment
+ * Generic interface used to validate that inheritance and generics also works with the camel open-api component
  */
 interface GenericData {
 }

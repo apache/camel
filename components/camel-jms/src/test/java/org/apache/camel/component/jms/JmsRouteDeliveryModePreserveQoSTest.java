@@ -160,7 +160,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
         // in this test, we can only pass if we are "preserving" existing deliveryMode.
         // this means camel expects to have an existing QoS set as a header, or it will pick
         // from the JMS message created by the message creator
-        // otherwise, "preserveMessageQos==true" does not allow us to explicity set the deliveryMode
+        // otherwise, "preserveMessageQos==true" does not allow us to explicitly set the deliveryMode
         // on the message
         mock.message(0).header("JMSDeliveryMode").isEqualTo(1);
 

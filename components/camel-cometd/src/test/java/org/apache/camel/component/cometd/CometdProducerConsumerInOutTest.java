@@ -120,7 +120,7 @@ public class CometdProducerConsumerInOutTest extends CamelTestSupport {
         uri = "cometd://127.0.0.1:" + port.getPort() + "/service/test?baseResource=file:./target/test-classes/webapp&"
               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-        //cometds protocal to start getSslSocketConnector
+        //cometds protocol to start getSslSocketConnector
         uriSSL = "cometds://127.0.0.1:" + portSSL.getPort() + "/service/test?baseResource=file:./target/test-classes/webapp&"
                  + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
     }

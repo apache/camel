@@ -35,7 +35,7 @@ public class JoorCompileErrorTest extends LanguageTestSupport {
             assertExpression("'Hello World", null);
             fail("Should fail");
         } catch (JoorCompilationException e) {
-            // there is a missing end quote cauing compile error
+            // there is a missing end quote causing compile error
             assertTrue(e.getCode().contains("return \"Hello World;"));
             assertTrue(e.getCause().getMessage().contains("Compilation error"));
         }
