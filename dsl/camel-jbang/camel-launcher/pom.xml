@@ -305,6 +305,19 @@
 
     <build>
         <plugins>
+            <!-- the repackaged self-executing JAR keeps this manifest -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <!-- JLine uses the FFM API for the terminal (JEP 472: Java 24+ warns without it) -->
+                            <Enable-Native-Access>ALL-UNNAMED</Enable-Native-Access>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <!-- Create self-executing JAR using Spring Boot loader tools -->
             <plugin>
                 <groupId>org.apache.camel</groupId>
