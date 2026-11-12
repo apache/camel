@@ -8211,3 +8211,13 @@ not pass a language on; a language header alone turns OCR on, unless the endpoin
 
 The language itself is passed to docling untouched, in both forms: it is docling's own identifier (language codes such
 as `en,de`, BCP-47 tags such as `iso:zh-Hant`, or `script/Latin`), and docling validates it.
+=== camel-influxdb2 - the retentionPolicy option and the camelInfluxDB.RetentionPolicy header are deprecated
+
+Neither has ever had any effect. A retention policy is an InfluxDB 1.x concept: its write API takes one per write, and
+`camel-influxdb` passes it there. The InfluxDB 2.x write API that this component calls does not -- retention is a
+property of the bucket -- so `InfluxDb2Producer` never reads the option or the header, and both were carried over from
+`camel-influxdb` along with the header's 1.x spelling, `camelInfluxDB.RetentionPolicy`.
+
+Both are now deprecated with a note that says so. Remove `retentionPolicy` from the endpoint URI and stop setting the
+header: they are silently ignored. To control how long the data is kept, set the retention period on the bucket the
+endpoint writes to.
