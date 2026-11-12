@@ -185,6 +185,76 @@ public class ClusteredRouteControllerStopTest {
         }
     }
 
+    @Test
+    public void testCamelContextClusterServiceNotStoppedWhenControllerStopsWhileCamelContextRuns() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        // a service of the CamelContext, which the route controller finds and shares with the other users of the
+        // cluster service of the CamelContext
+        context.addService(cs);
+        ClusteredRouteController controller = new ClusteredRouteController();
+        controller.setNamespace("my-ns");
+        context.setRouteController(controller);
+        context.start();
+        try {
+            assertTrue(cs.isStarted());
+
+            controller.stop();
+            assertTrue(cs.isStarted(), "the cluster service of the CamelContext must keep running");
+        } finally {
+            context.stop();
+        }
+        // the CamelContext stops its service
+        assertFalse(cs.isStarted());
+    }
+
+    @Test
+    public void testOldControllerShutdownKeepsTheClusterServiceSharedWithTheNewController() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        context.addService(cs);
+        ClusteredRouteController old = new ClusteredRouteController();
+        old.setNamespace("my-ns");
+        context.setRouteController(old);
+        context.start();
+        try {
+            // the route controller is replaced while the CamelContext runs, and the old one shut down
+            ClusteredRouteController replacement = new ClusteredRouteController();
+            replacement.setNamespace("my-ns");
+            // setRouteController starts the new route controller, as the CamelContext is started
+            context.setRouteController(replacement);
+            assertTrue(replacement.isStarted());
+            assertTrue(cs.isStarted());
+
+            old.shutdown();
+            assertTrue(cs.isStarted(), "the new route controller still uses the cluster service");
+            assertTrue(replacement.isStarted());
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testClusterServiceStartedByOthersNotStoppedWhenControllerStops() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        ClusteredRouteController controller = new ClusteredRouteController();
+        // a cluster service that the application started itself, and set on the route controller
+        cs.setCamelContext(context);
+        cs.start();
+        controller.setClusterService(cs);
+        controller.setNamespace("my-ns");
+        context.setRouteController(controller);
+        context.start();
+        try {
+            controller.stop();
+            assertTrue(cs.isStarted(), "the route controller did not start the cluster service, so it must not stop it");
+        } finally {
+            context.stop();
+            cs.stop();
+        }
+    }
+
     /**
      * Records whether the cluster service is still started when the CamelContext has stopped, before the fallback of
      * the route controller (whose lifecycle strategy is added after this one, when the route controller starts).

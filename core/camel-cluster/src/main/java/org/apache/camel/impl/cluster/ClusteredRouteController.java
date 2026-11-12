@@ -64,6 +64,9 @@ public class ClusteredRouteController extends DefaultRouteController {
     private final RoutesStoppedListener routesStoppedListener;
     private final LifecycleStrategy contextStoppedStrategy;
     private CamelClusterService clusterService;
+    // whether this route controller started the cluster service when it started (and may stop it while the CamelContext
+    // runs)
+    private volatile boolean startedClusterService;
     private CamelClusterService.Selector clusterServiceSelector;
 
     public ClusteredRouteController() {
@@ -152,7 +155,8 @@ public class ClusteredRouteController extends DefaultRouteController {
 
     /**
      * Set the cluster service to use. The route controller starts it if it is not started yet, and stops it when the
-     * CamelContext stops, once the routes have stopped.
+     * CamelContext stops, once the routes have stopped. When the route controller is stopped while the CamelContext
+     * runs, it stops the cluster service only if it started it and it is not a service of the CamelContext.
      */
     public void setClusterService(CamelClusterService clusterService) {
         ObjectHelper.notNull(clusterService, "CamelClusterService");
@@ -199,9 +203,11 @@ public class ClusteredRouteController extends DefaultRouteController {
         LOGGER.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(),
                 clusterService.getClass().getName());
 
+        startedClusterService = false;
         if (!ServiceHelper.isStarted(clusterService)) {
             // Start the cluster service if not yet started.
             clusterService.start();
+            startedClusterService = true;
         }
 
         if (!context.getManagementStrategy().getEventNotifiers().contains(routesStoppedListener)) {
@@ -223,7 +229,18 @@ public class ClusteredRouteController extends DefaultRouteController {
             return;
         }
 
-        stopClusterService();
+        // The route controller is stopped while the CamelContext runs: it stops the cluster service only if it started
+        // it, and if it is not a service of the CamelContext. Others may use that cluster service (the cluster route
+        // policies and master consumers of the CamelContext, or another route controller that replaces this one), and
+        // stopping it would make them give up their leadership
+        CamelContext context = getCamelContext();
+        if (startedClusterService && (context == null || !context.hasService(clusterService))) {
+            stopClusterService();
+        } else {
+            LOGGER.debug("The cluster service {} is not stopped: it was not started by this route controller, or it is"
+                         + " a service of the CamelContext",
+                    clusterService);
+        }
     }
 
     @Override
