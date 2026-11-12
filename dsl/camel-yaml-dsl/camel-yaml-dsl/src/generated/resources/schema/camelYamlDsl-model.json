@@ -12755,7 +12755,7 @@
       }, {
         "name" : "namingStrategy",
         "type" : "string",
-        "description" : "If set then Jackson will use the the defined Property Naming Strategy.Possible values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE",
+        "description" : "If set then Jackson will use the defined Property Naming Strategy. Possible values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE",
         "title" : "Naming Strategy",
         "displayName" : "Naming Strategy",
         "kind" : "attribute",

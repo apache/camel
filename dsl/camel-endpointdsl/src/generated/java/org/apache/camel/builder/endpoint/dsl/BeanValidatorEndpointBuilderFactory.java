@@ -238,7 +238,7 @@ public interface BeanValidatorEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a a custom ValidationProviderResolver.
+         * To use a custom ValidationProviderResolver.
          * 
          * The option is a:
          * <code>jakarta.validation.ValidationProviderResolver</code> type.
@@ -253,7 +253,7 @@ public interface BeanValidatorEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a a custom ValidationProviderResolver.
+         * To use a custom ValidationProviderResolver.
          * 
          * The option will be converted to a
          * <code>jakarta.validation.ValidationProviderResolver</code> type.

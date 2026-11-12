@@ -16,7 +16,7 @@ import org.apache.camel.spi.UriParams;
  * Camel endpoint configuration for {@link com.braintreegateway.SettlementBatchSummaryGateway}.
  */
 @ApiParams(apiName = "settlementBatchSummary", 
-           description = "Provides methods to interact wit settlement summaries",
+           description = "Provides methods to interact with settlement summaries",
            apiMethods = {@ApiMethod(methodName = "generate", signatures={"com.braintreegateway.Result<com.braintreegateway.SettlementBatchSummary> generate(java.util.Calendar settlementDate)", "com.braintreegateway.Result<com.braintreegateway.SettlementBatchSummary> generate(java.util.Calendar settlementDate, String groupByCustomField)"}), }, aliases = {})
 @UriParams
 @Configurer(extended = true)

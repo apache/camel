@@ -84,7 +84,7 @@ public class BeanValidatorComponent extends DefaultComponent {
     }
 
     /**
-     * To use a a custom {@link ValidationProviderResolver}
+     * To use a custom {@link ValidationProviderResolver}
      */
     public void setValidationProviderResolver(ValidationProviderResolver validationProviderResolver) {
         this.validationProviderResolver = validationProviderResolver;

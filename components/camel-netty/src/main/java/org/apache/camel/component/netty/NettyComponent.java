@@ -47,7 +47,7 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
                             + " 1. Setting this value to eg 10 will then use 10 threads unless 2 x cpu_core plus 1 is a higher value, which then"
                             + " will override and be used. For example if there are 8 cores, then the consumer thread pool will be 17."
                             + " This thread pool is used to route messages received from Netty by Camel. We use a separate thread pool to ensure"
-                            + " ordering of messages and also in case some messages will block, then nettys worker threads (event loop) wont be affected.")
+                            + " ordering of messages and also in case some messages will block, then netty's worker threads (event loop) won't be affected.")
     private int maximumPoolSize;
     @Metadata(label = "consumer,advanced", description = "To use the given custom EventExecutorGroup.")
     private volatile EventExecutorGroup executorService;

@@ -218,7 +218,7 @@
                                 </api>
                                 <api>
                                     <apiName>settlementBatchSummary</apiName>
-                                    <apiDescription>Provides methods to interact wit settlement summaries</apiDescription>
+                                    <apiDescription>Provides methods to interact with settlement summaries</apiDescription>
                                     <proxyClass>com.braintreegateway.SettlementBatchSummaryGateway</proxyClass>
                                     <fromJavasource />
                                 </api>
