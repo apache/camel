@@ -73,6 +73,7 @@ class TimeSourceDirectClockCallsTest {
             // camel-support
             "camel-support/src/main/java/org/apache/camel/support/DefaultTimeoutMap.java",
             "camel-support/src/main/java/org/apache/camel/support/MonotonicClock.java",
+            "camel-support/src/main/java/org/apache/camel/support/ScheduledPollConsumer.java",
             "camel-support/src/main/java/org/apache/camel/support/SendHelper.java",
             "camel-support/src/main/java/org/apache/camel/support/StepHelper.java",
             "camel-support/src/main/java/org/apache/camel/support/startup/DefaultStartupConditionStrategy.java",
