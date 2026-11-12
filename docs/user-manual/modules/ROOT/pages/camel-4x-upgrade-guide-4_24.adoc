@@ -1193,6 +1193,10 @@ When adding a plugin via `camel plugin add`, the `appliesTo` value from the list
 the configuration. After a plugin is downloaded for the first time, its `appliesTo` is learned from its
 `@CamelJBangPlugin` annotation and cached for subsequent invocations.
 
+NOTE: The annotation default (`appliesTo = {}`) is not equivalent to `appliesTo: []` in the config file.
+An unset annotation value means no filtering (backward compatible — the plugin is loaded for `run` and `export`),
+whereas an explicit empty list in the config restricts the plugin to its own command only.
+
 === camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
 
 A circuit breaker in the steps of a `doTry` no longer ends that `doTry` for the steps after it. Before, when the
