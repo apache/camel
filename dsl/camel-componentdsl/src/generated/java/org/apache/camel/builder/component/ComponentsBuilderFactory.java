@@ -1102,11 +1102,11 @@ public interface ComponentsBuilderFactory {
     /**
      * Cedar (camel-cedar)
      * Embedded Cedar authorization policies
-     *
+     * 
      * Category: security
      * Since: 4.24
      * Maven coordinates: org.apache.camel:camel-cedar
-     *
+     * 
      * @return the dsl builder
      */
     static CedarComponentBuilderFactory.CedarComponentBuilder cedar() {
