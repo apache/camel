@@ -102,7 +102,7 @@ newest first; the same error repeated is listed once with its count.
 - `h` — highlight a word
 - `l` — change log level
 - `Shift+F8` — fix with AI: the ERROR on the screen (a list to pick from when there are several)
-- `f` — toggle follow mode (`End` turns it on). Scrolling with the mouse wheel, `Up`, `PgUp` or `Home` turns it off; the title then shows `(paused, End follows)` when new lines arrive below the view
+- `Space` — pause or resume, as on the Timeline (`f` does the same, and `End` resumes). Scrolling with the mouse wheel, `Up`, `PgUp` or `Home` pauses too. The title says `● live` while the log follows the newest lines, and a reversed `‖ PAUSED` in a warning border while it stays put, with `more below` when there are lines below the view
 - `w` — toggle word wrap
 - `c` — toggle the compact view (on by default): the time, level, logger and message of each line, without the date, pid and thread
 - `Ctrl+L` — pin/cycle/unpin log panel (works from any tab)

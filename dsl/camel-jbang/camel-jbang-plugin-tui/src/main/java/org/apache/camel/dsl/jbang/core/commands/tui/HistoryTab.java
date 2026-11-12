@@ -2152,7 +2152,7 @@ class HistoryTab extends AbstractTab {
                 lines.add(Line.from(Span.raw("   " + stripControlChars(bl))));
             }
         } else {
-            lines.add(Line.from(Span.styled(" Body is null", headerStyle)));
+            lines.add(Line.from(Span.styled(" Body: ", headerStyle), Span.styled(BodyTypes.NO_BODY, Style.EMPTY.dim())));
         }
         lines.add(Line.from(Span.raw("")));
     }
