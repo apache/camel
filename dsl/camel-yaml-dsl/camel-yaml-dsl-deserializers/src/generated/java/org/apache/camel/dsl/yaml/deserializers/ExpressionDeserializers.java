@@ -88,9 +88,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             case "mvel": {
                 return asType(node, org.apache.camel.model.language.MvelExpression.class);
             }
-            case "ognl": {
-                return asType(node, org.apache.camel.model.language.OgnlExpression.class);
-            }
             case "python": {
                 return asType(node, org.apache.camel.model.language.PythonExpression.class);
             }
@@ -155,7 +152,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "language", type = "object:org.apache.camel.model.language.LanguageExpression", oneOf = "expression"),
                     @YamlProperty(name = "method", type = "object:org.apache.camel.model.language.MethodCallExpression", oneOf = "expression"),
                     @YamlProperty(name = "mvel", type = "object:org.apache.camel.model.language.MvelExpression", oneOf = "expression"),
-                    @YamlProperty(name = "ognl", type = "object:org.apache.camel.model.language.OgnlExpression", oneOf = "expression"),
                     @YamlProperty(name = "python", type = "object:org.apache.camel.model.language.PythonExpression", oneOf = "expression"),
                     @YamlProperty(name = "python3", type = "object:org.apache.camel.model.language.Python3Expression", oneOf = "expression"),
                     @YamlProperty(name = "quickjs", type = "object:org.apache.camel.model.language.QuickjsExpression", oneOf = "expression"),
@@ -194,7 +190,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "language", type = "object:org.apache.camel.model.language.LanguageExpression", oneOf = "expression"),
                     @YamlProperty(name = "method", type = "object:org.apache.camel.model.language.MethodCallExpression", oneOf = "expression"),
                     @YamlProperty(name = "mvel", type = "object:org.apache.camel.model.language.MvelExpression", oneOf = "expression"),
-                    @YamlProperty(name = "ognl", type = "object:org.apache.camel.model.language.OgnlExpression", oneOf = "expression"),
                     @YamlProperty(name = "python", type = "object:org.apache.camel.model.language.PythonExpression", oneOf = "expression"),
                     @YamlProperty(name = "python3", type = "object:org.apache.camel.model.language.Python3Expression", oneOf = "expression"),
                     @YamlProperty(name = "quickjs", type = "object:org.apache.camel.model.language.QuickjsExpression", oneOf = "expression"),

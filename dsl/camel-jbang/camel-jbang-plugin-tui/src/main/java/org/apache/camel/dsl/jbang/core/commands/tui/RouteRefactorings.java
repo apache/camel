@@ -49,7 +49,7 @@ final class RouteRefactorings {
     private static final Set<String> NOT_EXTRACTABLE = Set.of(
             "routes", "route", "camel", "beans", "from", "when", "otherwise", "doCatch", "doFinally", "onFallback",
             "expression", "simple", "constant", "header", "exchangeProperty", "variable", "jsonpath", "xpath",
-            "groovy", "language", "method", "tokenize", "jq", "ref", "datasonnet", "spel", "mvel", "ognl", "js",
+            "groovy", "language", "method", "tokenize", "jq", "ref", "datasonnet", "spel", "mvel", "js",
             "python", "java", "xquery", "xtokenize", "hl7terser", "jactl", "csimple", "joor");
 
     private RouteRefactorings() {

@@ -402,17 +402,6 @@ public class MockValueBuilder implements Expression, Predicate {
     }
 
     /**
-     * Creates an expression using the ognl language
-     *
-     * @param  value the expression value
-     * @return       a builder with the expression
-     */
-    public MockValueBuilder ognl(String value) {
-        Expression newExp = ExpressionBuilder.languageExpression(expression, "ognl", value, Object.class);
-        return onNewValueBuilder(newExp);
-    }
-
-    /**
      * Creates an expression using the python language
      *
      * @param  value the expression value

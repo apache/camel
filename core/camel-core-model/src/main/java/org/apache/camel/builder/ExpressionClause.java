@@ -537,16 +537,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Evaluates an <a href="http://camel.apache.org/ognl.html">OGNL expression</a>
-     *
-     * @param  text the expression to be evaluated
-     * @return      the builder to continue processing the DSL
-     */
-    public T ognl(String text) {
-        return delegate.ognl(text);
-    }
-
-    /**
      * Evaluates a Python expression.
      *
      * @param  text the expression to be evaluated

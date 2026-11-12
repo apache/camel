@@ -61,7 +61,7 @@ public final class ToolConfirms {
 
     /** The expression languages that run code, in the integration (or the CLI when none is selected). */
     public static final Set<String> CODE_LANGUAGES
-            = Set.of("groovy", "java", "joor", "js", "javascript", "python", "mvel", "ognl", "spel");
+            = Set.of("groovy", "java", "joor", "js", "javascript", "python", "mvel", "spel");
 
     private ToolConfirms() {
     }

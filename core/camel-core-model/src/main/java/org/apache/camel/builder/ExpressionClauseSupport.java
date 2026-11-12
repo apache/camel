@@ -39,7 +39,6 @@ import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
-import org.apache.camel.model.language.OgnlExpression;
 import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.QuickjsExpression;
@@ -653,16 +652,6 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
         expression.setUnpackArray("true");
         expression.setResultType(resultType);
         return expression(expression);
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/ognl.html">OGNL expression</a>
-     *
-     * @param  text the expression to be evaluated
-     * @return      the builder to continue processing the DSL
-     */
-    public T ognl(String text) {
-        return expression(new OgnlExpression(text));
     }
 
     /**

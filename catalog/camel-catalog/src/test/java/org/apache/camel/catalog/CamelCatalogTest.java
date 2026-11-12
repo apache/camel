@@ -2113,9 +2113,9 @@ public class CamelCatalogTest {
         Assertions.assertInstanceOf(ComponentModel.class, am);
         Assertions.assertEquals("Upload and download files to/from FTP servers.", am.getDescription());
 
-        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-ognl", catalog.getCatalogVersion());
+        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-jq", catalog.getCatalogVersion());
         Assertions.assertInstanceOf(LanguageModel.class, am);
-        Assertions.assertEquals("Evaluates an OGNL expression (Apache Commons OGNL)", am.getDescription());
+        Assertions.assertEquals("Evaluates a JQ expression against a JSON message body", am.getDescription());
 
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-bindy", catalog.getCatalogVersion());
         Assertions.assertInstanceOf(DataFormatModel.class, am);
