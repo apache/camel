@@ -142,7 +142,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
      * <p>
      * Note: Not for end users - this method is used internally by camel-blueprint/camel-cdi
      *
-     * @param init whether to automatic initialize.
+     * @param init whether to automatically initialize.
      */
     public SimpleCamelContext(boolean init) {
         super(init);

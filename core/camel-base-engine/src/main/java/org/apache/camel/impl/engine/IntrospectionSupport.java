@@ -53,15 +53,15 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * Helper for introspections of beans.
- * <p/>
+ * <p>
  * <b>Important: </b> Its recommended to call the {@link #stop()} method when {@link org.apache.camel.CamelContext} is
  * being stopped. This allows to clear the introspection cache.
- * <p/>
- * This implementation will skip methods from <tt>java.lang.Object</tt> and <tt>java.lang.reflect.Proxy</tt>.
- * <p/>
+ * <p>
+ * This implementation will skip methods from <code>java.lang.Object</code> and <code>java.lang.reflect.Proxy</code>.
+ * <p>
  * This implementation will use a cache when the {@link #getProperties(Object, java.util.Map, String)} method is being
  * used. Also the {@link #cacheClass(Class)} method gives access to the introspect cache.
- * <p/>
+ * <p>
  * This class is only for internal use by Camel - not for end users; use {@link BeanIntrospection} instead.
  */
 final class IntrospectionSupport {
@@ -111,7 +111,7 @@ final class IntrospectionSupport {
 
     /**
      * {@link org.apache.camel.CamelContext} should call this stop method when its stopping.
-     * <p/>
+     * <p>
      * This implementation will clear its introspection cache.
      */
     static void stop() {
@@ -206,14 +206,14 @@ final class IntrospectionSupport {
 
     /**
      * Will inspect the target for properties.
-     * <p/>
-     * Notice a property must have both a getter/setter method to be included. Notice all <tt>null</tt> values will be
-     * included.
+     * <p>
+     * Notice a property must have both a getter/setter method to be included. Notice all <code>null</code> values will
+     * be included.
      *
      * @param  target       the target bean
      * @param  properties   the map to fill in found properties
      * @param  optionPrefix an optional prefix to append the property key
-     * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
+     * @return              <code>true</code> if any properties were found, <code>false</code> otherwise.
      */
     static boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix) {
         return getProperties(target, properties, optionPrefix, true);
@@ -221,14 +221,14 @@ final class IntrospectionSupport {
 
     /**
      * Will inspect the target for properties.
-     * <p/>
+     * <p>
      * Notice a property must have both a getter/setter method to be included.
      *
      * @param  target       the target bean
      * @param  properties   the map to fill in found properties
      * @param  optionPrefix an optional prefix to append the property key
-     * @param  includeNull  whether to include <tt>null</tt> values
-     * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
+     * @param  includeNull  whether to include <code>null</code> values
+     * @return              <code>true</code> if any properties were found, <code>false</code> otherwise.
      */
     static boolean getProperties(
             Object target, Map<String, Object> properties, String optionPrefix, boolean includeNull) {
