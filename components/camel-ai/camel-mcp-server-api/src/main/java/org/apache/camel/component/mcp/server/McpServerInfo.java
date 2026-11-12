@@ -44,6 +44,9 @@ import java.util.List;
  *                                   disabled
  * @param requiredScopes             comma-separated OAuth scopes required by the MCP HTTP endpoint
  * @param resourceUri                explicit public HTTPS URI of the protected MCP resource for RFC 9728 metadata
+ * @param allowedHosts               hosts allowed in the {@code Host} header of a request to the MCP endpoint (exact,
+ *                                   or {@code host:*} for any port or none); {@code null} does not check the
+ *                                   {@code Host} header. Since 4.24.
  *
  * @since                            4.22
  */
@@ -61,19 +64,20 @@ public record McpServerInfo(
         List<String> allowedOrigins,
         String oauthProfile,
         String requiredScopes,
-        String resourceUri) {
+        String resourceUri,
+        List<String> allowedHosts) {
 
     public McpServerInfo(String serverName, String version, String path) {
         this(serverName, version, path,
              McpServerConstants.DEFAULT_SESSION_KEEP_ALIVE_INTERVAL,
              McpServerConstants.DEFAULT_SESSION_IDLE_TTL,
-             null, null, null, null, null, null, null, null, null);
+             null, null, null, null, null, null, null, null, null, null);
     }
 
     public McpServerInfo(String serverName, String version, String path,
                          long sessionKeepAliveIntervalMs, long sessionIdleTtlMs) {
         this(serverName, version, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs,
-             null, null, null, null, null, null, null, null, null);
+             null, null, null, null, null, null, null, null, null, null);
     }
 
     public McpServerInfo(String serverName, String version, String path,
@@ -81,7 +85,7 @@ public record McpServerInfo(
                          String title, String description, String websiteUrl, String instructions,
                          List<McpServerIcon> icons) {
         this(serverName, version, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs,
-             title, description, websiteUrl, instructions, icons, null, null, null, null);
+             title, description, websiteUrl, instructions, icons, null, null, null, null, null);
     }
 
     /**
@@ -105,7 +109,36 @@ public record McpServerInfo(
                          String title, String description, String websiteUrl, String instructions,
                          List<McpServerIcon> icons, List<String> allowedOrigins) {
         this(serverName, version, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs,
-             title, description, websiteUrl, instructions, icons, allowedOrigins, null, null, null);
+             title, description, websiteUrl, instructions, icons, allowedOrigins, null, null, null, null);
+    }
+
+    /**
+     * Compatibility constructor preserving the signature from before the allowed hosts. The {@code Host} header is not
+     * checked when this constructor is used.
+     *
+     * @param serverName                 the MCP server name
+     * @param version                    the MCP server version
+     * @param path                       the HTTP endpoint path
+     * @param sessionKeepAliveIntervalMs keep-alive interval in milliseconds
+     * @param sessionIdleTtlMs           session idle TTL in milliseconds
+     * @param title                      optional display title
+     * @param description                optional server description
+     * @param websiteUrl                 optional server website URL
+     * @param instructions               optional server instructions
+     * @param icons                      optional server icons
+     * @param allowedOrigins             allowed HTTP origins, or null for the default
+     * @param oauthProfile               the camel-oauth profile, or null when disabled
+     * @param requiredScopes             comma-separated OAuth scopes required by the MCP HTTP endpoint
+     * @param resourceUri                explicit public HTTPS URI of the protected MCP resource
+     */
+    public McpServerInfo(String serverName, String version, String path,
+                         long sessionKeepAliveIntervalMs, long sessionIdleTtlMs,
+                         String title, String description, String websiteUrl, String instructions,
+                         List<McpServerIcon> icons, List<String> allowedOrigins,
+                         String oauthProfile, String requiredScopes, String resourceUri) {
+        this(serverName, version, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs,
+             title, description, websiteUrl, instructions, icons, allowedOrigins, oauthProfile, requiredScopes,
+             resourceUri, null);
     }
 
     public McpServerInfo {
@@ -120,6 +153,9 @@ public record McpServerInfo(
         }
         if (allowedOrigins != null) {
             allowedOrigins = List.copyOf(allowedOrigins);
+        }
+        if (allowedHosts != null) {
+            allowedHosts = List.copyOf(allowedHosts);
         }
     }
 }

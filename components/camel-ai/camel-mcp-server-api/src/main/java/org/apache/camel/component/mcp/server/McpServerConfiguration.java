@@ -45,6 +45,7 @@ public class McpServerConfiguration {
     private long sessionKeepAliveInterval = McpServerConstants.DEFAULT_SESSION_KEEP_ALIVE_INTERVAL;
     private long sessionIdleTtl = McpServerConstants.DEFAULT_SESSION_IDLE_TTL;
     private String allowedOrigins;
+    private String allowedHosts;
     private String oauthProfile;
     private String requiredScopes;
     private String resourceUri;
@@ -221,6 +222,25 @@ public class McpServerConfiguration {
 
     public void setAllowedOrigins(String allowedOrigins) {
         this.allowedOrigins = allowedOrigins;
+    }
+
+    /**
+     * Comma-separated list of hosts allowed in the {@code Host} header of a request to the MCP endpoint, such as
+     * {@code mcp.example.com} or {@code localhost:*} (any port, or none). When set, a request whose {@code Host} header
+     * is missing or not in the list is rejected with HTTP 421 (Misdirected Request), before its body is read and before
+     * any session is created; this protects a server bound to a private address against DNS rebinding. The host is
+     * compared ignoring case. An entry that is not of the form {@code host[:port]}, such as {@code *} or an entry with
+     * a scheme, fails the startup (see {@link McpServerHosts}). When not set, the {@code Host} header is not checked.
+     * Engine-owned: ignored by native engines.
+     *
+     * @since 4.24
+     */
+    public String getAllowedHosts() {
+        return allowedHosts;
+    }
+
+    public void setAllowedHosts(String allowedHosts) {
+        this.allowedHosts = allowedHosts;
     }
 
     /**
