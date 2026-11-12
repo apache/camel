@@ -37,7 +37,7 @@ import org.apache.camel.util.URISupport;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFactoryBean<Endpoint> {
     @XmlAttribute(required = true)
-    @Metadata(description = "Sets the URI to use to resolve the endpoint. Notice that additional options can be configured using a series of property.")
+    @Metadata(description = "Sets the URI to use to resolve the endpoint. Notice that additional options can be configured using a series of properties.")
     private String uri;
     @XmlElementRef
     @Metadata(description = "To configure additional endpoint options using a XML style which is similar as configuring Spring beans.")
@@ -70,8 +70,8 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
 
     /**
      * Sets the URI to use to resolve the endpoint.
-     * <p/>
-     * Notice that additional options can be configured using a series of property.
+     * <p>
+     * Notice that additional options can be configured using a series of properties.
      */
     public void setUri(String uri) {
         this.uri = uri;

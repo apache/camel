@@ -73,8 +73,8 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
 
     /**
      * Encoding to use when loading properties file from the file system or classpath.
-     * <p/>
-     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as
+     * <p>
+     * If no encoding has been set, then the properties files are loaded using ISO-8859-1 encoding (latin-1) as
      * documented by {@link java.util.Properties#load(java.io.InputStream)}
      */
     public void setEncoding(String encoding) {

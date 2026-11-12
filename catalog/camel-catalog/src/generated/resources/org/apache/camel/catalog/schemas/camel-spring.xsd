@@ -2486,7 +2486,7 @@ The id of this node.
             <xs:documentation xml:lang="en">
 <![CDATA[
 Sets the URI to use to resolve the endpoint. Notice that additional options can be configured using a series of
-property.
+properties.
 ]]>
             </xs:documentation>
           </xs:annotation>

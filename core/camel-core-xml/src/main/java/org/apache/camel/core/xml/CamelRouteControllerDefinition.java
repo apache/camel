@@ -92,8 +92,8 @@ public class CamelRouteControllerDefinition extends IdentifiedType {
      *
      * The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma.
      *
-     * For example to include all kafka routes, you can say <tt>kafka:*</tt>. And to include routes with specific route
-     * ids <tt>myRoute,myOtherRoute</tt>. The pattern supports wildcards and uses the matcher from
+     * For example to include all kafka routes, you can say <code>kafka:*</code>. And to include routes with specific
+     * route ids <code>myRoute,myOtherRoute</code>. The pattern supports wildcards and uses the matcher from
      * org.apache.camel.support.PatternHelper#matchPattern.
      */
     public void setIncludeRoutes(String includeRoutes) {
@@ -109,8 +109,8 @@ public class CamelRouteControllerDefinition extends IdentifiedType {
      *
      * The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma.
      *
-     * For example to exclude all JMS routes, you can say <tt>jms:*</tt>. And to exclude routes with specific route ids
-     * <tt>mySpecialRoute,myOtherSpecialRoute</tt>. The pattern supports wildcards and uses the matcher from
+     * For example to exclude all JMS routes, you can say <code>jms:*</code>. And to exclude routes with specific route
+     * ids <code>mySpecialRoute,myOtherSpecialRoute</code>. The pattern supports wildcards and uses the matcher from
      * org.apache.camel.support.PatternHelper#matchPattern.
      */
     public void setExcludeRoutes(String excludeRoutes) {

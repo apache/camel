@@ -138,9 +138,9 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
 
     /**
      * Sets the spool (temporary) directory to use for overflow and spooling to disk.
-     * <p/>
-     * If no spool directory has been explicit configured, then a temporary directory is created in the
-     * <tt>java.io.tmpdir</tt> directory.
+     * <p>
+     * If no spool directory has been explicitly configured, then a temporary directory is created in the
+     * <code>java.io.tmpdir</code> directory.
      */
     public void setSpoolDirectory(String spoolDirectory) {
         this.spoolDirectory = spoolDirectory;
@@ -152,7 +152,7 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
 
     /**
      * Sets a cipher name to use when spooling to disk to write with encryption.
-     * <p/>
+     * <p>
      * By default the data is not encrypted.
      */
     public void setSpoolCipher(String spoolCipher) {
@@ -165,9 +165,9 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
 
     /**
      * Threshold in bytes when overflow to disk is activated.
-     * <p/>
+     * <p>
      * The default threshold is {@link org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes (eg 128kb). Use
-     * <tt>-1</tt> to disable overflow to disk.
+     * <code>-1</code> to disable overflow to disk.
      */
     public void setSpoolThreshold(String spoolThreshold) {
         this.spoolThreshold = spoolThreshold;
@@ -213,7 +213,7 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
 
     /**
      * Sets the buffer size to use when allocating in-memory buffers used for in-memory stream caches.
-     * <p/>
+     * <p>
      * The default size is {@link org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE}
      */
     public void setBufferSize(String bufferSize) {
@@ -226,8 +226,8 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
 
     /**
      * Whether to remove the temporary directory when stopping.
-     * <p/>
-     * This option is default <tt>true</tt>
+     * <p>
+     * This option is default <code>true</code>
      */
     public void setRemoveSpoolDirectoryWhenStopping(String removeSpoolDirectoryWhenStopping) {
         this.removeSpoolDirectoryWhenStopping = removeSpoolDirectoryWhenStopping;
@@ -249,11 +249,11 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets whether if just any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules returns
-     * <tt>true</tt> then shouldSpoolCache(long) returns <tt>true</tt>. If this option is <tt>false</tt>, then
-     * <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must return <tt>true</tt>.
-     * <p/>
-     * The default value is <tt>false</tt> which means that all the rules must return <tt>true</tt>.
+     * Sets whether, if any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules returns
+     * <code>true</code>, then shouldSpoolCache(long) returns <code>true</code>. If this option is <code>false</code>,
+     * then <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must return <code>true</code>.
+     * <p>
+     * The default value is <code>false</code> which means that all the rules must return <code>true</code>.
      */
     public void setAnySpoolRules(String anySpoolRules) {
         this.anySpoolRules = anySpoolRules;
