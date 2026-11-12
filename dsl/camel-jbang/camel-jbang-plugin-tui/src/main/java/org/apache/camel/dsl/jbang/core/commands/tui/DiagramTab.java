@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -761,7 +762,26 @@ class DiagramTab extends AbstractDiagramTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
-        return null;
+        return getDiagramAsJson();
+    }
+
+    /**
+     * What the tab draws now, as data an agent can read or sketch (tui_get_diagram): the groups of the architecture,
+     * the topology of the routes, or the steps of a route, each box with where it is drawn.
+     */
+    JsonObject getDiagramAsJson() {
+        Level level = level();
+        JsonObject json = switch (level) {
+            case ARCHITECTURE -> architecture.getDataAsJson();
+            case TOPOLOGY -> diagram.isShowDiagram() ? DiagramJson.boxes(diagram) : null;
+            case ROUTE -> drillDownRouteId != null
+                    ? DiagramJson.route(diagram.getRouteLayout(drillDownRouteId), diagram.getEipNodeBoxes()) : null;
+        };
+        if (json != null) {
+            json.put("tab", "Diagram");
+            json.put("level", level.name().toLowerCase(Locale.ROOT));
+        }
+        return json;
     }
 
     JsonObject getTopologyDataAsJson() {
