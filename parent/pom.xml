@@ -561,7 +561,7 @@
         <xmlunit-version>2.14.0</xmlunit-version>
         <yasson-version>3.0.5</yasson-version>
         <yetus-audience-annotations-version>0.15.1</yetus-audience-annotations-version>
-        <zendesk-client-version>1.6.1</zendesk-client-version>
+        <zendesk-client-version>1.7.0</zendesk-client-version>
         <zookeeper-version>3.9.7</zookeeper-version>
         <zxing-version>3.5.4</zxing-version>
     </properties>
