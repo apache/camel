@@ -1,0 +1,1 @@
+../../../../../components/camel-azure/camel-azure-iothub/src/main/docs/azure-iothub-component.adoc

@@ -1,0 +1,130 @@
+= Azure IoT Hub Component
+:doctitle: Azure IoT Hub
+:shortname: azure-iothub
+:artifactid: camel-azure-iothub
+:description: Send device telemetry and device-twin updates to Azure IoT Hub.
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Azure
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Azure IoT Hub component provides the capability to send device-to-cloud
+telemetry and to update device-twin reported properties on
+https://azure.microsoft.com/services/iot-hub/[Azure IoT Hub], using the
+Azure IoT device SDK. Device connections are pooled and reused by the
+resolved hub/device/module identity from the connection string.
+
+*Prerequisites*
+
+You must have a valid Microsoft Azure IoT Hub and a per-device connection string.
+More information is available at the
+https://learn.microsoft.com/azure/iot-hub/[Azure IoT Hub Documentation].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-azure-iothub</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI Format
+
+[source]
+------------------------------------------------------------
+azure-iothub:deviceId[?options]
+------------------------------------------------------------
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+The producer sends the message body to Azure IoT Hub. The delivery mode selects
+how the body is interpreted:
+
+* `TELEMETRY` - the body is sent as a device-to-cloud message, using the payload as a `byte[]`/`String`-compatible value.
+* `TWIN` - the body (a `java.util.Map`) is applied as device-twin reported properties
+  using a delta update (only changed properties are sent).
+* `BOTH` - sends the message body as telemetry and applies twin reported properties from the
+  `CamelAzureIoTHubTwinProperties` header.
+
+Any payload decoding (for example Protobuf or CloudEvent to `Map`) must be done by a
+preceding processor in the route; this component is payload-agnostic.
+
+=== Scope and non-goals
+
+This component deliberately covers only the *data plane* - the per-message act of
+connecting as an already-provisioned device and sending telemetry or twin updates.
+It is credential- and payload-agnostic: it expects a ready-to-use per-device
+connection string (supplied on the endpoint or via the
+`CamelAzureIoTHubConnectionString` header) and a payload already in the shape it
+expects.
+
+[WARNING]
+====
+Passing the IoT Hub connection string in a message header is sensitive because it may
+travel through tracing, logging, or downstream endpoints. Use it only when needed and
+avoid persisting it in a message body or route metadata.
+====
+
+The following *control plane* and application-specific concerns are intentionally
+*out of scope* and must be handled by the application or dedicated tooling before a
+message reaches this component:
+
+* *Device provisioning* via the Azure Device Provisioning Service (DPS) - enrollment
+  groups, id scopes, attestation and the registration handshake.
+* *Device registry lifecycle* - creating, disabling or deleting device identities in
+  IoT Hub.
+* *Credential resolution and storage* - deriving or retrieving SAS keys, integrating
+  with a secret store such as Azure Key Vault, caching and refresh policies.
+* *Payload decoding* - converting application formats (for example Protobuf or
+  CloudEvents) into the `byte[]`/`String` telemetry body or the `Map` of twin
+  reported properties.
+
+This mirrors the other Azure Camel components (for example `azure-eventhubs` and
+`azure-servicebus`), which likewise accept a connection string or token credential
+and leave resource provisioning to the application. Keeping provisioning out of the
+component makes it reusable across tenants, avoids coupling a hot data path to a slow
+one-time control path, and keeps environment-specific security details out of the
+component.
+
+=== Example
+
+Send telemetry to a fixed device:
+
+[source,java]
+------------------------------------------------------------
+from("direct:telemetry")
+    .to("azure-iothub:myDevice?deliveryMode=TELEMETRY&connectionString=RAW(HostName=...;DeviceId=myDevice;SharedAccessKey=...)");
+------------------------------------------------------------
+
+Route messages to different devices dynamically using headers:
+
+[source,java]
+------------------------------------------------------------
+from("direct:dynamic")
+    .setHeader("CamelAzureIoTHubDeviceId", simple("${header.deviceId}"))
+    .setHeader("CamelAzureIoTHubConnectionString", simple("${header.deviceConnectionString}"))
+    .to("azure-iothub:placeholder?deliveryMode=TWIN");
+------------------------------------------------------------
+
+[IMPORTANT]
+====
+The connection string is secret and should not be logged or propagated downstream unless
+it is strictly required. Prefer configuring it on the endpoint when possible.
+====

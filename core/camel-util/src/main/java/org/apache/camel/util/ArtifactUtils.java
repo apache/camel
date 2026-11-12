@@ -99,6 +99,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("azure-eventhubs", "camel-azure-eventhubs"),
             Map.<String, String> entry("azure-files", "camel-azure-files"),
             Map.<String, String> entry("azure-functions", "camel-azure-functions"),
+            Map.<String, String> entry("azure-iothub", "camel-azure-iothub"),
             Map.<String, String> entry("azure-key-vault", "camel-azure-key-vault"),
             Map.<String, String> entry("azure-servicebus", "camel-azure-servicebus"),
             Map.<String, String> entry("azure-storage-blob", "camel-azure-storage-blob"),
