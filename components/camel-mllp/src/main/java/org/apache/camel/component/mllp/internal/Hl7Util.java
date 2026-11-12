@@ -17,8 +17,8 @@
 package org.apache.camel.component.mllp.internal;
 
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +41,12 @@ public final class Hl7Util {
 
     public static final Map<Character, String> CHARACTER_REPLACEMENTS;
 
-    public static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss.SSSZZZZ");
+    /**
+     * The MSH-7 format of a generated acknowledgement. {@link DateTimeFormatter} is immutable and thread safe, unlike
+     * the {@link java.text.SimpleDateFormat} this used to be; the pattern letter {@code Z} is the RFC 822 offset
+     * ({@code +0100}), which is what {@code SimpleDateFormat} wrote for {@code ZZZZ}.
+     */
+    public static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSSZ");
 
     static final int STRING_BUFFER_PAD_SIZE = 100;
 
@@ -283,8 +288,7 @@ public final class Hl7Util {
 
         // MSH-7
         mllpSocketBuffer.write(fieldSeparator);
-        // TODO static field TIMESTAMP_FORMAT of type java.text.DateFormat isn't thread safe! Think about using ThreadLocal
-        mllpSocketBuffer.write(TIMESTAMP_FORMAT.format(new Date()).getBytes());
+        mllpSocketBuffer.write(TIMESTAMP_FORMAT.format(ZonedDateTime.now()).getBytes());
 
         // Don't copy MSH-8
         mllpSocketBuffer.write(fieldSeparator);

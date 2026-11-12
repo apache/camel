@@ -19,6 +19,10 @@ package org.apache.camel.component.mllp.internal;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Pattern;
 
 import org.apache.camel.component.mllp.MllpAcknowledgementGenerationException;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
@@ -33,6 +37,7 @@ import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class Hl7UtilTest {
@@ -231,6 +236,44 @@ public class Hl7UtilTest {
         String actualMsh7Field = mllpSocketBuffer.toString().split("\\|")[6];
 
         assertThat(actualMsh7Field, matchesPattern("\\d{14}\\.\\d{3}[+-]\\d{4}"));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadTimestampIsThreadSafe() throws Exception {
+        final Pattern msh7 = Pattern.compile("\\d{14}\\.\\d{3}[+-]\\d{4}");
+        final int threadCount = 8;
+        final int acknowledgementsPerThread = 500;
+        final List<String> malformed = new CopyOnWriteArrayList<>();
+        final List<Throwable> failures = new CopyOnWriteArrayList<>();
+
+        List<Thread> threads = new ArrayList<>(threadCount);
+        for (int i = 0; i < threadCount; i++) {
+            Thread thread = new Thread(() -> {
+                try {
+                    for (int j = 0; j < acknowledgementsPerThread; j++) {
+                        MllpSocketBuffer buffer = new MllpSocketBuffer(new MllpEndpointStub());
+                        hl7util.generateAcknowledgementPayload(buffer, TEST_MESSAGE.getBytes(), "AA");
+
+                        String field = buffer.toString().split("\\|")[6];
+                        if (!msh7.matcher(field).matches()) {
+                            malformed.add(field);
+                        }
+                    }
+                } catch (Throwable t) {
+                    failures.add(t);
+                }
+            });
+            threads.add(thread);
+            thread.start();
+        }
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        assertTrue(failures.isEmpty(), () -> "generating an acknowledgement threw " + failures.get(0));
+        assertTrue(malformed.isEmpty(),
+                () -> malformed.size() + " of " + threadCount * acknowledgementsPerThread
+                      + " acknowledgements had a corrupted MSH-7, such as " + malformed.get(0));
     }
 
     /**
