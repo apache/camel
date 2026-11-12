@@ -203,7 +203,9 @@ public class VertxComponent extends DefaultComponent {
                     // event-loop threads alive with nobody left to close it. onSuccess also fires at once if the
                     // future completed between the await and this registration, so no window is left open
                     clusteredVertx.onSuccess(v -> {
-                        LOG.warn("A Vert.x instance arrived after the timeout — closing it to prevent resource leak");
+                        LOG.warn("Closing the Vert.x that became ready after the timeout of {} seconds,"
+                                 + " as the component start has already failed",
+                                timeout);
                         v.close();
                     });
                     throw new IllegalStateException(
