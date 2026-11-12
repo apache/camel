@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.vertx;
 
+import java.lang.reflect.Proxy;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -39,36 +42,96 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class VertxStartupTest {
 
     @Test
-    public void shouldFailWhenTheEventBusIsNotReadyWithinTheTimeout() {
-        // a build that never completes, so the component waits out its timeout
-        VertxComponent component = clusteredComponent(Promise.<Vertx> promise().future());
-        component.setTimeout(1);
+    public void shouldFailWhenTheEventBusIsNotReadyWithinTheTimeout() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            // a build that never completes, so the component waits out its timeout
+            VertxComponent component = clusteredComponent(context, Promise.<Vertx> promise().future());
+            component.setTimeout(1);
 
-        Exception e = assertThrows(Exception.class, component::start);
+            Exception e = assertThrows(Exception.class, component::start);
 
-        assertTrue(messages(e).contains("not ready within the timeout"), messages(e));
-        assertNull(component.getVertx(), "the component must not be left holding a half-built Vert.x");
+            assertTrue(messages(e).contains("not ready within the timeout"), messages(e));
+            assertNull(component.getVertx(), "the component must not be left holding a half-built Vert.x");
+        }
     }
 
     @Test
-    public void shouldFailWhenBuildingTheClusteredVertxFails() {
-        VertxComponent component
-                = clusteredComponent(Future.failedFuture(new IllegalStateException("no cluster manager on the classpath")));
+    public void shouldFailWhenBuildingTheClusteredVertxFails() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            VertxComponent component = clusteredComponent(context,
+                    Future.failedFuture(new IllegalStateException("no cluster manager on the classpath")));
 
-        Exception e = assertThrows(Exception.class, component::start);
+            Exception e = assertThrows(Exception.class, component::start);
 
-        assertTrue(messages(e).contains("Error creating Clustered Vertx"), messages(e));
-        assertTrue(messages(e).contains("no cluster manager on the classpath"), messages(e));
-        assertNull(component.getVertx(), "the component must not be left holding a half-built Vert.x");
+            assertTrue(messages(e).contains("Error creating Clustered Vertx"), messages(e));
+            assertTrue(messages(e).contains("no cluster manager on the classpath"), messages(e));
+            assertNull(component.getVertx(), "the component must not be left holding a half-built Vert.x");
+        }
     }
 
-    private static VertxComponent clusteredComponent(Future<Vertx> clustered) {
+    @Test
+    public void shouldCloseAClusteredVertxThatArrivesAfterTheTimeout() throws Exception {
+        final AtomicBoolean closed = new AtomicBoolean();
+        final Promise<Vertx> buildClustered = Promise.promise();
+
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            VertxComponent component = clusteredComponent(context, buildClustered.future());
+            component.setTimeout(1);
+
+            assertThrows(Exception.class, component::start);
+
+            // the cluster join finishes a moment after the component gave up on it
+            buildClustered.complete(recordingVertx(closed));
+
+            for (int i = 0; i < 100 && !closed.get(); i++) {
+                Thread.sleep(10);
+            }
+            assertTrue(closed.get(), "a Vert.x that joins the cluster after the timeout has to be closed again");
+        }
+    }
+
+    @Test
+    public void shouldRejectANonPositiveTimeout() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            VertxComponent component = clusteredComponent(context, Promise.<Vertx> promise().future());
+            component.setTimeout(0);
+
+            Exception e = assertThrows(Exception.class, component::start);
+
+            assertTrue(messages(e).contains("must be a positive number of seconds"), messages(e));
+        }
+    }
+
+    private static VertxComponent clusteredComponent(DefaultCamelContext context, Future<Vertx> clustered) {
         VertxComponent component = new VertxComponent();
-        component.setCamelContext(new DefaultCamelContext());
+        component.setCamelContext(context);
         // a host makes the component build a clustered Vert.x, which is the asynchronous path
         component.setHost("localhost");
         component.setVertxFactory(new StubVertxBuilder(clustered));
         return component;
+    }
+
+    /**
+     * A Vert.x that records whether it was closed. A dynamic proxy keeps this to the one method the test cares about,
+     * rather than stubbing the whole interface.
+     */
+    private static Vertx recordingVertx(AtomicBoolean closed) {
+        return (Vertx) Proxy.newProxyInstance(Vertx.class.getClassLoader(), new Class<?>[] { Vertx.class },
+                (proxy, method, args) -> {
+                    switch (method.getName()) {
+                        case "close":
+                            closed.set(true);
+                            return Future.succeededFuture();
+                        case "toString":
+                            return "recording Vertx";
+                        case "hashCode":
+                            return System.identityHashCode(proxy);
+                        case "equals":
+                            return proxy == args[0];
+                        default:
+                            return null;
+                    }
+                });
     }
 
     private static String messages(Throwable t) {
