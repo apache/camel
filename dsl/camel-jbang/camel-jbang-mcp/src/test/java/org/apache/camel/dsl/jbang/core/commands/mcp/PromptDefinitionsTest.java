@@ -177,6 +177,25 @@ class PromptDefinitionsTest {
         assertThat(text).contains("camel_version_list");
     }
 
+    // ---- camel_migrate_to_camel ----
+
+    @Test
+    void migrateToCamelCarriesTheMigrationText() {
+        String text = extractText(prompts.migrateToCamel(null));
+
+        // the rules the server instructions leave out, as they serve everyday work
+        assertThat(text).isEqualTo(McpServerInstructions.migration())
+                .contains("useHeaderSubject=true", "removeHeaders", "xslt", "--dep", "Workflow:");
+    }
+
+    @Test
+    void migrateToCamelStartsWithWhatToMigrate() {
+        String text = extractText(prompts.migrateToCamel(" a Mule 3 application in legacy/ "));
+
+        assertThat(text).startsWith("What to migrate: a Mule 3 application in legacy/\n\nMigrating an integration to");
+        assertThat(extractText(prompts.migrateToCamel(" "))).isEqualTo(McpServerInstructions.migration());
+    }
+
     // ---- camel_security_review ----
 
     @Test

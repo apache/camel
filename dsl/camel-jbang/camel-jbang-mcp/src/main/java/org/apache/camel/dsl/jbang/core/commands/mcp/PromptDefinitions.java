@@ -151,6 +151,28 @@ public class PromptDefinitions {
     }
 
     /**
+     * A migration of an integration to Camel, from another product or from hand-written code (CAMEL-25672): the rules a
+     * migration gets wrong most and its workflow, which the server instructions leave out as they serve everyday work.
+     * The {@code camel_migration_instructions} tool returns the same text, for clients without prompts.
+     */
+    @Prompt(name = "camel_migrate_to_camel",
+            description = "Migrate an integration to Camel, from another product or from hand-written code: the rules "
+                          + "a migration gets wrong most (component names, mail headers, Camel* headers before an "
+                          + "http or mail call, xslt parameters, ports and dependencies of camel run) and the "
+                          + "workflow. For an upgrade between Camel versions, use camel_migrate_project.")
+    public List<PromptMessage> migrateToCamel(
+            @PromptArg(name = "source",
+                       description = "Optional: what to migrate, such as the product and where its files are",
+                       required = false) String source) {
+
+        String text = McpServerInstructions.migration();
+        if (source != null && !source.isBlank()) {
+            text = "What to migrate: " + source.strip() + "\n\n" + text;
+        }
+        return List.of(PromptMessage.withUserRole(text));
+    }
+
+    /**
      * Guided workflow for a security review of a Camel route.
      */
     @Prompt(name = "camel_security_review",

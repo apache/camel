@@ -32,6 +32,13 @@ class MigrationToolsTest {
         tools.catalogService = new CatalogService();
     }
 
+    @Test
+    void migrationInstructionsAreTheTextOfTheMigratePrompt() {
+        // for clients that use tools but no prompts: the same text as the camel_migrate_to_camel prompt
+        assertThat(tools.camel_migration_instructions()).isEqualTo(McpServerInstructions.migration())
+                .startsWith("Migrating an integration to Apache Camel ");
+    }
+
     // a Spring Boot application packaged as a WAR for Tomcat: the BOM and a managed-only component declare nothing,
     // the plugin dependency is not a project dependency
     private static final String SPRING_BOOT_WAR_POM = """

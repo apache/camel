@@ -29,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import io.quarkiverse.mcp.server.Prompt;
 import io.quarkiverse.mcp.server.Tool;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The server instructions sent in the MCP initialize response: their size, their first line and the tool names they
- * point the agent to.
+ * point the agent to. They serve everyday work; the rules of a migration to Camel are a separate text, sent when a
+ * migration starts.
  */
 class McpServerInstructionsTest {
 
@@ -52,7 +54,7 @@ class McpServerInstructionsTest {
         assertThat(text).hasSizeLessThan(McpServerInstructions.MAX_LENGTH);
         // Pi shows only the first line, Codex weighs the first 512 characters most
         assertThat(firstLine).hasSizeLessThan(512).startsWith("Apache Camel " + version + " ")
-                .contains("URI scheme", "camel_validate_source");
+                .contains("build, run and fix", "camel_edit_file", "camel_run", "camel_get_log");
         assertThat(McpServerInstructions.build("9.9.9")).startsWith("Apache Camel 9.9.9 ");
         assertThat(McpServerInstructions.build(null)).startsWith("Apache Camel (unknown version) ");
     }
@@ -61,15 +63,59 @@ class McpServerInstructionsTest {
     void theRulesComeInTheOrderOfTheProposal() {
         String text = new McpServerInstructions().text();
 
+        // the mistakes that cost a model most when it writes routes, the daily tool loop, then the way to a migration
+        assertThat(text).containsSubsequence(
+                "steps of an EIP", "go under its steps",
+                "A choice has one when list", "otherwise: {steps: [...]}",
+                "top-level", "handled: {constant: {expression: \"true\"}}",
+                "variable (setVariable, ${variable.name}), not an exchange property",
+                "Simple: functions inside ${...}, operators between them",
+                "URI scheme", "platform-http",
+                "After a write, read its answer",
+                "Daily work:", "camel_get_files", "camel_edit_file", "camel_write_file", "camel_run",
+                "camel_control", "camel_get_log", "camel_get_errors", "camel_eval_expression",
+                "Which tool:",
+                "Migrating to Camel, or between Camel versions?");
+        assertThat(text.strip()).endsWith("or call camel_migration_instructions.");
+    }
+
+    @Test
+    void theRulesOfAMigrationAreLeftToTheMigrationText() {
+        String text = new McpServerInstructions().text();
+
+        // rules that only matter when migrating to Camel are not in the text of everyday work
+        assertThat(text).doesNotContain("useHeaderSubject", "removeHeaders", "xslt", "--dep", "camel.server.port",
+                "smtp");
+        assertThat(McpServerInstructions.migration("4.0.0")).contains(
+                "useHeaderSubject=true", "removeHeaders", "xslt", "--dep", "camel.server.port", "smtp");
+    }
+
+    @Test
+    void theMigrationTextHasTheRulesOfAMigrationThenTheWorkflow() {
+        String version = new DefaultCamelCatalog().getCatalogVersion();
+        String text = McpServerInstructions.migration();
+
+        assertThat(text).startsWith("Migrating an integration to Apache Camel " + version + ",");
+        assertThat(McpServerInstructions.migration(null)).startsWith("Migrating an integration to Apache Camel "
+                                                                     + "(unknown version),");
         assertThat(text).containsSubsequence(
                 "URI scheme: smtp", "platform-http",
-                "top-level", "handled: {constant: {expression: \"true\"}}",
-                "camel.server.port", "//DEPS", "camel.jbang.dependencies", "--dep",
                 "useHeaderSubject=true", "useHeaderFrom=true", "useHeaderRecipients=true",
                 "removeHeaders", "Camel*",
                 "xslt", "headers and variables",
+                "camel.server.port", "//DEPS", "camel.jbang.dependencies", "--dep",
                 "run the app",
-                "Which tool:");
+                "Workflow:",
+                "camel_migrate_project");
+    }
+
+    @Test
+    void everyToolOfTheMigrationTextIsAToolOfThisServer() throws IOException {
+        Set<String> named = namesIn(McpServerInstructions.migration());
+        named.removeAll(promptNames());
+
+        assertThat(toolNames()).containsAll(named);
+        assertThat(McpServerInstructions.MIGRATION_TOOLS).containsExactlyInAnyOrderElementsOf(named);
     }
 
     @Test
@@ -83,18 +129,19 @@ class McpServerInstructionsTest {
 
     @Test
     void everyMappedToolIsMentionedAndIsAToolOfThisServer() throws IOException {
-        String text = new McpServerInstructions().text();
+        Set<String> named = namesIn(new McpServerInstructions().text());
         Set<String> toolNames = toolNames();
+        Set<String> promptNames = promptNames();
 
         assertThat(toolNames).as("@Tool methods found").hasSizeGreaterThan(10);
-        // the text names exactly the mapped tools, and each is a tool of this server (not renamed or removed)
-        Matcher m = TOOL_NAME.matcher(text);
-        Set<String> named = new HashSet<>();
-        while (m.find()) {
-            named.add(m.group());
-        }
+        assertThat(promptNames).as("@Prompt methods found").contains("camel_migrate_project");
+        // the text names exactly the mapped tools and prompts, and each is one of this server (not renamed or removed)
+        Set<String> prompts = new HashSet<>(named);
+        prompts.retainAll(promptNames);
+        named.removeAll(promptNames);
         assertThat(toolNames).containsAll(named);
         assertThat(McpServerInstructions.MAPPED_TOOLS).containsExactlyInAnyOrderElementsOf(named);
+        assertThat(McpServerInstructions.MAPPED_PROMPTS).containsExactlyInAnyOrderElementsOf(prompts);
     }
 
     @Test
@@ -115,6 +162,28 @@ class McpServerInstructionsTest {
 
         bean.configured = Optional.of(" ");
         assertThat(bean.instructions("camel-mcp-server")).contains(bean.text());
+    }
+
+    /** The camel_* names in a text. */
+    private static Set<String> namesIn(String text) {
+        Matcher m = TOOL_NAME.matcher(text);
+        Set<String> named = new HashSet<>();
+        while (m.find()) {
+            named.add(m.group());
+        }
+        return named;
+    }
+
+    /** The names of the {@code @Prompt} methods of the MCP server. */
+    private static Set<String> promptNames() {
+        Set<String> names = new HashSet<>();
+        for (Method method : PromptDefinitions.class.getDeclaredMethods()) {
+            Prompt prompt = method.getAnnotation(Prompt.class);
+            if (prompt != null) {
+                names.add(Prompt.ELEMENT_NAME.equals(prompt.name()) ? method.getName() : prompt.name());
+            }
+        }
+        return names;
     }
 
     /** The names of the {@code @Tool} methods of every class in the package of the MCP server. */

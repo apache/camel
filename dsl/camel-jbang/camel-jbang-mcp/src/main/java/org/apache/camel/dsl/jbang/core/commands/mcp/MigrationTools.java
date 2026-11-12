@@ -55,6 +55,19 @@ public class MigrationTools {
     CatalogService catalogService;
 
     /**
+     * The rules and workflow of a migration of an integration to Camel (CAMEL-25672), for clients that use tools but no
+     * prompts: the same text as the camel_migrate_to_camel prompt.
+     */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "The rules and workflow of a migration of an integration to Camel, from another product or "
+                        + "from hand-written code. Call it once, at the start of a migration. For an upgrade between "
+                        + "Camel versions, start with camel_migration_analyze instead.")
+    public String camel_migration_instructions() {
+        return McpServerInstructions.migration();
+    }
+
+    /**
      * Step 1: Analyze a project's pom.xml to detect runtime, Camel version, Java version, and components.
      */
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
