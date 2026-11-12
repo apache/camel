@@ -48,9 +48,7 @@ public class NaturalSortComparator implements Comparator<CharSequence> {
     }
 
     public NaturalSortComparator(Order order) {
-        if (order != null) {
-            this.order = order;
-        }
+        this.order = order != null ? order : Order.Ascending;
     }
 
     @Override
@@ -68,7 +66,6 @@ public class NaturalSortComparator implements Comparator<CharSequence> {
         int compare = 0;
         int fx = 0;
         int sx = 0;
-        // TODO first can contain null and the next line causes NPE then
         while (fx < first.length() && sx < second.length() && compare == 0) {
             if (isDigit(first.charAt(fx)) && isDigit(second.charAt(sx))) {
                 int flen = getNumSequenceLength(first, fx);
@@ -96,7 +93,7 @@ public class NaturalSortComparator implements Comparator<CharSequence> {
     }
 
     private boolean isDigit(char c) {
-        return c >= 48 && c < 57;
+        return c >= '0' && c <= '9';
     }
 
     private int getNumSequenceLength(CharSequence sequence, int index) {

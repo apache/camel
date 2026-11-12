@@ -33,7 +33,7 @@ public class NaturalSortComparatorTest {
 
         List<String> sorted = Arrays
                 .asList(new String[] {
-                        "0", "1", "3", "4.0", "11", "30", "55", "225", "333", "camel-2.1.0", "camel-2.1.1",
+                        "0", "1", "3", "4.0", "9", "11", "30", "55", "90", "225", "333", "camel-2.1.0", "camel-2.1.1",
                         "camel-2.1.1-SNAPSHOT", "camel-2.2.0" });
 
         List<String> unsorted = new ArrayList<>(sorted);
@@ -44,6 +44,43 @@ public class NaturalSortComparatorTest {
         Collections.shuffle(unsorted);
         Collections.sort(unsorted, new NaturalSortComparator(Order.Descending));
         Collections.reverse(sorted);
+        compareLists(sorted, unsorted);
+    }
+
+    @Test
+    public void testSortOrderAroundNine() {
+
+        List<String> sorted = Arrays
+                .asList(new String[] {
+                        "camel-2.8.0", "camel-2.9.0", "camel-2.10.0", "camel-2.11.0" });
+
+        List<String> unsorted = new ArrayList<>(sorted);
+        Collections.shuffle(unsorted);
+        Collections.sort(unsorted, new NaturalSortComparator());
+        compareLists(sorted, unsorted);
+    }
+
+    @Test
+    public void testSortOrderOfSequentialNodeNames() {
+
+        List<String> sorted = Arrays
+                .asList(new String[] {
+                        "node-0000000008", "node-0000000009", "node-0000000010" });
+
+        List<String> unsorted = new ArrayList<>(sorted);
+        Collections.shuffle(unsorted);
+        Collections.sort(unsorted, new NaturalSortComparator());
+        compareLists(sorted, unsorted);
+    }
+
+    @Test
+    public void testNullOrderSortsAscending() {
+
+        List<String> sorted = Arrays.asList(new String[] { "1", "2", "10" });
+
+        List<String> unsorted = new ArrayList<>(sorted);
+        Collections.shuffle(unsorted);
+        Collections.sort(unsorted, new NaturalSortComparator(null));
         compareLists(sorted, unsorted);
     }
 
