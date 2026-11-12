@@ -223,9 +223,8 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
      * can be retried — it must not be silently lost.
      * <p>
      * This test drives the production {@code remove()} via a Mockito delegate that intercepts
-     * {@link HazelcastInstance#newTransactionContext} and makes {@code commitTransaction()} throw,
-     * so that if the production code were changed back to a plain remove-then-put, this test would still catch the
-     * regression.
+     * {@link HazelcastInstance#newTransactionContext} and makes {@code commitTransaction()} throw, so that if the
+     * production code were changed back to a plain remove-then-put, this test would still catch the regression.
      */
     @Test
     public void checkOptimisticRemoveKeepsTheGroupWhenTheTransactionFails() throws Exception {
