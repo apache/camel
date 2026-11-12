@@ -25,9 +25,11 @@ Press *F8* to open the built-in AI prompt panel. The panel detects the provider 
 
 Press *Ctrl+P* inside the AI panel to switch provider or model at any time.
 
-A question can span several lines: *Ctrl+N* starts a new line (terminals deliver *Shift+Enter* and
-*Alt+Enter* as a plain *Enter*, so they cannot be used), pasted text keeps its line breaks, and *Up* and
-*Down* move between the lines of the question before they recall earlier prompts. *Enter* sends it.
+A question can span several lines: *Shift+Enter*, *Alt+Enter* or *Ctrl+N* starts a new line, pasted text keeps its
+line breaks, and *Up* and *Down* move between the lines of the question before they recall earlier prompts. *Enter*
+sends it. *Shift+Enter* needs a terminal with the Kitty keyboard protocol (see
+xref:camel-jbang-tui.adoc#_text_fields[Text Fields]); the others send it as a plain *Enter*. *Ctrl+N* works in every
+terminal.
 
 The same guidance, together with the provider that is currently detected, is available inside the TUI
 via *F2* -> _AI & MCP_ -> _Setup AI_. Use *F2* -> _Settings_ to pin a provider, model or base URL

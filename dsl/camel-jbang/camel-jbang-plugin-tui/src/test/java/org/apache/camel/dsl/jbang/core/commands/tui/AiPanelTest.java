@@ -1994,4 +1994,14 @@ class AiPanelTest {
         panel.close();
         assertEquals(60, panel.panelHeight(80), "a normal question opens the panel at its own height again");
     }
+
+    @Test
+    void shiftEnterAltEnterAndCtrlNBreakTheLine() {
+        // Shift+Enter arrives as such from a terminal with the Kitty keyboard protocol, Alt+Enter since TamboUI 0.7
+        assertTrue(AiPanel.isLineBreakKey(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.SHIFT)));
+        assertTrue(AiPanel.isLineBreakKey(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.ALT)));
+        assertTrue(AiPanel.isLineBreakKey(KeyEvent.ofChar('n', KeyModifiers.CTRL)));
+        assertFalse(AiPanel.isLineBreakKey(KeyEvent.ofKey(KeyCode.ENTER)));
+        assertFalse(AiPanel.isLineBreakKey(KeyEvent.ofChar('n')));
+    }
 }

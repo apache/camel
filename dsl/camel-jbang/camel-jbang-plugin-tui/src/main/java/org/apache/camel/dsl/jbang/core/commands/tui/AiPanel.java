@@ -837,8 +837,7 @@ class AiPanel {
             exportChatToFile();
             return true;
         }
-        if (ke.hasCtrl() && ke.isCharIgnoreCase('n') && !statsView && (!thinking.get() || editQuestionHandler != null)) {
-            // a line break in the question; terminals deliver Shift+Enter and Alt+Enter as plain Enter or nothing
+        if (isLineBreakKey(ke) && !statsView && (!thinking.get() || editQuestionHandler != null)) {
             inputLine.insert("\n");
             return true;
         }
@@ -902,6 +901,14 @@ class AiPanel {
             return false;
         }
         return true;
+    }
+
+    /**
+     * A line break in the question: Shift+Enter and Alt+Enter, and Ctrl+N for the terminals that deliver Shift+Enter as
+     * plain Enter (those without the Kitty keyboard protocol) or keep Alt for themselves (Option on macOS).
+     */
+    static boolean isLineBreakKey(KeyEvent ke) {
+        return ke.hasCtrl() && ke.isCharIgnoreCase('n') || ke.isKey(KeyCode.ENTER) && (ke.hasShift() || ke.hasAlt());
     }
 
     private static boolean isGlobalShortcut(KeyEvent ke) {

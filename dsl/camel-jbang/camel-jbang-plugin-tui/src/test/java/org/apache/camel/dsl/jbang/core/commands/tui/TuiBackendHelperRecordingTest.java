@@ -72,12 +72,12 @@ class TuiBackendHelperRecordingTest {
     }
 
     @Test
-    void theTerminalStaysOnTheLegacyKeyboardProtocol() throws Exception {
-        // TamboUI 0.7 defaults to the Kitty keyboard protocol, which changes how some keys arrive
+    void theTerminalIsAskedForTheKittyKeyboardProtocol() throws Exception {
+        // keys with their modifiers where the terminal has the protocol (Shift+Enter, Ctrl+Backspace), legacy keys elsewhere
         NoopBackend backend = new NoopBackend();
 
         try (TuiRunner runner = TuiBackendHelper.createTuiRunner(backend)) {
-            assertThat(backend.keyboardProtocol()).isEqualTo(KeyboardProtocol.LEGACY);
+            assertThat(backend.keyboardProtocol()).isEqualTo(KeyboardProtocol.AUTO);
         }
     }
 
