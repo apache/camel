@@ -602,7 +602,7 @@ class SourceValidatorSimpleTest {
                             steps:
                               - setBody:
                                   simple:
-                                    expression: "${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json' : 'resource:file:b.json'}"
+                                    expression: "${exchangeProperty.CamelTimerCounter == 1 ? 'resource:order.json' : 'resource:b.json'}"
                                     resolveResource: true
                               - setBody:
                                   simple: "resource:file:order-${exchangeProperty.CamelTimerCounter}.json"

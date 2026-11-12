@@ -698,6 +698,14 @@
         "description" : "Evaluates a MVEL template",
         "label" : "language,java"
       }, {
+        "name" : "ognl",
+        "type" : "object",
+        "ref" : "ognl",
+        "title" : "OGNL",
+        "description" : "Evaluates an OGNL expression (Apache Commons OGNL)",
+        "label" : "language,java",
+        "deprecated" : true
+      }, {
         "name" : "python",
         "type" : "object",
         "ref" : "python",
@@ -2680,6 +2688,10 @@
         "type" : "object",
         "ref" : "mvel"
       }, {
+        "name" : "ognl",
+        "type" : "object",
+        "ref" : "ognl"
+      }, {
         "name" : "python",
         "type" : "object",
         "ref" : "python"
@@ -3676,7 +3688,7 @@
       }, {
         "name" : "logLanguage",
         "type" : "string",
-        "description" : "The language to use for evaluating the log message, such as simple or groovy.",
+        "description" : "The language to use for evaluating the log message, such as simple, groovy, or ognl.",
         "title" : "Log Language",
         "displayName" : "Log Language",
         "kind" : "attribute",
@@ -12743,7 +12755,7 @@
       }, {
         "name" : "namingStrategy",
         "type" : "string",
-        "description" : "If set then Jackson will use the defined Property Naming Strategy. Possible values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE",
+        "description" : "If set then Jackson will use the the defined Property Naming Strategy.Possible values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE",
         "title" : "Naming Strategy",
         "displayName" : "Naming Strategy",
         "kind" : "attribute",
@@ -15732,6 +15744,63 @@
     "mvel" : {
       "title" : "MVEL",
       "description" : "Evaluates a MVEL template",
+      "label" : "language,java",
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node.",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "expression",
+        "type" : "string",
+        "description" : "The expression value in your chosen language syntax.",
+        "title" : "Expression",
+        "required" : true,
+        "displayName" : "Expression",
+        "kind" : "value",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "resultType",
+        "type" : "string",
+        "description" : "The class of the result type (type from output).",
+        "title" : "Result Type",
+        "displayName" : "Result Type",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "trim",
+        "type" : "boolean",
+        "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+        "title" : "Trim",
+        "default" : "true",
+        "displayName" : "Trim",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+        "title" : "Resolve Resource",
+        "default" : "false",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "advanced",
+        "label" : "advanced"
+      } ]
+    },
+    "ognl" : {
+      "title" : "OGNL",
+      "description" : "Evaluates an OGNL expression (Apache Commons OGNL)",
+      "deprecated" : true,
       "label" : "language,java",
       "children" : [ {
         "name" : "id",

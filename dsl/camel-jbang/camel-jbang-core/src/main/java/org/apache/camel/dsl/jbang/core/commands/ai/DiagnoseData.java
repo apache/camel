@@ -88,8 +88,9 @@ public class DiagnoseData {
                         "The body was already unmarshalled into a Map or a POJO and is unmarshalled again",
                         "The JSON itself is broken: a trailing comma, single quotes, an unquoted key"),
                 List.of(
-                        "For a script that names a file: add resolveResource: true under the language key so the"
-                        + " resource the result names is loaded, or set the body with"
+                        "For a script that names a file: add resolveResource: true under the language key and"
+                        + " return the name without a scheme ('resource:x'), so the resource the result names is"
+                        + " loaded from the classpath, or set the body with"
                         + " constant: \"resource:file:x\" (simple: \"resource:file:${...}\""
                         + " for a name chosen per message)",
                         "Log ${body} before the unmarshal step to see the text the data format received",
