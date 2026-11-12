@@ -19,7 +19,14 @@ package org.apache.camel.component.hashicorp.vault;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -29,15 +36,21 @@ import javax.net.ssl.SSLSocketFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.vault.authentication.AppRoleAuthentication;
 import org.springframework.vault.authentication.AppRoleAuthenticationOptions;
 import org.springframework.vault.authentication.AppRoleAuthenticationOptions.RoleId;
 import org.springframework.vault.authentication.AppRoleAuthenticationOptions.SecretId;
+import org.springframework.vault.authentication.AzureMsiAuthentication;
+import org.springframework.vault.authentication.AzureMsiAuthenticationOptions;
 import org.springframework.vault.authentication.ClientAuthentication;
 import org.springframework.vault.authentication.ClientCertificateAuthentication;
 import org.springframework.vault.authentication.ClientCertificateAuthenticationOptions;
+import org.springframework.vault.authentication.GcpComputeAuthentication;
+import org.springframework.vault.authentication.GcpComputeAuthenticationOptions;
 import org.springframework.vault.authentication.JwtAuthentication;
 import org.springframework.vault.authentication.JwtAuthenticationOptions;
 import org.springframework.vault.authentication.KubernetesAuthentication;
@@ -50,6 +63,7 @@ import org.springframework.vault.client.VaultClient;
 import org.springframework.vault.client.VaultEndpoint;
 import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.support.ClientOptions;
+import org.springframework.web.client.RestClient;
 
 /**
  * A client of HashiCorp Vault that logs in as its {@link HashicorpVaultClientSettings} say, and keeps its token valid:
@@ -62,17 +76,30 @@ import org.springframework.vault.support.ClientOptions;
  */
 public final class HashicorpVaultClient implements Closeable {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HashicorpVaultClient.class);
+
+    // a class of the AWS SDK that the aws-iam login needs
+    private static final String AWS_SDK_CLASS = "software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider";
+    // the resource of the Azure login in the documentation of HashiCorp Vault
+    static final String DEFAULT_AZURE_RESOURCE = "https://management.azure.com/";
+    private static final String AZURE_IDENTITY_TOKEN_URI
+            = "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01";
+
     private final VaultTemplate vaultTemplate;
     private final LifecycleAwareSessionManager sessionManager;
     private final ExecutorServiceManager executorServiceManager;
     private final ScheduledExecutorService renewal;
+    // what the login holds, such as the credentials provider of the AWS SDK, closed with the client
+    private final List<AutoCloseable> resources;
 
     private HashicorpVaultClient(VaultTemplate vaultTemplate, LifecycleAwareSessionManager sessionManager,
-                                 ExecutorServiceManager executorServiceManager, ScheduledExecutorService renewal) {
+                                 ExecutorServiceManager executorServiceManager, ScheduledExecutorService renewal,
+                                 List<AutoCloseable> resources) {
         this.vaultTemplate = vaultTemplate;
         this.sessionManager = sessionManager;
         this.executorServiceManager = executorServiceManager;
         this.renewal = renewal;
+        this.resources = resources;
     }
 
     /**
@@ -97,7 +124,14 @@ public final class HashicorpVaultClient implements Closeable {
         // their path: so only the login, and the renewal and revocation of its token, are sent to the namespace
         String namespace = settings.getCloudNamespace();
         VaultClient loginClient = namespace != null ? vaultClient(endpoint, requestFactory, namespace) : client;
-        ClientAuthentication authentication = createAuthentication(settings, loginClient);
+        List<AutoCloseable> resources = new ArrayList<>();
+        ClientAuthentication authentication;
+        try {
+            authentication = createAuthentication(settings, loginClient, resources::add);
+        } catch (RuntimeException e) {
+            close(resources);
+            throw e;
+        }
 
         ExecutorServiceManager executorServiceManager = camelContext.getExecutorServiceManager();
         ScheduledExecutorService renewal
@@ -106,10 +140,11 @@ public final class HashicorpVaultClient implements Closeable {
             LifecycleAwareSessionManager sessionManager
                     = new LifecycleAwareSessionManager(authentication, new ConcurrentTaskScheduler(renewal), loginClient);
             return new HashicorpVaultClient(
-                    new VaultTemplate(client, sessionManager), sessionManager, executorServiceManager, renewal);
+                    new VaultTemplate(client, sessionManager), sessionManager, executorServiceManager, renewal, resources);
         } catch (RuntimeException e) {
             // nothing is scheduled on the executor yet, so there is nothing to wait for
             executorServiceManager.shutdownNow(renewal);
+            close(resources);
             throw e;
         }
     }
@@ -141,9 +176,7 @@ public final class HashicorpVaultClient implements Closeable {
                 }
             }
             case KUBERNETES -> {
-                if (ObjectHelper.isEmpty(settings.getRole())) {
-                    throw new IllegalArgumentException("The kubernetes login needs a role");
-                }
+                validateRole(settings, "kubernetes");
                 validateJwt(settings, "kubernetes");
             }
             case JWT -> {
@@ -161,7 +194,23 @@ public final class HashicorpVaultClient implements Closeable {
                     throw new IllegalArgumentException("The cert login needs the https scheme");
                 }
             }
+            case AWS_IAM -> {
+                // no role: Vault takes the role named as the IAM principal
+                if (ObjectHelper.loadClass(AWS_SDK_CLASS, HashicorpVaultClient.class.getClassLoader()) == null) {
+                    throw new IllegalArgumentException(
+                            "The aws-iam login needs the AWS SDK: add the software.amazon.awssdk:auth dependency");
+                }
+                HashicorpVaultAwsIam.validate();
+            }
+            case AZURE_MSI -> validateRole(settings, "azure-msi");
+            case GCP_GCE -> validateRole(settings, "gcp-gce");
             default -> throw new IllegalStateException("Unexpected login: " + settings.getAuthentication());
+        }
+    }
+
+    private static void validateRole(HashicorpVaultClientSettings settings, String login) {
+        if (ObjectHelper.isEmpty(settings.getRole())) {
+            throw new IllegalArgumentException("The " + login + " login needs a role");
         }
     }
 
@@ -174,14 +223,21 @@ public final class HashicorpVaultClient implements Closeable {
 
     /**
      * The login of the settings, which logs in with the given client.
+     *
+     * @param closeOnStop takes what the login holds, to close with the client
      */
-    static ClientAuthentication createAuthentication(HashicorpVaultClientSettings settings, VaultClient loginClient) {
+    static ClientAuthentication createAuthentication(
+            HashicorpVaultClientSettings settings, VaultClient loginClient, Consumer<AutoCloseable> closeOnStop) {
         return switch (HashicorpVaultAuthentication.of(settings.getAuthentication())) {
             case TOKEN -> new TokenAuthentication(settings.getToken());
             case APPROLE -> new AppRoleAuthentication(appRoleOptions(settings), loginClient);
             case KUBERNETES -> new KubernetesAuthentication(kubernetesOptions(settings), loginClient);
             case JWT -> new JwtAuthentication(jwtOptions(settings), loginClient);
             case CERT -> new ClientCertificateAuthentication(certOptions(settings), loginClient);
+            // in a class of its own, as it needs the AWS SDK, an optional dependency
+            case AWS_IAM -> HashicorpVaultAwsIam.authentication(settings, loginClient, closeOnStop);
+            case AZURE_MSI -> new AzureMsiAuthentication(azureMsiOptions(settings), loginClient, metadataClient());
+            case GCP_GCE -> new GcpComputeAuthentication(gcpComputeOptions(settings), loginClient, metadataClient());
         };
     }
 
@@ -230,6 +286,46 @@ public final class HashicorpVaultClient implements Closeable {
             builder.path(settings.getAuthMountPath());
         }
         return builder.build();
+    }
+
+    static AzureMsiAuthenticationOptions azureMsiOptions(HashicorpVaultClientSettings settings) {
+        String resource = ObjectHelper.isNotEmpty(settings.getAzureResource())
+                ? settings.getAzureResource() : DEFAULT_AZURE_RESOURCE;
+        // the managed identity token for the resource of the Azure login of Vault, of the user-assigned identity when set
+        StringBuilder tokenUri = new StringBuilder(AZURE_IDENTITY_TOKEN_URI)
+                .append("&resource=").append(URLEncoder.encode(resource, StandardCharsets.UTF_8));
+        if (ObjectHelper.isNotEmpty(settings.getAzureClientId())) {
+            tokenUri.append("&client_id=").append(URLEncoder.encode(settings.getAzureClientId(), StandardCharsets.UTF_8));
+        }
+        AzureMsiAuthenticationOptions.AzureMsiAuthenticationOptionsBuilder builder = AzureMsiAuthenticationOptions.builder()
+                .role(settings.getRole())
+                .identityTokenServiceUri(URI.create(tokenUri.toString()));
+        if (ObjectHelper.isNotEmpty(settings.getAuthMountPath())) {
+            builder.path(settings.getAuthMountPath());
+        }
+        return builder.build();
+    }
+
+    static GcpComputeAuthenticationOptions gcpComputeOptions(HashicorpVaultClientSettings settings) {
+        GcpComputeAuthenticationOptions.GcpComputeAuthenticationOptionsBuilder builder
+                = GcpComputeAuthenticationOptions.builder().role(settings.getRole());
+        if (ObjectHelper.isNotEmpty(settings.getAuthMountPath())) {
+            builder.path(settings.getAuthMountPath());
+        }
+        return builder.build();
+    }
+
+    /**
+     * The HTTP client of the metadata service of the cloud (Azure instance metadata, Google Compute Engine metadata),
+     * which is reached directly, never through a proxy, as the clouds require.
+     */
+    private static RestClient metadataClient() {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setProxy(Proxy.NO_PROXY);
+        ClientOptions options = new ClientOptions();
+        requestFactory.setConnectTimeout(options.getConnectionTimeout());
+        requestFactory.setReadTimeout(options.getReadTimeout());
+        return RestClient.builder().requestFactory(requestFactory).build();
     }
 
     /**
@@ -299,7 +395,21 @@ public final class HashicorpVaultClient implements Closeable {
         try {
             executorServiceManager.shutdownNow(renewal);
         } finally {
-            sessionManager.destroy();
+            try {
+                sessionManager.destroy();
+            } finally {
+                close(resources);
+            }
+        }
+    }
+
+    private static void close(List<AutoCloseable> resources) {
+        for (AutoCloseable resource : resources) {
+            try {
+                resource.close();
+            } catch (Exception e) {
+                LOG.debug("Error closing {} of the HashiCorp Vault login. This exception is ignored.", resource, e);
+            }
         }
     }
 }

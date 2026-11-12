@@ -44,12 +44,18 @@ public final class HashicorpVaultClientSettings {
     static final String TRUST_STORE_PASSWORD_ENV = "CAMEL_HASHICORP_VAULT_TRUST_STORE_PASSWORD";
     static final String KEY_STORE_ENV = "CAMEL_HASHICORP_VAULT_KEY_STORE";
     static final String KEY_STORE_PASSWORD_ENV = "CAMEL_HASHICORP_VAULT_KEY_STORE_PASSWORD";
+    static final String AWS_IAM_SERVER_ID_ENV = "CAMEL_HASHICORP_VAULT_AWS_IAM_SERVER_ID";
+    static final String AWS_REGION_ENV = "CAMEL_HASHICORP_VAULT_AWS_REGION";
+    static final String AWS_STS_ENDPOINT_ENV = "CAMEL_HASHICORP_VAULT_AWS_STS_ENDPOINT";
+    static final String AZURE_RESOURCE_ENV = "CAMEL_HASHICORP_VAULT_AZURE_RESOURCE";
+    static final String AZURE_CLIENT_ID_ENV = "CAMEL_HASHICORP_VAULT_AZURE_CLIENT_ID";
 
     // any of these set means the settings come from the environment variables (the cloud variable alone does not)
     private static final List<String> ENVIRONMENT_SETTINGS = List.of(
             TOKEN_ENV, HOST_ENV, PORT_ENV, SCHEME_ENV, NAMESPACE_ENV, AUTHENTICATION_ENV, ROLE_ID_ENV, SECRET_ID_ENV,
             ROLE_ENV, JWT_ENV, JWT_FILE_ENV, AUTH_MOUNT_PATH_ENV, TRUST_STORE_ENV, TRUST_STORE_PASSWORD_ENV, KEY_STORE_ENV,
-            KEY_STORE_PASSWORD_ENV);
+            KEY_STORE_PASSWORD_ENV, AWS_IAM_SERVER_ID_ENV, AWS_REGION_ENV, AWS_STS_ENDPOINT_ENV, AZURE_RESOURCE_ENV,
+            AZURE_CLIENT_ID_ENV);
 
     private String host;
     private String port;
@@ -68,6 +74,11 @@ public final class HashicorpVaultClientSettings {
     private String trustStorePassword;
     private String keyStore;
     private String keyStorePassword;
+    private String awsIamServerId;
+    private String awsRegion;
+    private String awsStsEndpoint;
+    private String azureResource;
+    private String azureClientId;
 
     /**
      * The settings of the properties function and the secret refresh task: from the CAMEL_HASHICORP_VAULT_* environment
@@ -100,6 +111,11 @@ public final class HashicorpVaultClientSettings {
             settings.setTrustStorePassword(environment.apply(TRUST_STORE_PASSWORD_ENV));
             settings.setKeyStore(environment.apply(KEY_STORE_ENV));
             settings.setKeyStorePassword(environment.apply(KEY_STORE_PASSWORD_ENV));
+            settings.setAwsIamServerId(environment.apply(AWS_IAM_SERVER_ID_ENV));
+            settings.setAwsRegion(environment.apply(AWS_REGION_ENV));
+            settings.setAwsStsEndpoint(environment.apply(AWS_STS_ENDPOINT_ENV));
+            settings.setAzureResource(environment.apply(AZURE_RESOURCE_ENV));
+            settings.setAzureClientId(environment.apply(AZURE_CLIENT_ID_ENV));
         } else if (configuration != null) {
             settings.setHost(configuration.getHost());
             settings.setPort(configuration.getPort());
@@ -118,6 +134,11 @@ public final class HashicorpVaultClientSettings {
             settings.setTrustStorePassword(configuration.getTrustStorePassword());
             settings.setKeyStore(configuration.getKeyStore());
             settings.setKeyStorePassword(configuration.getKeyStorePassword());
+            settings.setAwsIamServerId(configuration.getAwsIamServerId());
+            settings.setAwsRegion(configuration.getAwsRegion());
+            settings.setAwsStsEndpoint(configuration.getAwsStsEndpoint());
+            settings.setAzureResource(configuration.getAzureResource());
+            settings.setAzureClientId(configuration.getAzureClientId());
         }
         return settings;
     }
@@ -175,7 +196,7 @@ public final class HashicorpVaultClientSettings {
     }
 
     /**
-     * How to log in: token (the default), approle, kubernetes, jwt or cert
+     * How to log in: token (the default), approle, kubernetes, jwt, cert, aws-iam, azure-msi or gcp-gce
      */
     public void setAuthentication(String authentication) {
         this.authentication = authentication;
@@ -267,5 +288,45 @@ public final class HashicorpVaultClientSettings {
 
     public void setKeyStorePassword(String keyStorePassword) {
         this.keyStorePassword = keyStorePassword;
+    }
+
+    public String getAwsIamServerId() {
+        return awsIamServerId;
+    }
+
+    public void setAwsIamServerId(String awsIamServerId) {
+        this.awsIamServerId = awsIamServerId;
+    }
+
+    public String getAwsRegion() {
+        return awsRegion;
+    }
+
+    public void setAwsRegion(String awsRegion) {
+        this.awsRegion = awsRegion;
+    }
+
+    public String getAwsStsEndpoint() {
+        return awsStsEndpoint;
+    }
+
+    public void setAwsStsEndpoint(String awsStsEndpoint) {
+        this.awsStsEndpoint = awsStsEndpoint;
+    }
+
+    public String getAzureResource() {
+        return azureResource;
+    }
+
+    public void setAzureResource(String azureResource) {
+        this.azureResource = azureResource;
+    }
+
+    public String getAzureClientId() {
+        return azureClientId;
+    }
+
+    public void setAzureClientId(String azureClientId) {
+        this.azureClientId = azureClientId;
     }
 }

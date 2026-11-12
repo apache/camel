@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
  */
 public class HashicorpVaultConfiguration extends VaultConfiguration {
 
-    @Metadata(defaultValue = "token", enums = "token,approle,kubernetes,jwt,cert")
+    @Metadata(defaultValue = "token", enums = "token,approle,kubernetes,jwt,cert,aws-iam,azure-msi,gcp-gce")
     private @Nullable String authentication = "token";
     @Metadata(security = "secret")
     private @Nullable String token;
@@ -50,6 +50,16 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
     private @Nullable String keyStore;
     @Metadata(security = "secret")
     private @Nullable String keyStorePassword;
+    @Metadata
+    private @Nullable String awsIamServerId;
+    @Metadata
+    private @Nullable String awsRegion;
+    @Metadata
+    private @Nullable String awsStsEndpoint;
+    @Metadata(defaultValue = "https://management.azure.com/")
+    private @Nullable String azureResource = "https://management.azure.com/";
+    @Metadata
+    private @Nullable String azureClientId;
     @Metadata(required = true)
     private @Nullable String host;
     @Metadata(required = true)
@@ -87,9 +97,10 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
 
     /**
      * How to log in to hashicorp vault: token (a fixed token), approle (a role ID and a secret ID), kubernetes (the
-     * service account token of the pod), jwt (a JWT, such as a workload identity token) or cert (the TLS client
-     * certificate of the keyStore). Camel renews the token before it expires, and logs in again when the token can no
-     * longer be renewed.
+     * service account token of the pod), jwt (a JWT, such as a workload identity token), cert (the TLS client
+     * certificate of the keyStore), aws-iam (the AWS credentials of the application), azure-msi (the Azure managed
+     * identity) or gcp-gce (the service account of the Google Compute Engine instance). Camel renews the token before
+     * it expires, and logs in again when the token can no longer be renewed.
      *
      * @since 4.24
      */
@@ -137,8 +148,10 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
     }
 
     /**
-     * The hashicorp vault role to log in as, for the kubernetes and jwt logins. The jwt login can leave it out when the
-     * login method has a default role.
+     * The hashicorp vault role to log in as, for the kubernetes, jwt, cert, aws-iam, azure-msi and gcp-gce logins. The
+     * jwt login can leave it out when the login method has a default role, the aws-iam login to log in as the role
+     * named as the IAM principal, and the cert login to let Vault pick the certificate role that trusts the
+     * certificate.
      *
      * @since 4.24
      */
@@ -189,7 +202,7 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
 
     /**
      * The path the login method is mounted at in hashicorp vault (without auth/), when it is not the default path of
-     * the login method: approle, kubernetes or jwt
+     * the login method: approle, kubernetes, jwt, cert, aws (for aws-iam), azure (for azure-msi) or gcp (for gcp-gce)
      *
      * @since 4.24
      */
@@ -241,7 +254,7 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
     /**
      * The file with the TLS client certificate and its private key, which Camel presents to hashicorp vault: for the
      * cert login, or for a Vault that requires client certificates. A PKCS12 or JKS key store, or PEM with the
-     * certificate and the PKCS#8 private key.
+     * certificate and its unencrypted private key, in PKCS#8 or, for an RSA key, in PKCS#1.
      *
      * @since 4.24
      */
@@ -263,6 +276,92 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
      */
     public void setKeyStorePassword(@Nullable String keyStorePassword) {
         this.keyStorePassword = keyStorePassword;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getAwsIamServerId() {
+        return awsIamServerId;
+    }
+
+    /**
+     * The value of the X-Vault-AWS-IAM-Server-ID header of the aws-iam login, when the AWS login of hashicorp vault
+     * requires one (iam_server_id_header_value)
+     *
+     * @since 4.24
+     */
+    public void setAwsIamServerId(@Nullable String awsIamServerId) {
+        this.awsIamServerId = awsIamServerId;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getAwsRegion() {
+        return awsRegion;
+    }
+
+    /**
+     * The AWS region the aws-iam login signs its request for, which must be the region of awsStsEndpoint. When not set:
+     * us-east-1 with the global endpoint, else the region of the AWS SDK default region chain (such as the AWS_REGION
+     * environment variable).
+     *
+     * @since 4.24
+     */
+    public void setAwsRegion(@Nullable String awsRegion) {
+        this.awsRegion = awsRegion;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getAwsStsEndpoint() {
+        return awsStsEndpoint;
+    }
+
+    /**
+     * The AWS STS endpoint of the aws-iam login, which the AWS login of hashicorp vault must accept (its sts_endpoint).
+     * When not set, the global endpoint https://sts.amazonaws.com/.
+     *
+     * @since 4.24
+     */
+    public void setAwsStsEndpoint(@Nullable String awsStsEndpoint) {
+        this.awsStsEndpoint = awsStsEndpoint;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getAzureResource() {
+        return azureResource;
+    }
+
+    /**
+     * The resource (audience) of the managed identity token of the azure-msi login, which must be the resource of the
+     * Azure login of hashicorp vault
+     *
+     * @since 4.24
+     */
+    public void setAzureResource(@Nullable String azureResource) {
+        this.azureResource = azureResource;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getAzureClientId() {
+        return azureClientId;
+    }
+
+    /**
+     * The client ID of a user-assigned managed identity, for the azure-msi login. When not set, the system-assigned
+     * managed identity.
+     *
+     * @since 4.24
+     */
+    public void setAzureClientId(@Nullable String azureClientId) {
+        this.azureClientId = azureClientId;
     }
 
     public @Nullable String getHost() {

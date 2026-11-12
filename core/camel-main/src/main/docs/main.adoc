@@ -542,24 +542,29 @@ The camel.vault.kubernetescm supports 2 options, which are listed below.
 
 
 === Camel Hashicorp Vault configurations
-The camel.vault.hashicorp supports 20 options, which are listed below.
+The camel.vault.hashicorp supports 25 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| `camel.vault.hashicorp.authentication` | How to log in to hashicorp vault: token (a fixed token), approle (a role ID and a secret ID), kubernetes (the service account token of the pod), jwt (a JWT, such as a workload identity token) or cert (the TLS client certificate of the keyStore). Camel renews the token before it expires, and logs in again when the token can no longer be renewed. | token | String
-| `camel.vault.hashicorp.authMountPath` | The path the login method is mounted at in hashicorp vault (without auth/), when it is not the default path of the login method: approle, kubernetes or jwt |  | String
+| `camel.vault.hashicorp.authentication` | How to log in to hashicorp vault: token (a fixed token), approle (a role ID and a secret ID), kubernetes (the service account token of the pod), jwt (a JWT, such as a workload identity token), cert (the TLS client certificate of the keyStore), aws-iam (the AWS credentials of the application), azure-msi (the Azure managed identity) or gcp-gce (the service account of the Google Compute Engine instance). Camel renews the token before it expires, and logs in again when the token can no longer be renewed. | token | String
+| `camel.vault.hashicorp.authMountPath` | The path the login method is mounted at in hashicorp vault (without auth/), when it is not the default path of the login method: approle, kubernetes, jwt, cert, aws (for aws-iam), azure (for azure-msi) or gcp (for gcp-gce) |  | String
+| `camel.vault.hashicorp.awsIamServerId` | The value of the X-Vault-AWS-IAM-Server-ID header of the aws-iam login, when the AWS login of hashicorp vault requires one (iam_server_id_header_value) |  | String
+| `camel.vault.hashicorp.awsRegion` | The AWS region the aws-iam login signs its request for, which must be the region of awsStsEndpoint. When not set: us-east-1 with the global endpoint, else the region of the AWS SDK default region chain (such as the AWS_REGION environment variable). |  | String
+| `camel.vault.hashicorp.awsStsEndpoint` | The AWS STS endpoint of the aws-iam login, which the AWS login of hashicorp vault must accept (its sts_endpoint). When not set, the global endpoint \https://sts.amazonaws.com/. |  | String
+| `camel.vault.hashicorp.azureClientId` | The client ID of a user-assigned managed identity, for the azure-msi login. When not set, the system-assigned managed identity. |  | String
+| `camel.vault.hashicorp.azureResource` | The resource (audience) of the managed identity token of the azure-msi login, which must be the resource of the Azure login of hashicorp vault | https://management.azure.com/ | String
 | `camel.vault.hashicorp.cloud` | Determine if the Hashicorp Vault is deployed on Hashicorp Cloud or not | false | boolean
 | `camel.vault.hashicorp.host` | Host to access hashicorp vault |  | String
 | `camel.vault.hashicorp.jwt` | The JWT to log in with, for the jwt and kubernetes logins. For a JWT that is replaced over time, such as a projected service account token, use jwtFile instead. |  | String
 | `camel.vault.hashicorp.jwtFile` | The file to read the JWT from at every login, for the jwt and kubernetes logins. The kubernetes login reads /var/run/secrets/kubernetes.io/serviceaccount/token when neither jwt nor jwtFile is set. |  | String
-| `camel.vault.hashicorp.keyStore` | The file with the TLS client certificate and its private key, which Camel presents to hashicorp vault: for the cert login, or for a Vault that requires client certificates. A PKCS12 or JKS key store, or PEM with the certificate and the PKCS#8 private key. |  | String
+| `camel.vault.hashicorp.keyStore` | The file with the TLS client certificate and its private key, which Camel presents to hashicorp vault: for the cert login, or for a Vault that requires client certificates. A PKCS12 or JKS key store, or PEM with the certificate and its unencrypted private key, in PKCS#8 or, for an RSA key, in PKCS#1. |  | String
 | `camel.vault.hashicorp.keyStorePassword` | The password of the key store and of its private key, when it is a PKCS12 or JKS key store |  | String
 | `camel.vault.hashicorp.namespace` | If the Hashicorp Vault instance is deployed on Hashicorp Cloud, this field will determine the namespace |  | String
 | `camel.vault.hashicorp.port` | Port to access hashicorp vault |  | String
 | `camel.vault.hashicorp.refreshEnabled` | Whether to automatically reload Camel upon secrets being updated in Hashicorp Vault. | false | boolean
 | `camel.vault.hashicorp.refreshPeriod` | The period (millis) between checking Hashicorp Vault for updated secrets. | 60000 | long
-| `camel.vault.hashicorp.role` | The hashicorp vault role to log in as, for the kubernetes and jwt logins. The jwt login can leave it out when the login method has a default role. |  | String
+| `camel.vault.hashicorp.role` | The hashicorp vault role to log in as, for the kubernetes, jwt, cert, aws-iam, azure-msi and gcp-gce logins. The jwt login can leave it out when the login method has a default role, the aws-iam login to log in as the role named as the IAM principal, and the cert login to let Vault pick the certificate role that trusts the certificate. |  | String
 | `camel.vault.hashicorp.roleId` | The role ID of the AppRole, for the approle login |  | String
 | `camel.vault.hashicorp.scheme` | Scheme to access hashicorp vault |  | String
 | `camel.vault.hashicorp.secretId` | The secret ID of the AppRole, for the approle login |  | String
