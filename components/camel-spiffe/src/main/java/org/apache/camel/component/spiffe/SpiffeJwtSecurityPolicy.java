@@ -51,19 +51,21 @@ public class SpiffeJwtSecurityPolicy implements AuthorizationPolicy {
                             + " further authorization to a downstream policy. Mutually exclusive with acceptedSpiffeIds.")
     private boolean acceptAnySpiffeId;
     @Metadata(label = "security",
-              description = "Path to the Workload API endpoint. Defaults to the SPIFFE_ENDPOINT_SOCKET environment"
-                            + " variable. Ignored when workloadApiClient is supplied.")
+              description = "Path to the Workload API endpoint. Defaults to the spiffeSocketPath of the spiffe component,"
+                            + " then to the SPIFFE_ENDPOINT_SOCKET environment variable. Ignored when a"
+                            + " workloadApiClient is used.")
     private String spiffeSocketPath;
-    @Metadata(label = "advanced", autowired = true,
-              description = "An existing WorkloadApiClient to use. It remains owned by its supplier and is not closed"
-                            + " when the guarded route stops.")
+    @Metadata(label = "advanced",
+              description = "An existing WorkloadApiClient to use. Defaults to the client of the spiffe component, when"
+                            + " it has one. The client remains owned by its supplier and is not closed when the guarded"
+                            + " route stops.")
     private WorkloadApiClient workloadApiClient;
 
     private volatile Set<SpiffeId> acceptedSet = Set.of();
 
     @Override
     public void beforeWrap(Route route, NamedNode definition) {
-        SpiffeJwtValidator.audiences(audience);
+        SpiffeJwtValidator.audiences(audience, "set the audience option");
         boolean haveAllowList = ObjectHelper.isNotEmpty(acceptedSpiffeIds);
         if (acceptAnySpiffeId == haveAllowList) {
             throw new IllegalStateException(
@@ -78,14 +80,21 @@ public class SpiffeJwtSecurityPolicy implements AuthorizationPolicy {
 
     @Override
     public Processor wrap(Route route, Processor processor) {
-        SpiffeConfiguration configuration = new SpiffeConfiguration();
+        // Start from the configuration of the spiffe component, so that its camel.component.spiffe.* settings and a
+        // client autowired on it apply to the policy as well; what is set on the policy itself takes precedence
+        SpiffeComponent component = route.getCamelContext().getComponent("spiffe", SpiffeComponent.class);
+        SpiffeConfiguration configuration = component.getConfiguration() != null
+                ? component.getConfiguration().copy() : new SpiffeConfiguration();
         configuration.setOperation(SpiffeOperation.validateJwtSvid);
         configuration.setAudience(audience);
         configuration.setPreserveBody(true);
-        configuration.setSpiffeSocketPath(spiffeSocketPath);
-        configuration.setWorkloadApiClient(workloadApiClient);
-        SpiffeEndpoint endpoint = new SpiffeEndpoint(
-                "spiffe:jwt-policy", new SpiffeComponent(route.getCamelContext()), configuration);
+        if (spiffeSocketPath != null) {
+            configuration.setSpiffeSocketPath(spiffeSocketPath);
+        }
+        if (workloadApiClient != null) {
+            configuration.setWorkloadApiClient(workloadApiClient);
+        }
+        SpiffeEndpoint endpoint = new SpiffeEndpoint("spiffe:jwt-policy", component, configuration);
         return new SpiffeJwtSecurityProcessor(processor, this, endpoint);
     }
 

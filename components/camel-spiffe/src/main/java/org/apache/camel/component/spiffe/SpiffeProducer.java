@@ -81,7 +81,7 @@ public class SpiffeProducer extends DefaultProducer {
         boolean preserveBody = getEndpoint().getConfiguration().isPreserveBody();
         JwtSvid svid = SpiffeJwtValidator.validate(
                 client, exchange, getEndpoint().getConfiguration().getAudience(), !preserveBody);
-        SpiffeJwtValidator.recordIdentity(exchange, svid);
+        SpiffeJwtValidator.recordIdentity(exchange, svid, true);
         if (!preserveBody) {
             getMessageForResponse(exchange).setBody(svid);
         }
@@ -108,18 +108,8 @@ public class SpiffeProducer extends DefaultProducer {
         return splitAudiences(audience, "set the audience option or the CamelSpiffeAudience header");
     }
 
-    private String[] splitAudiences(String audience, String how) {
-        if (ObjectHelper.isEmpty(audience)) {
-            throw new IllegalArgumentException("At least one audience is required (" + how + ")");
-        }
-        String[] parts = Arrays.stream(audience.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .toArray(String[]::new);
-        if (parts.length == 0) {
-            throw new IllegalArgumentException("At least one non-blank audience is required (" + how + ")");
-        }
-        return parts;
+    private static String[] splitAudiences(String audience, String how) {
+        return SpiffeJwtValidator.audiences(audience, how);
     }
 
     private static Message getMessageForResponse(Exchange exchange) {

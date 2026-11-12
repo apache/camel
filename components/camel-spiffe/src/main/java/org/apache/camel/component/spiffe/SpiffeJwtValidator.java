@@ -36,6 +36,9 @@ final class SpiffeJwtValidator {
         Message message = exchange.getMessage();
         String token = message.getHeader(SpiffeConstants.TOKEN, String.class);
         if (ObjectHelper.isEmpty(token)) {
+            // a JWT-SVID is presented over HTTP as "Authorization: Bearer <token>", so an HTTP route can validate it
+            // without a bean to strip the scheme; it is checked before the body so that a request payload on a POST
+            // or PUT is not mistaken for the token
             token = bearerToken(message.getHeader("Authorization", String.class));
         }
         if (ObjectHelper.isEmpty(token) && allowBodyToken) {
@@ -46,29 +49,46 @@ final class SpiffeJwtValidator {
                     "A JWT-SVID token is required (set CamelSpiffeToken or an Authorization: Bearer header"
                                                + (allowBodyToken ? ", or the message body)" : ")"));
         }
+        // The audience is the check here, not a parameter: it is what binds the token to THIS workload, so it comes
+        // from the configuration only. Honouring a CamelSpiffeAudience header would let a caller validate a token
+        // minted for someone else against an audience of their choosing.
+        //
+        // The Workload API validates against one audience at a time, so a configured list is tried in turn and the
+        // token is accepted when any audience matches. Taking only the first would silently enforce a narrower rule
+        // than the configuration asks for, which is the wrong failure mode for a check that decides whether a caller
+        // is authenticated.
         JwtSvidException failure = null;
-        // Audiences are policy configuration, never a message-selected validation parameter.
-        for (String audience : audiences(configuredAudience)) {
+        for (String audience : audiences(configuredAudience, "set the audience option")) {
             try {
                 return client.validateJwtSvid(token, audience);
             } catch (JwtSvidException e) {
+                // could be this audience, or the token itself; only once every audience has failed do we know
                 failure = e;
             }
         }
+        // audiences never returns an empty array, so the loop ran and failure is set; be explicit rather than leaving
+        // a reader (or a static analyser) to prove it
         if (failure == null) {
             throw new IllegalStateException("No configured audience was evaluated");
         }
         throw failure;
     }
 
-    static String[] audiences(String configured) {
+    /**
+     * Splits a comma-separated audience list, trimming each entry and dropping blank ones.
+     *
+     * @param  configured the configured list
+     * @param  how        how to configure it, for the error when it is empty
+     * @return            the audiences, never empty
+     */
+    static String[] audiences(String configured, String how) {
         if (ObjectHelper.isEmpty(configured)) {
-            throw new IllegalArgumentException("At least one audience is required (set the audience option)");
+            throw new IllegalArgumentException("At least one audience is required (" + how + ")");
         }
         String[] audiences = Arrays.stream(configured.split(",")).map(String::trim).filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
         if (audiences.length == 0) {
-            throw new IllegalArgumentException("At least one non-blank audience is required (set the audience option)");
+            throw new IllegalArgumentException("At least one non-blank audience is required (" + how + ")");
         }
         return audiences;
     }
@@ -79,11 +99,19 @@ final class SpiffeJwtValidator {
         exchange.getMessage().removeHeader(SpiffeConstants.EXPIRY);
     }
 
-    static void recordIdentity(Exchange exchange, JwtSvid svid) {
+    /**
+     * Publishes the verified identity. The exchange property is the value the route established, which a sender cannot
+     * put on the message, and the one to check further down the route. The producer also sets the identity headers, its
+     * documented output; the policy does not, so that the identity does not travel in two channels, nor to outbound
+     * producers.
+     */
+    static void recordIdentity(Exchange exchange, JwtSvid svid, boolean headers) {
         SpiffeJwtIdentity identity = new SpiffeJwtIdentity(svid);
         exchange.setProperty(SpiffeConstants.JWT_IDENTITY, identity);
-        exchange.getMessage().setHeader(SpiffeConstants.SPIFFE_ID, identity.getSpiffeId());
-        exchange.getMessage().setHeader(SpiffeConstants.EXPIRY, svid.getExpiry());
+        if (headers) {
+            exchange.getMessage().setHeader(SpiffeConstants.SPIFFE_ID, identity.getSpiffeId());
+            exchange.getMessage().setHeader(SpiffeConstants.EXPIRY, svid.getExpiry());
+        }
     }
 
     private static String bearerToken(String authorization) {

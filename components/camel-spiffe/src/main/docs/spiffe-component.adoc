@@ -184,8 +184,10 @@ come from policy configuration; message headers cannot override them. The policy
 headers as body-preserving producer validation and never from the body.
 
 Each guarded processor owns an endpoint-managed Workload API client, released when its route stops and recreated
-on restart. An injected `workloadApiClient` remains owned by its supplier and is never closed by the policy. The
-policy also supports `spiffeSocketPath`, defaulting to `SPIFFE_ENDPOINT_SOCKET` when no client is supplied.
+on restart. The policy starts from the configuration of the `spiffe` component, so the `camel.component.spiffe.*`
+settings and a client autowired on the component apply to it; its own `workloadApiClient` and `spiffeSocketPath`
+options take precedence, and `SPIFFE_ENDPOINT_SOCKET` is used when neither names a client or a socket. An injected
+`workloadApiClient` remains owned by its supplier and is never closed by the policy.
 
 [tabs]
 ====
@@ -243,7 +245,10 @@ YAML::
 ----
 ====
 
-The successful policy publishes the same token-free `CamelSpiffeJwtIdentity` property. Extract verified fields into
+The successful policy publishes the same token-free `CamelSpiffeJwtIdentity` property, and nothing else: unlike the
+producer, it sets no `CamelSpiffeSpiffeId` or `CamelSpiffeExpiry` header, so the identity is a value the route
+established, which a sender cannot put on the message and which later steps cannot change, and it does not travel to
+outbound producers. Check the property, not a header, further down the route. Extract verified fields into
 exchange properties to compose with OPA or OpenFGA; for example, copy its `spiffeId` into `subject`, use
 `includeProperties=subject` with OPA, or a configured OpenFGA `user` expression based on that property. Choosing
 `acceptAnySpiffeId` asserts that audience validation is sufficient at this step and leaves finer authorization to

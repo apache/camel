@@ -16,15 +16,20 @@
  */
 package org.apache.camel.component.spiffe;
 
+import io.spiffe.exception.JwtSvidException;
 import io.spiffe.svid.jwtsvid.JwtSvid;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Keeps JWT validation and its Workload API client within the guarded route's lifecycle. */
 final class SpiffeJwtSecurityProcessor extends DelegateAsyncProcessor {
+    private static final Logger LOG = LoggerFactory.getLogger(SpiffeJwtSecurityProcessor.class);
+
     private final SpiffeJwtSecurityPolicy policy;
     private final SpiffeEndpoint endpoint;
 
@@ -62,8 +67,17 @@ final class SpiffeJwtSecurityProcessor extends DelegateAsyncProcessor {
             if (!policy.isAuthorized(svid.getSpiffeId())) {
                 throw new IllegalArgumentException("Validated SPIFFE identity is not authorized by this policy");
             }
-            SpiffeJwtValidator.recordIdentity(exchange, svid);
+            SpiffeJwtValidator.recordIdentity(exchange, svid, false);
         } catch (Exception e) {
+            // Only the class of the failure is logged: the message of the SDK exception may contain the credential.
+            // A failure that is not a verdict on the token, such as the Workload API being unreachable, is worth a
+            // warning, since to the caller every failure is the same 401 and an outage would look like a 401 storm.
+            if (e instanceof JwtSvidException || e instanceof IllegalArgumentException) {
+                LOG.debug("JWT-SVID authentication or authorization failed: {}", e.getClass().getName());
+            } else {
+                LOG.warn("JWT-SVID validation could not be performed ({}): is the Workload API reachable?",
+                        e.getClass().getName());
+            }
             SpiffeJwtValidator.clearIdentity(exchange);
             exchange.getMessage().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, policy.getClass().getSimpleName());
             // Do not include the SDK exception message: it may contain the presented credential.

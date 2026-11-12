@@ -183,6 +183,9 @@ class SpiffeJwtValidationTest {
                 assertThat(received).hasValue(1);
                 assertThat(allowed.getMessage().getBody()).isEqualTo("payload");
                 assertThat(allowed.getProperty(SpiffeConstants.JWT_IDENTITY)).isInstanceOf(SpiffeJwtIdentity.class);
+                // the policy publishes the identity as a property only, unlike the producer
+                assertThat(allowed.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isNull();
+                assertThat(allowed.getMessage().getHeader(SpiffeConstants.EXPIRY)).isNull();
 
                 for (String reason : List.of("missing", "unlisted", "invalid", "expired", "wrong-audience")) {
                     Exchange denied = exchange(context, "payload", !reason.equals("missing"));
@@ -202,6 +205,42 @@ class SpiffeJwtValidationTest {
             } finally {
                 ServiceHelper.stopService(wrapped);
             }
+            verify(client, never()).close();
+        }
+    }
+
+    @Test
+    void policyUsesTheClientOfTheComponentWhenItSetsNone() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            WorkloadApiClient client = mock(WorkloadApiClient.class);
+            doReturn(svid(CALLER)).when(client).validateJwtSvid(TOKEN, AUDIENCE);
+            // the client is configured on the component, as camel.component.spiffe.workload-api-client or autowiring
+            // would do, and the policy names none
+            SpiffeConfiguration componentConfiguration = new SpiffeConfiguration();
+            componentConfiguration.setWorkloadApiClient(client);
+            context.getComponent("spiffe", SpiffeComponent.class).setConfiguration(componentConfiguration);
+
+            SpiffeJwtSecurityPolicy policy = new SpiffeJwtSecurityPolicy();
+            policy.setAudience(AUDIENCE);
+            policy.setAcceptedSpiffeIds(CALLER);
+            Route route = mock(Route.class);
+            when(route.getCamelContext()).thenReturn(context);
+            policy.beforeWrap(route, null);
+            AtomicInteger received = new AtomicInteger();
+            Processor wrapped = policy.wrap(route, e -> received.incrementAndGet());
+            ServiceHelper.startService(wrapped);
+            try {
+                Exchange allowed = exchange(context, "payload", true);
+                ((AsyncProcessor) wrapped).process(allowed, done -> {
+                });
+                assertThat(allowed.getException()).isNull();
+                assertThat(received).hasValue(1);
+                assertThat(allowed.getProperty(SpiffeConstants.JWT_IDENTITY)).isInstanceOf(SpiffeJwtIdentity.class);
+                verify(client).validateJwtSvid(TOKEN, AUDIENCE);
+            } finally {
+                ServiceHelper.stopService(wrapped);
+            }
+            // the component's client is not the policy's to close
             verify(client, never()).close();
         }
     }
