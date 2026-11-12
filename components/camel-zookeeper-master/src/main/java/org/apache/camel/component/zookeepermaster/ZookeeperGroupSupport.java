@@ -55,6 +55,10 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
     private ManagedGroupFactoryStrategy managedGroupFactoryStrategy;
     @Metadata(label = "advanced")
     private CuratorFramework curator;
+    // the client this is registered on as a connection state listener (the curator set on it, such as the curator of
+    // the component, or the "curator" bean of the registry, which others share), so the listener is removed from it
+    // when this stops
+    private volatile CuratorFramework listenedCurator;
     @Metadata(defaultValue = "10000")
     private int maximumConnectionTimeout = 10 * 1000;
     @Metadata(defaultValue = "localhost:2181")
@@ -148,6 +152,9 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
+        // registered again when started again after a stop (no-op when it is registered already)
+        registerAsListener();
+
         // attempt to lookup curator framework from registry using the name curator
         if (curator == null) {
             try {
@@ -228,9 +235,16 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
 
     @Override
     protected void doStop() throws Exception {
-        if (managedGroupFactory != null) {
-            managedGroupFactory.close();
-            managedGroupFactory = null;
+        try {
+            if (managedGroupFactory != null) {
+                managedGroupFactory.close();
+                managedGroupFactory = null;
+            }
+        } finally {
+            // the client may be shared (the curator of the component, or the "curator" bean of the registry): a listener
+            // left on it would keep this (and the consumer or route policy that created it) for as long as the client
+            // lives, one more at each start
+            unregisterAsListener();
         }
     }
 
@@ -240,8 +254,21 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
     }
 
     protected void registerAsListener() {
-        if (curator != null) {
+        if (curator != null && curator != listenedCurator) {
+            unregisterAsListener();
             curator.getConnectionStateListenable().addListener(this);
+            listenedCurator = curator;
+        }
+    }
+
+    /**
+     * Removes this as a connection state listener of the client it registered on.
+     */
+    protected void unregisterAsListener() {
+        CuratorFramework client = listenedCurator;
+        listenedCurator = null;
+        if (client != null) {
+            client.getConnectionStateListenable().removeListener(this);
         }
     }
 }
