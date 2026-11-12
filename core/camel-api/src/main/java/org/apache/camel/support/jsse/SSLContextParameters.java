@@ -49,19 +49,30 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     /**
      * The post-quantum hybrid named groups to detect for auto-configuration. Any one of them is enough to switch the
      * auto-configuration on: a JVM or a crypto policy restricted to the NIST curves offers the SecP* hybrids without
-     * the X25519 one.
+     * the X25519 one. The preferred ordering is derived from this list, so a hybrid added here takes part in both the
+     * detection and the ordering.
      */
     private static final List<String> PQC_NAMED_GROUPS
             = List.of("X25519MLKEM768", "SecP256r1MLKEM768", "SecP384r1MLKEM1024");
 
     /**
-     * The preferred named group ordering when PQC groups are available. This ordering ensures post-quantum key exchange
-     * is preferred while maintaining classical fallbacks for compatibility.
+     * The classical groups kept after the hybrids, as fallbacks for a peer that cannot negotiate a hybrid.
      */
-    private static final List<String> PQC_PREFERRED_NAMED_GROUPS
-            = List.of("X25519MLKEM768", "SecP256r1MLKEM768", "SecP384r1MLKEM1024", "x25519", "secp256r1", "secp384r1");
+    private static final List<String> CLASSICAL_FALLBACK_NAMED_GROUPS = List.of("x25519", "secp256r1", "secp384r1");
+
+    /**
+     * The preferred named group ordering when PQC groups are available: the hybrids, then the classical fallbacks, so
+     * that the post-quantum key exchange is preferred while the classical one stays available for compatibility.
+     */
+    private static final List<String> PQC_PREFERRED_NAMED_GROUPS = preferredNamedGroups();
 
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextParameters.class);
+
+    private static List<String> preferredNamedGroups() {
+        List<String> groups = new ArrayList<>(PQC_NAMED_GROUPS);
+        groups.addAll(CLASSICAL_FALLBACK_NAMED_GROUPS);
+        return List.copyOf(groups);
+    }
 
     /**
      * Logged once per JVM, so that a deployment without any post-quantum group says so instead of staying silent.
@@ -385,10 +396,17 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      */
     private boolean applyPqcNamedGroupDefaults(SSLContext context) {
         SSLEngine probeEngine = context.createSSLEngine();
-        List<String> ordered = resolvePqcNamedGroups(getNamedGroupsFromParams(probeEngine.getSSLParameters()));
+        String[] available = getNamedGroupsFromParams(probeEngine.getSSLParameters());
+        List<String> ordered = resolvePqcNamedGroups(available);
 
         if (ordered == null) {
-            logPqcNamedGroupsUnavailable();
+            if (hasPqcNamedGroup(available)) {
+                LOG.debug("The JVM already leads with the post-quantum named group {}; its named group order is left"
+                          + " alone",
+                        available[0]);
+            } else {
+                logPqcNamedGroupsUnavailable();
+            }
             return false;
         }
 
@@ -403,13 +421,17 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     /**
      * Orders the named groups available on this JVM so that the post-quantum hybrids come first, followed by the
      * classical fallbacks and then everything else, preserving the spelling the JVM uses.
+     * <p/>
+     * An order that already leads with a hybrid is left alone: it is either the default of the JVM, which this
+     * reordering would only confirm, or one an operator chose through {@code jdk.tls.namedGroups}, such as a CNSA 2.0
+     * setup that puts the P-384 hybrid first, which it must not rewrite.
      *
-     * @param  availableGroups the named groups the JVM offers
-     * @return                 the preferred ordering, or {@code null} when the JVM offers no post-quantum group - in
-     *                         which case the ordering is left alone rather than rewritten
+     * @param  availableGroups the named groups the JVM offers, in its order
+     * @return                 the preferred ordering, or {@code null} when the JVM offers no post-quantum group or
+     *                         already leads with one - in both cases the ordering is left alone rather than rewritten
      */
     static @Nullable List<String> resolvePqcNamedGroups(String @Nullable [] availableGroups) {
-        if (availableGroups == null || availableGroups.length == 0) {
+        if (availableGroups == null || availableGroups.length == 0 || isPqcNamedGroup(availableGroups[0])) {
             return null;
         }
 
@@ -440,11 +462,34 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         return ordered;
     }
 
+    /**
+     * Whether the JVM offers any of the post-quantum hybrid groups, in whatever position.
+     */
+    static boolean hasPqcNamedGroup(String @Nullable [] availableGroups) {
+        if (availableGroups != null) {
+            for (String group : availableGroups) {
+                if (isPqcNamedGroup(group)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isPqcNamedGroup(String group) {
+        for (String pqc : PQC_NAMED_GROUPS) {
+            if (pqc.equalsIgnoreCase(group)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static void logPqcNamedGroupsUnavailable() {
         if (!pqcNamedGroupsUnavailableLogged) {
             pqcNamedGroupsUnavailableLogged = true;
-            LOG.info("No post-quantum TLS named group ({}) is available on this JVM,"
-                     + " so the TLS key exchange stays classical. A JDK offering a hybrid ML-KEM group is required.",
+            LOG.debug("This JVM offers no post-quantum TLS named group ({}), so the TLS key exchange stays classical;"
+                      + " a JDK that offers a hybrid ML-KEM group, such as JDK 25, enables it.",
                     String.join(", ", PQC_NAMED_GROUPS));
         }
     }

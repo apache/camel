@@ -1332,6 +1332,27 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
+    public void testResolvePqcNamedGroupsLeavesAnOrderThatAlreadyLeadsWithAHybridAlone() {
+        // an operator who put a hybrid first through jdk.tls.namedGroups, here a CNSA 2.0 style setup, keeps that
+        // order: the P-384 hybrid must not be demoted behind the P-256 one
+        assertNull(SSLContextParameters.resolvePqcNamedGroups(
+                new String[] { "SecP384r1MLKEM1024", "SecP256r1MLKEM768", "secp384r1" }));
+        // and the default order of a JDK that leads with the X25519 hybrid is left as it is
+        assertNull(SSLContextParameters.resolvePqcNamedGroups(
+                new String[] { "X25519MLKEM768", "x25519", "secp256r1", "secp384r1" }));
+    }
+
+    @Test
+    public void testHasPqcNamedGroup() {
+        // tells a JVM that leads with a hybrid, and is left alone, from one that offers none, so the log is right
+        assertTrue(SSLContextParameters.hasPqcNamedGroup(new String[] { "X25519MLKEM768", "x25519" }));
+        assertTrue(SSLContextParameters.hasPqcNamedGroup(new String[] { "secp256r1", "secp256r1mlkem768" }));
+        assertFalse(SSLContextParameters.hasPqcNamedGroup(new String[] { "x25519", "secp256r1" }));
+        assertFalse(SSLContextParameters.hasPqcNamedGroup(new String[0]));
+        assertFalse(SSLContextParameters.hasPqcNamedGroup(null));
+    }
+
+    @Test
     public void testResolvePqcNamedGroupsKeepsTheSpellingOfTheProvider() {
         String[] available = { "x25519", "x25519mlkem768" };
 
@@ -1408,9 +1429,17 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     /**
      * The hybrid ML-KEM group the auto-configuration is expected to put first, or {@code null} when this JVM offers
-     * none of them and the ordering must be left untouched.
+     * none of them and the ordering must be left untouched. A JVM that already leads with a hybrid keeps its order, so
+     * that hybrid is the expected first group even when the auto-configuration would have preferred another.
      */
     private static String expectedFirstPqcGroup(String[] availableGroups) {
+        if (availableGroups.length > 0) {
+            for (String pqc : PQC_GROUPS) {
+                if (pqc.equalsIgnoreCase(availableGroups[0])) {
+                    return availableGroups[0];
+                }
+            }
+        }
         for (String pqc : PQC_GROUPS) {
             for (String available : availableGroups) {
                 if (pqc.equalsIgnoreCase(available)) {
