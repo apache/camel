@@ -38,6 +38,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.DiagramColors;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.EipDocSupport.*;
@@ -133,6 +134,10 @@ final class DiagramDetailSupport {
         }
     }
 
+    void setRouteDetailForTesting(JsonObject routeDetail) {
+        cachedRouteDetail = routeDetail;
+    }
+
     JsonObject findProcessorEntry(String nodeId) {
         if (cachedRouteDetail == null || nodeId == null) {
             return null;
@@ -140,6 +145,16 @@ final class DiagramDetailSupport {
         for (JsonObject p : getAllProcessors(cachedRouteDetail)) {
             if (nodeId.equals(p.getString("id"))) {
                 return p;
+            }
+        }
+        // the diagram names the input of a route by the route id, the app by the id of its from (from1)
+        JsonArray routes = (JsonArray) cachedRouteDetail.get("routes");
+        for (Object r : routes != null ? routes : List.of()) {
+            JsonObject route = (JsonObject) r;
+            JsonArray procs = (JsonArray) route.get("processors");
+            if (nodeId.equals(route.getString("routeId")) && procs != null && !procs.isEmpty()
+                    && "from".equals(((JsonObject) procs.get(0)).getString("type"))) {
+                return (JsonObject) procs.get(0);
             }
         }
         return null;
