@@ -210,8 +210,12 @@ validate_homebrew() {
     # ("Homebrew requires formulae to be in a tap" / "brew audit [path ...] is disabled");
     # empirically confirmed on this machine. A throwaway local tap (removed via `brew untap`
     # in the script's EXIT trap) satisfies that requirement without any network access or
-    # real publication. `brew install` auto-trusts formulae from a tap created this way (no
-    # separate trust command exists or is needed - empirically confirmed).
+    # real publication.
+    # Homebrew 6.0 (released 2026-06-11) introduced tap trust: formulae from third-party taps
+    # refuse to load until explicitly trusted. After `brew tap-new`, the tap is local but
+    # treated as untrusted, causing `brew audit` and `brew install` to fail with
+    # "Refusing to load formula ... from untrusted tap". `brew trust` marks it trusted so
+    # all subsequent brew commands can load the formula without further prompts.
     local tap_name="camel-cli-validators/formulae"
     local tap_dir tap_output
 
@@ -222,6 +226,9 @@ validate_homebrew() {
         return 1
     fi
     BREW_TAP_NAME="$tap_name"
+    # Trust the tap so Homebrew 6.0+ loads its formulae (no-op on older Homebrew where
+    # `brew trust` does not exist - `|| true` prevents failure on those versions).
+    HOMEBREW_NO_AUTO_UPDATE=1 brew trust "$tap_name" >/dev/null 2>&1 || true
 
     tap_dir=$(brew --repository "$tap_name")
     if ! cp -p "$formula_file" "$tap_dir/Formula/${fmla}.rb"; then
