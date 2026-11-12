@@ -44,24 +44,15 @@ public class LanguageProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String script = null;
-
-        // is there a custom expression in the header?
-        Expression exp = null;
-        if (getEndpoint().isAllowTemplateFromHeader()) {
-            exp = exchange.getIn().getHeader(LanguageConstants.LANGUAGE_SCRIPT, Expression.class);
-            if (exp == null) {
-                script = exchange.getIn().getHeader(LanguageConstants.LANGUAGE_SCRIPT, String.class);
-                if (script != null) {
-                    // the script may be a file: so resolve it before using
-                    script = getEndpoint().resolveScript(script);
-                    exp = getEndpoint().getLanguage().createExpression(script);
-                    exp.init(getEndpoint().getCamelContext());
-                }
-            }
+        if (getEndpoint().isAllowTemplateFromHeader() && processHeaderScript(exchange)) {
+            return;
         }
-        // if not fallback to use expression from endpoint
-        if (exp == null && getEndpoint().isCacheScript()) {
+
+        String script = null;
+        Expression exp = null;
+
+        // use the cached expression from endpoint
+        if (getEndpoint().isCacheScript()) {
             exp = getEndpoint().getExpression();
         }
 
@@ -114,16 +105,7 @@ public class LanguageProducer extends DefaultProducer {
         // the result is either the result of the expression or the input stream as-is because its binary content
         Object result;
         if (exp != null) {
-            try {
-                result = exp.evaluate(exchange, resultType);
-                LOG.debug("Evaluated expression as: {} with: {}", result, exchange);
-            } finally {
-                if (!getEndpoint().isCacheScript()) {
-                    // some languages add themselves as a service which we then need to remove if we are not cached
-                    ServiceHelper.stopService(exp);
-                    getEndpoint().getCamelContext().removeService(exp);
-                }
-            }
+            result = evaluate(exchange, exp, !getEndpoint().isCacheScript());
         } else {
             // use the result as-is
             result = is;
@@ -132,6 +114,52 @@ public class LanguageProducer extends DefaultProducer {
         // set message body if transform is enabled
         if (getEndpoint().isTransform()) {
             exchange.getMessage().setBody(result);
+        }
+    }
+
+    /**
+     * Evaluates the script of the {@link LanguageConstants#LANGUAGE_SCRIPT} header, if there is one. The script is for
+     * this exchange only: it is compiled once, never cached as the script of the endpoint, and the header is removed so
+     * a later language endpoint does not run it again.
+     *
+     * @return true if the header had a script, false to use the script of the endpoint
+     */
+    private boolean processHeaderScript(Exchange exchange) throws Exception {
+        Expression exp = exchange.getIn().getHeader(LanguageConstants.LANGUAGE_SCRIPT, Expression.class);
+        boolean compiled = false;
+        if (exp == null) {
+            String script = exchange.getIn().getHeader(LanguageConstants.LANGUAGE_SCRIPT, String.class);
+            if (script == null) {
+                return false;
+            }
+            // the script may be a file: so resolve it before using
+            script = getEndpoint().resolveScript(script);
+            Class<?> type = resultType != Object.class ? resultType : null;
+            exp = getEndpoint().getLanguage().createExpression(script, new Object[] { type });
+            exp.init(getEndpoint().getCamelContext());
+            compiled = true;
+        }
+        exchange.getIn().removeHeader(LanguageConstants.LANGUAGE_SCRIPT);
+
+        // the expression compiled from the script is used once, so it is always stopped after use
+        Object result = evaluate(exchange, exp, compiled || !getEndpoint().isCacheScript());
+        if (getEndpoint().isTransform()) {
+            exchange.getMessage().setBody(result);
+        }
+        return true;
+    }
+
+    private Object evaluate(Exchange exchange, Expression exp, boolean stopAfterUse) throws Exception {
+        try {
+            Object result = exp.evaluate(exchange, resultType);
+            LOG.debug("Evaluated expression as: {} with: {}", result, exchange);
+            return result;
+        } finally {
+            if (stopAfterUse) {
+                // some languages add themselves as a service which we then need to remove if we are not cached
+                ServiceHelper.stopService(exp);
+                getEndpoint().getCamelContext().removeService(exp);
+            }
         }
     }
 
