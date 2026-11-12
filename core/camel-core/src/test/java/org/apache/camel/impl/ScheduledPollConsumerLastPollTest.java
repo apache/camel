@@ -16,27 +16,21 @@
  */
 package org.apache.camel.impl;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.util.TimeSource;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * A scheduled poll consumer keeps when it last polled, and when it last polled messages and how many (CAMEL-26715),
- * read from {@link TimeSource}.
+ * A scheduled poll consumer keeps when it last polled, and when it last polled messages and how many (CAMEL-26715). The
+ * times are the system clock, as the other timestamps of management and the developer consoles.
  */
 public class ScheduledPollConsumerLastPollTest extends ContextTestSupport {
-
-    private final AtomicLong now = new AtomicLong();
-    private TimeSource.Provider previous;
 
     private static class MyConsumer extends MockScheduledPollConsumer {
 
@@ -53,31 +47,6 @@ public class ScheduledPollConsumerLastPollTest extends ContextTestSupport {
         }
     }
 
-    @BeforeEach
-    void installClock() {
-        previous = TimeSource.install(new TimeSource.Provider() {
-            @Override
-            public long currentTimeMillis() {
-                return now.get();
-            }
-
-            @Override
-            public long nanoTime() {
-                return System.nanoTime();
-            }
-
-            @Override
-            public void sleep(long millis) throws InterruptedException {
-                new CountDownLatch(1).await(millis, TimeUnit.MILLISECONDS);
-            }
-        });
-    }
-
-    @AfterEach
-    void restoreClock() {
-        TimeSource.install(previous);
-    }
-
     @Test
     public void testLastPollAndLastPollWithMessages() {
         MyConsumer consumer = new MyConsumer(getMockEndpoint("mock:foo"));
@@ -89,28 +58,29 @@ public class ScheduledPollConsumerLastPollTest extends ContextTestSupport {
             assertEquals(0, consumer.getLastPollMessagesCount());
 
             // nothing to poll
-            poll(consumer, 1000, 0);
-            assertEquals(1000, consumer.getLastPollTimestamp());
+            long time = poll(consumer, 0);
+            assertEquals(time, consumer.getLastPollTimestamp());
             assertEquals(0, consumer.getLastPollMessagesTimestamp());
             assertEquals(0, consumer.getLastPollMessagesCount());
 
             // 3 messages
-            poll(consumer, 2000, 3);
-            assertEquals(2000, consumer.getLastPollTimestamp());
-            assertEquals(2000, consumer.getLastPollMessagesTimestamp());
+            long withMessages = poll(consumer, 3);
+            assertEquals(withMessages, consumer.getLastPollTimestamp());
+            assertEquals(withMessages, consumer.getLastPollMessagesTimestamp());
             assertEquals(3, consumer.getLastPollMessagesCount());
 
             // nothing again: the last poll moves on, the last poll with messages stays
-            poll(consumer, 3000, 0);
-            assertEquals(3000, consumer.getLastPollTimestamp());
-            assertEquals(2000, consumer.getLastPollMessagesTimestamp());
+            time = poll(consumer, 0);
+            assertTrue(time > withMessages);
+            assertEquals(time, consumer.getLastPollTimestamp());
+            assertEquals(withMessages, consumer.getLastPollMessagesTimestamp());
             assertEquals(3, consumer.getLastPollMessagesCount());
 
             // a poll that fails is a poll too
             consumer.setExceptionToThrowOnPoll(new IllegalStateException("Forced"));
-            poll(consumer, 4000, 0);
-            assertEquals(4000, consumer.getLastPollTimestamp());
-            assertEquals(2000, consumer.getLastPollMessagesTimestamp());
+            time = poll(consumer, 0);
+            assertEquals(time, consumer.getLastPollTimestamp());
+            assertEquals(withMessages, consumer.getLastPollMessagesTimestamp());
             assertEquals(3, consumer.getLastPollMessagesCount());
             assertEquals(1, consumer.getErrorCounter());
         } finally {
@@ -124,8 +94,8 @@ public class ScheduledPollConsumerLastPollTest extends ContextTestSupport {
         consumer.setStartScheduler(false);
         consumer.start();
         try {
-            poll(consumer, 5000, 2);
-            assertEquals(5000, consumer.getLastPollTimestamp());
+            long time = poll(consumer, 2);
+            assertEquals(time, consumer.getLastPollTimestamp());
             assertEquals(2, consumer.getLastPollMessagesCount());
         } finally {
             consumer.stop();
@@ -137,9 +107,19 @@ public class ScheduledPollConsumerLastPollTest extends ContextTestSupport {
         assertEquals(0, consumer.getLastPollMessagesCount());
     }
 
-    private void poll(MyConsumer consumer, long time, int messages) {
-        now.set(time);
+    /**
+     * Polls once, in a millisecond of its own (so two polls never share a time), and returns the time of the poll as
+     * the consumer recorded it, after checking it is the system clock at the poll.
+     */
+    private static long poll(MyConsumer consumer, int messages) {
+        long previous = consumer.getLastPollTimestamp();
+        await().atMost(1, TimeUnit.SECONDS).until(() -> System.currentTimeMillis() > previous);
         consumer.messages = messages;
+        long before = System.currentTimeMillis();
         consumer.run();
+        long after = System.currentTimeMillis();
+        long time = consumer.getLastPollTimestamp();
+        assertTrue(time >= before && time <= after, "the poll time " + time + " is not within " + before + ".." + after);
+        return time;
     }
 }

@@ -136,8 +136,7 @@ does it when the run is created) and puts the previous provider back when the ru
 the synchronous redelivery (`RedeliveryPolicy`, `RedeliveryErrorHandler`), `ForegroundTask`, `BackgroundTask.schedule`,
 the budgets of both tasks, the wait loop of `DefaultShutdownStrategy`, the synchronous delayer, `MulticastProcessor`,
 `OptimisticLockRetryPolicy`, `DefaultStartupConditionStrategy`, `StopWatch`, `MonotonicClock`, `BackOffTimerTask`,
-`DefaultTimeoutMap`, the clocks of the throttlers, the counters of `ThrottlingExceptionRoutePolicy` and the last poll
-times of `ScheduledPollConsumer`. A sleep there is
+`DefaultTimeoutMap`, the clocks of the throttlers and the counters of `ThrottlingExceptionRoutePolicy`. A sleep there is
 a virtual wait on the loop thread, traced with its call site. A test of camel-core (`TimeSourceDirectClockCallsTest`)
 fails when one of these classes reads the system clock or sleeps directly: `System.nanoTime()`,
 `System.currentTimeMillis()`, `Thread.sleep`, a `sleep` of a `TimeUnit` constant, `Instant.now()` and the `now()` of the

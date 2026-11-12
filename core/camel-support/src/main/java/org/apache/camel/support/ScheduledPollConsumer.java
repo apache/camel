@@ -39,7 +39,6 @@ import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
-import org.apache.camel.util.TimeSource;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -335,15 +334,15 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
     /**
      * Keeps when this poll was done, and when it polled messages also how many: a quiet consumer can then be told from
-     * one whose scheduler has stopped. The time comes from {@link TimeSource}, so it runs in virtual time in a
-     * deterministic simulation test.
+     * one whose scheduler has stopped. The time is the system clock, as for the other timestamps that management and
+     * the developer consoles show (not {@code TimeSource}, which is for waits and durations).
      */
     private void onPolled(long currentGeneration, int polledMessages) {
         if (currentGeneration != generation.get()) {
             // the consumer has been stopped while polling, so the state (which has been reset) must not be updated
             return;
         }
-        long now = TimeSource.currentTimeMillis();
+        long now = System.currentTimeMillis();
         if (polledMessages > 0) {
             lastPollMessagesCount = polledMessages;
             lastPollMessagesTimestamp = now;
