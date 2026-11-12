@@ -1,0 +1,29 @@
+name: batch-file-test
+description: The batch-file example logs what its README promises
+actions:
+  - camel:
+      cli:
+        run:
+          integration:
+            name: "batch-file"
+            file: "../batch-file.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "samples/settlement-2026-11-09.csv"
+            - "samples/settlement-2026-11-10.csv"
+  - camel:
+      cli:
+        verify:
+          integration: "batch-file"
+          logMessage: "Large payment PAY-000434 for ORD-1434: 1633.36 EUR"
+  - camel:
+      cli:
+        verify:
+          integration: "batch-file"
+          logMessage: "Rejected from settlement-2026-11-10.csv: PAY-006117,ORD-7117,C-319,N/A,EUR"
+  - camel:
+      cli:
+        verify:
+          integration: "batch-file"
+          logMessage: "Settlement settlement-2026-11-10.csv done: 5000 lines"

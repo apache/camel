@@ -1,0 +1,89 @@
+# The payment provider sends the shop one settlement file a day, a CSV line per payment. Each file is read
+# line by line, the large payments are logged, a line that cannot be read goes to rejects, and the file moves to
+# done. The provider route plays the payment provider: it copies the samples into the inbox.
+- route:
+    id: provider
+    from:
+      uri: file
+      parameters:
+        directoryName: samples
+        noop: true
+        sortBy: "file:name"
+      steps:
+        - to:
+            uri: file
+            parameters:
+              directoryName: inbox
+
+- route:
+    id: settlement
+    from:
+      uri: file
+      parameters:
+        directoryName: inbox
+        include: ".*\\.csv"
+        move: done
+        moveFailed: failed
+        sortBy: "file:name"
+      steps:
+        - log:
+            message: "Settlement ${file:name} received: ${file:size} bytes"
+        - split:
+            expression:
+              tokenize:
+                token: "\n"
+                skipFirst: true
+            streaming: true
+            steps:
+              - setVariable:
+                  name: line
+                  expression:
+                    simple:
+                      expression: "${body}"
+              - doTry:
+                  steps:
+                    - unmarshal:
+                        csv:
+                          header: "paymentId,orderId,customer,amount,currency"
+                          useMaps: true
+                    - setBody:
+                        expression:
+                          simple:
+                            expression: "${body[0]}"
+                    - setVariable:
+                        name: amount
+                        expression:
+                          simple:
+                            expression: "${body[amount]}"
+                            resultType: java.math.BigDecimal
+                    - filter:
+                        expression:
+                          simple:
+                            expression: "${variable.amount} >= 500"
+                        steps:
+                          - log:
+                              message: "Large payment ${body[paymentId]} for ${body[orderId]}: ${variable.amount} EUR"
+                  doCatch:
+                    - exception:
+                        - java.lang.Exception
+                      steps:
+                        - log:
+                            message: "Rejected from ${file:name}: ${variable.line}"
+                        - setBody:
+                            expression:
+                              simple:
+                                expression: "${variable.line}"
+                        - to:
+                            uri: file
+                            parameters:
+                              directoryName: rejects
+                              fileName: "${file:name}"
+                              fileExist: Append
+                              appendChars: "\\n"
+              - filter:
+                  expression:
+                    simple:
+                      expression: "${exchangeProperty.CamelSplitComplete}"
+                  steps:
+                    - log:
+                        message: "Settlement ${file:name} done: ${exchangeProperty.CamelSplitSize} lines"

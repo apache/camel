@@ -1218,6 +1218,53 @@
         "order": 3
     },
     {
+        "name": "route/batch-file",
+        "title": "Batch file",
+        "description": "Two settlement files of the payment provider, 5000 payments each, are read line by line with a streaming split; each payment of 500 EUR or more is logged, the two lines whose amount is not a number go to rejects/ while the rest of the file goes on, and a summary line is logged when a file is done.",
+        "level": "route",
+        "teaches": {
+            "components": [
+                "file",
+                "log"
+            ],
+            "eips": [
+                "split",
+                "doTry",
+                "filter",
+                "setVariable",
+                "setBody",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple",
+                "tokenize"
+            ],
+            "dataformats": [
+                "csv"
+            ]
+        },
+        "tags": [
+            "shop",
+            "eip",
+            "batch",
+            "csv",
+            "streaming",
+            "split",
+            "rejects"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "batch-file.camel.yaml",
+            "samples/settlement-2026-11-09.csv",
+            "samples/settlement-2026-11-10.csv"
+        ],
+        "order": 7
+    },
+    {
         "name": "route/content-based-router",
         "title": "Content-based router",
         "description": "Three orders from three countries are read from the orders directory and a choice routes each by its country: the Danish order to local delivery, the German order to EU shipping without customs, the US order to export with a customs declaration; each branch logs what it did.",
