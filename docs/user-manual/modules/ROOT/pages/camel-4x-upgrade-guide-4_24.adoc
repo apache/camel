@@ -323,6 +323,14 @@ returns the lock held while routes are added to or removed from the model. A cus
 implement it (classes that extend `DefaultCamelContext` need no change). The Kamelet component now creates the routes of
 Kamelets holding this lock.
 
+=== camel-core - CamelContext has a new removeRouteTemplatesFromResources method
+
+The `CamelContext` interface has a new method `removeRouteTemplatesFromResources(String pattern)`, which removes the
+route templates loaded from a resource (such as a route file or a Kamelet) and keeps those without one (such as the route
+templates of a Java `RouteBuilder` added to the context). A custom implementation of `CamelContext` must implement it
+(classes that extend `DefaultCamelContext` need no change). The route reload of dev mode uses it, so a route template
+added from Java is kept across a reload, and a route created from it with a templated route in a file is created again.
+
 === camel-core - Route.clearRouteModel() is deprecated
 
 The `Route.clearRouteModel()` method is deprecated and is now a no-op. It will be removed in a later release.
