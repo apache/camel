@@ -33,6 +33,13 @@ import org.apache.camel.util.json.JsonObject;
  * the input does change and the context is not filled with copies. The first two calls are always answered in full, so
  * a legitimate re-read still works.
  * <p>
+ * The note starts with what to do next, and then says that the answer is the same each time. A note that only said the
+ * answer was already given did not stop a small model. In the local-model benchmark (r32), a model asked for a sample
+ * that does not exist, and then asked the same 11 or 12 more times, in 3 runs of a step. It said sorry for the repeated
+ * calls and asked again, until its 25 tool calls were spent. It never wrote the test of the step. So the note starts
+ * with the next step: the {@link ToolDescriptor#repeatHint() hint} of the tool, such as writing the file, whose checks
+ * say what to change, or else to go on with the task.
+ * <p>
  * One instance tracks one session: a client connection, or a conversation of an AI panel. Call {@link #reset()} when a
  * new session starts on the same instance.
  */
@@ -43,6 +50,9 @@ public final class RepeatedToolCalls {
 
     /** How many identical calls are answered in full before the short note is given. */
     static final int FULL_ANSWERS = 2;
+
+    /** The next step the note starts with when the tool has no {@link ToolDescriptor#repeatHint() hint} of its own. */
+    static final String NEXT_STEP = "Go on with the next step of your task.";
 
     /** Guards against unbounded growth over a very long session; the oldest counts are simply forgotten. */
     private static final int MAX_TRACKED = 1000;
@@ -76,10 +86,10 @@ public final class RepeatedToolCalls {
         note.put("repeated", true);
         note.put("tool", tool.name());
         note.put("timesAsked", times);
-        note.put("note", tool.name() + " was already called with these same arguments " + (times - 1)
-                         + " times in this session. Its answer does not change, so it is not sent again: it is in your"
-                         + " earlier tool result."
-                         + (tool.repeatHint() != null ? " " + tool.repeatHint() : ""));
+        // the next step first, then the fact; the count is timesAsked, this call included (CAMEL-26875)
+        note.put("note", (tool.repeatHint() != null ? tool.repeatHint() : NEXT_STEP) + " You asked this " + times
+                         + " times now with the same arguments, and the answer is the same each time: it is in your"
+                         + " earlier tool result.");
         return note;
     }
 

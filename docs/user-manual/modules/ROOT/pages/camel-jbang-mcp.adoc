@@ -541,11 +541,15 @@ with `"_meta": {"camel.apache.org/deterministic": true}`, so a client can notice
 
 An agent asking one of them the same question again and again gets nothing new, and a small local model can get
 stuck doing that until its tool call budget is spent. So the first two identical calls of a session are answered
-in full, and from the third the answer is a short note instead: that the call was already answered and how many
-times it was asked. The changed answer helps the agent break the loop, and the context is not filled with copies.
+in full, and from the third the answer is a short note instead. The note starts with what to do next. Then it says
+how many times the call was asked, and that the answer is the same each time and is in the earlier tool result.
+The changed answer helps the agent break the loop, and the context is not filled with copies.
+The next step depends on the tool. For `camel_catalog_sample` it is to write the file with `camel_write_file`,
+which checks the file and says what to change. For `camel_catalog_find` it is to use a match, or to ask with
+another term, and then write the file. For `camel_catalog_doc` it is to go on with the options it gave; when a page
+was cut, `docPage=<section title>` returns a section it left out.
 `camel_validate_source` counts the same way when it is given `content` and no `directory`: the same source gets
-the same answer, and the note also says to change the line the error names. For `camel_catalog_doc` the note says
-how to get the sections that a cut page left out: `docPage=<section title>` returns one section. Validating a file on disk, or
+the same answer, and the note says to change the line the error names. Validating a file on disk, or
 `content` with a `directory` (the checks then read the other files of the project, which a fix can change), is
 always answered in full.
 

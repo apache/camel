@@ -148,7 +148,11 @@ public class ToolDescriptor {
         return this;
     }
 
-    /** What the note of a repeated call adds for this tool: what to do instead of asking again. */
+    /**
+     * What the note of a repeated call starts with for this tool: the next step instead of asking again, such as
+     * writing the file, written as one or more whole sentences. Without a hint the note says to go on with the next
+     * step of the task, see {@link RepeatedToolCalls}.
+     */
     public ToolDescriptor repeatHint(String hint) {
         repeatHint = hint;
         return this;

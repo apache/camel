@@ -277,7 +277,10 @@ class AuthoringToolsTest {
         assertThat(second).isEqualTo(first);
         assertThat(third.getBoolean("repeated")).isTrue();
         assertThat(third.getInteger("timesAsked")).isEqualTo(3);
-        assertThat(third.getString("note")).contains("camel_catalog_doc", "2 times");
+        assertThat(third.getString("tool")).isEqualTo("camel_catalog_doc");
+        // the next step first, then the fact (CAMEL-26875)
+        assertThat(third.getString("note")).startsWith("Go on with the options the earlier answer gave")
+                .contains("You asked this 3 times now");
         assertThat(third.toJson().length()).isLessThan(first.toJson().length() / 4);
 
         // another question, or another connection, is answered in full
@@ -302,7 +305,8 @@ class AuthoringToolsTest {
         assertThat(first.get("repeated")).isNull();
         assertThat(second.get("repeated")).isNull();
         assertThat(third.getBoolean("repeated")).isTrue();
-        assertThat(third.getString("note")).contains("camel_validate_source", "change the line the error names");
+        assertThat(third.getString("tool")).isEqualTo("camel_validate_source");
+        assertThat(third.getString("note")).startsWith("Change the line the error names");
         // changed content is a new question
         assertThat(counted.camel_validate_source(agent, null, null, "route.camel.yaml", content + "\n", null)
                 .get("repeated")).isNull();
@@ -325,7 +329,8 @@ class AuthoringToolsTest {
             JsonObject third = counted.camel_eval_expression(agent, "${body.length()}", null, "[1, 2]", null, null, null,
                     null, null);
             assertThat(third.getBoolean("repeated")).isTrue();
-            assertThat(third.getString("note")).contains("camel_eval_expression", "change the expression or the message");
+            assertThat(third.getString("tool")).isEqualTo("camel_eval_expression");
+            assertThat(third.getString("note")).startsWith("Change the expression or the message");
             // a random value is asked again for a new one
             for (int i = 0; i < 3; i++) {
                 assertThat(counted.camel_eval_expression(agent, "${random(1,10)}", null, null, null, null, null, null, null)

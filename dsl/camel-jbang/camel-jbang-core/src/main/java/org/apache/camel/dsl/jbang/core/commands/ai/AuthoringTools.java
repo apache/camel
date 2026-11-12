@@ -131,8 +131,11 @@ public final class AuthoringTools {
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
                 .deterministic(true)
-                .repeatHint("When that answer was cut, it named the sections it left out: docPage=<section title> returns"
-                            + " one of them.")
+                // r32: three doc calls were each made 10 to 21 times with the same arguments; the write checks the
+                // options, so writing is the next step (CAMEL-26875)
+                .repeatHint("Go on with the options the earlier answer gave: write the file with camel_write_file, which"
+                            + " checks the options against the catalog. When that answer was cut, it named the sections"
+                            + " it left out: docPage=<section title> returns one of them.")
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
@@ -154,6 +157,8 @@ public final class AuthoringTools {
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
                 .deterministic(true)
+                .repeatHint("Use a match from the earlier answer, or ask with another term; then write the file with"
+                            + " camel_write_file.")
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.find(ctx.catalog(), args.get("term"), args.get("kind"),
@@ -176,6 +181,12 @@ public final class AuthoringTools {
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
                 .deterministic(true)
+                // r32: a sample that does not exist asked for again and again in a Citrus test step, until the calls of
+                // the step were spent and no test was written; the write checks the test and names the actions Citrus
+                // has (CAMEL-26875)
+                .repeatHint("Write the file now with camel_write_file: when the earlier answer had no sample, asking again"
+                            + " gives none either. The write checks the file, and its answer says what to change (for a"
+                            + " Citrus test: which actions it takes).")
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogSamples.sample(ctx.catalog(), args.get("kind"), args.get("name"),
@@ -195,8 +206,8 @@ public final class AuthoringTools {
                 // the same content gets the same answer: a model that validates it again and again is stuck
                 // (CAMEL-25371). Not with a directory: the checks then read the other files, which a fix can change.
                 .deterministicWhen("content", "directory")
-                .repeatHint("The content is the same each time, so the answer is too: change the line the error names,"
-                            + " then validate the changed content, or write it with camel_write_file.")
+                .repeatHint("Change the line the error names, then validate the changed content, or write it with"
+                            + " camel_write_file.")
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     String file = required(args, "file");
@@ -414,8 +425,7 @@ public final class AuthoringTools {
                 // the same expression on the same message gets the same answer, unless it reads the clock, a random
                 // value or the integration: a model that evaluates it again and again is stuck
                 .deterministicIf(ExpressionEvaluator::sameAnswer)
-                .repeatHint("The same expression on the same message gives the same result: change the expression or"
-                            + " the message (body, headers, variables) to learn something new.")
+                .repeatHint("Change the expression or the message (body, headers, variables) to learn something new.")
                 .executor((ctx, args) -> {
                     String expression = required(args, "expression");
                     Map<String, Object> headers = ExpressionEvaluator.parseValues("headers", args.get("headers"));
