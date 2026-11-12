@@ -28,9 +28,12 @@ import org.jline.terminal.TerminalBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+// it moves the home directory of the CLI: other tests would write their files into its temp dir while it is deleted
+@Isolated
 class TuiShellHistorySupportTest {
 
     private String originalHome;

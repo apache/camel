@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +31,8 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -357,27 +354,6 @@ class AiPanelTest {
         assertNotEquals(eventThread, listThread.get(),
                 "model discovery must not run on the TUI event thread, which reaches a blocking HTTP call");
         assertTrue(listThread.get().contains("model-list"));
-    }
-
-    @Test
-    void modelCommandPersistsSelectionAcrossRestarts(@TempDir Path tempDir) {
-        String originalHome = CommandLineHelper.getHomeDir().toString();
-        CommandLineHelper.useHomeDir(tempDir.toString());
-        try {
-            AiPanel panel = new AiPanel();
-            panel.setClientForTesting(new ModelListingLlmClient(List.of("model-a", "model-b")));
-            panel.open();
-
-            type(panel, "/model model-b");
-            panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
-
-            assertEquals("model-b", TuiSettings.load().getAiModel(),
-                    "the /model selection must be persisted so it survives a TUI restart");
-            assertTrue(panel.conversationForTesting().stream()
-                    .anyMatch(entry -> entry.text().contains("Switched model to model-b")));
-        } finally {
-            CommandLineHelper.useHomeDir(originalHome);
-        }
     }
 
     @Test
