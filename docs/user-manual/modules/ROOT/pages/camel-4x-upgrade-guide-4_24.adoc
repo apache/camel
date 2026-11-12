@@ -258,6 +258,20 @@ is skipped. Before, the source transaction was rolled back and the record replay
 the route of the send (for example with `direct`) behaves the same way, as it did in 4.23. To replay the record, throw
 the exception again in the `doCatch` block, or end it with `rollback()`.
 
+=== camel-jms, camel-sjms, camel-sjms2 - an exception sent back with transferException is not rolled back
+
+With `transferException=true`, a consumer that sends the exception of a failed exchange back as the reply now always
+treats the message as processed. Before, when the exception was a `RuntimeCamelException`, or had one as a cause, the
+consumer also rethrew it: a transacted session was rolled back, so the request was redelivered and the reply was lost
+with it. Now the outcome does not depend on the type of the exception. To have a failed request redelivered, do not
+use `transferException` on that route.
+
+=== camel-sjms, camel-sjms2 - a received StreamMessage is an InputStream
+
+The camel-sjms and camel-sjms2 consumers now map a received `jakarta.jms.StreamMessage` to an `InputStream` over its
+bytes, as the camel-jms consumer does, so a body sent with `jmsMessageType=Stream` arrives as the bytes that were sent.
+Before, the body was the `jakarta.jms.StreamMessage` itself. To get the JMS message, use `mapJmsMessage=false`.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.

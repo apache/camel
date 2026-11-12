@@ -302,6 +302,7 @@ The body is mapped to and from a JMS message as follows (unless the option `jmsM
 | `String`, other text (a `CharSequence` such as a `StringBuilder`) or XML `Node` | `TextMessage` | `String`
 | `byte[]`, `InputStream`, `Reader`, `ByteBuffer`, `File`, `Path` or `StreamCache` | `BytesMessage` | `byte[]`
 | `Map` (of simple values) | `MapMessage` | `Map`
+| Any body that converts to an `InputStream`, with `jmsMessageType=Stream` | `StreamMessage` | `InputStream`
 | `null` | `Message` | `null`
 | Other `Serializable` object (such as a number or a `List`) | `ObjectMessage` (only with `objectMessageEnabled=true`, fails otherwise) | the object
 | Any other object that converts to an `InputStream` (or `File`) | `BytesMessage` | `byte[]`
@@ -309,7 +310,7 @@ The body is mapped to and from a JMS message as follows (unless the option `jmsM
 |===
 
 With `jmsMessageType=Stream` the body is converted to an `InputStream`, and its bytes are written to a `StreamMessage`.
-A received `StreamMessage` is not mapped: the body is the `jakarta.jms.StreamMessage` itself.
+A received `StreamMessage` is mapped to an `InputStream` over its bytes, as in the JMS component.
 With `mapJmsMessage=false` the body is always the received `jakarta.jms.Message`.
 
 === Clustering
