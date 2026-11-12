@@ -24,9 +24,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.clustering.FailoverFeature;
 import org.apache.cxf.clustering.RandomStrategy;
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -132,9 +136,9 @@ public class FailOverFeatureTest {
                        + "&dataFormat=PAYLOAD";
 
         // use a non-exists address to trigger fail-over
-        // another problem is: if synchronous=false fail-over will not happen
+        // synchronous=true guards against CXF-9272 async callback hang on refused connections (CAMEL-26600, CAMEL-26696)
         String real = "cxf://" + NONE_EXIST_ADDRESS + "?wsdlURL=" + SERVICE_ADDRESS + "?wsdl"
-                      + "&dataFormat=PAYLOAD";
+                      + "&dataFormat=PAYLOAD&synchronous=true";
 
         context1 = new DefaultCamelContext();
         startRoute(context1, proxy, real);
@@ -146,8 +150,9 @@ public class FailOverFeatureTest {
                        + "&dataFormat=POJO";
 
         // use a non-exists address to trigger fail-over
+        // synchronous=true guards against CXF-9272 async callback hang on refused connections (CAMEL-26600, CAMEL-26696)
         String real = "cxf://" + NONE_EXIST_ADDRESS + "?serviceClass=" + "org.apache.camel.component.cxf.jaxws.HelloService"
-                      + "&dataFormat=POJO";
+                      + "&dataFormat=POJO&synchronous=true";
 
         context2 = new DefaultCamelContext();
         startRoute(context2, proxy, real);
@@ -170,6 +175,24 @@ public class FailOverFeatureTest {
 
                 CxfEndpoint endpoint = (CxfEndpoint) (ctx.getEndpoint(real));
                 endpoint.getFeatures().add(ff);
+                endpoint.setCxfConfigurer(new CxfConfigurer() {
+                    @Override
+                    public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
+                    }
+
+                    @Override
+                    public void configureClient(Client client) {
+                        HTTPConduit conduit = (HTTPConduit) client.getConduit();
+                        HTTPClientPolicy policy = new HTTPClientPolicy();
+                        policy.setConnectionTimeout(5000);
+                        policy.setReceiveTimeout(5000);
+                        conduit.setClient(policy);
+                    }
+
+                    @Override
+                    public void configureServer(Server server) {
+                    }
+                });
 
                 from(proxy).to(endpoint);
             }
