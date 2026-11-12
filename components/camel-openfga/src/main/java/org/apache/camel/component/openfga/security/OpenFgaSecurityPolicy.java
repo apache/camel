@@ -246,6 +246,7 @@ public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
         if (registry != null) {
             registry.unregister(healthCheck);
         }
+        healthCheck.close();
         healthCheck = null;
     }
 

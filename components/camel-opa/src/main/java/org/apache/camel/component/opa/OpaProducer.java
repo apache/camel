@@ -71,6 +71,7 @@ public class OpaProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         if (healthCheckRepository != null && producerHealthCheck != null) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
+            producerHealthCheck.close();
             producerHealthCheck = null;
         }
         super.doStop();

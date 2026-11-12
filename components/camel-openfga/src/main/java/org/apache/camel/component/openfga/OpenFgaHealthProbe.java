@@ -20,9 +20,12 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
@@ -38,7 +41,7 @@ import org.apache.camel.util.URISupport;
  * Both ask the same question of the same server, so the probe lives in one place: a fix here - a changed timeout, a new
  * failure mode to report - applies to both rather than to whichever was remembered.
  */
-public final class OpenFgaHealthProbe {
+public final class OpenFgaHealthProbe implements AutoCloseable {
 
     private static final Duration TIMEOUT = Duration.ofSeconds(5);
 
@@ -52,33 +55,62 @@ public final class OpenFgaHealthProbe {
      */
     private static final Pattern SERVING = Pattern.compile("\"status\"\\s*:\\s*\"SERVING\"");
 
-    /**
-     * Shared across every OpenFGA health check in the JVM. {@link HttpClient} only became {@link AutoCloseable} in Java
-     * 21, so on the Java 17 baseline one client per check would leak its selector thread with no way to shut it down.
-     * The client is immutable and thread-safe, so sharing is free; the per-request URL and token live on the
-     * {@link HttpRequest}.
-     */
-    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().connectTimeout(TIMEOUT).build();
+    private final SSLContext sslContext;
+    private HttpClient client;
+    private boolean closed;
 
-    /**
-     * One client per distinct TLS configuration, because an {@link SSLContext} can only be set when the client is
-     * built. A probe that ignored it would fail its handshake against the very server the authorization call reaches
-     * happily - reporting DOWN, and with it an application that never becomes ready.
-     * <p/>
-     * Keyed on identity and never evicted, which is bounded in practice: the key is an {@code SSLContext} built from an
-     * endpoint's {@code sslContextParameters}, and a deployment has one or two of those, not one per exchange.
-     */
-    private static final Map<SSLContext, HttpClient> TLS_CLIENTS = new ConcurrentHashMap<>();
-
-    private OpenFgaHealthProbe() {
+    public OpenFgaHealthProbe(SSLContext sslContext) {
+        this.sslContext = sslContext;
     }
 
-    private static HttpClient clientFor(SSLContext sslContext) {
-        if (sslContext == null) {
-            return HTTP_CLIENT;
+    private synchronized HttpClient client() {
+        if (closed) {
+            throw new IllegalStateException("The health probe is closed");
         }
-        return TLS_CLIENTS.computeIfAbsent(sslContext,
-                ctx -> HttpClient.newBuilder().connectTimeout(TIMEOUT).sslContext(ctx).build());
+        if (client == null) {
+            HttpClient.Builder builder = HttpClient.newBuilder().connectTimeout(TIMEOUT);
+            if (sslContext != null) {
+                builder.sslContext(sslContext);
+            }
+            client = builder.build();
+        }
+        return client;
+    }
+
+    @Override
+    public synchronized void close() {
+        closed = true;
+        if (client != null) {
+            client.shutdownNow();
+            client = null;
+        }
+    }
+
+    /**
+     * The client this probe holds, without creating one. For the tests of the probe's lifecycle.
+     */
+    synchronized HttpClient currentClient() {
+        return client;
+    }
+
+    /**
+     * Sends the request and waits for the whole response, body included, for at most {@link #TIMEOUT}. The timeout of
+     * the request itself only covers the wait for the response headers, so a server that stalls while sending the body
+     * would otherwise hold the thread that runs the health check for as long as it likes.
+     */
+    private <T> HttpResponse<T> sendBounded(HttpRequest request, HttpResponse.BodyHandler<T> handler) throws Exception {
+        CompletableFuture<HttpResponse<T>> call = client().sendAsync(request, handler);
+        try {
+            return call.get(TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            call.cancel(true);
+            throw new HttpTimeoutException("Timed out waiting for the OpenFGA health endpoint after " + TIMEOUT);
+        } catch (InterruptedException e) {
+            call.cancel(true);
+            throw e;
+        } catch (ExecutionException e) {
+            throw e.getCause() instanceof Exception cause ? cause : e;
+        }
     }
 
     /**
@@ -95,6 +127,12 @@ public final class OpenFgaHealthProbe {
      */
     public static void probe(
             HealthCheckResultBuilder builder, String apiUrl, String apiToken, String storeId, SSLContext sslContext) {
+        try (OpenFgaHealthProbe probe = new OpenFgaHealthProbe(sslContext)) {
+            probe.probe(builder, apiUrl, apiToken, storeId);
+        }
+    }
+
+    public void probe(HealthCheckResultBuilder builder, String apiUrl, String apiToken, String storeId) {
         builder.detail("openfga.apiUrl", URISupport.sanitizeUri(apiUrl));
         if (ObjectHelper.isNotEmpty(storeId)) {
             builder.detail("openfga.storeId", storeId);
@@ -111,8 +149,7 @@ public final class OpenFgaHealthProbe {
         }
 
         try {
-            HttpResponse<String> response
-                    = clientFor(sslContext).send(request.build(), HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = sendBounded(request.build(), HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
                 builder.down();
                 builder.message("OpenFGA answered its health endpoint with HTTP " + response.statusCode());

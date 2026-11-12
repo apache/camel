@@ -33,12 +33,12 @@ import org.apache.camel.util.URISupport;
  * unreachable server here fails every message outright, which is exactly the condition worth surfacing before traffic
  * arrives rather than after.
  */
-public class OpenFgaSecurityPolicyHealthCheck extends AbstractHealthCheck {
+public class OpenFgaSecurityPolicyHealthCheck extends AbstractHealthCheck implements AutoCloseable {
 
     private final String apiUrl;
     private final String apiToken;
     private final String storeId;
-    private final SSLContext sslContext;
+    private final OpenFgaHealthProbe probe;
 
     public OpenFgaSecurityPolicyHealthCheck(String apiUrl, String apiToken, String storeId, String relation,
                                             SSLContext sslContext) {
@@ -48,11 +48,16 @@ public class OpenFgaSecurityPolicyHealthCheck extends AbstractHealthCheck {
         this.apiUrl = apiUrl;
         this.apiToken = apiToken;
         this.storeId = storeId;
-        this.sslContext = sslContext;
+        this.probe = new OpenFgaHealthProbe(sslContext);
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        OpenFgaHealthProbe.probe(builder, apiUrl, apiToken, storeId, sslContext);
+        probe.probe(builder, apiUrl, apiToken, storeId);
+    }
+
+    @Override
+    public void close() {
+        probe.close();
     }
 }

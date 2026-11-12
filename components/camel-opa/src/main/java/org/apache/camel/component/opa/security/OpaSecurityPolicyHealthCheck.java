@@ -33,12 +33,12 @@ import org.apache.camel.util.URISupport;
  * unreachable server here fails every message outright, which is exactly the condition worth surfacing before traffic
  * arrives rather than after.
  */
-public class OpaSecurityPolicyHealthCheck extends AbstractHealthCheck {
+public class OpaSecurityPolicyHealthCheck extends AbstractHealthCheck implements AutoCloseable {
 
     private final String serverUrl;
     private final String bearerToken;
     private final String policyPath;
-    private final SSLContext sslContext;
+    private final OpaHealthProbe probe;
 
     public OpaSecurityPolicyHealthCheck(String serverUrl, String bearerToken, String policyPath,
                                         SSLContext sslContext) {
@@ -48,11 +48,16 @@ public class OpaSecurityPolicyHealthCheck extends AbstractHealthCheck {
         this.serverUrl = serverUrl;
         this.bearerToken = bearerToken;
         this.policyPath = policyPath;
-        this.sslContext = sslContext;
+        this.probe = new OpaHealthProbe(sslContext);
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        OpaHealthProbe.probe(builder, serverUrl, bearerToken, policyPath, sslContext);
+        probe.probe(builder, serverUrl, bearerToken, policyPath);
+    }
+
+    @Override
+    public void close() {
+        probe.close();
     }
 }
