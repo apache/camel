@@ -24,6 +24,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -66,13 +67,14 @@ public class FunctionsInvocationClient {
     public FunctionInvocationResponse invoke(String url, String method, Object body, Map<String, String> headers)
             throws IOException, InterruptedException {
 
+        URI uri = URI.create(url);
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(uri)
                 .timeout(Duration.ofMillis(readTimeout));
 
-        // Add function key header if present
+        // Add function key header if present, for an https URL of a function app
         String authKey = functionKey != null ? functionKey : hostKey;
-        if (authKey != null) {
+        if (authKey != null && isFunctionAppUri(uri)) {
             requestBuilder.header("x-functions-key", authKey);
         }
 
@@ -122,6 +124,11 @@ public class FunctionsInvocationClient {
                 response.statusCode(),
                 response.body(),
                 response.headers().map());
+    }
+
+    private static boolean isFunctionAppUri(URI uri) {
+        return "https".equalsIgnoreCase(uri.getScheme()) && uri.getHost() != null
+                && uri.getHost().toLowerCase(Locale.ROOT).endsWith(".azurewebsites.net");
     }
 
     private static byte[] toBytes(Object body) {

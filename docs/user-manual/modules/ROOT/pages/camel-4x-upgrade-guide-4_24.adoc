@@ -169,6 +169,17 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-azure-functions - invokeFunction checks the function app and the function name
+
+The `invokeFunction` operation now checks the function app and the function name, from the endpoint or from the
+`CamelAzureFunctionsFunctionApp` and `CamelAzureFunctionsFunctionName` headers, before it calls the function, and
+builds the URL with the function name encoded as a path. The exchange fails with an `IllegalArgumentException` when the
+function app is missing or is not an app name (letters, digits and hyphens, not starting or ending with a hyphen, at
+most 60 characters), or when the function name has a `?`, `#`, `\` or `%`, an empty segment, or a `.` or `..`
+segment. A function name of several segments, such as `products/42` for a function with a custom route, is still
+accepted. The `x-functions-key` header is only added to an `https` URL on an `azurewebsites.net` host. Valid
+configurations are not affected.
+
 === camel-mcp-server - the Origin header is checked on /mcp
 
 On Camel Main and Camel JBang, the streamable HTTP MCP endpoint now checks the `Origin` header on every request

@@ -314,6 +314,15 @@ class FunctionsProducerInvokeTest extends CamelTestSupport {
         assertEquals(500, result.getMessage().getHeader(FunctionsConstants.STATUS_CODE));
     }
 
+    @Test
+    void functionKeyIsOnlyAddedForHttpsFunctionAppUrls() throws Exception {
+        // the fake function app is on a plain http URL of the local host
+        Exchange result = template.send(functionsEndpoint(""), e -> e.getIn().setBody("Hello"));
+
+        assertNull(result.getException());
+        assertNull(nextRequest().functionKey());
+    }
+
     /**
      * The azure-functions endpoint of the test, with an invocation client that sends to the fake function app.
      */
@@ -351,7 +360,8 @@ class FunctionsProducerInvokeTest extends CamelTestSupport {
             body = in.readAllBytes();
         }
         requests.add(new RecordedRequest(
-                http.getRequestMethod(), http.getRequestURI().getPath(), http.getRequestHeaders().get("Content-Type"), body));
+                http.getRequestMethod(), http.getRequestURI().getPath(), http.getRequestHeaders().get("Content-Type"),
+                http.getRequestHeaders().getFirst("x-functions-key"), body));
 
         byte[] answer = responseBody.getBytes(StandardCharsets.UTF_8);
         http.getResponseHeaders().add("X-Function-Error", "details");
@@ -361,6 +371,6 @@ class FunctionsProducerInvokeTest extends CamelTestSupport {
         }
     }
 
-    private record RecordedRequest(String method, String path, List<String> contentTypes, byte[] body) {
+    private record RecordedRequest(String method, String path, List<String> contentTypes, String functionKey, byte[] body) {
     }
 }
