@@ -36,6 +36,19 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ProjectCapabilitiesTest {
 
+    @Test
+    void anInternalEntryPointSaysSoInsideTheBracketsOfItsLabel() {
+        assertThat(ProjectCapabilities.entryPointLabel(
+                new ProjectOverview.EntryPoint("timer", "timer:tick (period=2000)", "hello", false)))
+                .isEqualTo("timer:tick (period=2000, internal)");
+        assertThat(ProjectCapabilities.entryPointLabel(
+                new ProjectOverview.EntryPoint("timer", "timer:tick", "hello", false)))
+                .isEqualTo("timer:tick (internal)");
+        assertThat(ProjectCapabilities.entryPointLabel(
+                new ProjectOverview.EntryPoint("http", "platform-http:/orders", "order", true)))
+                .isEqualTo("platform-http:/orders");
+    }
+
     static final String ROUTES = """
             - route:
                 id: invoice

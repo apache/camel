@@ -28,6 +28,7 @@ import dev.tamboui.style.Color;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -189,6 +190,24 @@ class HistoryTabRenderTest {
         assertTrue(rendered.contains("TIME"), "Should show TIME header");
         assertTrue(rendered.contains("ROUTE"), "Should show ROUTE header");
         assertTrue(rendered.contains("STATUS"), "Should show STATUS header");
+    }
+
+    @Test
+    void theTableDataNamesTheInspectTabAndReadingStepsKeepsTheView() {
+        traces.set(List.of(createTrace("EX-010", "route1", "Done", true, true)));
+        HistoryTab tab = new HistoryTab(ctx, traces, new HashMap<>());
+        TuiTestHelper.renderToString(tab, 120, 30);
+
+        JsonObject table = tab.getTableDataAsJson();
+        assertEquals("Inspect", table.getString("tab"), "the name tui_get_options lists");
+        assertEquals("Traces", table.getString("view"));
+
+        // tui_get_history with an exchangeId: the steps of that exchange, while the tab still lists the traces
+        JsonObject steps = tab.traceStepsAsJson("EX-010");
+        assertEquals("Trace Steps", steps.getString("view"));
+        assertEquals("EX-010", steps.getString("exchangeId"));
+        assertEquals(1, steps.getInteger("totalRows"));
+        assertEquals("Traces", tab.getTableDataAsJson().getString("view"));
     }
 
     // ---- Helper methods ----

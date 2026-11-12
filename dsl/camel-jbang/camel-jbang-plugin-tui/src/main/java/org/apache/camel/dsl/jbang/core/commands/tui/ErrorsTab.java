@@ -365,7 +365,8 @@ class ErrorsTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No errors captured", 8, 7));
+            // in the first column, as the empty state of the other tabs, short enough not to be cut there
+            rows.add(emptyRow("No errors", 8));
         }
 
         ErrorInfo selectedError = shownError(info);

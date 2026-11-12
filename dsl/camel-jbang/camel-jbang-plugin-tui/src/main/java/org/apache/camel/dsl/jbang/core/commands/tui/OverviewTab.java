@@ -764,8 +764,9 @@ class OverviewTab extends AbstractTab {
                 Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
                 rightCell("ROUTE", 7, Style.EMPTY.bold()),
                 rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
-                centerCell(sortLabel("TOTAL", "total"), 14, sortStyle("total")),
-                centerCell(sortLabel("FAIL", "fail"), 14, sortStyle("fail")),
+                // the time in brackets is since the last one
+                centerCell(sortLabel("TOTAL (AGO)", "total"), 14, sortStyle("total")),
+                centerCell(sortLabel("FAIL (AGO)", "fail"), 14, sortStyle("fail")),
                 rightCell(timingHeader, 20, Style.EMPTY.bold()),
                 Cell.from(""));
 

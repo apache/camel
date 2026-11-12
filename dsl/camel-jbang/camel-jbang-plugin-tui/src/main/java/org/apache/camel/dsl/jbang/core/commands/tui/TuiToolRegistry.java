@@ -1229,14 +1229,19 @@ class TuiToolRegistry {
     }
 
     String callGetHistory(Map<String, Object> args) {
-        String exchangeId = args.get("exchangeId") instanceof String s ? s : null;
-        if (exchangeId != null && !exchangeId.isBlank()) {
-            facade.navigateToTab("History");
-            facade.selectTraceExchange(exchangeId);
+        String exchangeId = args.get("exchangeId") instanceof String s && !s.isBlank() ? s : null;
+        if (exchangeId != null) {
+            // read only: the steps of that exchange, without changing the tab or the view the user sees
+            JsonObject steps = facade.getTraceSteps(exchangeId);
+            if (steps == null) {
+                return "No trace steps for exchange " + exchangeId + ". Message tracing must be on, and the exchange "
+                       + "one of the traced ones (tui_get_history without exchangeId lists them).";
+            }
+            return Jsoner.serialize(steps);
         }
-        JsonObject data = facade.getTableData("History");
+        JsonObject data = facade.getTableData("Inspect");
         if (data == null) {
-            return "No history data available. Ensure the History tab has data.";
+            return "No history data available. Ensure the Inspect tab has data.";
         }
         return Jsoner.serialize(data);
     }

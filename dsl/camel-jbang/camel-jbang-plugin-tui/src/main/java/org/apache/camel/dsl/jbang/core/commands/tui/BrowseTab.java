@@ -747,7 +747,8 @@ class BrowseTab extends AbstractTab {
     public JsonObject getTableDataAsJson() {
         if (selectedEndpoint != null && !messages.isEmpty()) {
             JsonObject result = new JsonObject();
-            result.put("tab", "Browse Messages");
+            result.put("tab", "Browse Endpoints");
+            result.put("view", "Messages");
             result.put("endpoint", selectedEndpoint.uri);
             JsonArray rows = new JsonArray();
             for (MessageData m : messages) {
@@ -775,7 +776,7 @@ class BrowseTab extends AbstractTab {
             return null;
         }
         JsonObject result = new JsonObject();
-        result.put("tab", "Browse");
+        result.put("tab", "Browse Endpoints");
         JsonArray rows = new JsonArray();
         for (EndpointData e : endpoints) {
             JsonObject row = new JsonObject();

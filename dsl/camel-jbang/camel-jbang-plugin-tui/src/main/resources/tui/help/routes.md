@@ -10,8 +10,8 @@ they are sent to. A typical integration has multiple routes working together.
 - **FROM** — The endpoint that triggers this route (e.g., `timer`, `kafka`, `file`). This is the source of messages
 - **STATUS** — Route state: `Started` (running), `Stopped` (not running), or `Suspended` (paused, can be resumed)
 - **MSG/S** or **MSG/M** — Current message throughput (per second or per minute) for this route. Configure in Settings (F2)
-- **TOTAL** — Total exchanges processed by this route since startup
-- **FAIL** — Exchanges that ended with an unhandled error in this route
+- **TOTAL (AGO)** — Total exchanges processed by this route since startup, and in brackets how long ago the last one completed (`201 (13s)`)
+- **FAIL (AGO)** — Exchanges that ended with an unhandled error in this route, and in brackets how long ago the last one failed
 - **BODY TYPES** — Shown when steps of a route have been reached with more than one body type, across the messages (with the message history on, such as `camel run --dev`): how many steps varied, and how many of them with bodies of more than one kind, which need attention (`⚠ 1 mixed · 2 varied`). The processors of the selected route then have a BODY TYPES column too, with the types each step has been reached with
 - **MIN** — Fastest exchange processing time in milliseconds. This is the time from when the exchange entered the route until it completed
 - **MEAN** — Average exchange processing time in milliseconds. A rising MEAN may indicate a downstream service getting slower

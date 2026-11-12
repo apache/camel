@@ -91,8 +91,8 @@ Each row represents one running Camel integration:
 - **STATUS** — Current lifecycle state: `Running` (processing messages), `Started` (ready), or `Stopped`; `No status` when it wrote no status for 15 seconds while its process runs (its MSG/S is then `-`)
 - **AGE** — How long the integration has been running (e.g., `2m30s`, `1h15m`)
 - **MSG/S** or **MSG/M** — Messages processed per second or per minute (current throughput). The rate unit can be configured in settings. This is the overall rate across all routes
-- **TOTAL** — Total number of exchanges (messages) processed since the integration started
-- **FAIL** — Number of exchanges that ended with an unhandled error
+- **TOTAL (AGO)** — Total number of exchanges (messages) processed since the integration started, and in brackets how long ago the last one completed (`1128 (1s)`)
+- **FAIL (AGO)** — Number of exchanges that ended with an unhandled error, and in brackets how long ago the last one failed
 - **INFLIGHT** — Exchanges currently being processed right now. A consistently high inflight count may indicate slow downstream services
 - **SINCE-LAST** — Time since the last exchange activity, shown as up to three values separated by `/`: started/completed/failed. For example, `1s/3s/1m14s` means the last exchange started 1s ago, the last completed 3s ago, and the last failure was 1m14s ago. Values are omitted when there is no activity of that type
 

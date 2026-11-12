@@ -228,7 +228,7 @@ class TransformersTab extends AbstractTableTab {
             return null;
         }
         JsonObject result = new JsonObject();
-        result.put("tab", "Data Type Transformers");
+        result.put("tab", "Transformers");
         JsonArray rows = new JsonArray();
         for (TransformerData t : transformers) {
             JsonObject row = new JsonObject();
