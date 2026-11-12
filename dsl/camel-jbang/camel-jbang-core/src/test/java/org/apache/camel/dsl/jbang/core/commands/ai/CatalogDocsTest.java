@@ -495,6 +495,66 @@ class CatalogDocsTest {
         assertTrue(key.getString("description").contains("key"));
     }
 
+    /**
+     * CAMEL-26877: an EIP lists the exchange properties it sets, as a component lists its headers. No answer for split
+     * named CamelSplitSize, which a streaming split sets on its last message only (r32 of the local-model benchmark).
+     */
+    @Test
+    void anEipListsTheExchangePropertiesItSets() throws Exception {
+        JsonObject split = catalogDoc(Map.of("name", "split", "kind", "eip"));
+        JsonObject size = exchangeProperty(split, "CamelSplitSize");
+        assertEquals("int", size.getString("javaType"));
+        assertTrue(size.getString("description").contains("not applied for stream based splitting"), size.toJson());
+        // the name, type and description of a message header, nothing more
+        assertEquals(List.of("name", "javaType", "description"), List.copyOf(size.keySet()));
+        assertEquals("boolean", exchangeProperty(split, "CamelSplitComplete").getString("javaType"));
+        assertEquals("int", exchangeProperty(split, "CamelSplitIndex").getString("javaType"));
+
+        // a filter matches their names and descriptions, as it matches the options
+        JsonObject camel = catalogDoc(Map.of("name", "split", "kind", "eip", "optionsFilter", "Camel"));
+        assertTrue(exchangePropertyNames(camel).containsAll(List.of("CamelSplitIndex", "CamelSplitComplete",
+                "CamelSplitSize")), camel.toJson());
+        JsonObject bySize = catalogDoc(Map.of("name", "split", "kind", "eip", "optionsFilter", "size"));
+        assertEquals(List.of("CamelSplitSize"), exchangePropertyNames(bySize));
+        assertEquals(0, bySize.getInteger("matchedOptions"));
+        // the filter matched something, so no closest options and no other place to look
+        assertNull(bySize.get("closestOptions"), bySize.toJson());
+        assertNull(bySize.get("elsewhere"), bySize.toJson());
+        // an option the filter matches leaves out the exchange properties it does not match
+        JsonObject streaming = catalogDoc(Map.of("name", "split", "kind", "eip", "optionsFilter", "streaming"));
+        assertNotNull(option(streaming, "streaming"));
+        assertNull(streaming.get("exchangeProperties"), streaming.toJson());
+
+        // an EIP without exchange properties is unchanged
+        assertNull(catalogDoc(Map.of("name", "filter", "kind", "eip")).get("exchangeProperties"));
+        assertNull(catalogDoc(Map.of("name", "choice", "kind", "eip", "optionsFilter", "Camel")).get("exchangeProperties"));
+    }
+
+    /** CAMEL-26877: the page of an EIP lists its exchange properties, not the include line that renders them. */
+    @Test
+    void theEipPageHasItsExchangeProperties() throws Exception {
+        String split = catalogDoc(Map.of("name", "split", "kind", "eip", "includeDoc", true)).getString("doc");
+        assertFalse(split.contains("eip-exchangeProperties"), "the include line is replaced");
+        assertTrue(split.contains("== Exchange properties"), "the section is kept");
+        assertTrue(split.contains("\n* CamelSplitSize (int): The total number of Exchanges that was split."),
+                "listed in the section");
+        String choice = catalogDoc(Map.of("name", "choice", "kind", "eip", "includeDoc", true)).getString("doc");
+        assertFalse(choice.contains("eip-exchangeProperties"), "the include line is replaced");
+        assertTrue(choice.contains("The Choice EIP has no exchange properties."), "as the website says");
+    }
+
+    private static JsonObject exchangeProperty(JsonObject doc, String name) {
+        return ((JsonArray) doc.get("exchangeProperties")).stream().map(JsonObject.class::cast)
+                .filter(p -> name.equals(p.getString("name"))).findFirst().orElseThrow(() -> new AssertionError(
+                        name + " not in " + doc.toJson()));
+    }
+
+    private static List<String> exchangePropertyNames(JsonObject doc) {
+        JsonArray properties = (JsonArray) doc.get("exchangeProperties");
+        assertNotNull(properties, doc.toJson());
+        return properties.stream().map(p -> ((JsonObject) p).getString("name")).toList();
+    }
+
     @Test
     void theCommonOptionsAreTheDefaultAndTheScopeWidensThem() throws Exception {
         // the answer for kafka stays readable: deprecated and advanced options only on request, said in the answer
