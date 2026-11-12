@@ -8380,3 +8380,14 @@ With `allowTemplateFromHeader=true`, a script from the `CamelLanguageScript` hea
 Before, with `cacheScript=true` it could replace the cached script of the endpoint, so later messages without the header
 ran it too. The header is now removed after use, so a later language endpoint in the route runs its own script instead
 of the header's. Set the header again before each language endpoint that should use it.
+
+=== camel-jbang - camel run stops when a dependency it was given cannot be downloaded
+
+`camel run` now stops with exit code 1 when a dependency given with `--dep`, `camel.jbang.dependencies`, a `//DEPS`
+line or the dependencies of a Kamelet cannot be downloaded, and prints why on one line, such as
+`ERROR: Cannot download dependency: com.acme:foo:1.0 due to: ... Could not find artifact com.acme:foo:jar:1.0 in central (...)`.
+Before, it logged the error with the stack trace, started the routes without the dependency, and exited with 0.
+In dev mode (`--dev`), a reload with a `//DEPS` line that cannot be downloaded fails, and the routes keep running as
+they were. Other commands of the Camel CLI that fail to download a dependency also exit with 1 and print one line,
+instead of exiting with 70 and printing the stack trace (use `--verbose` for the stack trace). `camel export` still
+writes the dependency to the exported project.
