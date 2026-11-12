@@ -904,8 +904,9 @@ class AiPanel {
     }
 
     /**
-     * A line break in the question: Shift+Enter and Alt+Enter, and Ctrl+N for the terminals that deliver Shift+Enter as
-     * plain Enter (those without the Kitty keyboard protocol) or keep Alt for themselves (Option on macOS).
+     * A line break in the question: Shift+Enter and Alt+Enter. Ctrl+N is kept as the fallback, not shown in the footer,
+     * for the terminals that deliver Shift+Enter as plain Enter (those without the Kitty keyboard protocol, such as
+     * macOS Terminal) and keep Option for themselves.
      */
     static boolean isLineBreakKey(KeyEvent ke) {
         return ke.hasCtrl() && ke.isCharIgnoreCase('n') || ke.isKey(KeyCode.ENTER) && (ke.hasShift() || ke.hasAlt());
@@ -2225,7 +2226,7 @@ class AiPanel {
                 TuiHelper.hint(spans, "Esc", "back to the edit");
             } else if (!thinking.get()) {
                 TuiHelper.hint(spans, "Enter", "send");
-                TuiHelper.hint(spans, "Ctrl+N", "newline");
+                TuiHelper.hint(spans, "Shift+Enter", "newline");
                 TuiHelper.hint(spans, "Ctrl+R", "search");
             } else {
                 TuiHelper.hint(spans, "Esc/Ctrl+C", "interrupt");
