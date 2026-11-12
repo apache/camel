@@ -552,7 +552,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
-        } catch (Exception e) {
+        } catch (VirtualMachineError e) {
+            // left as before (thrown on after the callback), as in DelegateSyncProcessor
+            throw e;
+        } catch (Throwable e) {
+            // also an Error: the after task (the callback) is called in finally, so an Error thrown on after it would
+            // not fail the exchange (CAMEL-26741)
             exchange.setException(e);
         } finally {
             // processing is done
