@@ -8385,3 +8385,11 @@ With `allowTemplateFromHeader=true`, a script from the `CamelLanguageScript` hea
 Before, with `cacheScript=true` it could replace the cached script of the endpoint, so later messages without the header
 ran it too. The header is now removed after use, so a later language endpoint in the route runs its own script instead
 of the header's. Set the header again before each language endpoint that should use it.
+
+=== camel-jbang - camel run loads one version of each library
+
+`camel run` downloads the JARs of each component when it is first used. A library that is already loaded is now used,
+in the version that was loaded first, for the components that are loaded later, as the `dependencyManagement` of a
+Maven project would. Before, a later component that depended on another version of the library added that version as
+well, so the classpath could hold, for example, three versions of Netty, and a class was loaded from whichever JAR
+came first. Use `--verbose` to see the JARs added for each dependency.

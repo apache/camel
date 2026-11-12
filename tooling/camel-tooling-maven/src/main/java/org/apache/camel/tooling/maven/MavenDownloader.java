@@ -16,6 +16,7 @@
  */
 package org.apache.camel.tooling.maven;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -77,6 +78,23 @@ public interface MavenDownloader extends Service {
             boolean transitively, boolean useApacheSnapshots, Predicate<MavenGav> available)
             throws MavenResolutionException {
         return resolveArtifacts(rootGav, dependencyGAVs, extraRepositories, transitively, useApacheSnapshots);
+    }
+
+    /**
+     * Resolves the artifacts as {@link #resolveArtifacts(String, List, Set, boolean, boolean, Predicate)} does, with
+     * the versions of the managed artifacts: a transitive dependency on one of them gets its version, as with the
+     * dependencyManagement of a Maven project. For example, the libraries already loaded, so a library is not resolved
+     * again in another version.
+     *
+     * @param managed the artifacts whose version is used for the transitive dependencies on them, or null
+     */
+    default List<MavenArtifact> resolveArtifacts(
+            String rootGav,
+            List<String> dependencyGAVs, Set<String> extraRepositories,
+            boolean transitively, boolean useApacheSnapshots, Predicate<MavenGav> available,
+            Collection<MavenGav> managed)
+            throws MavenResolutionException {
+        return resolveArtifacts(rootGav, dependencyGAVs, extraRepositories, transitively, useApacheSnapshots, available);
     }
 
     /**
