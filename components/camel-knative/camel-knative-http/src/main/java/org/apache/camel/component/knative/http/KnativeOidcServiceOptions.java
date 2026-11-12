@@ -108,9 +108,10 @@ public class KnativeOidcServiceOptions implements KnativeHttpServiceOptions {
 
     /**
      * Whether the given value of the <code>Authorization</code> header is <code>Bearer</code> followed by the token at
-     * the token path. The comparison takes the same time wherever the first difference is. When the cached token does
-     * not match, the token is read again, as Knative may have renewed the mounted token since it was read: the renewed
-     * token is then accepted, and the token it replaces is no longer accepted.
+     * the token path. The comparison takes the same time wherever the first difference is, and its time depends only on
+     * the length of the token, not on the header of the request. When the cached token does not match, the token is
+     * read again, as Knative may have renewed the mounted token since it was read: the renewed token is then accepted,
+     * and the token it replaces is no longer accepted.
      *
      * @param  authorization the value of the <code>Authorization</code> header of the request, may be null
      * @return               true when the request carries the token at the token path
@@ -128,6 +129,8 @@ public class KnativeOidcServiceOptions implements KnativeHttpServiceOptions {
 
     private static boolean matches(String authorization, String token) {
         byte[] expected = ("Bearer " + token).getBytes(StandardCharsets.UTF_8);
+        // the expected value goes first: isEqual loops over the length of its first argument, also when the lengths
+        // differ, so the time does not depend on the header of the request
         return MessageDigest.isEqual(expected, authorization.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -137,7 +140,7 @@ public class KnativeOidcServiceOptions implements KnativeHttpServiceOptions {
                     .loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), oidcTokenPath))
                     .trim();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to load OIDC token from: " + oidcTokenPath, e);
         }
     }
 

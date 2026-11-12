@@ -250,7 +250,7 @@ camel.knative.client.oidc.cache.tokens=false
 
 === OIDC request verification
 
-With OIDC enabled on the service side, the Knative Http consumer accepts a request only when its `Authorization` header is `Bearer` followed by the token mounted at the token path. Any other request, also one without the header, gets a `401` response and does not reach the route.
+With OIDC enabled on the service side, the Knative Http consumer accepts a request only when its `Authorization` header is `Bearer <token>` (`Bearer`, a space, and the token), where `<token>` is the token mounted at the token path. Any other request, also one without the header, gets a `401` response and does not reach the route.
 
 The consumer compares the token of the request with the mounted token. It does not validate the token as an OIDC token: the signature, the issuer, the audience and the expiry of the token are not checked.
 
