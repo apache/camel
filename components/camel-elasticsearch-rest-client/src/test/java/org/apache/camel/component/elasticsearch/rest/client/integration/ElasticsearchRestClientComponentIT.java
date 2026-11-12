@@ -28,6 +28,8 @@ import org.apache.camel.component.elasticsearch.rest.client.ElasticSearchRestCli
 import org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,6 +73,18 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
                         .end()
                         .setHeader(ElasticSearchRestClientConstant.OPERATION).constant(ElasticsearchRestClientOperation.DELETE)
                         .to("elasticsearch-rest-client:my-cluster?restClient=#restClient&indexName=my_index");
+
+                from("direct:index-path-segment")
+                        .to("elasticsearch-rest-client:my-cluster?operation=INDEX_OR_UPDATE&restClient=#restClient&indexName=path_segment_index");
+
+                from("direct:get-by-id-path-segment")
+                        .to("elasticsearch-rest-client:my-cluster?operation=GET_BY_ID&restClient=#restClient&indexName=path_segment_index");
+
+                from("direct:search-path-segment")
+                        .to("elasticsearch-rest-client:my-cluster?operation=SEARCH&restClient=#restClient&indexName=path_segment_*,path_segment_index");
+
+                from("direct:delete-path-segment")
+                        .to("elasticsearch-rest-client:my-cluster?operation=DELETE&restClient=#restClient&indexName=path_segment_index");
 
                 from("direct:errorHandler")
                         .log("Handling exception: ${exception.message}")
@@ -257,6 +271,31 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
         ack = template.asyncRequestBodyAndHeader("direct:delete-index", null, ElasticSearchRestClientConstant.INDEX_NAME,
                 "my_index_2", Boolean.class);
         assertTrue(ack.get());
+    }
+
+    @Test
+    void documentWhoseIdContainsReservedCharacters() throws Exception {
+        Awaitility.await().atMost(30, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
+            Response health = restClient.performRequest(new Request("GET", "/_cluster/health"));
+            assertEquals(200, health.getStatusLine().getStatusCode());
+        });
+
+        var id = "a/b?c#d e%";
+        var document = "{\"title\": \"Elastic with reserved characters in the id\"}";
+
+        assertEquals(id, template.requestBodyAndHeader("direct:index-path-segment", document,
+                ElasticSearchRestClientConstant.ID, id, String.class));
+
+        assertEquals("{\"title\":\"Elastic with reserved characters in the id\"}",
+                template.requestBody("direct:get-by-id-path-segment", id, String.class));
+
+        // the comma separated list of an index pattern and an index name still searches both
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(
+                "[{\"title\":\"Elastic with reserved characters in the id\"}]",
+                template.requestBody("direct:search-path-segment", null, String.class)));
+
+        assertTrue(template.requestBodyAndHeader("direct:delete-path-segment", null, ElasticSearchRestClientConstant.ID, id,
+                Boolean.class));
     }
 
     @Test
