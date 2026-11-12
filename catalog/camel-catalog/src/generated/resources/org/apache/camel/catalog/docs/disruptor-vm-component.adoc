@@ -39,7 +39,7 @@ behavior and options of the SEDA component as much as possible.
 The main differences between them are the following:
 
 * The buffer used is always bounded in size (default 1024 exchanges).
-* As the buffer is always bouded, the default behaviour for the
+* As the buffer is always bounded, the default behaviour for the
 Disruptor is to block while the buffer is full instead of throwing an
 exception. This default behavior may be configured on the component
 (see options).
