@@ -49,7 +49,9 @@ A `uriTemplate` follows RFC 6570 level 1: each variable must occupy an entire pa
 RFC 3986 `pchar` characters (including well-formed percent-encoded octets); raw query/fragment
 characters, controls, malformed percent escapes, and `.` or `..` dot segments do not match.
 Fixed resources take precedence over a matching template when the same concrete URI is read.
-Two exposed templates that can match the same URI are refused.
+Tagged templates in one CamelContext must not overlap, even when they belong to different tags;
+a conflicting route fails startup rather than depending on registration order. A fixed
+`resourceUri` must not contain raw `{` or `}`; use `uriTemplate` for variable paths.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
