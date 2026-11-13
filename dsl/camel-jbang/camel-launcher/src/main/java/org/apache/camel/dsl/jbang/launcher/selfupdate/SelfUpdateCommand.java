@@ -404,8 +404,9 @@ public class SelfUpdateCommand extends CamelCommand {
                 try {
                     String output = outputFuture.get(10, TimeUnit.SECONDS);
                     printer().print(output);
-                } catch (TimeoutException | ExecutionException ignored) {
+                } catch (TimeoutException | ExecutionException e) {
                     // stdout drain timed out or failed — the installer already returned exit, so continue
+                    printer().print("installer finished, but its output could not be read");
                 }
                 return exit;
             } finally {

@@ -126,14 +126,14 @@ Wildcards work too:
 camel run https://github.com/apache/camel-kamelets-examples/tree/main/jbang/languages/rou*
 ----
 
-If you hit a rate limit or need to access a private repository, set a `GITHUB_TOKEN` environment variable
+If you hit a GitHub rate limit on directory or wildcard URLs, set a `GITHUB_TOKEN` environment variable
 before running the command.
-The token is forwarded as an `Authorization: Bearer` header, but only to `api.github.com` — it is never sent to other hosts:
+The token is forwarded as an `Authorization: Bearer` header only to `api.github.com` (the directory-listing API) — it is never sent to other hosts:
 
 [source,bash]
 ----
 export GITHUB_TOKEN=ghp_...
-camel run https://github.com/myorg/my-private-repo/blob/main/route.java
+camel run https://github.com/myorg/my-org-examples/tree/main/jbang/hello-java
 ----
 
 === Run from GitHub gists
