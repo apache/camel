@@ -34,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.run.common.LogFileReader;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.UnitUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -105,7 +106,13 @@ public class IntegrationStatus extends ProcessBaseCommand {
         JsonObject root = process.status();
         JsonObject context = root.get("context") instanceof JsonObject jo ? jo : new JsonObject();
         JsonObject runtime = root.get("runtime") instanceof JsonObject jo ? jo : new JsonObject();
+        JsonObject stats = context.get("statistics") instanceof JsonObject jo ? jo : null;
         JsonArray routes = routes(root);
+        JsonObject health = health(root);
+        JsonArray lastErrors = errors(errorFile, errors);
+        List<JsonObject> records = records(log);
+        JsonObject reload = reload(stats, records);
+        JsonObject jvm = jvm(root, runtime);
         JsonObject answer = new JsonObject();
         answer.put("pid", process.pid());
         answer.put("name", process.name());
@@ -115,39 +122,152 @@ public class IntegrationStatus extends ProcessBaseCommand {
         answer.put("phase", context.getInteger("phase"));
         answer.put("uptime", context.getLong("uptime"));
         answer.put("devMode", context.getBoolean("devMode"));
+        answer.put("problems", problems(context.getString("state"), routes, health, lastErrors, reload, jvm));
         // where it was started, and the files of its routes, as an agent edits them
         answer.put("directory", runtime.getString("directory"));
-        answer.put("sources", sources(routes));
-        JsonObject stats = context.get("statistics") instanceof JsonObject jo ? jo : null;
+        answer.put("sources", sources(routes, root));
         if (stats != null) {
             JsonObject exchanges = new JsonObject();
             exchanges.put("total", number(stats.get("exchangesTotal")));
             exchanges.put("failed", number(stats.get("exchangesFailed")));
             exchanges.put("inflight", number(stats.get("exchangesInflight")));
+            JsonObject oldest = oldestInflight(root);
+            if (oldest != null) {
+                exchanges.put("oldestInflight", oldest);
+            }
             answer.put("exchanges", exchanges);
         }
         answer.put("routes", routes);
-        answer.put("health", health(root));
+        answer.put("health", health);
         answer.put("http", http(root));
-        answer.put("errors", errors(errorFile, errors));
-        List<JsonObject> records = records(log);
-        answer.put("reload", reload(stats, records));
-        answer.put("jvm", jvm(root, runtime));
+        answer.put("errors", lastErrors);
+        answer.put("reload", reload);
+        answer.put("jvm", jvm);
         answer.put("log", new JsonArray(records.subList(0, Math.min(Math.max(logLines, 0), records.size()))));
         return answer;
     }
 
     /**
-     * The files of the routes, without the line: <tt>orders.camel.yaml</tt>.
+     * What is wrong, in a few words each, so an agent does not have to work it out from the rest: a route that is not
+     * started or has failed exchanges, a health check that is down, a failed reload, a heap that is nearly full. Empty
+     * when all is well. The failed exchanges are those of the routes, which a reload starts again from zero.
      */
-    private static JsonArray sources(JsonArray routes) {
+    private static JsonArray problems(
+            String state, JsonArray routes, JsonObject health, JsonArray errors, JsonObject reload, JsonObject jvm) {
+        JsonArray answer = new JsonArray();
+        if (state != null && !"Started".equals(state)) {
+            answer.add("Camel is " + state);
+        }
+        for (Object o : routes) {
+            JsonObject route = (JsonObject) o;
+            String id = route.getString("routeId");
+            String status = route.getString("status");
+            if (status != null && !"Started".equals(status) && !"Error".equals(status)) {
+                answer.add("route " + id + " is " + status);
+            }
+            Long failed = route.getLong("failed");
+            JsonObject lastError = route.getMap("lastError");
+            if (failed != null && failed > 0) {
+                String last = newestError(errors, id);
+                if (last == null && lastError != null) {
+                    last = lastError.getString("message");
+                }
+                answer.add("route " + id + ": " + failed + (failed == 1 ? " failed exchange" : " failed exchanges")
+                           + (last != null ? ", the last: " + last : ""));
+            } else if (lastError != null) {
+                answer.add("route " + id + " failed (" + lastError.getString("phase") + "): "
+                           + lastError.getString("message"));
+            }
+        }
+        JsonArray down = health.getCollection("down");
+        if (down != null) {
+            for (Object o : down) {
+                JsonObject check = (JsonObject) o;
+                answer.add("health check " + check.getString("id") + " is DOWN"
+                           + (check.getString("message") != null ? ": " + check.getString("message") : ""));
+            }
+        }
+        if (Boolean.FALSE.equals(health.getBoolean("ready")) && (down == null || down.isEmpty())) {
+            answer.add("not ready");
+        }
+        if (reload.get("last") instanceof JsonObject last && "failed".equals(last.getString("status"))) {
+            String message = last.getString("message");
+            answer.add("the last reload failed" + (message != null ? ": " + message.lines().findFirst().orElse("") : ""));
+        }
+        Long used = jvm.getLong("heapUsed");
+        Long max = jvm.getLong("heapMax");
+        if (used != null && max != null && max > 0 && used * 10 >= max * 9) {
+            answer.add("the heap is " + used * 100 / max + "% full");
+        }
+        return answer;
+    }
+
+    /**
+     * The newest error of the route, as <tt>type: message</tt>, or <tt>null</tt>.
+     */
+    private static String newestError(JsonArray errors, String routeId) {
+        for (Object o : errors) {
+            JsonObject error = (JsonObject) o;
+            if (routeId != null && routeId.equals(error.getString("routeId"))) {
+                JsonObject exception = error.getMap("exception");
+                return exception != null ? exception.getString("type") + ": " + exception.getString("message") : null;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The files of the routes, without the line (<tt>orders.camel.yaml</tt>), and the properties files that were loaded
+     * (<tt>application.properties</tt>), as an agent edits those too.
+     */
+    private static JsonArray sources(JsonArray routes, JsonObject root) {
         Set<String> files = new LinkedHashSet<>();
         for (Object o : routes) {
             if (o instanceof JsonObject route && route.getString("source") != null) {
                 files.add(route.getString("source").replaceFirst(":\\d+$", ""));
             }
         }
+        if (root.get("properties") instanceof JsonObject properties
+                && properties.get("locations") instanceof JsonArray locations) {
+            for (Object o : locations) {
+                String location = String.valueOf(o);
+                if (location.startsWith("file:")) {
+                    // file:./application.properties and file:application.properties are the same file
+                    String file = StringHelper.before(location.substring(5), ";", location.substring(5));
+                    files.add(file.startsWith("./") ? file.substring(2) : file);
+                }
+            }
+        }
         return new JsonArray(new ArrayList<>(files));
+    }
+
+    /**
+     * The exchange that has been inflight the longest, and where it is now, when the integration lists its inflight
+     * exchanges (as in dev mode): one that stays at the same place is how a hang shows.
+     */
+    private static JsonObject oldestInflight(JsonObject root) {
+        if (!(root.get("inflight") instanceof JsonObject inflight)
+                || !(inflight.get("exchanges") instanceof JsonArray exchanges)) {
+            return null;
+        }
+        JsonObject oldest = null;
+        for (Object o : exchanges) {
+            if (o instanceof JsonObject exchange
+                    && (oldest == null
+                            || exchange.getLongOrDefault("duration", 0) > oldest.getLongOrDefault("duration", 0))) {
+                oldest = exchange;
+            }
+        }
+        if (oldest == null) {
+            return null;
+        }
+        JsonObject answer = new JsonObject();
+        // the duration of an inflight exchange is the time since it was created
+        answer.put("age", oldest.getLong("duration"));
+        answer.put("routeId", oldest.getString("atRouteId"));
+        answer.put("nodeId", oldest.getString("nodeId"));
+        answer.put("source", oldest.getString("nodeSource"));
+        return answer;
     }
 
     /**
@@ -232,19 +352,39 @@ public class IntegrationStatus extends ProcessBaseCommand {
         return answer;
     }
 
-    private static JsonArray http(JsonObject root) {
-        JsonArray answer = new JsonArray();
-        if (root.get("platform-http") instanceof JsonObject ph && ph.get("endpoints") instanceof JsonArray endpoints) {
+    /**
+     * How to reach the integration over HTTP: the server, the endpoints of the routes, and the management endpoints,
+     * such as the health check, so an agent does not have to guess the port.
+     */
+    private static JsonObject http(JsonObject root) {
+        JsonObject answer = new JsonObject();
+        JsonArray endpoints = new JsonArray();
+        JsonArray management = new JsonArray();
+        if (root.get("platform-http") instanceof JsonObject ph) {
+            if (ph.getString("server") != null) {
+                answer.put("server", ph.getString("server"));
+            }
+            endpoints(ph.get("endpoints"), endpoints);
+            endpoints(ph.get("managementEndpoints"), management);
+        }
+        answer.put("endpoints", endpoints);
+        answer.put("management", management);
+        return answer;
+    }
+
+    private static void endpoints(Object list, JsonArray answer) {
+        if (list instanceof JsonArray endpoints) {
             for (Object o : endpoints) {
                 if (o instanceof JsonObject endpoint) {
                     JsonObject jo = new JsonObject();
                     jo.put("url", endpoint.getString("url"));
-                    jo.put("verbs", endpoint.getString("verbs"));
+                    if (endpoint.getString("verbs") != null) {
+                        jo.put("verbs", endpoint.getString("verbs"));
+                    }
                     answer.add(jo);
                 }
             }
         }
-        return answer;
     }
 
     /**
@@ -328,6 +468,15 @@ public class IntegrationStatus extends ProcessBaseCommand {
             sb.append(", dev mode");
         }
         printer().println(sb.toString());
+        JsonArray problems = status.getCollection("problems");
+        if (problems.isEmpty()) {
+            printer().println("Problems: none");
+        } else {
+            printer().println("Problems:");
+            for (Object o : problems) {
+                printer().println("  - " + o);
+            }
+        }
         if (status.getString("directory") != null) {
             printer().println("Directory: " + status.getString("directory"));
         }
@@ -338,8 +487,14 @@ public class IntegrationStatus extends ProcessBaseCommand {
             printer().println("Sources: " + files);
         }
         if (status.get("exchanges") instanceof JsonObject ex) {
+            String oldest = "";
+            if (ex.get("oldestInflight") instanceof JsonObject o) {
+                oldest = " (the oldest " + TimeUtils.printDuration(o.getLongOrDefault("age", 0)) + ", now at "
+                         + o.getString("routeId") + "/" + o.getString("nodeId")
+                         + (o.getString("source") != null ? " " + o.getString("source") : "") + ")";
+            }
             printer().println("Exchanges: " + ex.getLong("total") + " total, " + ex.getLong("failed") + " failed, "
-                              + ex.getLong("inflight") + " inflight");
+                              + ex.getLong("inflight") + " inflight" + oldest);
         }
         JsonArray routes = status.getCollection("routes");
         printer().println("Routes:" + (routes.isEmpty() ? " none" : ""));
@@ -365,11 +520,20 @@ public class IntegrationStatus extends ProcessBaseCommand {
                         ? ": " + d.getString("message") : ""));
             }
         }
-        JsonArray http = status.getCollection("http");
-        for (Object o : http) {
-            JsonObject h = (JsonObject) o;
-            printer().println("HTTP: " + (h.getString("verbs") != null ? h.getString("verbs") + " " : "")
-                              + h.getString("url"));
+        JsonObject http = status.getMap("http");
+        JsonArray endpoints = http.getCollection("endpoints");
+        JsonArray management = http.getCollection("management");
+        if (http.getString("server") != null || !endpoints.isEmpty() || !management.isEmpty()) {
+            printer().println("HTTP:" + (http.getString("server") != null ? " " + http.getString("server") : ""));
+            for (Object o : endpoints) {
+                JsonObject h = (JsonObject) o;
+                printer().println("  " + (h.getString("verbs") != null ? h.getString("verbs") + " " : "")
+                                  + h.getString("url"));
+            }
+            for (Object o : management) {
+                JsonObject h = (JsonObject) o;
+                printer().println("  management: " + h.getString("url"));
+            }
         }
         JsonArray errors = status.getCollection("errors");
         if (!errors.isEmpty()) {

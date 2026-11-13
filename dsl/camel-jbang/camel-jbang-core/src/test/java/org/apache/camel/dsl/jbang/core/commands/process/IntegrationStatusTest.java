@@ -59,12 +59,23 @@ class IntegrationStatusTest extends ProcessCommandTestSupport {
         assertThat(status.getInteger("phase")).isEqualTo(5);
         assertThat(status.getLong("uptime")).isEqualTo(65000L);
         assertThat(status.getBoolean("devMode")).isTrue();
+        // what is wrong, so an agent does not have to work it out from the rest
+        JsonArray problems = status.getCollection("problems");
+        assertThat(problems).containsExactly(
+                "route orders: 2 failed exchanges, the last: java.lang.IllegalStateException: Boom",
+                "health check kafka is DOWN: Connection refused");
         assertThat(status.getString("directory")).isEqualTo("/work/orders");
+        // the files of the routes, and the properties file, which is loaded under two names
         JsonArray sources = status.getCollection("sources");
-        assertThat(sources).containsExactly("orders.camel.yaml");
+        assertThat(sources).containsExactly("orders.camel.yaml", "application.properties");
         JsonObject exchanges = status.getMap("exchanges");
         assertThat(exchanges.getLong("total")).isEqualTo(12L);
         assertThat(exchanges.getLong("failed")).isEqualTo(2L);
+        JsonObject oldest = exchanges.getMap("oldestInflight");
+        assertThat(oldest.getLong("age")).isEqualTo(75000L);
+        assertThat(oldest.getString("routeId")).isEqualTo("orders");
+        assertThat(oldest.getString("nodeId")).isEqualTo("to1");
+        assertThat(oldest.getString("source")).isEqualTo("orders.camel.yaml:9");
 
         JsonArray routes = status.getCollection("routes");
         assertThat(routes).hasSize(1);
@@ -85,9 +96,14 @@ class IntegrationStatusTest extends ProcessCommandTestSupport {
         JsonObject kafka = (JsonObject) down.get(0);
         assertThat(kafka.getString("id")).isEqualTo("kafka");
 
-        JsonArray http = status.getCollection("http");
-        JsonObject endpoint = (JsonObject) http.get(0);
+        JsonObject http = status.getMap("http");
+        assertThat(http.getString("server")).isEqualTo("http://0.0.0.0:8080");
+        JsonArray endpoints = http.getCollection("endpoints");
+        JsonObject endpoint = (JsonObject) endpoints.get(0);
         assertThat(endpoint.getString("url")).isEqualTo("http://0.0.0.0:8080/orders");
+        JsonArray management = http.getCollection("management");
+        JsonObject healthEndpoint = (JsonObject) management.get(0);
+        assertThat(healthEndpoint.getString("url")).isEqualTo("http://0.0.0.0:9876/observe/health");
 
         // the newest error first, without its message and history
         JsonArray errors = status.getCollection("errors");
@@ -146,17 +162,43 @@ class IntegrationStatusTest extends ProcessCommandTestSupport {
 
         assertThat(printer.getStdout()).contains(
                 "orders (pid 12345), Camel 4.24.0 (JBang): Started, up 1m5s, dev mode",
-                "Exchanges: 12 total, 2 failed, 0 inflight",
+                "Problems:",
+                "  - route orders: 2 failed exchanges, the last: java.lang.IllegalStateException: Boom",
+                "  - health check kafka is DOWN: Connection refused",
+                "Exchanges: 12 total, 2 failed, 1 inflight (the oldest 1m15s, now at orders/to1 orders.camel.yaml:9)",
                 "Directory: /work/orders",
-                "Sources: orders.camel.yaml",
+                "Sources: orders.camel.yaml, application.properties",
                 "  orders  Error  timer://tick  orders.camel.yaml:4  (12 total, 2 failed, 0 inflight)",
                 "    last error (processing): Boom",
                 "Health: DOWN, ready, live",
                 "  DOWN kafka: Connection refused",
-                "HTTP: GET http://0.0.0.0:8080/orders",
+                "HTTP: http://0.0.0.0:8080",
+                "  GET http://0.0.0.0:8080/orders",
+                "  management: http://0.0.0.0:9876/observe/health",
                 "Reload: 3 reloaded, 0 failed; last: reloaded: Routes reloaded summary (total:1 started:1)",
                 "JVM: Java 21.0.2 (Eclipse Adoptium), heap 40.0 MB of 512.0 MB, 11 threads, 10 GCs (13 ms)",
                 "Log (last 4 records):");
+    }
+
+    @Test
+    void noProblems() throws Exception {
+        writeStatusFile(TEST_PID, json("""
+                {"context":{"name":"orders","version":"4.24.0","state":"Started","phase":5,"uptime":5000,
+                   "statistics":{"exchangesTotal":3,"exchangesFailed":0,"exchangesInflight":0}},
+                 "routes":[{"routeId":"orders","from":"timer://tick","state":"Started","uptime":"5s",
+                   "statistics":{"exchangesTotal":3,"exchangesFailed":0,"exchangesInflight":0}}],
+                 "healthChecks":{"up":true,"ready":true,"live":true,"checks":[{"id":"routes","state":"UP"}]}}
+                """));
+        IntegrationStatus command = command();
+        command.jsonOutput = true;
+
+        assertThat(call(command)).isEqualTo(CliExitCode.OK);
+        JsonArray problems = json(printer.getStdout()).getCollection("problems");
+        assertThat(problems).isEmpty();
+
+        // the text says so too
+        assertThat(call(command())).isEqualTo(CliExitCode.OK);
+        assertThat(printer.getStdout()).contains("Problems: none");
     }
 
     @Test
@@ -194,7 +236,7 @@ class IntegrationStatusTest extends ProcessCommandTestSupport {
                         {"runtime":{"pid":12345,"platform":"JBang","directory":"/work/orders","javaVersion":"21.0.2",
                            "javaVendor":"Eclipse Adoptium"},
                          "context":{"name":"orders","version":"4.24.0","state":"Started","phase":5,"uptime":65000,"devMode":true,
-                           "statistics":{"exchangesTotal":12,"exchangesFailed":2,"exchangesInflight":0,
+                           "statistics":{"exchangesTotal":12,"exchangesFailed":2,"exchangesInflight":1,
                              "reload":{"reloaded":3,"failed":0}}},
                          "routes":[{"routeId":"orders","from":"timer://tick","source":"file:orders.camel.yaml:4","state":"Started","uptime":"1m0s",
                            "statistics":{"exchangesTotal":12,"exchangesFailed":2,"exchangesInflight":0},
@@ -204,8 +246,13 @@ class IntegrationStatusTest extends ProcessCommandTestSupport {
                            {"id":"kafka","state":"DOWN","message":"Connection refused"}]},
                          "memory":{"heapMemoryUsed":40000000,"heapMemoryMax":512000000},"threads":{"threadCount":11},
                          "gc":{"collectionCount":10,"collectionTime":13},
+                         "properties":{"locations":["file:application.properties","file:./application.properties"]},
+                         "inflight":{"inflight":1,"inflightBrowseEnabled":true,"exchanges":[
+                           {"exchangeId":"ex-3","fromRouteId":"orders","atRouteId":"orders","nodeId":"to1",
+                            "nodeSource":"orders.camel.yaml:9","duration":75000}]},
                          "platform-http":{"server":"http://0.0.0.0:8080",
-                           "endpoints":[{"url":"http://0.0.0.0:8080/orders","path":"/orders","verbs":"GET"}]}}
+                           "endpoints":[{"url":"http://0.0.0.0:8080/orders","path":"/orders","verbs":"GET"}],
+                           "managementEndpoints":[{"url":"http://0.0.0.0:9876/observe/health","path":"/observe/health"}]}}
                         """));
         Files.writeString(CommandLineHelper.getCamelDir().resolve(TEST_PID + "-error.json"), json("""
                 {"errors":[

@@ -138,20 +138,23 @@ TIP: Use `camel get --watch` for continuous updates.
 
 === The state of one integration in one call
 
-`camel status` shows one integration: its state and uptime, the folder it was started from and the files of its
-routes, the exchanges, each route with its counters, its file and line, and last error, the health checks that are
-down, the HTTP endpoints, the last errors, the reloads of dev mode with the outcome of the last one, the Java version,
-heap, threads and garbage collections of its JVM, and the end of its log. It is what `camel get route`,
-`camel get health`, `camel get error` and `camel log` show, in one command, which is what an AI agent wants after it
-has run or changed an integration:
+`camel status` shows one integration. First what is wrong, in a few words each: a route that is not started or has
+failed exchanges, a health check that is down, a failed reload, a heap that is nearly full (`Problems: none` when all
+is well). Then its state and uptime, the folder it was started from and its files (the files of its routes, and the
+properties files it loaded), the exchanges and the oldest inflight one with where it is now (when the inflight
+exchanges are listed, as in dev mode), each route with its counters, its file and line, and last error, the health
+checks that are down, the HTTP server with its endpoints and management endpoints, the last errors, the reloads of
+dev mode with the outcome of the last one, the Java version, heap, threads and garbage collections of its JVM, and the
+end of its log. It is what `camel get route`, `camel get health`, `camel get error` and `camel log` show, in one
+command, which is what an AI agent wants after it has run or changed an integration:
 
 [source,bash]
 ----
 camel status cheese --json
 ----
 
-With `--json` it prints one document: the routes have the fields of `camel get route --json`, `uptime` is in millis,
-and the log records are newest first. Without a name it shows the only integration that runs. `--log-lines` and
+With `--json` it prints one document: `problems` is an empty list when all is well, the routes have the fields of
+`camel get route --json`, `uptime` is in millis, and the log records are newest first. Without a name it shows the only integration that runs. `--log-lines` and
 `--errors` say how many log records and errors to show (20 and 5).
 
 == Route status
