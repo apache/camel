@@ -26,10 +26,12 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
@@ -392,9 +394,17 @@ public class SelfUpdateCommand extends CamelCommand {
                     printer().printErr("installer timed out after 5 minutes");
                     return CliExitCode.TIMEOUT;
                 }
-                String output = outputFuture.get(10, TimeUnit.SECONDS);
                 int exit = process.exitValue();
-                printer().print(output);
+                // outputFuture.get() can time out when a grandchild (curl/wget) keeps the pipe open after the
+                // shell exits, or fail with an I/O error in the drainer thread. Either case is best-effort:
+                // the install already finished (process.exitValue() was called above), so treat the drain
+                // failure as non-fatal and print what we have.
+                try {
+                    String output = outputFuture.get(10, TimeUnit.SECONDS);
+                    printer().print(output);
+                } catch (TimeoutException | ExecutionException ignored) {
+                    // stdout drain timed out or failed — the installer already returned exit, so continue
+                }
                 return exit;
             } finally {
                 drainer.shutdownNow();

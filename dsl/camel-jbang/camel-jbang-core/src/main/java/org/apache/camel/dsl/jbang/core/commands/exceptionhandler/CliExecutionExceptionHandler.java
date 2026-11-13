@@ -19,7 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands.exceptionhandler;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.http.HttpTimeoutException;
 import java.nio.file.NoSuchFileException;
+import java.util.concurrent.TimeoutException;
 
 import org.aesh.command.parser.CommandLineParserException;
 import org.aesh.command.validator.OptionValidatorException;
@@ -36,9 +38,10 @@ import org.apache.camel.dsl.jbang.run.common.Printer;
  * {@link CliExitCode}.
  * <p/>
  * A {@link CliException} prints its message as one {@code ERROR:} line, and exits with its code. A file that does not
- * exist exits with {@link CliExitCode#FILE_NOT_FOUND}. Any other exception is unexpected: it prints the error with the
- * stack trace, and exits with {@link CliExitCode#INTERNAL}. With {@code --verbose} or the environment variable
- * {@code CAMEL_CLI_DEBUG=true}, every error prints its stack trace.
+ * exist exits with {@link CliExitCode#FILE_NOT_FOUND}. A network timeout ({@link TimeoutException} or
+ * {@link HttpTimeoutException} anywhere in the cause chain) exits with {@link CliExitCode#TIMEOUT}. Any other exception
+ * is unexpected: it prints the error with the stack trace, and exits with {@link CliExitCode#INTERNAL}. With
+ * {@code --verbose} or the environment variable {@code CAMEL_CLI_DEBUG=true}, every error prints its stack trace.
  * <p/>
  * A command in JSON mode ({@code --json}) also prints the error as a JSON document on stdout, see {@link JsonOutput}.
  */
@@ -87,6 +90,9 @@ public class CliExecutionExceptionHandler {
         }
         if (fileNotFound(ex) != null) {
             return CliExitCode.FILE_NOT_FOUND;
+        }
+        if (find(ex, TimeoutException.class) != null || find(ex, HttpTimeoutException.class) != null) {
+            return CliExitCode.TIMEOUT;
         }
         return CliExitCode.INTERNAL;
     }
