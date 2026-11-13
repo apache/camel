@@ -235,7 +235,10 @@ public class TransformMessageAction extends ActionWatchCommand {
         ActionResult result = ActionClient.execute(pid, root, timeout);
         JsonObject jo = result.reply();
         if (jo == null) {
-            throw new CliException(result.exitCode(), "Transform timeout: " + result.error());
+            // an integration that stopped before it answered is not a timeout
+            String error
+                    = result.status() == ActionClient.Status.TIMEOUT ? "Transform timeout: " + result.error() : result.error();
+            throw new CliException(result.exitCode(), error);
         }
         printStatusLine(jo);
         String exchangeId = jo.getString("exchangeId");
