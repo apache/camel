@@ -205,6 +205,7 @@ class ActionClientTest {
 
             assertThat(result.status()).isEqualTo(Status.OK);
             assertThat(result.reply().getInteger("value")).isEqualTo(42);
+            assertNoFilesLeft();
         } finally {
             integration.destroyForcibly();
         }
