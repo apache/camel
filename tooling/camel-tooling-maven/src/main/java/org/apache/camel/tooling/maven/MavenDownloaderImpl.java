@@ -909,9 +909,15 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                 if (t instanceof ConnectException || t instanceof UnknownHostException) {
                     return t;
                 }
-                // the connect timeout of the JDK, and of Apache HttpClient (ConnectTimeoutException)
-                if (t instanceof SocketTimeoutException && "Connect timed out".equalsIgnoreCase(t.getMessage())
-                        || "org.apache.http.conn.ConnectTimeoutException".equals(t.getClass().getName())) {
+                // the connect timeout of the JDK socket
+                if (t instanceof SocketTimeoutException && "Connect timed out".equalsIgnoreCase(t.getMessage())) {
+                    return t;
+                }
+                // the connect timeout of an HTTP client, by name to need none of them on the classpath:
+                // org.apache.http.conn.ConnectTimeoutException (HttpClient 4, the transport of Maven Resolver 1.x),
+                // org.apache.hc.client5.http.ConnectTimeoutException (HttpClient 5), whose message is not
+                // "Connect timed out", and java.net.http.HttpConnectTimeoutException (the JDK HTTP client)
+                if (t.getClass().getSimpleName().endsWith("ConnectTimeoutException")) {
                     return t;
                 }
             }
