@@ -96,6 +96,26 @@ public interface ControlbusComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * The names of the languages the language command may use, separated by
+         * comma, such as simple. The language command evaluates the message
+         * body as an expression, so it is off until the language is in this
+         * list: a controlbus:language endpoint whose language is not listed
+         * fails when it is created. The route actions are not affected. An
+         * endpoint can set its own list.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param allowedLanguages the value to set
+         * @return the dsl builder
+         */
+        default ControlbusComponentBuilder allowedLanguages(java.lang.String allowedLanguages) {
+            doSetProperty("allowedLanguages", allowedLanguages);
+            return this;
+        }
     }
 
     class ControlbusComponentBuilderImpl
@@ -113,6 +133,7 @@ public interface ControlbusComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((ControlBusComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((ControlBusComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "allowedLanguages": ((ControlBusComponent) component).setAllowedLanguages((java.lang.String) value); return true;
             default: return false;
             }
         }

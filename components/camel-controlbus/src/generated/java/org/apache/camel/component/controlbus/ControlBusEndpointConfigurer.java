@@ -25,6 +25,8 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
         ControlBusEndpoint target = (ControlBusEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "allowedlanguages":
+        case "allowedLanguages": target.setAllowedLanguages(property(camelContext, java.lang.String.class, value)); return true;
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -42,6 +44,8 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return java.lang.String.class;
+        case "allowedlanguages":
+        case "allowedLanguages": return java.lang.String.class;
         case "async": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -60,6 +64,8 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
         ControlBusEndpoint target = (ControlBusEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return target.getAction();
+        case "allowedlanguages":
+        case "allowedLanguages": return target.getAllowedLanguages();
         case "async": return target.isAsync();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
