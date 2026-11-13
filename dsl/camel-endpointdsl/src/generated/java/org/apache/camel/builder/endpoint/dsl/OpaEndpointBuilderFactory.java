@@ -537,6 +537,42 @@ public interface OpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * How often, in milliseconds, to check the configured WASM resource for
+         * changed policy or data. Zero disables automatic reload. Replacements
+         * are validated before publication; failed reloads retain the active
+         * revision. This option applies only to wasm mode.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param policyReloadInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder policyReloadInterval(long policyReloadInterval) {
+            doSetProperty("policyReloadInterval", policyReloadInterval);
+            return this;
+        }
+        /**
+         * How often, in milliseconds, to check the configured WASM resource for
+         * changed policy or data. Zero disables automatic reload. Replacements
+         * are validated before publication; failed reloads retain the active
+         * revision. This option applies only to wasm mode.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param policyReloadInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder policyReloadInterval(String policyReloadInterval) {
+            doSetProperty("policyReloadInterval", policyReloadInterval);
+            return this;
+        }
+        /**
          * How many WebAssembly policy instances to pool in wasm mode. An
          * instance carries mutable state and is not thread-safe, so each
          * exchange borrows one; this bounds how many exchanges evaluate at

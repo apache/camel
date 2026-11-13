@@ -165,11 +165,31 @@ public class OpaEndpoint extends DefaultEndpoint {
     }
 
     private OpaPolicyEvaluator createWasmEvaluator() throws Exception {
-        return OpaWasmEvaluator.create(
+        OpaReloadableWasmEvaluator replacement = OpaReloadableWasmEvaluator.create(
                 getCamelContext(), configuration.getPolicyBundle(), configuration.getEntrypoint(),
-                configuration.getPoolSize(), configuration.getBorrowTimeout(), policyPath, configuration.getAllowKey(),
+                configuration.getPoolSize(), configuration.getBorrowTimeout(), configuration.getPolicyReloadInterval(),
+                policyPath, configuration.getAllowKey(),
                 configuration.getIncludeHeaders(), configuration.getIncludeProperties(), configuration.isIncludeBody(),
                 configuration.isFailOpen());
+        try {
+            replacement.startWatching();
+            return replacement;
+        } catch (RuntimeException e) {
+            replacement.close();
+            throw e;
+        }
+    }
+
+    /** Explicitly reloads the configured WASM policy, retaining the active revision if validation fails. */
+    public boolean reloadPolicy() throws Exception {
+        if (evaluator instanceof OpaReloadableWasmEvaluator wasm) {
+            return wasm.reload();
+        }
+        throw new IllegalStateException("A started WASM endpoint is required to reload its policy");
+    }
+
+    public OpaPolicyReloadStatus getPolicyReloadStatus() {
+        return evaluator instanceof OpaReloadableWasmEvaluator wasm ? wasm.getReloadStatus() : null;
     }
 
     @Override

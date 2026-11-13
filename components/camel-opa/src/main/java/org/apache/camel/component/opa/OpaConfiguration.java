@@ -59,6 +59,8 @@ public class OpaConfiguration implements Cloneable {
     private int poolSize = 8;
     @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long borrowTimeout = 30000;
+    @UriParam(label = "advanced", defaultValue = "0", javaType = "java.time.Duration")
+    private long policyReloadInterval;
 
     @UriParam(label = "advanced", defaultValue = "10000", javaType = "java.time.Duration")
     private long connectionTimeout = 10000;
@@ -216,6 +218,19 @@ public class OpaConfiguration implements Cloneable {
      */
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
+    }
+
+    public long getPolicyReloadInterval() {
+        return policyReloadInterval;
+    }
+
+    /**
+     * How often, in milliseconds, to check the configured WASM resource for changed policy or data. Zero disables
+     * automatic reload. Replacements are validated before publication; failed reloads retain the active revision. This
+     * option applies only to wasm mode.
+     */
+    public void setPolicyReloadInterval(long policyReloadInterval) {
+        this.policyReloadInterval = policyReloadInterval;
     }
 
     public long getBorrowTimeout() {

@@ -50,6 +50,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "opaClient": target.getConfiguration().setOpaClient(property(camelContext, com.styra.opa.OPAClient.class, value)); return true;
         case "policybundle":
         case "policyBundle": target.getConfiguration().setPolicyBundle(property(camelContext, java.lang.String.class, value)); return true;
+        case "policyreloadinterval":
+        case "policyReloadInterval": target.getConfiguration().setPolicyReloadInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "poolsize":
         case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
         case "requesttimeout":
@@ -96,6 +98,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "opaClient": return com.styra.opa.OPAClient.class;
         case "policybundle":
         case "policyBundle": return java.lang.String.class;
+        case "policyreloadinterval":
+        case "policyReloadInterval": return long.class;
         case "poolsize":
         case "poolSize": return int.class;
         case "requesttimeout":
@@ -138,6 +142,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "opaClient": return target.getConfiguration().getOpaClient();
         case "policybundle":
         case "policyBundle": return target.getConfiguration().getPolicyBundle();
+        case "policyreloadinterval":
+        case "policyReloadInterval": return target.getConfiguration().getPolicyReloadInterval();
         case "poolsize":
         case "poolSize": return target.getConfiguration().getPoolSize();
         case "requesttimeout":
