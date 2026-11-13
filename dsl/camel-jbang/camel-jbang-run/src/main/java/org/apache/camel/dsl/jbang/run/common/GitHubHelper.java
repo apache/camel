@@ -170,10 +170,11 @@ public final class GitHubHelper {
 
         // use JDK http client to call github api
         HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
-        HttpRequest.Builder reqBuilder = HttpRequest.newBuilder(new URI(url)).timeout(timeout);
+        URI uri = new URI(url);
+        HttpRequest.Builder reqBuilder = HttpRequest.newBuilder(uri).timeout(timeout);
         // Send GITHUB_TOKEN as Authorization header when set, but only to api.github.com (never leak to other hosts)
         String token = System.getenv("GITHUB_TOKEN");
-        if (token != null && !token.isBlank() && "api.github.com".equals(new URI(url).getHost())) {
+        if (token != null && !token.isBlank() && "api.github.com".equals(uri.getHost())) {
             reqBuilder.header("Authorization", "Bearer " + token);
         }
         HttpRequest req = reqBuilder.build();
@@ -226,33 +227,10 @@ public final class GitHubHelper {
         } else if (res.statusCode() == 404) {
             throw new FileNotFoundException("GitHub API request failed with HTTP 404 for URL: " + url);
         } else {
-            String hint = rateLimitHint(res, token);
+            String hint = GitHubHttpHelper.rateLimitHint(res, token);
             throw new IOException(
                     "GitHub API request failed with HTTP " + res.statusCode() + hint + " for URL: " + url);
         }
-    }
-
-    /**
-     * Returns a hint string for rate-limit or access-denied errors (403/429).
-     */
-    private static String rateLimitHint(HttpResponse<String> res, String token) {
-        int status = res.statusCode();
-        if (status == 429) {
-            // Always a rate-limit response
-            return token != null && !token.isBlank()
-                    ? " (rate limit exceeded)"
-                    : " (rate limit exceeded - set GITHUB_TOKEN to increase the limit)";
-        }
-        if (status == 403) {
-            String remaining = res.headers().firstValue("x-ratelimit-remaining").orElse(null);
-            if ("0".equals(remaining)) {
-                return token != null && !token.isBlank()
-                        ? " (rate limit exceeded)"
-                        : " (rate limit exceeded - set GITHUB_TOKEN to increase the limit)";
-            }
-            return " (access denied - the repository may be private or blocked)";
-        }
-        return "";
     }
 
 }

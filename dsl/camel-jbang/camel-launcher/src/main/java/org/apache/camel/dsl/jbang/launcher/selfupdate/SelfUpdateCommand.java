@@ -397,7 +397,7 @@ public class SelfUpdateCommand extends CamelCommand {
                 printer().print(output);
                 return exit;
             } finally {
-                drainer.shutdown();
+                drainer.shutdownNow();
             }
         } catch (SelfUpdateException e) {
             printer().printErr(e.getMessage());

@@ -45,12 +45,16 @@ class GitHubApiResponseTest {
     private String url;
     private volatile String response;
     private volatile int statusCode = 200;
+    private volatile String rateLimitRemaining = null;
 
     @BeforeEach
     void startServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
         server.createContext("/", exchange -> {
             if (statusCode != 200) {
+                if (rateLimitRemaining != null) {
+                    exchange.getResponseHeaders().set("x-ratelimit-remaining", rateLimitRemaining);
+                }
                 exchange.sendResponseHeaders(statusCode, -1);
                 exchange.close();
             } else {
@@ -115,13 +119,24 @@ class GitHubApiResponseTest {
     }
 
     @Test
-    void rateLimitedGithubResponseThrowsWithHint() {
+    void accessDeniedGithubResponseThrowsWithHint() {
         statusCode = 403;
 
         assertThatThrownBy(() -> GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, new StringJoiner(",")))
                 .isInstanceOf(IOException.class)
                 .hasMessageContaining("403")
                 .hasMessageContaining("access denied");
+    }
+
+    @Test
+    void rateLimitExhaustedGithubResponseThrowsWithHint() {
+        statusCode = 403;
+        rateLimitRemaining = "0";
+
+        assertThatThrownBy(() -> GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, new StringJoiner(",")))
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("403")
+                .hasMessageContaining("rate limit exceeded");
     }
 
     @Test
