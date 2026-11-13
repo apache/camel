@@ -94,6 +94,8 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
                 // not done
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                // stop the download too: Maven Resolver moves a file in place only when it is complete,
+                // so an aborted transfer leaves no partial artifact, and the next run downloads it again
                 future.cancel(true);
                 if (required) {
                     throw new DownloadException("Interrupted while downloading: " + gav, e);

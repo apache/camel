@@ -158,14 +158,11 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         return new CamelContextCustomizer() {
             @Override
             public void configure(CamelContext camelContext) {
-                // notify the listeners about each dependency detected
+                // notify the listeners about each dependency detected; a listener that cannot download a dependency
+                // the Kamelet needs decides whether that fails (as for a //DEPS line), so it is not ignored here
                 for (DependencyStrategy ds : camelContext.getRegistry().findByType(DependencyStrategy.class)) {
                     for (String d : dep) {
-                        try {
-                            ds.onDependency(d);
-                        } catch (Exception e) {
-                            // ignore
-                        }
+                        ds.onDependency(d);
                     }
                 }
             }

@@ -20,12 +20,18 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.dsl.yaml.KameletRoutesBuilderLoader;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.SimpleCamelContext;
+import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DependencyDownloaderStrategyTest {
 
@@ -55,6 +61,69 @@ class DependencyDownloaderStrategyTest {
         }
 
         assertEquals(List.of("required:com.example:missing:1.0"), downloaded);
+    }
+
+    @Test
+    void requiredKameletDependencyThatCannotBeDownloadedFails() throws Exception {
+        DownloadException failure = new DownloadException("Cannot download dependency: com.example:missing:1.0");
+        List<String> downloaded = new ArrayList<>();
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addService(recordingDownloader(downloaded, failure));
+            context.getRegistry().bind("strategy", new DependencyDownloaderStrategy(context, true));
+
+            RoutesBuilder kamelet = loadKamelet(context, "com.example:missing:1.0");
+
+            // the loader of the Kamelet must not swallow the failure
+            Exception e = assertThrows(Exception.class, () -> context.addRoutes(kamelet));
+            assertTrue(hasCause(e, failure), "expected the download failure, got: " + e);
+        }
+
+        assertEquals(List.of("required:com.example:missing:1.0"), downloaded);
+    }
+
+    @Test
+    void kameletDependencyIsDownloaded() throws Exception {
+        List<String> downloaded = new ArrayList<>();
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addService(recordingDownloader(downloaded, null));
+            context.getRegistry().bind("strategy", new DependencyDownloaderStrategy(context));
+
+            context.addRoutes(loadKamelet(context, "com.example:declared:1.0"));
+        }
+
+        assertEquals(List.of("com.example:declared:1.0"), downloaded);
+    }
+
+    private static RoutesBuilder loadKamelet(CamelContext context, String dependency) throws Exception {
+        String yaml = """
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: my-source
+                spec:
+                  definition:
+                    title: My Source
+                  dependencies:
+                    - "%s"
+                  template:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: "kamelet:sink"
+                """.formatted(dependency);
+        KameletRoutesBuilderLoader loader = new KameletRoutesBuilderLoader();
+        loader.setCamelContext(context);
+        loader.start();
+        return loader.loadRoutesBuilder(ResourceHelper.fromString("my-source.kamelet.yaml", yaml));
+    }
+
+    private static boolean hasCause(Throwable t, Throwable cause) {
+        for (Throwable c = t; c != null; c = c.getCause()) {
+            if (c == cause) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static DependencyDownloader recordingDownloader(List<String> downloaded, DownloadException requiredFailure) {
