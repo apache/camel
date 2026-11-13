@@ -540,18 +540,18 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("readTimeout", readTimeout);
             return this;
         }
-
+    
         /**
          * Transport for streamedListObjects. Required with an injected
          * OpenFgaClient, whose HTTP configuration is opaque. The caller owns
          * this transport's lifecycle. storeId and readTimeout remain required
          * for streaming.
-         *
+         * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaStreamingClient&lt;/code&gt; type.
-         *
+         * 
          * Group: advanced
-         *
+         * 
          * @param streamingClient the value to set
          * @return the dsl builder
          */
@@ -559,16 +559,16 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("streamingClient", streamingClient);
             return this;
         }
-
-
+    
+        
         /**
          * Maximum characters in one streamed JSON record; must be positive.
-         *
+         * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         *
+         * 
          * Default: 65536
          * Group: advanced
-         *
+         * 
          * @param streamMaxLineLength the value to set
          * @return the dsl builder
          */
@@ -576,17 +576,17 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("streamMaxLineLength", streamMaxLineLength);
             return this;
         }
-
-
+    
+        
         /**
          * Maximum streamed objects before iteration fails; must be positive. No
          * partial answer is silently truncated.
-         *
+         * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         *
+         * 
          * Default: 10000
          * Group: advanced
-         *
+         * 
          * @param streamMaxResults the value to set
          * @return the dsl builder
          */

@@ -827,12 +827,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * OpenFgaClient, whose HTTP configuration is opaque. The caller owns
          * this transport's lifecycle. storeId and readTimeout remain required
          * for streaming.
-         *
+         * 
          * The option is a:
          * <code>org.apache.camel.component.openfga.OpenFgaStreamingClient</code> type.
-         *
+         * 
          * Group: advanced
-         *
+         * 
          * @param streamingClient the value to set
          * @return the dsl builder
          */
@@ -845,12 +845,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * OpenFgaClient, whose HTTP configuration is opaque. The caller owns
          * this transport's lifecycle. storeId and readTimeout remain required
          * for streaming.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.openfga.OpenFgaStreamingClient</code> type.
-         *
+         * 
          * Group: advanced
-         *
+         * 
          * @param streamingClient the value to set
          * @return the dsl builder
          */
@@ -860,12 +860,12 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Maximum characters in one streamed JSON record; must be positive.
-         *
+         * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Default: 65536
          * Group: advanced
-         *
+         * 
          * @param streamMaxLineLength the value to set
          * @return the dsl builder
          */
@@ -875,12 +875,12 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Maximum characters in one streamed JSON record; must be positive.
-         *
+         * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Default: 65536
          * Group: advanced
-         *
+         * 
          * @param streamMaxLineLength the value to set
          * @return the dsl builder
          */
@@ -891,12 +891,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * Maximum streamed objects before iteration fails; must be positive. No
          * partial answer is silently truncated.
-         *
+         * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Default: 10000
          * Group: advanced
-         *
+         * 
          * @param streamMaxResults the value to set
          * @return the dsl builder
          */
@@ -907,12 +907,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * Maximum streamed objects before iteration fails; must be positive. No
          * partial answer is silently truncated.
-         *
+         * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Default: 10000
          * Group: advanced
-         *
+         * 
          * @param streamMaxResults the value to set
          * @return the dsl builder
          */
