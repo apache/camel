@@ -16,9 +16,6 @@
  */
 package org.apache.camel.semantic.micrometer;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -60,35 +57,12 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
 
 class MicrometerSemanticMetricsTest {
-    @Test
-    void semanticEvaluationDoesNotRequireMicrometerOnTheApplicationClasspath(@TempDir Path temporary) throws Exception {
-        List<String> classpath = new ArrayList<>();
-        for (String entry : System.getProperty("surefire.test.class.path", System.getProperty("java.class.path"))
-                .split(File.pathSeparator)) {
-            if (!Path.of(entry).getFileName().toString().startsWith("micrometer-")) {
-                classpath.add(entry);
-            }
-        }
-        Path output = temporary.resolve("without-micrometer.log");
-        var process = new ProcessBuilder(
-                Path.of(System.getProperty("java.home"), "bin", "java").toString(),
-                "-cp", String.join(File.pathSeparator, classpath), WithoutMicrometer.class.getName())
-                .redirectErrorStream(true).redirectOutput(output.toFile()).start();
-        try {
-            assertThat(process.waitFor(30, TimeUnit.SECONDS)).as("isolated semantic evaluation completed").isTrue();
-            assertThat(process.exitValue()).as(Files.readString(output)).isZero();
-        } finally {
-            process.destroyForcibly();
-        }
-    }
-
     @Test
     void rejectsInvalidHistogramConfiguration() {
         var registry = new SimpleMeterRegistry();
@@ -426,27 +400,4 @@ class MicrometerSemanticMetricsTest {
         }
     }
 
-    public static class WithoutMicrometer {
-        public static void main(String[] args) throws Exception {
-            try {
-                Class.forName("io.micrometer.core.instrument.MeterRegistry");
-                throw new IllegalStateException("Micrometer unexpectedly present");
-            } catch (ClassNotFoundException expected) {
-                // This process deliberately omits every Micrometer artifact.
-            }
-            try (var context = new DefaultCamelContext()) {
-                context.disableJMX();
-                context.getRegistry().bind("expert", new BooleanExpert());
-                context.start();
-                var language = (SemanticLanguage) context.resolveLanguage("semantic");
-                Object result = language.evaluate(new SemanticEvaluation("containsText", "expert", null, Map.of()), "hello")
-                        .getValue();
-                if (!Boolean.TRUE.equals(result)) {
-                    throw new IllegalStateException("Semantic evaluation failed without Micrometer");
-                }
-            } catch (Exception failure) {
-                throw new IllegalStateException(failure);
-            }
-        }
-    }
 }

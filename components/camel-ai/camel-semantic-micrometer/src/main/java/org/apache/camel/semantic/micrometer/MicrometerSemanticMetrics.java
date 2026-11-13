@@ -40,6 +40,8 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
+
 /**
  * Optional Micrometer instrumentation of completed semantic assessment members. Register one notifier with the Camel
  * management strategy, supplying the application's registry. The registry remains application-owned; this notifier
@@ -49,7 +51,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class MicrometerSemanticMetrics extends EventNotifierSupport {
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerSemanticMetrics.class);
-    private static final String CAMEL_CONTEXT_TAG = "camelContext";
     private static final int MAX_POPULATIONS = 100;
     private static final int MAX_ANSWERS = 64;
     private static final Set<String> STATUSES = Set.of("success", "failed", "not_executed");

@@ -1507,7 +1507,7 @@ camel semantic monitoring my-app --source=departmentMetrics
 The Semantic *Monitoring* sibling, `tui_get_monitoring`, `semantic-monitoring` console and CLI read this same
 current-value cache. The TUI offers expert/definition grouping, filters and an inspector for counts, durations,
 distributions, meaning, observation times and collection health. It has no historical-period, reference or
-comparison controls. Pausing affects the display only. The optional Micrometer listener below exports
+comparison controls. Pausing affects the display only. The optional Micrometer integration exports
 measurements independently of this viewer. Runtime-specific automatic registration and scrape endpoint
 integration are separate from the shared listener.
 
@@ -1520,155 +1520,8 @@ Facades are removed at context shutdown. Monitoring also works with JMX disabled
 
 === Optional Micrometer instrumentation
 
-`MicrometerSemanticMetrics` consumes typed assessment completion events directly. Add `io.micrometer:micrometer-core`
-to your application, or use the registry dependency supplied by your runtime. Micrometer is an optional dependency
-of `camel-semantic`; applications that do not register this listener do not need it. Prometheus is not a runtime
-dependency of the listener.
-
-Register one listener before starting the context, passing the application's existing `MeterRegistry`:
-
-[source,java]
-----
-import org.apache.camel.semantic.micrometer.MicrometerSemanticMetrics;
-
-// registry is the application's existing Micrometer MeterRegistry.
-// Optional, increasing score bucket bounds may include negative values.
-context.getManagementStrategy().addEventNotifier(
-    new MicrometerSemanticMetrics(registry, -1, 0, 0.5, 1, 2, 5));
-----
-
-The listener does not create or close a registry or install an HTTP server. The application/runtime owns
-registry configuration, HTTP exposure, authentication and the registry lifecycle. Give contexts sharing a registry
-distinct names. Registering more than one listener in a context fails at startup to prevent double counting.
-Stop removes meters created by the listener; restarting starts new counters. Existing application meters remain.
-
-Each completed assessment member is counted once, including individual batch members. Starts, request outcomes
-and locally aggregated `typed_results` snapshots are not counted again. Provider attempts/retries are not inferred
-from semantic completions. Audit capture, input capture, JMX, the local monitoring cache and UI polling are not
-required. Collection failures are isolated from the assessment and reported by the collection health meters.
-The first failure since collector start also logs a warning containing only the exception class, without its
-message, stack trace or event payload; subsequent failures only increment the error count.
-
-[cols="2,3",options="header"]
-|===
-|Micrometer name |Meaning
-|`camel.semantic.evaluations` |Counter by execution `status`: `success`, `failed`, or `not_executed`.
-|`camel.semantic.duration` |Timer recording each available execution duration, including failures. Skipped or
-missing durations are not zero-duration observations. Percentile histograms use the original durations.
-|`camel.semantic.result.availability` |Successful assessments by `availability`: `available` or `unavailable`.
-|`camel.semantic.results` |Counter by returned `answer`. Boolean values are final answers, without another
-probability threshold. Choice counts the selected answer, not probability entries. Classification counts each
-selected label once per assessment, so membership percentages need not sum to 100%.
-|`camel.semantic.classification.empty` |Successful classification results with no selected labels.
-|`camel.semantic.score.observations` |Count of available finite numeric score observations.
-|`camel.semantic.score.sum`, `.minimum`, `.maximum` |Gauges preserving signed, fractional scores since collector
-start. The sum can decrease; do not treat it as a monotonic counter.
-|`camel.semantic.score.distribution` |Cumulative counters with inclusive `le` bounds supplied to the constructor and a
-`+Inf` bucket. Bounds describe numeric values, not severity or policy decisions.
-|`camel.semantic.collection.loss` |Counter by fixed `reason`: `population_limit`, `answer_limit`, `invalid_event`,
-or `unsupported_measurement`. Loss is excluded from the corresponding result distribution.
-|`camel.semantic.collection.errors` |Number of metric collection failures since collector start.
-|===
-
-Assessment meters have `camelContext`, `expert`, `definition`, `operation`, `origin` and `result.type` tags.
-Missing identity is the empty string; direct calls remain distinguishable by origin and the absence of a definition.
-The listener retains at most 100 distinct combinations and 64 answer labels of at most 256 characters per combination.
-Score histograms accept at most 64 finite, strictly increasing bounds; an empty array keeps count, sum, minimum,
-maximum and the overflow bucket. Configure identical bounds on instances you aggregate together.
-Each population can have both successful and failed duration timers. Default percentile histograms can add about
-70 bucket series per timer: the 100-population limit alone can therefore allow roughly 14,000 duration bucket
-series. Configure the registry's meter filter before registering the listener to choose fewer boundaries, for example:
-
-[source,java]
-----
-import java.time.Duration;
-
-import io.micrometer.core.instrument.Meter;
-import io.micrometer.core.instrument.config.MeterFilter;
-import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
-
-registry.config().meterFilter(new MeterFilter() {
-    @Override
-    public DistributionStatisticConfig configure(Meter.Id id, DistributionStatisticConfig config) {
-        if (id.getName().equals("camel.semantic.duration")) {
-            return DistributionStatisticConfig.builder().percentilesHistogram(false)
-                .serviceLevelObjectives(Duration.ofMillis(10).toNanos(), Duration.ofMillis(100).toNanos(),
-                    Duration.ofSeconds(1).toNanos(), Duration.ofSeconds(10).toNanos())
-                .build().merge(config);
-        }
-        return config;
-    }
-});
-----
-
-This example exports five duration buckets per timer in Prometheus, including `+Inf`, while retaining every
-observation in the count and sum. Choose boundaries for your latency goals: fewer buckets reduce percentile
-resolution. The `camelContext` tag matches Camel's other Micrometer metrics.
-
-Prompts, input, interpretation, exception messages and per-execution identifiers are never metric labels.
-Choose stable expert/definition names and result labels. Bounds limit retained series, but collection loss still
-means that a distribution may cover only part of the evaluated population. Collection error counts do not prove
-that every event was delivered: the shared AI notification contract remains synchronous and best effort.
-
-==== Expert-published scalar gauges
-
-The same listener accepts `SemanticMonitoringEvent` snapshots with `kind=gauge`, a single finite numeric
-`values.value`, and an explicit unit of `1`, `ratio`, `bytes`, `seconds`, `milliseconds`, `nanoseconds`, `count`,
-`requests` or `assessments`. If supplied, `availability` must be `available`. It exports
-`camel.semantic.expert.value` with `source`, `measurement` (the snapshot ID), `unit` and the supplied
-`expert`, `definition`, `operation`, `provider`, `taskId`, `taskVersion`, `revision` dimensions. Missing dimensions
-are empty strings. Other dimension keys are rejected, including correlation and message identifiers.
-
-Values replace earlier values for that identity; repeated publication never increments a counter. At most 100
-such identities are retained, independently of assessment populations. The producer owns meaning and update cadence.
-The last value remains until the next publication or collector shutdown; scraping does not refresh it. A publication
-with an unavailable or invalid value marks an existing gauge as `NaN`, rather than continuing to expose its old value.
-Only published snapshots are consumed: the listener does not call `SemanticMetricSource.snapshots()` or perform I/O
-while an assessment completes. Unsupported kinds, units, shapes or dimensions increment `unsupported_measurement`;
-aggregated counts are not guessed to be deltas, and snapshot means are never converted to latency observations.
-
-==== Prometheus queries and lifecycle
-
-Expose the supplied registry through the runtime's normal metrics endpoint. Prometheus scrapes that endpoint and
-owns time-series retention; it does not depend on the Camel TUI being connected. Select a scrape interval that fits
-your operational needs (for example 15 seconds) and use a rate window containing several scrapes.
-The shared listener does not provide automatic Main, Spring Boot or Quarkus registration, a Prometheus query client,
-historical TUI views or dashboards. Runtime-specific examples and Quarkus native validation are follow-up work.
-
-For a Prometheus registry, dots become underscores and counters gain `_total`. These example backend queries aggregate
-across instances while retaining the selected expert or definition grouping:
-
-[source,promql]
-----
-# Executed assessment rate per expert; skipped members are excluded.
-sum by (expert) (rate(camel_semantic_evaluations_total{status=~"success|failed"}[5m]))
-
-# Failed execution rate per expert and definition.
-sum by (expert, definition) (rate(camel_semantic_evaluations_total{status="failed"}[5m]))
-
-# Returned-answer distribution per expert and definition.
-sum by (expert, definition, result_type, answer) (rate(camel_semantic_results_total[5m]))
-
-# 95th percentile from actual duration buckets, aggregated across instances.
-histogram_quantile(0.95,
-  sum by (expert, le) (rate(camel_semantic_duration_seconds_bucket[5m])))
-
-# Available score distribution using application-declared bounds.
-sum by (expert, definition, le) (rate(camel_semantic_score_distribution_total[5m]))
-
-# Counter resets observed on individual application series.
-resets(camel_semantic_evaluations_total[1h])
-
-# Collection exclusions over the observation window.
-sum by (reason) (increase(camel_semantic_collection_loss_total[5m]))
-----
-
-Apply `rate` or `increase` before summing across instances so resets are handled per series. A restart resets these
-counters; Prometheus history remains in Prometheus. The first scrape after startup cannot reconstruct evaluations
-that happened before a counter's first observed sample. Backend labels such as `job` and `instance` distinguish
-application instances; they are supplied by the scrape configuration, not unique evaluation IDs.
-
-Exemplars depend on the runtime's tracing context, registry and exposition format. This listener neither fabricates
-trace context nor promises an exemplar for every assessment, particularly for detached or asynchronous completions.
-Historical investigations may query independently retained audit records for a matching `[since, until)` interval,
-definition/operation and typed result. Audit retention and metric observations can cover different populations.
+Add xref:others:semantic-micrometer.adoc[Semantic Micrometer] (`camel-semantic-micrometer`) to export
+assessment counts, durations, typed result distributions and supported expert measurements to the
+application's Micrometer registry. The integration brings `camel-semantic` and `camel-micrometer`
+transitively and documents registration, metric names, cardinality limits, lifecycle and PromQL queries.
+`camel-semantic` itself has no Micrometer dependency.
