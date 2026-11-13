@@ -2820,7 +2820,7 @@ public abstract class DefaultConfigurationProperties<T> {
      * Used for inclusive filtering of routes from directories.
      *
      * Typically used for specifying to accept routes in XML or YAML files. The default pattern is
-     * <code>*.yaml,*.xml</code> Multiple patterns can be specified separated by comma.
+     * <code>*.yaml,*.xml</code>. Multiple patterns can be specified separated by comma.
      */
     public T withRoutesReloadPattern(String routesReloadPattern) {
         this.routesReloadPattern = routesReloadPattern;
