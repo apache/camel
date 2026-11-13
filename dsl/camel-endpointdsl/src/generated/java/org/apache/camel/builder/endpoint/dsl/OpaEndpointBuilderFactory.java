@@ -512,11 +512,11 @@ public interface OpaEndpointBuilderFactory {
          * In batch mode it sees each element as the body on an exchange copy.
          * Null, scalar and streaming results fail closed. Reference a
          * configured expression bean.
-         *
+         * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
-         *
+         * 
          * Group: advanced
-         *
+         * 
          * @param inputExpression the value to set
          * @return the dsl builder
          */
@@ -531,12 +531,12 @@ public interface OpaEndpointBuilderFactory {
          * In batch mode it sees each element as the body on an exchange copy.
          * Null, scalar and streaming results fail closed. Reference a
          * configured expression bean.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
-         *
+         * 
          * Group: advanced
-         *
+         * 
          * @param inputExpression the value to set
          * @return the dsl builder
          */

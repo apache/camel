@@ -362,12 +362,12 @@ public interface OpaComponentBuilderFactory {
          * In batch mode it sees each element as the body on an exchange copy.
          * Null, scalar and streaming results fail closed. Reference a
          * configured expression bean.
-         *
+         * 
          * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
          * type.
-         *
+         * 
          * Group: advanced
-         *
+         * 
          * @param inputExpression the value to set
          * @return the dsl builder
          */
@@ -375,7 +375,7 @@ public interface OpaComponentBuilderFactory {
             doSetProperty("inputExpression", inputExpression);
             return this;
         }
-
+    
         /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
