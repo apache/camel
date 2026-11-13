@@ -3972,6 +3972,17 @@ the consumer of such a route kept running next to the one of the master. This in
 consume while the node cannot reach ZooKeeper. Setting the route to `autoStartup=false` is still recommended, so the
 consumer does not run for a moment when the CamelContext starts.
 
+=== camel-zookeeper-master - the zookeeper.password system property, and a group factory of the application
+
+The `zookeeper.password` system property is now used when no `zooKeeperPassword` is configured: the ZooKeeper client
+that the component creates then sends the `digest` authorization `fabric:<password>`. Before, the property was read but
+not used, so a deployment that set it connected without that authorization.
+
+A `ManagedGroupFactory` bound in the registry, or set with `setManagedGroupFactory`, is no longer closed when a
+`zookeeper-master` consumer, a `MasterRoutePolicy` or the component stops. The application that created it owns its
+lifecycle, as for a `CuratorFramework` bound in the registry. A group factory and a client that Camel created are
+still closed on stop, and created again on the next start.
+
 === camel-milo - each client connection has thread pools of its own
 
 A `milo-client` or `milo-browse` connection now handles the outcome of its write, method call, read and browse

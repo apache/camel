@@ -118,6 +118,8 @@ class ZookeeperGroupSupportLifecycleTest extends CamelTestSupport {
             ZookeeperGroupSupport<CamelNodeState> support = newSupport();
             curator = support.call();
 
+            // reads the private authInfos field of CuratorFrameworkImpl (curator-framework 5.9.x) by reflection: this
+            // fails loudly when a Curator upgrade renames or changes the field
             Field field = curator.getClass().getDeclaredField("authInfos");
             field.setAccessible(true);
             @SuppressWarnings("unchecked")
