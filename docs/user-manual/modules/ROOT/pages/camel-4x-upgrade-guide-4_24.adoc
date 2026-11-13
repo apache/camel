@@ -523,6 +523,31 @@ XML and YAML DSL schemas said `false`. Routes behave as before.
 
 Tools that read the default from the catalog or the schemas now see `true`.
 
+=== camel-core - resolveResource: the name of the resource has no scheme
+
+With `resolveResource=true` on an expression (new in 4.23), a result that starts with `resource:` must now name a
+resource without a scheme, which is loaded from the classpath. A result with a scheme (`resource:file:order.json`,
+`resource:classpath:...`, `resource:http:...`, `resource:ref:...`) or with `..` in the name fails with an
+`IllegalArgumentException` that says to give the name without a scheme. Before, any scheme was loaded, from any
+location.
+
+Drop the scheme: return `resource:order.json` instead of `resource:file:order.json`. The same name works with
+`camel run`, which puts the files given on the command line on the classpath, and after `camel export`, which puts them
+in `src/main/resources`.
+
+[source,yaml]
+----
+- setBody:
+    expression:
+      groovy:
+        expression: "counter == 1 ? 'resource:order.json' : 'resource:order-bad-email.json'"
+        resolveResource: true
+----
+
+Let the route choose the name, such as a fixed folder with a name the route picks, rather than taking it straight from
+the message. The `resource:` prefix on the expression text itself, such as `constant: "resource:file:order.json"`, is
+not affected.
+
 === camel-core - pollEnrich: the body is null after a timeout also for a message that creates its body on demand
 
 When `pollEnrich` (or `poll`) times out and no `aggregationStrategy` is configured, the body is set to `null`, and with

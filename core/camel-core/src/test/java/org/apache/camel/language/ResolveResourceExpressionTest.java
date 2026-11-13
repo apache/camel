@@ -16,30 +16,58 @@
  */
 package org.apache.camel.language;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.language.SimpleExpression;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * CAMEL-24884: with resolveResource=true a result that is a String starting with resource: is loaded and its content is
- * the result; a name without a scheme is a classpath resource. Off by default, the text is the result.
+ * the result. Off by default, the text is the result.
+ * <p/>
+ * CAMEL-25982: the name has no scheme and is loaded from the classpath; a name with a scheme or with .. fails.
  */
 public class ResolveResourceExpressionTest extends ContextTestSupport {
-
-    @Test
-    public void testResultIsLoadedWithAScheme() throws Exception {
-        getMockEndpoint("mock:resolved").expectedBodiesReceived("{\"orderId\": \"ORD-TEMPLATE\", \"status\": \"new\"}");
-        template.sendBodyAndHeader("direct:resolved", "x", "name",
-                "resource:classpath:org/apache/camel/language/resolve/order-template.json");
-        assertMockEndpointsSatisfied();
-    }
 
     @Test
     public void testResultIsLoadedWithoutAScheme() throws Exception {
         getMockEndpoint("mock:resolved").expectedBodiesReceived("{\"orderId\": \"ORD-TEMPLATE\", \"status\": \"new\"}");
         template.sendBodyAndHeader("direct:resolved", "x", "name",
                 "resource:org/apache/camel/language/resolve/order-template.json");
+        assertMockEndpointsSatisfied();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "resource:classpath:org/apache/camel/language/resolve/order-template.json",
+            "resource:file:src/test/resources/org/apache/camel/language/resolve/order-template.json",
+            "resource:http://localhost/order-template.json",
+            "resource:ref:myTemplate",
+            "resource:bean:myBean.template" })
+    public void testResultWithASchemeFails(String name) throws Exception {
+        getMockEndpoint("mock:resolved").expectedMessageCount(0);
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:resolved", "x", "name", name));
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("Give the name without a scheme"), cause.getMessage());
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testResultWithAParentFolderFails() throws Exception {
+        getMockEndpoint("mock:resolved").expectedMessageCount(0);
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:resolved", "x", "name",
+                        "resource:org/apache/camel/language/../language/resolve/order-template.json"));
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("with .. in its name"), cause.getMessage());
         assertMockEndpointsSatisfied();
     }
 

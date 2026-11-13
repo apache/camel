@@ -11860,7 +11860,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -11910,7 +11910,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -11955,7 +11955,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "trim" : {
@@ -12224,7 +12224,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12264,7 +12264,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "trim" : {
@@ -12299,7 +12299,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12344,7 +12344,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12390,7 +12390,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12436,7 +12436,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12476,7 +12476,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12539,7 +12539,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12604,7 +12604,7 @@
           "resolveResource" : {
             "type" : "boolean",
             "title" : "Resolve Resource",
-            "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+            "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
             "default" : false
           },
           "trim" : {
@@ -12648,7 +12648,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12700,7 +12700,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12740,7 +12740,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12780,7 +12780,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12820,7 +12820,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12860,7 +12860,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12912,7 +12912,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -12958,7 +12958,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -13025,7 +13025,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -13087,7 +13087,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "trim" : {
@@ -13147,7 +13147,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
@@ -13232,7 +13232,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultQName" : {
@@ -13314,7 +13314,7 @@
             "resolveResource" : {
               "type" : "boolean",
               "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
+              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:templates/order.json. The name has no scheme and is loaded from the classpath: camel run puts the files given on the command line on the classpath and export puts them in src/main/resources, so the same name works in both. A name with a scheme (file:, http: ...) or with .. fails. Let the route choose the name, such as a fixed folder with a name picked by the route, and do not take it straight from the message. Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
               "default" : false
             },
             "resultType" : {
