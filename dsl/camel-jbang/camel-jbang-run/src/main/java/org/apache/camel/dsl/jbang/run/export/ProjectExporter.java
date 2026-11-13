@@ -184,7 +184,12 @@ public class ProjectExporter {
             printer().printErr("Unknown runtime: " + request.runtime);
             return 1;
         }
-        return exporter.export();
+        try {
+            return exporter.export();
+        } catch (ExportException e) {
+            printer().printErr(e.getMessage());
+            return 1;
+        }
     }
 
     /**

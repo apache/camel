@@ -618,6 +618,8 @@ abstract class Exporter {
         // expression): they stay at the resources root, where the reference resolves, instead of camel-groovy where
         // they would be compiled as scripts and be out of reach of the reference (CAMEL-24853)
         Set<String> resourceReferenced = resourceReferencedFiles(prop.getProperty("camel.main.routesIncludePattern"));
+        // the file of the project that each file of the export is copied to: two files must not end up as one
+        Map<Path, Path> copied = new HashMap<>();
 
         for (String k : SETTINGS_PROP_SOURCE_KEYS) {
             String files;
@@ -704,6 +706,7 @@ abstract class Exporter {
                     }
                     if (!java) {
                         if (kamelet) {
+                            claim(copied, out, source);
                             ExportHelper.safeCopy(source, out, true);
                             if (request.symbolicLink) {
                                 deferredSymlinks.put(out, source);
@@ -715,12 +718,16 @@ abstract class Exporter {
                                     .replace(".jkube.yaml", ".yaml")
                                     .replace(".jkube.yml", ".yml");
                             out = srcCamelResourcesDir.getParent().getParent().resolve("jkube").resolve(name);
+                            claim(copied, out, source);
                             Files.createDirectories(out.getParent());
                             ExportHelper.safeCopy(source, out, true);
                             if (request.symbolicLink) {
                                 deferredSymlinks.put(out, source);
                             }
                         } else {
+                            if (!Files.isDirectory(source)) {
+                                claim(copied, out, source);
+                            }
                             Files.createDirectories(out.getParent());
                             ExportHelper.safeCopy(getClass().getClassLoader(), scheme, source, out, true);
                             if (request.symbolicLink) {
@@ -752,6 +759,7 @@ abstract class Exporter {
                                 }
                             }
                         }
+                        claim(copied, out, source);
                         if (request.javaLiveReload) {
                             ExportHelper.safeCopy(source, out, true);
                             if (request.symbolicLink) {
@@ -813,6 +821,24 @@ abstract class Exporter {
             }
         }
         return false;
+    }
+
+    /**
+     * Claims the file of the project that a file of the export is copied to: two files with the same name in different
+     * directories (x/route.camel.yaml and y/route.camel.yaml) would be the same file of the project, and one of them
+     * would be lost (CAMEL-26912). The same file given twice is copied once.
+     */
+    private void claim(Map<Path, Path> copied, Path out, Path source) {
+        Path from = source.toAbsolutePath().normalize();
+        Path target = out.toAbsolutePath().normalize();
+        Path previous = copied.putIfAbsent(target, from);
+        if (previous != null && !previous.equals(from)) {
+            Path build = buildDir().toAbsolutePath().normalize();
+            Path name = target.startsWith(build) ? build.relativize(target) : target;
+            throw new ExportException(
+                    "Cannot export " + previous + " and " + from + " as both would be "
+                                      + name.toString().replace('\\', '/') + " in the exported project: rename one of them");
+        }
     }
 
     protected void adjustJavaSourceFileLine(String line, OutputStream fos) throws Exception {
