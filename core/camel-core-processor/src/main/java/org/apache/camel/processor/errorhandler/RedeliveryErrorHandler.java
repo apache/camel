@@ -445,6 +445,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     }
 
     /**
+     * Marks the redelivery headers on the message as those of a redelivery that is over: they stay, so the next steps
+     * can see that the message was redelivered, but a later failure does not count on from them. The redelivery task
+     * calls it when a redelivered step succeeded (CAMEL-26734), and a doCatch when it takes over the failure of a route
+     * that the doTry called and whose error handler redelivered it (CAMEL-26857).
+     * <p/>
+     * Internal API, for the processors of Camel.
+     */
+    public static void markRedeliveryOver(Exchange exchange) {
+        Integer counter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+        if (counter != null) {
+            exchange.setProperty(REDELIVERY_OVER, counter);
+        }
+    }
+
+    /**
      * Evaluates a predicate of the error handler (such as handled or continued). A predicate that fails (throws an
      * exception) is regarded as <tt>false</tt>, as the error handler must still handle the exchange (such as the dead
      * letter channel which always handles the exchange). The original caused exception is kept, and the exception from
@@ -1658,7 +1673,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 // and it has not been handled by the error processor
                 if (isDone(exchange)) {
                     if (exchange.getException() == null) {
-                        markRedeliveryOver();
+                        // the redelivered step succeeded, so its redelivery is over (CAMEL-26734)
+                        RedeliveryErrorHandler.markRedeliveryOver(exchange);
                     }
                     AsyncCallback cb = callback;
                     taskFactory.release(this);
@@ -1668,20 +1684,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     reactiveExecutor.schedule(this);
                 }
             });
-        }
-
-        /**
-         * The redelivered step succeeded, so its redelivery is over. The redelivery headers stay, so the next steps can
-         * see that the message was redelivered, but they are marked as over: otherwise a later failure, of another step
-         * of the route or of a route that gets the exchange (or a copy of it, such as over seda) next, would count on
-         * from them (incrementRedeliveryCounter respects a higher header, for a nested error handler that failed) and
-         * get fewer redeliveries, or none (CAMEL-26734).
-         */
-        private void markRedeliveryOver() {
-            Integer counter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-            if (counter != null) {
-                exchange.setProperty(REDELIVERY_OVER, counter);
-            }
         }
 
         protected void prepareExchangeForContinue(Exchange exchange, boolean isDeadLetterChannel) {
