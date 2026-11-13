@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cedar;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -26,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 @UriEndpoint(firstVersion = "4.24.0", scheme = "cedar", title = "Cedar", syntax = "cedar:operation",
-             producerOnly = true, category = { org.apache.camel.Category.SECURITY })
+             producerOnly = true, remote = false, category = { Category.SECURITY })
 public class CedarEndpoint extends DefaultEndpoint {
     @UriPath(description = "Operation to perform. Only authorize is supported.")
     @Metadata(required = true, enums = "authorize")

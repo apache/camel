@@ -16,14 +16,20 @@
  */
 package org.apache.camel.component.cedar;
 
+import java.lang.reflect.Proxy;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.cedarpolicy.AuthorizationEngine;
 import com.cedarpolicy.value.EntityUID;
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +67,7 @@ class CedarConfigurationTest {
             assertThat(expression.evaluate(new DefaultExchange(context), EntityUID.class).getType().toString())
                     .isEqualTo("User");
         }
-        var ids = new java.util.HashSet<>(Set.of("policy0"));
+        var ids = new HashSet<>(Set.of("policy0"));
         var result = new CedarAuthorizationResult(
                 CedarAuthorizationResult.Outcome.ALLOW,
                 CedarAuthorizationResult.Decision.ALLOW, ids, List.of(), "revision");
@@ -94,7 +100,7 @@ class CedarConfigurationTest {
             CedarConfiguration config = new CedarConfiguration();
             config.setPoliciesResource("classpath:policy.cedar");
             config.setSchemaResource("classpath:schema.cedarschema");
-            var constant = org.apache.camel.support.builder.ExpressionBuilder.constantExpression("User::\"alice\"");
+            var constant = ExpressionBuilder.constantExpression("User::\"alice\"");
             config.setPrincipal(constant);
             config.setAction(constant);
             config.setResource(constant);
@@ -102,11 +108,60 @@ class CedarConfigurationTest {
                 throw new UnsatisfiedLinkError("sensitive native error");
             });
             try {
-                assertThatThrownBy(evaluator::start).hasMessageContaining("4.11.0 JNI initialization")
+                assertThatThrownBy(evaluator::start).isInstanceOf(IllegalStateException.class)
+                        .hasMessageContaining("native library initialization failed (java.lang.UnsatisfiedLinkError)")
                         .hasMessageContaining(System.getProperty("os.arch"))
                         .hasMessageContaining("writable executable").hasMessageNotContaining("sensitive").hasNoCause();
             } finally {
                 evaluator.stop();
+            }
+        }
+    }
+
+    @Test
+    void nativeFailureWhileInitializingAnExpressionIsActionable() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            CedarConfiguration config = new CedarConfiguration();
+            config.setPoliciesResource("classpath:policy.cedar");
+            config.setSchemaResource("classpath:schema.cedarschema");
+            var constant = ExpressionBuilder.constantExpression("User::\"alice\"");
+            config.setPrincipal(new ExpressionAdapter() {
+                @Override
+                public void init(CamelContext camelContext) {
+                    // what parsing an entity type name does on a platform without the native library
+                    throw new UnsatisfiedLinkError("sensitive native error");
+                }
+            });
+            config.setAction(constant);
+            config.setResource(constant);
+            // an engine that needs no native library, so only the expression can fail
+            AuthorizationEngine engine = (AuthorizationEngine) Proxy.newProxyInstance(
+                    AuthorizationEngine.class.getClassLoader(), new Class<?>[] { AuthorizationEngine.class },
+                    (proxy, method, args) -> {
+                        throw new UnsupportedOperationException(method.getName());
+                    });
+            var evaluator = new CedarEvaluator(context, config, () -> engine);
+            try {
+                assertThatThrownBy(evaluator::start).isInstanceOf(IllegalStateException.class)
+                        .hasMessageContaining("native library initialization failed (java.lang.UnsatisfiedLinkError)")
+                        .hasMessageContaining(System.getProperty("os.arch")).hasMessageNotContaining("sensitive")
+                        .hasNoCause();
+            } finally {
+                evaluator.stop();
+            }
+
+            // a configuration error of an expression is not a native failure
+            CedarEntityUidExpression ambiguous = new CedarEntityUidExpression();
+            ambiguous.setEntityType("User");
+            ambiguous.setId("alice");
+            ambiguous.setExchangeProperty("identity");
+            config.setPrincipal(ambiguous);
+            var again = new CedarEvaluator(context, config, () -> engine);
+            try {
+                assertThatThrownBy(again::start).isInstanceOf(IllegalArgumentException.class)
+                        .hasMessageContaining("exactly one of id and exchangeProperty");
+            } finally {
+                again.stop();
             }
         }
     }

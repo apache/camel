@@ -78,17 +78,25 @@ preventing the guarded processor from running.
 Its denial message contains the effective outcome, and the result remains available to error handling.
 It sets `Exchange.AUTHENTICATION_FAILURE_POLICY_ID` to `CedarSecurityPolicy` on rejection and clears that header before the next check.
 Result `toString()` omits input and diagnostic contents.
+An evaluation failure of one exchange is logged at `WARN` with the exception class, or with the evaluator's own reason
+when it rejected the input (an expression that did not yield an entity UID, a null or oversized context, invalid provider
+entity data); the SDK's message is never logged.
 Do not use principal/resource values as metric labels or log an entire exchange to diagnose a decision.
 
 == Validated resources and reload
 
 Startup loads bounded resources, parses policy and schema, validates their compatibility, and validates static entities.
-Every authorization enables SDK request validation and validates request entities against the same schema.
+Every authorization enables SDK request validation; the entities a provider adds are validated against the same schema
+for that request, while the static entities were validated when the snapshot was loaded.
 `maxResourceSize` defaults to 1 MiB per resource, explicit context JSON, and provider entity JSON.
 Resources close after loading; a Rust toolchain and a remote authorization service are not required.
 
 An endpoint's `reload()` explicitly loads and validates a complete candidate before publishing it atomically.
 A failed reload throws a sanitized exception and keeps the previous revision active.
+Its message, also logged at `WARN`, names the step (reading, parsing or validating), the option (`policiesResource`,
+`schemaResource` or `entitiesResource`), the exception class and, for a failed policy validation, the policy identifiers
+and error kinds; the SDK message, which can contain policy text or entity attributes, is neither logged nor kept as the
+cause. A failed first start says that no revision is active.
 Concurrent exchanges use a single old or new immutable snapshot, never partially mutated policy/schema/entity collections.
 No SDK `PolicySet` or mutable entity collection is exposed.
 There is no filesystem watcher or per-message resource reload.
@@ -262,6 +270,7 @@ GraalVM native image is not validated or advertised by this component.
 Native extraction needs an appropriate writable, executable location.
 Use a tested glibc JVM image and verify startup in your deployment image; a read-only or `noexec` temporary filesystem
 requires an explicit native-loading configuration following the Cedar Java and JNE documentation.
-Startup errors report the engine version, OS and architecture when JNI initialization fails.
+Startup errors name the exception class, the operating system and the architecture when the native library cannot be
+initialized, and the engine version when the SDK JAR declares one.
 Cedar uses Jackson 2 in its normal packages; it does not use Camel's Jackson 3 serializer.
 The first implementation does not modify the SDK's JVM-global native cache settings.

@@ -34,6 +34,7 @@ import com.cedarpolicy.CedarJson;
 import com.cedarpolicy.model.AuthorizationRequest;
 import com.cedarpolicy.model.EntityValidationRequest;
 import com.cedarpolicy.model.ValidationRequest;
+import com.cedarpolicy.model.ValidationResponse;
 import com.cedarpolicy.model.entity.Entities;
 import com.cedarpolicy.model.entity.Entity;
 import com.cedarpolicy.model.policy.PolicySet;
@@ -46,9 +47,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Owns parsed SDK objects privately. Every evaluation captures exactly one validated snapshot. */
 public final class CedarEvaluator extends ServiceSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CedarEvaluator.class);
     private static final TypeReference<Map<String, Value>> CONTEXT_TYPE = new TypeReference<>() {
     };
     private final CamelContext camelContext;
@@ -58,6 +62,18 @@ public final class CedarEvaluator extends ServiceSupport {
     private volatile Snapshot snapshot;
 
     private record Snapshot(PolicySet policies, Schema schema, Entities entities, String revision) {
+    }
+
+    /**
+     * A failure the evaluator found itself. Its message names the check that failed and never carries input, policy
+     * text or an SDK message, so it can be reported and logged as it is.
+     */
+    private static final class Rejected extends IllegalArgumentException {
+        private static final long serialVersionUID = 1L;
+
+        Rejected(String message) {
+            super(message);
+        }
     }
 
     public CedarEvaluator(CamelContext camelContext, CedarConfiguration configuration) {
@@ -82,29 +98,33 @@ public final class CedarEvaluator extends ServiceSupport {
         if (configuration.getMaxResourceSize() < 1 || configuration.getMaxResourceSize() == Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Cedar maxResourceSize must be between 1 and 2147483646 bytes");
         }
-        configuration.getPrincipal().init(camelContext);
-        configuration.getAction().init(camelContext);
-        configuration.getResource().init(camelContext);
-        if (configuration.getContext() != null) {
-            configuration.getContext().init(camelContext);
-        }
         try {
             engine = engineFactory.get();
         } catch (LinkageError | RuntimeException e) {
-            throw nativeUnavailable();
+            throw nativeUnavailable(e);
         }
         try {
+            // parsing an entity type name loads the native library as well, so the expressions are initialized under
+            // the same guard as the engine; a configuration error of an expression propagates as it is
+            configuration.getPrincipal().init(camelContext);
+            configuration.getAction().init(camelContext);
+            configuration.getResource().init(camelContext);
+            if (configuration.getContext() != null) {
+                configuration.getContext().init(camelContext);
+            }
             reload();
         } catch (LinkageError e) {
-            // Some JNI failures surface on the first validation call, after library construction succeeded.
-            throw nativeUnavailable();
+            // some JNI failures surface on the first native call, after the library construction succeeded
+            throw nativeUnavailable(e);
         }
     }
 
-    private static IllegalStateException nativeUnavailable() {
+    private static IllegalStateException nativeUnavailable(Throwable cause) {
+        String version = BasicAuthorizationEngine.class.getPackage().getImplementationVersion();
         return new IllegalStateException(
-                "Cedar Java 4.11.0 JNI initialization failed on "
-                                         + System.getProperty("os.name") + "/" + System.getProperty("os.arch")
+                "Cedar Java" + (version == null ? "" : " " + version) + " native library initialization failed ("
+                                         + cause.getClass().getName() + ") on " + System.getProperty("os.name") + "/"
+                                         + System.getProperty("os.arch")
                                          + ". Use a packaged JVM platform (tested: Linux amd64 glibc) and a writable executable native extraction location.");
     }
 
@@ -119,17 +139,30 @@ public final class CedarEvaluator extends ServiceSupport {
         if (engine == null) {
             throw new IllegalStateException("Cedar evaluator is not started");
         }
+        String kept = snapshot == null ? "no revision is active" : "the previous revision is retained";
+        String step = "reading";
+        String option = "policiesResource";
         try {
             String policiesText = read(configuration.getPoliciesResource());
+            option = "schemaResource";
             String schemaText = read(configuration.getSchemaResource());
+            option = "entitiesResource";
             String entitiesText
                     = configuration.getEntitiesResource() == null ? "[]" : read(configuration.getEntitiesResource());
+            step = "parsing";
+            option = "schemaResource";
             Schema schema = Schema.parse(Schema.JsonOrCedar.Cedar, schemaText);
+            option = "policiesResource";
             PolicySet policies = PolicySet.parsePolicies(policiesText);
-            if (!engine.validate(new ValidationRequest(schema, policies)).validationPassed()) {
-                throw new IllegalArgumentException("Policy schema validation failed");
+            step = "validating";
+            ValidationResponse validation = engine.validate(new ValidationRequest(schema, policies));
+            if (!validation.validationPassed()) {
+                throw new Rejected(validationFindings(validation));
             }
+            step = "parsing";
+            option = "entitiesResource";
             Entities entities = Entities.parse(entitiesText);
+            step = "validating";
             engine.validateEntities(new EntityValidationRequest(schema, new ArrayList<>(entities.getEntities())));
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             for (String content : List.of(policiesText, schemaText, entitiesText)) {
@@ -140,10 +173,25 @@ public final class CedarEvaluator extends ServiceSupport {
             }
             snapshot = new Snapshot(policies, schema, entities, HexFormat.of().formatHex(digest.digest()));
         } catch (Exception e) {
-            // SDK parse/validation messages may contain policy text or entity attributes. Do not retain them as causes.
-            throw new IllegalArgumentException(
-                    "Cedar resource loading or schema validation failed; previous revision retained");
+            // SDK parse and validation messages may contain policy text or entity attributes, so they are neither
+            // logged nor retained as causes; the step, the option, the exception class and the evaluator's own
+            // findings are what an operator needs
+            String reason = e instanceof Rejected ? e.getMessage() : e.getClass().getName();
+            String message = "Cedar " + step + " of " + option + " failed (" + reason + "); " + kept;
+            LOG.warn(message);
+            throw new IllegalArgumentException(message);
         }
+    }
+
+    /** Policy identifiers and error kinds of a failed schema validation; the SDK messages stay out. */
+    private static String validationFindings(ValidationResponse validation) {
+        List<String> findings = new ArrayList<>();
+        validation.success.ifPresent(success -> success.validationErrors.forEach(
+                error -> findings.add(error.getPolicyId() + ": " + error.getError().code.orElse("validation error"))));
+        validation.errors.ifPresent(errors -> errors.forEach(error -> findings.add(error.code.orElse("validation error"))));
+        return findings.isEmpty()
+                ? "policy validation against the schema failed"
+                : "policy validation against the schema failed: " + String.join(", ", findings);
     }
 
     public String getRevision() {
@@ -153,15 +201,15 @@ public final class CedarEvaluator extends ServiceSupport {
 
     private String read(String uri) throws Exception {
         if (uri == null || uri.isBlank()) {
-            throw new IllegalArgumentException("Required Cedar resource is missing");
+            throw new Rejected("the resource URI is missing");
         }
         if (!uri.startsWith("classpath:") && !uri.startsWith("file:")) {
-            throw new IllegalArgumentException("Cedar resources require classpath: or file: URIs");
+            throw new Rejected("only classpath: and file: URIs are accepted");
         }
         try (InputStream input = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uri)) {
             byte[] bytes = input.readNBytes(configuration.getMaxResourceSize() + 1);
             if (bytes.length > configuration.getMaxResourceSize()) {
-                throw new IllegalArgumentException("Cedar resource too large");
+                throw new Rejected("the resource is larger than maxResourceSize");
             }
             return new String(bytes, StandardCharsets.UTF_8);
         }
@@ -184,11 +232,11 @@ public final class CedarEvaluator extends ServiceSupport {
                 if (configuration.getContext() != null) {
                     Object value = configuration.getContext().evaluate(exchange, Object.class);
                     if (value == null) {
-                        throw new IllegalArgumentException("Null Cedar context");
+                        throw new Rejected("the context expression yielded null");
                     }
                     context = CedarJson.objectMapper().convertValue(value, CONTEXT_TYPE);
                     if (CedarJson.objectMapper().writeValueAsBytes(context).length > configuration.getMaxResourceSize()) {
-                        throw new IllegalArgumentException("Cedar context too large");
+                        throw new Rejected("the context is larger than maxResourceSize");
                     }
                 }
                 Entities entities = entities(current, exchange);
@@ -223,6 +271,11 @@ public final class CedarEvaluator extends ServiceSupport {
                             outcome, decision, success.getReason(), diagnostics, current.revision());
                 }
             } catch (Exception e) {
+                if (e instanceof Rejected) {
+                    LOG.warn("Cedar evaluation rejected its input ({}); the result is an ERROR outcome", e.getMessage());
+                } else {
+                    LOG.warn("Cedar evaluation failed ({}); the result is an ERROR outcome", e.getClass().getName());
+                }
                 result = error(current.revision(), "INPUT_OR_EVALUATION_ERROR");
             }
         }
@@ -231,21 +284,24 @@ public final class CedarEvaluator extends ServiceSupport {
     }
 
     private Entities entities(Snapshot current, Exchange exchange) throws Exception {
-        Set<Entity> entities = new HashSet<>(current.entities().getEntities());
-        if (configuration.getEntityProvider() != null) {
-            String json = configuration.getEntityProvider().entities(exchange);
-            if (json == null || json.getBytes(StandardCharsets.UTF_8).length > configuration.getMaxResourceSize()) {
-                throw new IllegalArgumentException("Invalid provider entity data");
-            }
-            Set<EntityUID> ids = new HashSet<>();
-            entities.forEach(entity -> ids.add(entity.getEUID()));
-            for (Entity entity : Entities.parse(json).getEntities()) {
-                if (!ids.add(entity.getEUID())) {
-                    throw new IllegalArgumentException("Duplicate entity UID");
-                }
-                entities.add(entity);
-            }
+        if (configuration.getEntityProvider() == null) {
+            // the static entities were validated against the schema when the snapshot was loaded
+            return current.entities();
         }
+        Set<Entity> entities = new HashSet<>(current.entities().getEntities());
+        String json = configuration.getEntityProvider().entities(exchange);
+        if (json == null || json.getBytes(StandardCharsets.UTF_8).length > configuration.getMaxResourceSize()) {
+            throw new Rejected("the entity provider returned null or more than maxResourceSize bytes");
+        }
+        Set<EntityUID> ids = new HashSet<>();
+        entities.forEach(entity -> ids.add(entity.getEUID()));
+        for (Entity entity : Entities.parse(json).getEntities()) {
+            if (!ids.add(entity.getEUID())) {
+                throw new Rejected("the entity provider returned an entity UID that is already defined");
+            }
+            entities.add(entity);
+        }
+        // the entities a provider adds are validated against the schema for this request
         Entities requestEntities = new Entities(entities);
         engine.validateEntities(new EntityValidationRequest(current.schema(), new ArrayList<>(entities)));
         return requestEntities;
@@ -257,9 +313,10 @@ public final class CedarEvaluator extends ServiceSupport {
             return uid;
         }
         if (value instanceof String text) {
-            return EntityUID.parse(text).orElseThrow();
+            return EntityUID.parse(text)
+                    .orElseThrow(() -> new Rejected("an entity expression yielded text that is not an entity UID"));
         }
-        throw new IllegalArgumentException("Cedar expression must yield an entity UID");
+        throw new Rejected("an entity expression yielded neither an EntityUID nor a String");
     }
 
     private static CedarAuthorizationResult error(String revision, String code) {
