@@ -282,6 +282,38 @@ class ActionClientTest {
     }
 
     @Test
+    void textThatIsNotJsonIsReadOnceItNoLongerChanges() throws Exception {
+        Files.writeString(CommandLineHelper.getCamelDir().resolve(PID + "-status.json"),
+                "{\"context\":{\"version\":\"4.23.0\"}}");
+        executor.submit(() -> {
+            Path dir = CommandLineHelper.getCamelDir();
+            Path request = await().pollInterval(1, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                    .until(() -> requestFiles(dir, PID), files -> !files.isEmpty()).get(0);
+            String id = request.getFileName().toString().substring((PID + "-action-").length()).replace(".json", "");
+            Files.writeString(dir.resolve(PID + "-output-" + id + ".json"), "Route route1 started");
+            Files.delete(request);
+            return null;
+        });
+
+        JsonObject request = new JsonObject();
+        request.put("action", "route");
+        StopWatch watch = new StopWatch();
+        assertThat(ActionClient.executeText(PID, request, 5000)).isEqualTo("Route route1 started");
+        // an integration of an earlier Camel version writes it in place, and the answer is looked for every 5 millis
+        assertThat(watch.taken()).isGreaterThanOrEqualTo(100);
+    }
+
+    @Test
+    void answerIsLookedForSoonAndThenLessOften() {
+        // the connector looks for the action about every 20 millis
+        assertThat(ActionClient.pollDelay(0)).isEqualTo(5);
+        assertThat(ActionClient.pollDelay(80)).isEqualTo(8);
+        // an action that takes longer, such as a message sent to a slow route, is not looked for 200 times a second
+        assertThat(ActionClient.pollDelay(500)).isEqualTo(50);
+        assertThat(ActionClient.pollDelay(60_000)).isEqualTo(100);
+    }
+
+    @Test
     void errorMessageComesFromTheAnswer() {
         assertThat(ActionClient.result(json("{\"status\":\"error\",\"exception\":{\"message\":\"Forced\"}}")).error())
                 .isEqualTo("Forced");

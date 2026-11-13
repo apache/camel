@@ -48,7 +48,9 @@ public final class ActionClient {
      */
     public static final long DEFAULT_TIMEOUT = 10_000;
 
-    private static final long POLL_INTERVAL = 100;
+    // the connector looks for actions about every 20 millis since Camel 4.24, and every second before
+    private static final long MIN_POLL_INTERVAL = 5;
+    private static final long MAX_POLL_INTERVAL = 100;
     private static final Pattern VERSION = Pattern.compile("^(\\d+)\\.(\\d+)");
 
     /**
@@ -221,14 +223,19 @@ public final class ActionClient {
      */
     public static String executeText(long pid, JsonObject request, long timeout) throws IOException {
         // the answer once it is all there, as an integration of an earlier Camel version writes it in place
-        // (CAMEL-26911): JSON once it parses, other text once it reads the same at two polls
+        // (CAMEL-26911): JSON once it parses, other text once it has not changed for 100 millis
         AtomicReference<String> previous = new AtomicReference<>();
+        StopWatch unchanged = new StopWatch();
         Exchange<String> exchange = exchange(pid, versionOf(pid), request, timeout, true, text -> {
             if (isJson(text)) {
                 return text;
             }
             boolean json = text.stripLeading().startsWith("{") || text.stripLeading().startsWith("[");
-            return !json && text.equals(previous.getAndSet(text)) ? text : null;
+            if (json || !text.equals(previous.getAndSet(text))) {
+                unchanged.restart();
+                return null;
+            }
+            return unchanged.taken() >= MAX_POLL_INTERVAL ? text : null;
         });
         if (exchange.stopped()) {
             throw new StoppedException(pid, request.getString("action"));
@@ -284,7 +291,7 @@ public final class ActionClient {
             StopWatch watch = new StopWatch();
             while (watch.taken() < timeout) {
                 try {
-                    Thread.sleep(Math.min(POLL_INTERVAL, Math.max(1, timeout - watch.taken())));
+                    Thread.sleep(Math.min(pollDelay(watch.taken()), Math.max(1, timeout - watch.taken())));
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
@@ -310,6 +317,16 @@ public final class ActionClient {
             Files.deleteIfExists(actionFile);
             Files.deleteIfExists(outputFile);
         }
+    }
+
+    /**
+     * How long to wait before looking again for an answer that is not there yet: a tenth of the time waited so far, so
+     * an answer is read at most about a tenth later than it is there, from 5 to 100 millis.
+     *
+     * @param waited how long the answer has been waited for, in millis
+     */
+    public static long pollDelay(long waited) {
+        return Math.clamp(waited / 10, MIN_POLL_INTERVAL, MAX_POLL_INTERVAL);
     }
 
     private static <T> T readReply(Path outputFile, Function<String, T> reader) {

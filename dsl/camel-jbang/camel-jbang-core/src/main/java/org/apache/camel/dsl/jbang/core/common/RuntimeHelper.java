@@ -44,7 +44,6 @@ import org.apache.camel.util.json.Jsoner;
 public final class RuntimeHelper {
 
     private static final long ACTION_TIMEOUT_MS = 10_000;
-    private static final long POLL_INTERVAL_MS = 100;
 
     /**
      * Information about a discovered running Camel process.
