@@ -8553,3 +8553,10 @@ A Vert.x that completes after the timeout is closed, rather than being left join
 
 `timeout` must now be a positive number of seconds on that path: `timeout=0` used to mean "do not wait", which left the
 component without a Vert.x, and is rejected with a clear message instead.
+
+=== camel-docling - html_split_page is rejected by docling-serve
+
+`outputFormat=html_split_page` produced an empty body on the docling-serve path: the request asked docling-serve for
+the split pages, whose content it does not return in the response, so every content field of the reply was empty. It
+now fails with an `IllegalArgumentException` that names the reason and the way out, `outputFormat=html` to get the
+HTML of the whole document.
