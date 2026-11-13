@@ -32,12 +32,12 @@ Two designs remove the JVM start:
 A prototype of the daemon answered `version`, `ps`, `get route` and `doc` in 26-37 ms, where a new JVM takes
 0.15-0.28 s. The native front has no prototype, and is estimated at 10-40 ms. This document compares the two. It
 recommends the daemon, opt-in and in stages, once the startup quick wins (CAMEL-26937) and the AOT cache
-(CAMEL-26940) are in, and not the native front: a daemon with a native client is as fast, for a fraction of the build
-and release work.
+(CAMEL-26940) are in, and not the native front: a daemon with a native client is in the same range (21-37 ms measured,
+against 10-40 ms estimated), for a fraction of the build and release work.
 
 The seconds a daemon saves are small next to the turns of the model. The reason to build it is that a command that
-answers at once can be called after every step: an agent that validates after every edit, looks an option up with
-`camel doc` instead of guessing it, and checks `camel status` after every reload makes fewer mistakes. Speed alone
+answers at once can be called after every step. An agent makes fewer mistakes when it validates after every edit, looks
+an option up with `camel doc` instead of guessing it, and checks `camel status` after every reload. Speed alone
 does not make an agent do that, it has to be told (see the motivation), but speed makes it cheap to do. With the Java
 client the daemon answers in 50-65 ms, under the 0.1 s at which a response feels instant, like a native command.
 
@@ -335,10 +335,10 @@ daemon or a native front does not serve too, and the start of the daemon itself.
   compare the pass rate, the calls and the invented options per answer, the compactions and the time of the model.
   The daemon needs a benchmark that drives `camel` through a shell. Make the daemon the default only after a release
   as opt-in, and when that benchmark shows the gain.
-. Do not build the native front. A daemon with a native client is as fast (21-37 ms measured, against 10-40 ms
-  estimated), and the native front costs the most: the base classes of the commands change, GraalVM metadata must
-  follow every command and option, aesh needs a change, and each release needs a binary per platform, all before the
-  first command is faster.
+. Do not build the native front. A daemon with a native client is in the same range (21-37 ms measured, against
+  10-40 ms estimated), and the native front costs the most: the base classes of the commands change, GraalVM metadata
+  must follow every command and option, aesh needs a change, and each release needs a binary per platform, all before
+  the first command is faster.
 
 The seconds alone would not pay for a process in the background. If the loop is at about 3 s after the first step, the
 daemon with the Java client takes about 1 s more off it (estimate: 8 short commands at about 0.1 s each), next to model
