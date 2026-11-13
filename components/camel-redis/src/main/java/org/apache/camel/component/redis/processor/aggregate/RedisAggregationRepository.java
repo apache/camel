@@ -76,10 +76,10 @@ public class RedisAggregationRepository extends ServiceSupport
      * bytes for the same holder when storing and comparing it.
      *
      * <p>
-     * The {@code HSET} into the recovery map is intentionally placed before the {@code HDEL} from the active map.
-     * Redis does not roll back a Lua script on error; a failed {@code HSET} aborts the script before the {@code HDEL}
-     * runs, leaving the exchange in the active map. This ordering ensures that a storage failure never results in
-     * exchange loss.
+     * The {@code HSET} into the recovery map is intentionally placed before the {@code HDEL} from the active map. Redis
+     * does not roll back a Lua script on error; a failed {@code HSET} aborts the script before the {@code HDEL} runs,
+     * leaving the exchange in the active map. This ordering ensures that a storage failure never results in exchange
+     * loss.
      */
 
     private static final String OPTIMISTIC_REMOVE_SCRIPT = """
