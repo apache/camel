@@ -23,12 +23,14 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.impl.parser.CommandLineParser;
 import org.aesh.command.invocation.CommandInvocation;
 import org.aesh.command.option.Option;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.main.download.DownloadException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -123,6 +125,14 @@ class ExitCodeContractTest {
     }
 
     @Test
+    void dependencyThatCannotBeDownloadedIsFailure() {
+        assertThat(run("test-download")).isEqualTo(CliExitCode.FAILURE);
+        // the message of the download failure, without the stack trace
+        assertThat(printer.getStderr()).isEqualTo(
+                "ERROR: Cannot download dependency: com.example:missing:1.0 due to: Could not find artifact");
+    }
+
+    @Test
     void noMatchingIntegrationIsNotFound() {
         assertThat(run("cmd", "memory-leak", "no-such-integration")).isEqualTo(CliExitCode.NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: No running Camel integration matches: no-such-integration");
@@ -200,6 +210,7 @@ class ExitCodeContractTest {
             commandLine.addSubcommand("test-crash", new CommandTree(new CrashCommand(this)));
             commandLine.addSubcommand("test-error", new CommandTree(new ErrorCommand(this)));
             commandLine.addSubcommand("test-missing-file", new CommandTree(new MissingFileCommand(this)));
+            commandLine.addSubcommand("test-download", new CommandTree(new DownloadCommand(this)));
             commandLine.addSubcommand("test-parent", new CommandTree(new ParentCommand(this)));
         }
 
@@ -276,6 +287,21 @@ class ExitCodeContractTest {
         @Override
         public Integer doCall() throws Exception {
             throw new RuntimeException("Cannot load the routes", new NoSuchFileException("routes/missing.yaml"));
+        }
+    }
+
+    @CommandDefinition(name = "test-download", description = "", generateHelp = true, sortOptions = true)
+    static class DownloadCommand extends CamelCommand {
+        DownloadCommand(CamelJBangMain main) {
+            super(main);
+        }
+
+        @Override
+        public Integer doCall() {
+            // as camel run fails to start, when a dependency it needs cannot be downloaded
+            throw new RuntimeCamelException(
+                    new DownloadException(
+                            "Cannot download dependency: com.example:missing:1.0 due to: Could not find artifact"));
         }
     }
 

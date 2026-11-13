@@ -2943,9 +2943,12 @@ or follows, like Enter does.
 * `camel run --background` waits up to 60 seconds for the integration to start (it was 20 seconds), and
   `--background-wait` takes how long, such as `--background-wait=2m` (`true` and `false` still work). An integration
   that is still starting after the wait exits with `124` and is left running; before, the command exited with `0`.
-* The output of an integration in the background goes to `~/.camel/<pid>-run.log`, whose path is printed. The log is
+* The output of an integration in the background goes to `~/.camel/<pid>-run.log`. The log is
   kept while the integration runs (it was removed once the integration had started), and `camel stop` removes it. With
   `--background-wait=false` the output goes to the log as well, instead of a pipe that nobody read.
+* The output only gets the warnings and errors of the logging, and what the integration prints otherwise (such as why
+  it cannot start): all of the logging is in `~/.camel/<pid>.log`, which `camel log` reads. Before, each line was written
+  to both files. The `Log:` line is printed once the integration has started, with the path of `~/.camel/<pid>.log`.
 * An integration that loads no routes exits with `1` and `No routes found in: <files>`, instead of running without
   doing anything, except with `--source-dir`, `--empty` or in dev mode, where files can be added later.
 * `camel run` and `camel dev` with `--max-seconds`, `--max-messages` or `--max-idle-seconds` exit at the limit also in
@@ -8067,6 +8070,25 @@ dead letter channel or a handled `onException`, so that the item is marked consu
 `delay`, or set `backoffIdleThreshold` and `backoffMultiplier`: a poll counts only the items that it marked consumed,
 so a poll whose items all failed is an idle poll, after which a `greedy` consumer does not poll again at once.
 
+=== camel-jbang - runtime catalogs use the selected Camel version
+
+Spring Boot and Quarkus catalogs now report the resolved Camel core version and read EIP/model schemas from that
+version's catalog. Previously, they could combine the selected runtime's component schemas with the running CLI or
+MCP server's newer model schemas. A model absent from the selected catalog now remains absent.
+Runtime dependency coordinates still use the selected Spring Boot or Camel Quarkus version.
+
+A Quarkus BOM must identify both `org.apache.camel:camel-catalog` and
+`org.apache.camel.quarkus:camel-quarkus-catalog`. If either version or the selected catalog cannot be resolved,
+catalog loading fails instead of returning the running server's catalog.
+
+Spring Boot retains its existing fallback: if downloading `org.apache.camel:camel-catalog` for the requested
+version fails, it tries the running CLI's Camel version. The catalog reports the core version actually resolved.
+
+For Spring Boot, `camel export` and `camel run` without an explicit `--camel-version` now use the resolved core
+catalog version for Camel core dependencies in the generated project. For example, `--camel-spring-boot-version=4.8.0`
+uses Camel 4.8.0 instead of the running CLI's version when that catalog is available. Set `--camel-version` explicitly
+to retain a different core dependency version.
+
 === camel-jbang - the Quarkus Platform is looked up only for the Quarkus runtime
 
 With a runtime other than Quarkus, `camel run` and `camel export` no longer look up the Quarkus Platform in the Quarkus
@@ -8120,6 +8142,19 @@ The option metadata in the catalog (component, endpoint and header options, and 
 simple language) no longer has `"deprecationNote": ""`. The key is now present only when there is a note, as was
 already the case for options without `@Metadata`. Tools that read the catalog JSON get no key (null with
 `camel-tooling-model`) instead of an empty string.
+
+=== camel-catalog - no default value for java.lang.Boolean options that declare none
+
+A component or endpoint option of type `java.lang.Boolean` that declares no default value no longer has
+`"defaultValue": false` in the catalog, and the javadoc of its Endpoint DSL and Component DSL methods no longer says
+`Default: false`. The same holds for the `java.lang.Boolean` parameters of the API-based components. Such an option is
+often not `false` when it is not set: another option, a library or the remote service then decides. Routes behave as
+before.
+
+The `closeStreamAfterRead` option of `azure-storage-datalake` now has the default value `true` in the catalog, the value
+it has when it is not set.
+
+Tools that read the default value from the catalog get none for these options (null with `camel-tooling-model`).
 
 === camel-langchain4j-embeddings - the producer uses the EmbeddingRequest API of LangChain4j
 
@@ -8592,6 +8627,16 @@ Before, with `cacheScript=true` it could replace the cached script of the endpoi
 ran it too. The header is now removed after use, so a later language endpoint in the route runs its own script instead
 of the header's. Set the header again before each language endpoint that should use it.
 
+=== camel-jbang - camel infra run artemis maps MQTT and AMQP only on request
+
+`camel infra run artemis` maps the core acceptor (61616) and the web console (8161) on the host, and no longer the
+MQTT (1883) and AMQP (5672) ports, which are the ports of mosquitto and RabbitMQ: Artemis failed to start next to
+`camel infra run mosquitto`. Map them with `--property artemis.ports=mqtt,amqp` (or `all`).
+The `withFixedPort()` container of `camel-test-infra-artemis` maps the same ports, and reads the same property.
+
+A service that does not start because a port it maps on the host is taken now fails with one line that names the port,
+and the infra service that has it, instead of the stack trace of the container runtime.
+
 === camel-vertx - the component fails to start when the clustered Vert.x is not created
 
 When the component builds its own clustered Vert.x (the component `host` or `port` option is set and no `vertxOptions` is
@@ -8605,6 +8650,17 @@ A Vert.x that completes after the timeout is closed, rather than being left join
 
 `timeout` must now be a positive number of seconds on that path: `timeout=0` used to mean "do not wait", which left the
 component without a Vert.x, and is rejected with a clear message instead.
+
+=== camel-jbang - camel run stops when a dependency it was given cannot be downloaded
+
+`camel run` now stops with exit code 1 when a dependency given with `--dep`, `camel.jbang.dependencies`, a `//DEPS`
+line or the dependencies of a Kamelet cannot be downloaded, and prints why on one line, such as
+`ERROR: Cannot download dependency: com.acme:foo:1.0 due to: ... Could not find artifact com.acme:foo:jar:1.0 in central (...)`.
+Before, it logged the error with the stack trace, started the routes without the dependency, and exited with 0.
+In dev mode (`--dev`), a reload with a `//DEPS` line that cannot be downloaded fails, and the routes keep running as
+they were. Other commands of the Camel CLI that fail to download a dependency also exit with 1 and print one line,
+instead of exiting with 70 and printing the stack trace (use `--verbose` for the stack trace). `camel export` still
+writes the dependency to the exported project.
 
 === camel-docling - html_split_page is rejected by docling-serve
 

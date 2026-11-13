@@ -51,7 +51,10 @@ import org.slf4j.LoggerFactory;
  * The snapshots are written every second (every 100 millis in debug mode), and the action files are looked for about
  * every 20 millis in between, on the same thread, so an action does not wait up to a second for its answer. In between,
  * the directory is only listed when its modification time has changed, which it does when a file is added to it, as
- * listing it costs far more than looking at that time. With every snapshot it is listed anyway.
+ * listing it costs far more than looking at that time. With every snapshot it is listed anyway. The status is also
+ * written as soon as Camel changes phase, such as when it has started, and after actions are answered (at most every
+ * 200 millis), so a <tt>camel run --background</tt> is told that Camel has started without waiting for the next status,
+ * and a <tt>camel get</tt> right after a <tt>camel cmd</tt> shows what the action did.
  * <p/>
  * An action with a request id (<tt>{pid}-action-{requestId}.json</tt>) always gets a reply in
  * <tt>{pid}-output-{requestId}.json</tt>: <tt>{"status":"failed","error":"..."}</tt> when it is unknown, throws or
@@ -79,6 +82,10 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private final Map<File, PendingAction> pending = new HashMap<>();
     // the modification time of the directory when it was last listed, or 0 to list it at the next poll
     private long listed;
+    // the phase of Camel when the status was last written, when it was written, and whether an action was answered since
+    private int statusPhase = -1;
+    private long statusWritten;
+    private boolean answered;
 
     // an action file this young that cannot be read may still be written: the Camel CLI before 4.24 writes it in place
     private static final long UNREADABLE_GRACE_MS = 2000;
@@ -89,6 +96,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     // a file added within the same tick of the clock of the file system as the change before it leaves the
     // modification time of the directory as it was; a tick is at most about 16 millis (Windows)
     private static final long CLOCK_TICK_MS = 20;
+    // how often at most the status is written for the actions answered between two snapshots, as collecting it costs
+    private static final long ANSWERED_STATUS_MS = 200;
 
     private record PendingAction(File output, boolean replyAlways, CompletableFuture<CliActionOutcome> outcome) {
     }
@@ -209,10 +218,16 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
 
     /**
      * Looks for actions between two snapshots, so an action is answered in about 20 millis instead of up to a second.
+     * Writes the status when Camel has changed phase since it was last written, and when an action was answered (at
+     * most every 200 millis).
      */
     protected void actionPollTask() {
         if (polling()) {
             actionTask(false);
+            if (statusPhase != camelContext.getCamelContextExtension().getStatusPhase()
+                    || (answered && TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - statusWritten) >= ANSWERED_STATUS_MS)) {
+                statusTask();
+            }
         }
     }
 
@@ -343,6 +358,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             LOG.warn("Error writing action result: {} due to: {}", request, e.getMessage(), e);
         } finally {
             FileUtil.deleteFile(request);
+            // the status shows what the action did
+            answered = true;
         }
     }
 
@@ -410,6 +427,9 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     }
 
     protected void statusTask() {
+        statusPhase = camelContext.getCamelContextExtension().getStatusPhase();
+        statusWritten = System.nanoTime();
+        answered = false;
         try {
             // even during termination then collect status as we want to see status changes during stopping
             JsonObject root = snapshots.status();

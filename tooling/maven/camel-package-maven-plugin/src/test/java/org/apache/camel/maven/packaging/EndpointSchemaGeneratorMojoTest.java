@@ -17,8 +17,12 @@
 package org.apache.camel.maven.packaging;
 
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.camel.maven.packaging.endpoint.SomeApiWithBooleanOptions;
+import org.apache.camel.maven.packaging.endpoint.SomeComponentWithBooleanOptions;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpoint;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointExtendingBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstants;
@@ -28,6 +32,7 @@ import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingInterfaceConst
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBodyTypes;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBooleanOptions;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithEnumStyleBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithFilter;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderClassHierarchy;
@@ -37,9 +42,12 @@ import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithoutHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeExtendingEndpoint;
 import org.apache.camel.maven.packaging.endpoint.SomeInternalRemoteEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
@@ -300,6 +308,47 @@ class EndpointSchemaGeneratorMojoTest {
         MojoExecutionException e = assertThrows(MojoExecutionException.class, () -> mojo.addBodyTypes(model, clazz));
         assertTrue(e.getMessage().startsWith(clazz.getName() + ": the @BodyTypes "), e.getMessage());
         assertTrue(model.getBodyTypes().isEmpty());
+    }
+
+    @Test
+    void testBooleanEndpointOptionWithoutDefaultValueHasNone() {
+        // CAMEL-26894: a java.lang.Boolean option that is not set is not false, so it has no default value unless it
+        // declares one, while a boolean option keeps false
+        mojo.findClassProperties(model, SomeEndpointWithBooleanOptions.class, Set.of(), "", null, null, false);
+        List<ComponentModel.EndpointOptionModel> options = model.getEndpointOptions();
+        assertFalse(optionJson(options, "wrapperPath").containsKey("defaultValue"));
+        assertFalse(optionJson(options, "wrapperWithoutDefault").containsKey("defaultValue"));
+        assertEquals(Boolean.FALSE, optionJson(options, "wrapperFalse").get("defaultValue"));
+        assertEquals(Boolean.TRUE, optionJson(options, "wrapperTrue").get("defaultValue"));
+        assertEquals(Boolean.TRUE, optionJson(options, "wrapperMetadataTrue").get("defaultValue"));
+        assertEquals(Boolean.FALSE, optionJson(options, "primitiveWithoutDefault").get("defaultValue"));
+    }
+
+    @Test
+    void testBooleanComponentOptionWithoutDefaultValueHasNone() {
+        // CAMEL-26894: the same for component options, which the generator reads from the setters
+        mojo.findComponentClassProperties(model, SomeComponentWithBooleanOptions.class, "", null, null);
+        List<ComponentModel.ComponentOptionModel> options = model.getComponentOptions();
+        assertFalse(optionJson(options, "wrapperWithoutDefault").containsKey("defaultValue"));
+        assertEquals(Boolean.TRUE, optionJson(options, "wrapperTrue").get("defaultValue"));
+        assertEquals(Boolean.FALSE, optionJson(options, "primitiveWithoutDefault").get("defaultValue"));
+    }
+
+    @Test
+    void testBooleanApiParameterWithoutDefaultValueHasNone() {
+        // CAMEL-26894: the same for the parameters of an API component, which cannot declare a default value
+        model.setApi(true);
+        mojo.findClassProperties(model, SomeApiWithBooleanOptions.class, Set.of(), "", null, null, false);
+        List<ComponentModel.ApiOptionModel> parameters = model.getApiOptions().stream()
+                .filter(api -> "test".equals(api.getName())).findFirst().orElseThrow()
+                .getMethods().stream().filter(method -> "m".equals(method.getName())).findFirst().orElseThrow()
+                .getOptions();
+        assertFalse(optionJson(parameters, "wrapperParameter").containsKey("defaultValue"));
+        assertEquals(Boolean.FALSE, optionJson(parameters, "primitiveParameter").get("defaultValue"));
+    }
+
+    private static JsonObject optionJson(Collection<? extends BaseOptionModel> options, String name) {
+        return JsonMapper.asJsonObject(options.stream().filter(o -> name.equals(o.getName())).findFirst().orElseThrow());
     }
 
     private void addEndpointOptions(String... names) {

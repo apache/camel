@@ -122,14 +122,12 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Set this parameter to true to return only scorecards that are
          * favorites of the querying user.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param favorites the value to set
@@ -254,14 +252,12 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Set this parameter to true to return only scorecards for key
          * indicators.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param key the value to set
@@ -488,14 +484,12 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Set this parameter to true to return only scorecards that have a
          * target.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param target the value to set
@@ -506,13 +500,11 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Gets only those categories whose parent is a catalog.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param topLevelOnly the value to set

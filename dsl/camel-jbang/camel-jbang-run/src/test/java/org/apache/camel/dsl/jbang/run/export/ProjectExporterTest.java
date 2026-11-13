@@ -16,19 +16,24 @@
  */
 package org.apache.camel.dsl.jbang.run.export;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
@@ -37,12 +42,15 @@ import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.dsl.jbang.run.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.XmlHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junitpioneer.jupiter.SetSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -108,6 +116,80 @@ class ProjectExporterTest {
         assertThat(exportDir.resolve("src/main/resources/camel/hello.camel.yaml")).hasSameTextualContentAs(route);
         // the run settings and the project are built in the work directory of the request
         assertThat(request.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE)).exists();
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "4.10.0")
+    void springBootExportUsesResolvedCoreVersionUnlessExplicit(String camelVersion) throws Exception {
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(writeRoute("hello"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.camelSpringBootVersion = "4.8.0";
+        request.camelVersion = camelVersion;
+        DependencyResolver withCoreDependency = r -> {
+            resolver.resolve(r);
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.writeString(settings, Files.readString(settings) + "dependency=camel:util\n");
+            return 0;
+        };
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(withCoreDependency))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        var factory = XmlHelper.createDocumentBuilderFactory();
+        factory.setNamespaceAware(false);
+        var pom = factory.newDocumentBuilder().parse(exportDir.resolve("pom.xml").toFile());
+        var xpath = XPathFactory.newInstance().newXPath();
+        assertThat(xpath.evaluate("/project/dependencies/dependency[artifactId='camel-util']/version", pom))
+                .isEqualTo(camelVersion == null ? "4.8.0" : camelVersion);
+        assertThat(xpath.evaluate(
+                "/project/dependencyManagement/dependencies/dependency[artifactId='camel-spring-boot-bom']/version", pom))
+                .isEqualTo("4.8.0");
+    }
+
+    @Test
+    void keepsTheEscapesAndTheEncodingOfTheApplicationProperties() throws Exception {
+        Path route = writeRoute("shop");
+        // as an editor saves it, in UTF-8
+        String source = """
+                path=C:\\\\temp\\\\new
+                regex=^\\\\d+$
+                my.key\\ with\\ space=1
+                greeting=Hej æøå
+                euro=5 \\u20ac
+                """;
+        Files.writeString(dir.resolve("application.properties"), source, StandardCharsets.UTF_8);
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.baseDir = dir;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+        assertThat(exit).as(printer.getOutput()).isZero();
+
+        // the exported project reads the same properties as camel run reads from the application.properties
+        Path exported = exportDir.resolve("src/main/resources/application.properties");
+        Properties expected = load(dir.resolve("application.properties"));
+        Properties actual = load(exported);
+        assertThat(expected.getProperty("path")).isEqualTo("C:\\temp\\new");
+        for (String key : List.of("path", "regex", "my.key with space", "greeting", "euro")) {
+            assertThat(actual.getProperty(key)).as(key).isEqualTo(expected.getProperty(key));
+        }
+        // and the UTF-8 text is written as it was, for a runtime that reads it in UTF-8 (Quarkus)
+        assertThat(Files.readAllLines(exported, StandardCharsets.UTF_8)).contains("greeting=Hej æøå");
+    }
+
+    private static Properties load(Path file) throws Exception {
+        Properties answer = new Properties();
+        try (InputStream is = Files.newInputStream(file)) {
+            answer.load(is);
+        }
+        return answer;
     }
 
     @Test
@@ -311,6 +393,55 @@ class ProjectExporterTest {
     }
 
     @Test
+    void failsForTwoFilesWithTheSameNameInDifferentDirectories() throws Exception {
+        Path x = writeRoute(Files.createDirectories(dir.resolve("x")), "route", "x");
+        Path y = writeRoute(Files.createDirectories(dir.resolve("y")), "route", "y");
+        Path exportDir = dir.resolve("export");
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(routes(x, y)))
+                .export(request(x, exportDir));
+
+        // one of the routes would be lost
+        assertThat(exit).isEqualTo(1);
+        assertThat(printer.getOutput()).contains(x.toString(), y.toString(),
+                "src/main/resources/camel/route.camel.yaml", "rename one of them");
+        assertThat(exportDir.resolve("pom.xml")).doesNotExist();
+    }
+
+    @Test
+    void copiesTheSameFileGivenTwiceOnce() throws Exception {
+        Path x = writeRoute(Files.createDirectories(dir.resolve("x")), "route", "x");
+        Path exportDir = dir.resolve("export");
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(routes(x, dir.resolve("x/../x/route.camel.yaml"))))
+                .export(request(x, exportDir));
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        assertThat(exportDir.resolve("src/main/resources/camel/route.camel.yaml")).hasSameTextualContentAs(x);
+    }
+
+    /**
+     * A resolver whose run loads the given route files.
+     */
+    private static DependencyResolver routes(Path... files) {
+        return r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            String pattern = Stream.of(files).map(f -> "file:" + f).collect(Collectors.joining(","));
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=%s
+                    dependency=camel:timer
+                    dependency=camel:log
+                    """.formatted(pattern));
+            return 0;
+        };
+    }
+
+    @Test
     void requiresRuntime() throws Exception {
         ExportRequest request = new ExportRequest();
         request.files.add(dir.resolve("missing.camel.yaml").toString());
@@ -403,13 +534,17 @@ class ProjectExporterTest {
     }
 
     private Path writeRoute(String name) throws Exception {
-        Path route = dir.resolve(name + ".camel.yaml");
+        return writeRoute(dir, name, name);
+    }
+
+    private static Path writeRoute(Path directory, String name, String timer) throws Exception {
+        Path route = directory.resolve(name + ".camel.yaml");
         Files.writeString(route, """
                 - from:
                     uri: timer:%s
                     steps:
                       - to: log:%s
-                """.formatted(name, name));
+                """.formatted(timer, timer));
         return route;
     }
 
