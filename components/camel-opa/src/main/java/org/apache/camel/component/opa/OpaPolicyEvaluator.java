@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.opa;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -25,7 +27,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -42,6 +48,9 @@ public abstract class OpaPolicyEvaluator {
     private static final Logger LOG = LoggerFactory.getLogger(OpaPolicyEvaluator.class);
 
     private static final String ALL_NAMES = "*";
+    private static final ObjectMapper INPUT_MAPPER = new ObjectMapper();
+    private static final TypeReference<Map<String, Object>> INPUT_TYPE = new TypeReference<>() {
+    };
 
     /**
      * Headers that carry a caller credential verbatim. They are withheld when {@code includeHeaders} is the wildcard,
@@ -56,10 +65,16 @@ public abstract class OpaPolicyEvaluator {
     private final Set<String> includedProperties;
     private final boolean includeBody;
     private final boolean failOpen;
+    private final Expression inputExpression;
     private final AtomicBoolean unreadableVerdictWarned = new AtomicBoolean();
 
     protected OpaPolicyEvaluator(String policyPath, String allowKey, String includeHeaders,
                                  String includeProperties, boolean includeBody, boolean failOpen) {
+        this(policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen, null);
+    }
+
+    protected OpaPolicyEvaluator(String policyPath, String allowKey, String includeHeaders,
+                                 String includeProperties, boolean includeBody, boolean failOpen, Expression inputExpression) {
         this.policyPath = ObjectHelper.notNull(policyPath, "policyPath");
         this.allowKey = ObjectHelper.isNotEmpty(allowKey) ? allowKey : "allow";
         // headers default to all of them, exchange properties to none: properties are mostly used to carry
@@ -68,6 +83,7 @@ public abstract class OpaPolicyEvaluator {
         this.includedProperties = parseNameFilter(includeProperties, false);
         this.includeBody = includeBody;
         this.failOpen = failOpen;
+        this.inputExpression = inputExpression;
     }
 
     /**
@@ -83,9 +99,16 @@ public abstract class OpaPolicyEvaluator {
         // what this component decided. Overwriting at the end is not enough: the paths that throw never get there,
         // and a route that handles the exception would resume routing with the sender's own verdict still on it
         clearDecisionHeaders(exchange);
+        Map<String, Object> input;
+        try {
+            input = buildInput(exchange);
+        } catch (Exception e) {
+            restoreInterruptIfWrapped(e);
+            throw new OpaPolicyEvaluationException("Failed to build input for policy " + policyPath, exchange, e);
+        }
         Object decision;
         try {
-            decision = evaluateDecision(buildInput(exchange));
+            decision = evaluateDecision(input);
         } catch (InterruptedException e) {
             // not a policy failure but a shutdown, so failOpen must not turn it into an allow: nothing decided
             // that this exchange was permitted. Restore the flag the interruptible wait cleared, then fail closed.
@@ -198,8 +221,13 @@ public abstract class OpaPolicyEvaluator {
             return verdicts;
         }
         Map<String, Map<String, Object>> inputs = new LinkedHashMap<>();
-        for (int i = 0; i < elements.size(); i++) {
-            inputs.put(Integer.toString(i), buildInput(exchange, elements.get(i), true));
+        try {
+            for (int i = 0; i < elements.size(); i++) {
+                inputs.put(Integer.toString(i), buildInput(exchange, elements.get(i), true));
+            }
+        } catch (Exception e) {
+            restoreInterruptIfWrapped(e);
+            throw new OpaPolicyEvaluationException("Failed to build batch input for policy " + policyPath, exchange, e);
         }
 
         List<OpaBatchOutcome> outcomes = new ArrayList<>(elements.size());
@@ -300,6 +328,9 @@ public abstract class OpaPolicyEvaluator {
      * Builds the {@code input} document handed to OPA.
      */
     protected Map<String, Object> buildInput(Exchange exchange) {
+        if (inputExpression != null) {
+            return mappedInput(exchange);
+        }
         return buildInput(exchange, exchange.getMessage().getBody(), includeBody);
     }
 
@@ -308,6 +339,12 @@ public abstract class OpaPolicyEvaluator {
      * the element as the body so every element is authorized against the same shared headers and properties.
      */
     protected Map<String, Object> buildInput(Exchange exchange, Object body, boolean withBody) {
+        if (inputExpression != null) {
+            Exchange element = exchange.copy();
+            element.getIn().setBody(body);
+            element.getMessage().setBody(body);
+            return mappedInput(element);
+        }
         Map<String, Object> input = new LinkedHashMap<>();
         Map<String, Object> headers = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
@@ -348,6 +385,19 @@ public abstract class OpaPolicyEvaluator {
             input.put("routeId", exchange.getFromRouteId());
         }
         return input;
+    }
+
+    private Map<String, Object> mappedInput(Exchange exchange) {
+        Object value = inputExpression.evaluate(exchange, Object.class);
+        if (value == null || value instanceof InputStream || value instanceof Reader) {
+            throw new IllegalArgumentException("inputExpression must produce a JSON object, not a null or streaming value");
+        }
+        JsonNode node = INPUT_MAPPER.valueToTree(value);
+        if (!node.isObject()) {
+            throw new IllegalArgumentException(
+                    "inputExpression must produce a JSON object, but was " + value.getClass().getName());
+        }
+        return INPUT_MAPPER.convertValue(node, INPUT_TYPE);
     }
 
     /**

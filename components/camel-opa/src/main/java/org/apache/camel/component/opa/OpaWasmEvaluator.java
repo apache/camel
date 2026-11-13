@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.styra.opa.wasm.OpaPolicy;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -51,7 +52,14 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
     public OpaWasmEvaluator(byte[] wasm, String data, String entrypoint, int poolSize, long borrowTimeout,
                             String policyPath, String allowKey, String includeHeaders, String includeProperties,
                             boolean includeBody, boolean failOpen) {
-        super(policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
+        this(wasm, data, entrypoint, poolSize, borrowTimeout, policyPath, allowKey, includeHeaders, includeProperties,
+             includeBody, failOpen, null);
+    }
+
+    public OpaWasmEvaluator(byte[] wasm, String data, String entrypoint, int poolSize, long borrowTimeout,
+                            String policyPath, String allowKey, String includeHeaders, String includeProperties,
+                            boolean includeBody, boolean failOpen, Expression inputExpression) {
+        super(policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen, inputExpression);
         this.entrypoint = entrypoint;
         this.data = data;
         // OpaPolicy carries mutable input/data and is not thread-safe, while a Camel producer is invoked
@@ -105,6 +113,15 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
             String policyPath, String allowKey, String includeHeaders, String includeProperties, boolean includeBody,
             boolean failOpen)
             throws Exception {
+        return create(camelContext, policyBundle, entrypoint, poolSize, borrowTimeout, policyPath, allowKey,
+                includeHeaders, includeProperties, includeBody, failOpen, null);
+    }
+
+    public static OpaWasmEvaluator create(
+            CamelContext camelContext, String policyBundle, String entrypoint, int poolSize, long borrowTimeout,
+            String policyPath, String allowKey, String includeHeaders, String includeProperties, boolean includeBody,
+            boolean failOpen, Expression inputExpression)
+            throws Exception {
         if (ObjectHelper.isEmpty(policyBundle)) {
             throw new IllegalArgumentException(
                     "policyBundle is required when evaluationMode=wasm; build one with"
@@ -119,7 +136,7 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
         Bundle bundle = loadPolicy(camelContext, policyBundle);
         return new OpaWasmEvaluator(
                 bundle.wasm(), bundle.data(), resolvedEntrypoint, poolSize, borrowTimeout, policyPath, allowKey,
-                includeHeaders, includeProperties, includeBody, failOpen);
+                includeHeaders, includeProperties, includeBody, failOpen, inputExpression);
     }
 
     /**

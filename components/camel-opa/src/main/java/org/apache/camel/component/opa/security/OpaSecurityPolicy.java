@@ -23,6 +23,7 @@ import javax.net.ssl.SSLContext;
 
 import com.styra.opa.OPAClient;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -94,6 +95,11 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     @Metadata(defaultValue = "false",
               description = "Whether to send the message body to OPA as part of the input document.")
     private boolean includeBody;
+    @Metadata(label = "advanced",
+              description = "An expression producing the complete policy input as a Map, object JSON node or POJO."
+                            + " Replaces the default input envelope and its includeHeaders, includeProperties and"
+                            + " includeBody options. Null, scalar and streaming results fail closed.")
+    private Expression inputExpression;
     @Metadata(label = "security", security = "secret",
               description = "Bearer token sent to the OPA server in the Authorization header, for an OPA instance that"
                             + " has its API authentication enabled. Not used in wasm mode.")
@@ -199,11 +205,14 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      * engine runs.
      */
     private OpaPolicyEvaluator buildEvaluator(CamelContext camelContext) {
+        if (inputExpression != null) {
+            inputExpression.init(camelContext);
+        }
         if (WASM_MODE.equalsIgnoreCase(evaluationMode)) {
             warnIgnoredServerOptions();
             try {
                 return OpaWasmEvaluator.create(camelContext, policyBundle, entrypoint, poolSize, borrowTimeout,
-                        policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
+                        policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen, inputExpression);
             } catch (RuntimeException e) {
                 // the validation messages (policyBundle, poolSize) already read correctly; do not bury them
                 throw e;
@@ -224,7 +233,8 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
             ownsClient = true;
         }
         return new OpaRestEvaluator(
-                opaClient, transport, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
+                opaClient, transport, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen,
+                inputExpression);
     }
 
     /**
@@ -309,6 +319,18 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
 
     OpaPolicyEvaluator getEvaluator() {
         return evaluator;
+    }
+
+    public Expression getInputExpression() {
+        return inputExpression;
+    }
+
+    /**
+     * An expression producing the complete input as a Map, object JSON node or JSON-convertible POJO. Replaces the
+     * default envelope and its inclusion options. Null, scalar and streaming results fail closed.
+     */
+    public void setInputExpression(Expression inputExpression) {
+        this.inputExpression = inputExpression;
     }
 
     public String getServerUrl() {
