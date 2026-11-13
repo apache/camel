@@ -45,7 +45,7 @@ clients use to read the resource. The uri must be unique within the CamelContext
 `uriTemplate` instead of `resourceUri`; the two options are mutually exclusive.
 
 A `uriTemplate` follows RFC 6570 level 1: each variable must occupy an entire path segment, for example
-`crm://customers/{id}`. Variables do not match across `/` separators. A concrete variable must use
+`crm://customers/\{id\}`. Variables do not match across `/` separators. A concrete variable must use
 RFC 3986 `pchar` characters (including well-formed percent-encoded octets); raw query/fragment
 characters, controls, malformed percent escapes, and `.` or `..` dot segments do not match.
 Fixed resources take precedence over a matching template when the same concrete URI is read.
@@ -124,7 +124,7 @@ YAML::
 === Templated resource
 
 Use `uriTemplate` when one route serves a family of client-addressable resources. The example below exposes
-`crm://customers/{id}` and makes the concrete URI and captured variable available to the route:
+`crm://customers/\{id\}` and makes the concrete URI and captured variable available to the route:
 
 [source,java]
 ----

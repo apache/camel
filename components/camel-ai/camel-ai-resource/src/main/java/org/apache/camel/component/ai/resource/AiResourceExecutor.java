@@ -57,14 +57,14 @@ public final class AiResourceExecutor {
         DefaultConsumer consumer = spec.getConsumer();
         if (consumer == null) {
             IllegalStateException cause = new IllegalStateException(
-                    String.format("No consumer available for resource '%s'", spec.getUri()));
+                    String.format("No consumer available for resource '%s'", resourceName));
             return new AiResourceResult.ExecutionError(cause.getMessage(), cause);
         }
 
         Processor routeProcessor = consumer.getProcessor();
         if (routeProcessor == null) {
             IllegalStateException cause = new IllegalStateException(
-                    String.format("No route processor available for resource '%s'", spec.getUri()));
+                    String.format("No route processor available for resource '%s'", resourceName));
             return new AiResourceResult.ExecutionError(cause.getMessage(), cause);
         }
 
@@ -77,14 +77,14 @@ public final class AiResourceExecutor {
                 Exception routeError = exchange.getException();
                 LOG.error("Error reading resource '{}': {}", resourceName, routeError.getMessage(), routeError);
                 return new AiResourceResult.ExecutionError(
-                        String.format("Error reading resource '%s': %s", spec.getUri(), routeError.getMessage()), routeError);
+                        String.format("Error reading resource '%s': %s", resourceName, routeError.getMessage()), routeError);
             }
 
             return convertBody(spec, exchange);
         } catch (Exception e) {
             LOG.error("Error reading resource '{}': {}", resourceName, e.getMessage(), e);
             return new AiResourceResult.ExecutionError(
-                    String.format("Error reading resource '%s': %s", spec.getUri(), e.getMessage()), e);
+                    String.format("Error reading resource '%s': %s", resourceName, e.getMessage()), e);
         }
     }
 
@@ -92,7 +92,7 @@ public final class AiResourceExecutor {
         String resourceName = spec.getName();
         if (exchange.getMessage().getBody() == null) {
             IllegalStateException cause = new IllegalStateException(
-                    String.format("Resource '%s' produced no content", spec.getUri()));
+                    String.format("Resource '%s' produced no content", resourceName));
             return new AiResourceResult.ExecutionError(cause.getMessage(), cause);
         }
 
@@ -125,10 +125,11 @@ public final class AiResourceExecutor {
 
     private static AiResourceResult conversionError(
             AiResourceSpec spec, String targetType, TypeConversionException conversionFailure) {
+        String resourceName = spec.getName();
         IllegalStateException cause = new IllegalStateException(
                 String.format("Resource '%s' produced a body that cannot be converted to %s "
                               + "(declared mimeType is %s)",
-                        spec.getUri(), targetType, spec.getMimeType()),
+                        resourceName, targetType, spec.getMimeType()),
                 conversionFailure);
         return new AiResourceResult.ExecutionError(cause.getMessage(), cause);
     }
