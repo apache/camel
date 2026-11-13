@@ -174,8 +174,9 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
+         * Milliseconds before the consumer continues polling after an error has
+         * occurred, or after a transacted consumer rolled back the transaction
+         * of a failed exchange (the message is then on the queue again).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -190,8 +191,9 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
+         * Milliseconds before the consumer continues polling after an error has
+         * occurred, or after a transacted consumer rolled back the transaction
+         * of a failed exchange (the message is then on the queue again).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -595,8 +597,9 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
+         * Milliseconds before the consumer continues polling after an error has
+         * occurred, or after a transacted consumer rolled back the transaction
+         * of a failed exchange (the message is then on the queue again).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -611,8 +614,9 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
+         * Milliseconds before the consumer continues polling after an error has
+         * occurred, or after a transacted consumer rolled back the transaction
+         * of a failed exchange (the message is then on the queue again).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -945,8 +949,9 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
+         * Milliseconds before the consumer continues polling after an error has
+         * occurred, or after a transacted consumer rolled back the transaction
+         * of a failed exchange (the message is then on the queue again).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -961,8 +966,9 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
+         * Milliseconds before the consumer continues polling after an error has
+         * occurred, or after a transacted consumer rolled back the transaction
+         * of a failed exchange (the message is then on the queue again).
          * 
          * The option will be converted to a <code>int</code> type.
          * 

@@ -46,9 +46,9 @@ import org.apache.pulsar.client.api.PulsarClient;
                                                  + " convert or unmarshal it"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "What converts to a byte array: text, bytes, a stream or a file, sent as the"
-                                                + " payload. Any other body is sent with Java serialization, a Map, a List, a"
-                                                + " number and no body too, and an object that is not Serializable fails:"
-                                                + " marshal it first"),
+                                                + " payload. Any other body, such as a Map, a List, a number or a POJO, fails,"
+                                                + " and so does no body: marshal it first",
+                                  dependsOn = "allowJavaSerializedObject"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    description = "Unchanged, also when the exchange expects a reply, with the id of the"
                                                  + " published message in a header"))
