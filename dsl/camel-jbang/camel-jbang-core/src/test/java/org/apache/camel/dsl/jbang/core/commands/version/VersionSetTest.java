@@ -123,4 +123,22 @@ class VersionSetTest extends BaseConfigTestSupport {
         CommandLineHelper.loadProperties(properties -> assertEquals("4.10.0", properties.get("camel-version")), true);
     }
 
+    @Test
+    void malformedConfigRefusesWriteAndReturnsNonZero() throws Exception {
+        // A malformed config file (Windows-style path without escaping) must not be overwritten
+        UserConfigHelper.createUserConfig("path=C:\\users\\name");
+        String originalContent = Files.readString(
+                CommandLineHelper.getHomeDir().resolve(CommandLineHelper.USER_CONFIG));
+
+        VersionSet command = new VersionSet(new CamelJBangMain().withPrinter(printer));
+        command.version = "4.10.0";
+        Integer exitCode = command.doCall();
+
+        // must return non-zero and leave the file untouched
+        assertEquals(1, exitCode, "exit code must be 1 on malformed config");
+        String afterContent = Files.readString(
+                CommandLineHelper.getHomeDir().resolve(CommandLineHelper.USER_CONFIG));
+        assertEquals(originalContent, afterContent, "malformed config file must not be overwritten");
+    }
+
 }
