@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.run.export;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.run.common.CamelHome;
@@ -38,6 +41,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junitpioneer.jupiter.SetSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -228,6 +233,65 @@ class ProjectExporterTest {
             assertThat(exportDir.resolve("src/main/resources/camel")).isDirectoryContaining("glob:**/" + route)
                     .isDirectoryNotContaining(p -> !p.getFileName().toString().equals(route));
         }
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = RuntimeType.class, names = { "main", "springBoot", "quarkus" })
+    void localJarsAreInTheLibDirectoryAsThePomRefersToThem(RuntimeType runtime) throws Exception {
+        Path route = writeRoute("hello");
+        // a JAR in a directory that is not built by Maven, and one built by Maven whose file name is not its artifact
+        Path greeter = jar(Files.createDirectories(dir.resolve("libs")).resolve("greeter.jar"), null);
+        Path util = jar(dir.resolve("util.jar"), "com.acme:acme-util:2.1");
+        DependencyResolver withJars = r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=file:%s
+                    camel.jbang.classpathFiles=%s,%s
+                    dependency=camel:timer
+                    dependency=camel:log
+                    """.formatted(route, greeter, util));
+            return 0;
+        };
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.runtime = runtime;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(withJars))
+                .export(request);
+        assertThat(exit).as(printer.getOutput()).isZero();
+
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+        assertThat(pom).contains("<groupId>local</groupId>", "${project.basedir}/lib/greeter-1.0.jar</systemPath>",
+                "<groupId>com.acme</groupId>", "${project.basedir}/lib/acme-util-2.1.jar</systemPath>");
+        // the JARs are where the pom.xml refers to them, and only there
+        assertThat(exportDir.resolve("lib/greeter-1.0.jar")).hasSameBinaryContentAs(greeter);
+        assertThat(exportDir.resolve("lib/acme-util-2.1.jar")).hasSameBinaryContentAs(util);
+        try (Stream<Path> files = Files.walk(exportDir)) {
+            assertThat(files.filter(p -> p.toString().endsWith(".jar") && !p.toString().contains(".mvn")))
+                    .containsExactlyInAnyOrder(exportDir.resolve("lib/greeter-1.0.jar"),
+                            exportDir.resolve("lib/acme-util-2.1.jar"));
+        }
+    }
+
+    /**
+     * A JAR with a class, and the pom.properties of Maven when it has a GAV.
+     */
+    private static Path jar(Path file, String gav) throws Exception {
+        try (JarOutputStream jar = new JarOutputStream(Files.newOutputStream(file))) {
+            jar.putNextEntry(new JarEntry("acme/Greeter.class"));
+            jar.write(new byte[] { (byte) 0xca, (byte) 0xfe });
+            jar.closeEntry();
+            if (gav != null) {
+                String[] ids = gav.split(":");
+                jar.putNextEntry(new JarEntry("META-INF/maven/" + ids[0] + "/" + ids[1] + "/pom.properties"));
+                jar.write("groupId=%s%nartifactId=%s%nversion=%s%n".formatted(ids[0], ids[1], ids[2])
+                        .getBytes(StandardCharsets.UTF_8));
+                jar.closeEntry();
+            }
+        }
+        return file;
     }
 
     @Test
