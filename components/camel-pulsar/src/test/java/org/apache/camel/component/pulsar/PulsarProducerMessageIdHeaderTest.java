@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
-import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.ProducerBuilder;
