@@ -23,9 +23,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -156,6 +158,11 @@ public final class PluginHelper {
         // optimization is acceptable since this prefix-options pattern is uncommon.
         String target = args[0];
         if (target == null || target.isBlank() || target.startsWith("-")) {
+            // --version (-V) only prints the version string: no plugins needed.
+            // All other global flags (--help, etc.) still need plugins for the full listing.
+            if ("--version".equals(target) || "-V".equals(target)) {
+                return false;
+            }
             return true;
         }
         if (PLUGIN_CONSUMING_BUILTINS.contains(target)) {
@@ -187,16 +194,22 @@ public final class PluginHelper {
         if (Arrays.stream(PluginType.values()).anyMatch(p -> p.getCommand().equals(command))) {
             return true;
         }
-        JsonObject config = getPluginConfig();
-        if (config != null) {
-            JsonObject plugins = config.getMap("plugins");
-            for (String pluginKey : plugins.keySet()) {
-                JsonObject properties = plugins.getMap(pluginKey);
-                String name = properties.getOrDefault("name", pluginKey).toString();
-                if (command.equals(properties.getOrDefault("command", name).toString())) {
-                    return true;
+        try {
+            JsonObject config = getPluginConfig();
+            if (config != null) {
+                JsonObject plugins = config.getMap("plugins");
+                if (plugins != null) {
+                    for (String pluginKey : plugins.keySet()) {
+                        JsonObject properties = plugins.getMap(pluginKey);
+                        String name = properties.getOrDefault("name", pluginKey).toString();
+                        if (command.equals(properties.getOrDefault("command", name).toString())) {
+                            return true;
+                        }
+                    }
                 }
             }
+        } catch (Exception e) {
+            // corrupt plugin config — treat as no plugins configured
         }
         return PluginHelper.class.getClassLoader().getResource(PLUGIN_SERVICE_DIR + "camel-jbang-plugin-" + command) != null;
     }
@@ -364,6 +377,9 @@ public final class PluginHelper {
             CamelCatalog catalog = new DefaultCamelCatalog();
             String version = catalog.getCatalogVersion();
             JsonObject plugins = config.getMap("plugins");
+            if (plugins == null) {
+                return activePlugins;
+            }
 
             boolean configDirty = false;
             for (String pluginKey : plugins.keySet()) {
@@ -776,11 +792,29 @@ public final class PluginHelper {
     }
 
     public static JsonObject getOrCreatePluginConfig() {
-        return Optional.ofNullable(getPluginConfig()).orElseGet(PluginHelper::createPluginConfig);
+        try {
+            JsonObject existing = getPluginConfig();
+            if (existing != null) {
+                return existing;
+            }
+        } catch (RuntimeCamelException e) {
+            // file exists but is corrupt — do NOT overwrite with a fresh config
+            throw e;
+        }
+        return createPluginConfig();
     }
 
     public static JsonObject getOrCreatePluginConfig(Path configPath) {
-        return Optional.ofNullable(getPluginConfig(configPath)).orElseGet(() -> PluginHelper.createPluginConfig(configPath));
+        try {
+            JsonObject existing = getPluginConfig(configPath);
+            if (existing != null) {
+                return existing;
+            }
+        } catch (RuntimeCamelException e) {
+            // file exists but is corrupt — do NOT overwrite with a fresh config
+            throw e;
+        }
+        return createPluginConfig(configPath);
     }
 
     public static JsonObject getPluginConfig() {
@@ -794,8 +828,14 @@ public final class PluginHelper {
                 String text = Files.readString(f);
                 return (JsonObject) Jsoner.deserialize(text);
             }
+        } catch (IOException e) {
+            // file not readable — treat as absent
         } catch (Exception e) {
-            // ignore
+            // JSON parsing error: file exists but is corrupt (truncated, invalid JSON)
+            throw new RuntimeCamelException(
+                    "Plugin configuration file exists but is corrupt: "
+                                            + getCustomPluginConfigPath(configPath) + " (" + e.getMessage() + ")",
+                    e);
         }
 
         return null;
@@ -813,15 +853,55 @@ public final class PluginHelper {
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            Files.writeString(f, config.toJson(),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.WRITE,
-                    StandardOpenOption.TRUNCATE_EXISTING);
+            atomicWriteJson(f, config.toJson());
         } catch (IOException e) {
             throw new RuntimeCamelException("Failed to create plugin configuration", e);
         }
 
         return config;
+    }
+
+    /**
+     * Writes {@code content} to {@code target} atomically: writes to a sibling temp file first, then moves it into
+     * place with {@link StandardCopyOption#REPLACE_EXISTING}. When atomic move is not supported by the underlying
+     * filesystem (e.g. across mounts), falls back to a plain overwriting write, which is still safer than
+     * truncate-then-write because the write is a single syscall.
+     */
+    private static void atomicWriteJson(Path target, String content) throws IOException {
+        // Resolve symlinks so the move replaces the target file, not the symlink itself.
+        Path realTarget;
+        try {
+            realTarget = target.toRealPath();
+        } catch (IOException e) {
+            // file does not exist yet — no symlink to resolve
+            realTarget = target;
+        }
+        Path dir = realTarget.getParent();
+        if (dir != null) {
+            Files.createDirectories(dir);
+        }
+        Path tmp = dir != null
+                ? Files.createTempFile(dir, "." + realTarget.getFileName(), ".tmp")
+                : Files.createTempFile("." + realTarget.getFileName(), ".tmp");
+        try {
+            Files.writeString(tmp, content, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            try {
+                Files.move(tmp, realTarget, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                tmp = null; // moved successfully, nothing to delete
+            } catch (AtomicMoveNotSupportedException e) {
+                // fall back: non-atomic replace — still better than truncate-then-write
+                Files.move(tmp, realTarget, StandardCopyOption.REPLACE_EXISTING);
+                tmp = null;
+            }
+        } finally {
+            if (tmp != null) {
+                try {
+                    Files.deleteIfExists(tmp);
+                } catch (IOException ignored) {
+                    // best effort
+                }
+            }
+        }
     }
 
     public static void savePluginConfig(JsonObject plugins) {
@@ -831,10 +911,7 @@ public final class PluginHelper {
     public static void savePluginConfig(JsonObject plugins, Path configPath) {
         Path f = getCustomPluginConfigPath(configPath);
         try {
-            Files.writeString(f, plugins.toJson(),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.WRITE,
-                    StandardOpenOption.TRUNCATE_EXISTING);
+            atomicWriteJson(f, plugins.toJson());
         } catch (IOException e) {
             throw new RuntimeCamelException("Failed to save plugin configuration", e);
         }

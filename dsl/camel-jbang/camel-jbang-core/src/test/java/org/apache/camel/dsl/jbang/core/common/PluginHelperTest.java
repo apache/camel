@@ -642,4 +642,93 @@ public class PluginHelperTest {
             return CommandResult.SUCCESS;
         }
     }
+
+    // --- CAMEL-26913: atomic write for savePluginConfig ---
+
+    @Test
+    void savePluginConfigWritesAtomically() throws Exception {
+        // create a valid plugin config
+        Path configPath = tempDir.resolve(PluginHelper.PLUGIN_CONFIG);
+        JsonObject config = PluginHelper.createPluginConfig(tempDir);
+
+        // add a fake plugin entry
+        JsonObject plugins = config.getMap("plugins");
+        JsonObject fakePlugin = new JsonObject();
+        fakePlugin.put("name", "fake");
+        fakePlugin.put("command", "fake");
+        plugins.put("fake", fakePlugin);
+
+        // save via the atomic path
+        PluginHelper.savePluginConfig(config, tempDir);
+
+        // the file must exist and have the expected content
+        assertTrue(Files.exists(configPath));
+        String content = Files.readString(configPath);
+        assertTrue(content.contains("\"fake\""));
+
+        // no temp files left behind
+        try (var stream = Files.list(tempDir)) {
+            long tmpCount = stream.filter(p -> p.getFileName().toString().endsWith(".tmp")).count();
+            assertEquals(0, tmpCount, "Stray .tmp files found in " + tempDir);
+        }
+    }
+
+    @Test
+    void savePluginConfigPreservesExistingFileOnWrite() throws Exception {
+        // start with a valid config
+        PluginHelper.createPluginConfig(tempDir);
+        Path configPath = tempDir.resolve(PluginHelper.PLUGIN_CONFIG);
+        String original = Files.readString(configPath);
+
+        // reading back produces the same object
+        JsonObject read = PluginHelper.getPluginConfig(tempDir);
+        assertNotNull(read);
+        PluginHelper.savePluginConfig(read, tempDir);
+
+        // content should be equivalent — round-trip must preserve the plugins map
+        String afterSave = Files.readString(configPath);
+        assertNotNull(afterSave);
+        assertTrue(afterSave.contains("\"plugins\""), "saved config must still contain the plugins key");
+        JsonObject reRead = PluginHelper.getPluginConfig(tempDir);
+        assertNotNull(reRead);
+        assertNotNull(reRead.getMap("plugins"), "plugins map must be preserved after save");
+    }
+
+    @Test
+    void emptyJsonObjectDoesNotCauseNpe() throws Exception {
+        // {} without a "plugins" key must not NPE — getActivePlugins should return empty
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, "{}", StandardOpenOption.CREATE);
+
+        CamelJBangMain main = new CamelJBangMain();
+        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "version");
+        assertTrue(plugins.isEmpty());
+    }
+
+    @Test
+    void isPluginCommandHandlesEmptyJsonObject() throws Exception {
+        // {} without a "plugins" key must not NPE in isPluginCommand
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, "{}", StandardOpenOption.CREATE);
+
+        assertFalse(PluginHelper.isPluginCommand("fake"));
+    }
+
+    @Test
+    void truncatedJsonThrowsOnGetPluginConfig() throws Exception {
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, "{ \"plugins\": { \"foo\":", StandardOpenOption.CREATE);
+
+        assertThrows(RuntimeException.class, () -> PluginHelper.getPluginConfig());
+    }
+
+    @Test
+    void getOrCreatePluginConfigRefusesToOverwriteCorruptFile() throws Exception {
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, "TRUNCATED GARBAGE", StandardOpenOption.CREATE);
+
+        assertThrows(RuntimeException.class, () -> PluginHelper.getOrCreatePluginConfig());
+        // the corrupt file must still exist (not overwritten)
+        assertEquals("TRUNCATED GARBAGE", Files.readString(userConfig));
+    }
 }

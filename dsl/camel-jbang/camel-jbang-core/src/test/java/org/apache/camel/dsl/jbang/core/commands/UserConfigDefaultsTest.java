@@ -79,6 +79,68 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
     }
 
     @Test
+    void malformedUserConfigDoesNotCrashCli() throws Exception {
+        // A Windows-style path stored without escaping produces a malformed \\uXXXX sequence,
+        // which throws IllegalArgumentException from Properties.load — not IOException.
+        // The CLI must warn and continue instead of propagating the exception.
+        UserConfigHelper.createUserConfig("path=C:\\users\\name");
+
+        // The command must succeed (not throw); the option falls back to its own default.
+        assertThat(runCapturingWarning("echo")).isEqualTo("sort=pid repos=null");
+    }
+
+    @Test
+    void malformedConfigLoadPropertiesReturnsFalseAndWarns() throws Exception {
+        // loadProperties must not throw and must return false for a malformed config file
+        UserConfigHelper.createUserConfig("path=C:\\users\\name");
+
+        StringPrinter out = new StringPrinter();
+        boolean[] loaded = { true };
+        loaded[0] = CommandLineHelper.loadProperties(props -> {
+            // should NOT be called since the 3-arg overload does not call consumer on failure
+            loaded[0] = true;
+        }, false, out);
+
+        assertThat(loaded[0]).as("loadProperties should return false for a malformed file").isFalse();
+        assertThat(out.getStderr()).contains("could not parse");
+        assertThat(out.getStderr()).contains("escaping");
+    }
+
+    @Test
+    void malformedConfigLoadPropertiesTwoArgCallsConsumerWithEmpty() throws Exception {
+        // The 2-arg overload (used by read-only callers) calls consumer with empty props
+        UserConfigHelper.createUserConfig("path=C:\\users\\name");
+
+        boolean[] consumerCalled = { false };
+        CommandLineHelper.loadProperties(props -> {
+            consumerCalled[0] = true;
+            assertThat(props).isEmpty();
+        }, false);
+
+        assertThat(consumerCalled[0]).as("2-arg overload should call consumer with empty props").isTrue();
+    }
+
+    private static String runCapturingWarning(String... args) {
+        StringPrinter out = new StringPrinter();
+        CamelJBangMain main = new CamelJBangMain().withPrinter(out);
+        CommandTree commandLine = new CommandTree(main)
+                .addSubcommand("echo", new CommandTree(new EchoCommand(main)))
+                .addSubcommand("other", new CommandTree(new EchoCommand(main)))
+                .addSubcommand("dev", new CommandTree(new DevCommand(main)))
+                .addSubcommand("plugin", new CommandTree(new PluginCommand(main))
+                        .addSubcommand("echo", new CommandTree(new EchoCommand(main))));
+        // augmentWithUserConfiguration must NOT throw for a malformed config
+        CommandLineHelper.augmentWithUserConfiguration(commandLine, out);
+
+        try {
+            assertThat(commandLine.execute(args).getResultValue()).isZero();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        return out.getStdout();
+    }
+
+    @Test
     void pluginCommandsDoNotUseTheConfiguration() throws Exception {
         UserConfigHelper.createUserConfig("sort=name");
 

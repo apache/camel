@@ -127,12 +127,23 @@ public final class CommandLineHelper {
     }
 
     public static void augmentWithUserConfiguration(CommandTree commandLine) {
+        augmentWithUserConfiguration(commandLine, new Printer.SystemOutPrinter());
+    }
+
+    public static void augmentWithUserConfiguration(CommandTree commandLine, Printer printer) {
         Path file = getUserConfigurationFile();
         if (Files.isRegularFile(file) && Files.exists(file)) {
             Properties properties = new Properties();
             try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
                 properties.load(reader);
-            } catch (IOException e) {
+            } catch (Exception e) {
+                // best-effort: a malformed config file (e.g. malformed unicode escape) must never break the CLI;
+                // warn the user so they know to fix it, but let the command continue without defaults
+                // TODO: the printer is new SystemOutPrinter() when called from the no-printer overload, which
+                //       goes to raw terminal — acceptable for now, would need a refactor to thread TUI printer through
+                printer.printErr(
+                        "Warning: could not parse '" + file.toAbsolutePath() + "' (" + e.getMessage()
+                                 + "). Edit the file by hand, escaping '\\' as '\\\\' or using '/'.");
                 return;
             }
 
@@ -162,6 +173,24 @@ public final class CommandLineHelper {
     }
 
     public static void loadProperties(Consumer<Properties> consumer, boolean local) {
+        boolean ok = loadProperties(consumer, local, new Printer.SystemOutPrinter());
+        if (!ok) {
+            // Read-only callers get empty props so the command continues with defaults.
+            // Write callers (config set/unset) use the 3-arg overload and check the return value.
+            consumer.accept(new OrderedProperties());
+        }
+    }
+
+    /**
+     * Loads user properties from the configuration file. When the file exists but is malformed (e.g. a Windows-style
+     * path stored without escaping produces a malformed \\uXXXX sequence), the method warns via the given printer and
+     * returns {@code false} <b>without</b> calling the consumer. This lets callers that write back to the file (config
+     * set, config unset) detect the failure and refuse to overwrite a malformed file.
+     *
+     * @return {@code true} if the file was loaded successfully (or did not exist), {@code false} if the file exists but
+     *         could not be parsed.
+     */
+    public static boolean loadProperties(Consumer<Properties> consumer, boolean local, Printer printer) {
         Path file = getUserPropertyFile(local);
         if (Files.isRegularFile(file) && Files.exists(file)) {
             try (InputStream is = Files.newInputStream(file)) {
@@ -169,9 +198,12 @@ public final class CommandLineHelper {
                 prop.load(is);
                 consumer.accept(prop);
             } catch (Exception e) {
-                throw new RuntimeException("Cannot load user configuration: " + file);
+                printer.printErr("Warning: could not parse '" + file.toAbsolutePath() + "' (" + e.getMessage()
+                                 + "). Edit the file by hand, escaping '\\' as '\\\\' or using '/'.");
+                return false;
             }
         }
+        return true;
     }
 
     public static void storeProperties(Properties properties, Printer printer, boolean local) {

@@ -41,10 +41,13 @@ public class ConfigUnset extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        CommandLineHelper.loadProperties(properties -> {
+        if (!CommandLineHelper.loadProperties(properties -> {
             properties.remove(key);
             CommandLineHelper.storeProperties(properties, printer(), !global);
-        }, !global);
+        }, !global, printer())) {
+            printer().printErr("Cannot unset configuration: the configuration file is malformed. Fix it by hand first.");
+            return 1;
+        }
 
         return 0;
     }

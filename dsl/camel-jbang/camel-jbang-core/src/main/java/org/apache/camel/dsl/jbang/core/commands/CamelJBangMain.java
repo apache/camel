@@ -159,7 +159,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         withErrorHandling(commandLine);
 
         CommandLineHelper.migrateLegacyUserConfig(out);
-        CommandLineHelper.augmentWithUserConfiguration(commandLine);
+        CommandLineHelper.augmentWithUserConfiguration(commandLine, out);
         preExecute(commandLine, args);
         int exitCode = run(commandLine, args);
         if (isHelpRequest(args) && EnvironmentHelper.isInteractiveTerminal()) {
@@ -600,12 +600,16 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         }
 
         Set<String> installed = new HashSet<>();
-        JsonObject config = PluginHelper.getPluginConfig();
-        if (config != null) {
-            JsonObject plugins = config.getMap("plugins");
-            if (plugins != null) {
-                installed.addAll(plugins.keySet());
+        try {
+            JsonObject config = PluginHelper.getPluginConfig();
+            if (config != null) {
+                JsonObject plugins = config.getMap("plugins");
+                if (plugins != null) {
+                    installed.addAll(plugins.keySet());
+                }
             }
+        } catch (Exception e) {
+            // corrupt plugin config — don't crash the help/banner output
         }
         // also consider already registered subcommands as installed
         Set<String> registered = commandLine.getSubcommands().keySet();

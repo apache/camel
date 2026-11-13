@@ -56,12 +56,15 @@ public class ConfigSet extends CamelCommand {
         }
         CommandLineHelper.createPropertyFile(local);
 
-        CommandLineHelper.loadProperties(properties -> {
+        if (!CommandLineHelper.loadProperties(properties -> {
             String key = StringHelper.before(configuration, "=").trim();
             String value = StringHelper.after(configuration, "=").trim();
             properties.put(key, value);
             CommandLineHelper.storeProperties(properties, printer(), local);
-        }, local);
+        }, local, printer())) {
+            printer().printErr("Cannot set configuration: the configuration file is malformed. Fix it by hand first.");
+            return 1;
+        }
 
         return 0;
     }

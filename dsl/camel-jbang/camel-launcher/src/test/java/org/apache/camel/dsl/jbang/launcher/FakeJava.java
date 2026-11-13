@@ -223,4 +223,27 @@ final class FakeJava {
             }
         }
     }
+
+    /**
+     * Computes the POSIX cksum hash of the given string, matching the shell expression
+     * {@code printf '%s' "$str" | cksum | cut -d' ' -f1} used in camel.sh for CDS directory hashing.
+     */
+    static String cksumHash(String str) throws Exception {
+        ProcessBuilder pb = new ProcessBuilder(
+                "/bin/sh", "-c",
+                "printf '%s' '" + str.replace("'", "'\\''") + "' | cksum | cut -d' ' -f1");
+        pb.environment().clear();
+        pb.environment().put("PATH", "/usr/bin:/bin");
+        Process p = pb.start();
+        byte[] out = p.getInputStream().readAllBytes();
+        p.waitFor(10, TimeUnit.SECONDS);
+        return new String(out, StandardCharsets.UTF_8).trim();
+    }
+
+    /**
+     * The BASEDIR of a launcher home as computed by camel.sh: the directory of the script (bin/).
+     */
+    static Path basedir(Path bin) {
+        return bin;
+    }
 }
