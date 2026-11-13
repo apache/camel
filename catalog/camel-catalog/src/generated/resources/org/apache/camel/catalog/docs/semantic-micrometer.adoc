@@ -70,7 +70,8 @@ start. The sum can decrease; do not treat it as a monotonic counter.
 `+Inf` bucket. Bounds describe numeric values, not severity or policy decisions.
 |`camel.semantic.collection.loss` |Counter by fixed `reason`: `population_limit`, `answer_limit`, `invalid_event`,
 or `unsupported_measurement`. Loss is excluded from the corresponding result distribution.
-|`camel.semantic.collection.errors` |Number of metric collection failures since collector start.
+|`camel.semantic.collection.errors` |Function counter of metric collection failures since collector start.
+Prometheus exposes `camel_semantic_collection_errors_total`; use `rate()` or `increase()` to account for restarts.
 |===
 
 Assessment meters have `camelContext`, `expert`, `definition`, `operation`, `origin` and `result.type` tags.

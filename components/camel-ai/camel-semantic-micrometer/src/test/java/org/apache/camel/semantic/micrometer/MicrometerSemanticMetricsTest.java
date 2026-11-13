@@ -157,7 +157,7 @@ class MicrometerSemanticMetricsTest {
             context.start();
             send(context, event(ResultType.SCORE, Map.of("value", 0.4), "success", 1));
             send(context, event(ResultType.SCORE, Map.of("value", 1.6), "success", 1));
-            assertThat(registry.get("camel.semantic.collection.errors").gauge().value()).isEqualTo(1);
+            assertThat(registry.get("camel.semantic.collection.errors").functionCounter().count()).isEqualTo(1);
             assertThat(registry.get("camel.semantic.score.observations").counter().count()).isEqualTo(1);
             assertThat(registry.get("camel.semantic.score.sum").gauge().value()).isEqualTo(1.6);
             assertThat(registry.get("camel.semantic.score.distribution").tag("le", "+Inf").counter().count()).isEqualTo(1);
@@ -325,7 +325,7 @@ class MicrometerSemanticMetricsTest {
         appender.start();
         logger.addAppender(appender);
         logger.setLevel(Level.WARN);
-        var registry = new SimpleMeterRegistry();
+        var registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
         try (AutoCloseable closeRegistry = registry::close; var context = new DefaultCamelContext()) {
             registry.config().meterFilter(new MeterFilter() {
                 @Override
@@ -339,15 +339,30 @@ class MicrometerSemanticMetricsTest {
             var metrics = new MicrometerSemanticMetrics(registry);
             context.getManagementStrategy().addEventNotifier(metrics);
             context.start();
+            var errors = registry.get("camel.semantic.collection.errors").functionCounter();
+            assertThat(errors.count()).isZero();
             metrics.notify(event(ResultType.BOOLEAN, Map.of("value", true), "success", 1));
             metrics.notify(event(ResultType.BOOLEAN, Map.of("value", false), "success", 1));
-            assertThat(registry.get("camel.semantic.collection.errors").gauge().value()).isEqualTo(2);
+            assertThat(errors.count()).isEqualTo(2);
+            assertThat(registry.scrape()).contains("# TYPE camel_semantic_collection_errors_total counter");
+            assertThat(registry.scrape().lines()
+                    .filter(line -> line.startsWith("camel_semantic_collection_errors_total{")))
+                    .singleElement().asString().matches(".*camelContext=\"[^\"]+\".*} 2(?:\\.0)?");
             assertThat(messages).singleElement().satisfies(message -> {
                 assertThat(message.getLevel()).isEqualTo(Level.WARN);
                 assertThat(message.getMessage().getFormattedMessage()).contains("java.lang.IllegalStateException")
                         .doesNotContain("private-provider-error", "private-input");
                 assertThat(message.getThrown()).isNull();
             });
+            context.stop();
+            assertThat(registry.find("camel.semantic.collection.errors").meters()).isEmpty();
+            context.start();
+            var restartedErrors = registry.get("camel.semantic.collection.errors").functionCounter();
+            assertThat(restartedErrors).isNotSameAs(errors);
+            assertThat(restartedErrors.count()).isZero();
+            metrics.notify(event(ResultType.BOOLEAN, Map.of("value", true), "success", 1));
+            assertThat(restartedErrors.count()).isEqualTo(1);
+            assertThat(messages).hasSize(2);
         } finally {
             logger.setLevel(previous);
             logger.removeAppender(appender);
