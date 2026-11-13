@@ -66,19 +66,19 @@ public class ServiceNowConfiguration implements Cloneable {
     private String resource;
     @UriParam
     private String table;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean excludeReferenceLink = false;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean suppressAutoSysField = false;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean includeScores = false;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean includeAggregates = false;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean includeAvailableBreakdowns = false;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean includeAvailableAggregates = false;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean includeScoreNotes = false;
     @UriParam
     private Boolean topLevelOnly;
@@ -98,11 +98,11 @@ public class ServiceNowConfiguration implements Cloneable {
     private String sortBy;
     @UriParam(enums = "asc,desc")
     private String sortDir;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean suppressPaginationHeader = false;
     @UriParam(defaultValue = "false", enums = "false,true,all")
     private String displayValue = "false";
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean inputDisplayValue = false;
     @UriParam(prefix = "model.", multiValue = true, description = "Defines both request and response models")
     private transient Map<String, Class<?>> models; // field not in use as its a shortcut for both requestModels/responseModels

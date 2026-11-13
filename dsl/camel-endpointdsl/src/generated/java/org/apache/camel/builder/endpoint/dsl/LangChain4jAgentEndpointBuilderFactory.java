@@ -150,7 +150,6 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param compensateOnToolErrors the value to set
@@ -169,7 +168,6 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param compensateOnToolErrors the value to set
@@ -188,7 +186,6 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param executeToolsConcurrently the value to set
@@ -208,7 +205,6 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param executeToolsConcurrently the value to set

@@ -1489,7 +1489,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param abortOnError the value to set
@@ -1505,7 +1504,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param abortOnError the value to set
@@ -1626,7 +1624,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doCodeEnrichment the value to set
@@ -1642,7 +1639,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doCodeEnrichment the value to set
@@ -1685,7 +1681,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doFormulaEnrichment the value to set
@@ -1701,7 +1696,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doFormulaEnrichment the value to set
@@ -1718,7 +1712,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doOcr the value to set
@@ -1736,7 +1729,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doOcr the value to set
@@ -1751,7 +1743,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureClassification the value to set
@@ -1767,7 +1758,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureClassification the value to set
@@ -1782,7 +1772,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureDescription the value to set
@@ -1798,7 +1787,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureDescription the value to set
@@ -1813,7 +1801,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doTableStructure the value to set
@@ -1829,7 +1816,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doTableStructure the value to set
@@ -1844,7 +1830,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param forceOcr the value to set
@@ -1860,7 +1845,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param forceOcr the value to set
@@ -1917,7 +1901,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param includeImages the value to set
@@ -1933,7 +1916,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param includeImages the value to set
@@ -2034,7 +2016,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param tableCellMatching the value to set
@@ -2050,7 +2031,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param tableCellMatching the value to set
@@ -2979,7 +2959,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param abortOnError the value to set
@@ -2995,7 +2974,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param abortOnError the value to set
@@ -3116,7 +3094,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doCodeEnrichment the value to set
@@ -3132,7 +3109,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doCodeEnrichment the value to set
@@ -3175,7 +3151,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doFormulaEnrichment the value to set
@@ -3191,7 +3166,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doFormulaEnrichment the value to set
@@ -3208,7 +3182,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doOcr the value to set
@@ -3226,7 +3199,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doOcr the value to set
@@ -3241,7 +3213,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureClassification the value to set
@@ -3257,7 +3228,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureClassification the value to set
@@ -3272,7 +3242,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureDescription the value to set
@@ -3288,7 +3257,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureDescription the value to set
@@ -3303,7 +3271,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doTableStructure the value to set
@@ -3319,7 +3286,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doTableStructure the value to set
@@ -3334,7 +3300,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param forceOcr the value to set
@@ -3350,7 +3315,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param forceOcr the value to set
@@ -3407,7 +3371,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param includeImages the value to set
@@ -3423,7 +3386,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param includeImages the value to set
@@ -3524,7 +3486,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param tableCellMatching the value to set
@@ -3540,7 +3501,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param tableCellMatching the value to set
@@ -4427,7 +4387,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param abortOnError the value to set
@@ -4443,7 +4402,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param abortOnError the value to set
@@ -4564,7 +4522,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doCodeEnrichment the value to set
@@ -4580,7 +4537,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doCodeEnrichment the value to set
@@ -4623,7 +4579,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doFormulaEnrichment the value to set
@@ -4639,7 +4594,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doFormulaEnrichment the value to set
@@ -4656,7 +4610,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doOcr the value to set
@@ -4674,7 +4627,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doOcr the value to set
@@ -4689,7 +4641,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureClassification the value to set
@@ -4705,7 +4656,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureClassification the value to set
@@ -4720,7 +4670,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureDescription the value to set
@@ -4736,7 +4685,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureDescription the value to set
@@ -4751,7 +4699,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doTableStructure the value to set
@@ -4767,7 +4714,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doTableStructure the value to set
@@ -4782,7 +4728,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param forceOcr the value to set
@@ -4798,7 +4743,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param forceOcr the value to set
@@ -4855,7 +4799,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param includeImages the value to set
@@ -4871,7 +4814,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param includeImages the value to set
@@ -4972,7 +4914,6 @@ public interface DoclingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param tableCellMatching the value to set
@@ -4988,7 +4929,6 @@ public interface DoclingEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param tableCellMatching the value to set
