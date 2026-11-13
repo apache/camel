@@ -232,13 +232,13 @@ public interface OpenFgaEndpointBuilderFactory {
          * default) fails the operation, while ignore leaves that relationship
          * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
          * later.
-         *
+         * 
          * The option is a:
          * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
-         *
+         * 
          * Default: error
          * Group: producer
-         *
+         * 
          * @param onDuplicate the value to set
          * @return the dsl builder
          */
@@ -251,13 +251,13 @@ public interface OpenFgaEndpointBuilderFactory {
          * default) fails the operation, while ignore leaves that relationship
          * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
          * later.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
-         *
+         * 
          * Default: error
          * Group: producer
-         *
+         * 
          * @param onDuplicate the value to set
          * @return the dsl builder
          */
@@ -269,13 +269,13 @@ public interface OpenFgaEndpointBuilderFactory {
          * How deleteTuples and write handle an absent relationship: error (the
          * default) fails the operation, while ignore skips that deletion and
          * continues. The ignore mode requires OpenFGA 1.10.0 or later.
-         *
+         * 
          * The option is a:
          * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
-         *
+         * 
          * Default: error
          * Group: producer
-         *
+         * 
          * @param onMissing the value to set
          * @return the dsl builder
          */
@@ -287,13 +287,13 @@ public interface OpenFgaEndpointBuilderFactory {
          * How deleteTuples and write handle an absent relationship: error (the
          * default) fails the operation, while ignore skips that deletion and
          * continues. The ignore mode requires OpenFGA 1.10.0 or later.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.openfga.OpenFgaWriteConflictMode</code> type.
-         *
+         * 
          * Default: error
          * Group: producer
-         *
+         * 
          * @param onMissing the value to set
          * @return the dsl builder
          */

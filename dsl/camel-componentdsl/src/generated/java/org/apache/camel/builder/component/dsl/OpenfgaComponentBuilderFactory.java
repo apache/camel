@@ -255,20 +255,20 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("object", object);
             return this;
         }
-
-
+    
+        
         /**
          * How writeTuples and write handle an existing relationship: error (the
          * default) fails the operation, while ignore leaves that relationship
          * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
          * later.
-         *
+         * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaWriteConflictMode&lt;/code&gt; type.
-         *
+         * 
          * Default: error
          * Group: producer
-         *
+         * 
          * @param onDuplicate the value to set
          * @return the dsl builder
          */
@@ -276,19 +276,19 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("onDuplicate", onDuplicate);
             return this;
         }
-
-
+    
+        
         /**
          * How deleteTuples and write handle an absent relationship: error (the
          * default) fails the operation, while ignore skips that deletion and
          * continues. The ignore mode requires OpenFGA 1.10.0 or later.
-         *
+         * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaWriteConflictMode&lt;/code&gt; type.
-         *
+         * 
          * Default: error
          * Group: producer
-         *
+         * 
          * @param onMissing the value to set
          * @return the dsl builder
          */
