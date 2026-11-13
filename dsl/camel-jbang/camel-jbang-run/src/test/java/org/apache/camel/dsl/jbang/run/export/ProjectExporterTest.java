@@ -295,6 +295,22 @@ class ProjectExporterTest {
     }
 
     @Test
+    void doesNotLoadTheKameletCatalogForAnIntegrationWithoutKamelets() throws Exception {
+        Path route = writeRoute("hello");
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        // a catalog that cannot be downloaded: the export would fail to load it
+        request.kameletsVersion = "0.0.0-no-such-version";
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        assertThat(exportDir.resolve("pom.xml")).exists();
+    }
+
+    @Test
     void requiresRuntime() throws Exception {
         ExportRequest request = new ExportRequest();
         request.files.add(dir.resolve("missing.camel.yaml").toString());

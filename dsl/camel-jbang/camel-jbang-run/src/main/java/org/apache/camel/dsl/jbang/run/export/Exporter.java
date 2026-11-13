@@ -340,13 +340,18 @@ abstract class Exporter {
         List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
 
         // check if we use custom and/or official ASF kamelets
-        List<String> officialKamelets
-                = KameletCatalogHelper.findKameletNames(request.kameletsVersion, request.mavenResolver.repos());
+        List<String> officialKamelets = null;
         boolean kamelets = false;
         boolean asfKamelets = false;
         for (String line : lines) {
             if (line.startsWith("kamelet=")) {
                 kamelets = true;
+                if (officialKamelets == null) {
+                    // the Kamelet catalog is downloaded only for an integration that uses Kamelets: it is about 38 MB
+                    // with its dependencies on a first export (CAMEL-26912)
+                    officialKamelets = KameletCatalogHelper.findKameletNames(request.kameletsVersion,
+                            request.mavenResolver.repos());
+                }
                 String name = StringHelper.after(line, "kamelet=");
                 if (officialKamelets.contains(name)) {
                     asfKamelets = true;
