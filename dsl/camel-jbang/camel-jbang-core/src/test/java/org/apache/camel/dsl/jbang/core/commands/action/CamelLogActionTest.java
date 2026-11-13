@@ -169,6 +169,26 @@ class CamelLogActionTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void coloredLinesArePrintedWithoutColorsWhenTheConsoleStripsThem() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        writeLog(TEST_PID + ".log", line(-300, "\u001b[32mStarting\u001b[m"), line(-1, "Failed"));
+        // the output of the console is not a terminal (a file or a pipe), which takes the colors out of each line
+        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer)) {
+            @Override
+            protected boolean colorsStripped() {
+                return true;
+            }
+        };
+        CommandLineTestHelper.parse(command, "orders", "--follow=false", "--prefix=true");
+
+        assertThat(callWithSingleProcess(command)).isZero();
+
+        // printed as without --logging-color: the same text, without the console in between
+        assertThat(lines()).hasSize(2).noneMatch(l -> l.contains("\u001b"));
+        assertThat(lines().get(0)).startsWith("orders").endsWith(": Starting");
+    }
+
+    @Test
     void previousPrintsTheLogOfTheRunThatEnded() throws Exception {
         keepPreviousRun("orders", line(-300, "Starting"), line(-1, "Failed to start route route1"));
 
