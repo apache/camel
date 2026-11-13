@@ -70,6 +70,7 @@
         <module>camel-test-infra-google-common</module>
         <module>camel-test-infra-google-firestore</module>
         <module>camel-test-infra-google-pubsub</module>
+        <module>camel-test-infra-google-secret-manager</module>
         <module>camel-test-infra-google-storage</module>
         <module>camel-test-infra-infinispan</module>
         <module>camel-test-infra-microprofile-lra</module>
