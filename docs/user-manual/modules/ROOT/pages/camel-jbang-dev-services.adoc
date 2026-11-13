@@ -114,9 +114,13 @@ camel infra restart kafka --background
 [source,bash]
 ----
 $ camel infra ps
-  PID   ALIAS      IMPLEMENTATION  UI  DESCRIPTION                                        SERVICE_DATA
- 45211  arangodb                       ArangoDB is a multi-model database for high-pe...  {"getServiceAddress":"http:/...
+  PID   ALIAS      IMPLEMENTATION  UI  DESCRIPTION                                   CONTAINER       SERVICE_DATA
+ 45211  arangodb                       ArangoDB is a multi-model database for hig…  camel-arangodb  {"containerId":"3f2a9c1b7d4e",…
 ----
+
+The CONTAINER column is the Docker container the service runs in, so you can use it with `docker exec`,
+`docker logs` or `docker inspect`. A service that runs embedded, in the process itself, has none. The
+container name and its short id are in the connection details too (`containerName` and `containerId`).
 
 There is one row per running instance, so starting the same service twice lists both processes, each
 with its own PID and connection details:
@@ -124,9 +128,9 @@ with its own PID and connection details:
 [source,bash]
 ----
 $ camel infra ps
-  PID   ALIAS  IMPLEMENTATION  UI  DESCRIPTION                                   SERVICE_DATA
- 45244  ftp                        FTP is a standard communication protocol ...  {"port":21,"host":"localhost"...
- 45262  ftp                        FTP is a standard communication protocol ...  {"port":2121,"host":"localhos...
+  PID   ALIAS  IMPLEMENTATION  UI  DESCRIPTION                                   CONTAINER  SERVICE_DATA
+ 45244  ftp                        FTP is a standard communication protocol …             {"port":21,"host":"localhost"…
+ 45262  ftp                        FTP is a standard communication protocol …             {"port":2121,"host":"localhos…
 ----
 
 Pass a service name to list only its instances, and `--json` to get the full connection details of each
