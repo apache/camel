@@ -102,7 +102,7 @@ public abstract class McpServerConformanceTestSupport extends CamelTestSupport {
 
                 from("ai-tool:slow_tool?tags=" + CONFORMANCE_TAG + "&description=Exceeds the tool timeout")
                         .routeId("slow-tool-route")
-                        .delay(TOOL_TIMEOUT_MILLIS * 3)
+                        .delay(TOOL_TIMEOUT_MILLIS + 1000)
                         .setBody(constant("done"));
 
                 from("ai-tool:hidden_tool?description=Untagged tool, must not be exposed")

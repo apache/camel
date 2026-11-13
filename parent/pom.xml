@@ -87,7 +87,7 @@
         <asn1bean-version>1.16.0</asn1bean-version>
         <assertj-version>3.27.7</assertj-version>
         <asterisk-java-version>3.42.2</asterisk-java-version>
-        <atlassian-fugue-version>6.1.7</atlassian-fugue-version>
+        <atlassian-fugue-version>6.1.8</atlassian-fugue-version>
         <atmosphere-version>4.0.76</atmosphere-version>
         <avro-version>1.12.2</avro-version>
         <avro-ipc-jetty-version>1.12.2</avro-ipc-jetty-version>
@@ -113,6 +113,7 @@
         <camunda-version>7.24.0</camunda-version>
         <camunda-client-java-version>8.10.7</camunda-client-java-version>
         <cassandra-driver-version>4.19.4</cassandra-driver-version>
+        <cedar-java-version>4.11.0</cedar-java-version>
         <clickhouse-client-version>0.11.0</clickhouse-client-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
@@ -172,7 +173,7 @@
         <extjwnl-version>2.0.5</extjwnl-version>
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
         <exec-maven-plugin-version>3.6.4</exec-maven-plugin-version>
-        <fastjson-version>2.0.65</fastjson-version>
+        <fastjson-version>2.0.66</fastjson-version>
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
         <flink-version>1.20.5</flink-version>
@@ -268,9 +269,9 @@
         <infinispan-protostream-version>6.0.7</infinispan-protostream-version>
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
-        <jackson-annotations-version>2.22</jackson-annotations-version>
+        <jackson-annotations-version>2.23</jackson-annotations-version>
         <jackson-jq-version>1.6.5</jackson-jq-version>
-        <jackson2-version>2.22.4</jackson2-version>
+        <jackson2-version>2.23.0</jackson2-version>
         <jackson3-version>3.2.4</jackson3-version>
         <jackrabbit-version>2.22.5</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
@@ -307,7 +308,7 @@
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>8.0.2</jedis-client-version>
-        <jetty-version>12.1.14</jetty-version>
+        <jetty-version>12.1.15</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.7</jettison-version>
@@ -541,7 +542,7 @@
         <tika-version>4.1.0</tika-version>
         <twilio-version>13.1.0</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
-        <undertow-servlet-version>2.3.26.Final</undertow-servlet-version>
+        <undertow-servlet-version>2.3.27.Final</undertow-servlet-version>
         <undertow-version>2.4.4.Final</undertow-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <velocity-tools-version>3.1</velocity-tools-version>
@@ -1241,6 +1242,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-cbor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-cedar</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

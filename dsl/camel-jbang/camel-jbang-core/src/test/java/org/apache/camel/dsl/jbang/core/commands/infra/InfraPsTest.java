@@ -159,6 +159,28 @@ class InfraPsTest extends InfraCommandTestSupport {
     }
 
     @Test
+    void shouldShowTheContainerOfARunningService() throws Exception {
+        // CAMEL-22280: the container infra run started, so docker exec and docker logs know which one it is
+        writePidFile("kafka", 1234, "{\"containerId\":\"0a1b2c3d4e5f\",\"containerName\":\"camel-kafka\"}");
+        // without a name (an older infra run) the short id is shown
+        writePidFile("nats", 5678, "{\"containerId\":\"ba9876543210\"}");
+        // an embedded service runs in no container
+        writePidFile("ftp", 4321, "{\"port\":21}");
+
+        int exit = command().doCall();
+
+        assertEquals(0, exit);
+        String out = printer.getOutput();
+        assertTrue(out.lines().findFirst().orElse("").contains("CONTAINER"), "the header should name the column, was: " + out);
+        String kafka = out.lines().filter(l -> l.contains("1234")).findFirst().orElse("");
+        assertTrue(kafka.contains("camel-kafka"), "kafka should show its container name, was: " + out);
+        // and its implementations in full
+        assertTrue(kafka.contains("strimzi"), "kafka should show all its implementations, was: " + out);
+        String nats = out.lines().filter(l -> l.contains("5678")).findFirst().orElse("");
+        assertTrue(nats.contains("ba9876543210"), "nats should show its container id, was: " + out);
+    }
+
+    @Test
     void shouldTreatTheCurrentProcessAsAliveByDefault() throws Exception {
         // exercises the real ProcessHandle based aliveCheck rather than a stub: this JVM is certainly running
         long pid = ProcessHandle.current().pid();

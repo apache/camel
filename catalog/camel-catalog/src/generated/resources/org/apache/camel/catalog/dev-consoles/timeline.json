@@ -157,6 +157,24 @@
                 "type": "integer"
               },
               "description": "Per second 1 when a camel-chaos rule had the route down (stall or a lifecycle fault), else 0 (only present with camel-chaos)"
+            },
+            "polling": {
+              "type": "object",
+              "properties": {
+                "lastPollTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds of the last poll (only present once the consumer has polled since it was started)"
+                },
+                "lastPollMessagesTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds of the last poll that polled messages (only present once a poll has polled any since the consumer was started)"
+                },
+                "lastPollMessagesCount": {
+                  "type": "integer",
+                  "description": "Number of messages the last poll that polled messages gave (only present once a poll has polled any since the consumer was started)"
+                }
+              },
+              "description": "When the consumer of the route last polled, and last polled messages (only present for a route from a scheduled poll consumer)"
             }
           }
         },

@@ -23,9 +23,9 @@ import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.StringQuoteHelper;
 
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArgumentsKeepQuotes;
 
 /**
  * Built-in Simple function for user-defined custom functions: {@code ${function(name)}} and
@@ -47,14 +47,16 @@ public final class CustomFunctionFactory implements SimpleLanguageFunctionFactor
             throw new SimpleParserException(
                     "Valid syntax: ${function(name)} or ${function(name,exp)} was: " + function, index);
         }
-        String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-        if (tokens.length < 1 || tokens.length > 2) {
+        // a comma inside quotes or a nested function is part of the expression
+        String[] tokens = splitArgumentsKeepQuotes(values);
+        if (tokens.length > 2 || tokens[0] == null) {
             throw new SimpleParserException(
                     "Valid syntax: ${function(name)} or ${function(name,exp)} was: " + function, index);
         }
         key = StringHelper.removeQuotes(tokens[0]);
         key = key.trim();
-        if (tokens.length == 2) {
+        // an expression left out is the message body
+        if (tokens.length == 2 && tokens[1] != null) {
             param = tokens[1];
             param = StringHelper.removeLeadingAndEndingQuotes(param.trim());
         }

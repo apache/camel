@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.pulsar;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageUtils;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -103,24 +101,23 @@ public class PulsarProducer extends DefaultAsyncProducer {
     }
 
     /**
-     * Serialize the given content using the appropriate converter if any, otherwise it relies on
-     * {@link PulsarMessageUtils#serialize(Object)}.
-     *
-     * @param  exchange    the exchange used as context for the serialization process.
-     * @param  content     the content to serialize.
-     * @return             the serialized counterpart of the given content
-     * @throws IOException if an error occurs while serializing the content.
+     * The payload of the message: the body converted to a byte array. A body that does not convert, such as a Map or a
+     * POJO, and no body, fail unless allowJavaSerializedObject is enabled, which sends them with Java serialization.
      */
-    private static byte[] serialize(Exchange exchange, Object content) throws IOException {
-        byte[] result;
-        try {
-            result = exchange.getContext().getTypeConverter()
-                    .mandatoryConvertTo(byte[].class, exchange, content);
-        } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
-            // fallback to try to serialize the data
-            result = PulsarMessageUtils.serialize(content);
+    private byte[] serialize(Exchange exchange, Object content) throws Exception {
+        if (content != null) {
+            byte[] result = exchange.getContext().getTypeConverter().tryConvertTo(byte[].class, exchange, content);
+            if (result != null) {
+                return result;
+            }
         }
-        return result;
+        if (pulsarEndpoint.getPulsarConfiguration().isAllowJavaSerializedObject()) {
+            return PulsarMessageUtils.serialize(content);
+        }
+        String hint = content == null
+                ? "the pulsar producer does not send a message without a body"
+                : "the pulsar producer sends the body as a byte array: marshal it first, for example with marshal().json()";
+        throw new InvalidPayloadException(exchange, byte[].class, exchange.getIn(), hint);
     }
 
     private void createProducer() throws PulsarClientException {

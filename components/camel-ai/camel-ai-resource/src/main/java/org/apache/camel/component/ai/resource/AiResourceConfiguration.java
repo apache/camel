@@ -31,11 +31,15 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class AiResourceConfiguration implements Cloneable {
 
-    @Metadata(label = "consumer", required = true)
-    @UriParam(description = "The resource uri clients use to read this resource, for example "
-                            + "camel:///config/app.json or s3://reports/latest.pdf. It must be unique within the "
-                            + "CamelContext and is what an MCP client sends in a resources/read request.")
+    @Metadata(label = "consumer")
+    @UriParam(description = "The fixed resource uri clients use to read this resource. Configure this or uriTemplate, "
+                            + "but not both. The uri must be unique within the CamelContext.")
     private String resourceUri;
+
+    @Metadata(label = "consumer")
+    @UriParam(description = "RFC 6570 level 1 URI template. Each variable must occupy a whole path segment, for "
+                            + "example crm://customers/{id}. Configure this or resourceUri, but not both.")
+    private String uriTemplate;
 
     @Metadata(label = "consumer")
     @UriParam(description = "Comma-separated list of tags used to group resources. Adapters filter the registry by "
@@ -68,6 +72,14 @@ public class AiResourceConfiguration implements Cloneable {
 
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
+    }
+
+    public String getUriTemplate() {
+        return uriTemplate;
+    }
+
+    public void setUriTemplate(String uriTemplate) {
+        this.uriTemplate = uriTemplate;
     }
 
     public String getTags() {

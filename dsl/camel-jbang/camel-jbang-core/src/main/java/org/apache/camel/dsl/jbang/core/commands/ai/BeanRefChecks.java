@@ -622,8 +622,8 @@ final class BeanRefChecks {
     /**
      * A script (groovy, jq, ...) that returns 'resource:file:x' returns that text: the resource: prefix is resolved on
      * the expression text, never on a returned value, so the next step gets 24 characters instead of the file
-     * (CAMEL-24882). Says to add resolveResource: true (CAMEL-24884) or to use constant/simple. Skipped when the
-     * expression already has resolveResource: true.
+     * (CAMEL-24882). Says to add resolveResource: true (CAMEL-24884) and return the name without a scheme, or to use
+     * constant/simple. With resolveResource: true, a returned name with a scheme fails (CAMEL-25982): says to drop it.
      */
     static List<String> validateReturnedResourceLiterals(String content) {
         List<String> errors = new ArrayList<>();
@@ -663,22 +663,46 @@ final class BeanRefChecks {
                 }
                 block.append(t.startsWith("expression:") ? stripYamlQuotes(t.substring(11).trim()) : t).append('\n');
             }
+            Matcher m = QUOTED_RESOURCE_LITERAL.matcher(block);
             if (resolves) {
+                while (m.find()) {
+                    String literal = m.group(1);
+                    String plain = withoutScheme(literal);
+                    if (!plain.equals(literal)) {
+                        errors.add("Line " + (i + 1) + ": " + key + ": with resolveResource: true the script must return"
+                                   + " the name without a scheme, '" + plain + "' instead of '" + literal + "': a name"
+                                   + " with a scheme fails. It is loaded from the classpath, where camel run puts the"
+                                   + " files given on the command line and export puts src/main/resources");
+                        break;
+                    }
+                }
                 i = end;
                 continue;
             }
-            Matcher m = QUOTED_RESOURCE_LITERAL.matcher(block);
             if (m.find()) {
                 String literal = m.group(1);
                 errors.add("Line " + (i + 1) + ": " + key + ": the script returns the text '" + literal + "', not the"
                            + " file: the resource: prefix is resolved on an expression's text, never on a value it"
-                           + " returns. Add resolveResource: true under " + key + ": to load the resource the result"
-                           + " names, or set the body with constant: \"" + literal + "\" (simple: \"resource:file:${...}\""
-                           + " for a name chosen per message)");
+                           + " returns. Add resolveResource: true under " + key + ": and return the name without a"
+                           + " scheme, '" + withoutScheme(literal) + "', to load the resource the result names from the"
+                           + " classpath (camel run puts the files given on the command line there), or set the body"
+                           + " with constant: \"" + literal + "\" (simple: \"resource:file:${...}\" for a name chosen"
+                           + " per message)");
             }
             i = end;
         }
         return errors;
+    }
+
+    /** resource:file:order.json -> resource:order.json, the form resolveResource: true loads. */
+    private static String withoutScheme(String literal) {
+        String name = literal.substring(9);
+        for (String scheme : new String[] { "classpath:", "file:", "ref:", "bean:" }) {
+            if (name.startsWith(scheme)) {
+                return "resource:" + name.substring(scheme.length());
+            }
+        }
+        return literal;
     }
 
     private static String stripYamlQuotes(String value) {

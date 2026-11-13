@@ -29,7 +29,6 @@ public final class OAIPMHConstants {
     public static final String VERB = "CamelOaimphVerb";
     public static final String METADATA_PREFIX = "CamelOaimphMetadataPrefix";
     public static final String ONLY_FIRST = "CamelOaimphOnlyFirst";
-    public static final String IGNORE_SSL_WARNINGS = "CamelOaimphIgnoreSSLWarnings";
     public static final String UNTIL = "CamelOaimphUntil";
     public static final String FROM = "CamelOaimphFrom";
     public static final String SET = "CamelOaimphSet";

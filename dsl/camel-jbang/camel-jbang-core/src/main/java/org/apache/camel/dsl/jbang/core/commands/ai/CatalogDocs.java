@@ -97,8 +97,8 @@ public final class CatalogDocs {
               + " or for simple: functions, operators, ognl, advanced";
     /** The optionsFilter argument of camel_catalog_doc. */
     public static final String OPTIONS_FILTER_DESC
-            = "Word to match in option names or descriptions, all matches listed in full; for an EIP whose own options"
-              + " do not match, its elements' options are searched (nestedOptions)";
+            = "Words to match in option names or descriptions, comma-separated (logStackTrace,maximumRedeliveries),"
+              + " all matches in full; for an EIP its elements' options too (nestedOptions)";
     /** The limit argument of camel_catalog_doc. */
     public static final String OPTIONS_LIMIT_DESC
             = "Options of a component listed in full (default 20, the rest by name; all with optionsFilter)";
@@ -128,9 +128,10 @@ public final class CatalogDocs {
      * @param  name           the artifact name (kafka, json-jackson, simple, choice); ignored when endpoint is given
      * @param  endpoint       an endpoint URI to validate instead of documenting an artifact
      * @param  kind           component, dataformat, language, eip, bean or api; null to detect
-     * @param  optionsFilter  keyword to match in option names, descriptions and groups; also picks the simple functions
-     *                        and operators to list in full, and the exchange properties of an EIP (by name and
-     *                        description). When no option of a component matches, its message headers are searched;
+     * @param  optionsFilter  keyword to match in option names, descriptions and groups, or several separated by comma
+     *                        (each term that matches nothing is said in unmatchedTerms); also picks the simple
+     *                        functions and operators to list in full, and the exchange properties of an EIP (by name
+     *                        and description). When no option of a component matches, its message headers are searched;
      *                        when no function of simple matches, the file: functions; when nothing matches, the answer
      *                        says where an option or header of that name is
      * @param  includeOptions which options to list: {@code common} (the default; without the deprecated and advanced
@@ -240,8 +241,102 @@ public final class CatalogDocs {
     public static JsonObject catalogDoc(
             CamelCatalog catalog, String name, String endpoint, String kind, String optionsFilter,
             String includeOptions, boolean includeHeaders, boolean includeDoc, String docPage, int limit) {
-        return capAnswer(answer(catalog, name, endpoint, kind, optionsFilter, includeOptions, includeHeaders, includeDoc,
-                docPage, limit));
+        String filter = filterTerms(optionsFilter);
+        JsonObject answer = answer(catalog, name, endpoint, kind, filter, includeOptions, includeHeaders, includeDoc,
+                docPage, limit);
+        if (several(filter) && (endpoint == null || endpoint.isBlank()) && (docPage == null || docPage.isBlank())
+                && !answer.containsKey("error")) {
+            putUnmatchedTerms(catalog, name, kind, filter, includeOptions, limit, answer);
+            if (splitTerms(optionsFilter).size() > MAX_FILTER_TERMS) {
+                answer.put("filterNote", "only the first " + MAX_FILTER_TERMS + " terms of optionsFilter are searched");
+            }
+        }
+        return capAnswer(answer);
+    }
+
+    /** The most terms of one optionsFilter that are searched (CAMEL-25632). */
+    static final int MAX_FILTER_TERMS = 30;
+
+    /**
+     * The optionsFilter as the answer matches it: as it is when it has no comma, else its terms joined by comma. A
+     * model checked each option it meant to write with a call of its own, and ran out of tool calls before it wrote the
+     * route: 17 lookups on onException in one step of the local-model benchmark (CAMEL-25632). So the filter takes
+     * several terms, separated by comma, each trimmed (also of the brackets and quotes of a list written as text), in
+     * lower case and without duplicates, up to {@link #MAX_FILTER_TERMS}. Null when there is no filter.
+     */
+    static String filterTerms(String optionsFilter) {
+        if (optionsFilter == null || optionsFilter.isBlank()) {
+            return null;
+        }
+        if (optionsFilter.indexOf(',') < 0) {
+            return optionsFilter;
+        }
+        List<String> terms = splitTerms(optionsFilter);
+        return terms.isEmpty() ? null : String.join(",", terms.subList(0, Math.min(terms.size(), MAX_FILTER_TERMS)));
+    }
+
+    /** The spaces, brackets and quotes around a term of a filter: [a, "b"] is a and b. */
+    private static final Pattern TERM_DECORATION = Pattern.compile("^[\\s\\[\"']+|[\\s\\]\"']+$");
+
+    private static List<String> splitTerms(String optionsFilter) {
+        Set<String> terms = new LinkedHashSet<>();
+        for (String part : optionsFilter.split(",")) {
+            String term = TERM_DECORATION.matcher(part).replaceAll("").toLowerCase(Locale.ROOT);
+            if (!term.isEmpty()) {
+                terms.add(term);
+            }
+        }
+        return new ArrayList<>(terms);
+    }
+
+    /** Whether a filter, as {@link #filterTerms(String)} returns it, has several terms. */
+    private static boolean several(String filter) {
+        return filter != null && filter.indexOf(',') >= 0;
+    }
+
+    /** Whether the text, in lower case, contains the filter, or one of its terms when it has several. */
+    private static boolean containsTerm(String lowerText, String filter) {
+        if (!several(filter)) {
+            return lowerText.contains(filter);
+        }
+        for (String term : filter.split(",")) {
+            if (lowerText.contains(term)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * The terms of a filter of several that match no option, each with what the answer for that term alone says
+     * instead: the message header it names, where an option of that name is, or the closest options. The answer for all
+     * the terms lists what they match; what one term matches nothing would be lost in it (CAMEL-25632).
+     */
+    private static void putUnmatchedTerms(
+            CamelCatalog catalog, String name, String kind, String filter, String includeOptions, int limit,
+            JsonObject answer) {
+        JsonArray unmatched = new JsonArray();
+        for (String term : filter.split(",")) {
+            JsonObject one = answer(catalog, name, null, kind, term, includeOptions, false, false, null, limit);
+            boolean headersOnly = one.getIntegerOrDefault("matchedOptions", -1) == 0
+                    && one.getIntegerOrDefault("matchedHeaders", 0) > 0;
+            if (!headersOnly && !matchedNothing(one)) {
+                continue;
+            }
+            JsonObject entry = new JsonObject();
+            entry.put("term", term);
+            for (String key : List.of("note", "headers", "headerNames", "closestOptions", "elsewhere")) {
+                if (one.containsKey(key)) {
+                    entry.put(key, one.get(key));
+                }
+            }
+            unmatched.add(entry);
+        }
+        if (!unmatched.isEmpty()) {
+            answer.put("unmatchedTerms", unmatched);
+            answer.put("unmatchedHint", "the terms of optionsFilter that match no option here, each with what it is"
+                                        + " instead (a message header, an option elsewhere) or the closest options");
+        }
     }
 
     private static JsonObject answer(
@@ -701,12 +796,13 @@ public final class CatalogDocs {
             // only when there is one, else an agent spends a call that answers "no sample" (CAMEL-25539)
             result.put("sampleHint", "camel_catalog_sample name=" + model.getName() + " returns a validated YAML example");
         }
-        // only when the filter matched none of the EIP's own options, also none the scope left out
-        if (filter != null && scope != OptionScope.NONE && result.getIntegerOrDefault("matchedOptions", 0) == 0
-                && result.getIntegerOrDefault("omittedOptions", 0) == 0) {
+        // also when the filter matched options of the EIP itself: redelivery matches the redeliveryPolicy of
+        // onException, and the redeliveryDelay a model wants is an option of that element (CAMEL-25632); but not when
+        // the scope left out options of the EIP itself that matched
+        if (filter != null && scope != OptionScope.NONE && result.getIntegerOrDefault("omittedOptions", 0) == 0) {
             putNestedOptions(catalog, model, filter, scope, result);
         }
-        if (filter != null && matchedNothing(result)) {
+        if (filter != null && !several(filter) && matchedNothing(result)) {
             // the EIP's own options first, as a component's, then where an option of that name is
             JsonArray closest = closestOptions(model, filter);
             if (!closest.isEmpty()) {
@@ -2110,7 +2206,8 @@ public final class CatalogDocs {
             int matching = filter != null ? sectionsContaining(how.sections(), filter) : 0;
             result.put("sectionsHint", "docPage=<section title> returns that section of the page as text"
                                        + (matching > 0
-                                               ? "; the first " + matching + " contain '" + filter + "'"
+                                               ? "; the first " + matching + " contain "
+                                                 + (several(filter) ? "one of " : "") + "'" + filter + "'"
                                                : ""));
         }
         String mainGroup = MAIN_CONFIG_GROUPS.get(model.getScheme());
@@ -2184,7 +2281,7 @@ public final class CatalogDocs {
                 }
                 if (opt.isRequired()) {
                     required.add(o);
-                } else if (filter != null && opt.getName().toLowerCase(Locale.ROOT).contains(filter)) {
+                } else if (filter != null && containsTerm(opt.getName().toLowerCase(Locale.ROOT), filter)) {
                     // a name match before a match in a description
                     byName.add(o);
                 } else {
@@ -2211,7 +2308,8 @@ public final class CatalogDocs {
             String omittedHint = result.getString("optionsHint");
             result.put("optionsHint", optionsHint(listed, ordered.size(), omittedHint));
         }
-        if (filter != null && ordered.isEmpty() && omitted == 0) {
+        // a filter of several terms says this for each term that matches nothing, in unmatchedTerms
+        if (filter != null && !several(filter) && ordered.isEmpty() && omitted == 0) {
             List<ComponentModel.EndpointHeaderModel> headers = headersMatching(model, filter);
             if (!headers.isEmpty()) {
                 putMatchedHeaders(result, headers, filter);
@@ -2334,7 +2432,7 @@ public final class CatalogDocs {
      * restConfiguration (CAMEL-26572). Nothing when no option or header has that name.
      */
     private static void putElsewhere(CamelCatalog catalog, JsonObject result, String filter) {
-        if (filter == null || !matchedNothing(result)) {
+        if (filter == null || several(filter) || !matchedNothing(result)) {
             return;
         }
         String where = CatalogNameIndex.of(catalog).where(filter);
@@ -2563,7 +2661,7 @@ public final class CatalogDocs {
         JsonArray first = new JsonArray();
         JsonArray rest = new JsonArray();
         for (DocSection s : sections) {
-            if (filter != null && s.own().toLowerCase(Locale.ROOT).contains(filter)) {
+            if (filter != null && containsTerm(s.own().toLowerCase(Locale.ROOT), filter)) {
                 first.add(s.title());
             } else {
                 rest.add(s.title());
@@ -2574,7 +2672,7 @@ public final class CatalogDocs {
     }
 
     private static int sectionsContaining(List<DocSection> sections, String filter) {
-        return (int) sections.stream().filter(s -> s.own().toLowerCase(Locale.ROOT).contains(filter)).count();
+        return (int) sections.stream().filter(s -> containsTerm(s.own().toLowerCase(Locale.ROOT), filter)).count();
     }
 
     /**
@@ -2601,11 +2699,14 @@ public final class CatalogDocs {
         return null;
     }
 
+    /** How many of the entries a cut answer leaves out it names in its note. */
+    private static final int MAX_CUT_NAMES = 30;
+
     /**
      * Cuts an answer longer than {@link #MAX_ANSWER_LENGTH} characters, with a marker that says what was cut and how to
      * ask for it: first the text of a page, at a line and down to {@link #MIN_DOC_KEPT} characters, with the titles of
      * the sections left out; then the longest list, from its end (the options left out are named in moreOptions, the
-     * message headers in moreHeaders).
+     * message headers in moreHeaders, the entries of another list in the note).
      */
     static JsonObject capAnswer(JsonObject answer) {
         String doc = answer.getString("doc");
@@ -2629,6 +2730,7 @@ public final class CatalogDocs {
             answer.put("truncated", true);
         }
         Map<String, Integer> cut = new LinkedHashMap<>();
+        Map<String, List<String>> cutNames = new LinkedHashMap<>();
         for (int round = 0; round < 10; round++) {
             excess = answer.toJson().length() - MAX_ANSWER_LENGTH;
             if (excess <= 0) {
@@ -2697,9 +2799,17 @@ public final class CatalogDocs {
                                             + " optionsFilter=<header name> returns one in full");
                 continue;
             }
+            // the options cut are named, so that a model that asked for several by name knows which ones to ask
+            // again for (CAMEL-25632)
+            List<String> names = cutNames.computeIfAbsent(longest, k -> new ArrayList<>());
+            names.addAll(0, removedNames);
+            String named = names.isEmpty()
+                    ? ""
+                    : " (" + String.join(", ", names.subList(0, Math.min(names.size(), MAX_CUT_NAMES)))
+                      + (names.size() > MAX_CUT_NAMES ? ", ..." : "") + ")";
             answer.put("truncatedNote", "the answer is cut at " + MAX_ANSWER_LENGTH + " characters: the last " + total
-                                        + " entries of " + longest + " are left out; optionsFilter=<word> or a"
-                                        + " smaller limit narrows the answer");
+                                        + " entries of " + longest + " are left out" + named
+                                        + "; optionsFilter=<word> or a smaller limit narrows the answer");
         }
         return answer;
     }
@@ -2856,25 +2966,39 @@ public final class CatalogDocs {
         if (functions != null && !functions.isEmpty()) {
             result.put("functionCount", functions.size());
             if (filter != null) {
-                boolean group = isFunctionGroup(functions, filter);
-                JsonArray matched = functionsMatching(functions, filter, group);
+                // each term of a filter of several is matched on its own, as a function name, a group or a word
+                JsonArray matched = new JsonArray();
+                Set<String> names = new HashSet<>();
+                List<String> groups = new ArrayList<>();
                 String note = null;
-                if (matched.isEmpty() && included != null && included.getFunctions() != null) {
-                    // the file: functions are in the catalog entry of the file language, not in the one of simple: a
-                    // model sent optionsFilter=file:name.noext 14 times in one step (CAMEL-26572)
-                    group = isFunctionGroup(included.getFunctions(), filter);
-                    matched = functionsMatching(included.getFunctions(), filter, group);
-                    if (!matched.isEmpty()) {
-                        note = "functions of the " + included.getName() + " language, which " + model.getName()
-                               + " includes: write one inside ${...}, such as ${"
-                               + ((JsonObject) matched.get(0)).getString("name") + "}; they work on a message from a"
-                               + " file, ftp or sftp consumer";
+                for (String term : filter.split(",")) {
+                    boolean group = isFunctionGroup(functions, term);
+                    JsonArray found = functionsMatching(functions, term, group);
+                    if (found.isEmpty() && included != null && included.getFunctions() != null) {
+                        // the file: functions are in the catalog entry of the file language, not in the one of
+                        // simple: a model sent optionsFilter=file:name.noext 14 times in one step (CAMEL-26572)
+                        group = isFunctionGroup(included.getFunctions(), term);
+                        found = functionsMatching(included.getFunctions(), term, group);
+                        if (!found.isEmpty() && note == null) {
+                            note = "functions of the " + included.getName() + " language, which " + model.getName()
+                                   + " includes: write one inside ${...}, such as ${"
+                                   + ((JsonObject) found.get(0)).getString("name") + "}; they work on a message from"
+                                   + " a file, ftp or sftp consumer";
+                        }
+                    }
+                    if (group) {
+                        groups.add(term);
+                    }
+                    for (Object fn : found) {
+                        if (names.add(((JsonObject) fn).toJson())) {
+                            matched.add(fn);
+                        }
                     }
                 }
                 result.put("functions", matched);
                 result.put("matchedFunctions", matched.size());
-                if (group) {
-                    result.put("functionGroup", filter);
+                if (!groups.isEmpty()) {
+                    result.put("functionGroup", String.join(",", groups));
                 }
                 if (note != null) {
                     result.put("functionsNote", note);
@@ -2895,27 +3019,40 @@ public final class CatalogDocs {
         if (operators != null && !operators.isEmpty()) {
             result.put("operatorCount", operators.size());
             if (filter != null) {
-                // an operator kind (binary, logical, unary...) is that kind only; an operator itself comes first
-                boolean kind = operators.stream().anyMatch(op -> filter.equalsIgnoreCase(op.getOperatorKind()));
-                JsonArray exact = new JsonArray();
-                JsonArray arr = new JsonArray();
-                for (LanguageModel.LanguageOperatorModel op : operators) {
-                    if (kind) {
-                        if (filter.equalsIgnoreCase(op.getOperatorKind())) {
+                JsonArray matched = new JsonArray();
+                Set<String> names = new HashSet<>();
+                List<String> kinds = new ArrayList<>();
+                for (String term : filter.split(",")) {
+                    // an operator kind (binary, logical, unary...) is that kind only; an operator itself comes first
+                    boolean kind = operators.stream().anyMatch(op -> term.equalsIgnoreCase(op.getOperatorKind()));
+                    JsonArray exact = new JsonArray();
+                    JsonArray arr = new JsonArray();
+                    for (LanguageModel.LanguageOperatorModel op : operators) {
+                        if (kind) {
+                            if (term.equalsIgnoreCase(op.getOperatorKind())) {
+                                arr.add(operatorToJson(op));
+                            }
+                        } else if (term.equalsIgnoreCase(op.getName())) {
+                            exact.add(operatorToJson(op));
+                        } else if (matchesOptionFilter(op, term)
+                                || (op.getOperatorKind() != null && op.getOperatorKind().toLowerCase().contains(term))) {
                             arr.add(operatorToJson(op));
                         }
-                    } else if (filter.equalsIgnoreCase(op.getName())) {
-                        exact.add(operatorToJson(op));
-                    } else if (matchesOptionFilter(op, filter)
-                            || (op.getOperatorKind() != null && op.getOperatorKind().toLowerCase().contains(filter))) {
-                        arr.add(operatorToJson(op));
+                    }
+                    exact.addAll(arr);
+                    if (kind) {
+                        kinds.add(term);
+                    }
+                    for (Object op : exact) {
+                        if (names.add(((JsonObject) op).toJson())) {
+                            matched.add(op);
+                        }
                     }
                 }
-                exact.addAll(arr);
-                result.put("operators", exact);
-                result.put("matchedOperators", exact.size());
-                if (kind) {
-                    result.put("operatorKind", filter);
+                result.put("operators", matched);
+                result.put("matchedOperators", matched.size());
+                if (!kinds.isEmpty()) {
+                    result.put("operatorKind", String.join(",", kinds));
                 }
             } else {
                 JsonArray syntaxes = new JsonArray();
@@ -3073,8 +3210,8 @@ public final class CatalogDocs {
     private static void putExchangeProperties(JsonObject result, EipModel model, String filter) {
         JsonArray properties = new JsonArray();
         for (EipModel.EipOptionModel p : model.getExchangeProperties()) {
-            if (filter == null || p.getName().toLowerCase(Locale.ROOT).contains(filter)
-                    || (p.getDescription() != null && p.getDescription().toLowerCase(Locale.ROOT).contains(filter))) {
+            if (filter == null || containsTerm(p.getName().toLowerCase(Locale.ROOT), filter)
+                    || (p.getDescription() != null && containsTerm(p.getDescription().toLowerCase(Locale.ROOT), filter))) {
                 properties.add(exchangePropertyToJson(p));
             }
         }
@@ -3193,10 +3330,10 @@ public final class CatalogDocs {
         if (filter == null) {
             return true;
         }
-        return (opt.getName() != null && opt.getName().toLowerCase().contains(filter))
-                || (opt.getDescription() != null && opt.getDescription().toLowerCase().contains(filter))
-                || (opt.getGroup() != null && opt.getGroup().toLowerCase().contains(filter))
-                || (opt.getLabel() != null && opt.getLabel().toLowerCase().contains(filter));
+        return (opt.getName() != null && containsTerm(opt.getName().toLowerCase(), filter))
+                || (opt.getDescription() != null && containsTerm(opt.getDescription().toLowerCase(), filter))
+                || (opt.getGroup() != null && containsTerm(opt.getGroup().toLowerCase(), filter))
+                || (opt.getLabel() != null && containsTerm(opt.getLabel().toLowerCase(), filter));
     }
 
     /** One option as the tools return it; {@code scope} is component or endpoint for a component's options. */

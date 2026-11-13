@@ -38,7 +38,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@UsesWorkingDirectory
 class DependencyUpdateTest extends CamelCommandBaseTestSupport {
 
     private File workingDir;
@@ -47,6 +46,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
     @Override
     public void setup() throws Exception {
         super.setup();
+        useTestWorkDir();
         workingDir = Files.createTempDirectory("camel-dependency-update-tests").toFile();
     }
 
@@ -126,6 +126,8 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         CommandLineTestHelper.parse(exportCommand,
                 "--gav=examples:route:1.0.0",
                 "--dir=" + workingDir,
+                // the directory has the route that camel init created, which the export replaces with the project
+                "--clean-dir", "--yes",
                 "--camel-version=4.13.0",
                 "--runtime=" + rt.runtime(),
                 CamelCommandBaseTestSupport.quarkusExtRegistry(),

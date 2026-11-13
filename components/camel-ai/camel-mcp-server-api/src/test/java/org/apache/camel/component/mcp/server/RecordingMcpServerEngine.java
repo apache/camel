@@ -32,18 +32,26 @@ public class RecordingMcpServerEngine extends ServiceSupport implements McpServe
 
     private final Map<String, McpServerTool> tools = new ConcurrentHashMap<>();
     private final Map<String, McpServerResource> resources = new ConcurrentHashMap<>();
+    private final Map<String, McpServerResourceTemplate> resourceTemplates = new ConcurrentHashMap<>();
     private final Map<String, McpServerPrompt> prompts = new ConcurrentHashMap<>();
     private final List<String> removed = new CopyOnWriteArrayList<>();
     private final List<String> removedResources = new CopyOnWriteArrayList<>();
+    private final List<String> removedResourceTemplates = new CopyOnWriteArrayList<>();
     private final List<String> removedPrompts = new CopyOnWriteArrayList<>();
     private final boolean resourcesSupported;
+    private final boolean resourceTemplatesSupported;
 
     public RecordingMcpServerEngine() {
-        this(true);
+        this(true, true);
     }
 
     public RecordingMcpServerEngine(boolean resourcesSupported) {
+        this(resourcesSupported, true);
+    }
+
+    public RecordingMcpServerEngine(boolean resourcesSupported, boolean resourceTemplatesSupported) {
         this.resourcesSupported = resourcesSupported;
+        this.resourceTemplatesSupported = resourceTemplatesSupported;
     }
 
     private CamelContext camelContext;
@@ -92,6 +100,22 @@ public class RecordingMcpServerEngine extends ServiceSupport implements McpServe
     }
 
     @Override
+    public void resourceTemplateAdded(McpServerResourceTemplate resourceTemplate) {
+        resourceTemplates.put(resourceTemplate.uriTemplate(), resourceTemplate);
+    }
+
+    @Override
+    public void resourceTemplateRemoved(String uriTemplate) {
+        resourceTemplates.remove(uriTemplate);
+        removedResourceTemplates.add(uriTemplate);
+    }
+
+    @Override
+    public boolean supportsResourceTemplates() {
+        return resourceTemplatesSupported;
+    }
+
+    @Override
     public void promptAdded(McpServerPrompt prompt) {
         prompts.put(prompt.name(), prompt);
     }
@@ -125,6 +149,14 @@ public class RecordingMcpServerEngine extends ServiceSupport implements McpServe
 
     public List<String> removedResources() {
         return removedResources;
+    }
+
+    public Map<String, McpServerResourceTemplate> resourceTemplates() {
+        return resourceTemplates;
+    }
+
+    public List<String> removedResourceTemplates() {
+        return removedResourceTemplates;
     }
 
     public List<String> removed() {

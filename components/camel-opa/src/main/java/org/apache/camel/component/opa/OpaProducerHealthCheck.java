@@ -37,9 +37,15 @@ public class OpaProducerHealthCheck extends AbstractHealthCheck implements AutoC
     private final String bearerToken;
     private final String policyPath;
     private final OpaHealthProbe probe;
+    private final boolean healthCheckBundles;
 
     public OpaProducerHealthCheck(String serverUrl, String bearerToken, String policyPath, String id,
                                   SSLContext sslContext) {
+        this(serverUrl, bearerToken, policyPath, id, sslContext, false);
+    }
+
+    public OpaProducerHealthCheck(String serverUrl, String bearerToken, String policyPath, String id,
+                                  SSLContext sslContext, boolean healthCheckBundles) {
         // the id is built from the endpoint URI so that two endpoints sharing a policy path stay distinct, but that
         // URI carries the bearerToken in the clear and the id is published in the health output, so sanitize it
         super("camel", "producer:opa-" + URISupport.sanitizeUri(id));
@@ -47,11 +53,12 @@ public class OpaProducerHealthCheck extends AbstractHealthCheck implements AutoC
         this.bearerToken = bearerToken;
         this.policyPath = policyPath;
         this.probe = new OpaHealthProbe(sslContext);
+        this.healthCheckBundles = healthCheckBundles;
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        probe.probe(builder, serverUrl, bearerToken, policyPath);
+        probe.probe(builder, serverUrl, bearerToken, policyPath, healthCheckBundles);
     }
 
     @Override

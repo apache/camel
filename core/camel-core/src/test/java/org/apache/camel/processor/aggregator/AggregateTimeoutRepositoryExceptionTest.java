@@ -105,6 +105,21 @@ public class AggregateTimeoutRepositoryExceptionTest extends ContextTestSupport 
     }
 
     @Test
+    public void testTimeoutCompletesGroupAfterFailedGetWithError() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived("B");
+
+        template.sendBodyAndHeader("direct:start", "A", "id", "1");
+        template.sendBodyAndHeader("direct:start", "B", "id", "1");
+        // the next read of the group is the one of the timeout checker, and it throws an Error (such as a missing class
+        // of a stored body): it is tried again, as for an exception
+        repository.failNextGetWithError.set(true);
+
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+        assertEquals(1, repository.failures.get(), "the repository should have failed once");
+    }
+
+    @Test
     public void testTimeoutCompletesGroupAfterFailedRemove() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("B");
@@ -136,6 +151,7 @@ public class AggregateTimeoutRepositoryExceptionTest extends ContextTestSupport 
 
         private final MemoryAggregationRepository delegate = new MemoryAggregationRepository();
         private final AtomicBoolean failNextGet = new AtomicBoolean();
+        private final AtomicBoolean failNextGetWithError = new AtomicBoolean();
         private final AtomicBoolean failNextRemove = new AtomicBoolean();
         private final AtomicInteger failingGets = new AtomicInteger();
         private final AtomicInteger failures = new AtomicInteger();
@@ -147,6 +163,10 @@ public class AggregateTimeoutRepositoryExceptionTest extends ContextTestSupport 
 
         @Override
         public Exchange get(CamelContext camelContext, String key) {
+            if (failNextGetWithError.compareAndSet(true, false)) {
+                failures.incrementAndGet();
+                throw new NoClassDefFoundError("Simulated missing class");
+            }
             if (failNextGet.compareAndSet(true, false) || failingGets.getAndUpdate(n -> Math.max(0, n - 1)) > 0) {
                 failures.incrementAndGet();
                 throw new IllegalStateException("Simulated repository failure in get");
