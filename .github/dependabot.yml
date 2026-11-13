@@ -46,7 +46,8 @@ updates:
       - dependency-name: "com.fasterxml.jackson.core:jackson-annotations"
         update-types: ["version-update:semver-major"]
       # Jackson 3.3 Blackbird needs Java 25, and jtoon 3.0.0 (camel-toon) registers it, so camel-toon fails on Java 21:
-      # revisit when jtoon no longer registers Blackbird below Java 25, or when Camel's minimum Java is 25
+      # revisit when jtoon no longer registers Blackbird below Java 25 (https://github.com/toon-format/toon-java/issues/243),
+      # or when Camel's minimum Java is 25
       - dependency-name: "tools.jackson:*"
         versions: [">= 3.3.0"]
       - dependency-name: "tools.jackson.*:*"
