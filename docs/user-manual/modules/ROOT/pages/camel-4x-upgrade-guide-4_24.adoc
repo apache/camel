@@ -217,6 +217,15 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-wordpress - each endpoint uses its own site URL and credentials
+
+Each WordPress endpoint now has a client of its own, set up from the `url`, `apiVersion`, `user` and `password`
+options of that endpoint, and the producers and consumers of the endpoint use that client. The endpoints no longer
+initialise the `WordpressServiceProvider.getInstance()` singleton, which is deprecated together with its `init`
+methods. Code that read services from `WordpressServiceProvider.getInstance()` after Camel created a WordPress endpoint
+must now use `WordpressEndpoint.getServiceProvider()`, or create a provider with
+`WordpressServiceProvider.create(WordpressAPIConfiguration)`.
+
 === camel-azure-functions - invokeFunction checks the function app and the function name
 
 The `invokeFunction` operation now checks the function app and the function name, from the endpoint or from the
