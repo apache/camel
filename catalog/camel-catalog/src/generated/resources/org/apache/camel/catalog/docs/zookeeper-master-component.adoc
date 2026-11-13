@@ -135,6 +135,8 @@ However, you can also configure the url of the ZooKeeper ensemble using environm
 export ZOOKEEPER_URL = "myzookeeper:2181"
 ----
 
+When no `zooKeeperPassword` is configured, the password can also be set with the `zookeeper.password` system property.
+
 === Master RoutePolicy
 
 You can also use a `RoutePolicy` to control routes in master/slave mode.

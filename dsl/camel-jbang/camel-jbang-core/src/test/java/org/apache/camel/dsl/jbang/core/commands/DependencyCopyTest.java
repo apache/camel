@@ -28,6 +28,7 @@ import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.maven.MavenResolutionException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -43,7 +44,6 @@ import static org.mockito.Mockito.spy;
  * camel dependency copy: the JARs of the dependencies of the integration, copied to a directory. The dependencies are
  * not downloaded: each resolves to a JAR of its own.
  */
-@UsesWorkingDirectory
 class DependencyCopyTest extends CamelCommandBaseTestSupport {
 
     @TempDir
@@ -54,6 +54,13 @@ class DependencyCopyTest extends CamelCommandBaseTestSupport {
 
     @TempDir
     Path lib;
+
+    @BeforeEach
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestWorkDir();
+    }
 
     @Test
     void copiesTheJarsOfTheDependencies() throws Exception {

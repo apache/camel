@@ -432,7 +432,10 @@ option, but it can be set elsewhere: not known.
 the model the step uses (the language of its expression, its data format, its endpoint, or the data type transformer
 of its `toType`), with the options of that model. `steps` is the body the steps of the EIP end with.
 . *An option the side names whose value is not known before the route runs* (a `+{{placeholder}}+` or a `+${expression}+`),
-or an option the step does not set but that can be set elsewhere, such as on the component: not known.
+or an option the step does not set but that can be set elsewhere, such as on the component: not known. An insecure
+opt-in (its `security` is `insecure:ssl`, `insecure:serialization` or `insecure:dev`, such as `allowJavaSerializedObject`)
+is not such an option: it keeps its default when the step does not set it, as one turned on for the whole component is
+reported by the xref:security-policy.adoc[security policy] at startup.
 . *An option of `dependsOn` the step sets:* the `byOption` entry for that value says the body. When it has a
 `javaTypeOption` the step sets, the body is an object of that class. Without such an entry: not known.
 . *The `javaTypeOption` of the side, when the step sets it:* an object of the class it names, or null. It wins over the

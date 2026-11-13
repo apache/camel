@@ -35,6 +35,7 @@ import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.AvailablePortFinder.Port;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,144 +44,150 @@ class VertxMcpServerToolAnnotationsTest {
 
     @Test
     void testEnginePublishesTitleOnlyHint() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
-        CamelContext camelContext = new DefaultCamelContext();
-        VertxMcpServerEngine engine = new VertxMcpServerEngine();
-        McpSyncClient client = null;
-        try {
-            MainHttpServer main = new MainHttpServer();
-            main.setCamelContext(camelContext);
-            main.setHost("0.0.0.0");
-            main.setPort(port);
-            camelContext.addService(main);
-            camelContext.start();
+        try (Port portHolder = AvailablePortFinder.find()) {
+            int port = portHolder.getPort();
+            CamelContext camelContext = new DefaultCamelContext();
+            VertxMcpServerEngine engine = new VertxMcpServerEngine();
+            McpSyncClient client = null;
+            try {
+                MainHttpServer main = new MainHttpServer();
+                main.setCamelContext(camelContext);
+                main.setHost("0.0.0.0");
+                main.setPort(port);
+                camelContext.addService(main);
+                camelContext.start();
 
-            engine.setCamelContext(camelContext);
-            engine.initialize(new McpServerInfo("tool-hints", "1.0", "/mcp"));
-            engine.start();
+                engine.setCamelContext(camelContext);
+                engine.initialize(new McpServerInfo("tool-hints", "1.0", "/mcp"));
+                engine.start();
 
-            AiToolConfiguration configuration = new AiToolConfiguration();
-            configuration.setTitle("Lookup customer");
-            AiToolAnnotations annotations = AiToolAnnotations.fromConfiguration(configuration);
+                AiToolConfiguration configuration = new AiToolConfiguration();
+                configuration.setTitle("Lookup customer");
+                AiToolAnnotations annotations = AiToolAnnotations.fromConfiguration(configuration);
 
-            engine.toolAdded(tool("lookup", "Lookup a customer", annotations,
-                    arguments -> new McpToolCallResult("ok", false)));
+                engine.toolAdded(tool("lookup", "Lookup a customer", annotations,
+                        arguments -> new McpToolCallResult("ok", false)));
 
-            client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port).build())
-                    .requestTimeout(Duration.ofSeconds(10))
-                    .initializationTimeout(Duration.ofSeconds(10))
-                    .build();
-            client.initialize();
+                client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port).build())
+                        .requestTimeout(Duration.ofSeconds(10))
+                        .initializationTimeout(Duration.ofSeconds(10))
+                        .build();
+                client.initialize();
 
-            List<McpSchema.Tool> tools = client.listTools().tools();
-            McpSchema.Tool lookup = tools.stream().filter(t -> "lookup".equals(t.name())).findFirst().orElseThrow();
+                List<McpSchema.Tool> tools = client.listTools().tools();
+                McpSchema.Tool lookup = tools.stream().filter(t -> "lookup".equals(t.name())).findFirst().orElseThrow();
 
-            assertThat(lookup.title()).isEqualTo("Lookup customer");
-            assertThat(lookup.annotations()).isNull();
-        } finally {
-            if (client != null) {
-                client.closeGracefully();
+                assertThat(lookup.title()).isEqualTo("Lookup customer");
+                assertThat(lookup.annotations()).isNull();
+            } finally {
+                if (client != null) {
+                    client.closeGracefully();
+                }
+                engine.stop();
+                camelContext.stop();
             }
-            engine.stop();
-            camelContext.stop();
         }
     }
 
     @Test
     void testEnginePublishesPartialBooleanHints() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
-        CamelContext camelContext = new DefaultCamelContext();
-        VertxMcpServerEngine engine = new VertxMcpServerEngine();
-        McpSyncClient client = null;
-        try {
-            MainHttpServer main = new MainHttpServer();
-            main.setCamelContext(camelContext);
-            main.setHost("0.0.0.0");
-            main.setPort(port);
-            camelContext.addService(main);
-            camelContext.start();
+        try (Port portHolder = AvailablePortFinder.find()) {
+            int port = portHolder.getPort();
+            CamelContext camelContext = new DefaultCamelContext();
+            VertxMcpServerEngine engine = new VertxMcpServerEngine();
+            McpSyncClient client = null;
+            try {
+                MainHttpServer main = new MainHttpServer();
+                main.setCamelContext(camelContext);
+                main.setHost("0.0.0.0");
+                main.setPort(port);
+                camelContext.addService(main);
+                camelContext.start();
 
-            engine.setCamelContext(camelContext);
-            engine.initialize(new McpServerInfo("tool-hints", "1.0", "/mcp"));
-            engine.start();
+                engine.setCamelContext(camelContext);
+                engine.initialize(new McpServerInfo("tool-hints", "1.0", "/mcp"));
+                engine.start();
 
-            AiToolConfiguration configuration = new AiToolConfiguration();
-            configuration.setDestructiveHint(true);
-            AiToolAnnotations annotations = AiToolAnnotations.fromConfiguration(configuration);
+                AiToolConfiguration configuration = new AiToolConfiguration();
+                configuration.setDestructiveHint(true);
+                AiToolAnnotations annotations = AiToolAnnotations.fromConfiguration(configuration);
 
-            engine.toolAdded(tool("delete", "Delete resource", annotations,
-                    arguments -> new McpToolCallResult("ok", false)));
+                engine.toolAdded(tool("delete", "Delete resource", annotations,
+                        arguments -> new McpToolCallResult("ok", false)));
 
-            client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port).build())
-                    .requestTimeout(Duration.ofSeconds(10))
-                    .initializationTimeout(Duration.ofSeconds(10))
-                    .build();
-            client.initialize();
+                client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port).build())
+                        .requestTimeout(Duration.ofSeconds(10))
+                        .initializationTimeout(Duration.ofSeconds(10))
+                        .build();
+                client.initialize();
 
-            List<McpSchema.Tool> tools = client.listTools().tools();
-            McpSchema.Tool delete = tools.stream().filter(t -> "delete".equals(t.name())).findFirst().orElseThrow();
+                List<McpSchema.Tool> tools = client.listTools().tools();
+                McpSchema.Tool delete = tools.stream().filter(t -> "delete".equals(t.name())).findFirst().orElseThrow();
 
-            assertThat(delete.title()).isNull();
-            assertThat(delete.annotations()).isNotNull();
-            assertThat(delete.annotations().destructiveHint()).isTrue();
-            assertThat(delete.annotations().readOnlyHint()).isNull();
-        } finally {
-            if (client != null) {
-                client.closeGracefully();
+                assertThat(delete.title()).isNull();
+                assertThat(delete.annotations()).isNotNull();
+                assertThat(delete.annotations().destructiveHint()).isTrue();
+                assertThat(delete.annotations().readOnlyHint()).isNull();
+            } finally {
+                if (client != null) {
+                    client.closeGracefully();
+                }
+                engine.stop();
+                camelContext.stop();
             }
-            engine.stop();
-            camelContext.stop();
         }
     }
 
     @Test
     void testEnginePublishesToolAnnotationHints() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
-        CamelContext camelContext = new DefaultCamelContext();
-        VertxMcpServerEngine engine = new VertxMcpServerEngine();
-        McpSyncClient client = null;
-        try {
-            MainHttpServer main = new MainHttpServer();
-            main.setCamelContext(camelContext);
-            main.setHost("0.0.0.0");
-            main.setPort(port);
-            camelContext.addService(main);
-            camelContext.start();
+        try (Port portHolder = AvailablePortFinder.find()) {
+            int port = portHolder.getPort();
+            CamelContext camelContext = new DefaultCamelContext();
+            VertxMcpServerEngine engine = new VertxMcpServerEngine();
+            McpSyncClient client = null;
+            try {
+                MainHttpServer main = new MainHttpServer();
+                main.setCamelContext(camelContext);
+                main.setHost("0.0.0.0");
+                main.setPort(port);
+                camelContext.addService(main);
+                camelContext.start();
 
-            engine.setCamelContext(camelContext);
-            engine.initialize(new McpServerInfo("tool-hints", "1.0", "/mcp"));
-            engine.start();
+                engine.setCamelContext(camelContext);
+                engine.initialize(new McpServerInfo("tool-hints", "1.0", "/mcp"));
+                engine.start();
 
-            AiToolConfiguration configuration = new AiToolConfiguration();
-            configuration.setTitle("Read only tool");
-            configuration.setReadOnlyHint(true);
-            configuration.setDestructiveHint(false);
-            configuration.setOpenWorldHint(false);
-            AiToolAnnotations annotations = AiToolAnnotations.fromConfiguration(configuration);
+                AiToolConfiguration configuration = new AiToolConfiguration();
+                configuration.setTitle("Read only tool");
+                configuration.setReadOnlyHint(true);
+                configuration.setDestructiveHint(false);
+                configuration.setOpenWorldHint(false);
+                AiToolAnnotations annotations = AiToolAnnotations.fromConfiguration(configuration);
 
-            engine.toolAdded(tool("read_only", "Read-only lookup", annotations,
-                    arguments -> new McpToolCallResult("ok", false)));
+                engine.toolAdded(tool("read_only", "Read-only lookup", annotations,
+                        arguments -> new McpToolCallResult("ok", false)));
 
-            client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port).build())
-                    .requestTimeout(Duration.ofSeconds(10))
-                    .initializationTimeout(Duration.ofSeconds(10))
-                    .build();
-            client.initialize();
+                client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port).build())
+                        .requestTimeout(Duration.ofSeconds(10))
+                        .initializationTimeout(Duration.ofSeconds(10))
+                        .build();
+                client.initialize();
 
-            List<McpSchema.Tool> tools = client.listTools().tools();
-            McpSchema.Tool readOnly = tools.stream().filter(t -> "read_only".equals(t.name())).findFirst().orElseThrow();
+                List<McpSchema.Tool> tools = client.listTools().tools();
+                McpSchema.Tool readOnly = tools.stream().filter(t -> "read_only".equals(t.name())).findFirst().orElseThrow();
 
-            assertThat(readOnly.title()).isEqualTo("Read only tool");
-            assertThat(readOnly.annotations()).isNotNull();
-            assertThat(readOnly.annotations().readOnlyHint()).isTrue();
-            assertThat(readOnly.annotations().destructiveHint()).isFalse();
-            assertThat(readOnly.annotations().openWorldHint()).isFalse();
-        } finally {
-            if (client != null) {
-                client.closeGracefully();
+                assertThat(readOnly.title()).isEqualTo("Read only tool");
+                assertThat(readOnly.annotations()).isNotNull();
+                assertThat(readOnly.annotations().readOnlyHint()).isTrue();
+                assertThat(readOnly.annotations().destructiveHint()).isFalse();
+                assertThat(readOnly.annotations().openWorldHint()).isFalse();
+            } finally {
+                if (client != null) {
+                    client.closeGracefully();
+                }
+                engine.stop();
+                camelContext.stop();
             }
-            engine.stop();
-            camelContext.stop();
         }
     }
 

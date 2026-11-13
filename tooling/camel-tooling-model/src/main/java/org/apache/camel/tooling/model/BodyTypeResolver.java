@@ -73,7 +73,8 @@ public final class BodyTypeResolver {
      * @param  options the options the step sets, by name: the endpoint uri, the parameters or the options of a data
      *                 format
      * @param  hidden  the options that can be set elsewhere when the step does not set them, such as the options of the
-     *                 component
+     *                 component; not the insecure opt-ins (allowJavaSerializedObject), which keep their default unless
+     *                 the step sets them
      * @return         the body, or null when it is not known for the step
      */
     public static Resolved resolve(BodyTypeModel side, Map<String, String> options, Set<String> hidden) {

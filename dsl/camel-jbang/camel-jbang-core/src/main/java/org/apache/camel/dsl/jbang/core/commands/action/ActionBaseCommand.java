@@ -262,7 +262,7 @@ abstract class ActionBaseCommand extends CamelCommand {
             }
         }
 
-        Path workDir = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR, workDirPrefix + ProcessHandle.current().pid());
+        Path workDir = CommandLineHelper.getWorkDir().resolve(workDirPrefix + ProcessHandle.current().pid());
         PathUtils.deleteDirectory(workDir);
         final String target = workDir.toString();
         // anything this boot dumps must be newer than this: guards readers against a stale dump left over from a

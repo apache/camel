@@ -151,6 +151,9 @@ public class OpaEndpoint extends DefaultEndpoint {
      * between the producer and {@code .policy(...)}.
      */
     private void warnAboutIgnoredServerOptions() {
+        if (configuration.isHealthCheckBundles()) {
+            LOG.warn("healthCheckBundles is ignored when evaluationMode=wasm: there is no server to probe");
+        }
         if (configuration.getOpaClient() != null) {
             LOG.warn("opaClient is ignored when evaluationMode=wasm: the policy is evaluated in-process");
         }

@@ -329,6 +329,13 @@ For several tuples at once, leave `user`/`relation`/`object` unset and put them 
 `Map`s with `user`, `relation` and `object` entries, or of `ClientTupleKey` objects. `deleteTuples` accepts the same
 shapes and revokes instead.
 
+A `writeTuples` body may also set a relationship condition on a tuple: a `ClientTupleKey` built with `.condition(..)`,
+or a `Map` whose `condition` entry is itself a map of a `name` and an optional `context`. The condition is written
+through as given, so a conditioned grant stays conditioned; a tuple with no condition is written unconditioned. Because
+a condition can ride only on the body, a tuple configured on the endpoint is always written without one; set the
+condition on the body when you need a conditioned tuple. A `deleteTuples` body may carry a condition too, but it is
+ignored, because OpenFGA deletes by identity.
+
 [IMPORTANT]
 .The endpoint wins over the body
 ====
@@ -625,8 +632,9 @@ from somewhere the caller cannot reach, which in practice means the endpoint.
 
 `readTuples` answers "what access exists", as opposed to `check`'s "may this subject do this". Here `user`, `relation`
 and `object` are a *filter* rather than a subject, and the body comes back as a list of maps keyed `user`, `relation`,
-`object` and `timestamp` — deliberately the keys `writeTuples` and `deleteTuples` accept, so a route can revoke what
-it just read without reshaping anything:
+`object` and `timestamp`, plus a `condition` map of `name` and `context` when the stored tuple has one — deliberately
+the keys `writeTuples` and `deleteTuples` accept, so a route can revoke what it just read, or re-grant it with its
+condition intact, without reshaping anything:
 
 [tabs]
 ====
@@ -683,7 +691,8 @@ silently widens when a value goes missing is the read-side form of failing open.
 ====
 
 `readChanges` reads the change log, which is the building block for keeping a cache or a projection in step with the
-graph. Each entry adds an `operation` of `WRITE` or `DELETE`.
+graph. Each entry adds an `operation` of `WRITE` or `DELETE`, and carries the same `condition` map as `readTuples`
+when the changed tuple has one.
 
 Both are paged. `pageSize` bounds one request, and the token the page returns arrives on
 `CamelOpenFgaContinuationToken`; feed it back through `continuationToken` to read on.

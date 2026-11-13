@@ -19,9 +19,18 @@ package org.apache.camel.component.opa;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.security.KeyStore;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpsConfigurator;
+import com.sun.net.httpserver.HttpsServer;
 import org.apache.camel.health.HealthCheck;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -107,4 +116,70 @@ class OpaProducerHealthCheckTest {
         assertThat(result.getMessage()).get().asString().contains("Cannot reach the OPA server");
         assertThat(result.getError()).isPresent();
     }
+
+    @Test
+    void includesBundleActivationOnlyWhenEnabled() throws Exception {
+        AtomicBoolean activated = new AtomicBoolean();
+        AtomicReference<String> query = new AtomicReference<>();
+        AtomicReference<String> authorization = new AtomicReference<>();
+        server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        server.createContext("/health", exchange -> {
+            query.set(exchange.getRequestURI().getRawQuery());
+            authorization.set(exchange.getRequestHeaders().getFirst("Authorization"));
+            int status = "bundles=true".equals(query.get()) && !activated.get() ? 500 : 200;
+            exchange.sendResponseHeaders(status, -1);
+            exchange.close();
+        });
+        server.start();
+        String serverUrl = "http://localhost:" + server.getAddress().getPort();
+
+        assertThat(call(serverUrl).getState()).isEqualTo(HealthCheck.State.UP);
+        assertThat(query.get()).isNull();
+
+        OpaProducerHealthCheck bundleCheck = new OpaProducerHealthCheck(
+                serverUrl + "/", "test-token", "authz/allow", "bundles", null, true);
+        bundleCheck.setEnabled(true);
+        HealthCheck.Result notActivated = bundleCheck.call(Map.of());
+
+        assertThat(notActivated.getState()).isEqualTo(HealthCheck.State.DOWN);
+        assertThat(notActivated.getDetails()).containsEntry("opa.healthCheckBundles", true);
+        assertThat(query.get()).isEqualTo("bundles=true");
+        assertThat(authorization.get()).isEqualTo("Bearer test-token");
+
+        activated.set(true);
+        assertThat(bundleCheck.call(Map.of()).getState()).isEqualTo(HealthCheck.State.UP);
+    }
+
+    @Test
+    void preservesTlsConfigurationWhenCheckingBundles() throws Exception {
+        KeyStore fixture = KeyStore.getInstance("PKCS12");
+        try (var in = getClass().getResourceAsStream("/opa-server.p12")) {
+            fixture.load(in, "changeit".toCharArray());
+        }
+        KeyManagerFactory keys = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keys.init(fixture, "changeit".toCharArray());
+        SSLContext serverTls = SSLContext.getInstance("TLS");
+        serverTls.init(keys.getKeyManagers(), null, null);
+        TrustManagerFactory trust = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trust.init(fixture);
+        SSLContext clientTls = SSLContext.getInstance("TLS");
+        clientTls.init(null, trust.getTrustManagers(), null);
+        HttpsServer https = HttpsServer.create(new InetSocketAddress("localhost", 0), 0);
+        https.setHttpsConfigurator(new HttpsConfigurator(serverTls));
+        server = https;
+        AtomicReference<String> query = new AtomicReference<>();
+        https.createContext("/health", exchange -> {
+            query.set(exchange.getRequestURI().getRawQuery());
+            exchange.sendResponseHeaders(200, -1);
+            exchange.close();
+        });
+        https.start();
+        OpaProducerHealthCheck check = new OpaProducerHealthCheck(
+                "https://localhost:" + https.getAddress().getPort(), null, "authz/allow", "tls-bundles", clientTls, true);
+        check.setEnabled(true);
+
+        assertThat(check.call(Map.of()).getState()).isEqualTo(HealthCheck.State.UP);
+        assertThat(query.get()).isEqualTo("bundles=true");
+    }
+
 }

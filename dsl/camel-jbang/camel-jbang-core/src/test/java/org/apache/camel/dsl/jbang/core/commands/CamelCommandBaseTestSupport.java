@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -33,6 +34,7 @@ public class CamelCommandBaseTestSupport {
 
     private Path previousHome;
     private Path testHome;
+    private Path testWorkDir;
 
     @BeforeEach
     public void setup() throws Exception {
@@ -70,6 +72,24 @@ public class CamelCommandBaseTestSupport {
         CommandLineHelper.useHomeDir(home.toString());
     }
 
+    /**
+     * Gives the test a working directory of its own: a temporary directory that replaces the shared
+     * {@code .camel-jbang} directory that {@code camel run}, {@code camel export}, and others create. With an isolated
+     * directory per test instance, tests annotated with {@link UsesWorkingDirectory} can run in parallel forks instead
+     * of one at a time in the serial-test execution.
+     *
+     * @return             the working directory
+     * @throws IOException if the temp directory cannot be created
+     */
+    protected Path useTestWorkDir() throws IOException {
+        if (testWorkDir != null) {
+            FileUtil.removeDir(testWorkDir.toFile());
+        }
+        testWorkDir = Files.createTempDirectory("camel-jbang-work");
+        CamelHome.useWorkDir(testWorkDir);
+        return testWorkDir;
+    }
+
     @AfterEach
     public void restoreHomeDir() {
         if (previousHome != null) {
@@ -79,6 +99,11 @@ public class CamelCommandBaseTestSupport {
         if (testHome != null) {
             FileUtil.removeDir(testHome.toFile());
             testHome = null;
+        }
+        if (testWorkDir != null) {
+            FileUtil.removeDir(testWorkDir.toFile());
+            testWorkDir = null;
+            CamelHome.resetWorkDir();
         }
     }
 

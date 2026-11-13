@@ -33,6 +33,7 @@ import org.apache.camel.component.mcp.server.McpServerConfiguration;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
@@ -85,16 +86,25 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
     private static final String MINIMAL_WAV_BASE64
             = "UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
 
-    private final int port = AvailablePortFinder.getNextAvailable();
+    private AvailablePortFinder.Port portRef;
+
+    @AfterEach
+    void releasePort() {
+        if (portRef != null) {
+            portRef.release();
+            portRef = null;
+        }
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
+        portRef = AvailablePortFinder.find();
         MainHttpServer server = new MainHttpServer();
         server.setCamelContext(camelContext);
         server.setHost("0.0.0.0");
-        server.setPort(port);
+        server.setPort(portRef.getPort());
         camelContext.addService(server);
 
         McpServerConfiguration configuration = new McpServerConfiguration();
@@ -218,7 +228,7 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
 
     @Test
     void testOfficialMcpConformanceSuite() throws Exception {
-        String serverUrl = "http://localhost:" + port + "/mcp";
+        String serverUrl = "http://localhost:" + portRef.getPort() + "/mcp";
         Path expectedFailures = expectedFailuresPath();
 
         LOG.info("Running official MCP conformance suite against {}", serverUrl);

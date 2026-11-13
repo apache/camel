@@ -1430,10 +1430,10 @@ public class TextBodyFlowTest {
 
     @Test
     public void testTheBodyOfMessaging() {
-        // the paho consumer gives bytes, so a field read needs an unmarshal; smtp sends what converts to text, so
-        // parsed data must be marshalled first, and so must the reply of a nats consumer that answers (InOut); the
-        // converter of spring-rabbitmq and the allowJavaSerializedObject option of pulsar may be set on the component,
-        // and an imap mail may be text, a stream or a multipart, which say nothing
+        // the paho consumer gives bytes, so a field read needs an unmarshal; pulsar and smtp send what converts to
+        // bytes or text, so parsed data must be marshalled first, and so must the reply of a nats consumer that answers
+        // (InOut); the converter of spring-rabbitmq may be set on the component, and an imap mail may be text, a stream
+        // or a multipart, which say nothing
         String yaml = """
                 - route:
                     id: mqtt
@@ -1502,15 +1502,46 @@ public class TextBodyFlowTest {
                             name: id
                             simple: ${body[id]}
                 """;
-        assertThat(lines(yaml)).hasSize(3).anySatisfy(m -> assertThat(m)
+        assertThat(lines(yaml)).hasSize(4).anySatisfy(m -> assertThat(m)
                 .contains("route mqtt: simple reads a field of the body (${body[id]})")
                 .contains("the paho consumer gives it as bytes"))
-                .noneSatisfy(m -> assertThat(m).contains("route publish:"))
+                .anySatisfy(m -> assertThat(m).contains("to: pulsar needs the body as text, bytes, a stream or a file"))
                 .anySatisfy(m -> assertThat(m)
                         .contains("route service:")
                         .contains("the body at the end of the route is the reply to the nats request"))
                 .anySatisfy(m -> assertThat(m)
                         .contains("route mail: to: smtp needs the body as text, bytes, a stream or a file"));
+    }
+
+    @Test
+    public void testTheBodyOfAnInsecureOptIn() {
+        // allowJavaSerializedObject of pulsar can be set on the component, but it is an insecure opt-in: it keeps its
+        // default (off) when the route does not set it, so parsed data must be marshalled first; a route that turns it
+        // on sends any body, which says nothing
+        String yaml = """
+                - route:
+                    id: publish
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: pulsar:persistent://public/default/orders
+                - route:
+                    id: legacy
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: pulsar:persistent://public/default/orders?allowJavaSerializedObject=true
+                """;
+        assertThat(lines(yaml)).hasSize(1).first().asString()
+                .contains("route publish: to: pulsar needs the body as text, bytes, a stream or a file");
     }
 
     @Test

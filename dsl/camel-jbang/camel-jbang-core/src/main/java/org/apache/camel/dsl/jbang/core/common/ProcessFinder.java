@@ -207,7 +207,12 @@ public final class ProcessFinder {
                     if (byPid ? ph.pid() != pid : skipThisProcess && ph.pid() == current) {
                         return;
                     }
-                    JsonObject status = readStatus(statusFiles.get(ph.pid()));
+                    Path file = statusFiles.get(ph.pid());
+                    if (ProcessHelper.isStale(ph, file)) {
+                        // left over from an integration that is gone, and the pid is now another process
+                        return;
+                    }
+                    JsonObject status = readStatus(file);
                     if (status == null || stopped(status)) {
                         return;
                     }
