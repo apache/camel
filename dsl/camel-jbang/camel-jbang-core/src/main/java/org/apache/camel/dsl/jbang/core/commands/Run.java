@@ -51,6 +51,7 @@ import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.OptionalValueParser;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeTypeConverter;
@@ -1357,7 +1358,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
                 }
                 if (state < 5) {
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(ProcessFinder.STATUS_POLL_INTERVAL);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         break;

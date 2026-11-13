@@ -44,6 +44,12 @@ import org.apache.camel.util.json.Jsoner;
  */
 public final class ProcessFinder {
 
+    /**
+     * How often a command that waits for an integration to start looks at its status file, in millis. The connector
+     * writes it as soon as Camel has started, since Camel 4.24, and every second.
+     */
+    public static final long STATUS_POLL_INTERVAL = 50;
+
     // the phase of a CamelContext that has stopped (see AbstractCamelContext)
     private static final int STOPPED_PHASE = 9;
 
