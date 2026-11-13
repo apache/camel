@@ -118,7 +118,8 @@ Camel is a large, long-lived project — code often looks "wrong" but exists for
    [`payload-mode.adoc`](design/payload-mode.adoc) (proposed `payloadMode`, the `PayloadMode` SPI),
    [`kamelets-in-camel.adoc`](design/kamelets-in-camel.adoc) (proposed move of `camel-kamelets` into Camel, released
    with Camel),
-   [`good-to-know.adoc`](design/good-to-know.adoc) (proposed hint rules in the catalog, facts per component).
+   [`good-to-know.adoc`](design/good-to-know.adoc) (proposed hint rules in the catalog, facts per component),
+   [`cedar.adoc`](design/cedar.adoc) (proposed `camel-cedar`, embedded Cedar authorization).
 5. **Understand the broader context**: if a module replaced another (e.g. `camel-opentelemetry2`), understand what was
    intentionally changed vs. accidentally omitted.
 6. **Check if the fix reverts prior work**: if so, stop and reconsider; if still justified, say so in the PR description.

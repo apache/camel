@@ -5,7 +5,7 @@ authors:
 reviewers: []
 approvers: []
 creation-date: 2026-11-11
-last-updated: 2026-11-11
+last-updated: 2026-11-13
 status: implementable
 see-also:
   - "design/security.adoc"
@@ -14,6 +14,20 @@ see-also:
 replaces: []
 superseded-by: []
 ---
+
+== Summary
+
+`camel-cedar` evaluates Cedar policies inside the JVM through the `cedar-java`
+binding and its bundled native library. A producer records a typed authorization
+result on the exchange, and an authorization-policy bean denies access before the
+processor it wraps runs. Policies, schema and static entities come from trusted
+configuration, are validated against each other at every load and are published
+as immutable snapshots. The engine's native semantics (default deny, forbid
+precedence, skip-on-error) are exposed as a raw decision next to an effective
+outcome, which by default reports a decision with evaluation errors as an error
+rather than an allow. This document records the feasibility evidence, the
+portability limits of the native artifact and the contract that CAMEL-26847
+implements.
 
 == Decision
 
@@ -136,12 +150,45 @@ even when the engine's raw decision is allow. An explicit compatibility mode may
 honor Cedar's native decision, but must retain its diagnostics and clearly
 explain the difference. Do not label an evaluation failure as a policy denial
 or silently allow a failed call. A transport-style `failOpen` option has no role
-in this embedded first version.
+in this embedded first version; the relation to `camel-opa` and `camel-openfga`
+below says why.
 
 Validate policies against the configured schema at startup. Request validation
 and entity parsing must follow that schema where the SDK supports it. A syntax
 check alone does not establish that the policy is compatible with the application's
 entity and action model.
+
+=== Relation to camel-opa and camel-openfga
+
+Camel already has two decision components with the same shape: a producer that
+records the verdict and an `AuthorizationPolicy` bean that wraps part of a route.
+`camel-cedar` keeps that shape and the conventions that come with it:
+
+* The policy bean throws `CamelAuthorizationException` and the wrapped processor
+  does not run; the result stays on the exchange for an `onException` handler,
+  as the `CamelOpa*` and `CamelOpenFga*` headers do.
+* Outputs are cleared on entry, so a value an inbound message carries under the
+  component's own names never survives into the route.
+* Identifiers are parsed as data; no header selects the policy, the schema or
+  the revision.
+
+It deliberately differs in two points:
+
+* The result is one typed exchange property, `CamelCedarAuthorizationResult`,
+  carrying the effective outcome, the raw engine decision, the determining policy
+  identifiers, the diagnostics and the policy revision, instead of the Boolean
+  `CamelOpaDecisionAllow` and `CamelOpenFgaAllowed` headers with a separate deny
+  reason. A Cedar decision has more parts than a Boolean, and a property does not
+  travel to outbound producers.
+* There is no `failOpen`. In `camel-opa` (CAMEL-24738) and `camel-openfga` the
+  option covers one thing only: the decision point could not be asked (a
+  transport failure, a 5xx, a rate limit) and the route owner accepts to proceed
+  without a verdict. An embedded engine has no decision point that can be
+  unavailable. Its failures are configuration errors, caught at startup and at
+  reload, or input and evaluation errors of one exchange, which the strict mode
+  reports as an `ERROR` outcome and the policy bean rejects. There is nothing to
+  fail open on; a `failOpen` option here would only label an evaluation error as
+  an allow.
 
 === Reload and lifecycle
 
@@ -149,6 +196,12 @@ Publish immutable snapshots containing a policy set, schema, static entity data
 if configured, and a content revision. Load, parse, validate and warm a candidate
 before making it current. A failed reload leaves the previous validated snapshot
 active and reports the failure without input, credential or policy contents.
+What may be reported, in the exception and at `WARN`, is the option that failed
+(`policiesResource`, `schemaResource` or `entitiesResource`), the kind of failure,
+the exception class, and the policy identifiers and error kinds of a validation
+failure. SDK exception messages can carry policy text or entity attributes; they
+are not logged and not retained as causes. A native-loading failure reports the
+exception class, the operating system and the architecture in the same way.
 An exchange uses one coherent snapshot. Reload does not mutate the policy set
 already being evaluated by other exchanges.
 
@@ -166,10 +219,12 @@ previous outputs before evaluating another decision. Do not retain a full
 Exchange, token or private key in a result or event. Policy identifiers and
 revisions can appear in explicit diagnostics; principal/resource identifiers,
 raw inputs and policy text must not become metric labels or default log output.
+An evaluation failure of one exchange is logged with the exception class only.
 
-Use the component's normal lifecycle and the shared decision-observation
-contract when available. Avoid adding a second tracing implementation around
-the same call. Bean catalog metadata, generated endpoint/configuration metadata,
+Use the component's normal lifecycle and events. Camel has no shared
+decision-observation contract today, and this component does not introduce one;
+avoid adding a second tracing implementation around the same call. Bean catalog
+metadata, generated endpoint/configuration metadata,
 Java/XML/YAML examples and startup validation are part of the initial component.
 
 == Verification for implementation
@@ -180,8 +235,12 @@ Java/XML/YAML examples and startup validation are part of the initial component.
   schema validation, request/entity errors and strict versus native error handling.
 * Concurrent evaluation and reload tests proving that old or new snapshots are
   coherent and an invalid replacement never becomes active.
-* Native-loading tests on the supported CI targets; document targets that are
-  packaged but not exercised.
+* Native-loading tests on the supported CI targets. Camel's Jenkins matrix also
+  builds on ppc64le and s390x, where the artifact has no native library and even
+  parsing an entity type name loads it, so the module sets the `skipTests.ppc64le`
+  and `skipTests.s390x` properties of `components/pom.xml`, as
+  `camel-langchain4j-embeddings` does, instead of guarding single tests. Document
+  targets that are packaged but not exercised.
 * Reproducible dependency and native-resource inventory. Native-image support
   requires its own build and runtime tests before being advertised.
 
