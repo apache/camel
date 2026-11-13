@@ -30,6 +30,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.stream.Stream;
 
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
 import org.apache.camel.dsl.jbang.run.common.MavenResolver;
@@ -37,12 +39,15 @@ import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.dsl.jbang.run.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.XmlHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junitpioneer.jupiter.SetSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -108,6 +113,39 @@ class ProjectExporterTest {
         assertThat(exportDir.resolve("src/main/resources/camel/hello.camel.yaml")).hasSameTextualContentAs(route);
         // the run settings and the project are built in the work directory of the request
         assertThat(request.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE)).exists();
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "4.10.0")
+    void springBootExportUsesResolvedCoreVersionUnlessExplicit(String camelVersion) throws Exception {
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(writeRoute("hello"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.camelSpringBootVersion = "4.8.0";
+        request.camelVersion = camelVersion;
+        DependencyResolver withCoreDependency = r -> {
+            resolver.resolve(r);
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.writeString(settings, Files.readString(settings) + "dependency=camel:util\n");
+            return 0;
+        };
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(withCoreDependency))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        var factory = XmlHelper.createDocumentBuilderFactory();
+        factory.setNamespaceAware(false);
+        var pom = factory.newDocumentBuilder().parse(exportDir.resolve("pom.xml").toFile());
+        var xpath = XPathFactory.newInstance().newXPath();
+        assertThat(xpath.evaluate("/project/dependencies/dependency[artifactId='camel-util']/version", pom))
+                .isEqualTo(camelVersion == null ? "4.8.0" : camelVersion);
+        assertThat(xpath.evaluate(
+                "/project/dependencyManagement/dependencies/dependency[artifactId='camel-spring-boot-bom']/version", pom))
+                .isEqualTo("4.8.0");
     }
 
     @Test

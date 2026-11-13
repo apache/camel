@@ -30,6 +30,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -170,7 +171,7 @@ public final class CatalogLoader {
                 resources.addFile(ma.getFile());
             } else {
                 throw new IOException(
-                        "Cannot download " + springBootGroupId + ":camel-catalog-provider-springboot:" + version);
+                        "Cannot download " + springBootGroupId + ":camel-catalog-provider-springboot:" + sbVersion);
             }
 
             Class<RuntimeProvider> clazz;
@@ -223,26 +224,31 @@ public final class CatalogLoader {
                     String g = node.getElementsByTagName("groupId").item(0).getTextContent();
                     String a = node.getElementsByTagName("artifactId").item(0).getTextContent();
                     if ("org.apache.camel.quarkus".equals(g) && "camel-quarkus-catalog".equals(a)) {
-                        camelQuarkusVersion = node.getElementsByTagName("version").item(0).getTextContent();
+                        Node version = node.getElementsByTagName("version").item(0);
+                        camelQuarkusVersion = version != null ? version.getTextContent().trim() : null;
                     } else if ("org.apache.camel".equals(g) && "camel-catalog".equals(a)) {
-                        camelVersion = node.getElementsByTagName("version").item(0).getTextContent();
+                        Node version = node.getElementsByTagName("version").item(0);
+                        camelVersion = version != null ? version.getTextContent().trim() : null;
                     }
                 }
             }
         }
 
-        if (camelQuarkusVersion == null || camelVersion == null) {
-            throw new IOException("Cannot determine Camel and Camel Quarkus catalog versions from " + quarkusCamelBom);
+        if (camelQuarkusVersion == null || camelQuarkusVersion.isEmpty() || camelVersion == null || camelVersion.isEmpty()) {
+            throw new IOException(
+                    "Cannot determine Camel and Camel Quarkus catalog versions from " + quarkusCamelBom
+                                  + "; expected org.apache.camel:camel-catalog and org.apache.camel.quarkus:camel-quarkus-catalog"
+                                  + " dependencies with non-empty versions");
         }
 
         // download camel-quarkus-catalog we use to know if we have an extension or not
         MavenArtifact artifact = downloader.apply(MavenGav.fromCoordinates("org.apache.camel.quarkus",
                 "camel-quarkus-catalog", camelQuarkusVersion, "jar", null));
-        DependencyDownloaderClassLoader cl
-                = new DependencyDownloaderClassLoader(Thread.currentThread().getContextClassLoader());
         if (artifact == null || artifact.getFile() == null) {
             throw new IOException("Cannot download org.apache.camel.quarkus:camel-quarkus-catalog:" + camelQuarkusVersion);
         }
+        DependencyDownloaderClassLoader cl
+                = new DependencyDownloaderClassLoader(Thread.currentThread().getContextClassLoader());
         cl.addFile(artifact.getFile());
         DependencyDownloaderClassLoader resources = new DependencyDownloaderClassLoader(null);
         MavenArtifact coreCatalog
@@ -253,13 +259,9 @@ public final class CatalogLoader {
         resources.addFile(coreCatalog.getFile());
         resources.addFile(artifact.getFile());
         Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(QUARKUS_CATALOG_PROVIDER);
-        if (clazz != null) {
-            RuntimeProvider provider = ObjectHelper.newInstance(clazz);
-            if (provider != null) {
-                answer.setRuntimeProvider(provider);
-            }
-            answer.setVersionManager(new DownloadCatalogVersionManager(camelVersion, camelQuarkusVersion, resources));
-        }
+        RuntimeProvider provider = ObjectHelper.newInstance(clazz);
+        answer.setRuntimeProvider(provider);
+        answer.setVersionManager(new DownloadCatalogVersionManager(camelVersion, camelQuarkusVersion, resources));
         answer.enableCache();
 
         return answer;
