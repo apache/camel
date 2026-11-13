@@ -27,7 +27,7 @@ import org.apache.camel.spi.ClaimCheckRepository;
 
 /**
  * The default {@link ClaimCheckRepository} implementation that is an in-memory storage.
- * <p/>
+ * <p>
  * The repository is not thread-safe, as it is scoped per exchange. When an exchange is copied (such as by the Splitter,
  * Multicast, Recipient List or Wire Tap EIPs), then the copy gets its own repository, which starts with the same claim
  * checks, via {@link #safeCopy()}.

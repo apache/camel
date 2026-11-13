@@ -51,7 +51,6 @@ import org.apache.camel.util.concurrent.ThreadHelper;
  * last-delivered element it is <i>ready-for-delivery</i> immediately. After delivery the last-delivered element is
  * adjusted accordingly. If the last-delivered element is <code>null</code> i.e. the resequencer was newly created the
  * first arriving element needs <code>timeout</code> milliseconds in any case for becoming <i>ready-for-delivery</i>.
- * <p>
  */
 public class ResequencerEngine<E> {
 

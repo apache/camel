@@ -34,8 +34,8 @@ public final class PipelineHelper {
      * @param  exchange the next exchange
      * @param  message  a message to use when logging that we should not continue processing
      * @param  log      a logger
-     * @return          <tt>true</tt> to continue processing, <tt>false</tt> to break out, for example if an exception
-     *                  occurred.
+     * @return          <code>true</code> to continue processing, <code>false</code> to break out, for example if an
+     *                  exception occurred.
      */
     public static boolean continueProcessing(Exchange exchange, String message, Logger log) {
         boolean stop = exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()

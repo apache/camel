@@ -37,7 +37,7 @@ import org.apache.camel.util.URISupport;
 
 /**
  * Manages the interceptors of the intercept send to endpoint EIP for a {@link CamelContext}.
- * <p/>
+ * <p>
  * Each endpoint that is intercepted is wrapped once in a {@link DefaultInterceptSendToEndpoint}, and the routes
  * register and unregister their interceptors on it (when the route starts and stops). The wrapped endpoint (and the
  * producers created from it) stay the same, so removing a route does not affect the other routes that send to the
@@ -227,7 +227,7 @@ public final class InterceptSendToEndpointManager implements EndpointStrategy {
      *
      * @param  uri     the uri
      * @param  pattern the pattern, which can be an endpoint uri as well
-     * @return         <tt>true</tt> if matched and we should intercept, <tt>false</tt> if not matched, and not
+     * @return         <code>true</code> if matched and we should intercept, <code>false</code> if not matched, and not
      *                 intercept.
      */
     private boolean matchPattern(String uri, String pattern) {

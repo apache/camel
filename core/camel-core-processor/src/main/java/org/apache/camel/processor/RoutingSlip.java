@@ -51,8 +51,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a <a href="http://camel.apache.org/routing-slip.html">Routing Slip</a> pattern where the list of actual
- * endpoints to send a message exchange to are dependent on the value of a message header.
- * <p/>
+ * endpoints to send a message exchange to is dependent on the value of a message header.
+ * <p>
  * This implementation mirrors the logic from the {@link org.apache.camel.processor.Pipeline} in the async variation as
  * the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the pipeline to
  * ensure it works the same and the async routing engine is flawless.
@@ -80,10 +80,10 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
     protected interface RoutingSlipIterator {
 
         /**
-         * Are the more routing slip(s)?
+         * Are there more routing slip(s)?
          *
          * @param  exchange the current exchange
-         * @return          <tt>true</tt> if more slips, <tt>false</tt> otherwise.
+         * @return          <code>true</code> if more slips, <code>false</code> otherwise.
          */
         boolean hasNext(Exchange exchange);
 
@@ -218,7 +218,7 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
      *
      * @param  exchange   the exchange
      * @param  expression the expression
-     * @return            the iterator, should never be <tt>null</tt>
+     * @return            the iterator, should never be <code>null</code>
      */
     protected RoutingSlipIterator createRoutingSlipIterator(final Exchange exchange, final Expression expression)
             throws Exception {

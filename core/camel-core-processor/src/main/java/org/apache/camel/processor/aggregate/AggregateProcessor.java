@@ -88,7 +88,7 @@ import org.slf4j.LoggerFactory;
  * messages is processed (up to a maximum amount or until some timeout is reached) and messages for the same correlation
  * key are combined using some kind of {@link AggregationStrategy} (by default the latest message is used) to compress
  * many message exchanges into a smaller number of exchanges.
- * <p/>
+ * <p>
  * A good example of this is stock market data; you may be receiving 30,000 messages/second, and you may want to
  * throttle it right down so that multiple messages for the same stock are combined (or just the latest message is used
  * and older prices to be discarded). Another idea is to combine line item messages together into a single invoice
@@ -558,18 +558,18 @@ public class AggregateProcessor extends BaseProcessorSupport
 
     /**
      * Aggregates the exchange with the given correlation key
-     * <p/>
+     * <p>
      * This method <b>must</b> be run synchronized as we cannot aggregate the same correlation key in parallel.
-     * <p/>
+     * <p>
      * The completed {@link Exchange}(s) are added to the given list as soon as they are completed (and removed from the
-     * repository), also if this method fails afterwards. They should be send downstream using the
+     * repository), also if this method fails afterwards. They should be sent downstream using the
      * {@link #onSubmitCompletion(String, org.apache.camel.Exchange)} method which sends out the aggregated and
      * completed {@link Exchange}.
      *
      * @param  key                                     the correlation key
      * @param  newExchange                             the exchange
      * @param  spooled                                 the references that the exchange holds to spooled stream caches,
-     *                                                 which are taken when they are handed over, or <tt>null</tt>
+     *                                                 which are taken when they are handed over, or <code>null</code>
      * @param  list                                    the list to add the aggregated exchange(s) which are complete to
      * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
      */
@@ -802,12 +802,12 @@ public class AggregateProcessor extends BaseProcessorSupport
     }
 
     /**
-     * Tests whether the given exchanges is pre-complete or not
+     * Tests whether the given exchange is pre-complete or not
      *
      * @param  key         the correlation key
      * @param  oldExchange the existing exchange
      * @param  newExchange the incoming exchange
-     * @return             <tt>null</tt> if not pre-completed, otherwise a String with the type that triggered the
+     * @return             <code>null</code> if not pre-completed, otherwise a String with the type that triggered the
      *                     pre-completion
      */
     protected String isPreCompleted(String key, Exchange oldExchange, Exchange newExchange) {
@@ -819,7 +819,8 @@ public class AggregateProcessor extends BaseProcessorSupport
      *
      * @param  key      the correlation key
      * @param  exchange the incoming exchange
-     * @return          <tt>null</tt> if not completed, otherwise a String with the type that triggered the completion
+     * @return          <code>null</code> if not completed, otherwise a String with the type that triggered the
+     *                  completion
      */
     protected String isCompleted(String key, Exchange exchange) {
         // batch consumer completion must always run first
@@ -872,7 +873,7 @@ public class AggregateProcessor extends BaseProcessorSupport
     /**
      * Whether the group records if it has a completion timeout, and the timeout checker only completes a group that has
      * one.
-     * <p/>
+     * <p>
      * With optimistic locking the timeout entry of a completed group is not removed (see
      * {@link #onCompletion(String, Exchange, Exchange, boolean, boolean)}), so it can be left over when a new group for
      * the same correlation key starts. A new group normally replaces the entry with its own timeout, but with a
@@ -1248,7 +1249,7 @@ public class AggregateProcessor extends BaseProcessorSupport
 
     /**
      * Restores the timeout map with timeout values from the aggregation repository.
-     * <p/>
+     * <p>
      * This is needed in case the aggregator has been stopped and started again (for example a server restart). Then the
      * existing exchanges from the {@link AggregationRepository} must have their timeout conditions restored.
      */
