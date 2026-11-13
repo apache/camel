@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.openfga;
 
+import java.io.InputStream;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 
 import javax.net.ssl.SSLContext;
 
@@ -27,6 +32,7 @@ import dev.openfga.sdk.api.configuration.ApiToken;
 import dev.openfga.sdk.api.configuration.ClientConfiguration;
 import dev.openfga.sdk.api.configuration.ClientCredentials;
 import dev.openfga.sdk.api.configuration.Credentials;
+import dev.openfga.sdk.api.model.ListObjectsRequest;
 import dev.openfga.sdk.errors.FgaInvalidParameterException;
 import org.apache.camel.util.ObjectHelper;
 
@@ -47,6 +53,10 @@ public final class OpenFgaClientFactory {
      */
     public static OpenFgaClient createClient(OpenFgaConfiguration configuration, SSLContext sslContext)
             throws FgaInvalidParameterException {
+        return new OpenFgaClient(createConfiguration(configuration), createApiClient(configuration, sslContext));
+    }
+
+    private static ClientConfiguration createConfiguration(OpenFgaConfiguration configuration) {
         ClientConfiguration clientConfiguration = new ClientConfiguration()
                 .apiUrl(configuration.getApiUrl())
                 .storeId(configuration.getStoreId())
@@ -59,7 +69,34 @@ public final class OpenFgaClientFactory {
         if (credentials != null) {
             clientConfiguration.credentials(credentials);
         }
-        return new OpenFgaClient(clientConfiguration, createApiClient(configuration, sslContext));
+        return clientConfiguration;
+    }
+
+    /** Creates a pull transport using the SDK's request builder, authentication and serializer. */
+    static OpenFgaStreamingClient createStreamingClient(OpenFgaConfiguration configuration, SSLContext sslContext) {
+        ClientConfiguration clientConfiguration = createConfiguration(configuration);
+        ApiClient apiClient = createApiClient(configuration, sslContext);
+        return new OpenFgaStreamingClient() {
+            @Override
+            public CompletableFuture<HttpResponse<InputStream>> open(
+                    String storeId, ListObjectsRequest request)
+                    throws Exception {
+                var builder = ApiClient.requestBuilder("POST",
+                        "/stores/" + URLEncoder.encode(storeId, StandardCharsets.UTF_8).replace("+", "%20")
+                                                               + "/streamed-list-objects",
+                        apiClient.getJsonSerializer().writeValueAsBytes(request), clientConfiguration);
+                apiClient.applyAuthHeader(builder, clientConfiguration);
+                if (apiClient.getRequestInterceptor() != null) {
+                    apiClient.getRequestInterceptor().accept(builder);
+                }
+                return apiClient.getHttpClient().sendAsync(builder.build(), HttpResponse.BodyHandlers.ofInputStream());
+            }
+
+            @Override
+            public void close() {
+                apiClient.getHttpClient().shutdownNow();
+            }
+        };
     }
 
     /**

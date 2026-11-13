@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
 import dev.openfga.sdk.api.client.model.ClientBatchCheckClientResponse;
@@ -47,6 +49,7 @@ import dev.openfga.sdk.api.configuration.ClientReadChangesOptions;
 import dev.openfga.sdk.api.configuration.ClientReadOptions;
 import dev.openfga.sdk.api.model.ConsistencyPreference;
 import dev.openfga.sdk.api.model.FgaObject;
+import dev.openfga.sdk.api.model.ListObjectsRequest;
 import dev.openfga.sdk.api.model.TupleChange;
 import dev.openfga.sdk.api.model.TupleKey;
 import dev.openfga.sdk.api.model.User;
@@ -67,6 +70,8 @@ public class OpenFgaProducer extends DefaultProducer {
 
     private static final String DEFAULT_USER_FILTER = "user";
 
+    private final Set<OpenFgaObjectIterator> activeStreams = ConcurrentHashMap.newKeySet();
+    private ScheduledExecutorService streamScheduler;
     private OpenFgaProducerHealthCheck producerHealthCheck;
     private WritableHealthCheckRepository healthCheckRepository;
 
@@ -84,6 +89,10 @@ public class OpenFgaProducer extends DefaultProducer {
         super.doStart();
 
         OpenFgaConfiguration configuration = getEndpoint().getConfiguration();
+        if (getEndpoint().getOperation() == OpenFgaOperation.streamedListObjects) {
+            streamScheduler = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "OpenFgaStreamTimeout");
+        }
         // an injected client can point anywhere and the endpoint has no way to ask it where, so there is no server
         // this check would know the address of
         if (configuration.getOpenFgaClient() != null || ObjectHelper.isEmpty(configuration.getApiUrl())) {
@@ -109,6 +118,11 @@ public class OpenFgaProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
+        activeStreams.forEach(OpenFgaObjectIterator::close);
+        if (streamScheduler != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(streamScheduler);
+            streamScheduler = null;
+        }
         if (healthCheckRepository != null && producerHealthCheck != null) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck.close();
@@ -124,6 +138,7 @@ public class OpenFgaProducer extends DefaultProducer {
             case check -> authorizer.check(exchange);
             case batchCheck -> batchCheck(exchange, authorizer);
             case listObjects -> listObjects(exchange, authorizer);
+            case streamedListObjects -> streamedListObjects(exchange, authorizer);
             case listRelations -> listRelations(exchange, authorizer);
             case listUsers -> listUsers(exchange, authorizer);
             case writeTuples -> writeTuples(exchange, authorizer);
@@ -228,6 +243,31 @@ public class OpenFgaProducer extends DefaultProducer {
     /**
      * Lists the objects of the configured type the subject can reach through the relation.
      */
+    private void streamedListObjects(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
+        OpenFgaAuthorizer.clearDecisionHeaders(exchange);
+        OpenFgaConfiguration configuration = getEndpoint().getConfiguration();
+        String user = authorizer.resolveUser(exchange);
+        String relation = authorizer.resolveRelation(exchange);
+        List<ClientTupleKey> contextualTuples = authorizer.resolveContextualTuples(exchange);
+        ListObjectsRequest request = new ListObjectsRequest().user(user).relation(relation).type(configuration.getType());
+        applyModelAndConsistency(authorizer, request::authorizationModelId, request::consistency);
+        if (contextualTuples != null && !contextualTuples.isEmpty()) {
+            request.contextualTuples(ClientTupleKey.asContextualTupleKeys(contextualTuples));
+        }
+        if (authorizer.getConditionContext() != null) {
+            request.context(authorizer.getConditionContext());
+        }
+        OpenFgaObjectIterator iterator = new OpenFgaObjectIterator(
+                getEndpoint().getStreamingClient(),
+                configuration.getStoreId(), request, streamScheduler, configuration.getReadTimeout(),
+                configuration.getStreamMaxResults(), configuration.getStreamMaxLineLength(), activeStreams::remove);
+        activeStreams.add(iterator);
+        if (user == null || relation == null || contextualTuples == null) {
+            iterator.completeEmpty();
+        }
+        exchange.getMessage().setBody(iterator);
+    }
+
     private void listObjects(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
         OpenFgaAuthorizer.clearDecisionHeaders(exchange);
         String type = getEndpoint().getConfiguration().getType();

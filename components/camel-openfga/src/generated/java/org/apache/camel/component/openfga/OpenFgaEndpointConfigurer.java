@@ -71,6 +71,12 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "startTime": target.getConfiguration().setStartTime(property(camelContext, java.lang.String.class, value)); return true;
         case "storeid":
         case "storeId": target.getConfiguration().setStoreId(property(camelContext, java.lang.String.class, value)); return true;
+        case "streammaxlinelength":
+        case "streamMaxLineLength": target.getConfiguration().setStreamMaxLineLength(property(camelContext, int.class, value)); return true;
+        case "streammaxresults":
+        case "streamMaxResults": target.getConfiguration().setStreamMaxResults(property(camelContext, int.class, value)); return true;
+        case "streamingclient":
+        case "streamingClient": target.getConfiguration().setStreamingClient(property(camelContext, org.apache.camel.component.openfga.OpenFgaStreamingClient.class, value)); return true;
         case "type": target.getConfiguration().setType(property(camelContext, java.lang.String.class, value)); return true;
         case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
         case "userfilters":
@@ -81,7 +87,7 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"openFgaClient"};
+        return new String[]{"openFgaClient", "streamingClient"};
     }
 
     @Override
@@ -134,6 +140,12 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "startTime": return java.lang.String.class;
         case "storeid":
         case "storeId": return java.lang.String.class;
+        case "streammaxlinelength":
+        case "streamMaxLineLength": return int.class;
+        case "streammaxresults":
+        case "streamMaxResults": return int.class;
+        case "streamingclient":
+        case "streamingClient": return org.apache.camel.component.openfga.OpenFgaStreamingClient.class;
         case "type": return java.lang.String.class;
         case "user": return java.lang.String.class;
         case "userfilters":
@@ -193,6 +205,12 @@ public class OpenFgaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "startTime": return target.getConfiguration().getStartTime();
         case "storeid":
         case "storeId": return target.getConfiguration().getStoreId();
+        case "streammaxlinelength":
+        case "streamMaxLineLength": return target.getConfiguration().getStreamMaxLineLength();
+        case "streammaxresults":
+        case "streamMaxResults": return target.getConfiguration().getStreamMaxResults();
+        case "streamingclient":
+        case "streamingClient": return target.getConfiguration().getStreamingClient();
         case "type": return target.getConfiguration().getType();
         case "user": return target.getConfiguration().getUser();
         case "userfilters":

@@ -349,6 +349,19 @@ class OpenFgaIT extends CamelTestSupport {
     }
 
     @Test
+    void streamsObjectsIncrementallyAgainstThePinnedModel() {
+        OpenFgaObjectIterator iterator = template.requestBody(
+                openfga("streamedListObjects", "relation=reader&user=user:anne&type=document"), null,
+                OpenFgaObjectIterator.class);
+        try (iterator) {
+            java.util.ArrayList<String> objects = new java.util.ArrayList<>();
+            iterator.forEachRemaining(objects::add);
+            assertThat(objects).contains("document:budget", "document:announcement").doesNotContain("document:roadmap");
+            assertThat(iterator.isComplete()).isTrue();
+        }
+    }
+
+    @Test
     void listsTheRelationsASubjectHoldsOnAnObject() {
         Exchange out = template.request(
                 openfga("listRelations", "user=user:anne&object=document:budget&relations=reader,writer,owner"), e -> {
