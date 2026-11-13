@@ -30,7 +30,7 @@ import org.apache.camel.component.whatsapp.model.MessageResponse;
 import org.apache.camel.component.whatsapp.model.TextMessage;
 import org.apache.camel.component.whatsapp.model.TextMessageRequest;
 import org.apache.camel.component.whatsapp.service.WhatsAppServiceRestAPIAdapter;
-import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
