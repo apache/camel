@@ -47,6 +47,11 @@
             <artifactId>jsonapi-converter</artifactId>
             <version>${jasminb-jsonapi-version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>
