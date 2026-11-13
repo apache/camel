@@ -6510,6 +6510,22 @@ The consumer now gives a message that its serializer cannot deserialize, such as
 route as a `byte[]`. Previously the message was dropped with a WARN. A failed exchange of the consumer is now handed to
 its exception handler.
 
+=== camel-redis - Redis Cluster hash slot requirement for optimistic recovery
+
+When using `RedisAggregationRepository` with optimistic removal and recovery enabled
+on Redis Cluster, `mapName` and `persistenceMapName` must resolve to the same Redis hash slot.
+
+Use a common Redis hash tag to ensure both keys are assigned to the same slot. For example:
+
+* `mapName`: `orders:{aggregation}`
+* `persistenceMapName`: `orders:{aggregation}-completed`
+
+Existing Redis Cluster configurations using different hash slots must update their map names
+before upgrading. Existing aggregation data may need to be migrated to the new Redis keys.
+
+The repository now validates this configuration during startup and throws an
+`IllegalArgumentException` if the keys belong to different hash slots.
+
 === camel-spring-ws - the reply of a consumer, and File and stream bodies of the producer
 
 A `spring-ws` consumer route that sets the body to `null` in a processor, such as with
