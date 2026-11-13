@@ -1378,17 +1378,14 @@ The Camel CLI parses its command lines, prints its help and completes its comman
 https://github.com/aeshell/aesh[aesh] instead of picocli. The commands and their options are the same. The help looks a
 little different: the default value of an option is on a line of its own (`Default: ...`).
 
-An argument `@file` is no longer replaced by the arguments in that file (picocli did that, such as
-`camel run @args.txt`). Give the arguments on the command line instead, for example `camel run $(cat args.txt)` in a
-shell script.
-
 A plugin of the Camel CLI (an implementation of `org.apache.camel.dsl.jbang.core.common.Plugin`) must be changed and
 built for Camel 4.24:
 
 * `Plugin.customize` takes a `CommandTree` instead of a picocli `CommandLine`. A command is added with
   `commandLine.addSubcommand("mycommand", new CommandTree(new MyCommand(main)))`.
 * The command classes use the aesh annotations: `@CommandDefinition` instead of `@Command` (the `footer` of the help
-  is an attribute of it), `@Option(name = "my-option")` instead of `@Option(names = "--my-option")` (with
+  is an attribute of it; aesh wraps the lines of the footer at 80 columns, except indented lines such as examples, so
+  keep a line of text within 80 columns), `@Option(name = "my-option")` instead of `@Option(names = "--my-option")` (with
   `hasValue = false` for a flag), `@OptionList` for an option with several values, `@Argument` or `@Arguments` instead
   of `@Parameters`, and the aesh `@Mixin`.
 * A class with the completion candidates of an option extends `org.apache.camel.dsl.jbang.core.common.CompletionCandidates`,
