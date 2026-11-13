@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.xpath.XPathFactory;
@@ -392,6 +393,55 @@ class ProjectExporterTest {
     }
 
     @Test
+    void failsForTwoFilesWithTheSameNameInDifferentDirectories() throws Exception {
+        Path x = writeRoute(Files.createDirectories(dir.resolve("x")), "route", "x");
+        Path y = writeRoute(Files.createDirectories(dir.resolve("y")), "route", "y");
+        Path exportDir = dir.resolve("export");
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(routes(x, y)))
+                .export(request(x, exportDir));
+
+        // one of the routes would be lost
+        assertThat(exit).isEqualTo(1);
+        assertThat(printer.getOutput()).contains(x.toString(), y.toString(),
+                "src/main/resources/camel/route.camel.yaml", "rename one of them");
+        assertThat(exportDir.resolve("pom.xml")).doesNotExist();
+    }
+
+    @Test
+    void copiesTheSameFileGivenTwiceOnce() throws Exception {
+        Path x = writeRoute(Files.createDirectories(dir.resolve("x")), "route", "x");
+        Path exportDir = dir.resolve("export");
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(routes(x, dir.resolve("x/../x/route.camel.yaml"))))
+                .export(request(x, exportDir));
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        assertThat(exportDir.resolve("src/main/resources/camel/route.camel.yaml")).hasSameTextualContentAs(x);
+    }
+
+    /**
+     * A resolver whose run loads the given route files.
+     */
+    private static DependencyResolver routes(Path... files) {
+        return r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            String pattern = Stream.of(files).map(f -> "file:" + f).collect(Collectors.joining(","));
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=%s
+                    dependency=camel:timer
+                    dependency=camel:log
+                    """.formatted(pattern));
+            return 0;
+        };
+    }
+
+    @Test
     void requiresRuntime() throws Exception {
         ExportRequest request = new ExportRequest();
         request.files.add(dir.resolve("missing.camel.yaml").toString());
@@ -484,13 +534,17 @@ class ProjectExporterTest {
     }
 
     private Path writeRoute(String name) throws Exception {
-        Path route = dir.resolve(name + ".camel.yaml");
+        return writeRoute(dir, name, name);
+    }
+
+    private static Path writeRoute(Path directory, String name, String timer) throws Exception {
+        Path route = directory.resolve(name + ".camel.yaml");
         Files.writeString(route, """
                 - from:
                     uri: timer:%s
                     steps:
                       - to: log:%s
-                """.formatted(name, name));
+                """.formatted(timer, timer));
         return route;
     }
 
