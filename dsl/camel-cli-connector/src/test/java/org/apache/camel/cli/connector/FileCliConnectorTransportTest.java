@@ -128,6 +128,8 @@ class FileCliConnectorTransportTest {
         writeAction(action("result"), "r1");
 
         assertThat(awaitJson(file(PID + "-output-r1.json"))).containsEntry("status", "success").containsEntry("value", "42");
+        // written aside and moved in place, so the tool never reads half a reply (CAMEL-26911)
+        assertThat(file(PID + "-output-r1.json.tmp")).doesNotExist();
     }
 
     @Test
