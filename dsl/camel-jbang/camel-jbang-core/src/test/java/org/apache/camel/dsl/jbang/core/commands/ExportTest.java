@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@UsesWorkingDirectory
 class ExportTest extends CamelCommandBaseTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);

@@ -1405,7 +1405,7 @@ public class Run extends CamelCommand {
 
         String content = TemplateHelper.processTemplate("run-custom-camel-version.ftl", model);
 
-        String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CustomCamelJBang.java";
+        String fn = CommandLineHelper.getWorkDir().resolve("CustomCamelJBang.java").toString();
         Files.writeString(Paths.get(fn), content);
 
         List<String> cmds;
@@ -1430,7 +1430,7 @@ public class Run extends CamelCommand {
         // need to use jbang command to specify camel version
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");
-        jbangArgs.add(CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CustomCamelJBang.java");
+        jbangArgs.add(CommandLineHelper.getWorkDir().resolve("CustomCamelJBang.java").toString());
 
         jbangArgs.addAll(cmds);
 
@@ -1468,7 +1468,7 @@ public class Run extends CamelCommand {
     }
 
     private String loadFromCode(String code, String name, boolean file) throws IOException {
-        String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/" + name + ".java";
+        String fn = CommandLineHelper.getWorkDir().resolve(name + ".java").toString();
         if (!file) {
             // need to replace single quote as double quotes (from input string)
             code = code.replace("'", "\"");

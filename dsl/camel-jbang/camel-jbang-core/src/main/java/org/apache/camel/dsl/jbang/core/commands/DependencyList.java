@@ -55,7 +55,7 @@ import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
                              "  camel dependency list hello.java --output=gav" })
 public class DependencyList extends Export {
 
-    protected static String exportDir() {
+    protected static String tempExportDir() {
         return CommandLineHelper.getWorkDir().resolve("export").toString();
     }
 
@@ -109,7 +109,7 @@ public class DependencyList extends Export {
         Integer answer = doExport();
         if (answer == 0) {
             // read pom.xml
-            Path pom = Paths.get(exportDir()).resolve("pom.xml");
+            Path pom = Paths.get(tempExportDir()).resolve("pom.xml");
             if (Files.exists(pom)) {
                 DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
                 DocumentBuilder db = dbf.newDocumentBuilder();
@@ -212,7 +212,7 @@ public class DependencyList extends Export {
                 }
             }
             // cleanup dir after complete
-            Path buildDir = Paths.get(exportDir());
+            Path buildDir = Paths.get(tempExportDir());
             try {
                 Files.walk(buildDir)
                         .sorted(Comparator.reverseOrder())
@@ -280,7 +280,7 @@ public class DependencyList extends Export {
         }
 
         // use temporary export dir
-        exportDir = exportDir();
+        exportDir = tempExportDir();
         if (gav == null) {
             gav = "org.example.project:camel-jbang-dummy:1.0";
         }

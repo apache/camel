@@ -47,7 +47,7 @@ import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
                              "  camel sbom hello.java --sbom-output-format=xml" })
 public class SBOMGenerator extends Export {
 
-    protected static String exportDir() {
+    protected static String tempExportDir() {
         return CommandLineHelper.getWorkDir().resolve("export").toString();
     }
 
@@ -113,7 +113,7 @@ public class SBOMGenerator extends Export {
 
         Integer answer = doExport();
         if (answer == 0) {
-            Path buildDir = Paths.get(exportDir());
+            Path buildDir = Paths.get(tempExportDir());
             List<String> mvnProgramCall;
             if (FileUtil.isWindows()) {
                 mvnProgramCall = List.of("cmd", "/c", "mvn");
@@ -205,7 +205,7 @@ public class SBOMGenerator extends Export {
         }
 
         // use temporary export dir
-        exportDir = exportDir();
+        exportDir = tempExportDir();
         if (gav == null) {
             gav = "org.example.project:camel-jbang-run:1.0";
         }

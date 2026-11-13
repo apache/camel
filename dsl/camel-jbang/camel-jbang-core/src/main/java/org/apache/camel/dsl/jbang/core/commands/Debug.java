@@ -78,7 +78,6 @@ import org.jline.jansi.AnsiConsole;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.CAMEL_JBANG_WORK_DIR;
 import static org.apache.camel.util.IOHelper.buffered;
 
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false, showDefaultValues = true,
@@ -444,7 +443,7 @@ public class Debug extends Run {
                 // the process (and those it started) stops with this JVM, then the files of the run are removed
                 ChildProcess.stopOnExit(processRef::get, () -> {
                     removeDir(Paths.get(RUN_PLATFORM_DIR));
-                    removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                    removeDir(CommandLineHelper.getWorkDir());
                     Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
                 });
 
@@ -551,7 +550,7 @@ public class Debug extends Run {
                 // the process (and those it started) stops with this JVM, then the files of the run are removed
                 ChildProcess.stopOnExit(processRef::get, () -> {
                     removeDir(Paths.get(RUN_PLATFORM_DIR));
-                    removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                    removeDir(CommandLineHelper.getWorkDir());
                     Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
                 });
 
