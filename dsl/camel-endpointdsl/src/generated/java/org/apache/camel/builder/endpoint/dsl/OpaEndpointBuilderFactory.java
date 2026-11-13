@@ -541,12 +541,12 @@ public interface OpaEndpointBuilderFactory {
          * changed policy or data. Zero disables automatic reload. Replacements
          * are validated before publication; failed reloads retain the active
          * revision. This option applies only to wasm mode.
-         *
+         * 
          * The option is a: <code>long</code> type.
-         *
+         * 
          * Default: 0
          * Group: advanced
-         *
+         * 
          * @param policyReloadInterval the value to set
          * @return the dsl builder
          */
@@ -559,12 +559,12 @@ public interface OpaEndpointBuilderFactory {
          * changed policy or data. Zero disables automatic reload. Replacements
          * are validated before publication; failed reloads retain the active
          * revision. This option applies only to wasm mode.
-         *
+         * 
          * The option will be converted to a <code>long</code> type.
-         *
+         * 
          * Default: 0
          * Group: advanced
-         *
+         * 
          * @param policyReloadInterval the value to set
          * @return the dsl builder
          */

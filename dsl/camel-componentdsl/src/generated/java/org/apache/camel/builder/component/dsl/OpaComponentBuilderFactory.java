@@ -378,12 +378,12 @@ public interface OpaComponentBuilderFactory {
          * changed policy or data. Zero disables automatic reload. Replacements
          * are validated before publication; failed reloads retain the active
          * revision. This option applies only to wasm mode.
-         *
+         * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         *
+         * 
          * Default: 0
          * Group: advanced
-         *
+         * 
          * @param policyReloadInterval the value to set
          * @return the dsl builder
          */
@@ -391,8 +391,8 @@ public interface OpaComponentBuilderFactory {
             doSetProperty("policyReloadInterval", policyReloadInterval);
             return this;
         }
-
-
+    
+        
         /**
          * How many WebAssembly policy instances to pool in wasm mode. An
          * instance carries mutable state and is not thread-safe, so each
