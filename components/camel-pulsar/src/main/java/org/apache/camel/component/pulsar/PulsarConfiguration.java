@@ -22,6 +22,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionMode;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.pulsar.client.api.BatcherBuilder;
@@ -158,6 +159,15 @@ public class PulsarConfiguration implements Cloneable {
               description = "Hashing function to use when choosing the partition to use for a particular message",
               enums = "JavaStringHash,Murmur3_32Hash", defaultValue = "JavaStringHash")
     private String hashingScheme = "JavaStringHash";
+    @UriParam(label = "producer,advanced", security = "insecure:serialization",
+              description = "Whether the producer sends a body that does not convert to a byte array (such as a Map, a List,"
+                            + " a number or a POJO) with Java serialization, as Camel did before 4.24. Such a message can only"
+                            + " be read by a Java client that deserializes it. By default the producer fails such a body:"
+                            + " marshal it first, for example to JSON.")
+    @Metadata(deprecationNote = "Java serialization of the body is kept only for compatibility, and will be removed:"
+                                + " marshal the body before sending it")
+    @Deprecated
+    private boolean allowJavaSerializedObject;
 
     /**
      * Returns a copy of this configuration
@@ -168,6 +178,16 @@ public class PulsarConfiguration implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    @Deprecated
+    public boolean isAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
+    }
+
+    @Deprecated
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
     public boolean isTopicsPattern() {

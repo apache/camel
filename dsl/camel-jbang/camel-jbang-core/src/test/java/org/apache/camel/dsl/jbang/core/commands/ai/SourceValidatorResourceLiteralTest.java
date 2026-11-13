@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * CAMEL-24882: a script that returns 'resource:file:x' returns that text; the validator says to add resolveResource:
- * true or to use constant/simple.
+ * true or to use constant/simple. CAMEL-25982: with resolveResource: true the name has no scheme.
  */
 class SourceValidatorResourceLiteralTest {
 
@@ -49,7 +49,8 @@ class SourceValidatorResourceLiteralTest {
         assertThat(errors).hasSize(2);
         assertThat(errors.get(0))
                 .startsWith("Line 7: groovy: the script returns the text 'resource:file:order.json', not the file")
-                .contains("Add resolveResource: true under groovy:")
+                .contains("Add resolveResource: true under groovy: and return the name without a scheme,"
+                          + " 'resource:order.json'")
                 .contains("constant: \"resource:file:order.json\"");
         assertThat(errors.get(1)).startsWith("Line 12: jq: the script returns the text 'resource:classpath:templates/'");
     }
@@ -67,7 +68,7 @@ class SourceValidatorResourceLiteralTest {
                         - setBody:
                             expression:
                               groovy:
-                                expression: "counter == 1 ? 'resource:file:order.json' : 'resource:file:other.json'"
+                                expression: "counter == 1 ? 'resource:order.json' : 'resource:other.json'"
                                 resolveResource: true
                         - setBody:
                             expression:
@@ -78,6 +79,26 @@ class SourceValidatorResourceLiteralTest {
                               simple: "resource:file:${header.name}"
                 """;
         assertThat(BeanRefChecks.validateReturnedResourceLiterals(yaml)).isEmpty();
+    }
+
+    @Test
+    void resolveResourceWithASchemeGetsTheHint() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:orders
+                      steps:
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "counter == 1 ? 'resource:file:order.json' : 'resource:file:other.json'"
+                                resolveResource: true
+                """;
+        List<String> errors = BeanRefChecks.validateReturnedResourceLiterals(yaml);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0))
+                .startsWith("Line 7: groovy: with resolveResource: true the script must return the name without a"
+                            + " scheme, 'resource:order.json' instead of 'resource:file:order.json'");
     }
 
     @Test

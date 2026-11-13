@@ -994,6 +994,57 @@ class MavenDownloaderImplTest {
         return repo;
     }
 
+    @Test
+    void testAvailableArtifactsAreLeftOutWithTheirDependencies() throws Exception {
+        // app -> lib-a -> lib-a-dep, and app -> lib-b
+        File repo = new File(tempDir, "available-repo");
+        writeJar(repo, "app", dependencies("lib-a", "lib-b"));
+        writeJar(repo, "lib-a", dependencies("lib-a-dep"));
+        writeJar(repo, "lib-a-dep", "");
+        writeJar(repo, "lib-b", "");
+        File localRepo = new File(tempDir, "available-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(repo.toURI().toString());
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 5000);
+
+            // lib-a is available, such as on the classpath
+            List<MavenArtifact> artifacts = customDownloader.resolveArtifacts(null,
+                    List.of("org.example.fixture:app:1.0.0"), null, true, false,
+                    gav -> "lib-a".equals(gav.getArtifactId()) && "1.0.0".equals(gav.getVersion()));
+
+            assertEquals(List.of("org.example.fixture:app:1.0.0", "org.example.fixture:lib-b:1.0.0"),
+                    artifacts.stream().map(a -> a.getGav().toString()).toList());
+            // not downloaded, not even the POM of lib-a
+            assertFalse(new File(localRepo, "org/example/fixture/lib-a").exists());
+            assertFalse(new File(localRepo, "org/example/fixture/lib-a-dep").exists());
+
+            // without it, all are resolved
+            artifacts = customDownloader.resolveArtifacts(null, List.of("org.example.fixture:app:1.0.0"), null, true,
+                    false, null);
+            assertEquals(4, artifacts.size());
+        }
+    }
+
+    private static String dependencies(String... artifactIds) {
+        StringBuilder sb = new StringBuilder("  <dependencies>\n");
+        for (String artifactId : artifactIds) {
+            sb.append("    <dependency><groupId>org.example.fixture</groupId><artifactId>").append(artifactId)
+                    .append("</artifactId><version>1.0.0</version></dependency>\n");
+        }
+        return sb.append("  </dependencies>\n").toString();
+    }
+
+    private static void writeJar(File repo, String artifactId, String body) throws Exception {
+        writePom(repo, artifactId, body);
+        File dir = new File(repo, "org/example/fixture/" + artifactId + "/1.0.0");
+        Files.writeString(new File(dir, artifactId + "-1.0.0.jar").toPath(), artifactId);
+    }
+
     private static void writePom(File repo, String artifactId, String body) throws Exception {
         File dir = new File(repo, "org/example/fixture/" + artifactId + "/1.0.0");
         assertTrue(dir.mkdirs() || dir.isDirectory());

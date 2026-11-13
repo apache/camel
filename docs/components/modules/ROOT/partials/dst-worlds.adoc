@@ -1,0 +1,23 @@
+// dst worlds: START
+// the fake worlds of the deterministic simulation tests of the component, from the dstWorlds section of its JSON
+include::jsonpathcount$example$json/{shortname}.json[queries='dstworldcount=nodes$.dstWorlds.*']
+
+ifeval::[{dstworldcount} != 0]
+== Deterministic simulation tests
+
+The consumer of the {doctitle} component is tested with xref:others:test-dst.adoc[deterministic simulation tests]:
+the real consumer runs under a seeded virtual-time scheduler against a fake of the external system, which injects
+faults while the tests check invariants. A failing seed can be replayed. These are the fake worlds of the component:
+
+[width="100%",cols="3a,6a,2a",options="header"]
+|===
+| World | What it checks | Issues
+|===
+
+jsonpathTable::example$json/{shortname}.json['nodes$.dstWorlds.*','camel.dstWorld(path[2], value)|camel.dstChecks(value)|camel.dstIssues(value)','camel=xref:ROOT:js/camel.js']
+
+The worlds and their tests are in the test sources of the component. How to run them, replay a seed and write a
+world is described in xref:others:test-dst.adoc#_running_the_tests[Running the tests] and
+xref:others:test-dst.adoc#_writing_a_fake_world_a_guide_for_ai_agents_and_humans[Writing a fake world].
+endif::[]
+// dst worlds: END

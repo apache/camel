@@ -180,7 +180,29 @@ String xml = template.requestBody("controlbus:route?action=stats", null, String.
 === Using Simple language
 
 You can use the xref:languages:simple-language.adoc[Simple] language with the control bus.
-For example, to stop a specific route, you can send a message to the `"controlbus:language:simple"` endpoint containing the following message:
+
+The `language` command evaluates the message body as an expression, so it is off by default.
+To turn it on, list the languages it may use in the `allowedLanguages` option, separated by comma.
+Set it on the component to apply to every endpoint:
+
+[source,properties]
+----
+camel.component.controlbus.allowed-languages = simple
+----
+
+Or set it on the endpoint itself, which takes precedence over the list of the component:
+
+[source,text]
+----
+controlbus:language:simple?allowedLanguages=simple
+----
+
+A `controlbus:language` endpoint whose language is not listed fails when it is created, with an error that names the `allowedLanguages` option.
+The `route` command does not need this option.
+
+IMPORTANT: The body is evaluated as an expression with the full power of the language: only send it text that comes from the route, never the content of a message from an untrusted sender.
+
+With `simple` allowed on the component, to stop a specific route, you can send a message to the `"controlbus:language:simple"` endpoint containing the following message:
 
 ._Java-only: Java test API (ProducerTemplate)_
 [source,java]
@@ -216,5 +238,5 @@ message we sent to the control bus component.
 
 [TIP]
 ====
-You can also use other languages such as xref:languages:groovy-language.adoc[Groovy], etc.
+You can also use other languages such as xref:languages:groovy-language.adoc[Groovy], etc., when they are listed in the `allowedLanguages` option.
 ====

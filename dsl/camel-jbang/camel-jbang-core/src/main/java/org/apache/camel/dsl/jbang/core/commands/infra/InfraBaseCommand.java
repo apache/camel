@@ -338,18 +338,25 @@ public abstract class InfraBaseCommand extends CamelCommand {
             int pidWidth = showPidColumn()
                     ? CamelTableColumns.measure("PID", Integer.MAX_VALUE, rows, r -> r.pid) : 0;
             int implWidth = CamelTableColumns.measure("IMPLEMENTATION", 35, rows, Row::aliasImplementation);
-            int overhead = TerminalWidthHelper.noBorderOverhead(showPidColumn() ? 6 : 5);
+            // the container is shown for the running services only (infra ps)
+            int containerWidth = showPidColumn()
+                    ? CamelTableColumns.measure("CONTAINER", 30, rows, r -> containerOf(r.serviceData())) : 0;
+            int overhead = TerminalWidthHelper.noBorderOverhead(showPidColumn() ? 7 : 5);
             int descWidth = CamelTableColumns.lastColumnWidth(
-                    tw, overhead, pidWidth, aliasWidth, implWidth, uiWidth, serviceDataWidth);
+                    tw, overhead, pidWidth, aliasWidth, implWidth, uiWidth, containerWidth, serviceDataWidth);
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").visible(showPidColumn()).headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("ALIAS").minWidth(aliasWidth).dataAlign(HorizontalAlign.LEFT)
                             .with(Row::alias),
-                    new Column().header("IMPLEMENTATION").maxWidth(implWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
+                    // the max width of a column includes its padding, the measured width does not
+                    new Column().header("IMPLEMENTATION").maxWidth(implWidth + 2, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .dataAlign(HorizontalAlign.LEFT).with(Row::aliasImplementation),
                     new Column().header("UI").maxWidth(uiWidth).dataAlign(HorizontalAlign.CENTER)
                             .with(r -> r.uiSupported() ? "x" : ""),
                     CamelTableColumns.lastText("DESCRIPTION", descWidth).with(Row::description),
+                    new Column().header("CONTAINER").visible(showPidColumn())
+                            .maxWidth(containerWidth + 2, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .dataAlign(HorizontalAlign.LEFT).with(r -> containerOf(r.serviceData())),
                     new Column().header("SERVICE_DATA").maxWidth(serviceDataWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .dataAlign(HorizontalAlign.LEFT).with(Row::serviceData))));
         }
@@ -371,6 +378,24 @@ public abstract class InfraBaseCommand extends CamelCommand {
         } catch (DeserializationException e) {
             return null;
         }
+    }
+
+    /**
+     * The container a running service is in, as {@code infra run} wrote it to its service data: the container name, or
+     * the short container id when it has no name. Returns {@code null} for a service that does not run in a container.
+     */
+    static String containerOf(String serviceData) {
+        if (parseServiceData(serviceData) instanceof Map<?, ?> data) {
+            Object name = data.get("containerName");
+            if (name != null) {
+                return name.toString();
+            }
+            Object id = data.get("containerId");
+            if (id != null) {
+                return id.toString();
+            }
+        }
+        return null;
     }
 
     public String getLogFileName(String service, String pid) {
