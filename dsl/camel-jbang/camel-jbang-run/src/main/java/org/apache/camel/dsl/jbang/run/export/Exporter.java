@@ -824,7 +824,8 @@ abstract class Exporter {
             Function<Properties, Object> customize)
             throws Exception {
         Properties settingsProps = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(settingsProps, settings);
+        // the run settings are written in UTF-8 (see RunSettings)
+        RuntimeUtil.loadProperties(settingsProps, settings, StandardCharsets.UTF_8);
 
         Properties profileProps = new CamelCaseOrderedProperties();
         if (Files.exists(profile)) {
@@ -903,10 +904,11 @@ abstract class Exporter {
             }
         }
 
-        // write all the properties
+        // write all the properties, in the encoding of a properties file (ISO-8859-1), as the application.properties of
+        // the export was read: its text is written back as it was, also UTF-8 text, which is read as ISO-8859-1
         Files.createDirectories(targetDir);
         Path appPropsPath = targetDir.resolve("application.properties");
-        Files.writeString(appPropsPath, content.toString(), StandardCharsets.UTF_8);
+        Files.writeString(appPropsPath, content.toString(), StandardCharsets.ISO_8859_1);
     }
 
     protected void prepareApplicationProperties(Properties properties) {
@@ -985,8 +987,12 @@ abstract class Exporter {
         FileUtil.setPosixFilePermissions(camelCmdPath, "rwxr-xr-x");
     }
 
+    /**
+     * The line of a property in the application.properties of the exported project, escaped as a properties file needs
+     * it (see {@link ExportHelper#propertyLine(String, String)}), or null to leave the property out.
+     */
     protected String applicationPropertyLine(String key, String value) {
-        return key + "=" + value;
+        return ExportHelper.propertyLine(key, value);
     }
 
     /**
@@ -1133,12 +1139,13 @@ abstract class Exporter {
         if (sb.isEmpty()) {
             return;
         }
-        String content = Files.exists(file) ? Files.readString(file) : "";
+        // in the encoding of a properties file, which keeps the bytes of the file as they are
+        String content = Files.exists(file) ? Files.readString(file, StandardCharsets.ISO_8859_1) : "";
         if (!content.isEmpty() && !content.endsWith("\n")) {
             content += "\n";
         }
         content += "# developer console (--console), only for the dev profile\n" + sb;
-        Files.writeString(file, content);
+        Files.writeString(file, content, StandardCharsets.ISO_8859_1);
     }
 
     public static String jibMavenPluginVersion(Path settings, Properties prop) {
