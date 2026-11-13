@@ -98,7 +98,7 @@ public class ProjectRunner extends ProjectExporter {
                 }
             }
         } catch (IOException e) {
-            // removed by a later run
+            // best effort: the directory was removed by a later run, or cannot be listed (permissions, I/O)
         }
     }
 
