@@ -91,7 +91,7 @@ set "_CDS_INSTALL_HASH="
 set "_CDS_PS_INPUT=!BASEDIR!"
 set "_CDS_PS_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
 if exist "!_CDS_PS_EXE!" (
-  for /f "delims=" %%h in ('"!_CDS_PS_EXE!" -NoProfile -NonInteractive -Command "$b=[System.Text.Encoding]::UTF8.GetBytes($env:_CDS_PS_INPUT);$h=[System.Security.Cryptography.SHA256]::Create().ComputeHash($b);($h[0..3]|ForEach-Object{$_.ToString(\"x2\")}) -join \"\"" 2^>nul') do set "_CDS_INSTALL_HASH=%%h"
+  for /f "delims=" %%h in ('!_CDS_PS_EXE! -NoProfile -NonInteractive -Command "$b=[System.Text.Encoding]::UTF8.GetBytes($env:_CDS_PS_INPUT);$h=[System.Security.Cryptography.SHA256]::Create().ComputeHash($b);($h[0..3]|ForEach-Object{$_.ToString(\"x2\")}) -join \"\"" 2^>nul') do set "_CDS_INSTALL_HASH=%%h"
 )
 if not defined _CDS_INSTALL_HASH set "_CDS_INSTALL_HASH=default"
 set "_CDS_DIR=!LOCALAPPDATA!\camel-cli\cds\!_CDS_VERSION!\!_CDS_INSTALL_HASH!"

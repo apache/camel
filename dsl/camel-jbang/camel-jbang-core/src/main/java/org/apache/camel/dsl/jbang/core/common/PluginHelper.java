@@ -921,9 +921,9 @@ public final class PluginHelper {
      * (e.g. {@code getActivePlugins} and {@code printAvailablePlugins}) do not repeat the message.
      */
     public static void warnCorruptPluginConfig(Printer printer, Exception e) {
-        String key = e.getMessage();
+        String key = e.getMessage() != null ? e.getMessage() : "unknown-corrupt-plugin-config";
         if (WARNED_PLUGIN_PATHS.add(key)) {
-            printer.printErr("Warning: " + e.getMessage() + ". Use 'camel plugin' commands to fix or delete the file.");
+            printer.printErr("Warning: " + e.getMessage() + ". Fix the JSON by hand or delete the file.");
         }
     }
 
