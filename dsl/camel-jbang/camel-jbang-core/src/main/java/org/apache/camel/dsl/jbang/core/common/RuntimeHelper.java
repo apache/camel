@@ -167,6 +167,8 @@ public final class RuntimeHelper {
             if (response != null) {
                 return response;
             }
+        } catch (ActionClient.StoppedException e) {
+            return e.getMessage();
         } catch (IOException e) {
             // Preserve the existing text API's diagnostic when the request cannot be exchanged.
         }

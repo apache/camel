@@ -28,11 +28,14 @@ import java.util.function.Function;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.Status;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -125,6 +128,89 @@ class ActionClientTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void integrationThatStopsIsNotWaitedFor() throws Exception {
+        // a process of its own, as the client only watches a process it can see
+        Process integration = new ProcessBuilder("sleep", "30").start();
+        try {
+            long pid = integration.pid();
+            executor.submit(() -> {
+                // stops while it has the action (such as a send that waits for a reply), without answering it
+                await().atMost(5, TimeUnit.SECONDS).until(() -> !requestFiles(CommandLineHelper.getCamelDir(), pid).isEmpty());
+                integration.destroy();
+                return null;
+            });
+            JsonObject request = new JsonObject();
+            request.put("action", "send");
+            StopWatch watch = new StopWatch();
+
+            ActionResult result = ActionClient.execute(pid, request, 30000);
+
+            assertThat(watch.taken()).isLessThan(10000);
+            assertThat(result.status()).isEqualTo(Status.ERROR);
+            assertThat(result.exitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+            assertThat(result.error())
+                    .isEqualTo("The integration with pid " + pid + " stopped before it answered the action send");
+            assertNoFilesLeft();
+        } finally {
+            integration.destroyForcibly();
+        }
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void textOfAnIntegrationThatStopsIsAnError() throws Exception {
+        Process integration = new ProcessBuilder("sleep", "30").start();
+        try {
+            long pid = integration.pid();
+            executor.submit(() -> {
+                await().atMost(5, TimeUnit.SECONDS).until(() -> !requestFiles(CommandLineHelper.getCamelDir(), pid).isEmpty());
+                integration.destroy();
+                return null;
+            });
+            JsonObject request = new JsonObject();
+            request.put("action", "route-dump");
+
+            // the tools of camel ask and the TUI say so, instead of that the integration did not answer in time
+            assertThatThrownBy(() -> ActionClient.executeText(pid, request, 30000))
+                    .isInstanceOf(ActionClient.StoppedException.class)
+                    .hasMessage("The integration with pid " + pid + " stopped before it answered the action route-dump");
+            assertNoFilesLeft();
+        } finally {
+            integration.destroyForcibly();
+        }
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void answerOfAnIntegrationThatStopsRightAfterIsRead() throws Exception {
+        Process integration = new ProcessBuilder("sleep", "30").start();
+        try {
+            long pid = integration.pid();
+            executor.submit(() -> {
+                Path dir = CommandLineHelper.getCamelDir();
+                Path request = await().atMost(5, TimeUnit.SECONDS)
+                        .until(() -> requestFiles(dir, pid), files -> !files.isEmpty()).get(0);
+                String id = request.getFileName().toString().substring((pid + "-action-").length()).replace(".json", "");
+                Files.writeString(dir.resolve(pid + "-output-" + id + ".json"), "{\"status\":\"success\",\"value\":42}");
+                integration.destroy();
+                integration.waitFor(5, TimeUnit.SECONDS);
+                Files.deleteIfExists(request);
+                return null;
+            });
+            JsonObject request = new JsonObject();
+            request.put("action", "jvm");
+
+            ActionResult result = ActionClient.execute(pid, request, 30000);
+
+            assertThat(result.status()).isEqualTo(Status.OK);
+            assertThat(result.reply().getInteger("value")).isEqualTo(42);
+        } finally {
+            integration.destroyForcibly();
+        }
+    }
+
+    @Test
     void olderIntegrationTakesAnActionWithoutConfirmingIt() throws Exception {
         // before 4.24 the connector deletes the request without answering an action without a result
         answerRequest(r -> null);
@@ -177,7 +263,7 @@ class ActionClientTest {
         // an integration of an earlier Camel version writes the answer in place: half of it is there first
         executor.submit(() -> {
             Path dir = CommandLineHelper.getCamelDir();
-            Path request = await().atMost(5, TimeUnit.SECONDS).until(() -> requestFiles(dir), files -> !files.isEmpty())
+            Path request = await().atMost(5, TimeUnit.SECONDS).until(() -> requestFiles(dir, PID), files -> !files.isEmpty())
                     .get(0);
             String id = request.getFileName().toString().substring((PID + "-action-").length()).replace(".json", "");
             Path output = dir.resolve(PID + "-output-" + id + ".json");
@@ -238,7 +324,7 @@ class ActionClientTest {
     private Future<JsonObject> answerRequest(Function<JsonObject, JsonObject> answer) {
         return executor.submit(() -> {
             Path dir = CommandLineHelper.getCamelDir();
-            Path request = await().atMost(5, TimeUnit.SECONDS).until(() -> requestFiles(dir), files -> !files.isEmpty())
+            Path request = await().atMost(5, TimeUnit.SECONDS).until(() -> requestFiles(dir, PID), files -> !files.isEmpty())
                     .get(0);
             JsonObject action = json(Files.readString(request));
             JsonObject reply = answer.apply(action);
@@ -251,9 +337,9 @@ class ActionClientTest {
         });
     }
 
-    private static List<Path> requestFiles(Path dir) throws Exception {
+    private static List<Path> requestFiles(Path dir, long pid) throws Exception {
         try (var files = Files.list(dir)) {
-            return files.filter(f -> f.getFileName().toString().startsWith(PID + "-action-")).toList();
+            return files.filter(f -> f.getFileName().toString().startsWith(pid + "-action-")).toList();
         }
     }
 

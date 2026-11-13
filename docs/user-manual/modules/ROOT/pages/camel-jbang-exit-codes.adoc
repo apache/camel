@@ -29,7 +29,8 @@ The exit codes and streams on this page apply from Camel 4.24 onwards.
 | `3`
 | Not found
 | An integration, route, component, service or other name given on the command line is not running or does not exist,
-  or a name matches more than one running integration.
+  or a name matches more than one running integration. Also when the integration stops before it answers the command,
+  such as a `camel cmd send` that waits for the reply.
 
 | `66`
 | File not found

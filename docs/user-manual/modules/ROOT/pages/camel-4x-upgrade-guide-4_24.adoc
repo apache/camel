@@ -2829,6 +2829,8 @@ xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]):
 * A name or pid that matches no running integration exits with `3`, instead of doing nothing and exiting with `0`.
   Without a name (all integrations) and nothing running, the command exits with `0` and prints
   `No running Camel integrations` on stderr.
+* An integration that stops before it answers the action exits with `3` as soon as it is gone, instead of waiting until
+  `--timeout` and exiting with `124`, such as a `camel cmd send` that waits for the reply of a slow route.
 * `camel eval expression` with a name or pid that matches no running integration exits with `3`, instead of starting
   a new Camel to evaluate in: only without a name, or with `--isolated`, a new Camel evaluates the expression. An
   evaluation that fails exits with `1`, and the `Using existing running Camel integration` line is printed on stderr.
