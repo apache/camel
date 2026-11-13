@@ -1525,13 +1525,15 @@ way as the `camel.uri` attribute, which shows the endpoint URI as `Endpoint.toSt
 
 Dashboards or queries that use the old values may need a change.
 
-=== camel-oaipmh - the CamelOaimphOnlyFirst and CamelOaimphIgnoreSSLWarnings headers apply to their message only
+=== camel-oaipmh - the CamelOaimphOnlyFirst header applies to its message only, and the CamelOaimphIgnoreSSLWarnings header is removed
 
-The `CamelOaimphOnlyFirst` and `CamelOaimphIgnoreSSLWarnings` headers now apply only to the message that has them.
-Before, the producer wrote them onto the endpoint, so after one message with `CamelOaimphOnlyFirst=true` every later
-message sent to that endpoint returned only the first page, and after one message with
-`CamelOaimphIgnoreSSLWarnings=true` every later message accepted a self-signed certificate. A message without the
-header uses the `onlyFirst` and `ignoreSSLWarnings` options of the endpoint.
+The `CamelOaimphOnlyFirst` header now applies only to the message that has it. Before, the producer wrote it onto the
+endpoint, so after one message with `CamelOaimphOnlyFirst=true` every later message sent to that endpoint returned only
+the first page. A message without the header uses the `onlyFirst` option of the endpoint.
+
+The producer no longer reads the `CamelOaimphIgnoreSSLWarnings` header, and the `OAIPMHConstants.IGNORE_SSL_WARNINGS`
+constant is removed. Use the `ignoreSSLWarnings` option of the endpoint instead; when only some repositories need it,
+send to them through an endpoint URI that sets the option.
 
 === camel-clickhouse - a query in a binary format returns a byte[] body
 
