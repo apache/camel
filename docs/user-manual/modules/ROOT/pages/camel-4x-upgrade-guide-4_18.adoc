@@ -77,15 +77,22 @@ at `DEBUG` level with the message only. Checkpoint failures triggered by batch s
 The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.
 The `InvalidMessageSignatureException` of a failed check no longer carries the calculated signature: `getCalculatedSignature()` returns `null` and is deprecated, as is the constructor that takes it.
 
-=== camel-file - the consumer's move, preMove and moveFailed resolve symbolic links for jailStartingDirectory
+=== camel-file - the consumer skips a file it would move through a symbolic link resolving outside the starting directory
 
-With `jailStartingDirectory` enabled (the default), the file consumer now resolves symbolic links on the target of
-`move`, `preMove` and `moveFailed`, including the default `.camel` folder, when that target is inside the starting
-directory. A target that resolves outside the starting directory through a link is not used: the move fails like any
-other failed move, so the file stays where it is and the error is passed to the exception handler. Before, the existing
-target was deleted and the file was moved wherever the link pointed. Targets configured outside the starting directory
-(such as `move=../archive`) and links resolving inside it work as before. Set `jailStartingDirectory=false` to keep
-following links to other directories.
+With `jailStartingDirectory` enabled (the default), the file consumer now resolves symbolic links on the targets of
+`preMove`, `move` and `moveFailed`, including the default `.camel` folder. It checks these targets before the file is
+processed. When a target is inside the starting directory but resolves outside of it through a link, the consumer skips
+the file. It logs a WARN the first time. The file is not processed and not moved, and it stays in the folder. Before,
+the existing target was deleted and the file was moved wherever the link pointed. A target that depends on what the
+route sets can only be checked when the file is moved. Such a move fails, and the file is consumed again on the next
+poll.
+
+The file producer now refuses to delete or rename onto a file through such a link. This covers `fileExist=Move` with
+`moveExisting`, and the rename of a file written with `tempFileName`. The write fails.
+
+Targets configured outside the starting directory (such as `move=../archive`) and links resolving inside it work as
+before. A deployment that links these folders to another directory on purpose, such as `.camel` on another volume, must
+set `jailStartingDirectory=false` to keep following those links.
 
 === camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
 

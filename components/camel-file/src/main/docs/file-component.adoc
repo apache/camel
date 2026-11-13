@@ -719,13 +719,23 @@ done and ready to be consumed.
 With `jailStartingDirectory` enabled (the default), symbolic links are resolved when checking that a file stays within
 the starting directory. The consumer skips a file, or with `recursive=true` a directory, that is a link resolving
 outside the starting directory (logged at WARN the first time), and the producer fails to write through such a link.
-The consumer also checks the target of `move`, `preMove` and `moveFailed`, including the default `.camel` folder.
-When that target is inside the starting directory but resolves outside of it through a link, the move fails like any
-other failed move, and the file stays where it is. A target configured outside the starting directory (such as
-`move=../archive`) is not checked.
-Links that resolve inside the starting directory, and a starting directory that is itself a link, work as usual. Set
-`jailStartingDirectory=false` if the application relies on following links to other directories. The check and the
-read or write that follows are not atomic, so the permissions of the directories still matter.
+
+The consumer also checks where it would move a file: the targets of `preMove`, `move` and `moveFailed`, including the
+default `.camel` folder. It evaluates these targets before the file is processed, so they are evaluated one extra time
+per file. When a target is inside the starting directory but resolves outside of it through a link, the consumer skips
+the file (logged at WARN the first time). The file is not processed and stays in the folder. This applies to
+`moveFailed` too, even when the file would be processed without errors. A target that depends on what the route sets,
+such as an exchange property, can only be checked when the file is moved. When such a target resolves outside, the move
+fails like any other failed move, and the file is consumed again on the next poll.
+
+The producer checks the files it deletes or renames onto in the same way: with `fileExist=Move` and `moveExisting`, and
+when it renames a file written with `tempFileName`. Such a write fails.
+
+A target configured outside the starting directory (such as `move=../archive`) is not checked. Links that resolve inside
+the starting directory, and a starting directory that is itself a link, work as usual. Set `jailStartingDirectory=false`
+if the application relies on following links to other directories, such as a `.camel` folder linked to another volume on
+purpose. The check and the read or write that follows are not atomic, so the permissions of the directories still
+matter.
 
 === Done files
 
