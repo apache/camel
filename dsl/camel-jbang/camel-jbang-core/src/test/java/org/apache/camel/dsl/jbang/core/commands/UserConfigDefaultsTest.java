@@ -95,13 +95,14 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
         UserConfigHelper.createUserConfig("path=C:\\users\\name");
 
         StringPrinter out = new StringPrinter();
-        boolean[] loaded = { true };
-        loaded[0] = CommandLineHelper.loadProperties(props -> {
+        boolean[] consumerCalled = { false };
+        boolean loaded = CommandLineHelper.loadProperties(props -> {
             // should NOT be called since the 3-arg overload does not call consumer on failure
-            loaded[0] = true;
+            consumerCalled[0] = true;
         }, false, out);
 
-        assertThat(loaded[0]).as("loadProperties should return false for a malformed file").isFalse();
+        assertThat(loaded).as("loadProperties should return false for a malformed file").isFalse();
+        assertThat(consumerCalled[0]).as("consumer must not be called on failure").isFalse();
         assertThat(out.getStderr()).contains("could not parse");
         assertThat(out.getStderr()).contains("escaping");
     }

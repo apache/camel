@@ -864,8 +864,8 @@ public final class PluginHelper {
     /**
      * Writes {@code content} to {@code target} atomically: writes to a sibling temp file first, then moves it into
      * place with {@link StandardCopyOption#REPLACE_EXISTING}. When atomic move is not supported by the underlying
-     * filesystem (e.g. across mounts), falls back to a plain overwriting write, which is still safer than
-     * truncate-then-write because the write is a single syscall.
+     * filesystem, falls back to a plain overwriting move (rename(2)), which is still safe — a reader never observes a
+     * half-written file.
      */
     private static void atomicWriteJson(Path target, String content) throws IOException {
         // Resolve symlinks so the move replaces the target file, not the symlink itself.
