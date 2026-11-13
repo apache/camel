@@ -2883,11 +2883,11 @@
 													},
 													"elapsed": {
 														"type": "integer",
-														"description": "Elapsed time in milliseconds since the exchange started"
+														"description": "Elapsed time in milliseconds the exchange has been at the current node"
 													},
 													"duration": {
 														"type": "integer",
-														"description": "Duration in milliseconds the exchange has been at the current node"
+														"description": "Duration in milliseconds since the exchange started"
 													}
 												},
 												"required": [
