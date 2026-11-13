@@ -47,13 +47,14 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractReifier {
 
     private static final Pattern SINGLE_TO_DOUBLE = Pattern.compile("'(\\{\\{.*?}})'"); // non-greedy mode
+    // a scheme of a resource name, such as file:, classpath:, http: or ref:
+    private static final Pattern RESOURCE_SCHEME = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]*:");
 
     // for custom reifiers
     private static final Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> EXPRESSIONS
@@ -186,8 +187,13 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
 
     /**
      * Wraps the expression so a result that is a String starting with <code>resource:</code> is loaded and its content
-     * is the result (resolveResource=true, CAMEL-24884). A name without a scheme is a classpath resource. Applies to
-     * expressions only: a predicate answers true or false, there is no resource to load in its result.
+     * is the result (resolveResource=true, CAMEL-24884). Applies to expressions only: a predicate answers true or
+     * false, there is no resource to load in its result.
+     * <p/>
+     * The name must have no scheme and is loaded from the classpath (CAMEL-25982): <code>camel run</code> puts the
+     * files given on the command line on the classpath, and <code>camel export</code> puts them in
+     * <code>src/main/resources</code>, so the same name works in both. A name with a scheme (file:, http:, ref: ...) or
+     * with <code>..</code> fails, so a result taken from the message cannot load a file or a URL of its choosing.
      */
     private Expression resolveResourceResult(Expression delegate) {
         return new ExpressionAdapter() {
@@ -202,10 +208,9 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 Object answer = delegate.evaluate(exchange, Object.class);
                 if (answer instanceof String text && text.startsWith("resource:")) {
                     String name = text.substring(9);
-                    if (!ResourceHelper.hasScheme(name) && !name.startsWith("ref:") && !name.startsWith("bean:")) {
-                        name = "classpath:" + name;
-                    }
-                    return ScriptHelper.resolveOptionalExternalScript(exchange.getContext(), exchange, "resource:" + name);
+                    checkResourceName(text, name);
+                    return ScriptHelper.resolveOptionalExternalScript(exchange.getContext(), exchange,
+                            "resource:classpath:" + name);
                 }
                 return answer;
             }
@@ -215,6 +220,24 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 return delegate.toString();
             }
         };
+    }
+
+    private static void checkResourceName(String text, String name) {
+        Matcher m = RESOURCE_SCHEME.matcher(name);
+        if (m.find()) {
+            throw new IllegalArgumentException(
+                    "resolveResource: the result " + text + " names a resource with a scheme (" + m.group()
+                                               + "). Give the name without a scheme, as in resource:"
+                                               + name.substring(m.end())
+                                               + ": it is loaded from the classpath (camel run puts the files given on"
+                                               + " the command line on the classpath, camel export puts them in"
+                                               + " src/main/resources)");
+        }
+        if (name.contains("..")) {
+            throw new IllegalArgumentException(
+                    "resolveResource: the result " + text + " names a resource with .. in its name."
+                                               + " Give a name on the classpath without .., such as resource:templates/order.json");
+        }
     }
 
     public Predicate createPredicate() {

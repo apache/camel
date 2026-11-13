@@ -37,7 +37,6 @@ import org.apache.directory.server.core.integ5.DirectoryExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -47,9 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(DirectoryExtension.class)
 @CreateLdapServer(transports = { @CreateTransport(protocol = "LDAP") })
 @ApplyLdifFiles("org/apache/camel/component/ldap/LdapRouteTest.ldif")
-@EnabledIfSystemProperty(named = "enable.ldap.itests", matches = "true",
-                         disabledReason = "the tests does not work due to complex ldap server environment")
-public class LdapRouteTwoManualIT extends AbstractLdapTestUnit {
+public class LdapRouteTwoTest extends AbstractLdapTestUnit {
 
     private CamelContext camel;
     private ProducerTemplate template;

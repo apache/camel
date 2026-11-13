@@ -23,6 +23,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.net.http.HttpConnectTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
@@ -37,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.util.FileUtil;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.http.Header;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
@@ -1239,6 +1241,11 @@ class MavenDownloaderImplTest {
         assertNotNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(new UnknownHostException("nope")));
         assertNotNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(
                 new SocketTimeoutException("Connect timed out")));
+        // Apache HttpClient 4 (the HTTP transport of Maven Resolver) has its own exception for a connect timeout
+        assertNotNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(
+                new RuntimeException(new ConnectTimeoutException("Connect to localhost:1234 timed out"))));
+        assertNotNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(
+                new HttpConnectTimeoutException("HTTP connect timed out")));
         // a read timeout is a slow repository, not an unreachable one
         assertNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(
                 new SocketTimeoutException("Read timed out")));

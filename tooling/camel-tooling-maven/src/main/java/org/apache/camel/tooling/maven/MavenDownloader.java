@@ -87,6 +87,7 @@ public interface MavenDownloader extends Service {
      * again in another version.
      *
      * @param managed the artifacts whose version is used for the transitive dependencies on them, or null
+     * @since         4.24
      */
     default List<MavenArtifact> resolveArtifacts(
             String rootGav,

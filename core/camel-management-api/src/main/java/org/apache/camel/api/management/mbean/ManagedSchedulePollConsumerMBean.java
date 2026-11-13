@@ -16,6 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import java.util.Date;
+
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
@@ -106,5 +108,23 @@ public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
     @ManagedAttribute(description = "Success counter. If the success is > 0 that means the consumer succeeded polling for the last N number of times."
                                     + " When the consumer is failing again, then the success counter resets to zero.")
     long getSuccessCounter();
+
+    /**
+     * @since 4.24
+     */
+    @ManagedAttribute(description = "Timestamp of the last poll (null if the consumer has not polled since it was started)")
+    Date getLastPollTimestamp();
+
+    /**
+     * @since 4.24
+     */
+    @ManagedAttribute(description = "Timestamp of the last poll that polled messages (null if no poll has polled any since the consumer was started)")
+    Date getLastPollMessagesTimestamp();
+
+    /**
+     * @since 4.24
+     */
+    @ManagedAttribute(description = "Number of messages the last poll that polled messages gave (0 if no poll has polled any since the consumer was started)")
+    int getLastPollMessagesCount();
 
 }

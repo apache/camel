@@ -18,6 +18,8 @@ package org.apache.camel.component.jsonapi;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Collections;
+import java.util.List;
 
 import com.github.jasminb.jsonapi.exceptions.DocumentSerializationException;
 import com.github.jasminb.jsonapi.exceptions.UnregisteredTypeException;
@@ -29,8 +31,10 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonApiDataFormatTest extends CamelTestSupport {
 
@@ -105,6 +109,109 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
     }
 
     @Test
+    public void testJsonApiUnmarshalCollection() throws Exception {
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
+        JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(MyBook.class, formats);
+
+        Exchange exchange = new DefaultExchange(context);
+        Object outputObj = jsonApiDataFormat.unmarshal(exchange,
+                new ByteArrayInputStream(generateBooksAsString().getBytes()));
+
+        List<?> books = assertInstanceOf(List.class, outputObj);
+        assertEquals(2, books.size());
+        MyBook first = assertInstanceOf(MyBook.class, books.get(0));
+        assertEquals("1617292931", first.getIsbn());
+        assertEquals("Camel in Action", first.getTitle());
+        MyBook second = assertInstanceOf(MyBook.class, books.get(1));
+        assertEquals("1935182366", second.getIsbn());
+        assertEquals("Camel in Action, first edition", second.getTitle());
+    }
+
+    @Test
+    public void testJsonApiUnmarshalCollectionDataNotFirst() throws Exception {
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
+        JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(MyBook.class, formats);
+
+        // the data member comes after other members, one of them an object with a data member of its own
+        String jsonApiInput = "{\"meta\":{\"data\":{\"total\":1}},\"links\":{\"self\":\"/books\"},"
+                              + "\"data\":[{\"type\":\"book\",\"id\":\"1617292931\","
+                              + "\"attributes\":{\"title\":\"Camel in Action\"}}]}";
+
+        Exchange exchange = new DefaultExchange(context);
+        Object outputObj = jsonApiDataFormat.unmarshal(exchange, jsonApiInput.getBytes());
+
+        List<?> books = assertInstanceOf(List.class, outputObj);
+        assertEquals(1, books.size());
+        assertEquals("Camel in Action", assertInstanceOf(MyBook.class, books.get(0)).getTitle());
+    }
+
+    @Test
+    public void testJsonApiUnmarshalEmptyCollection() throws Exception {
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
+        JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(MyBook.class, formats);
+
+        Exchange exchange = new DefaultExchange(context);
+        Object outputObj = jsonApiDataFormat.unmarshal(exchange, "{\"data\":[]}".getBytes());
+
+        List<?> books = assertInstanceOf(List.class, outputObj);
+        assertTrue(books.isEmpty());
+    }
+
+    @Test
+    public void testJsonApiMarshalCollection() throws Exception {
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
+        JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(formats);
+
+        Exchange exchange = new DefaultExchange(context);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        jsonApiDataFormat.marshal(exchange, generateBooksAsObjects(), baos);
+
+        assertEquals(generateBooksAsString(), baos.toString());
+    }
+
+    @Test
+    public void testJsonApiMarshalArray() throws Exception {
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
+        JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(formats);
+
+        Exchange exchange = new DefaultExchange(context);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        jsonApiDataFormat.marshal(exchange, generateBooksAsObjects().toArray(new MyBook[0]), baos);
+
+        assertEquals(generateBooksAsString(), baos.toString());
+    }
+
+    @Test
+    public void testJsonApiMarshalEmptyCollection() throws Exception {
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
+        JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(formats);
+
+        Exchange exchange = new DefaultExchange(context);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        jsonApiDataFormat.marshal(exchange, Collections.emptyList(), baos);
+
+        assertEquals("{\"data\":[]}", baos.toString());
+    }
+
+    @Test
+    public void testJsonApiCollectionRoundTrip() throws Exception {
+        Class<?>[] formats = { MyBook.class, MyAuthor.class };
+        JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(MyBook.class, formats);
+
+        Exchange exchange = new DefaultExchange(context);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        jsonApiDataFormat.marshal(exchange, generateBooksAsObjects(), baos);
+        Object outputObj = jsonApiDataFormat.unmarshal(exchange, baos.toByteArray());
+
+        List<?> books = assertInstanceOf(List.class, outputObj);
+        assertEquals(2, books.size());
+        MyBook first = assertInstanceOf(MyBook.class, books.get(0));
+        assertEquals("Camel in Action", first.getTitle());
+        assertEquals("1", first.getAuthor().getAuthorId());
+        assertEquals("Camel in Action, first edition", assertInstanceOf(MyBook.class, books.get(1)).getTitle());
+    }
+
+    @Test
     public void testCamelJsonApiMarshal() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:resultMarshal");
         mock.expectedMessageCount(1);
@@ -162,6 +269,21 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
 
     private String generateTestDataAsString() {
         return "{\"data\":{\"type\":\"book\",\"id\":\"1617292931\",\"attributes\":{\"title\":\"Camel in Action\"},\"relationships\":{\"author\":{\"data\":{\"type\":\"author\",\"id\":\"1\"}}}}}";
+    }
+
+    private String generateBooksAsString() {
+        return "{\"data\":[{\"type\":\"book\",\"id\":\"1617292931\",\"attributes\":{\"title\":\"Camel in Action\"},"
+               + "\"relationships\":{\"author\":{\"data\":{\"type\":\"author\",\"id\":\"1\"}}}},"
+               + "{\"type\":\"book\",\"id\":\"1935182366\",\"attributes\":{\"title\":\"Camel in Action, first edition\"},"
+               + "\"relationships\":{\"author\":{\"data\":{\"type\":\"author\",\"id\":\"1\"}}}}]}";
+    }
+
+    private List<MyBook> generateBooksAsObjects() {
+        MyBook second = new MyBook();
+        second.setIsbn("1935182366");
+        second.setTitle("Camel in Action, first edition");
+        second.setAuthor(generateTestDataAsObject().getAuthor());
+        return List.of(generateTestDataAsObject(), second);
     }
 
     private MyBook generateTestDataAsObject() {

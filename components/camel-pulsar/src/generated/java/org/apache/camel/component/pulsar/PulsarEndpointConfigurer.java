@@ -30,6 +30,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "ackTimeoutMillis": target.getPulsarConfiguration().setAckTimeoutMillis(property(camelContext, long.class, value)); return true;
         case "acktimeoutredeliverybackoff":
         case "ackTimeoutRedeliveryBackoff": target.getPulsarConfiguration().setAckTimeoutRedeliveryBackoff(property(camelContext, org.apache.pulsar.client.api.RedeliveryBackoff.class, value)); return true;
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": target.getPulsarConfiguration().setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": target.getPulsarConfiguration().setAllowManualAcknowledgement(property(camelContext, boolean.class, value)); return true;
         case "authenticationclass":
@@ -131,6 +133,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "ackTimeoutMillis": return long.class;
         case "acktimeoutredeliverybackoff":
         case "ackTimeoutRedeliveryBackoff": return org.apache.pulsar.client.api.RedeliveryBackoff.class;
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return boolean.class;
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": return boolean.class;
         case "authenticationclass":
@@ -233,6 +237,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "ackTimeoutMillis": return target.getPulsarConfiguration().getAckTimeoutMillis();
         case "acktimeoutredeliverybackoff":
         case "ackTimeoutRedeliveryBackoff": return target.getPulsarConfiguration().getAckTimeoutRedeliveryBackoff();
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return target.getPulsarConfiguration().isAllowJavaSerializedObject();
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": return target.getPulsarConfiguration().isAllowManualAcknowledgement();
         case "authenticationclass":

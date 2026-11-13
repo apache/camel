@@ -36,7 +36,7 @@
         <firstVersion>2.21.0</firstVersion>
         <title>LRA</title>
         <label>microservice</label>
-        <supportLevel>preview</supportLevel>
+        <supportLevel>Stable</supportLevel>
 
         <!-- LRA coordinator container is only available for x86 -->
         <skipITs.s390x>true</skipITs.s390x>

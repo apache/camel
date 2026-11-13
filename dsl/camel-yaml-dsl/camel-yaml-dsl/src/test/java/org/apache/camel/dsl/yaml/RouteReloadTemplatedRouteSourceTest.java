@@ -141,19 +141,9 @@ class RouteReloadTemplatedRouteSourceTest extends YamlTestSupport {
     @Test
     void reloadOfAnotherFileWithTheRouteTemplateFromJava() throws Exception {
         // the route template comes from Java (no file) and the templated route from a file: a reload of another file
-        // must not fail on the route template that the reload removed (CAMEL-25616)
-        context.getRouteController().removeAllRoutes();
-        context.removeRouteTemplates("*");
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                routeTemplate("greeting").templateParameter("greeting")
-                        .from("direct:greet").setBody(constant("{{greeting}}"));
-            }
-        });
-        loadRoutes(ResourceHelper.resolveResource(context, "file:" + uses),
-                ResourceHelper.resolveResource(context, "file:" + plain));
-        assertThat(context.getRoute("greet").getSourceResource()).isNull();
+        // must not fail on the route template (CAMEL-25616), and keeps the route template, so the templated route is
+        // created again (CAMEL-25619)
+        useRouteTemplateFromJava();
 
         TestableStrategy strategy = new TestableStrategy(dir.toString());
         strategy.setCamelContext(context);
@@ -168,9 +158,67 @@ class RouteReloadTemplatedRouteSourceTest extends YamlTestSupport {
             assertThat(strategy.getLastError()).isNull();
             assertThat(context.createFluentProducerTemplate().to("direct:plain").request(String.class))
                     .isEqualTo("plain changed");
+            assertThat(context.getRouteController().getRouteStatus("greet")).isEqualTo(ServiceStatus.Started);
+            assertThat(context.createFluentProducerTemplate().to("direct:greet").request(String.class))
+                    .isEqualTo("Hello");
+            assertThat(context.getRoute("greet").getTemplatedRouteResource().getLocation()).isEqualTo("file:" + uses);
         } finally {
             strategy.doStop();
         }
+    }
+
+    @Test
+    void failedReloadWithTheRouteTemplateFromJavaRestoresTheTemplatedRoute() throws Exception {
+        // the routes that ran before a failed reload are restored (CAMEL-24860): the templated route too, as the
+        // route template from Java is kept (CAMEL-25619)
+        useRouteTemplateFromJava();
+
+        TestableStrategy strategy = new TestableStrategy(dir.toString());
+        strategy.setCamelContext(context);
+        strategy.setPattern("*.yaml");
+        strategy.doStart();
+        try {
+            Files.writeString(plain, """
+                    - route:
+                        id: plain
+                        from:
+                          uri: direct:plain
+                          steps:
+                            - noSuchEip: {}
+                    """);
+            Exception failure = null;
+            try {
+                strategy.getResourceReload().onReload(plain.toString(),
+                        ResourceHelper.resolveResource(context, "file:" + plain));
+            } catch (Exception e) {
+                failure = e;
+            }
+
+            assertThat(failure).isNotNull();
+            assertThat(context.getRouteController().getRouteStatus("greet")).isEqualTo(ServiceStatus.Started);
+            assertThat(context.createFluentProducerTemplate().to("direct:greet").request(String.class))
+                    .isEqualTo("Hello");
+            assertThat(context.createFluentProducerTemplate().to("direct:plain").request(String.class))
+                    .isEqualTo("plain");
+        } finally {
+            strategy.doStop();
+        }
+    }
+
+    private void useRouteTemplateFromJava() throws Exception {
+        context.getRouteController().removeAllRoutes();
+        context.removeRouteTemplates("*");
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                routeTemplate("greeting").templateParameter("greeting")
+                        .from("direct:greet").setBody(constant("{{greeting}}"));
+            }
+        });
+        loadRoutes(ResourceHelper.resolveResource(context, "file:" + uses),
+                ResourceHelper.resolveResource(context, "file:" + plain));
+        assertThat(context.getRoute("greet").getSourceResource()).isNull();
+        assertThat(context.createFluentProducerTemplate().to("direct:greet").request(String.class)).isEqualTo("Hello");
     }
 
     private static String plainRoute(String body) {
