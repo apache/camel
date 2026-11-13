@@ -1105,22 +1105,28 @@ public class AggregateProcessor extends BaseProcessorSupport
     /**
      * Sends the aggregated exchanges (more than one when the batch consumer completes all its groups). None of them is
      * in the repository any more, so when one of them fails to be submitted (the thread pool rejects it, or the
-     * aggregation strategy throws an exception on completion), the others are still sent (or failed too), and then the
-     * first failure is thrown.
+     * aggregation strategy throws an exception or an Error on completion), the others are still sent (or failed too),
+     * and then the first failure is thrown.
      */
     private void submitCompletions(String key, List<Exchange> aggregated) {
-        RuntimeException failure = null;
+        Throwable failure = null;
         for (Exchange agg : aggregated) {
             try {
                 onSubmitCompletion(key, agg);
-            } catch (RuntimeException e) {
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled here
+                throw e;
+            } catch (RuntimeException | Error e) {
+                // also an Error of the aggregation strategy, as for an exception
                 if (failure == null) {
                     failure = e;
                 }
             }
         }
-        if (failure != null) {
-            throw failure;
+        if (failure instanceof Error err) {
+            throw err;
+        } else if (failure != null) {
+            throw (RuntimeException) failure;
         }
     }
 
@@ -1921,6 +1927,7 @@ public class AggregateProcessor extends BaseProcessorSupport
                                     try {
                                         onSubmitCompletion(key, exchange);
                                     } catch (VirtualMachineError e) {
+                                        // left as before: a JVM-level failure is not handled, and ends the recover task
                                         throw e;
                                     } catch (RuntimeException | Error e) {
                                         // it has been failed and passed to the exception handler, and is recovered
