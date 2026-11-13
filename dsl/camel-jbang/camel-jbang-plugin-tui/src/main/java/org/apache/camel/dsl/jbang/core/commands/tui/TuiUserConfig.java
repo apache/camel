@@ -73,7 +73,11 @@ final class TuiUserConfig {
         }
         boolean local = livesInLocal(key);
         String[] holder = { null };
-        CommandLineHelper.loadProperties(props -> holder[0] = props.getProperty(key), local);
+        boolean ok = CommandLineHelper.loadProperties(props -> holder[0] = props.getProperty(key), local,
+                new Printer.SystemOutPrinter());
+        if (!ok) {
+            throw new RuntimeException("Could not parse TUI user config file");
+        }
         return holder[0];
     }
 
