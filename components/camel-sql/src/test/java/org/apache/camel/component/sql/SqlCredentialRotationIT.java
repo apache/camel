@@ -18,20 +18,23 @@ package org.apache.camel.component.sql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.agroal.api.AgroalDataSource;
-import io.agroal.api.AgroalDataSourceMetrics;
 import io.agroal.api.configuration.supplier.AgroalDataSourceConfigurationSupplier;
+import io.agroal.api.security.AgroalSecurityProvider;
 import io.agroal.api.security.NamePrincipal;
-import io.agroal.api.security.SimplePassword;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.test.infra.postgres.services.PostgresService;
 import org.apache.camel.test.infra.postgres.services.PostgresServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -42,7 +45,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * End-to-end integration test for credential rotation in {@link SqlComponent}.
@@ -56,7 +60,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * <li>Verify that subsequent queries succeed and use a new physical connection (different
  * {@code pg_backend_pid()}).</li>
  * </ol>
- * Both HikariCP and Agroal pools are covered.
+ * HikariCP is tested with a direct pool credential update; Agroal is tested with a custom
+ * {@link AgroalSecurityProvider} that supplies the current password on each new connection.
  */
 class SqlCredentialRotationIT extends CamelTestSupport {
 
@@ -90,6 +95,9 @@ class SqlCredentialRotationIT extends CamelTestSupport {
 
     @AfterEach
     void dropTestUser() throws Exception {
+        if (hikariDs != null) {
+            hikariDs.close();
+        }
         try (Connection adminConn = DriverManager.getConnection(
                 postgres.jdbcUrl(), postgres.userName(), postgres.password());
              Statement st = adminConn.createStatement()) {
@@ -124,13 +132,15 @@ class SqlCredentialRotationIT extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void hikariCp_credentialRotation_newConnectionUsesNewPassword() throws Exception {
         sqlComponent = context.getComponent("sql", SqlComponent.class);
 
+        DefaultContextReloadStrategy reload = new DefaultContextReloadStrategy();
+        context.addService(reload);
+
         // Step 1: verify the pool works with cred A
         int pidBefore = queryBackendPid();
-        assertNotNull(pidBefore, "pg_backend_pid() must return a value with credential A");
+        assertNotEquals(0, pidBefore, "pg_backend_pid() must return a non-zero value with credential A");
 
         // Step 2: change the database password to cred B via the admin connection
         try (Connection adminConn = DriverManager.getConnection(
@@ -139,21 +149,43 @@ class SqlCredentialRotationIT extends CamelTestSupport {
             st.execute("ALTER ROLE " + TEST_USER + " PASSWORD '" + CRED_B + "'");
         }
 
-        // Step 3: update the pool's password to cred B, then trigger rotation
+        // Verify old password no longer works for new connections
+        assertThrows(SQLException.class,
+                () -> DriverManager.getConnection(postgres.jdbcUrl(), TEST_USER, CRED_A),
+                "Old password must be rejected after ALTER ROLE");
+
+        // Step 3: update the pool's password to cred B, then trigger rotation via reload strategy
         hikariDs.setPassword(CRED_B);
-        sqlComponent.onSecretRotation("test-rotation");
+        reload.onReload("test-rotation");
 
         // Step 4: verify that a new query succeeds with cred B on a fresh connection
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             int pidAfter = queryBackendPid();
-            assertNotNull(pidAfter, "pg_backend_pid() must succeed after rotation");
+            assertNotEquals(0, pidAfter, "pg_backend_pid() must return a non-zero value after rotation");
             assertNotEquals(pidBefore, pidAfter,
                     "After rotation, pg_backend_pid() must differ — pool must have opened a fresh connection");
         });
     }
 
     @Test
-    void agroal_credentialRotation_flushEvictsConnections() throws Exception {
+    void agroal_credentialRotation_newConnectionUsesNewPassword() throws Exception {
+        // A marker credential object that our custom AgroalSecurityProvider recognises.
+        // The provider returns the current password from an AtomicReference, allowing
+        // the test to rotate the credential without rebuilding the DataSource.
+        record RotatingCredential() {
+        }
+
+        AtomicReference<String> currentPassword = new AtomicReference<>(CRED_A);
+
+        AgroalSecurityProvider rotating = credential -> {
+            if (credential instanceof RotatingCredential) {
+                Properties p = new Properties();
+                p.setProperty("password", currentPassword.get());
+                return p;
+            }
+            return null;
+        };
+
         try (AgroalDataSource agroalDs = AgroalDataSource.from(
                 new AgroalDataSourceConfigurationSupplier()
                         .metricsEnabled()
@@ -162,33 +194,60 @@ class SqlCredentialRotationIT extends CamelTestSupport {
                                 .minSize(1)
                                 .connectionFactoryConfiguration(factory -> factory
                                         .jdbcUrl(postgres.jdbcUrl())
-                                        .credential(new NamePrincipal(TEST_USER))
-                                        .credential(new SimplePassword(CRED_A)))))) {
+                                        .principal(new NamePrincipal(TEST_USER))
+                                        .credential(new RotatingCredential())
+                                        .addSecurityProvider(rotating))))) {
 
-            AgroalDataSourceMetrics metrics = agroalDs.getMetrics();
+            // Register the Agroal DataSource in the registry so it can be discovered by the component
+            context.getRegistry().bind("agroalRotationDs", agroalDs);
 
-            // Verify the pool works
-            try (Connection conn = agroalDs.getConnection()) {
-                assertNotNull(conn.createStatement().executeQuery("SELECT 1").next());
-            }
-            long flushCountBefore = metrics.flushCount();
-
-            // Build a temporary SqlComponent wired to the Agroal DataSource and trigger rotation
+            // Build a temporary SqlComponent wired to the Agroal DataSource
             SqlComponent agroalComponent = new SqlComponent();
             agroalComponent.setDataSource(agroalDs);
             agroalComponent.setCamelContext(context);
+
+            // Step 1: verify the pool works with cred A — grab a PID
+            int pidBefore;
+            try (Connection conn = agroalDs.getConnection();
+                 var rs = conn.createStatement().executeQuery("SELECT pg_backend_pid() AS pid")) {
+                assertTrue(rs.next(), "SELECT pg_backend_pid() must return a row");
+                pidBefore = rs.getInt("pid");
+                assertNotEquals(0, pidBefore, "pg_backend_pid() must return a non-zero value with credential A");
+            }
+
+            long flushCountBefore = agroalDs.getMetrics().flushCount();
+
+            // Step 2: change the database password to cred B via the admin connection
+            try (Connection adminConn = DriverManager.getConnection(
+                    postgres.jdbcUrl(), postgres.userName(), postgres.password());
+                 Statement st = adminConn.createStatement()) {
+                st.execute("ALTER ROLE " + TEST_USER + " PASSWORD '" + CRED_B + "'");
+            }
+
+            // Verify old password no longer works for new connections
+            assertThrows(SQLException.class,
+                    () -> DriverManager.getConnection(postgres.jdbcUrl(), TEST_USER, CRED_A),
+                    "Old password must be rejected after ALTER ROLE");
+
+            // Step 3: update the rotating credential and trigger rotation
+            currentPassword.set(CRED_B);
             agroalComponent.onSecretRotation("agroal-rotation");
 
-            // Agroal's flush(GRACEFUL) is handed to a housekeeping executor — wait for it
+            // Step 4: wait for the flush and verify a new connection uses cred B
             await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-                long flushCountAfter = metrics.flushCount();
-                assertNotEquals(flushCountBefore, flushCountAfter,
+                long flushCountAfter = agroalDs.getMetrics().flushCount();
+                assertTrue(flushCountAfter > flushCountBefore,
                         "Agroal flushCount must have increased after rotation — flush(GRACEFUL) must have been called");
             });
 
-            // Verify the pool is still functional after the flush
-            try (Connection conn = agroalDs.getConnection()) {
-                assertNotNull(conn.createStatement().executeQuery("SELECT 1").next());
+            // Step 5: verify the pool creates a new connection (different PID) with the new password
+            try (Connection conn = agroalDs.getConnection();
+                 var rs = conn.createStatement().executeQuery("SELECT pg_backend_pid() AS pid")) {
+                assertTrue(rs.next(), "SELECT pg_backend_pid() must return a row after rotation");
+                int pidAfter = rs.getInt("pid");
+                assertNotEquals(0, pidAfter, "pg_backend_pid() must return a non-zero value after rotation");
+                assertNotEquals(pidBefore, pidAfter,
+                        "After rotation, pg_backend_pid() must differ — pool must have opened a fresh connection");
             }
         }
     }
@@ -202,7 +261,7 @@ class SqlCredentialRotationIT extends CamelTestSupport {
         List<Map<String, Object>> rows = template.requestBody("direct:sql-pid", null, List.class);
         assertEquals(1, rows.size(), "SELECT pg_backend_pid() must return exactly one row");
         Object pid = rows.get(0).get("pid");
-        assertNotNull(pid, "pg_backend_pid() must not be null");
+        assertNotEquals(0, ((Number) pid).intValue(), "pg_backend_pid() must not be zero");
         return ((Number) pid).intValue();
     }
 }

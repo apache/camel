@@ -112,7 +112,7 @@
             <version>${mariadb-version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- PostgreSQL only used for the aggregation repository integration tests -->
+        <!-- PostgreSQL used for the aggregation repository and credential rotation integration tests -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
