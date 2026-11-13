@@ -157,10 +157,19 @@ public final class GitHubHelper {
     static void resolveGithubAsRawFiles(
             String url, String wildcard, StringJoiner routes, StringJoiner kamelets, StringJoiner properties, StringJoiner all)
             throws Exception {
+        resolveGithubAsRawFiles(url, wildcard, routes, kamelets, properties, all, Duration.ofSeconds(20));
+    }
+
+    /**
+     * Package-private overload accepting a custom timeout for testing.
+     */
+    static void resolveGithubAsRawFiles(
+            String url, String wildcard, StringJoiner routes, StringJoiner kamelets, StringJoiner properties, StringJoiner all,
+            Duration timeout)
+            throws Exception {
 
         // use JDK http client to call github api
         HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
-        Duration timeout = Duration.ofSeconds(20);
         HttpRequest.Builder reqBuilder = HttpRequest.newBuilder(new URI(url)).timeout(timeout);
         // Send GITHUB_TOKEN as Authorization header when set, but only to api.github.com (never leak to other hosts)
         String token = System.getenv("GITHUB_TOKEN");
