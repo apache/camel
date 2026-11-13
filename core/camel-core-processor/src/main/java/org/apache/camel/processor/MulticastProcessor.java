@@ -530,6 +530,12 @@ public class MulticastProcessor extends BaseProcessorSupport
                 }
             } catch (Exception e) {
                 doFailed(e);
+            } catch (VirtualMachineError e) {
+                // left as before, as in DelegateSyncProcessor
+                throw e;
+            } catch (Throwable e) {
+                // also an Error of the aggregation strategy: thrown on, it would leave the exchange without its done
+                doFailed(e);
             }
         }
 
@@ -583,6 +589,11 @@ public class MulticastProcessor extends BaseProcessorSupport
                 doTimeoutDone(result.get(), true);
             } catch (Exception e) {
                 doTimeoutFailed(e);
+            } catch (VirtualMachineError e) {
+                throw e;
+            } catch (Throwable e) {
+                // also an Error of the aggregation strategy
+                doTimeoutFailed(e);
             } finally {
                 lock.unlock();
             }
@@ -607,6 +618,14 @@ public class MulticastProcessor extends BaseProcessorSupport
          * completed (for example by the timeout), and handed back to the caller, is not changed afterwards.
          */
         protected void doFailed(Exception e) {
+            doFailed((Throwable) e);
+        }
+
+        /**
+         * Same as {@link #doFailed(Exception)} for any {@link Throwable}, such as an Error that is not a
+         * {@link VirtualMachineError} (set on the exchange wrapped in a CamelExecutionException).
+         */
+        protected void doFailed(Throwable e) {
             if (done.compareAndSet(false, true)) {
                 cancelTimeoutTask();
                 original.setException(e);
@@ -620,6 +639,13 @@ public class MulticastProcessor extends BaseProcessorSupport
          * Same as {@link #doFailed(Exception)} but called from the timeout task, which must not cancel itself.
          */
         protected void doTimeoutFailed(Exception e) {
+            doTimeoutFailed((Throwable) e);
+        }
+
+        /**
+         * Same as {@link #doTimeoutFailed(Exception)} for any {@link Throwable}.
+         */
+        protected void doTimeoutFailed(Throwable e) {
             if (done.compareAndSet(false, true)) {
                 original.setException(e);
                 MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
@@ -628,9 +654,15 @@ public class MulticastProcessor extends BaseProcessorSupport
             }
         }
 
-        private void logFailedAfterDone(Exception e) {
-            LOG.debug("Exception occurred after the exchange was already completed, so it is not set on exchange: {}",
-                    original.getExchangeId(), e);
+        private void logFailedAfterDone(Throwable e) {
+            if (e instanceof Exception) {
+                LOG.debug("Exception occurred after the exchange was already completed, so it is not set on exchange: {}",
+                        original.getExchangeId(), e);
+            } else {
+                // an Error reached the thread before, so it is not only logged at DEBUG now
+                LOG.warn("Error occurred after the exchange was already completed, so it is not set on exchange: {}",
+                        original.getExchangeId(), e);
+            }
         }
 
         private void cancelTimeoutTask() {
@@ -759,6 +791,11 @@ public class MulticastProcessor extends BaseProcessorSupport
                 }
             } catch (Exception e) {
                 doFailed(e);
+            } catch (VirtualMachineError e) {
+                throw e;
+            } catch (Throwable e) {
+                // also an Error of the iterator of a streaming split
+                doFailed(e);
             }
         }
 
@@ -791,6 +828,12 @@ public class MulticastProcessor extends BaseProcessorSupport
                 try {
                     next = doRun();
                 } catch (Exception e) {
+                    doFailed(e);
+                    return;
+                } catch (VirtualMachineError e) {
+                    throw e;
+                } catch (Throwable e) {
+                    // also an Error of the iterator
                     doFailed(e);
                     return;
                 }

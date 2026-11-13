@@ -186,10 +186,10 @@ additional documentation of the features above.
 
 A plain `Processor` (in `process(...)`, in `bean(...)` for a bean that is a `Processor`, or a producer that is not an
 `AsyncProcessor`) may throw an `Error` instead of an exception. The same rules apply to an `Error` of the expression of
-a `recipientList`, of the expression of a `split` with `synchronous=true`, of the watermark expression of a `split`
-(it fails that item), of the `AggregationStrategy` of a `split`, `multicast` or `recipientList` with
-`synchronous=true` and without `parallelProcessing`, of the `AggregationStrategy` of an `enrich` or `pollEnrich`, of a
-data type transformer, of a transformer or validator of the input or output type of a route (`inputType`,
+a `recipientList`, of the expression of a `split` with `synchronous=true`, of the watermark expression of a `split` (it
+fails that item), of the `AggregationStrategy` of a `split`, `multicast` or `recipientList` (also when its `timeout` is
+called), of the iterator of a `split` with `streaming()`, of the `AggregationStrategy` of an `enrich` or `pollEnrich`,
+of a data type transformer, of a transformer or validator of the input or output type of a route (`inputType`,
 `outputType`), and of a plain `Processor` of a transacted exchange in a step without an error handler of its own (such
 as in a `doTry` block):
 
@@ -211,7 +211,11 @@ resource is released as failed
 |A `VirtualMachineError`, such as `OutOfMemoryError`, `StackOverflowError` or `InternalError`
 |Camel's error handling does not get it (the JVM may no longer be in a consistent state, so the application should not
 handle it). It is not set on the exchange, but thrown on after the processor's
-callback was called. Depending on the error handler, the `Error` reaches the caller (and the exchange may stay
+callback was called (an `Error` of an `AggregationStrategy` or of the iterator of a split is thrown on from the task
+of the EIP, and the callback is not called unless the EIP is `synchronous=true` or the exchange is transacted, in both
+cases without `parallelProcessing`; with `parallelProcessing`, or from the `timeout` of the strategy, it is lost on a
+thread of the pool).
+Depending on the error handler, the `Error` reaches the caller (and the exchange may stay
 inflight), or it is only logged and the route continues as if the processor had succeeded
 |===
 

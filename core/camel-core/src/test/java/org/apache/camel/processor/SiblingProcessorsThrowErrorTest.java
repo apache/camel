@@ -141,9 +141,9 @@ class SiblingProcessorsThrowErrorTest extends ContextTestSupport {
 
     @Test
     void synchronousSplitFailsTheExchangeWithAnErrorOfItsAggregationStrategy() throws Exception {
-        // the Error leaves the split task (which catches only exceptions) through the reactive executor and the await
-        // manager of the synchronous split, and reaches the catch around the await manager: the exchange fails instead
-        // of continuing after the callback (doDone of the split is skipped on this path, as before)
+        // the split task fails the exchange with the Error of the AggregationStrategy (see MulticastTaskThrowsErrorTest
+        // for the other modes); the catch around the await manager of the synchronous split is still there for an Error
+        // that leaves the task: either way the exchange fails instead of continuing after the callback
         getMockEndpoint("mock:part").expectedBodiesReceived("a");
         getMockEndpoint("mock:after").expectedMessageCount(0);
         getMockEndpoint("mock:handled").expectedMessageCount(1);
