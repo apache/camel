@@ -4368,8 +4368,7 @@ public class StaticEndpointBuilders {
     /**
      * CXF (camel-cxf-soap)
      * Expose SOAP services, or invoke operations of SOAP services, using Apache
-     * CXF. The dataFormat option decides how the SOAP message is represented in
-     * the Camel message body.
+     * CXF.
      * 
      * Category: http,webservice
      * Since: 1.0
@@ -4399,8 +4398,7 @@ public class StaticEndpointBuilders {
     /**
      * CXF (camel-cxf-soap)
      * Expose SOAP services, or invoke operations of SOAP services, using Apache
-     * CXF. The dataFormat option decides how the SOAP message is represented in
-     * the Camel message body.
+     * CXF.
      * 
      * Category: http,webservice
      * Since: 1.0
@@ -4432,9 +4430,7 @@ public class StaticEndpointBuilders {
     /**
      * CXF-RS (camel-cxf-rest)
      * Expose REST services described by JAX-RS resource classes, or send
-     * requests to REST services, using Apache CXF. The bindingStyle option
-     * decides how the consumer maps the request to the Camel message, and the
-     * httpClientAPI option decides which client API the producer uses.
+     * requests to REST services, using Apache CXF.
      * 
      * Category: rest
      * Since: 2.0
@@ -4468,9 +4464,7 @@ public class StaticEndpointBuilders {
     /**
      * CXF-RS (camel-cxf-rest)
      * Expose REST services described by JAX-RS resource classes, or send
-     * requests to REST services, using Apache CXF. The bindingStyle option
-     * decides how the consumer maps the request to the Camel message, and the
-     * httpClientAPI option decides which client API the producer uses.
+     * requests to REST services, using Apache CXF.
      * 
      * Category: rest
      * Since: 2.0

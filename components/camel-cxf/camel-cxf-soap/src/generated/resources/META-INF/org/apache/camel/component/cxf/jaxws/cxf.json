@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "cxf",
     "title": "CXF",
-    "description": "Expose SOAP services, or invoke operations of SOAP services, using Apache CXF. The dataFormat option decides how the SOAP message is represented in the Camel message body.",
+    "description": "Expose SOAP services, or invoke operations of SOAP services, using Apache CXF.",
     "deprecated": false,
     "firstVersion": "1.0.0",
     "label": "http,webservice",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "cxfrs",
     "title": "CXF-RS",
-    "description": "Expose REST services described by JAX-RS resource classes, or send requests to REST services, using Apache CXF. The bindingStyle option decides how the consumer maps the request to the Camel message, and the httpClientAPI option decides which client API the producer uses.",
+    "description": "Expose REST services described by JAX-RS resource classes, or send requests to REST services, using Apache CXF.",
     "deprecated": false,
     "firstVersion": "2.0.0",
     "label": "rest",
