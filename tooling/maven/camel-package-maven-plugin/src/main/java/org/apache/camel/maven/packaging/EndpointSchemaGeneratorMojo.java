@@ -1150,7 +1150,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
 
                 // prepare default value so its value is correct according to its type
-                defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
+                defaultValue = getOptionDefaultValue(defaultValue, fieldTypeName, isDuration);
 
                 String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
                         componentModel.isProducerOnly());
@@ -1460,7 +1460,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         // prepare default value so its value is correct according to its type
-        defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
+        defaultValue = getOptionDefaultValue(defaultValue, fieldTypeName, isDuration);
 
         // resolve security: prefer explicit security attribute from @UriParam, then @Metadata, then fall back to secret=true
         String metaSecurity = metadata != null ? metadata.security() : null;
@@ -1667,7 +1667,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
 
             // prepare default value so its value is correct according to its type
-            defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
+            defaultValue = getOptionDefaultValue(defaultValue, fieldTypeName, isDuration);
 
             String metaSecurity = metadata != null ? metadata.security() : null;
             String resolvedSecurity = !Strings.isNullOrEmpty(path.security()) ? path.security() : metaSecurity;
@@ -2118,6 +2118,18 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             defaultValue = "";
         }
         return defaultValue;
+    }
+
+    /**
+     * Gets the default value of a component or endpoint option according to its type. Unlike a primitive boolean, a
+     * java.lang.Boolean option that declares no default value has none, as its null value often means that a library, a
+     * system property or another option decides (CAMEL-26894).
+     */
+    static Object getOptionDefaultValue(Object defaultValue, String fieldTypeName, boolean isDuration) {
+        if ("java.lang.Boolean".equals(fieldTypeName) && isNullOrEmpty(defaultValue)) {
+            return null;
+        }
+        return getDefaultValue(defaultValue, fieldTypeName, isDuration);
     }
 
 }

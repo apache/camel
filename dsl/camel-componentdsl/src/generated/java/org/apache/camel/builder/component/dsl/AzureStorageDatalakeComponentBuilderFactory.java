@@ -89,7 +89,7 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set

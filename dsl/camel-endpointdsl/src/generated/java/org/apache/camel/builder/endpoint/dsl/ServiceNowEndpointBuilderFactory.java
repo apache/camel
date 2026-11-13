@@ -117,7 +117,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param favorites the value to set
@@ -134,7 +133,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param favorites the value to set
@@ -360,7 +358,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param key the value to set
@@ -377,7 +374,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param key the value to set
@@ -705,7 +701,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param target the value to set
@@ -722,7 +717,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param target the value to set
@@ -737,7 +731,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param topLevelOnly the value to set
@@ -753,7 +746,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param topLevelOnly the value to set
