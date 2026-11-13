@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -238,6 +240,29 @@ final class FakeJava {
         byte[] out = p.getInputStream().readAllBytes();
         p.waitFor(10, TimeUnit.SECONDS);
         return new String(out, StandardCharsets.UTF_8).trim();
+    }
+
+    /**
+     * Computes the Windows CDS install-directory hash of the given string, matching the PowerShell expression used in
+     * camel.bat: SHA-256 of the UTF-8 bytes, first 4 bytes as lowercase hex (8 chars). Falls back to {@code "default"}
+     * if the hash cannot be computed (should not happen on Windows JVM).
+     */
+    static String batCdsHash(String str) {
+        try {
+            byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(bytes);
+            return HexFormat.of().formatHex(digest, 0, 4);
+        } catch (Exception e) {
+            return "default";
+        }
+    }
+
+    /**
+     * The BASEDIR of a launcher home as computed by camel.bat: {@code %~dp0}, the directory containing the script
+     * (bin\), with a trailing backslash as set by {@code %~dp0}.
+     */
+    static Path batBasedir(Path bin) {
+        return bin;
     }
 
     /**
