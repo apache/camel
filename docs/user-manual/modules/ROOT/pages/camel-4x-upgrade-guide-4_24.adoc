@@ -6299,6 +6299,9 @@ contain the whole value. When a `Map` is marshalled, a `byte[]` value is accepte
   `?` (a user without a home, such as in a container), as the CLI then uses `$HOME`, and when a test gives the CLI a
   home of its own. The CLI sets the directory as the system property `camel.jbang.logDir`. A Quarkus app that
   `camel run` exports and runs also logs there.
+* `camel run --logging-json` writes `<pid>.log` too, as `camel run` does with and without color. The JSON is for the
+  console only: the file has the pattern that `camel log`, the TUI and the AI tools read, the same as without color.
+  Before, the file stayed empty with JSON logging, so they showed no log.
 
 === camel-jbang-mcp - runtime tools that changed behaviour
 
