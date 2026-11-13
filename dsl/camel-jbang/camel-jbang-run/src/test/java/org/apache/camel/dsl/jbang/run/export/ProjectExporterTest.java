@@ -30,9 +30,12 @@ import java.util.stream.Stream;
 import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
 import org.apache.camel.dsl.jbang.run.common.MavenResolver;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.dsl.jbang.run.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junitpioneer.jupiter.SetSystemProperty;
@@ -44,6 +47,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * the silent run of camel-jbang-core does.
  */
 class ProjectExporterTest {
+
+    // the home of the CLI, where an export locks its work directory
+    @TempDir
+    Path home;
+    private Path previousHome;
 
     @TempDir
     Path dir;
@@ -61,6 +69,17 @@ class ProjectExporterTest {
                 """.formatted(request.files.get(0)));
         return 0;
     };
+
+    @BeforeEach
+    void useHome() {
+        previousHome = CamelHome.getHomeDir();
+        CamelHome.useHomeDir(home.toString());
+    }
+
+    @AfterEach
+    void restoreHome() {
+        CamelHome.useHomeDir(previousHome.toString());
+    }
 
     @Test
     void exportsCamelMainProject() throws Exception {
@@ -158,11 +177,36 @@ class ProjectExporterTest {
     void exportsInParallelWithWorkDirsOfTheirOwn() throws Exception {
         List<String> before = listWorkDir();
 
+        exportInParallel(false);
+
+        // nothing is written to the .camel-jbang directory of the current directory
+        assertThat(listWorkDir()).isEqualTo(before);
+    }
+
+    @Test
+    void exportsInParallelWithTheDefaultWorkDir() throws Exception {
+        List<String> before = listWorkDir();
+
+        try {
+            // as camel export does: the .camel-jbang directory, which every export in the directory shares, so they
+            // run one at a time
+            exportInParallel(true);
+        } finally {
+            if (before.isEmpty()) {
+                PathUtils.deleteDirectory(CamelHome.getWorkDir());
+            }
+        }
+    }
+
+    private void exportInParallel(boolean defaultWorkDir) throws Exception {
         int count = 4;
         List<Callable<Integer>> tasks = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             Path route = writeRoute("hello" + i);
             ExportRequest request = request(route, dir.resolve("export" + i));
+            if (defaultWorkDir) {
+                request.workDir = new ExportRequest().workDir;
+            }
             tasks.add(() -> new ProjectExporter(
                     new ExportContext().withPrinter(new StringPrinter()).withDependencyResolver(resolver))
                     .export(request));
@@ -184,8 +228,6 @@ class ProjectExporterTest {
             assertThat(exportDir.resolve("src/main/resources/camel")).isDirectoryContaining("glob:**/" + route)
                     .isDirectoryNotContaining(p -> !p.getFileName().toString().equals(route));
         }
-        // nothing is written to the .camel-jbang directory of the current directory
-        assertThat(listWorkDir()).isEqualTo(before);
     }
 
     @Test
