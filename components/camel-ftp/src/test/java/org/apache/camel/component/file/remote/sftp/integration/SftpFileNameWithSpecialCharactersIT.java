@@ -143,6 +143,36 @@ class SftpFileNameWithSpecialCharactersIT extends CamelTestSupport {
         assertTrue(Files.exists(inbox.resolve("data-1.txt")));
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void consumeAndMoveFileWithWildcardInName(boolean stepwise) throws Exception {
+        Files.writeString(inbox.resolve("data-?.txt"), "wanted");
+        Files.writeString(inbox.resolve("data-1.txt"), "other");
+        Path done = Files.createDirectories(inbox.resolve("done"));
+        Files.writeString(done.resolve("data-2.txt"), "done before");
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(Exchange.FILE_NAME, "data-?.txt");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(sftpUri("inbox") + "&fileName=data-?.txt&move=done/${file:name}&initialDelay=0"
+                     + "&delay=60000&stepwise=" + stepwise)
+                        .to("mock:result");
+            }
+        });
+
+        mock.assertIsSatisfied();
+        // the file is renamed into the done directory once the exchange is done
+        await().atMost(10, TimeUnit.SECONDS).until(() -> Files.exists(done.resolve("data-?.txt")));
+        assertEquals("wanted", Files.readString(done.resolve("data-?.txt")));
+        assertFalse(Files.exists(inbox.resolve("data-?.txt")));
+        assertEquals("other", Files.readString(inbox.resolve("data-1.txt")));
+        assertEquals("done before", Files.readString(done.resolve("data-2.txt")));
+    }
+
     private String sftpUri(String directory) {
         return "sftp://localhost:" + service.getPort() + "/" + base + "/" + directory
                + "?username=admin&password=admin&knownHostsFile=" + service.getKnownHostsFile();
