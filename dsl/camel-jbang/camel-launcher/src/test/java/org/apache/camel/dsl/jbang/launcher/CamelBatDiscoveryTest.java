@@ -109,7 +109,7 @@ class CamelBatDiscoveryTest {
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
 
-        String hash = FakeJava.batCdsHash(FakeJava.batBasedir(h).toString() + "\\");
+        String hash = FakeJava.batCdsHash(FakeJava.batBasedirString(h));
         Path archives = localAppData.resolve("camel-cli").resolve("cds").resolve("9.9.9").resolve(hash);
         assertEquals(0, r.exitCode(), r.stderr());
         assertTrue(r.stdout().contains("-XX:+AutoCreateSharedArchive \"-XX:SharedArchiveFile="
@@ -129,7 +129,7 @@ class CamelBatDiscoveryTest {
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "--help");
 
-        String hash = FakeJava.batCdsHash(FakeJava.batBasedir(h).toString() + "\\");
+        String hash = FakeJava.batCdsHash(FakeJava.batBasedirString(h));
         assertTrue(r.stdout().contains(
                 "-XX:SharedArchiveFile=" + localAppData.resolve("camel-cli\\cds\\9.9.9\\" + hash + "\\camel.jsa") + "\""),
                 r.stdout());
@@ -141,7 +141,7 @@ class CamelBatDiscoveryTest {
         Path h = home(base);
         Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
         Path localAppData = Files.createDirectories(base.resolve("lad"));
-        String hash = FakeJava.batCdsHash(FakeJava.batBasedir(h).toString() + "\\");
+        String hash = FakeJava.batCdsHash(FakeJava.batBasedirString(h));
         Path archive = Files.createDirectories(localAppData.resolve("camel-cli\\cds\\9.9.9\\" + hash)).resolve("version.jsa");
         Files.createFile(archive);
         Map<String, String> env = isolatedEnvironment();

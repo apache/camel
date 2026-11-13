@@ -258,9 +258,39 @@ final class FakeJava {
     }
 
     /**
+     * Returns the Windows CDS BASEDIR string as computed by camel.bat: the {@code %~dp0} of the launcher script (the
+     * bin\ directory path with a trailing backslash), as cmd.exe resolves it. This may differ from
+     * {@code bin.toString() + "\\"} when Windows 8.3 short names are involved (e.g. {@code C:\\Users\\RUNNER~1\\} vs
+     * the full long path), so this method runs a helper batch to capture the actual {@code %~dp0} rather than inferring
+     * it from the Java Path.
+     */
+    static String batBasedirString(Path bin) throws Exception {
+        Path helper = Files.createTempFile(bin, "basedir-probe", ".bat");
+        try {
+            Files.writeString(helper, "@echo %~dp0\r\n", StandardCharsets.UTF_8);
+            String systemRoot = System.getenv("SystemRoot");
+            ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", helper.toString());
+            pb.environment().clear();
+            pb.environment().put("PATH", systemRoot + "\\System32");
+            pb.environment().put("SystemRoot", systemRoot);
+            pb.environment().put("OS", "Windows_NT");
+            Process p = pb.start();
+            String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8).strip();
+            p.waitFor(5, TimeUnit.SECONDS);
+            return out; // e.g. "D:\\a\\...\\bin\\" (trailing backslash included by %~dp0)
+        } finally {
+            Files.deleteIfExists(helper);
+        }
+    }
+
+    /**
      * The BASEDIR of a launcher home as computed by camel.bat: {@code %~dp0}, the directory containing the script
      * (bin\), with a trailing backslash as set by {@code %~dp0}.
+     *
+     * @deprecated Use {@link #batBasedirString(Path)} which captures the actual {@code %~dp0} from cmd.exe to handle
+     *             Windows 8.3 short-name aliasing correctly.
      */
+    @Deprecated
     static Path batBasedir(Path bin) {
         return bin;
     }
