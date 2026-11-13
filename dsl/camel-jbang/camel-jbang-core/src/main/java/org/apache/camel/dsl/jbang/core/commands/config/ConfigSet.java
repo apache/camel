@@ -67,6 +67,6 @@ public class ConfigSet extends CamelCommand {
             return CliExitCode.FAILURE;
         }
 
-        return 0;
+        return CliExitCode.OK;
     }
 }

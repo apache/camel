@@ -50,6 +50,6 @@ public class ConfigUnset extends CamelCommand {
             return CliExitCode.FAILURE;
         }
 
-        return 0;
+        return CliExitCode.OK;
     }
 }

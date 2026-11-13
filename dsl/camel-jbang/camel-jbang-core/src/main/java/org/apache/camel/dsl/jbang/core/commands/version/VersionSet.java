@@ -86,7 +86,7 @@ public class VersionSet extends CamelCommand {
             return CliExitCode.FAILURE;
         }
 
-        return 0;
+        return CliExitCode.OK;
     }
 
 }

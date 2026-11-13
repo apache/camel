@@ -83,7 +83,12 @@ if "!_CDS_REST!"=="." set "_CDS_CMD=!_CDS_ARG!"
 :cdsCommandDone
 for %%j in ("!LAUNCHER_JAR!") do set "_CDS_VERSION=%%~nj"
 set "_CDS_VERSION=!_CDS_VERSION:camel-launcher-=!"
-set "_CDS_DIR=!LOCALAPPDATA!\camel-cli\cds\!_CDS_VERSION!"
+@REM Include a hash of the install directory so two installs of the same version get separate archives.
+@REM Different install methods (SDKMAN, zip) place the launcher in different directories;
+@REM a shared archive from another install points at the wrong JAR or returns wrong install metadata.
+for /f "delims=" %%h in ('powershell -NoProfile -Command "$b=[System.Text.Encoding]::UTF8.GetBytes(\"!BASEDIR!\");$h=[System.Security.Cryptography.SHA256]::Create().ComputeHash($b);($h[0..3]|ForEach-Object{$_.ToString(\"x2\")}) -join \"\""') do set "_CDS_INSTALL_HASH=%%h"
+if not defined _CDS_INSTALL_HASH set "_CDS_INSTALL_HASH=default"
+set "_CDS_DIR=!LOCALAPPDATA!\camel-cli\cds\!_CDS_VERSION!\!_CDS_INSTALL_HASH!"
 @REM the JVM does not start when the directory of the archive is missing
 if not exist "!_CDS_DIR!\" mkdir "!_CDS_DIR!" 2> nul
 if not exist "!_CDS_DIR!\" goto cdsEnd
