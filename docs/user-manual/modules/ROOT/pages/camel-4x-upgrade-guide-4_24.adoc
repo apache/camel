@@ -8489,3 +8489,17 @@ With `allowTemplateFromHeader=true`, a script from the `CamelLanguageScript` hea
 Before, with `cacheScript=true` it could replace the cached script of the endpoint, so later messages without the header
 ran it too. The header is now removed after use, so a later language endpoint in the route runs its own script instead
 of the header's. Set the header again before each language endpoint that should use it.
+
+=== camel-vertx - the component fails to start when the clustered Vert.x is not created
+
+When the component builds its own clustered Vert.x (the component `host` or `port` option is set and no `vertxOptions` is
+given), it waits for the EventBus to be ready before it reports itself started. That wait used to be ineffective: the
+result of the bounded wait was discarded and a failed build only logged a warning, so the component started with no
+Vert.x instance and the first endpoint, producer or consumer to use it failed with a `NullPointerException`.
+
+The component now fails to start, with the cause attached, when the clustered Vert.x cannot be built or is not ready within
+the `timeout` option. An application whose cluster join is slower than `timeout` (60 seconds by default) has to raise it.
+A Vert.x that completes after the timeout is closed, rather than being left joined to the cluster with nobody to stop it.
+
+`timeout` must now be a positive number of seconds on that path: `timeout=0` used to mean "do not wait", which left the
+component without a Vert.x, and is rejected with a clear message instead.
