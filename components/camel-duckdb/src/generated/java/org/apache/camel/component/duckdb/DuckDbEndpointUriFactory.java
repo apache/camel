@@ -24,9 +24,12 @@ public class DuckDbEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(14);
         props.add("allowDatabasePathFromHeader");
+        props.add("allowGlobCopySource");
+        props.add("allowUrlCopySource");
         props.add("batchSize");
+        props.add("copyBaseDirectory");
         props.add("databasePath");
         props.add("format");
         props.add("jdbcUrl");
