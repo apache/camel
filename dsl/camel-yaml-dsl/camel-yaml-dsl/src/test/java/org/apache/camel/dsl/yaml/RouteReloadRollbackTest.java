@@ -345,6 +345,41 @@ class RouteReloadRollbackTest extends YamlTestSupport {
     }
 
     @Test
+    void theFixedSaveAfterABrokenOneLoadsInARelativeFolder() throws Exception {
+        // camel run watches the current folder, so the files have relative locations (file:only.camel.yaml)
+        assertTheFixedSaveLoads(Files.createTempDirectory(Path.of("target"), "camel-reload-relative"));
+    }
+
+    @Test
+    void theFixedSaveAfterABrokenOneLoadsInAFolderWithASpaceInItsName() throws Exception {
+        // a location with a space in it is not a URI as it is
+        assertTheFixedSaveLoads(Files.createTempDirectory("camel reload"));
+    }
+
+    // CAMEL-26943: the version that goes back from memory after a broken save is the same file as the one saved next,
+    // so the fixed save loads in its place, and not next to it with the same route id
+    private static void assertTheFixedSaveLoads(Path solo) throws Exception {
+        Path only = Files.writeString(solo.resolve("only.camel.yaml"), route("only", "mock:only"));
+        RouteWatcherReloadStrategy strategy = new RouteWatcherReloadStrategy(solo.toString());
+        strategy.setPattern("*.yaml");
+        strategy.setScheduler(false);
+        CamelContext ctx = startWithRoutes(strategy, false, only);
+        try {
+            Files.writeString(only, brokenRoute("only"));
+            assertThatThrownBy(() -> reload(strategy, ctx, only)).hasMessageContaining("pollEnrich");
+            assertRunsTo(ctx, "direct:only", "mock:only");
+
+            Files.writeString(only, route("only", "mock:fixed"));
+            reload(strategy, ctx, only);
+            assertThat(ctx.getRoutes()).hasSize(1);
+            assertRunsTo(ctx, "direct:only", "mock:fixed");
+        } finally {
+            ctx.stop();
+            deleteRecursively(solo);
+        }
+    }
+
+    @Test
     void theFirstBrokenSaveUnderSrcMainResourcesGoesBackToTheVersionLoadedFromTargetClasses() throws Exception {
         // the Camel Main defaults: the routes load from the classpath, target/classes, and the reload watches
         // src/main/resources, so the file that loaded and the file that is saved have different locations
