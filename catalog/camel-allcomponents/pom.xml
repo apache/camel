@@ -524,6 +524,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cedar</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-chaos</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -2005,6 +2010,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-semantic</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-semantic-micrometer</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

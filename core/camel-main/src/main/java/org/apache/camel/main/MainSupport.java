@@ -124,7 +124,7 @@ public abstract class MainSupport extends BaseMainSupport {
 
     /**
      * Callback to run custom logic before CamelContext is being started.
-     * <p/>
+     * <p>
      * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
      */
     protected void beforeStart() throws Exception {
@@ -135,7 +135,7 @@ public abstract class MainSupport extends BaseMainSupport {
 
     /**
      * Callback to run custom logic after CamelContext has been started.
-     * <p/>
+     * <p>
      * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
      */
     protected void afterStart() throws Exception {
@@ -161,7 +161,7 @@ public abstract class MainSupport extends BaseMainSupport {
 
     /**
      * Callback to run custom logic before CamelContext is being stopped.
-     * <p/>
+     * <p>
      * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
      */
     protected void beforeStop() throws Exception {
@@ -172,7 +172,7 @@ public abstract class MainSupport extends BaseMainSupport {
 
     /**
      * Callback to run custom logic after CamelContext has been stopped.
-     * <p/>
+     * <p>
      * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
      */
     protected void afterStop() throws Exception {

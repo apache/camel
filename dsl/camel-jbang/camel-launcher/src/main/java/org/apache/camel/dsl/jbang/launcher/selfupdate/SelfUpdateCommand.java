@@ -46,16 +46,19 @@ import org.apache.camel.util.FileUtil;
                            "  camel self-update --version SNAPSHOT",
                            "  camel self-update --check",
                            "",
-                           "An install pinned with the web installer's --version X.Y.Z never moves; one pinned with",
-                           "--version X.Y or --version LTS moves to the newest release of that line, or the newest LTS.",
+                           "An install pinned with the web installer's --version X.Y.Z never moves; one",
+                           "pinned with --version X.Y or --version LTS moves to the newest release of that",
+                           "line, or the newest LTS.",
                            "",
-                           "--version SNAPSHOT (main) or X.Y.Z-SNAPSHOT installs the newest nightly build from the Apache",
-                           "snapshot repository, and pins it, so camel self-update follows the nightly builds. Nightly",
-                           "builds are development builds for testing, not Apache releases. A nightly build of a",
-                           "maintenance branch is updated by re-running the installer with --version X.Y.Z-SNAPSHOT.",
+                           "--version SNAPSHOT (main) or X.Y.Z-SNAPSHOT installs the newest nightly build",
+                           "from the Apache snapshot repository, and pins it, so camel self-update follows",
+                           "the nightly builds. Nightly builds are development builds for testing, not",
+                           "Apache releases. A nightly build of a maintenance branch is updated by",
+                           "re-running the installer with --version X.Y.Z-SNAPSHOT.",
                            "",
-                           "--version switches the pin to another selector: SNAPSHOT, X.Y.Z-SNAPSHOT, one nightly build",
-                           "(which never moves), LTS or X.Y. --version X.Y.Z installs that release without a pin." })
+                           "--version switches the pin to another selector: SNAPSHOT, X.Y.Z-SNAPSHOT, one",
+                           "nightly build (which never moves), LTS or X.Y. --version X.Y.Z installs that",
+                           "release without a pin." })
 public class SelfUpdateCommand extends CamelCommand {
 
     @Option(name = "version",

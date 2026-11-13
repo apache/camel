@@ -21,12 +21,14 @@ import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.ConsoleAppender;
 import org.apache.logging.log4j.core.appender.FileAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.ConfigurationFactory;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,6 +68,7 @@ class LogConfigurationTest {
     @CsvSource({
             "log4j2-color.properties, PID.log",
             "log4j2-no-color.properties, PID.log",
+            "log4j2-json.properties, PID.log",
             "log4j2-off.properties, PID.log",
             "log4j2-export.properties, camel-export.log",
             "log4j2-script.properties, camel-script.log" })
@@ -94,13 +97,35 @@ class LogConfigurationTest {
         }
     }
 
+    @Test
+    void withJsonLoggingTheLogFileHasThePatternOfNoColor() throws Exception {
+        System.setProperty(RuntimeUtil.LOG_DIR, dir.toString());
+
+        // the JSON is for the console only: camel log, the TUI and the AI tools read the file as the pattern
+        assertThat(filePattern("log4j2-json.properties")).isEqualTo(filePattern("log4j2-no-color.properties"));
+    }
+
     // the name of the log file of the configuration, as log4j resolves it
     private static String fileName(String resource) throws Exception {
         Configuration config = load(ConfigurationSource.fromResource(resource, LogConfigurationTest.class.getClassLoader()));
         try {
             Appender file = config.getAppender("file");
             assertThat(file).isInstanceOf(FileAppender.class);
+            // and the configuration logs to it
+            assertThat(config.getRootLogger().getAppenders()).containsKey("file");
             return ((FileAppender) file).getFileName();
+        } finally {
+            config.stop();
+        }
+    }
+
+    // the pattern of the log file of the configuration
+    private static String filePattern(String resource) throws Exception {
+        Configuration config = load(ConfigurationSource.fromResource(resource, LogConfigurationTest.class.getClassLoader()));
+        try {
+            Layout<?> layout = config.getAppender("file").getLayout();
+            assertThat(layout).isInstanceOf(PatternLayout.class);
+            return ((PatternLayout) layout).getConversionPattern();
         } finally {
             config.stop();
         }

@@ -41,7 +41,17 @@ ai-resource:resourceName?resourceUri=uri[&options]
 ----
 
 Where *resourceName* is the human-readable label shown in resource listings, and *resourceUri* is the address
-clients use to read the resource. The uri must be unique within the CamelContext.
+clients use to read the resource. The uri must be unique within the CamelContext. For a family of resources, use
+`uriTemplate` instead of `resourceUri`; the two options are mutually exclusive.
+
+A `uriTemplate` follows RFC 6570 level 1: each variable must occupy an entire path segment, for example
+`crm://customers/\{id\}`. Variables do not match across `/` separators. A concrete variable must use
+RFC 3986 `pchar` characters (including well-formed percent-encoded octets); raw query/fragment
+characters, controls, malformed percent escapes, and `.` or `..` dot segments do not match.
+Fixed resources take precedence over a matching template when the same concrete URI is read.
+Tagged templates in one CamelContext must not overlap, even when they belong to different tags;
+a conflicting route fails startup rather than depending on registration order. A fixed
+`resourceUri` must not contain raw `{` or `}`; use `uriTemplate` for variable paths.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -110,6 +120,29 @@ YAML::
                 expression: "file:config?fileName=app.json&noop=true&idempotent=false"
 ----
 ====
+
+=== Templated resource
+
+Use `uriTemplate` when one route serves a family of client-addressable resources. The example below exposes
+`crm://customers/\{id\}` and makes the concrete URI and captured variable available to the route:
+
+[source,java]
+----
+from("ai-resource:customer?uriTemplate=crm://customers/{id}&tags=crm")
+    .process(exchange -> {
+        String customerId = exchange.getMessage().getHeader(
+            "CamelAiResourceTemplateVariable.id", String.class);
+        String requestedUri = exchange.getMessage().getHeader("CamelAiResourceUri", String.class);
+        // Validate customerId against the application's identifier rules before using it.
+        exchange.getMessage().setBody("Customer " + customerId + " requested as " + requestedUri);
+    });
+----
+
+For each template read, Camel sets `CamelAiResourceUri` to the concrete URI sent by the client and sets one header
+per variable using the prefix `CamelAiResourceTemplateVariable.` followed by the variable name. Variable values are
+passed as raw strings; percent-encoding is retained. These values are untrusted client input. Validate them against
+an allowlist or strict format before using them to build file paths, database queries or downstream URIs. Do not treat
+them as Camel property placeholders or evaluate them as expressions.
 
 === Binary resource
 

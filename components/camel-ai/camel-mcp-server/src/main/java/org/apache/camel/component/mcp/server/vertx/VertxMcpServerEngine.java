@@ -41,6 +41,7 @@ import org.apache.camel.component.mcp.server.McpServerIcon;
 import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerPrompt;
 import org.apache.camel.component.mcp.server.McpServerResource;
+import org.apache.camel.component.mcp.server.McpServerResourceTemplate;
 import org.apache.camel.component.mcp.server.McpServerTool;
 import org.apache.camel.component.mcp.server.McpToolCallContext;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
@@ -359,6 +360,58 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
 
     @Override
     public boolean supportsResources() {
+        return true;
+    }
+
+    @Override
+    public void resourceTemplateAdded(McpServerResourceTemplate resourceTemplate) {
+        McpSchema.ResourceTemplate.Builder builder = McpSchema.ResourceTemplate
+                .builder(resourceTemplate.uriTemplate(), resourceTemplate.name())
+                .description(resourceTemplate.description())
+                .mimeType(resourceTemplate.mimeType());
+        if (resourceTemplate.title() != null && !resourceTemplate.title().isBlank()) {
+            builder.title(resourceTemplate.title());
+        }
+        McpServerFeatures.SyncResourceTemplateSpecification spec = new McpServerFeatures.SyncResourceTemplateSpecification(
+                builder.build(),
+                (exchange, request) -> {
+                    McpResourceReadResult result = resourceTemplate.handler().read(request.uri());
+                    if (result.isError()) {
+                        throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+                                .message(result.errorMessage())
+                                .build();
+                    }
+                    McpSchema.ResourceContents contents;
+                    if (result.blob() != null) {
+                        contents = new McpSchema.BlobResourceContents(
+                                request.uri(), resourceTemplate.mimeType(),
+                                Base64.getEncoder().encodeToString(result.blob()));
+                    } else {
+                        contents = new McpSchema.TextResourceContents(
+                                request.uri(), resourceTemplate.mimeType(), result.text());
+                    }
+                    return new McpSchema.ReadResourceResult(List.of(contents));
+                });
+        server.addResourceTemplate(spec);
+        LOG.debug("MCP resource template added: {}", resourceTemplate.uriTemplate());
+    }
+
+    @Override
+    public void resourceTemplateRemoved(String uriTemplate) {
+        try {
+            server.removeResourceTemplate(uriTemplate);
+            // MCP Java SDK 2.1.0 does not send resources/list_changed when a template is removed.
+            // Remove this workaround when the SDK's removeResourceTemplate() sends that notification itself.
+            server.notifyResourcesListChanged();
+            LOG.debug("MCP resource template removed: {}", uriTemplate);
+        } catch (Exception e) {
+            LOG.debug("Failed to remove MCP resource template {} or notify clients: {}",
+                    uriTemplate, e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean supportsResourceTemplates() {
         return true;
     }
 

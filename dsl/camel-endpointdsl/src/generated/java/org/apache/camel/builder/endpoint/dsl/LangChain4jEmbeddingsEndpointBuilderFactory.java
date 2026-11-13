@@ -391,7 +391,8 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
         public static final LangChain4jEmbeddingsHeaderNameBuilder INSTANCE = new LangChain4jEmbeddingsHeaderNameBuilder();
 
         /**
-         * The Finish Reason.
+         * The Finish Reason. Deprecation note: The producer no longer sets this
+         * header, as the EmbeddingResponse of LangChain4j has no finish reason.
          * 
          * The option is a: {@code dev.langchain4j.model.output.FinishReason}
          * type.
@@ -401,6 +402,7 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
          * @return the name of the header {@code
          * LangChain4jEmbeddingsFinishReason}.
          */
+        @Deprecated
         public String langChain4jEmbeddingsFinishReason() {
             return "CamelLangChain4jEmbeddingsFinishReason";
         }

@@ -79,14 +79,12 @@ public interface AiResourceEndpointBuilderFactory {
             return this;
         }
         /**
-         * The resource uri clients use to read this resource, for example
-         * camel:///config/app.json or s3://reports/latest.pdf. It must be
-         * unique within the CamelContext and is what an MCP client sends in a
-         * resources/read request.
+         * The fixed resource uri clients use to read this resource. Configure
+         * this or uriTemplate, but not both. The uri must be unique within the
+         * CamelContext.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: consumer
          * 
          * @param resourceUri the value to set
@@ -126,6 +124,22 @@ public interface AiResourceEndpointBuilderFactory {
          */
         default AiResourceEndpointBuilder title(String title) {
             doSetProperty("title", title);
+            return this;
+        }
+        /**
+         * RFC 6570 level 1 URI template. Each variable must occupy a whole path
+         * segment, for example crm://customers/{id}. Configure this or
+         * resourceUri, but not both.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param uriTemplate the value to set
+         * @return the dsl builder
+         */
+        default AiResourceEndpointBuilder uriTemplate(String uriTemplate) {
+            doSetProperty("uriTemplate", uriTemplate);
             return this;
         }
     }
@@ -269,6 +283,20 @@ public interface AiResourceEndpointBuilderFactory {
          * Since: 4.23
          * Maven coordinates: org.apache.camel:camel-ai-resource
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default AiResourceHeaderNameBuilder aiResource() {
+            return AiResourceHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AI Resource (camel-ai-resource)
+         * Framework-agnostic consumer endpoint that registers a Camel route as
+         * a read-only AI resource in the shared AiResourceRegistry.
+         * 
+         * Category: ai
+         * Since: 4.23
+         * Maven coordinates: org.apache.camel:camel-ai-resource
+         * 
          * Syntax: <code>ai-resource:resourceName</code>
          * 
          * Path parameter: resourceName (required)
@@ -305,6 +333,42 @@ public interface AiResourceEndpointBuilderFactory {
             return AiResourceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the AI Resource component.
+     */
+    public static class AiResourceHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final AiResourceHeaderNameBuilder INSTANCE = new AiResourceHeaderNameBuilder();
+
+        /**
+         * Header containing the concrete URI requested for a resource-template
+         * read.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AiResourceUri}.
+         */
+        public String aiResourceUri() {
+            return "CamelAiResourceUri";
+        }
+        /**
+         * Prefix for headers carrying raw, client-supplied template variables.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AiResourceTemplateVariable.}.
+         */
+        public String airesourcetemplatevariable() {
+            return "CamelAiResourceTemplateVariable.";
+        }
     }
     static AiResourceEndpointBuilder endpointBuilder(String componentName, String path) {
         class AiResourceEndpointBuilderImpl extends AbstractEndpointBuilder implements AiResourceEndpointBuilder, AdvancedAiResourceEndpointBuilder {

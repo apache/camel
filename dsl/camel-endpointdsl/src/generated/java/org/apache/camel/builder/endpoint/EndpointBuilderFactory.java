@@ -66,6 +66,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.CamelEventEndpointBuilderFactory.CamelEventBuilders,
             org.apache.camel.builder.endpoint.dsl.CamundaEndpointBuilderFactory.CamundaBuilders,
             org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraBuilders,
+            org.apache.camel.builder.endpoint.dsl.CedarEndpointBuilderFactory.CedarBuilders,
             org.apache.camel.builder.endpoint.dsl.ChatScriptEndpointBuilderFactory.ChatScriptBuilders,
             org.apache.camel.builder.endpoint.dsl.ChunkEndpointBuilderFactory.ChunkBuilders,
             org.apache.camel.builder.endpoint.dsl.CinderEndpointBuilderFactory.CinderBuilders,

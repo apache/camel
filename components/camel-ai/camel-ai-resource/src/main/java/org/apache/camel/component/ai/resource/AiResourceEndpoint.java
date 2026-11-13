@@ -44,11 +44,14 @@ import static org.apache.camel.component.ai.resource.AiResource.SCHEME;
              syntax = "ai-resource:resourceName",
              consumerOnly = true,
              remote = false,
+             headersClass = AiResource.class,
              category = { Category.AI })
 @BodyTypes(consumerOut = @BodyType(value = Carrier.NULL,
-                                   description = "No body and no headers: a resource read carries no arguments. The"
-                                                 + " route fetches the content itself, for example with pollEnrich or a"
-                                                 + " producer with a read operation"),
+                                   description = "No request body is supplied. A template read carries the concrete"
+                                                 + " requested URI and raw path-segment variables in the"
+                                                 + " CamelAiResourceUri and CamelAiResourceTemplateVariable.* headers."
+                                                 + " These values are untrusted client input and must be validated"
+                                                 + " before use"),
            consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                      description = "The content the route ends with: converted to a String when the"
                                                    + " mimeType is textual (the default text/plain, json, xml, yaml), else"
