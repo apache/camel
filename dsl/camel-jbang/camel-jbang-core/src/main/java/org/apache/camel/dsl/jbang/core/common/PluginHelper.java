@@ -64,12 +64,16 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper for command line plugins that add sub-commands and functionality when enabled by the user. Loads and saves
  * plugin configuration from/to the user home directory.
  */
 public final class PluginHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PluginHelper.class);
 
     public static final String PLUGIN_CONFIG = ".camel-jbang-plugins.json";
     public static final String PLUGIN_CONFIG_ENV = "CAMEL_CLI_PLUGIN_CONFIG";
@@ -210,6 +214,7 @@ public final class PluginHelper {
             }
         } catch (Exception e) {
             // corrupt plugin config — treat as no plugins configured
+            LOG.debug("Could not load plugin config in isPluginCommand: {}", e.getMessage(), e);
         }
         return PluginHelper.class.getClassLoader().getResource(PLUGIN_SERVICE_DIR + "camel-jbang-plugin-" + command) != null;
     }

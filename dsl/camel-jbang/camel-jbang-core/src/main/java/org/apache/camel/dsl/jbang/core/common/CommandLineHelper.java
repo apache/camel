@@ -27,6 +27,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import org.aesh.command.DefaultValueProvider;
@@ -39,6 +41,14 @@ import org.apache.camel.util.OrderedProperties;
  * Helper for CLI command line.
  */
 public final class CommandLineHelper {
+
+    /** Paths whose malformed-config warning has already been printed this JVM run, to avoid repeating it. */
+    private static final Set<String> WARNED_PATHS = ConcurrentHashMap.newKeySet();
+
+    /** Clears the warn-once set. Call from tests that write a fresh config file at the same path. */
+    static void clearWarnedPathsForTesting() {
+        WARNED_PATHS.clear();
+    }
 
     public static final String USER_CONFIG = ".camel-cli.properties";
     public static final String LOCAL_USER_CONFIG = "camel-cli.properties";
@@ -138,12 +148,14 @@ public final class CommandLineHelper {
                 properties.load(reader);
             } catch (Exception e) {
                 // best-effort: a malformed config file (e.g. malformed unicode escape) must never break the CLI;
-                // warn the user so they know to fix it, but let the command continue without defaults
-                // TODO: the printer is new SystemOutPrinter() when called from the no-printer overload, which
-                //       goes to raw terminal — acceptable for now, would need a refactor to thread TUI printer through
-                printer.printErr(
-                        "Warning: could not parse '" + file.toAbsolutePath() + "' (" + e.getMessage()
-                                 + "). Edit the file by hand, escaping '\\' as '\\\\' or using '/'.");
+                // warn the user so they know to fix it, but let the command continue without defaults.
+                // Warn once per path: loadProperties may also warn for the same file, so we deduplicate here.
+                String key = file.toAbsolutePath().toString();
+                if (WARNED_PATHS.add(key)) {
+                    printer.printErr(
+                            "Warning: could not parse '" + file.toAbsolutePath() + "' (" + e.getMessage()
+                                     + "). Edit the file by hand, escaping '\\' as '\\\\' or using '/'.");
+                }
                 return;
             }
 
@@ -198,8 +210,14 @@ public final class CommandLineHelper {
                 prop.load(is);
                 consumer.accept(prop);
             } catch (Exception e) {
-                printer.printErr("Warning: could not parse '" + file.toAbsolutePath() + "' (" + e.getMessage()
-                                 + "). Edit the file by hand, escaping '\\' as '\\\\' or using '/'.");
+                // Warn once per path per JVM run: camel run calls loadProperties from multiple code paths
+                // (resolveRepos, augmentWithUserConfiguration, printConfigurationValues) and each would
+                // print the same message. Using the absolute path as the key deduplicates the warning.
+                String key = file.toAbsolutePath().toString();
+                if (WARNED_PATHS.add(key)) {
+                    printer.printErr("Warning: could not parse '" + file.toAbsolutePath() + "' (" + e.getMessage()
+                                     + "). Edit the file by hand, escaping '\\' as '\\\\' or using '/'.");
+                }
                 return false;
             }
         }
