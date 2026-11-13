@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mcp.server.McpServerBridge;
 import org.apache.camel.main.Main;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.AvailablePortFinder.Port;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,35 +46,37 @@ class McpServerSessionEvictionPropertiesTest {
 
     @Test
     void testSessionIdleTtlPropertyEvictsOrphanSessions() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+        try (Port portHolder = AvailablePortFinder.find()) {
+            int port = portHolder.getPort();
 
-        Main main = new Main();
-        main.configure().addRoutesBuilder(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("ai-tool:ping?tags=crm&description=Ping tool")
-                        .setBody(constant("pong"));
+            Main main = new Main();
+            main.configure().addRoutesBuilder(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("ai-tool:ping?tags=crm&description=Ping tool")
+                            .setBody(constant("pong"));
+                }
+            });
+            main.addInitialProperty("camel.server.enabled", "true");
+            main.addInitialProperty("camel.server.port", String.valueOf(port));
+            main.addInitialProperty("camel.server.mcp-enabled", "true");
+            main.addInitialProperty("camel.server.mcp-tags", "crm");
+            main.addInitialProperty("camel.server.mcp-session-keep-alive-interval", "0");
+            main.addInitialProperty("camel.server.mcp-session-idle-ttl", "500");
+            main.start();
+
+            try {
+                initializeSession(port);
+                McpServerBridge bridge = main.getCamelContext().hasService(McpServerBridge.class);
+                assertThat(bridge).isNotNull();
+                assertThat(bridge.getEngine()).isInstanceOf(VertxMcpServerEngine.class);
+                VertxMcpServerEngine engine = (VertxMcpServerEngine) bridge.getEngine();
+                assertThat(engine.sessionCount()).isEqualTo(1);
+
+                await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(engine.sessionCount()).isZero());
+            } finally {
+                main.stop();
             }
-        });
-        main.addInitialProperty("camel.server.enabled", "true");
-        main.addInitialProperty("camel.server.port", String.valueOf(port));
-        main.addInitialProperty("camel.server.mcp-enabled", "true");
-        main.addInitialProperty("camel.server.mcp-tags", "crm");
-        main.addInitialProperty("camel.server.mcp-session-keep-alive-interval", "0");
-        main.addInitialProperty("camel.server.mcp-session-idle-ttl", "500");
-        main.start();
-
-        try {
-            initializeSession(port);
-            McpServerBridge bridge = main.getCamelContext().hasService(McpServerBridge.class);
-            assertThat(bridge).isNotNull();
-            assertThat(bridge.getEngine()).isInstanceOf(VertxMcpServerEngine.class);
-            VertxMcpServerEngine engine = (VertxMcpServerEngine) bridge.getEngine();
-            assertThat(engine.sessionCount()).isEqualTo(1);
-
-            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(engine.sessionCount()).isZero());
-        } finally {
-            main.stop();
         }
     }
 

@@ -114,7 +114,7 @@ public class AiResourceExecutorTest extends CamelTestSupport {
 
         assertThat(result).isInstanceOf(AiResourceResult.ExecutionError.class);
         AiResourceResult.ExecutionError error = (AiResourceResult.ExecutionError) result;
-        String expected = "Resource 'camel:///list.bin' produced a body that cannot be converted to byte[]"
+        String expected = "Resource 'list_as_blob' produced a body that cannot be converted to byte[]"
                           + " (declared mimeType is application/octet-stream)";
         assertThat(error.message()).isEqualTo(expected);
         assertThat(error.cause()).isInstanceOf(IllegalStateException.class)
@@ -126,7 +126,7 @@ public class AiResourceExecutorTest extends CamelTestSupport {
         AiResourceResult result = read("camel:///map.bin");
 
         assertThat(result).isInstanceOf(AiResourceResult.ExecutionError.class);
-        String expected = "Resource 'camel:///map.bin' produced a body that cannot be converted to byte[]"
+        String expected = "Resource 'map_as_blob' produced a body that cannot be converted to byte[]"
                           + " (declared mimeType is application/octet-stream)";
         assertThat(((AiResourceResult.ExecutionError) result).message()).isEqualTo(expected);
     }
@@ -136,7 +136,8 @@ public class AiResourceExecutorTest extends CamelTestSupport {
         AiResourceResult result = read("camel:///empty");
 
         assertThat(result).isInstanceOf(AiResourceResult.ExecutionError.class);
-        assertThat(((AiResourceResult.ExecutionError) result).message()).contains("produced no content");
+        assertThat(((AiResourceResult.ExecutionError) result).message()).contains("empty_resource")
+                .doesNotContain("camel:///empty");
     }
 
     @Test
@@ -146,7 +147,7 @@ public class AiResourceExecutorTest extends CamelTestSupport {
         assertThat(result).isInstanceOf(AiResourceResult.ExecutionError.class);
         AiResourceResult.ExecutionError error = (AiResourceResult.ExecutionError) result;
         assertThat(error.cause()).isInstanceOf(IllegalStateException.class);
-        assertThat(error.message()).contains("camel:///failing");
+        assertThat(error.message()).contains("failing_resource").doesNotContain("camel:///failing");
     }
 
     @Test
@@ -156,6 +157,8 @@ public class AiResourceExecutorTest extends CamelTestSupport {
         assertThat(result).isInstanceOf(AiResourceResult.ExecutionError.class);
         assertThat(((AiResourceResult.ExecutionError) result).cause())
                 .isInstanceOf(IllegalStateException.class);
+        assertThat(((AiResourceResult.ExecutionError) result).message())
+                .contains("exchange_failure").doesNotContain("camel:///exchange-failure");
     }
 
     @Test
@@ -165,7 +168,8 @@ public class AiResourceExecutorTest extends CamelTestSupport {
         AiResourceResult result = AiResourceExecutor.execute(spec, new DefaultExchange(context));
 
         assertThat(result).isInstanceOf(AiResourceResult.ExecutionError.class);
-        assertThat(((AiResourceResult.ExecutionError) result).message()).contains("No consumer available");
+        assertThat(((AiResourceResult.ExecutionError) result).message()).contains("No consumer available", "orphan")
+                .doesNotContain("camel:///orphan");
     }
 
     private AiResourceResult read(String resourceUri) {

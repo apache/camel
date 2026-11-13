@@ -1,0 +1,44 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "cedar",
+    "title": "Cedar",
+    "description": "Embedded Cedar authorization policies",
+    "deprecated": false,
+    "firstVersion": "4.24.0",
+    "label": "security",
+    "javaType": "org.apache.camel.component.cedar.CedarComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cedar",
+    "version": "4.24.0-SNAPSHOT",
+    "scheme": "cedar",
+    "extendsScheme": "",
+    "syntax": "cedar:operation",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": false
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "properties": {
+    "operation": { "index": 0, "kind": "path", "displayName": "Operation", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Operation to perform. Only authorize is supported." },
+    "action": { "index": 1, "kind": "parameter", "displayName": "Action", "group": "producer", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.Expression", "deprecated": false, "autowired": false, "secret": false, "supportSimpleExpression": true, "configurationClass": "org.apache.camel.component.cedar.CedarConfiguration", "configurationField": "configuration", "description": "Required configured expression yielding a Cedar EntityUID or canonical entity UID string." },
+    "context": { "index": 2, "kind": "parameter", "displayName": "Context", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.Expression", "deprecated": false, "autowired": false, "secret": false, "supportSimpleExpression": true, "configurationClass": "org.apache.camel.component.cedar.CedarConfiguration", "configurationField": "configuration", "description": "Optional explicit expression yielding a context object or map. No implicit body extraction." },
+    "entitiesResource": { "index": 3, "kind": "parameter", "displayName": "Entities Resource", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.cedar.CedarConfiguration", "configurationField": "configuration", "description": "Optional classpath: or file: static Cedar entity JSON resource URI. Published coherently with policy and schema." },
+    "entityProvider": { "index": 4, "kind": "parameter", "displayName": "Entity Provider", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.cedar.CedarEntityProvider", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.cedar.CedarConfiguration", "configurationField": "configuration", "description": "Optional request scoped entity JSON provider. Provider owns its bounded I\/O and freshness contract." },
+    "maxResourceSize": { "index": 5, "kind": "parameter", "displayName": "Max Resource Size", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1048576, "configurationClass": "org.apache.camel.component.cedar.CedarConfiguration", "configurationField": "configuration", "description": "Maximum bytes per policy, schema, entity resource, explicit context and provider entity JSON. Reload fails without replacing the active revision if exceeded." },
+    "policiesResource": { "index": 6, "kind": "parameter", "displayName": "Policies Resource", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.cedar.CedarConfiguration", "configurationField": "configuration", "description": "Required classpath: or file: Cedar policy text resource URI. Loaded and schema validated at startup and explicit reload." },
+    "principal": { "index": 7, "kind": "parameter", "displayName": "Principal", "group": "producer", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.Expression", "deprecated": false, "autowired": false, "secret": false, "supportSimpleExpression": true, "configurationClass": "org.apache.camel.component.cedar.CedarConfiguration", "configurationField": "configuration", "description": "Required configured expression yielding a Cedar EntityUID or canonical entity UID string." },
+    "resource": { "index": 8, "kind": "parameter", "displayName": "Resource", "group": "producer", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.Expression", "deprecated": false, "autowired": false, "secret": false, "supportSimpleExpression": true, "configurationClass": "org.apache.camel.component.cedar.CedarConfiguration", "configurationField": "configuration", "description": "Required configured expression yielding a Cedar EntityUID or canonical entity UID string." },
+    "schemaResource": { "index": 9, "kind": "parameter", "displayName": "Schema Resource", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.cedar.CedarConfiguration", "configurationField": "configuration", "description": "Required classpath: or file: Cedar schema text resource URI. Used for policy, entity and request validation." },
+    "strict": { "index": 10, "kind": "parameter", "displayName": "Strict", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "configurationClass": "org.apache.camel.component.cedar.CedarConfiguration", "configurationField": "configuration", "description": "Reject evaluation errors even when the raw engine decision is allow. False explicitly honors Cedar skip-on-error semantics and retains diagnostics." },
+    "lazyStartProducer": { "index": 11, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  }
+}

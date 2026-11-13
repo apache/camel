@@ -133,10 +133,9 @@ public interface AiResourceComponentBuilderFactory {
         }
     
         /**
-         * The resource uri clients use to read this resource, for example
-         * camel:///config/app.json or s3://reports/latest.pdf. It must be
-         * unique within the CamelContext and is what an MCP client sends in a
-         * resources/read request.
+         * The fixed resource uri clients use to read this resource. Configure
+         * this or uriTemplate, but not both. The uri must be unique within the
+         * CamelContext.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -181,6 +180,23 @@ public interface AiResourceComponentBuilderFactory {
          */
         default AiResourceComponentBuilder title(java.lang.String title) {
             doSetProperty("title", title);
+            return this;
+        }
+    
+        /**
+         * RFC 6570 level 1 URI template. Each variable must occupy a whole path
+         * segment, for example crm://customers/{id}. Configure this or
+         * resourceUri, but not both.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param uriTemplate the value to set
+         * @return the dsl builder
+         */
+        default AiResourceComponentBuilder uriTemplate(java.lang.String uriTemplate) {
+            doSetProperty("uriTemplate", uriTemplate);
             return this;
         }
     
@@ -233,6 +249,7 @@ public interface AiResourceComponentBuilderFactory {
             case "resourceUri": getOrCreateConfiguration((AiResourceComponent) component).setResourceUri((java.lang.String) value); return true;
             case "tags": getOrCreateConfiguration((AiResourceComponent) component).setTags((java.lang.String) value); return true;
             case "title": getOrCreateConfiguration((AiResourceComponent) component).setTitle((java.lang.String) value); return true;
+            case "uriTemplate": getOrCreateConfiguration((AiResourceComponent) component).setUriTemplate((java.lang.String) value); return true;
             case "autowiredEnabled": ((AiResourceComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }

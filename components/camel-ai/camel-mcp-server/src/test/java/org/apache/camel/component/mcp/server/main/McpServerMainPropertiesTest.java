@@ -33,6 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mcp.server.stdio.StdioMcpServerEngine;
 import org.apache.camel.main.Main;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.AvailablePortFinder.Port;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,81 +47,85 @@ class McpServerMainPropertiesTest {
 
     @Test
     void testMcpServerStartsFromPropertiesAlone() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+        try (Port portHolder = AvailablePortFinder.find()) {
+            int port = portHolder.getPort();
 
-        Main main = new Main();
-        main.configure().addRoutesBuilder(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("ai-tool:say_hello?tags=crm&description=Say hello"
-                     + "&parameter.name=string&parameter.name.required=true")
-                        .setBody(simple("Hello ${header.name}"));
+            Main main = new Main();
+            main.configure().addRoutesBuilder(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("ai-tool:say_hello?tags=crm&description=Say hello"
+                         + "&parameter.name=string&parameter.name.required=true")
+                            .setBody(simple("Hello ${header.name}"));
 
-                from("ai-tool:hidden_tool?description=Untagged, not exposed")
-                        .setBody(constant("hidden"));
+                    from("ai-tool:hidden_tool?description=Untagged, not exposed")
+                            .setBody(constant("hidden"));
+                }
+            });
+            main.addInitialProperty("camel.server.enabled", "true");
+            main.addInitialProperty("camel.server.port", String.valueOf(port));
+            main.addInitialProperty("camel.server.mcp-enabled", "true");
+            main.addInitialProperty("camel.server.mcp-tags", "crm");
+            main.addInitialProperty("camel.server.mcp-server-name", "my-integration-app");
+            main.start();
+
+            McpSyncClient client = null;
+            try {
+                client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port).build())
+                        .requestTimeout(Duration.ofSeconds(10))
+                        .initializationTimeout(Duration.ofSeconds(10))
+                        .build();
+
+                McpSchema.InitializeResult init = client.initialize();
+                assertThat(init.serverInfo().name()).isEqualTo("my-integration-app");
+                HttpResponse<String> metadata = HttpClient.newHttpClient().send(
+                        HttpRequest.newBuilder(URI.create("http://localhost:" + port
+                                                          + "/.well-known/oauth-protected-resource/mcp"))
+                                .GET().build(),
+                        HttpResponse.BodyHandlers.ofString());
+                assertThat(metadata.statusCode()).isEqualTo(404);
+
+                assertThat(client.listTools().tools())
+                        .extracting(McpSchema.Tool::name)
+                        .contains("say_hello")
+                        .doesNotContain("hidden_tool");
+
+                McpSchema.CallToolResult result
+                        = client.callTool(new McpSchema.CallToolRequest("say_hello", Map.of("name", "Camel")));
+                assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
+                assertThat(result.content().toString()).contains("Hello Camel");
+            } finally {
+                if (client != null) {
+                    client.closeGracefully();
+                }
+                main.stop();
             }
-        });
-        main.addInitialProperty("camel.server.enabled", "true");
-        main.addInitialProperty("camel.server.port", String.valueOf(port));
-        main.addInitialProperty("camel.server.mcp-enabled", "true");
-        main.addInitialProperty("camel.server.mcp-tags", "crm");
-        main.addInitialProperty("camel.server.mcp-server-name", "my-integration-app");
-        main.start();
-
-        McpSyncClient client = null;
-        try {
-            client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port).build())
-                    .requestTimeout(Duration.ofSeconds(10))
-                    .initializationTimeout(Duration.ofSeconds(10))
-                    .build();
-
-            McpSchema.InitializeResult init = client.initialize();
-            assertThat(init.serverInfo().name()).isEqualTo("my-integration-app");
-            HttpResponse<String> metadata = HttpClient.newHttpClient().send(
-                    HttpRequest.newBuilder(URI.create("http://localhost:" + port
-                                                      + "/.well-known/oauth-protected-resource/mcp"))
-                            .GET().build(),
-                    HttpResponse.BodyHandlers.ofString());
-            assertThat(metadata.statusCode()).isEqualTo(404);
-
-            assertThat(client.listTools().tools())
-                    .extracting(McpSchema.Tool::name)
-                    .contains("say_hello")
-                    .doesNotContain("hidden_tool");
-
-            McpSchema.CallToolResult result
-                    = client.callTool(new McpSchema.CallToolRequest("say_hello", Map.of("name", "Camel")));
-            assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
-            assertThat(result.content().toString()).contains("Hello Camel");
-        } finally {
-            if (client != null) {
-                client.closeGracefully();
-            }
-            main.stop();
         }
     }
 
     @Test
     void testMcpAllowedOriginsFromProperties() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+        try (Port portHolder = AvailablePortFinder.find()) {
+            int port = portHolder.getPort();
 
-        Main main = new Main();
-        main.addInitialProperty("camel.server.enabled", "true");
-        main.addInitialProperty("camel.server.port", String.valueOf(port));
-        main.addInitialProperty("camel.server.mcp-enabled", "true");
-        main.addInitialProperty("camel.server.mcp-tags", "crm");
-        main.addInitialProperty("camel.server.mcp-allowed-origins", "https://App.Example.com:443/, http://localhost:3000");
-        main.start();
+            Main main = new Main();
+            main.addInitialProperty("camel.server.enabled", "true");
+            main.addInitialProperty("camel.server.port", String.valueOf(port));
+            main.addInitialProperty("camel.server.mcp-enabled", "true");
+            main.addInitialProperty("camel.server.mcp-tags", "crm");
+            main.addInitialProperty("camel.server.mcp-allowed-origins", "https://App.Example.com:443/, http://localhost:3000");
+            main.start();
 
-        try {
-            assertThat(initialize(port, null)).isEqualTo(200);
-            assertThat(initialize(port, "https://app.example.com")).isEqualTo(200);
-            assertThat(initialize(port, "http://localhost:3000")).isEqualTo(200);
-            // the configured list replaces the loopback default
-            assertThat(initialize(port, "http://localhost:6274")).isEqualTo(403);
-            assertThat(initialize(port, "https://other.example.com")).isEqualTo(403);
-        } finally {
-            main.stop();
+            try {
+                assertThat(initialize(port, null)).isEqualTo(200);
+                assertThat(initialize(port, "https://app.example.com")).isEqualTo(200);
+                assertThat(initialize(port, "http://localhost:3000")).isEqualTo(200);
+                // the configured list replaces the loopback default
+                assertThat(initialize(port, "http://localhost:6274")).isEqualTo(403);
+                assertThat(initialize(port, "https://other.example.com")).isEqualTo(403);
+            } finally {
+                main.stop();
+            }
         }
     }
 
@@ -163,18 +168,20 @@ class McpServerMainPropertiesTest {
 
     @Test
     void testMcpAllowedOriginWildcardFailsFast() {
-        Main main = new Main();
-        main.addInitialProperty("camel.server.enabled", "true");
-        main.addInitialProperty("camel.server.port", String.valueOf(AvailablePortFinder.getNextAvailable()));
-        main.addInitialProperty("camel.server.mcp-enabled", "true");
-        main.addInitialProperty("camel.server.mcp-tags", "crm");
-        main.addInitialProperty("camel.server.mcp-allowed-origins", "*");
+        try (Port portHolder = AvailablePortFinder.find()) {
+            Main main = new Main();
+            main.addInitialProperty("camel.server.enabled", "true");
+            main.addInitialProperty("camel.server.port", String.valueOf(portHolder.getPort()));
+            main.addInitialProperty("camel.server.mcp-enabled", "true");
+            main.addInitialProperty("camel.server.mcp-tags", "crm");
+            main.addInitialProperty("camel.server.mcp-allowed-origins", "*");
 
-        try {
-            assertThatThrownBy(main::start)
-                    .hasStackTraceContaining("MCP allowed origin * is not supported");
-        } finally {
-            main.stop();
+            try {
+                assertThatThrownBy(main::start)
+                        .hasStackTraceContaining("MCP allowed origin * is not supported");
+            } finally {
+                main.stop();
+            }
         }
     }
 

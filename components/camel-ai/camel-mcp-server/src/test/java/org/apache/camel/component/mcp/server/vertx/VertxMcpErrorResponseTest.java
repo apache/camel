@@ -46,13 +46,15 @@ class VertxMcpErrorResponseTest {
 
     private static final HttpClient HTTP = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 
+    private static AvailablePortFinder.Port portRef;
     private static CamelContext camelContext;
     private static VertxMcpServerEngine engine;
     private static String url;
 
     @BeforeAll
     static void startServer() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+        portRef = AvailablePortFinder.find();
+        int port = portRef.getPort();
         camelContext = new DefaultCamelContext();
         MainHttpServer main = new MainHttpServer();
         main.setCamelContext(camelContext);
@@ -73,6 +75,9 @@ class VertxMcpErrorResponseTest {
     static void stopServer() {
         engine.stop();
         camelContext.stop();
+        if (portRef != null) {
+            portRef.release();
+        }
     }
 
     @Test

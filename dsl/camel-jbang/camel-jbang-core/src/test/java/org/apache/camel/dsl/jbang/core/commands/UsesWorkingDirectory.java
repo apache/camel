@@ -26,7 +26,8 @@ import org.junit.jupiter.api.Tag;
 
 /**
  * A test that uses the working directory of the build: the {@code .camel-jbang} directory that camel run, export,
- * dependency, transform and others create and delete, or a local {@code camel-cli.properties}.
+ * dependency, transform and others create and delete, a local {@code camel-cli.properties}, or the
+ * {@code ./application.properties} file in the module directory.
  * <p/>
  * The test forks run in parallel and share the working directory, so these tests run after them in a fork of their own,
  * one class at a time (the {@code serial-test} execution in pom.xml).

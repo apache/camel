@@ -78,7 +78,6 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.jline.jansi.Ansi;
 import org.jline.jansi.AnsiConsole;
 
-import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.CAMEL_JBANG_WORK_DIR;
 import static org.apache.camel.util.IOHelper.buffered;
 
 @CommandDefinition(name = "debug", description = "Debug local Camel integration", generateHelp = true,
@@ -438,7 +437,7 @@ public class Debug extends Run {
                 // the process (and those it started) stops with this JVM, then the files of the run are removed
                 ChildProcess.stopOnExit(processRef::get, () -> {
                     removeDir(Paths.get(RUN_PLATFORM_DIR));
-                    removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                    removeDir(CommandLineHelper.getWorkDir());
                     Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
                 });
 
@@ -545,7 +544,7 @@ public class Debug extends Run {
                 // the process (and those it started) stops with this JVM, then the files of the run are removed
                 ChildProcess.stopOnExit(processRef::get, () -> {
                     removeDir(Paths.get(RUN_PLATFORM_DIR));
-                    removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                    removeDir(CommandLineHelper.getWorkDir());
                     Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
                 });
 

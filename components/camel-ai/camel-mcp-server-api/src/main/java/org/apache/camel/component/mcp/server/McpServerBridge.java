@@ -40,11 +40,13 @@ import org.apache.camel.component.ai.prompt.AiPromptRegistry;
 import org.apache.camel.component.ai.prompt.AiPromptRegistryListener;
 import org.apache.camel.component.ai.prompt.AiPromptResult;
 import org.apache.camel.component.ai.prompt.AiPromptSpec;
+import org.apache.camel.component.ai.resource.AiResource;
 import org.apache.camel.component.ai.resource.AiResourceExecutor;
 import org.apache.camel.component.ai.resource.AiResourceRegistry;
 import org.apache.camel.component.ai.resource.AiResourceRegistryListener;
 import org.apache.camel.component.ai.resource.AiResourceResult;
 import org.apache.camel.component.ai.resource.AiResourceSpec;
+import org.apache.camel.component.ai.resource.AiResourceTemplateSpec;
 import org.apache.camel.component.ai.tool.AiToolAnnotations;
 import org.apache.camel.component.ai.tool.AiToolExecutor;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper;
@@ -97,6 +99,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     private final ReentrantLock lock = new ReentrantLock();
     private final Map<String, AiToolSpec> published = new HashMap<>();
     private final Map<String, AiResourceSpec> publishedResources = new HashMap<>();
+    private final Map<String, AiResourceTemplateSpec> publishedResourceTemplates = new HashMap<>();
     private final Map<String, AiPromptSpec> publishedPrompts = new HashMap<>();
 
     private CamelContext camelContext;
@@ -107,6 +110,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     private String[] tagPatterns = new String[0];
     private ExecutorService executor;
     private boolean resourcesUnsupportedWarned;
+    private boolean resourceTemplatesUnsupportedWarned;
     private boolean promptsUnsupportedWarned;
 
     public McpServerBridge(McpServerConfiguration configuration) {
@@ -239,6 +243,11 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 specs.forEach(this::publishResource);
             }
         });
+        resourceRegistry.getResourceTemplates().forEach((tag, specs) -> {
+            if (matchesTag(tag)) {
+                specs.forEach(this::publishResourceTemplate);
+            }
+        });
         promptRegistry.getPrompts().forEach((tag, specs) -> {
             if (matchesTag(tag)) {
                 specs.forEach(this::publishPrompt);
@@ -261,6 +270,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         try {
             published.clear();
             publishedResources.clear();
+            publishedResourceTemplates.clear();
             publishedPrompts.clear();
         } finally {
             lock.unlock();
@@ -393,6 +403,108 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         }
     }
 
+    private void publishResourceTemplate(AiResourceTemplateSpec spec) {
+        lock.lock();
+        try {
+            AiResourceTemplateSpec existing = publishedResourceTemplates.get(spec.getUriTemplate());
+            if (existing == spec) {
+                return;
+            }
+            if (existing != null) {
+                LOG.error("Refusing to expose MCP resource template '{}': the URI template is already exposed.",
+                        spec.getUriTemplate());
+                return;
+            }
+            AiResourceTemplateSpec overlapping = publishedResourceTemplates.values().stream()
+                    .filter(other -> other != spec && other.overlaps(spec))
+                    .findFirst()
+                    .orElse(null);
+            if (overlapping != null) {
+                LOG.error("Refusing to expose MCP resource template '{}': it overlaps already exposed template '{}'. "
+                          + "Resource templates must not match the same URI.",
+                        spec.getUriTemplate(), overlapping.getUriTemplate());
+                return;
+            }
+            if (!engine.supportsResourceTemplates()) {
+                if (!resourceTemplatesUnsupportedWarned) {
+                    resourceTemplatesUnsupportedWarned = true;
+                    LOG.warn("Engine {} does not serve MCP resource templates: ai-resource routes with uriTemplate "
+                             + "matching the configured tags are not exposed",
+                            engine.getClass().getSimpleName());
+                }
+                return;
+            }
+            try {
+                engine.resourceTemplateAdded(createResourceTemplate(spec));
+            } catch (McpServerRefusedException e) {
+                LOG.error("Refusing to expose MCP resource template '{}': {}", spec.getUriTemplate(), e.getMessage(), e);
+                return;
+            }
+            publishedResourceTemplates.put(spec.getUriTemplate(), spec);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void unpublishResourceTemplate(AiResourceTemplateSpec spec) {
+        lock.lock();
+        try {
+            if (publishedResourceTemplates.get(spec.getUriTemplate()) != spec) {
+                return;
+            }
+            // A spec can be registered under multiple selected tags; unpublish only after the last selected tag goes.
+            boolean stillSelected = resourceRegistry.getResourceTemplates().entrySet().stream()
+                    .anyMatch(entry -> matchesTag(entry.getKey()) && entry.getValue().contains(spec));
+            if (!stillSelected) {
+                publishedResourceTemplates.remove(spec.getUriTemplate());
+                engine.resourceTemplateRemoved(spec.getUriTemplate());
+                // A previously refused overlapping template may now be publishable. Re-evaluate the remaining
+                // selected templates so route stop/start order does not permanently hide a valid route.
+                resourceRegistry.getResourceTemplates().entrySet().stream()
+                        .filter(entry -> matchesTag(entry.getKey()))
+                        .flatMap(entry -> entry.getValue().stream())
+                        .forEach(this::publishResourceTemplate);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private McpServerResourceTemplate createResourceTemplate(AiResourceTemplateSpec spec) {
+        McpResourceTemplateReadHandler handler = resourceUri -> read(spec, resourceUri);
+        return new McpServerResourceTemplate() {
+            @Override
+            public String uriTemplate() {
+                return spec.getUriTemplate();
+            }
+
+            @Override
+            public String name() {
+                return spec.getName();
+            }
+
+            @Override
+            public String description() {
+                return spec.getDescription();
+            }
+
+            @Override
+            public String mimeType() {
+                return spec.getMimeType();
+            }
+
+            @Override
+            public McpResourceTemplateReadHandler handler() {
+                return handler;
+            }
+
+            @Override
+            public String title() {
+                return spec.getTitle();
+            }
+        };
+    }
+
     private McpServerResource createResource(AiResourceSpec spec) {
         McpResourceReadHandler handler = () -> read(spec);
         return new McpServerResource() {
@@ -430,6 +542,10 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
 
     private McpResourceReadResult read(AiResourceSpec spec) {
         Exchange exchange = spec.getConsumer().getEndpoint().createExchange();
+        return read(spec, exchange);
+    }
+
+    private McpResourceReadResult read(AiResourceSpec spec, Exchange exchange) {
         boolean release = true;
         try {
             Future<AiResourceResult> future = executor.submit(() -> AiResourceExecutor.execute(spec, exchange));
@@ -443,14 +559,14 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 LOG.warn("MCP resource '{}' did not complete within {} ms; returning a timeout error to the client. "
                          + "The route keeps running until it completes on its own, and exchange {} is not returned "
                          + "to the pool.",
-                        spec.getUri(), configuration.getResourceTimeout(), exchange.getExchangeId());
+                        spec.getName(), configuration.getResourceTimeout(), exchange.getExchangeId());
                 return McpResourceReadResult.error(GENERIC_READ_TIMEOUT_ERROR);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 release = false;
                 return McpResourceReadResult.error(GENERIC_READ_ERROR);
             } catch (ExecutionException e) {
-                LOG.warn("MCP resource '{}' read failed", spec.getUri(), e.getCause());
+                LOG.warn("MCP resource '{}' read failed", spec.getName(), e.getCause());
                 return McpResourceReadResult.error(GENERIC_READ_ERROR);
             }
             if (result instanceof AiResourceResult.Text text) {
@@ -459,8 +575,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 return McpResourceReadResult.blob(binary.value());
             } else {
                 AiResourceResult.ExecutionError error = (AiResourceResult.ExecutionError) result;
-                // never leak raw route exception messages to remote MCP clients
-                LOG.warn("MCP resource '{}' read failed: {}", spec.getUri(), error.message(), error.cause());
+                // Keep details in the server-side log; the MCP client still receives a generic error.
+                LOG.warn("MCP resource '{}' read failed: {}", spec.getName(), error.message(), error.cause());
                 return McpResourceReadResult.error(GENERIC_READ_ERROR);
             }
         } finally {
@@ -468,6 +584,22 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 spec.getConsumer().releaseExchange(exchange, false);
             }
         }
+    }
+
+    private McpResourceReadResult read(AiResourceTemplateSpec spec, String resourceUri) {
+        Map<String, String> variables = spec.match(resourceUri).orElse(null);
+        if (variables == null) {
+            // Defensive guard: the protocol engine normally calls this handler only after a URI-template match.
+            return McpResourceReadResult.error("Resource not found");
+        }
+
+        Exchange exchange = spec.getConsumer().getEndpoint().createExchange();
+        // Values originate at the MCP client. Set them directly as headers: never resolve placeholders or evaluate
+        // expressions from these values. Keep percent-encoding intact so route authors can validate/interpret safely.
+        exchange.getMessage().setHeader(AiResource.RESOURCE_URI_HEADER, resourceUri);
+        variables.forEach((name, value) -> exchange.getMessage().setHeader(
+                AiResource.TEMPLATE_VARIABLE_HEADER_PREFIX + name, value));
+        return read(spec.asResourceSpec(resourceUri), exchange);
     }
 
     private void publishPrompt(AiPromptSpec spec) {
@@ -824,6 +956,20 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         public void resourceDeregistered(String tag, AiResourceSpec spec) {
             if (matchesTag(tag) && isStartingOrStarted()) {
                 unpublishResource(spec);
+            }
+        }
+
+        @Override
+        public void resourceTemplateRegistered(String tag, AiResourceTemplateSpec spec) {
+            if (matchesTag(tag) && isStartingOrStarted()) {
+                publishResourceTemplate(spec);
+            }
+        }
+
+        @Override
+        public void resourceTemplateDeregistered(String tag, AiResourceTemplateSpec spec) {
+            if (matchesTag(tag) && isStartingOrStarted()) {
+                unpublishResourceTemplate(spec);
             }
         }
     }
