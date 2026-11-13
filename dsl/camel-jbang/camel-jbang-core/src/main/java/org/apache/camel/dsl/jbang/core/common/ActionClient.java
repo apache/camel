@@ -320,8 +320,8 @@ public final class ActionClient {
     }
 
     /**
-     * How long to wait before looking again for an answer that is not there yet: a tenth of the time waited so far, so
-     * an answer is read at most about a tenth later than it is there, from 5 to 100 millis.
+     * How long to wait before looking again for an answer that is not there yet: a tenth of the time waited so far,
+     * from 5 to 100 millis. An answer that arrives is read at the latest after that delay.
      *
      * @param waited how long the answer has been waited for, in millis
      */
