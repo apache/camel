@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
@@ -54,6 +55,7 @@ public abstract class McpServerResourceConformanceTestSupport extends CamelTestS
 
     protected McpServerBridge bridge;
     private McpSyncClient client;
+    private final AtomicInteger customerTemplateInvocations = new AtomicInteger();
 
     /**
      * Base URL of the server under test, without the MCP endpoint path (the SDK client appends {@code /mcp}).
@@ -120,6 +122,31 @@ public abstract class McpServerResourceConformanceTestSupport extends CamelTestS
                 from("ai-resource:other_resource?resourceUri=camel:///other&tags=untrusted"
                      + "&description=Not a selected tag, must not be exposed")
                         .setBody(constant("other"));
+
+                from("ai-resource:customer_template?uriTemplate=camel:///customers/{customerId}&tags="
+                     + CONFORMANCE_TAG + "&description=Customer selected by id")
+                        .routeId("customer-template-route")
+                        .process(exchange -> {
+                            customerTemplateInvocations.incrementAndGet();
+                            String uri = exchange.getMessage().getHeader("CamelAiResourceUri", String.class);
+                            String id = exchange.getMessage().getHeader(
+                                    "CamelAiResourceTemplateVariable.customerId", String.class);
+                            exchange.getMessage().setBody(uri + "|" + id);
+                        });
+
+                // This exact URI also matches customer_template; MCP must read this fixed resource first.
+                from("ai-resource:fixed_customer?resourceUri=camel:///customers/special&tags=" + CONFORMANCE_TAG
+                     + "&description=Fixed customer resource")
+                        .routeId("fixed-customer-route")
+                        .setBody(constant("fixed-resource"));
+
+                from("ai-resource:hidden_template?uriTemplate=camel:///hidden/{id}"
+                     + "&description=Untagged template, must not be exposed")
+                        .setBody(constant("hidden-template"));
+
+                from("ai-resource:other_template?uriTemplate=camel:///other/{id}&tags=untrusted"
+                     + "&description=Template with an unselected tag")
+                        .setBody(constant("other-template"));
             }
         };
     }
@@ -148,6 +175,9 @@ public abstract class McpServerResourceConformanceTestSupport extends CamelTestS
         assertThat(client().getServerCapabilities().resources())
                 .as("An engine serving resources must advertise the capability")
                 .isNotNull();
+        assertThat(client().getServerCapabilities().resources().listChanged())
+                .as("An engine serving resources must advertise list-change notifications")
+                .isTrue();
     }
 
     @Test
@@ -201,6 +231,94 @@ public abstract class McpServerResourceConformanceTestSupport extends CamelTestS
     void testReadResourceTimeout() {
         assertThatThrownBy(() -> client().readResource(new McpSchema.ReadResourceRequest("camel:///slow")))
                 .hasMessageContaining("timed out");
+    }
+
+    @Test
+    void testListResourceTemplatesExposesOnlySelectedTags() {
+        List<McpSchema.ResourceTemplate> templates = client().listResourceTemplates().resourceTemplates();
+
+        assertThat(templates).extracting(McpSchema.ResourceTemplate::uriTemplate)
+                .containsExactly("camel:///customers/{customerId}")
+                .doesNotContain("camel:///hidden/{id}", "camel:///other/{id}");
+        assertThat(templates.get(0).name()).isEqualTo("customer_template");
+        assertThat(templates.get(0).description()).isEqualTo("Customer selected by id");
+    }
+
+    @Test
+    void testReadResourceTemplateWithVariables() {
+        customerTemplateInvocations.set(0);
+        McpSchema.ReadResourceResult result
+                = client().readResource(new McpSchema.ReadResourceRequest("camel:///customers/42"));
+
+        assertThat(result.contents()).hasSize(1);
+        McpSchema.TextResourceContents contents = (McpSchema.TextResourceContents) result.contents().get(0);
+        assertThat(contents.uri()).isEqualTo("camel:///customers/42");
+        assertThat(contents.text()).isEqualTo("camel:///customers/42|42");
+        assertThat(customerTemplateInvocations).hasValue(1);
+    }
+
+    @Test
+    void testFixedResourceTakesPrecedenceOverMatchingTemplate() {
+        customerTemplateInvocations.set(0);
+        McpSchema.ReadResourceResult result
+                = client().readResource(new McpSchema.ReadResourceRequest("camel:///customers/special"));
+
+        McpSchema.TextResourceContents contents = (McpSchema.TextResourceContents) result.contents().get(0);
+        assertThat(contents.text()).isEqualTo("fixed-resource");
+        assertThat(customerTemplateInvocations).hasValue(0);
+    }
+
+    @Test
+    void testUnmatchedTemplateUriReturnsNotFoundWithoutCallingRoute() {
+        customerTemplateInvocations.set(0);
+        assertThatThrownBy(() -> client().readResource(
+                new McpSchema.ReadResourceRequest("camel:///customers/42/extra")))
+                .hasMessageContaining("Resource not found");
+        assertThat(customerTemplateInvocations).hasValue(0);
+    }
+
+    @Test
+    void testResourceTemplateLifecycleSendsListChangedNotifications() throws Exception {
+        AtomicInteger notifications = new AtomicInteger();
+        McpSyncClient notificationClient = McpClient.sync(
+                HttpClientStreamableHttpTransport.builder(mcpServerBaseUrl()).build())
+                .requestTimeout(Duration.ofSeconds(10))
+                .initializationTimeout(Duration.ofSeconds(10))
+                .resourcesChangeConsumer(resources -> notifications.incrementAndGet())
+                .build();
+
+        try {
+            notificationClient.initialize();
+
+            int beforeStop = notifications.get();
+            context.getRouteController().stopRoute("customer-template-route");
+            await().atMost(10, TimeUnit.SECONDS).until(() -> notifications.get() > beforeStop);
+
+            int beforeStart = notifications.get();
+            context.getRouteController().startRoute("customer-template-route");
+            await().atMost(10, TimeUnit.SECONDS).until(() -> notifications.get() > beforeStart);
+        } finally {
+            notificationClient.closeGracefully();
+        }
+    }
+
+    @Test
+    void testResourceTemplateListReflectsRouteStopAndStart() throws Exception {
+        assertThat(client().listResourceTemplates().resourceTemplates())
+                .extracting(McpSchema.ResourceTemplate::uriTemplate)
+                .contains("camel:///customers/{customerId}");
+
+        context.getRouteController().stopRoute("customer-template-route");
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(
+                client().listResourceTemplates().resourceTemplates())
+                .extracting(McpSchema.ResourceTemplate::uriTemplate)
+                .doesNotContain("camel:///customers/{customerId}"));
+
+        context.getRouteController().startRoute("customer-template-route");
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(
+                client().listResourceTemplates().resourceTemplates())
+                .extracting(McpSchema.ResourceTemplate::uriTemplate)
+                .contains("camel:///customers/{customerId}"));
     }
 
     @Test
