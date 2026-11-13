@@ -569,8 +569,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 return McpResourceReadResult.blob(binary.value());
             } else {
                 AiResourceResult.ExecutionError error = (AiResourceResult.ExecutionError) result;
-                // never leak raw route exception messages to remote MCP clients
-                LOG.warn("MCP resource '{}' read failed", spec.getName());
+                // Keep details in the server-side log; the MCP client still receives a generic error.
+                LOG.warn("MCP resource '{}' read failed: {}", spec.getName(), error.message());
                 return McpResourceReadResult.error(GENERIC_READ_ERROR);
             }
         } finally {

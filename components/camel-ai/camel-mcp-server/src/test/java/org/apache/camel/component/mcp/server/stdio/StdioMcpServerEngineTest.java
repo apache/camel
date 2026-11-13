@@ -23,11 +23,14 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.ai.tool.AiToolParameterHelper.ParameterDef;
 import org.apache.camel.component.mcp.server.McpPromptArgument;
 import org.apache.camel.component.mcp.server.McpPromptHandler;
 import org.apache.camel.component.mcp.server.McpPromptMessage;
 import org.apache.camel.component.mcp.server.McpPromptResult;
+import org.apache.camel.component.mcp.server.McpResourceReadHandler;
 import org.apache.camel.component.mcp.server.McpResourceReadResult;
+import org.apache.camel.component.mcp.server.McpResourceTemplateReadHandler;
 import org.apache.camel.component.mcp.server.McpServerBridge;
 import org.apache.camel.component.mcp.server.McpServerConfiguration;
 import org.apache.camel.component.mcp.server.McpServerInfo;
@@ -217,7 +220,7 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
             }
 
             @Override
-            public org.apache.camel.component.mcp.server.McpResourceReadHandler handler() {
+            public McpResourceReadHandler handler() {
                 return () -> McpResourceReadResult.text("queued");
             }
         };
@@ -246,7 +249,7 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
             }
 
             @Override
-            public org.apache.camel.component.mcp.server.McpResourceTemplateReadHandler handler() {
+            public McpResourceTemplateReadHandler handler() {
                 return uri -> McpResourceReadResult.text(uri);
             }
         };
@@ -301,7 +304,7 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
             }
 
             @Override
-            public Map<String, org.apache.camel.component.ai.tool.AiToolParameterHelper.ParameterDef> parameters() {
+            public Map<String, ParameterDef> parameters() {
                 return Map.of();
             }
 

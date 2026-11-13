@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
@@ -81,7 +82,7 @@ public final class McpStdioHarnessMain {
                         });
 
                 // Test controls exercise template route lifecycle through the live stdio MCP connection.
-                org.apache.camel.CamelContext camelContext = getContext();
+                CamelContext camelContext = getContext();
                 from("ai-tool:stop_customer_template?tags=" + tags + "&description=Stop the customer template route")
                         .routeId("stop-customer-template-tool")
                         .process(exchange -> {

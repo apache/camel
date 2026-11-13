@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import io.modelcontextprotocol.client.McpClient;
@@ -231,7 +232,7 @@ class StdioMcpServerProcessIT {
     }
 
     private static McpSyncClient createClient(
-            String mode, java.util.function.Consumer<List<McpSchema.Resource>> resourcesChangeConsumer) {
+            String mode, Consumer<List<McpSchema.Resource>> resourcesChangeConsumer) {
         List<String> command = harnessCommand(mode);
         ServerParameters parameters = ServerParameters.builder(command.get(0))
                 .args(command.subList(1, command.size()))
