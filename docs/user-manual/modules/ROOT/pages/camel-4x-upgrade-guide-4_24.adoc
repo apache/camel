@@ -906,6 +906,20 @@ caller), put the EIP in a `doTry` with only a `doFinally` in the called route, o
 called route with `errorHandler(noErrorHandler())`, which turns it off for the other steps of that route too. Neither
 option brings back the redelivery of a whole routing slip or dynamic router.
 
+=== camel-core - an Error of an advice of a route, a route policy or the result processor of a send
+
+An `Error` that is not a `VirtualMachineError` (such as a `NoClassDefFoundError` of a data format), thrown by an advice
+of a route or of a step (such as the binding of the Rest DSL, `variableReceive`, or the debugger, for example an
+assertion in `debugBefore` or `debugAfter` of camel-test), by the result processor of a `ProducerTemplate` send, or by
+the producer of a transacted `ProducerTemplate` send, now fails the exchange (wrapped in a `CamelExecutionException`),
+and the advices that already ran end as for an exception (such as the end of the unit of work). As for an exception of
+an advice, the error handler of that route does not get it. An `Error` of a `RoutePolicy` (`onExchangeBegin`,
+`onExchangeDone`) is logged at WARN and ignored, as an exception already was, so an assertion inside a `RoutePolicy`
+no longer fails the caller. Before, the `Error` was thrown on to the code that ran the route or the send (such as the
+consumer, or the caller of a `ProducerTemplate`), and the exchange could stay inflight (an asynchronous send with a
+result processor could never complete when the endpoint answered on another thread). A `VirtualMachineError` is left
+as before.
+
 === camel-core - an AsyncProcessor that throws in a step without an error handler fails the exchange
 
 A step that has no error handler of its own (the steps of `doTry`, `doCatch`, `doFinally` and `onException`, also when
