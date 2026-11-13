@@ -27,12 +27,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.nats.client.Connection;
 import io.nats.client.JetStream;
 import io.nats.client.JetStreamManagement;
+import io.nats.client.JetStreamStatusException;
 import io.nats.client.JetStreamSubscription;
 import io.nats.client.PullSubscribeOptions;
 import io.nats.client.api.ServerInfo;
 import io.nats.client.api.StreamInfo;
 import io.nats.client.support.DateTimeUtils;
 import io.nats.client.support.JsonParser;
+import io.nats.client.support.Status;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -47,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The stop of a NATS consumer when the flush of the connection fails, and when the consumer stops while its JetStream
- * pull subscribe is in flight.
+ * pull subscribe, or its subscribe again after the server deleted the consumer, is in flight.
  */
 class NatsConsumerStopGapsTest extends CamelTestSupport {
 
@@ -59,6 +61,13 @@ class NatsConsumerStopGapsTest extends CamelTestSupport {
     private final AtomicInteger pullUnsubscribes = new AtomicInteger();
     private final AtomicBoolean pullActive = new AtomicBoolean(true);
     private final AtomicBoolean unsubscribedOnInterruptedThread = new AtomicBoolean();
+
+    // the pull subscribe again of the third test
+    private final CountDownLatch resubscribing = new CountDownLatch(1);
+    private final CountDownLatch resubscribeDone = new CountDownLatch(1);
+    private final AtomicInteger newPullUnsubscribes = new AtomicInteger();
+    private final AtomicBoolean newPullActive = new AtomicBoolean(true);
+    private final AtomicBoolean newUnsubscribedOnInterruptedThread = new AtomicBoolean();
 
     NatsConsumerStopGapsTest() {
         testConfiguration().withUseRouteBuilder(false);
@@ -109,6 +118,30 @@ class NatsConsumerStopGapsTest extends CamelTestSupport {
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, pullUnsubscribes.get(),
                 "the subscription made for the stopped consumer must be ended"));
         assertFalse(unsubscribedOnInterruptedThread.get(), "the unsubscribe must not run on an interrupted thread");
+    }
+
+    @Test
+    void pullSubscriptionMadeAgainWhileStoppingIsEnded() throws Exception {
+        context.getRegistry().bind("conn", resubscribeConnection());
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("nats:orders?connection=#conn&jetstreamEnabled=true&jetstreamName=ORDERS&flushConnection=false")
+                        .routeId("orders").to("mock:result");
+            }
+        });
+        context.start();
+        // the first fetch tells that the server deleted the ephemeral consumer, and the task subscribes again
+        assertTrue(resubscribing.await(10, TimeUnit.SECONDS));
+
+        // the subscribe again completes just before the stop interrupts the task, and the task stores the new
+        // subscription after doStop looked for it
+        context.getRouteController().stopRoute("orders");
+        resubscribeDone.countDown();
+
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, newPullUnsubscribes.get(),
+                "the subscription made again for the stopped consumer must be ended"));
+        assertFalse(newUnsubscribedOnInterruptedThread.get(), "the unsubscribe must not run on an interrupted thread");
     }
 
     @Test
@@ -182,6 +215,80 @@ class NatsConsumerStopGapsTest extends CamelTestSupport {
                     Thread.currentThread().interrupt();
                 }
                 return subscription;
+            }
+            throw new UnsupportedOperationException(name);
+        });
+        ServerInfo info = new ServerInfo("INFO {\"server_id\":\"fake\",\"jetstream\":true}");
+        return proxy(Connection.class, (name, args) -> switch (name) {
+            case "getServerInfo" -> info;
+            case "jetStreamManagement" -> jsm;
+            case "jetStream" -> js;
+            case "getStatus" -> Connection.Status.CONNECTED;
+            default -> null;
+        });
+    }
+
+    private Connection resubscribeConnection() {
+        StreamInfo streamInfo = new StreamInfo(
+                JsonParser.parseUnchecked("{\"config\":{\"name\":\"ORDERS\",\"subjects\":[\"orders\"]},\"created\":\""
+                                          + DateTimeUtils.toRfc3339(ZonedDateTime.now()) + "\",\"state\":{}}"));
+        JetStreamManagement jsm = proxy(JetStreamManagement.class, (name, args) -> switch (name) {
+            case "getStreamInfo", "addStream" -> streamInfo;
+            default -> null;
+        });
+        // the subscription of the first subscribe, whose consumer the server deleted
+        AtomicBoolean firstActive = new AtomicBoolean(true);
+        AtomicBoolean toldDeleted = new AtomicBoolean();
+        JetStreamSubscription[] first = new JetStreamSubscription[1];
+        first[0] = proxy(JetStreamSubscription.class, (name, args) -> switch (name) {
+            case "isActive" -> firstActive.get();
+            case "unsubscribe" -> {
+                firstActive.set(false);
+                yield null;
+            }
+            case "fetch" -> {
+                if (toldDeleted.compareAndSet(false, true)) {
+                    throw new JetStreamStatusException(new Status(409, Status.CONSUMER_DELETED), first[0]);
+                }
+                yield List.of();
+            }
+            default -> null;
+        });
+        // the subscription made again
+        JetStreamSubscription again = proxy(JetStreamSubscription.class, (name, args) -> switch (name) {
+            case "isActive" -> newPullActive.get();
+            case "unsubscribe" -> {
+                // jnats drops the UNSUB that it queues on an interrupted thread
+                newUnsubscribedOnInterruptedThread.compareAndSet(false, Thread.currentThread().isInterrupted());
+                newPullUnsubscribes.incrementAndGet();
+                newPullActive.set(false);
+                yield null;
+            }
+            case "fetch" -> List.of();
+            default -> null;
+        });
+        AtomicInteger subscribes = new AtomicInteger();
+        JetStream js = proxy(JetStream.class, (name, args) -> {
+            if ("subscribe".equals(name) && args.length == 2 && args[1] instanceof PullSubscribeOptions) {
+                if (subscribes.incrementAndGet() == 1) {
+                    return first[0];
+                }
+                resubscribing.countDown();
+                // the subscribe again completed before the interrupt of the stop reached it: the task gets the new
+                // subscription after doStop looked for it
+                boolean interrupted = false;
+                while (true) {
+                    try {
+                        assertTrue(resubscribeDone.await(20, TimeUnit.SECONDS));
+                        break;
+                    } catch (InterruptedException e) {
+                        interrupted = true;
+                    }
+                }
+                if (interrupted) {
+                    Thread.currentThread().interrupt();
+                }
+                return again;
             }
             throw new UnsupportedOperationException(name);
         });

@@ -189,23 +189,26 @@ public class NatsConsumer extends DefaultConsumer {
         }
 
         LOG.debug("Stopping Nats Consumer");
-        if (this.executor != null) {
-            if (this.getEndpoint() != null && this.getEndpoint().getCamelContext() != null) {
-                this.getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(this.executor);
-            } else {
-                this.executor.shutdownNow();
+        try {
+            if (this.executor != null) {
+                if (this.getEndpoint() != null && this.getEndpoint().getCamelContext() != null) {
+                    this.getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(this.executor);
+                } else {
+                    this.executor.shutdownNow();
+                }
             }
-        }
-        this.executor = null;
+            this.executor = null;
 
-        if (ObjectHelper.isEmpty(configuration.getConnection()) && ObjectHelper.isNotEmpty(this.connection)) {
-            LOG.debug("Closing Nats Connection");
-            if (!this.connection.getStatus().equals(Connection.Status.CLOSED)) {
-                this.connection.close();
+            if (ObjectHelper.isEmpty(configuration.getConnection()) && ObjectHelper.isNotEmpty(this.connection)) {
+                LOG.debug("Closing Nats Connection");
+                if (!this.connection.getStatus().equals(Connection.Status.CLOSED)) {
+                    this.connection.close();
+                }
             }
-        }
-        if (interrupted) {
-            Thread.currentThread().interrupt();
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
         }
         super.doStop();
     }
@@ -626,12 +629,9 @@ public class NatsConsumer extends DefaultConsumer {
             unacknowledged.clear();
             NatsConsumer.this.jetStreamSubscription = sub;
             if (!NatsConsumer.this.isRunAllowed()) {
-                // stopping: doStop may have unsubscribed the old subscription before this one was assigned
-                try {
-                    sub.unsubscribe();
-                } catch (Exception e) {
-                    LOG.debug("Error unsubscribing the new pull subscription while stopping", e);
-                }
+                // stopping: doStop may have unsubscribed the old subscription before this one was assigned, and the
+                // stop interrupts this thread
+                unsubscribeStopped(sub);
             }
             try {
                 old.unsubscribe();
