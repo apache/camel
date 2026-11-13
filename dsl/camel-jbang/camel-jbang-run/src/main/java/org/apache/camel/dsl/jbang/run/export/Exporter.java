@@ -643,6 +643,10 @@ abstract class Exporter {
                     if ("github".equals(scheme)) {
                         continue;
                     }
+                    if (CLASSPATH_FILES.equals(k) && f.endsWith(".jar")) {
+                        // a local JAR is a dependency in the lib directory (see copyLocalLibDependencies)
+                        continue;
+                    }
                     String ext = FileUtil.onlyExt(f, true);
                     String ext2 = FileUtil.onlyExt(f, false);
                     if (!"kamelet".equals(k) && ext == null) {
@@ -1236,13 +1240,14 @@ abstract class Exporter {
     protected MavenGav parseMavenGav(String dep) {
         MavenGav gav;
         if (dep.startsWith("lib:") && dep.endsWith(".jar")) {
-            // lib:commons-lang3-3.12.0.jar
-            String n = dep.substring(4);
-            n = n.substring(0, n.length() - 4);
+            // lib:commons-lang3-3.12.0.jar, or lib:dir/commons-lang3-3.12.0.jar for a JAR in a directory
+            String path = dep.substring(4);
             // scan inside JAR in META-INF/maven and find pom.properties file
-            gav = parseLocalJar(n);
+            gav = parseLocalJar(path);
             if (gav == null) {
-                // okay JAR was not maven build
+                // okay JAR was not maven build: the name of the file (not its directory) is the artifact and version
+                String n = FileUtil.stripPath(path);
+                n = n.substring(0, n.length() - 4);
                 gav = new MavenGav();
                 String v = "1.0";
                 String a = n;
@@ -1262,9 +1267,13 @@ abstract class Exporter {
         return gav;
     }
 
-    private MavenGav parseLocalJar(String dep) {
-        Path path = request.baseDir.resolve(dep + ".jar");
-        if (!Files.isRegularFile(path) || !Files.exists(path)) {
+    private MavenGav parseLocalJar(String file) {
+        // the path of the JAR is relative to the current directory, as the run has it (see copyLocalLibDependencies)
+        Path path = Paths.get(file);
+        if (!Files.isRegularFile(path)) {
+            path = request.baseDir.resolve(file);
+        }
+        if (!Files.isRegularFile(path)) {
             return null;
         }
 
@@ -1298,7 +1307,10 @@ abstract class Exporter {
                 Files.createDirectories(libDirPath);
                 String n = d.substring(4);
                 Path sourcePath = Paths.get(n);
-                Path targetPath = libDirPath.resolve(n);
+                // the name that the system path of the dependency in the pom.xml has (artifactId-version.jar), which
+                // is not the name of the JAR when that is not artifactId-version.jar, nor when it is in a directory
+                MavenGav gav = parseMavenGav(d);
+                Path targetPath = libDirPath.resolve(gav.getArtifactId() + "-" + gav.getVersion() + ".jar");
                 ExportHelper.safeCopy(sourcePath, targetPath, true);
             }
         }
