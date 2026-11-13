@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.FunctionCounter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -54,6 +55,7 @@ public final class MicrometerSemanticMetrics extends EventNotifierSupport {
     private static final int MAX_POPULATIONS = 100;
     private static final int MAX_ANSWERS = 64;
     private static final Set<String> STATUSES = Set.of("success", "failed", "not_executed");
+    private static final Set<String> RESULT_TYPES = Set.of("", "BOOLEAN", "CHOICE", "SCORE", "CLASSIFICATION");
     private static final Set<String> UNITS = Set.of("1", "ratio", "bytes", "seconds", "milliseconds", "nanoseconds",
             "count", "requests", "assessments");
     private static final Set<String> DIMENSIONS = Set.of("expert", "definition", "operation", "provider",
@@ -164,7 +166,7 @@ public final class MicrometerSemanticMetrics extends EventNotifierSupport {
             return;
         }
         String type = data.get("semantics") instanceof Map<?, ?> semantics ? text(semantics, "resultType") : "";
-        if (!Set.of("", "BOOLEAN", "CHOICE", "SCORE", "CLASSIFICATION").contains(type)) {
+        if (!RESULT_TYPES.contains(type)) {
             invalidEvents.increment();
             return;
         }
@@ -246,7 +248,7 @@ public final class MicrometerSemanticMetrics extends EventNotifierSupport {
         existing = new HashSet<>(registry.getMeters());
         contextTags = Tags.of(CAMEL_CONTEXT_TAG, getCamelContext().getName());
         errors.set(0);
-        own(Gauge.builder("camel.semantic.collection.errors", errors, AtomicLong::doubleValue)
+        own(FunctionCounter.builder("camel.semantic.collection.errors", errors, AtomicLong::doubleValue)
                 .description("Metric collection failures since this collector started").tags(contextTags).register(registry));
         populationLoss = counter("collection.loss", contextTags.and("reason", "population_limit"));
         answerLoss = counter("collection.loss", contextTags.and("reason", "answer_limit"));
