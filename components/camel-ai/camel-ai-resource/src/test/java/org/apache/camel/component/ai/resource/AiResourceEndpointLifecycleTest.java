@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ai.resource;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -62,7 +63,7 @@ public class AiResourceEndpointLifecycleTest extends CamelTestSupport {
         AiResourceTemplateSpec spec = templates.iterator().next();
         assertThat(spec.getName()).isEqualTo("customer");
         assertThat(spec.getUriTemplate()).isEqualTo("crm://customers/{id}");
-        assertThat(spec.match("crm://customers/42")).hasValue(java.util.Map.of("id", "42"));
+        assertThat(spec.match("crm://customers/42")).hasValue(Map.of("id", "42"));
     }
 
     @Test
@@ -155,6 +156,39 @@ public class AiResourceEndpointLifecycleTest extends CamelTestSupport {
     }
 
     @Test
+    public void testFixedResourceUriContainingBracesFailsRouteStart() throws Exception {
+        try (DefaultCamelContext ctx = new DefaultCamelContext()) {
+            assertThatThrownBy(() -> {
+                ctx.addRoutes(new RouteBuilder() {
+                    public void configure() {
+                        from("ai-resource:account_typo?resourceUri=camel:///accounts/{id}&tags=crm")
+                                .setBody(constant("value"));
+                    }
+                });
+                ctx.start();
+            }).hasStackTraceContaining("Fixed resourceUri must not contain");
+        }
+    }
+
+    @Test
+    public void testOverlappingTemplatesAcrossTagsFailRouteStart() throws Exception {
+        try (DefaultCamelContext ctx = new DefaultCamelContext()) {
+            assertThatThrownBy(() -> {
+                ctx.addRoutes(new RouteBuilder() {
+                    public void configure() {
+                        from("ai-resource:customer_by_id?uriTemplate=crm://customers/{id}&tags=crm")
+                                .setBody(constant("by-id"));
+
+                        from("ai-resource:customer_by_number?uriTemplate=crm://customers/{number}&tags=ops")
+                                .setBody(constant("by-number"));
+                    }
+                });
+                ctx.start();
+            }).hasStackTraceContaining("Overlapping resource uriTemplate");
+        }
+    }
+
+    @Test
     public void testResourceUriAndTemplateAreMutuallyExclusive() throws Exception {
         try (DefaultCamelContext ctx = new DefaultCamelContext()) {
             assertThatThrownBy(() -> {
@@ -167,6 +201,21 @@ public class AiResourceEndpointLifecycleTest extends CamelTestSupport {
                 ctx.start();
             })
                     .hasStackTraceContaining("Only one of resourceUri or uriTemplate");
+        }
+    }
+
+    @Test
+    public void testInvalidResourceUriTemplateFailsRouteStart() throws Exception {
+        try (DefaultCamelContext ctx = new DefaultCamelContext()) {
+            assertThatThrownBy(() -> {
+                ctx.addRoutes(new RouteBuilder() {
+                    public void configure() {
+                        from("ai-resource:invalid?uriTemplate=crm://customers/pre-{id}")
+                                .setBody(constant("value"));
+                    }
+                });
+                ctx.start();
+            }).hasStackTraceContaining("whole path segment");
         }
     }
 

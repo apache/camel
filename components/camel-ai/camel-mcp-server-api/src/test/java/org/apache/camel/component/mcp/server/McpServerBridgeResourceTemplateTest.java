@@ -45,29 +45,25 @@ class McpServerBridgeResourceTemplateTest extends CamelTestSupport {
                 from("ai-resource:customer_by_id?uriTemplate=crm://customers/{id}&tags=crm")
                         .routeId("customer-by-id-template-route")
                         .setBody(header("CamelAiResourceTemplateVariable.id"));
-
-                from("ai-resource:customer_by_number?uriTemplate=crm://customers/{number}&tags=ops")
-                        .routeId("customer-by-number-template-route")
-                        .setBody(header("CamelAiResourceTemplateVariable.number"));
             }
         };
     }
 
     @Test
-    void testOnlyOneOverlappingTemplateIsPublished() {
-        assertThat(engine.resourceTemplates()).hasSize(1);
+    void testSingleTemplateIsPublished() {
+        assertThat(engine.resourceTemplates())
+                .containsOnlyKeys("crm://customers/{id}");
     }
 
     @Test
-    void testRemainingOverlappingTemplateIsPublishedWhenAcceptedRouteStops() throws Exception {
-        String acceptedTemplate = engine.resourceTemplates().keySet().iterator().next();
-        String acceptedRoute = acceptedTemplate.endsWith("{id}")
-                ? "customer-by-id-template-route" : "customer-by-number-template-route";
-        String refusedTemplate = acceptedTemplate.endsWith("{id}")
-                ? "crm://customers/{number}" : "crm://customers/{id}";
+    void testStoppingAndRestartingTemplateRouteRestoresSameTemplate() throws Exception {
+        context.getRouteController().stopRoute("customer-by-id-template-route");
+        assertThat(engine.resourceTemplates()).isEmpty();
 
-        context.getRouteController().stopRoute(acceptedRoute);
+        context.getRouteController().startRoute("customer-by-id-template-route");
 
-        assertThat(engine.resourceTemplates()).containsOnlyKeys(refusedTemplate);
+        assertThat(engine.resourceTemplates())
+                .containsOnlyKeys("crm://customers/{id}");
     }
+
 }

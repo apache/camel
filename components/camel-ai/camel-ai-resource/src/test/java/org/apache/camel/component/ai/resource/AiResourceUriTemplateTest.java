@@ -46,6 +46,20 @@ class AiResourceUriTemplateTest {
     }
 
     @Test
+    void matchesOnlyRfc3986PcharSegmentsAndRejectsUnsafeOrMalformedSegments() {
+        AiResourceUriTemplate template = new AiResourceUriTemplate("crm://customers/{id}");
+
+        assertThat(template.match("crm://customers/a-b._~!$&'()*+,;=:@%2F"))
+                .hasValue(Map.of("id", "a-b._~!$&'()*+,;=:@%2F"));
+        assertThat(template.match("crm://customers/42?x=1")).isEmpty();
+        assertThat(template.match("crm://customers/42#fragment")).isEmpty();
+        assertThat(template.match("crm://customers/.")).isEmpty();
+        assertThat(template.match("crm://customers/..")).isEmpty();
+        assertThat(template.match("crm://customers/a\nb")).isEmpty();
+        assertThat(template.match("crm://customers/%2")).isEmpty();
+    }
+
+    @Test
     void detectsOverlappingTemplates() {
         AiResourceUriTemplate left = new AiResourceUriTemplate("crm://customers/{id}");
         AiResourceUriTemplate right = new AiResourceUriTemplate("crm://customers/{customerId}");
@@ -67,6 +81,13 @@ class AiResourceUriTemplateTest {
         assertThatThrownBy(() -> new AiResourceUriTemplate("crm://customers/{id}/orders/{id}"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Duplicate");
+    }
+
+    @Test
+    void rejectsVariableNamesThatDifferOnlyByCase() {
+        assertThatThrownBy(() -> new AiResourceUriTemplate("camel:///orders/{id}/items/{ID}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("case-insensitive");
     }
 
     @Test

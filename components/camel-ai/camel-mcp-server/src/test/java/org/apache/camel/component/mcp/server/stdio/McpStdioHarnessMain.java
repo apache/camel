@@ -65,7 +65,7 @@ public final class McpStdioHarnessMain {
 
                 // Fixed resource and URI-template routes exercise the real MCP stdio protocol.
                 from("ai-resource:stdio_config?resourceUri=camel:///stdio/config&tags=" + tags
-                     + "&description=A fixed stdio resource")
+                     + "&description=A fixed stdio resource&title=Fixed stdio resource")
                         .routeId("stdio-config-resource")
                         .setBody(constant("stdio-fixed-resource"));
 

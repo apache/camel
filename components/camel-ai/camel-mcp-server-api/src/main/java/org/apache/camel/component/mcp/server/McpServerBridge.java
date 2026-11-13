@@ -553,14 +553,14 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 LOG.warn("MCP resource '{}' did not complete within {} ms; returning a timeout error to the client. "
                          + "The route keeps running until it completes on its own, and exchange {} is not returned "
                          + "to the pool.",
-                        spec.getUri(), configuration.getResourceTimeout(), exchange.getExchangeId());
+                        spec.getName(), configuration.getResourceTimeout(), exchange.getExchangeId());
                 return McpResourceReadResult.error(GENERIC_READ_TIMEOUT_ERROR);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 release = false;
                 return McpResourceReadResult.error(GENERIC_READ_ERROR);
             } catch (ExecutionException e) {
-                LOG.warn("MCP resource '{}' read failed", spec.getUri(), e.getCause());
+                LOG.warn("MCP resource '{}' read failed", spec.getName(), e.getCause());
                 return McpResourceReadResult.error(GENERIC_READ_ERROR);
             }
             if (result instanceof AiResourceResult.Text text) {
@@ -570,7 +570,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             } else {
                 AiResourceResult.ExecutionError error = (AiResourceResult.ExecutionError) result;
                 // never leak raw route exception messages to remote MCP clients
-                LOG.warn("MCP resource '{}' read failed: {}", spec.getUri(), error.message(), error.cause());
+                LOG.warn("MCP resource '{}' read failed", spec.getName());
                 return McpResourceReadResult.error(GENERIC_READ_ERROR);
             }
         } finally {

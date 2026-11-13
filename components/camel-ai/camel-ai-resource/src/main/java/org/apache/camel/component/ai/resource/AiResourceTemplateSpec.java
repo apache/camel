@@ -17,6 +17,7 @@
 package org.apache.camel.component.ai.resource;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.camel.support.DefaultConsumer;
@@ -89,6 +90,30 @@ public final class AiResourceTemplateSpec {
             throw new IllegalArgumentException("URI does not match resource template: " + resourceUri);
         }
         return new AiResourceSpec(name, resourceUri, description, mimeType, title, consumer);
+    }
+
+    // Keep equality consistent with AiResourceSpec. The consumer is included
+    // so different route registrations remain distinct registry entries.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        AiResourceTemplateSpec that = (AiResourceTemplateSpec) o;
+        return Objects.equals(name, that.name)
+                && Objects.equals(uriTemplate, that.uriTemplate)
+                && Objects.equals(description, that.description)
+                && Objects.equals(mimeType, that.mimeType)
+                && Objects.equals(title, that.title)
+                && Objects.equals(consumer, that.consumer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, uriTemplate, description, mimeType, title, consumer);
     }
 
     @Override

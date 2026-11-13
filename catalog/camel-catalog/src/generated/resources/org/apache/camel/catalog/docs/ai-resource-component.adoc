@@ -45,8 +45,11 @@ clients use to read the resource. The uri must be unique within the CamelContext
 `uriTemplate` instead of `resourceUri`; the two options are mutually exclusive.
 
 A `uriTemplate` follows RFC 6570 level 1: each variable must occupy an entire path segment, for example
-`crm://customers/{id}`. Variables do not match across `/` separators. Fixed resources take precedence over a matching
-template when the same concrete URI is read. Two exposed templates that can match the same URI are refused.
+`crm://customers/{id}`. Variables do not match across `/` separators. A concrete variable must use
+RFC 3986 `pchar` characters (including well-formed percent-encoded octets); raw query/fragment
+characters, controls, malformed percent escapes, and `.` or `..` dot segments do not match.
+Fixed resources take precedence over a matching template when the same concrete URI is read.
+Two exposed templates that can match the same URI are refused.
 
 // component options: START
 include::partial$component-configure-options.adoc[]

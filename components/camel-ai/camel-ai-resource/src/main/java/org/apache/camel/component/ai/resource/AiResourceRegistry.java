@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.ai.resource;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -152,25 +154,44 @@ public final class AiResourceRegistry {
     }
 
     /**
-     * Registers a URI template under a tag. Adapters enforce overlap rules against the subset they expose.
+     * Registers a URI template under a tag. Tagged templates must not overlap anywhere in this registry. A conflicting
+     * registration fails route startup rather than depending on adapter selection or iteration order.
      */
     public void putTemplate(String tag, AiResourceTemplateSpec spec) {
         boolean added;
         lock.lock();
         try {
-            Set<AiResourceTemplateSpec> set = resourceTemplates.get(tag);
-            if (set == null) {
-                set = new LinkedHashSet<>();
+            for (Map.Entry<String, Set<AiResourceTemplateSpec>> entry : resourceTemplates.entrySet()) {
+                for (AiResourceTemplateSpec existing : entry.getValue()) {
+                    // The same route specification may intentionally be registered under several tags.
+                    if (existing == spec) {
+                        continue;
+                    }
+
+                    if (existing.getUriTemplate().equals(spec.getUriTemplate())) {
+                        throw new IllegalArgumentException(
+                                "Duplicate resource uriTemplate '" + spec.getUriTemplate()
+                                                           + "' already registered under tag '" + entry.getKey()
+                                                           + "': uri templates must be unique");
+                    }
+
+                    if (existing.overlaps(spec)) {
+                        throw new IllegalArgumentException(
+                                "Overlapping resource uriTemplate '" + spec.getUriTemplate()
+                                                           + "' under tag '" + tag
+                                                           + "' with existing template '" + existing.getUriTemplate()
+                                                           + "' under tag '" + entry.getKey()
+                                                           + "': resource templates must not match the same URI");
+                    }
+                }
             }
-            // The registry is framework-agnostic and does not know which tags an adapter exposes. An adapter
-            // refuses overlapping templates within its selected view when it publishes them.
+
+            Set<AiResourceTemplateSpec> set = resourceTemplates.computeIfAbsent(tag, key -> new LinkedHashSet<>());
             added = set.add(spec);
-            if (added) {
-                resourceTemplates.putIfAbsent(tag, set);
-            }
         } finally {
             lock.unlock();
         }
+
         if (added) {
             notifyTemplateRegistered(tag, spec);
         }
@@ -199,15 +220,21 @@ public final class AiResourceRegistry {
     }
 
     /**
-     * Registers a template in the default pool. It is checked against every tagged pool because the default pool is
-     * merged into every tag-specific view.
+     * Registers a template in the default pool. Exact duplicates are rejected within this pool. The default pool
+     * remains separate from tagged templates and is not published by camel-mcp-server.
      */
     public void putDefaultTemplate(AiResourceTemplateSpec spec) {
         boolean added;
         lock.lock();
         try {
-            // Default templates are merged into every tagged view; collision checks belong to the adapter's
-            // selected publication set rather than this generic registry.
+            for (AiResourceTemplateSpec existing : defaultResourceTemplates) {
+                if (existing.getUriTemplate().equals(spec.getUriTemplate()) && existing != spec) {
+                    throw new IllegalArgumentException(
+                            "Duplicate resource uriTemplate '" + spec.getUriTemplate()
+                                                       + "' in the default pool: uri templates must be unique");
+                }
+            }
+            // Cross-pool overlap checks belong to adapters, which know the templates they expose.
             added = defaultResourceTemplates.add(spec);
         } finally {
             lock.unlock();
@@ -377,19 +404,30 @@ public final class AiResourceRegistry {
         }
     }
 
+    /**
+     * Returns a snapshot of the tag-to-template-spec mapping. Tags are sorted lexicographically and each value set is a
+     * defensive copy.
+     *
+     * @since 4.24
+     */
     public Map<String, Set<AiResourceTemplateSpec>> getResourceTemplates() {
         lock.lock();
         try {
-            Map<String, Set<AiResourceTemplateSpec>> snapshot = new LinkedHashMap<>();
+            Map<String, Set<AiResourceTemplateSpec>> snapshot = new TreeMap<>();
             for (Map.Entry<String, Set<AiResourceTemplateSpec>> entry : resourceTemplates.entrySet()) {
                 snapshot.put(entry.getKey(), new LinkedHashSet<>(entry.getValue()));
             }
-            return Map.copyOf(snapshot);
+            return Collections.unmodifiableMap(snapshot);
         } finally {
             lock.unlock();
         }
     }
 
+    /**
+     * Returns a snapshot of the default (untagged) resource templates.
+     *
+     * @since 4.24
+     */
     public Set<AiResourceTemplateSpec> getDefaultResourceTemplates() {
         lock.lock();
         try {

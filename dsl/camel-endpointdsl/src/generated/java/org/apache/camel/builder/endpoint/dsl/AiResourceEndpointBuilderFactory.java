@@ -283,6 +283,20 @@ public interface AiResourceEndpointBuilderFactory {
          * Since: 4.23
          * Maven coordinates: org.apache.camel:camel-ai-resource
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default AiResourceHeaderNameBuilder aiResource() {
+            return AiResourceHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AI Resource (camel-ai-resource)
+         * Framework-agnostic consumer endpoint that registers a Camel route as
+         * a read-only AI resource in the shared AiResourceRegistry.
+         * 
+         * Category: ai
+         * Since: 4.23
+         * Maven coordinates: org.apache.camel:camel-ai-resource
+         * 
          * Syntax: <code>ai-resource:resourceName</code>
          * 
          * Path parameter: resourceName (required)
@@ -319,6 +333,42 @@ public interface AiResourceEndpointBuilderFactory {
             return AiResourceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the AI Resource component.
+     */
+    public static class AiResourceHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final AiResourceHeaderNameBuilder INSTANCE = new AiResourceHeaderNameBuilder();
+
+        /**
+         * Header containing the concrete URI requested for a resource-template
+         * read.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AiResourceUri}.
+         */
+        public String aiResourceUri() {
+            return "CamelAiResourceUri";
+        }
+        /**
+         * Prefix for headers carrying raw, client-supplied template variables.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AiResourceTemplateVariable.}.
+         */
+        public String airesourcetemplatevariable() {
+            return "CamelAiResourceTemplateVariable.";
+        }
     }
     static AiResourceEndpointBuilder endpointBuilder(String componentName, String path) {
         class AiResourceEndpointBuilderImpl extends AbstractEndpointBuilder implements AiResourceEndpointBuilder, AdvancedAiResourceEndpointBuilder {

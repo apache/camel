@@ -52,47 +52,47 @@ public final class AiResourceExecutor {
      * @return          an {@link AiResourceResult} classifying the outcome; never null
      */
     public static AiResourceResult execute(AiResourceSpec spec, Exchange exchange) {
-        String uri = spec.getUri();
+        String resourceName = spec.getName();
 
         DefaultConsumer consumer = spec.getConsumer();
         if (consumer == null) {
             IllegalStateException cause = new IllegalStateException(
-                    String.format("No consumer available for resource '%s'", uri));
+                    String.format("No consumer available for resource '%s'", spec.getUri()));
             return new AiResourceResult.ExecutionError(cause.getMessage(), cause);
         }
 
         Processor routeProcessor = consumer.getProcessor();
         if (routeProcessor == null) {
             IllegalStateException cause = new IllegalStateException(
-                    String.format("No route processor available for resource '%s'", uri));
+                    String.format("No route processor available for resource '%s'", spec.getUri()));
             return new AiResourceResult.ExecutionError(cause.getMessage(), cause);
         }
 
-        LOG.debug("Reading Camel route resource: '{}'", uri);
+        LOG.debug("Reading Camel route resource: '{}'", resourceName);
 
         try {
             routeProcessor.process(exchange);
 
             if (exchange.getException() != null) {
                 Exception routeError = exchange.getException();
-                LOG.error("Error reading resource '{}': {}", uri, routeError.getMessage(), routeError);
+                LOG.error("Error reading resource '{}': {}", resourceName, routeError.getMessage(), routeError);
                 return new AiResourceResult.ExecutionError(
-                        String.format("Error reading resource '%s': %s", uri, routeError.getMessage()), routeError);
+                        String.format("Error reading resource '%s': %s", spec.getUri(), routeError.getMessage()), routeError);
             }
 
             return convertBody(spec, exchange);
         } catch (Exception e) {
-            LOG.error("Error reading resource '{}': {}", uri, e.getMessage(), e);
+            LOG.error("Error reading resource '{}': {}", resourceName, e.getMessage(), e);
             return new AiResourceResult.ExecutionError(
-                    String.format("Error reading resource '%s': %s", uri, e.getMessage()), e);
+                    String.format("Error reading resource '%s': %s", spec.getUri(), e.getMessage()), e);
         }
     }
 
     private static AiResourceResult convertBody(AiResourceSpec spec, Exchange exchange) {
-        String uri = spec.getUri();
+        String resourceName = spec.getName();
         if (exchange.getMessage().getBody() == null) {
             IllegalStateException cause = new IllegalStateException(
-                    String.format("Resource '%s' produced no content", uri));
+                    String.format("Resource '%s' produced no content", spec.getUri()));
             return new AiResourceResult.ExecutionError(cause.getMessage(), cause);
         }
 
@@ -106,7 +106,7 @@ public final class AiResourceExecutor {
             if (text == null) {
                 return conversionError(spec, "String", null);
             }
-            LOG.debug("Resource '{}' read {} characters", uri, text.length());
+            LOG.debug("Resource '{}' read {} characters", resourceName, text.length());
             return new AiResourceResult.Text(text);
         }
 
@@ -119,7 +119,7 @@ public final class AiResourceExecutor {
         if (blob == null) {
             return conversionError(spec, "byte[]", null);
         }
-        LOG.debug("Resource '{}' read {} bytes", uri, blob.length);
+        LOG.debug("Resource '{}' read {} bytes", resourceName, blob.length);
         return new AiResourceResult.Binary(blob);
     }
 

@@ -77,6 +77,12 @@ class StdioMcpServerProcessIT {
                     .contains("camel:///stdio/config")
                     .doesNotContain("camel:///stdio/hidden");
 
+            McpSchema.Resource fixedResource = resources.stream()
+                    .filter(resource -> "camel:///stdio/config".equals(resource.uri()))
+                    .findFirst()
+                    .orElseThrow();
+            assertThat(fixedResource.title()).isEqualTo("Fixed stdio resource");
+
             List<McpSchema.ResourceTemplate> templates = client.listResourceTemplates().resourceTemplates();
             assertThat(templates).extracting(McpSchema.ResourceTemplate::uriTemplate)
                     .contains("camel:///stdio/customers/{customerId}")

@@ -80,6 +80,20 @@ public class EndpointHeaderBuilders {
         return ActiveMQ6EndpointBuilderFactory.ActiveMQ6HeaderNameBuilder.INSTANCE;
     }
     /**
+     * AI Resource (camel-ai-resource)
+     * Framework-agnostic consumer endpoint that registers a Camel route as a
+     * read-only AI resource in the shared AiResourceRegistry.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-ai-resource
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static AiResourceEndpointBuilderFactory.AiResourceHeaderNameBuilder aiResource() {
+        return AiResourceEndpointBuilderFactory.AiResourceHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * AI Tool (camel-ai-tool)
      * Framework-agnostic consumer endpoint that registers a Camel route as an
      * LLM tool in the shared AiToolRegistry.

@@ -106,6 +106,13 @@ public class AiResourceConsumer extends DefaultConsumer {
         }
 
         if (hasResourceUri) {
+            // The MCP SDK treats braces in fixed resource URIs as URI-template expressions.
+            // Require route authors to configure uriTemplate explicitly instead.
+            if (resourceUri.indexOf('{') >= 0 || resourceUri.indexOf('}') >= 0) {
+                throw new IllegalArgumentException(
+                        "Fixed resourceUri must not contain '{' or '}'; use uriTemplate instead: ai-resource:"
+                                                   + resourceName);
+            }
             registeredSpec = new AiResourceSpec(
                     resourceName, resourceUri, desc, mimeType, configuration.getTitle(), this);
         } else {

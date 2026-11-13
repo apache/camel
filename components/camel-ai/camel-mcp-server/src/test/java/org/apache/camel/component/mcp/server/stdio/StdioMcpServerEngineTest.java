@@ -19,6 +19,7 @@ package org.apache.camel.component.mcp.server.stdio;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -300,8 +301,8 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
             }
 
             @Override
-            public java.util.Map<String, org.apache.camel.component.ai.tool.AiToolParameterHelper.ParameterDef> parameters() {
-                return java.util.Map.of();
+            public Map<String, org.apache.camel.component.ai.tool.AiToolParameterHelper.ParameterDef> parameters() {
+                return Map.of();
             }
 
             @Override

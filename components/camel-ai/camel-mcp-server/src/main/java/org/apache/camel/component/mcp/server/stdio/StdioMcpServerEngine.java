@@ -34,6 +34,7 @@ import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.server.transport.StdioServerTransportProvider;
+import io.modelcontextprotocol.spec.McpError;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.ai.tool.AiToolAnnotations;
@@ -270,18 +271,21 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
 
     @Override
     public void resourceAdded(McpServerResource resource) {
-        McpSchema.Resource mcpResource = McpSchema.Resource.builder()
+        McpSchema.Resource.Builder resourceBuilder = McpSchema.Resource.builder()
                 .uri(resource.uri())
                 .name(resource.name())
                 .description(resource.description())
-                .mimeType(resource.mimeType())
-                .build();
+                .mimeType(resource.mimeType());
+        if (resource.title() != null && !resource.title().isBlank()) {
+            resourceBuilder.title(resource.title());
+        }
+        McpSchema.Resource mcpResource = resourceBuilder.build();
         McpServerFeatures.SyncResourceSpecification spec = new McpServerFeatures.SyncResourceSpecification(
                 mcpResource,
                 (exchange, request) -> {
                     McpResourceReadResult result = resource.handler().read();
                     if (result.isError()) {
-                        throw io.modelcontextprotocol.spec.McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+                        throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
                                 .message(result.errorMessage())
                                 .build();
                     }
@@ -347,7 +351,7 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
                 (exchange, request) -> {
                     McpResourceReadResult result = resourceTemplate.handler().read(request.uri());
                     if (result.isError()) {
-                        throw io.modelcontextprotocol.spec.McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+                        throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
                                 .message(result.errorMessage())
                                 .build();
                     }

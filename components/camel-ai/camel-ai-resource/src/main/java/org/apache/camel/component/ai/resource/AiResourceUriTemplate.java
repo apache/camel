@@ -39,6 +39,9 @@ public final class AiResourceUriTemplate {
 
     private static final Pattern SCHEME = Pattern.compile("[A-Za-z][A-Za-z0-9+.-]*");
     private static final Pattern VARIABLE_NAME = Pattern.compile("[A-Za-z0-9_]+(?:\\.[A-Za-z0-9_]+)*");
+    // RFC 3986 pchar: unreserved / pct-encoded / sub-delims / ":" / "@".
+    // Keep percent-encoded octets intact so an encoded slash remains one segment.
+    private static final String PCHAR_SEGMENT = "(?:[A-Za-z0-9._~!$&'()*+,;=:@-]|%[0-9A-Fa-f]{2})+";
 
     private final String template;
     private final String prefix;
@@ -91,9 +94,12 @@ public final class AiResourceUriTemplate {
             if (!VARIABLE_NAME.matcher(variable).matches()) {
                 throw new IllegalArgumentException("Invalid resource uriTemplate variable name '" + variable + "'");
             }
-            if (parsedVariables.contains(variable)) {
+            // Camel message header names are case-insensitive. Reject case variants
+            // so two URI variables cannot silently overwrite the same header.
+            if (parsedVariables.stream().anyMatch(existing -> existing.equalsIgnoreCase(variable))) {
                 throw new IllegalArgumentException(
-                        "Duplicate resource uriTemplate variable '" + variable + "': " + template);
+                        "Duplicate resource uriTemplate variable (case-insensitive) '"
+                                                   + variable + "': " + template);
             }
             parsedVariables.add(variable);
             parsedSegments.add(Segment.variable(variable));
@@ -110,7 +116,7 @@ public final class AiResourceUriTemplate {
         for (Segment segment : segments) {
             regex.append('/');
             if (segment.isVariable()) {
-                regex.append("([^/]+)");
+                regex.append('(').append(PCHAR_SEGMENT).append(')');
             } else {
                 regex.append(Pattern.quote(segment.literal()));
             }
@@ -137,7 +143,12 @@ public final class AiResourceUriTemplate {
         }
         Map<String, String> values = new LinkedHashMap<>();
         for (int i = 0; i < variableNames.size(); i++) {
-            values.put(variableNames.get(i), matcher.group(i + 1));
+            String value = matcher.group(i + 1);
+            // Dot segments can be normalized by downstream URI/path consumers.
+            if (".".equals(value) || "..".equals(value)) {
+                return Optional.empty();
+            }
+            values.put(variableNames.get(i), value);
         }
         return Optional.of(Collections.unmodifiableMap(values));
     }
