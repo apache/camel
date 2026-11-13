@@ -78,10 +78,14 @@ public class IntegrationStatus extends ProcessBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        if (("*".equals(name) || name == null || name.isBlank()) && ProcessFinder.find("*").isEmpty()) {
+        // no name (as ActionBaseCommand.findProcesses has it) is the only integration that runs
+        String query = name == null || name.isBlank() ? "*" : name;
+        List<CamelProcess> found = ProcessFinder.find(query);
+        if (found.isEmpty() && "*".equals(query)) {
             throw CliException.notFound("No running Camel integrations");
         }
-        CamelProcess process = ProcessFinder.requireOne(name == null || name.isBlank() ? "*" : name);
+        // one scan when one integration matches; requireOne scans again only to tell what is wrong
+        CamelProcess process = found.size() == 1 ? found.get(0) : ProcessFinder.requireOne(query);
         JsonObject log = LogFileReader.read(process.pid(), process.name(), Math.max(logLines, RELOAD_RECORDS), null,
                 null, false);
         JsonObject status = status(process, loadErrorFile(process.pid()), log, logLines, errors);
