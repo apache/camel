@@ -355,18 +355,18 @@ public interface OpaComponentBuilderFactory {
             return this;
         }
     
-
+        
         /**
          * Whether the server readiness check also requires activation of OPA's
          * configured bundles. Sends /health?bundles=true. Does not enable
          * health checks, change policy evaluation or guarantee a particular
          * policy revision. Not used in wasm mode or with an injected client.
-         *
+         * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         *
+         * 
          * Default: false
          * Group: advanced
-         *
+         * 
          * @param healthCheckBundles the value to set
          * @return the dsl builder
          */
@@ -374,7 +374,7 @@ public interface OpaComponentBuilderFactory {
             doSetProperty("healthCheckBundles", healthCheckBundles);
             return this;
         }
-
+    
         /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
