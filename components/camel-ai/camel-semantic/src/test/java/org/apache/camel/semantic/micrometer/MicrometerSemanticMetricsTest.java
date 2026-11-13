@@ -19,6 +19,7 @@ package org.apache.camel.semantic.micrometer;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.config.MeterFilter;
+import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.prometheusmetrics.PrometheusConfig;
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
@@ -51,6 +53,12 @@ import org.apache.camel.semantic.SemanticResultMetrics;
 import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventHelper;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -178,7 +186,7 @@ class MicrometerSemanticMetricsTest {
             assertThat(registry.get("camel.semantic.collection.errors").gauge().value()).isEqualTo(1);
             assertThat(registry.get("camel.semantic.score.observations").counter().count()).isEqualTo(1);
             assertThat(registry.get("camel.semantic.score.sum").gauge().value()).isEqualTo(1.6);
-            assertThat(registry.get("camel.semantic.score.bucket").tag("le", "+Inf").counter().count()).isEqualTo(1);
+            assertThat(registry.get("camel.semantic.score.distribution").tag("le", "+Inf").counter().count()).isEqualTo(1);
         }
     }
 
@@ -244,13 +252,47 @@ class MicrometerSemanticMetricsTest {
             assertThat(registry.get("camel.semantic.score.minimum").gauge().value()).isEqualTo(-0.4);
             assertThat(registry.get("camel.semantic.score.maximum").gauge().value()).isEqualTo(1.6);
             assertThat(registry.get("camel.semantic.score.observations").counter().count()).isEqualTo(2);
-            assertThat(registry.get("camel.semantic.score.bucket").tag("le", "0.0").counter().count()).isEqualTo(1);
-            assertThat(registry.get("camel.semantic.score.bucket").tag("le", "+Inf").counter().count()).isEqualTo(2);
+            assertThat(registry.get("camel.semantic.score.distribution").tag("le", "0.0").counter().count()).isEqualTo(1);
+            assertThat(registry.get("camel.semantic.score.distribution").tag("le", "+Inf").counter().count()).isEqualTo(2);
             String scrape = registry.scrape();
             assertThat(scrape).contains("camel_semantic_duration_seconds_bucket", "camel_semantic_duration_seconds_count",
                     "camel_semantic_duration_seconds_sum", "camel_semantic_score_observations_total")
                     .doesNotContain("private-input", "eventId", "breadcrumbId", "invocationId");
+            assertThat(scrape.lines().filter(line -> line.startsWith("camel_semantic_score_distribution_total{")))
+                    .anySatisfy(line -> assertThat(line).contains("le=\"0.0\"", "camelContext=\"" + context.getName() + "\"")
+                            .endsWith(" 1.0"));
             assertThat(registry.get("camel.semantic.duration").timer().totalTime(TimeUnit.MILLISECONDS)).isEqualTo(10);
+        }
+    }
+
+    @Test
+    void applicationCanLimitDurationHistogramBuckets() throws Exception {
+        var registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+        registry.config().meterFilter(new MeterFilter() {
+            @Override
+            public DistributionStatisticConfig configure(Meter.Id id, DistributionStatisticConfig config) {
+                if (id.getName().equals("camel.semantic.duration")) {
+                    return DistributionStatisticConfig.builder().percentilesHistogram(false)
+                            .serviceLevelObjectives(Duration.ofMillis(10).toNanos(), Duration.ofMillis(100).toNanos(),
+                                    Duration.ofSeconds(1).toNanos(), Duration.ofSeconds(10).toNanos())
+                            .build().merge(config);
+                }
+                return config;
+            }
+        });
+        try (AutoCloseable closeRegistry = registry::close; var context = new DefaultCamelContext()) {
+            context.getManagementStrategy().addEventNotifier(new MicrometerSemanticMetrics(registry));
+            context.start();
+            send(context, event(ResultType.SCORE, Map.of("value", 1), "success", 50000000));
+            send(context, event(ResultType.SCORE, Map.of("value", 2), "success", 15000000000L));
+            String scrape = registry.scrape();
+            assertThat(scrape.lines().filter(line -> line.startsWith("camel_semantic_duration_seconds_bucket{")))
+                    .hasSize(5);
+            assertThat(scrape.lines().filter(line -> line.startsWith("camel_semantic_duration_seconds_bucket{")))
+                    .anySatisfy(line -> assertThat(line).contains("le=\"0.1\"").endsWith(" 1"))
+                    .anySatisfy(line -> assertThat(line).contains("le=\"+Inf\"").endsWith(" 2"));
+            assertThat(registry.get("camel.semantic.duration").timer().count()).isEqualTo(2);
+            assertThat(registry.get("camel.semantic.duration").timer().totalTime(TimeUnit.MILLISECONDS)).isEqualTo(15050);
         }
     }
 
@@ -298,6 +340,17 @@ class MicrometerSemanticMetricsTest {
 
     @Test
     void registryFailureIsVisibleAndDoesNotEscapeTheCallback() throws Exception {
+        Logger logger = (Logger) LogManager.getLogger(MicrometerSemanticMetrics.class);
+        Level previous = logger.getLevel();
+        List<LogEvent> messages = new ArrayList<>();
+        var appender = new AbstractAppender("SemanticMetricsTest", null, null, true, Property.EMPTY_ARRAY) {
+            public void append(LogEvent event) {
+                messages.add(event.toImmutable());
+            }
+        };
+        appender.start();
+        logger.addAppender(appender);
+        logger.setLevel(Level.WARN);
         var registry = new SimpleMeterRegistry();
         try (AutoCloseable closeRegistry = registry::close; var context = new DefaultCamelContext()) {
             registry.config().meterFilter(new MeterFilter() {
@@ -313,7 +366,18 @@ class MicrometerSemanticMetricsTest {
             context.getManagementStrategy().addEventNotifier(metrics);
             context.start();
             metrics.notify(event(ResultType.BOOLEAN, Map.of("value", true), "success", 1));
-            assertThat(registry.get("camel.semantic.collection.errors").gauge().value()).isEqualTo(1);
+            metrics.notify(event(ResultType.BOOLEAN, Map.of("value", false), "success", 1));
+            assertThat(registry.get("camel.semantic.collection.errors").gauge().value()).isEqualTo(2);
+            assertThat(messages).singleElement().satisfies(message -> {
+                assertThat(message.getLevel()).isEqualTo(Level.WARN);
+                assertThat(message.getMessage().getFormattedMessage()).contains("java.lang.IllegalStateException")
+                        .doesNotContain("private-provider-error", "private-input");
+                assertThat(message.getThrown()).isNull();
+            });
+        } finally {
+            logger.setLevel(previous);
+            logger.removeAppender(appender);
+            appender.stop();
         }
     }
 

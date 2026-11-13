@@ -37,6 +37,8 @@ import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.semantic.SemanticMonitoringEvent;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Optional Micrometer instrumentation of completed semantic assessment members. Register one notifier with the Camel
@@ -46,6 +48,8 @@ import org.apache.camel.support.EventNotifierSupport;
  * @since 4.24
  */
 public final class MicrometerSemanticMetrics extends EventNotifierSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(MicrometerSemanticMetrics.class);
+    private static final String CAMEL_CONTEXT_TAG = "camelContext";
     private static final int MAX_POPULATIONS = 100;
     private static final int MAX_ANSWERS = 64;
     private static final Set<String> STATUSES = Set.of("success", "failed", "not_executed");
@@ -104,7 +108,11 @@ public final class MicrometerSemanticMetrics extends EventNotifierSupport {
             }
         } catch (Exception | AssertionError | LinkageError failure) {
             // Instrumentation must not change the assessment or expose payloads through exception logging.
-            errors.incrementAndGet();
+            if (errors.incrementAndGet() == 1) {
+                LOG.warn(
+                        "Semantic metric collection failed ({}); further failures are counted in camel.semantic.collection.errors",
+                        failure.getClass().getName());
+            }
         }
     }
 
@@ -235,7 +243,7 @@ public final class MicrometerSemanticMetrics extends EventNotifierSupport {
             throw new IllegalStateException("Only one Semantic Micrometer collector may be registered per CamelContext");
         }
         existing = new HashSet<>(registry.getMeters());
-        contextTags = Tags.of("camel.context", getCamelContext().getName());
+        contextTags = Tags.of(CAMEL_CONTEXT_TAG, getCamelContext().getName());
         errors.set(0);
         own(Gauge.builder("camel.semantic.collection.errors", errors, AtomicLong::doubleValue)
                 .description("Metric collection failures since this collector started").tags(contextTags).register(registry));
@@ -295,9 +303,9 @@ public final class MicrometerSemanticMetrics extends EventNotifierSupport {
                 own(Gauge.builder("camel.semantic.score.maximum", this, p -> p.maximum).tags(tags).register(registry));
                 List<Counter> registeredBuckets = new ArrayList<>();
                 for (double bound : scoreBounds) {
-                    registeredBuckets.add(counter("score.bucket", tags.and("le", Double.toString(bound))));
+                    registeredBuckets.add(counter("score.distribution", tags.and("le", Double.toString(bound))));
                 }
-                registeredBuckets.add(counter("score.bucket", tags.and("le", "+Inf")));
+                registeredBuckets.add(counter("score.distribution", tags.and("le", "+Inf")));
                 buckets.addAll(registeredBuckets);
                 scores = observations;
             }
