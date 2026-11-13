@@ -16,13 +16,13 @@
  */
 package org.apache.camel.impl.debugger;
 
-import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -81,7 +81,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private final ConcurrentMap<String, BacklogTracerEventMessage> suspendedBreakpointMessages = new ConcurrentHashMap<>();
 
     private final AtomicReference<CountDownLatch> suspend = new AtomicReference<>();
-    private final Deque<String> singleStepExchangeId = new ArrayDeque<>();
+    // changed by the threads of the debugger client and of the exchanges
+    private final Deque<String> singleStepExchangeId = new ConcurrentLinkedDeque<>();
     private final AtomicBoolean stepOverMode = new AtomicBoolean();
     private final AtomicBoolean skipOverMode = new AtomicBoolean();
 
@@ -925,6 +926,14 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     }
 
     /**
+     * Removes the message at the node if it is the message of the given exchange (another exchange may be suspended at
+     * the node by now).
+     */
+    private void removeMessageOf(String nodeId, String exchangeId) {
+        suspendedBreakpointMessages.computeIfPresent(nodeId, (k, m) -> exchangeId.equals(m.getExchangeId()) ? null : m);
+    }
+
+    /**
      * Represents a {@link org.apache.camel.spi.Breakpoint} that has a {@link Condition} on a specific node id.
      */
     private final class NodeBreakpoint extends BreakpointSupport implements Condition {
@@ -970,20 +979,27 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                             first, false, uid, timestamp, source, fromRouteId, routeId, toNode, toNodeParentId, null, null,
                             toNodeShortName, toNodeLabel, level, exchangeId, correlationExchangeId, breadcrumbId,
                             false, false, data);
-            suspendedBreakpointMessages.put(nodeId, msg);
 
-            // suspend at this breakpoint
+            // suspend at this breakpoint, with the suspended exchange that matchProcess registered for this exchange:
+            // the breakpoint may have been resumed before this exchange got here, and another exchange may be suspended
+            // at this node by now, which this exchange must neither wait for nor replace in the debugger
             final SuspendedExchange se = suspendedBreakpoints.get(nodeId);
-            if (se != null) {
+            if (se != null && se.getExchange() == exchange) {
+                // publish the message only while this exchange is the one suspended at the node, in one step with the
+                // check, as a resume and another exchange can come in between
+                suspendedBreakpointMessages.compute(nodeId, (k, m) -> suspendedBreakpoints.get(k) == se ? msg : m);
                 // now wait until we should continue
                 logger.log(String.format("NodeBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
                         exchangeId));
                 try {
                     boolean hit = se.awaitExchange(fallbackTimeout);
+                    // the message of this exchange only (a resume removes it already); by exchange id, as the debugger
+                    // replaces the message when the body or a header is changed at the breakpoint
+                    removeMessageOf(nodeId, exchangeId);
                     if (!hit) {
-                        // remove breakpoint as it timed out
-                        suspendedBreakpointMessages.remove(nodeId);
-                        suspendedBreakpoints.remove(nodeId);
+                        // remove breakpoint as it timed out (only the suspended exchange of this exchange: another
+                        // exchange may be suspended at this node after a resume)
+                        suspendedBreakpoints.remove(nodeId, se);
                         logger.log(
                                 String.format("NodeBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
                                         exchangeId),
@@ -1075,9 +1091,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             try {
                 boolean hit = se.awaitExchange(fallbackTimeout);
                 if (!hit) {
-                    // remove breakpoint as it timed out
-                    suspendedBreakpointMessages.remove(toNode);
-                    suspendedBreakpoints.remove(toNode);
+                    // remove breakpoint as it timed out (only the ones of this exchange)
+                    removeMessageOf(toNode, exchange.getExchangeId());
+                    suspendedBreakpoints.remove(toNode, se);
                     logger.log(
                             String.format("StepBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
                                     exchange.getExchangeId()),
@@ -1194,9 +1210,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             try {
                 boolean hit = se.awaitExchange(fallbackTimeout);
                 if (!hit) {
-                    // remove breakpoint as it timed out
-                    suspendedBreakpointMessages.remove(toNode);
-                    suspendedBreakpoints.remove(toNode);
+                    // remove breakpoint as it timed out (only the ones of this exchange)
+                    removeMessageOf(toNode, exchange.getExchangeId());
+                    suspendedBreakpoints.remove(toNode, se);
                     logger.log(
                             String.format("StepBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
                                     exchange.getExchangeId()),
