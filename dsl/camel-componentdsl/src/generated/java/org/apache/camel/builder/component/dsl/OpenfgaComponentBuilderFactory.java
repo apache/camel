@@ -92,21 +92,21 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("authorizationModelId", authorizationModelId);
             return this;
         }
-
-
+    
+        
         /**
          * Whether batchCheck fans out individual checks (client, the compatible
          * default) or uses the native server BatchCheck API (server, requires
          * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
          * and correlates responses back to the original objects. Failures never
          * fall back to an unfiltered result or another mode.
-         *
+         * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaBatchCheckMode&lt;/code&gt; type.
-         *
+         * 
          * Default: client
          * Group: producer
-         *
+         * 
          * @param batchCheckMode the value to set
          * @return the dsl builder
          */
@@ -487,12 +487,12 @@ public interface OpenfgaComponentBuilderFactory {
          * Maximum number of checks per native server BatchCheck request, from 1
          * to 50. Applies only when batchCheckMode=server; the SDK splits larger
          * input lists into requests of at most this size.
-         *
+         * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         *
+         * 
          * Default: 50
          * Group: advanced
-         *
+         * 
          * @param maxBatchSize the value to set
          * @return the dsl builder
          */
@@ -500,8 +500,8 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("maxBatchSize", maxBatchSize);
             return this;
         }
-
-
+    
+        
         /**
          * How many HTTP requests a batchCheck may have in flight at once. In
          * client mode each request checks one object; in server mode each

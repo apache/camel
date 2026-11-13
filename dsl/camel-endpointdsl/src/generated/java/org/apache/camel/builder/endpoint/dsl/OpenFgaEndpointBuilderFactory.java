@@ -89,14 +89,14 @@ public interface OpenFgaEndpointBuilderFactory {
          * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
          * and correlates responses back to the original objects. Failures never
          * fall back to an unfiltered result or another mode.
-         *
+         * 
          * The option is a:
          * <code>org.apache.camel.component.openfga.OpenFgaBatchCheckMode</code>
          * type.
-         *
+         * 
          * Default: client
          * Group: producer
-         *
+         * 
          * @param batchCheckMode the value to set
          * @return the dsl builder
          */
@@ -110,14 +110,14 @@ public interface OpenFgaEndpointBuilderFactory {
          * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
          * and correlates responses back to the original objects. Failures never
          * fall back to an unfiltered result or another mode.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.openfga.OpenFgaBatchCheckMode</code>
          * type.
-         *
+         * 
          * Default: client
          * Group: producer
-         *
+         * 
          * @param batchCheckMode the value to set
          * @return the dsl builder
          */
@@ -722,12 +722,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * Maximum number of checks per native server BatchCheck request, from 1
          * to 50. Applies only when batchCheckMode=server; the SDK splits larger
          * input lists into requests of at most this size.
-         *
+         * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Default: 50
          * Group: advanced
-         *
+         * 
          * @param maxBatchSize the value to set
          * @return the dsl builder
          */
@@ -739,12 +739,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * Maximum number of checks per native server BatchCheck request, from 1
          * to 50. Applies only when batchCheckMode=server; the SDK splits larger
          * input lists into requests of at most this size.
-         *
+         * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Default: 50
          * Group: advanced
-         *
+         * 
          * @param maxBatchSize the value to set
          * @return the dsl builder
          */
