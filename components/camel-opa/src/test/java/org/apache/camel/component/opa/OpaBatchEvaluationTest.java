@@ -67,6 +67,11 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
         when(client.evaluateBatch(eq(PATH), anyMap())).thenReturn(results);
     }
 
+    @SuppressWarnings("unchecked")
+    private static List<OpaBatchOutcome> outcomes(Exchange exchange) {
+        return exchange.getMessage().getHeader(OpaConstants.BATCH_OUTCOMES, List.class);
+    }
+
     @Test
     void reportsAVerdictParallelToEachElement() throws Exception {
         Map<String, OPAResult> results = new LinkedHashMap<>();
@@ -81,6 +86,9 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
         assertThat(out.getException()).isNull();
         assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION, List.class))
                 .containsExactly(true, false, true);
+        assertThat(outcomes(out)).extracting(OpaBatchOutcome::getDecision).containsExactly(true, false, true);
+        assertThat(outcomes(out)).extracting(OpaBatchOutcome::isFailedOpen).containsOnly(false);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
         // batch mode must set the policy-path header too, so observability tooling reads the same
         // CamelOpaPolicyPath as it does after a single evaluation
         assertThat(out.getMessage().getHeader(OpaConstants.POLICY_PATH, String.class)).isEqualTo(PATH);
@@ -167,6 +175,8 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
 
         assertThat(out.getException()).isNull();
         assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION, List.class)).isEmpty();
+        assertThat(outcomes(out)).isEmpty();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
         assertThat(out.getMessage().getHeader(OpaConstants.POLICY_PATH, String.class)).isEqualTo(PATH);
         verify(client, never()).evaluateBatch(anyString(), anyMap());
     }
@@ -199,6 +209,11 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
         assertThat(out.getException()).isNull();
         assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION, List.class))
                 .containsExactly(true, true, true);
+        assertThat(outcomes(out)).extracting(OpaBatchOutcome::getDecision).containsOnlyNulls();
+        assertThat(outcomes(out)).extracting(OpaBatchOutcome::isFailedOpen).containsOnly(true);
+        assertThat(outcomes(out)).extracting(OpaBatchOutcome::getFailureCategory)
+                .containsOnly(OpaBatchOutcome.FailureCategory.UNAVAILABLE);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isEqualTo(true);
     }
 
     @Test
@@ -231,4 +246,91 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
         assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
         assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION)).isNull();
     }
+
+    @Test
+    void distinguishesDecisionsFailuresAndMissingResults() throws Exception {
+        Map<String, OPAResult> results = new LinkedHashMap<>();
+        results.put("0", new OPAResult(Boolean.TRUE));
+        results.put("1", new OPAResult(Boolean.FALSE));
+        results.put("2", failed(unreachable(PATH)));
+        results.put("3", failed(evaluationError(PATH)));
+        // Index 4 is absent; index 5 exists but the SDK returned no result for it.
+        results.put("5", null);
+        stubBatch(results);
+
+        Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true&failOpen=true",
+                e -> e.getMessage().setBody(List.of("a", "b", "c", "d", "e", "f")));
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION, List.class))
+                .containsExactly(true, false, true, false, false, false);
+        List<OpaBatchOutcome> outcomes = outcomes(out);
+        assertThat(outcomes).extracting(OpaBatchOutcome::isAllowed)
+                .containsExactly(true, false, true, false, false, false);
+        assertThat(outcomes).extracting(OpaBatchOutcome::getDecision)
+                .containsExactly(true, false, null, null, null, null);
+        assertThat(outcomes).extracting(OpaBatchOutcome::getFailureCategory).containsExactly(
+                OpaBatchOutcome.FailureCategory.NONE, OpaBatchOutcome.FailureCategory.NONE,
+                OpaBatchOutcome.FailureCategory.UNAVAILABLE, OpaBatchOutcome.FailureCategory.EVALUATION_ERROR,
+                OpaBatchOutcome.FailureCategory.MISSING_RESULT, OpaBatchOutcome.FailureCategory.MISSING_RESULT);
+        assertThat(outcomes).extracting(OpaBatchOutcome::isFailedOpen)
+                .containsExactly(false, false, true, false, false, false);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isEqualTo(true);
+        assertThatThrownBy(() -> outcomes.add(outcomes.get(0))).isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    void identifiesAnInterruptedElementWithoutFailingOpen() throws Exception {
+        Map<String, OPAResult> results = new LinkedHashMap<>();
+        results.put("0", failed(interrupted(PATH)));
+        stubBatch(results);
+        try {
+            Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true&failOpen=true",
+                    e -> e.getMessage().setBody(List.of("a")));
+
+            assertThat(Thread.currentThread().isInterrupted()).isTrue();
+            assertThat(out.getException()).isNull();
+            assertThat(outcomes(out)).extracting(OpaBatchOutcome::getFailureCategory)
+                    .containsExactly(OpaBatchOutcome.FailureCategory.INTERRUPTED);
+            assertThat(outcomes(out)).extracting(OpaBatchOutcome::isAllowed).containsExactly(false);
+            assertThat(outcomes(out)).extracting(OpaBatchOutcome::isFailedOpen).containsExactly(false);
+            assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
+        } finally {
+            Thread.interrupted();
+        }
+    }
+
+    @Test
+    void clearsOldDiagnosticsBeforeAWholeBatchFailure() throws Exception {
+        when(client.evaluateBatch(eq(PATH), anyMap())).thenThrow(unreachable(PATH));
+
+        Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true", e -> {
+            e.getMessage().setBody(List.of("a"));
+            e.getMessage().setHeader(OpaConstants.BATCH_OUTCOMES, List.of("old outcome"));
+            e.getMessage().setHeader(OpaConstants.DECISION_FAILED_OPEN, true);
+        });
+
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(outcomes(out)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
+    }
+
+    @Test
+    void clearsBatchDiagnosticsBeforeASubsequentSingleDecision() throws Exception {
+        stubBatch(Map.of("0", failed(unreachable(PATH))));
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenReturn(Boolean.TRUE);
+        Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true&failOpen=true",
+                e -> e.getMessage().setBody(List.of("a")));
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isEqualTo(true);
+
+        template.send("opa:" + PATH + "?opaClient=#opaClient", out);
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+        assertThat(outcomes(out)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
+    }
+
 }

@@ -837,8 +837,7 @@ class AiPanel {
             exportChatToFile();
             return true;
         }
-        if (ke.hasCtrl() && ke.isCharIgnoreCase('n') && !statsView && (!thinking.get() || editQuestionHandler != null)) {
-            // a line break in the question; terminals deliver Shift+Enter and Alt+Enter as plain Enter or nothing
+        if (isLineBreakKey(ke) && !statsView && (!thinking.get() || editQuestionHandler != null)) {
             inputLine.insert("\n");
             return true;
         }
@@ -902,6 +901,15 @@ class AiPanel {
             return false;
         }
         return true;
+    }
+
+    /**
+     * A line break in the question: Shift+Enter and Alt+Enter. Ctrl+N is kept as the fallback, not shown in the footer,
+     * for the terminals that deliver Shift+Enter as plain Enter (those without the Kitty keyboard protocol, such as
+     * macOS Terminal) and keep Option for themselves.
+     */
+    static boolean isLineBreakKey(KeyEvent ke) {
+        return ke.hasCtrl() && ke.isCharIgnoreCase('n') || ke.isKey(KeyCode.ENTER) && (ke.hasShift() || ke.hasAlt());
     }
 
     private static boolean isGlobalShortcut(KeyEvent ke) {
@@ -2218,7 +2226,7 @@ class AiPanel {
                 TuiHelper.hint(spans, "Esc", "back to the edit");
             } else if (!thinking.get()) {
                 TuiHelper.hint(spans, "Enter", "send");
-                TuiHelper.hint(spans, "Ctrl+N", "newline");
+                TuiHelper.hint(spans, "Shift+Enter", "newline");
                 TuiHelper.hint(spans, "Ctrl+R", "search");
             } else {
                 TuiHelper.hint(spans, "Esc/Ctrl+C", "interrupt");
@@ -2721,8 +2729,7 @@ class AiPanel {
 
     /**
      * The user's question as a blockquote, its lines kept as typed (hard breaks). A fenced code block in it, such as
-     * the source the fix with AI question quotes, is put outside the quote, as a code block inside a quote is not
-     * rendered.
+     * the source the fix with AI question quotes, stays in the quote as a code block, its lines as they are.
      */
     static String quoteQuestion(String text) {
         if (text == null) {
@@ -2730,25 +2737,16 @@ class AiPanel {
         }
         StringBuilder sb = new StringBuilder();
         boolean inFence = false;
-        boolean quoted = false;
         for (String line : text.split("\n", -1)) {
             if (line.strip().startsWith("```")) {
-                if (!inFence && quoted) {
-                    // end the quote, so the fence starts a code block of its own
-                    sb.append('\n');
-                    quoted = false;
-                }
-                sb.append(line.strip()).append('\n');
-                if (inFence) {
-                    sb.append('\n');
-                }
+                sb.append("> ").append(line.strip());
                 inFence = !inFence;
             } else if (inFence) {
-                sb.append(line).append('\n');
+                sb.append(line.isEmpty() ? ">" : "> " + line);
             } else {
-                sb.append(line.isBlank() ? ">" : "> " + line + "  ").append('\n');
-                quoted = true;
+                sb.append(line.isBlank() ? ">" : "> " + line + "  ");
             }
+            sb.append('\n');
         }
         return sb.toString().stripTrailing();
     }

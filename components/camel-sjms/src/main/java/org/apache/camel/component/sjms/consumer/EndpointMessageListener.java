@@ -186,7 +186,7 @@ public class EndpointMessageListener implements SessionMessageListener {
 
             // process the exchange either asynchronously or synchronous
             LOG.trace("onMessage.process START");
-            AsyncCallback callback
+            EndpointMessageListenerAsyncCallback callback
                     = new EndpointMessageListenerAsyncCallback(
                             session, message, exchange, endpoint, sendReply, replyDestination);
 
@@ -219,8 +219,10 @@ public class EndpointMessageListener implements SessionMessageListener {
                     return;
                 }
             }
-            // if we failed processed the exchange from the async callback task, then grab the exception
-            rce = exchange.getException(RuntimeCamelException.class);
+            // rethrow only the failure the callback decided on: an exception that was sent back as the reply
+            // (transferException) is not rethrown, as a transacted session would then roll back the request
+            // and the reply with it, and the request would be redelivered
+            rce = callback.getFailure();
 
             // release back when synchronous mode
             consumer.releaseExchange(exchange, false);
@@ -391,6 +393,7 @@ public class EndpointMessageListener implements SessionMessageListener {
         private final SjmsEndpoint endpoint;
         private final boolean sendReply;
         private final Object replyDestination;
+        private RuntimeCamelException failure;
 
         private EndpointMessageListenerAsyncCallback(Session session, Message message, Exchange exchange, SjmsEndpoint endpoint,
                                                      boolean sendReply, Object replyDestination) {
@@ -400,6 +403,14 @@ public class EndpointMessageListener implements SessionMessageListener {
             this.endpoint = endpoint;
             this.sendReply = sendReply;
             this.replyDestination = replyDestination;
+        }
+
+        /**
+         * The failure to rethrow from onMessage when the exchange was done synchronously, or null when the message was
+         * processed, including when the exception was sent back as the reply (transferException).
+         */
+        RuntimeCamelException getFailure() {
+            return failure;
         }
 
         @Override
@@ -457,6 +468,8 @@ public class EndpointMessageListener implements SessionMessageListener {
                     rce = wrapRuntimeCamelException(replyException);
                 }
             }
+
+            failure = rce;
 
             // if an exception occurred
             if (rce != null) {

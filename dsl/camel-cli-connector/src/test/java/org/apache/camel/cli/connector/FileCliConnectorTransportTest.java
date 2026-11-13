@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.json.JsonObject;
@@ -100,6 +101,26 @@ class FileCliConnectorTransportTest {
 
         writeAction(action("result"), "r1");
         assertThat(awaitJson(file(PID + "-output-r1.json"))).containsEntry("status", "success");
+    }
+
+    @Test
+    void actionsAreAnsweredBetweenTwoStatusUpdates() {
+        // CAMEL-25447: the status every second, as by default, and the actions looked for about every 100 millis
+        transport.updateDelay(1000);
+        awaitJson(file(PID + "-status.json"));
+        int statuses = snapshots.statuses.get();
+        long start = System.nanoTime();
+
+        for (int i = 1; i <= 5; i++) {
+            writeAction(action("result"), "r" + i);
+            assertThat(awaitJson(file(PID + "-output-r" + i + ".json"))).containsEntry("value", "42");
+        }
+
+        long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+        // an action per status update took at least 4 seconds
+        assertThat(elapsed).isLessThan(2500);
+        // and the status is not collected more often
+        assertThat(snapshots.statuses.get() - statuses).isLessThanOrEqualTo((int) (elapsed / 1000) + 2);
     }
 
     @Test
@@ -343,9 +364,11 @@ class FileCliConnectorTransportTest {
     private static final class EmptySnapshots implements CliSnapshotProducer {
         // thrown once by the next status
         volatile Error error;
+        final AtomicInteger statuses = new AtomicInteger();
 
         @Override
         public JsonObject status() {
+            statuses.incrementAndGet();
             Error e = error;
             if (e != null) {
                 error = null;

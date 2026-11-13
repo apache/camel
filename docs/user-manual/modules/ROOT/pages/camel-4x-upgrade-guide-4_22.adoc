@@ -82,6 +82,17 @@ scheduled time of its window, but before the (late) timer has run, joins that wi
 checkpointed by that timer. Before, such an event always started a new window, so `timeout` was practically never
 set. Routes that read this header can now see `timeout` as well as `size`.
 
+=== camel-azure-functions - invokeFunction checks the function app and the function name
+
+The `invokeFunction` operation now checks the function app and the function name, from the endpoint or from the
+`CamelAzureFunctionsFunctionApp` and `CamelAzureFunctionsFunctionName` headers, before it calls the function, and
+builds the URL with the function name encoded as a path. The exchange fails with an `IllegalArgumentException` when the
+function app is missing or is not an app name (letters, digits and hyphens, not starting or ending with a hyphen, at
+most 60 characters), or when the function name has a `?`, `#`, `\` or `%`, an empty segment, or a `.` or `..`
+segment. A function name of several segments, such as `products/42` for a function with a custom route, is still
+accepted. The `x-functions-key` header is only added to an `https` URL on an `azurewebsites.net` host. Valid
+configurations are not affected.
+
 === camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
 
 A `hazelcast-seda` consumer now restores the headers and exchange properties of an exchange that a producer with
@@ -245,6 +256,18 @@ The `user` and `password` are now offered only to the nodes the client talks to:
 when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Previously they were
 registered for any host. A request to another host, including the host of a node with another scheme or port, is now
 sent without them. A client set with the `restClient` option is not changed.
+
+=== camel-elasticsearch-rest-client - the document id and the index name are each sent as one path segment
+
+The producer now percent-encodes the document id and the index name, so each is sent as one path segment of the
+request and Elasticsearch takes it literally. Before, they were placed into the path as given: a `/`, `?` or `#` in
+the value changed the path of the request, and a space or a `%` made the request fail. A route that put extra path
+segments or request parameters into the document id or the index name must change.
+
+A document id of `.` or `..` is now rejected, as is an index name that is empty, `.` or `..`, or that contains `\`,
+`/`, `?`, `"`, `<`, `>`, `|`, `#` or a space. A comma separated list of index names and patterns, such as
+`logs-*,my_index`, still works. A `GET_BY_ID` response without the source of the document now gives a `null` body
+instead of failing with a `NullPointerException`.
 
 === camel-smooks - allowExternalEntities applies to Smooks Source bodies and to a reader declared without a class
 
@@ -646,6 +669,15 @@ or in the `fileName` option before the message reaches the producer.
 
 `copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`
 and `CamelAzureStorageBlobSourceBlobContainerName`) with an `IllegalArgumentException`.
+
+=== camel-netty-http - endpoint options are no longer sent to the server as query parameters
+
+The `netty-http` producer no longer sends some of its endpoint options, such as `cookieHandler`, `httpMethodRestrict`,
+`traceEnabled` and `exchangePattern`, to the HTTP server as query parameters. For example,
+`netty-http:http://localhost:8080/foo?bar=1&cookieHandler=#myCookieHandler` now calls
+`http://localhost:8080/foo?bar=1`. Before, the server also received the `cookieHandler` parameter. Only the
+query parameters that are not endpoint options are sent, as the documentation describes. To send a query parameter
+that has the same name as an endpoint option, set the query in the `CamelHttpQuery` header.
 
 == Upgrading from 4.22.1 to 4.22.2
 

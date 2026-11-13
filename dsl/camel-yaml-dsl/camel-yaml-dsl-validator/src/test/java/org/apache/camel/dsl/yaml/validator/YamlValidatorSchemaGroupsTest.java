@@ -19,12 +19,12 @@ package org.apache.camel.dsl.yaml.validator;
 import java.io.File;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * CAMEL-24697: the generated schema must accept what the runtime accepts for oneOf groups with a required alternative,
@@ -40,7 +40,7 @@ public class YamlValidatorSchemaGroupsTest {
         validator = new YamlValidator();
         validator.init();
         try (var is = YamlValidator.class.getResourceAsStream("/schema/camelYamlDsl.json")) {
-            definitions = new ObjectMapper().readTree(is).path("items").path("definitions");
+            definitions = new JsonMapper().readTree(is).path("items").path("definitions");
         }
     }
 

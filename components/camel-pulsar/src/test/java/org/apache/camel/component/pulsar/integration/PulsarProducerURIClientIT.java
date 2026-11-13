@@ -68,7 +68,7 @@ public class PulsarProducerURIClientIT extends PulsarITSupport {
 
         producerTemplate.sendBody("Hello ");
         producerTemplate.sendBody("World ");
-        producerTemplate.sendBody(10);
+        producerTemplate.sendBody("10");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
     }

@@ -43,7 +43,7 @@ public class SmbProducerAllowNullBodyIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("",
-                        new String(copyFileContentFromContainer("/data/rw/nullbody/allowNullBody1.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/nullbody/allowNullBody1.txt"))));
     }
 
     @Test

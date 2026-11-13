@@ -335,6 +335,11 @@ public class CamelMonitor extends CamelCommand {
             }
 
             @Override
+            public void mouse(MouseEvent event) {
+                pendingKeys.add(new McpFacade.PendingKey(event, MonotonicClock.millis()));
+            }
+
+            @Override
             public String screen() {
                 return TapePlayer.screenText(recordingManager.getLastBuffer());
             }
@@ -1254,6 +1259,7 @@ public class CamelMonitor extends CamelCommand {
             }
         }
         if (event instanceof MouseEvent me) {
+            recordingManager.recordMouse(me, confirmations.isDelivering());
             if (shellPanel.isOpen() && shellPanel.handleMouseEvent(me)) {
                 return true;
             }
@@ -1601,7 +1607,7 @@ public class CamelMonitor extends CamelCommand {
                 }
                 KeyEvent key = HintClicks.keyEvent(subViewBar.keyAt(me.x(), me.y()));
                 if (key != null) {
-                    return handleEvent(key, runner);
+                    return recordingManager.pressedByClick(() -> handleEvent(key, runner));
                 }
             }
             return true;
@@ -1634,7 +1640,7 @@ public class CamelMonitor extends CamelCommand {
     /** A click on a key hint of the footer presses its key, as if it was typed. */
     private boolean handleFooterClick(MouseEvent me, TuiRunner runner) {
         KeyEvent key = footerClicks.keyAt(me.x(), me.y());
-        return key != null && handleEvent(key, runner);
+        return key != null && recordingManager.pressedByClick(() -> handleEvent(key, runner));
     }
 
     private boolean handlePasteEvent(PasteEvent pe) {

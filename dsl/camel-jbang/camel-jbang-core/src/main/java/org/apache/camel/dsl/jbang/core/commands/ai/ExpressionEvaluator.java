@@ -174,8 +174,9 @@ public final class ExpressionEvaluator {
         } else if (resultType != null) {
             result.put("resultType", resultType);
         }
-        if (body == null && expression.contains("${body")) {
-            result.put("note", "evaluated with an empty body; pass body to evaluate against a value");
+        String noBody = noBodyNote(lang, expression, body);
+        if (noBody != null) {
+            result.put("note", noBody);
         }
         if (predicate && resultType != null) {
             addNote(result, "resultType is not used for a predicate, which gives true or false");
@@ -198,18 +199,95 @@ public final class ExpressionEvaluator {
         if ("error".equals(result.getString("status"))) {
             evaluateOnParsedBody(ctx, r, result, result.getString("error"));
         }
-        addNullAndElvisNotes(ctx, result, lang, expression);
+        addNullAndElvisNotes(ctx, result, r);
         addFilterNote(result, lang, expression);
         addXPathHint(result, lang, expression);
         return result;
     }
 
-    static final String NULL_NOTE = "evaluated to null: a header, property or variable that is not set, or a function"
-                                    + " name that took in the rest of the text";
+    static final String NULL_NOTE = "evaluated to null: a header, property or variable that is not set (an evaluation has"
+                                    + " only the headers and variables passed to it), or a function name that took in"
+                                    + " the rest of the text";
+
+    static final String NO_BODY_NOTE = "no body was passed, so the body is empty text (\"\"), not null as in a route"
+                                       + " whose message has none (after a timer, for example); pass body to evaluate"
+                                       + " against a value";
 
     /** The languages whose expressions read the fields of a body that is data, a Map or a List, and not of text. */
     private static final Set<String> READS_DATA = Set.of("simple", "groovy", "mvel", "spel", "js", "javascript",
             "python", "java", "joor", "jactl");
+
+    /** The languages that read their document from the body, and what that document is. */
+    private static final Map<String, String> BODY_DOCUMENT
+            = Map.of("jsonpath", "JSON", "jq", "JSON", "xpath", "XML", "xquery", "XML");
+
+    // a header, exchange property or variable that simple reads by name: ${header.foo}, ${headers:foo},
+    // ${header[foo]}, ${headerAs(foo, Integer)}, ${exchangeProperty.foo}, ${variable.foo}. A name in brackets or in
+    // quotes is the whole name, as for simple: ${header['kafka.KEY']} reads the header kafka.KEY, not kafka
+    private static final Pattern READS_BY_NAME = Pattern.compile(
+            "\\$\\{\\s*(?:in\\.)?(header|exchangeProperty|variable)s?(?:[.:\\[]|As\\()\\s*['\"]?"
+                                                                 + "((?<=\\[)[^\\]'\"]+|(?<=['\"])[^'\"]+|[\\w-]+)");
+
+    /** The headers the error handler sets from the first redelivery on. */
+    private static final Set<String> REDELIVERY_HEADERS
+            = Set.of("CamelRedeliveryCounter", "CamelRedeliveryMaxCounter", "CamelRedelivered");
+
+    /**
+     * What to say when no body is passed and the expression reads it (r24): the body is then empty text, so ${body} ==
+     * null answered false, and jsonpath failed with "json string can not be null or empty", which does not name the
+     * body.
+     */
+    static String noBodyNote(String lang, String expression, String body) {
+        if (body != null || expression == null) {
+            return null;
+        }
+        String document = BODY_DOCUMENT.get(lang);
+        if (document != null) {
+            return "no body was passed: " + lang + " reads the " + document + " of the message body, so this was"
+                   + " evaluated on empty text; pass the " + document + " as body";
+        }
+        return expression.contains("${body") ? NO_BODY_NOTE : null;
+    }
+
+    /**
+     * Why a simple expression evaluated to null when it reads a header, an exchange property or a variable the
+     * evaluation does not have, else {@link #NULL_NOTE}. r24 to r26 fail-well-error-handling step 2:
+     * ${header.CamelRedeliveryCounter} was null, and the model looked for it as an exchange property, or in 11 lookups
+     * of the Exchange API, and wrote nothing.
+     */
+    static String nullNote(
+            String lang, String expression, Map<String, Object> headers, Map<String, Object> variables) {
+        Matcher m = "simple".equals(lang) && expression != null ? READS_BY_NAME.matcher(expression) : null;
+        while (m != null && m.find()) {
+            String name = m.group(2).strip();
+            boolean redelivery = REDELIVERY_HEADERS.contains(name);
+            if ("exchangeProperty".equals(m.group(1))) {
+                return "evaluated to null: the exchange property " + name + " is not set: an evaluation has no exchange"
+                       + " properties" + (redelivery ? "; " + name + " is a header: ${header." + name + "}" : "");
+            }
+            if ("variable".equals(m.group(1))) {
+                // a scoped variable, such as ${variable.global:foo}, keeps the generic note
+                if (!expression.startsWith(":", m.end()) && (variables == null || !variables.containsKey(name))) {
+                    return "evaluated to null: the variable " + name + " is not set: an evaluation has only the"
+                           + " variables passed in variables";
+                }
+                continue;
+            }
+            // the headers of a message do not tell case
+            if (headers == null || headers.keySet().stream().noneMatch(name::equalsIgnoreCase)) {
+                return "evaluated to null: the header " + name + " is not set: an evaluation has only the headers"
+                       + " passed in headers"
+                       + (redelivery
+                               ? "; the error handler sets it on the message it redelivers, from the first redelivery"
+                                 + " on (the redelivered step and onRedelivery see it), so it is not set on the first"
+                                 + " attempt; an onException that handles or continues the exchange, and a dead"
+                                 + " letter channel, do not see it, because the error handler removes it before they"
+                                 + " run"
+                               : "");
+            }
+        }
+        return NULL_NOTE;
+    }
 
     /**
      * What an expression can read that changes from one call to the next: the clock, a random value, an id, a property,
@@ -318,14 +396,15 @@ public final class ExpressionEvaluator {
      * header named 'offset ?:0' (CAMEL-26401). An elvis operator inside ${...} that the Camel of the evaluation does
      * not read as one is the note, also when the value is not null or the evaluation failed.
      */
-    static void addNullAndElvisNotes(ToolContext ctx, JsonObject result, String lang, String expression) {
+    static void addNullAndElvisNotes(ToolContext ctx, JsonObject result, Request r) {
         boolean isNull = "ok".equals(result.getString("status")) && result.get("result") == null;
         if (isNull) {
             result.put("result", null);
             result.put("nullResult", true);
         }
-        String elvis = elvisNote(ctx, lang, expression);
-        String note = elvis != null ? elvis : isNull ? NULL_NOTE : null;
+        String elvis = elvisNote(ctx, r.language(), r.expression());
+        String note
+                = elvis != null ? elvis : isNull ? nullNote(r.language(), r.expression(), r.headers(), r.variables()) : null;
         if (note != null) {
             result.put("note", result.containsKey("note") ? result.getString("note") + "; " + note : note);
         }
@@ -461,16 +540,18 @@ public final class ExpressionEvaluator {
         } catch (ToolExecutionException e) {
             // the integration answers an expression that fails as a failed action, a tool error (CAMEL-25398): what
             // to pass for an XPath function, that resultType was not used, and the rewrite of an elvis operator inside
-            // ${...} that an integration before Camel 4.24 refuses, go with its message
+            // ${...} that an integration before Camel 4.24 refuses, and that no body was passed, go with its message
             String hint = xpathHint(r.language(), r.expression(), e.getMessage());
             String elvis = elvisNote(ctx, r.language(), r.expression());
             String filter = filterNote(r.language(), r.expression(), "error");
-            if (hint == null && ignored == null && elvis == null && filter == null) {
+            String noBody = noBodyNote(r.language(), r.expression(), r.body());
+            if (hint == null && ignored == null && elvis == null && filter == null && noBody == null) {
                 throw e;
             }
             throw new ToolExecutionException(
                     e.getMessage() + (hint != null ? "; " + hint : "") + (ignored != null ? "; " + ignored : "")
-                                             + (elvis != null ? "; " + elvis : "") + (filter != null ? "; " + filter : ""));
+                                             + (elvis != null ? "; " + elvis : "") + (filter != null ? "; " + filter : "")
+                                             + (noBody != null ? "; " + noBody : ""));
         }
         JsonObject out = null;
         try {

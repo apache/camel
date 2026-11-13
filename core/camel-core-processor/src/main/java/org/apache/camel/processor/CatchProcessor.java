@@ -31,6 +31,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.Traceable;
+import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptableProcessor;
 import org.apache.camel.spi.RouteIdAware;
@@ -191,6 +192,11 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
         if (ext.isFailureHandled() || ext.isErrorHandlerHandledSet()) {
             ext.setFailureHandled(false);
             ext.setErrorHandlerHandled(null);
+            // that route may have been redelivered before it failed, and left its redelivery headers on the message:
+            // they stay readable in the doCatch block, but that redelivery is over, so a later error handler does not
+            // count on from them (CAMEL-26857), as when the doTry failed in this route (no redelivery runs in a doTry).
+            // Only here: when the doTry failed in this route, a header the exchange brought into it is left as it was
+            RedeliveryErrorHandler.markRedeliveryOver(exchange);
         }
 
         if (LOG.isDebugEnabled()) {

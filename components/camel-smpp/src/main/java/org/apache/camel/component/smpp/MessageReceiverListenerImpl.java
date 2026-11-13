@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 public class MessageReceiverListenerImpl implements MessageReceiverListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(MessageReceiverListenerImpl.class);
+    private static final long INITIALIZATION_TIMEOUT_SECONDS = 10;
 
     private MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
     private Consumer consumer;
@@ -76,11 +77,10 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
 
     @Override
     public void onAcceptAlertNotification(AlertNotification alertNotification) {
-        try {
-            // wait for initialization in case consumer is active before startup listener above has been executed
-            initialized.await(10, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            // ignore
+        if (!awaitInitialization()) {
+            LOG.warn("Skipping alertNotification {}: the consumer was not initialized within {} seconds",
+                    alertNotification, INITIALIZATION_TIMEOUT_SECONDS);
+            return;
         }
         LOG.debug("Received an alertNotification {}", alertNotification);
 
@@ -104,11 +104,9 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
 
     @Override
     public void onAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
-        try {
-            // wait for initialization in case consumer is active before startup listener above has been executed
-            initialized.await(10, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            // ignore
+        if (!awaitInitialization()) {
+            throw new ProcessRequestException(
+                    "The consumer was not initialized within " + INITIALIZATION_TIMEOUT_SECONDS + " seconds", 255);
         }
         LOG.debug("Received a deliverSm {}", deliverSm);
 
@@ -141,11 +139,9 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
 
     @Override
     public DataSmResult onAcceptDataSm(DataSm dataSm, Session session) throws ProcessRequestException {
-        try {
-            // wait for initialization in case consumer is active before startup listener above has been executed
-            initialized.await(10, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            // ignore
+        if (!awaitInitialization()) {
+            throw new ProcessRequestException(
+                    "The consumer was not initialized within " + INITIALIZATION_TIMEOUT_SECONDS + " seconds", 255);
         }
         LOG.debug("Received a dataSm {}", dataSm);
 
@@ -169,6 +165,21 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
             return new DataSmResult(newMessageId, dataSm.getOptionalParameters());
         } finally {
             consumer.releaseExchange(exchange, false);
+        }
+    }
+
+    /**
+     * Waits for the startup listener to publish the consumer, the processor and the exception handler, which a message
+     * arriving before the route is fully started would otherwise read as null.
+     *
+     * @return {@code true} once they are set, {@code false} if the wait timed out or was interrupted
+     */
+    private boolean awaitInitialization() {
+        try {
+            return initialized.await(INITIALIZATION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
         }
     }
 

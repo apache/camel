@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * The AI tools ask the user, through the monitor, before a call that reaches beyond the integration, may destroy data
@@ -120,7 +121,8 @@ class McpFacadeConfirmTest {
     @Test
     void addingAndChangingAChaosRuleAskFirstAndCheckingDoesNot() throws Exception {
         AnsweringBridge bridge = new AnsweringBridge(false);
-        TuiToolRegistry registry = new TuiToolRegistry(facade(context(), bridge));
+        MonitorContext ctx = context();
+        TuiToolRegistry registry = new TuiToolRegistry(facade(ctx, bridge));
 
         JsonObject added = (JsonObject) Jsoner.deserialize(registry.execute("tui_chaos_add",
                 new JsonObject(Map.of("rule", "route=orders error rate=0.05"))));
@@ -134,12 +136,11 @@ class McpFacadeConfirmTest {
                 .containsExactly("route=orders error rate=0.05", "route=orders error rate=0.1");
         assertThat(registry.execute("tui_chaos_add", new JsonObject(Map.of()))).isEqualTo("Error: rule is required");
 
-        // the check only reads: it is not asked (here no integration answers it)
-        try {
-            registry.execute("tui_chaos_check", new JsonObject(Map.of("rule", "route=orders error")));
-        } catch (RuntimeException e) {
-            // no integration with pid 1 runs in the test
-        }
+        // the check only reads: it is not asked. No integration is selected, so it fails at once; pid 1 is a live
+        // process but no Camel, which would keep the check waiting 10 seconds for an answer
+        ctx.selectedPid = null;
+        assertThatThrownBy(() -> registry.execute("tui_chaos_check", new JsonObject(Map.of("rule", "route=orders error"))))
+                .hasMessageContaining("No running Camel process");
         assertThat(bridge.calls).hasSize(2);
     }
 

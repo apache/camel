@@ -308,6 +308,28 @@ one element failed, nor allowed because most of it succeeded. A call that fails 
 reached at all - fails the exchange rather than denying each element: it carries no verdict at all, not a list of
 `false`. Under `failOpen` a call that could not reach the server allows every element instead.
 
+`CamelOpaBatchOutcomes` provides an immutable `List<OpaBatchOutcome>` in the same order, while
+`CamelOpaBatchDecision` keeps its existing Boolean-list contract. Each outcome has:
+
+[cols="1,3",options="header"]
+|===
+|Property |Meaning
+|`allowed` |Whether the element may proceed, including an explicit fail-open result.
+|`decision` |The normalized Boolean policy verdict, or `null` when no decision was obtained. This is not the raw policy document.
+|`failureCategory` |`NONE`, `UNAVAILABLE`, `EVALUATION_ERROR`, `MISSING_RESULT` or `INTERRUPTED`.
+|`failedOpen` |`true` only when the element proceeded because its decision point was unavailable and `failOpen` was enabled.
+|===
+
+These outcomes contain no exception objects or failure messages. A genuine policy denial has `decision=false`,
+`failureCategory=NONE` and `failedOpen=false`. An unavailable element allowed under `failOpen` has
+`allowed=true`, `decision=null`, `failureCategory=UNAVAILABLE` and `failedOpen=true`.
+`CamelOpaDecisionFailedOpen=true` marks a batch whenever *any* element failed open; inspect the outcomes to identify
+which ones. A call that could not reach the server at all is reported like an element whose own decision point was
+unavailable: under `failOpen` every element is `UNAVAILABLE` and `failedOpen=true`, and the outcomes do not say which
+of the two happened, since the route proceeds the same way in both cases. Empty batches return empty verdict and outcome lists. A whole-batch failure that fails closed carries
+neither list. The outcome header and aggregate marker are cleared before every evaluation, including a subsequent
+single-element evaluation.
+
 `batch` requires `evaluationMode=rest`: it saves the per-element HTTP round-trip, which has no meaning for in-process
 `wasm` evaluation, and the endpoint rejects the combination at startup.
 
@@ -652,6 +674,10 @@ rather than as a deny, so it fails closed as well. Give every decision rule a de
 so the policy always returns a verdict.
 
 == Health check
+
+Each check owns its HTTP client and releases it when the check stops. The five-second
+health deadline includes the complete response body; a stalled body reports DOWN and
+the outstanding request is cancelled.
 
 Because the component fails closed, an OPA server that cannot be reached fails *every* exchange through the route.
 The producer registers a readiness check that probes the server's `/health` endpoint, so an unavailable policy

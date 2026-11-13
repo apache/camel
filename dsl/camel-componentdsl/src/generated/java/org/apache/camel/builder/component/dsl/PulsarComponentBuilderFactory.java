@@ -901,6 +901,30 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether the producer sends a body that does not convert to a byte
+         * array (such as a Map, a List, a number or a POJO) with Java
+         * serialization, as Camel did before 4.24. Such a message can only be
+         * read by a Java client that deserializes it. By default the producer
+         * fails such a body: marshal it first, for example to JSON. Deprecation
+         * note: Java serialization of the body is kept only for compatibility,
+         * and will be removed: marshal the body before sending it.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
+         */
+        @Deprecated
+        default PulsarComponentBuilder allowJavaSerializedObject(boolean allowJavaSerializedObject) {
+            doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
+            return this;
+        }
+    
         /**
          * The pulsar auto configuration.
          * 
@@ -1023,6 +1047,7 @@ public interface PulsarComponentBuilderFactory {
             case "messageRoutingMode": getOrCreateConfiguration((PulsarComponent) component).setMessageRoutingMode((org.apache.pulsar.client.api.MessageRoutingMode) value); return true;
             case "producerName": getOrCreateConfiguration((PulsarComponent) component).setProducerName((java.lang.String) value); return true;
             case "sendTimeoutMs": getOrCreateConfiguration((PulsarComponent) component).setSendTimeoutMs((int) value); return true;
+            case "allowJavaSerializedObject": getOrCreateConfiguration((PulsarComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "autoConfiguration": ((PulsarComponent) component).setAutoConfiguration((org.apache.camel.component.pulsar.utils.AutoConfiguration) value); return true;
             case "autowiredEnabled": ((PulsarComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "pulsarClient": ((PulsarComponent) component).setPulsarClient((org.apache.pulsar.client.api.PulsarClient) value); return true;

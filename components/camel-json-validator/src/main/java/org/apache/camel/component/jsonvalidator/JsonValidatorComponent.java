@@ -18,12 +18,12 @@ package org.apache.camel.component.jsonvalidator;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * The JSON Schema Validator Component is for validating JSON against a schema.
@@ -42,7 +42,8 @@ public class JsonValidatorComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JsonValidatorEndpoint endpoint = new JsonValidatorEndpoint(uri, this, remaining);
         if (objectMapper != null) {
-            ObjectMapper om = CamelContextHelper.lookup(getCamelContext(), objectMapper, ObjectMapper.class);
+            // mandatory, so a wrong id or a mapper of another Jackson line fails instead of being ignored
+            ObjectMapper om = CamelContextHelper.mandatoryLookup(getCamelContext(), objectMapper, ObjectMapper.class);
             endpoint.setObjectMapper(om);
         } else if (useDefaultObjectMapper) {
             ObjectMapper om = CamelContextHelper.findSingleByType(getCamelContext(), ObjectMapper.class);
@@ -69,7 +70,7 @@ public class JsonValidatorComponent extends DefaultComponent {
     }
 
     /**
-     * Whether to lookup and use default Jackson ObjectMapper from the registry.
+     * Whether to lookup and use the default Jackson 3 (tools.jackson) ObjectMapper from the registry.
      */
     public void setUseDefaultObjectMapper(boolean useDefaultObjectMapper) {
         this.useDefaultObjectMapper = useDefaultObjectMapper;
@@ -80,7 +81,7 @@ public class JsonValidatorComponent extends DefaultComponent {
     }
 
     /**
-     * Lookup and use the existing ObjectMapper with the given id.
+     * Lookup and use the existing Jackson 3 (tools.jackson) ObjectMapper with the given id.
      */
     public void setObjectMapper(String objectMapper) {
         this.objectMapper = objectMapper;

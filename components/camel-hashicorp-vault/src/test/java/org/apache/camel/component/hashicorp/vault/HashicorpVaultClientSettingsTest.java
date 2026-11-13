@@ -23,6 +23,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.AUTHENTICATION_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.AUTH_MOUNT_PATH_ENV;
+import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.AWS_IAM_SERVER_ID_ENV;
+import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.AWS_REGION_ENV;
+import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.AWS_STS_ENDPOINT_ENV;
+import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.AZURE_CLIENT_ID_ENV;
+import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.AZURE_RESOURCE_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.CLOUD_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.HOST_ENV;
 import static org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings.JWT_FILE_ENV;
@@ -107,6 +112,43 @@ class HashicorpVaultClientSettingsTest {
         assertEquals("trust-password", settings.getTrustStorePassword());
         assertEquals("/etc/vault/client.p12", settings.getKeyStore());
         assertEquals("key-password", settings.getKeyStorePassword());
+    }
+
+    @Test
+    void takesTheCloudSettingsOfTheEnvironmentVariables() {
+        Map<String, String> environment = Map.of(
+                AWS_IAM_SERVER_ID_ENV, "vault.example.com", AWS_REGION_ENV, "eu-west-1",
+                AWS_STS_ENDPOINT_ENV, "https://sts.eu-west-1.amazonaws.com", AZURE_RESOURCE_ENV, "https://vault.hashicorp.com",
+                AZURE_CLIENT_ID_ENV, "1b2c3d4e");
+
+        HashicorpVaultClientSettings settings
+                = HashicorpVaultClientSettings.fromEnvironmentOrConfiguration(configuration(), environment::get);
+
+        assertEquals("vault.example.com", settings.getAwsIamServerId());
+        assertEquals("eu-west-1", settings.getAwsRegion());
+        assertEquals("https://sts.eu-west-1.amazonaws.com", settings.getAwsStsEndpoint());
+        assertEquals("https://vault.hashicorp.com", settings.getAzureResource());
+        assertEquals("1b2c3d4e", settings.getAzureClientId());
+        assertNull(settings.getHost());
+    }
+
+    @Test
+    void takesTheCloudSettingsOfTheConfiguration() {
+        HashicorpVaultConfiguration configuration = configuration();
+        configuration.setAwsIamServerId("vault.example.com");
+        configuration.setAwsRegion("eu-west-1");
+        configuration.setAwsStsEndpoint("https://sts.eu-west-1.amazonaws.com");
+        configuration.setAzureClientId("1b2c3d4e");
+
+        HashicorpVaultClientSettings settings
+                = HashicorpVaultClientSettings.fromEnvironmentOrConfiguration(configuration, name -> null);
+
+        assertEquals("vault.example.com", settings.getAwsIamServerId());
+        assertEquals("eu-west-1", settings.getAwsRegion());
+        assertEquals("https://sts.eu-west-1.amazonaws.com", settings.getAwsStsEndpoint());
+        // the default resource of the configuration
+        assertEquals("https://management.azure.com/", settings.getAzureResource());
+        assertEquals("1b2c3d4e", settings.getAzureClientId());
     }
 
     @Test

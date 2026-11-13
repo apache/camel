@@ -133,7 +133,11 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                             } catch (Exception e) {
                                 exchange.setException(e);
                             }
-                            onExchangeDone(exchange, txc);
+                            if (onExchangeDone(exchange, txc)) {
+                                // the message is back on the queue: wait before taking it again, or a message that
+                                // always fails is taken and rolled back in a tight loop
+                                waitOnErrorDelay();
+                            }
                         } else {
                             // process using the asynchronous routing engine
                             processor.process(exchange, new AsyncCallback() {
@@ -171,19 +175,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                     }
                 }
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
-                // Use Camel's task API for error recovery delay instead of Thread.sleep()
-                // We use initialDelay for the actual delay, and maxIterations(1) to run once
-                Tasks.backgroundTask()
-                        .withBudget(Budgets.iterationTimeBudget()
-                                .withMaxIterations(1)
-                                .withInitialDelay(Duration.ofMillis(endpoint.getConfiguration().getOnErrorDelay()))
-                                .withInterval(Duration.ofMillis(1))
-                                .withUnlimitedDuration()
-                                .build())
-                        .withScheduledExecutor(taskExecutor)
-                        .withName("HazelcastSedaErrorRecoveryDelay")
-                        .build()
-                        .run(getEndpoint().getCamelContext(), () -> true);
+                waitOnErrorDelay();
             } finally {
                 if (transacted) {
                     releaseExchange(exchange, false);
@@ -213,7 +205,31 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
         exchange.getIn().setBody(transferred.getIn().getBody());
     }
 
-    private void onExchangeDone(Exchange exchange, TransactionContext txc) {
+    /**
+     * Waits onErrorDelay before the consumer polls again, after an error or a rolled back transaction.
+     */
+    private void waitOnErrorDelay() {
+        // Use Camel's task API for error recovery delay instead of Thread.sleep()
+        // We use initialDelay for the actual delay, and maxIterations(1) to run once
+        Tasks.backgroundTask()
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withMaxIterations(1)
+                        .withInitialDelay(Duration.ofMillis(endpoint.getConfiguration().getOnErrorDelay()))
+                        .withInterval(Duration.ofMillis(1))
+                        .withUnlimitedDuration()
+                        .build())
+                .withScheduledExecutor(taskExecutor)
+                .withName("HazelcastSedaErrorRecoveryDelay")
+                .build()
+                .run(getEndpoint().getCamelContext(), () -> true);
+    }
+
+    /**
+     * Ends the transaction of the exchange, if any, and handles its exception.
+     *
+     * @return true when the transaction was rolled back, so the message is on the queue again
+     */
+    private boolean onExchangeDone(Exchange exchange, TransactionContext txc) {
         // a rollback only exchange (without an exception) did not complete successfully either
         boolean rollback = exchange.getException() != null || exchange.isRollbackOnly()
                 || exchange.isRollbackOnlyLast();
@@ -229,6 +245,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
             LOG.trace("Commit transaction: {}", txc.getTxnId());
             txc.commitTransaction();
         }
+        return rollback && txc != null;
     }
 
 }

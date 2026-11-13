@@ -120,6 +120,11 @@ public class HashicorpVaultEndpoint extends DefaultEndpoint {
         settings.setTrustStorePassword(configuration.getTrustStorePassword());
         settings.setKeyStore(configuration.getKeyStore());
         settings.setKeyStorePassword(configuration.getKeyStorePassword());
+        settings.setAwsIamServerId(configuration.getAwsIamServerId());
+        settings.setAwsRegion(configuration.getAwsRegion());
+        settings.setAwsStsEndpoint(configuration.getAwsStsEndpoint());
+        settings.setAzureResource(configuration.getAzureResource());
+        settings.setAzureClientId(configuration.getAzureClientId());
         return settings;
     }
 

@@ -248,6 +248,47 @@ class McpServerBridgeTest extends CamelTestSupport {
     }
 
     @Test
+    void testAllowedHostsPassedToEngine() throws Exception {
+        CamelContext hostContext = new DefaultCamelContext();
+        RecordingMcpServerEngine hostEngine = new RecordingMcpServerEngine();
+        hostContext.getRegistry().bind("mcpServerEngine", hostEngine);
+        McpServerConfiguration configuration = new McpServerConfiguration();
+        configuration.setTags("crm");
+        configuration.setAllowedHosts(" MCP.Example.com ,, localhost:* ");
+        McpServerBridge hostBridge = new McpServerBridge(configuration);
+        hostContext.addService(hostBridge);
+        hostContext.start();
+        hostBridge.start();
+
+        try {
+            assertThat(hostEngine.info().allowedHosts()).containsExactly("mcp.example.com", "localhost:*");
+        } finally {
+            hostBridge.stop();
+            hostContext.stop();
+        }
+    }
+
+    @Test
+    void testAllowedHostsNotSetDoesNotCheckTheHost() {
+        assertThat(engine.info().allowedHosts()).isNull();
+    }
+
+    @Test
+    void testAllowedHostThatCanNeverMatchFailsTheStart() throws Exception {
+        try (DefaultCamelContext hostContext = new DefaultCamelContext()) {
+            hostContext.getRegistry().bind("mcpServerEngine", new RecordingMcpServerEngine());
+            McpServerConfiguration configuration = new McpServerConfiguration();
+            configuration.setTags("crm");
+            configuration.setAllowedHosts("http://mcp.example.com");
+            McpServerBridge hostBridge = new McpServerBridge(configuration);
+
+            assertThatThrownBy(() -> hostContext.addService(hostBridge))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageStartingWith("Invalid MCP allowed host 'http://mcp.example.com'");
+        }
+    }
+
+    @Test
     void testAllowedOriginThatCanNeverMatchFailsTheStart() throws Exception {
         try (DefaultCamelContext originContext = new DefaultCamelContext()) {
             originContext.getRegistry().bind("mcpServerEngine", new RecordingMcpServerEngine());

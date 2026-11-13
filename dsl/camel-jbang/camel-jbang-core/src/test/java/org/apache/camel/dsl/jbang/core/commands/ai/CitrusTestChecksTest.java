@@ -25,9 +25,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.yaml.validator.YamlTrees;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -35,6 +34,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,7 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CitrusTestChecksTest {
 
     private static final Path ORDERS = Path.of("src/test/resources/citrus-orders");
-    private static final ObjectMapper YAML = new ObjectMapper(new YAMLFactory());
+    private static final ObjectMapper YAML = YamlTrees.newMapper();
 
     /** What is said of an action named log: what to write to log a message, and to check the log of the integration. */
     private static final String LOG_HINT = "echo: {message: \"...\"} writes a message to the test log, and camel: {cli:"
@@ -398,6 +398,28 @@ class CitrusTestChecksTest {
                 """))).isEmpty();
     }
 
+    /**
+     * Citrus reads a test with SnakeYAML, as YAML 1.1: 1_000 and 0b101 are integers there, which Jackson 3 reads as
+     * text.
+     */
+    @Test
+    void yaml11IntegersAreIntegers() {
+        String test = """
+                name: orders.citrus.it
+                actions:
+                  - camel:
+                      cli:
+                        verify:
+                          integration: orders
+                          logMessage: "Order accepted"
+                          maxAttempts: %s
+                """;
+        for (String value : List.of("10", "1_000", "0x1F", "0b101", "0123")) {
+            assertThat(CitrusTestChecks.validate(test.formatted(value))).as(value).isEmpty();
+        }
+        assertThat(CitrusTestChecks.validate(test.formatted("ten"))).singleElement().asString().contains("maxAttempts");
+    }
+
     @Test
     void aPartOfTheBodyTheTestExpectsIsCheckedWithJsonPath() {
         // r28n-4 and r28n-7 step 2
@@ -530,7 +552,7 @@ class CitrusTestChecksTest {
                                          + "          logMessage: \"Order ORD-1001 accepted for C-482 with 2 line(s)\"");
         String fixed = written(test, msgs.get(0));
         assertThat(CitrusTestChecks.validate(fixed)).isEmpty();
-        assertThat(YAML.readTree(fixed).at("/actions/0/camel/" + cli + "/verify/logMessage").asText())
+        assertThat(YAML.readTree(fixed).at("/actions/0/camel/" + cli + "/verify/logMessage").asString())
                 .isEqualTo("Order ORD-1001 accepted for C-482 with 2 line(s)");
     }
 
@@ -550,7 +572,7 @@ class CitrusTestChecksTest {
                                          + "          logMessage: 'Wrote ORD-1001.json to C:\\orders\\out'");
         String fixed = written(test, msgs.get(0));
         assertThat(CitrusTestChecks.validate(fixed)).isEmpty();
-        assertThat(YAML.readTree(fixed).at("/actions/0/camel/cli/verify/logMessage").asText())
+        assertThat(YAML.readTree(fixed).at("/actions/0/camel/cli/verify/logMessage").asString())
                 .isEqualTo("Wrote ORD-1001.json to C:\\orders\\out");
     }
 

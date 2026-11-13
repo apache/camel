@@ -25,8 +25,6 @@ import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.networknt.schema.Error;
 import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaLocation;
@@ -46,10 +44,19 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.dataformat.yaml.YAMLFactory;
+import tools.jackson.dataformat.yaml.YAMLMapper;
+import tools.jackson.dataformat.yaml.YAMLReadFeature;
+import tools.jackson.dataformat.yaml.YAMLSchema;
 
 public class YamlTestSupport implements HasCamelContext {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper(new YAMLFactory());
+    // as YamlTrees of camel-yaml-dsl-validator, so the routes are checked as the validator reads them
+    private static final ObjectMapper MAPPER = YAMLMapper.builder(YAMLFactory.builder()
+            .yamlSchema(YAMLSchema.CORE)
+            .disable(YAMLReadFeature.PARSE_OCTAL_NUMBERS)
+            .build()).configureForJackson2().build();
     private static final Schema SCHEMA;
 
     static {

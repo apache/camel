@@ -850,6 +850,18 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void removeRouteTemplates(String pattern) throws Exception;
 
     /**
+     * Removes the route templates matching the pattern that were loaded from a resource, such as a route file or a
+     * Kamelet, and keeps those without a resource, such as the route templates of a Java {@code RouteBuilder} added to
+     * the context. A route reload loads the resources again, so it removes their route templates with this: nothing
+     * would add a route template without a resource back.
+     *
+     * @param  pattern   pattern, such as * for all, or foo* to remove all foo templates
+     * @throws Exception is thrown if error during removing route templates
+     * @since            4.24
+     */
+    void removeRouteTemplatesFromResources(String pattern) throws Exception;
+
+    /**
      * Adds the given route policy factory
      *
      * @param routePolicyFactory the factory

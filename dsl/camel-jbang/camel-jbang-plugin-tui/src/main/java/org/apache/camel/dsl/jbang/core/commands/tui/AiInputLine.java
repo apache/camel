@@ -29,6 +29,7 @@ import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.text.WordBoundaries;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.paragraph.Paragraph;
@@ -151,8 +152,14 @@ final class AiInputLine {
         insert(normalized);
     }
 
-    /** Backspace, Delete, Left, Right, Home, End, and typed text; returns whether the key was one of them. */
+    /**
+     * Backspace, Delete, Left, Right, Home, End, the word-wise keys, and typed text; returns whether the key was one of
+     * them.
+     */
     boolean handleEditKey(KeyEvent ke) {
+        if (handleWordKey(ke)) {
+            return true;
+        }
         // the cursor moves and deletes a character at a time: all the code points of an emoji, such as a family or a flag
         if (ke.isKey(KeyCode.BACKSPACE)) {
             if (cursorPos > 0) {
@@ -204,6 +211,35 @@ final class AiInputLine {
             return true;
         }
         return false;
+    }
+
+    /**
+     * The word-wise keys of the bindings: Ctrl+Left/Right moves a word, Ctrl+Backspace (and Ctrl+W) and Ctrl+Delete
+     * delete one, with Alt instead of Ctrl on macOS. Checked before Backspace and the arrows, which they also are.
+     */
+    private boolean handleWordKey(KeyEvent ke) {
+        if (ke.isWordLeft()) {
+            cursorPos = WordBoundaries.prevWord(inputBuffer, cursorPos);
+        } else if (ke.isWordRight()) {
+            cursorPos = WordBoundaries.nextWord(inputBuffer, cursorPos);
+        } else if (ke.isDeleteWordBackward()) {
+            delete(WordBoundaries.prevWord(inputBuffer, cursorPos), cursorPos);
+        } else if (ke.isDeleteWordForward()) {
+            delete(cursorPos, WordBoundaries.nextWord(inputBuffer, cursorPos));
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    private void delete(int from, int to) {
+        if (from < to) {
+            if (promptHistory != null) {
+                promptHistory.resetNavigation();
+            }
+            inputBuffer.delete(from, to);
+            cursorPos = from;
+        }
     }
 
     // ---- Reverse-i-search (Ctrl+R) ----

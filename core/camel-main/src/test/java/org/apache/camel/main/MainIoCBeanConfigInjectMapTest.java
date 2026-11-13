@@ -38,6 +38,8 @@ public class MainIoCBeanConfigInjectMapTest {
         main.addInitialProperty("bar.Name", "Thirsty Bear");
         main.addInitialProperty("Bar.AGE", "23");
         main.addInitialProperty("foo", "blah");
+        // sibling key sharing the prefix but not on a '.' boundary must not be captured
+        main.addInitialProperty("barstool", "leaked");
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -73,6 +75,7 @@ public class MainIoCBeanConfigInjectMapTest {
         public MyBar createBar(@BeanConfigInject("bar") Map config) {
             assertEquals(2, config.size());
             assertNull(config.get("foo"));
+            assertNull(config.get("stool"));
 
             String text = config.get("Name") + " (minimum age: " + config.get("AGE") + ")";
             return new MyBar(text);

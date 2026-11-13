@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @UsesWorkingDirectory
-class ExportTest {
+class ExportTest extends CamelCommandBaseTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
 
@@ -70,8 +70,11 @@ class ExportTest {
     private File workingDir;
 
     @BeforeEach
-    public void setup() throws IOException {
+    @Override
+    public void setup() throws Exception {
+        super.setup();
         LOG.info("Preparing ExportTest");
+        useTestWorkDir();
         workingDir = Files.createTempDirectory("camel-export").toFile();
     }
 
@@ -868,6 +871,36 @@ class ExportTest {
                             "camel-quarkus-zookeeper-master", null));
             Assertions.assertTrue(
                     containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-timer", null));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportWebhookDelegate(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportWebhookDelegate {}", rt);
+        Export command = createCommand(rt, new String[] { "src/test/resources/webhook-route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+
+        // the delegate component of the webhook endpoint must be exported as well (CAMEL-26325)
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-webhook", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-telegram", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-webhook-starter",
+                            null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-telegram-starter",
+                            null));
+        } else if (rt == RuntimeType.quarkus) {
+            // camel-quarkus has no webhook extension
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-telegram",
+                            null));
         }
     }
 

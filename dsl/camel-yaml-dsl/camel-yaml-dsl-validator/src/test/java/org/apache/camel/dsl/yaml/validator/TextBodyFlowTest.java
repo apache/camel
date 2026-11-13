@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -1430,10 +1430,10 @@ public class TextBodyFlowTest {
 
     @Test
     public void testTheBodyOfMessaging() {
-        // the paho consumer gives bytes, so a field read needs an unmarshal; pulsar and smtp send what converts to
-        // bytes or text, so parsed data must be marshalled first, and so must the reply of a nats consumer that answers
-        // (InOut); the converter of spring-rabbitmq may be set on the component, and an imap mail may be text, a stream
-        // or a multipart, which say nothing
+        // the paho consumer gives bytes, so a field read needs an unmarshal; smtp sends what converts to text, so
+        // parsed data must be marshalled first, and so must the reply of a nats consumer that answers (InOut); the
+        // converter of spring-rabbitmq and the allowJavaSerializedObject option of pulsar may be set on the component,
+        // and an imap mail may be text, a stream or a multipart, which say nothing
         String yaml = """
                 - route:
                     id: mqtt
@@ -1502,10 +1502,10 @@ public class TextBodyFlowTest {
                             name: id
                             simple: ${body[id]}
                 """;
-        assertThat(lines(yaml)).hasSize(4).anySatisfy(m -> assertThat(m)
+        assertThat(lines(yaml)).hasSize(3).anySatisfy(m -> assertThat(m)
                 .contains("route mqtt: simple reads a field of the body (${body[id]})")
                 .contains("the paho consumer gives it as bytes"))
-                .anySatisfy(m -> assertThat(m).contains("to: pulsar needs the body as text, bytes, a stream or a file"))
+                .noneSatisfy(m -> assertThat(m).contains("route publish:"))
                 .anySatisfy(m -> assertThat(m)
                         .contains("route service:")
                         .contains("the body at the end of the route is the reply to the nats request"))

@@ -17,8 +17,6 @@
 package org.apache.camel.main.download;
 
 import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -31,6 +29,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -63,9 +62,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private static final String MINIMUM_QUARKUS_VERSION = "2.0.0";
 
     private static final Logger LOG = LoggerFactory.getLogger(MavenDependencyDownloader.class);
-    private static final String CP = System.getProperty("java.class.path");
 
-    private String[] bootClasspath;
+    private BootClasspath bootClasspath;
     private DownloadThreadPool threadPool;
     private boolean verbose;
     private ClassLoader classLoader;
@@ -300,13 +298,13 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         // when running jbang directly then the CP has some existing camel components
         // that essentially is not needed to be downloaded, but we need the listener to trigger
         // to capture that the GAV is required for running the application
-        if (CP != null) {
+        if (bootClasspath != null && sharesBootClasspath()) {
             // is it already on classpath
             String target = artifactId;
             if (version != null) {
                 target = target + "-" + version;
             }
-            if (CP.contains(target)) {
+            if (bootClasspath.contains(target)) {
                 // already on classpath
                 return;
             }
@@ -335,8 +333,13 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 extraRepositories.addAll(resolveExtraRepositories(known));
             }
 
+            // what is already on the classpath is left out (with its dependencies), so it is not downloaded
+            Predicate<MavenGav> available = sharesBootClasspath()
+                    ? a -> bootClasspath != null && bootClasspath.containsJar(a.getArtifactId(), a.getVersion(),
+                            a.getClassifier())
+                    : null;
             List<MavenArtifact> artifacts = resolveDependenciesViaAether(parentGav, deps, extraRepositories,
-                    transitively, useApacheSnapshots);
+                    transitively, useApacheSnapshots, available);
             List<File> files = new ArrayList<>();
             if (verbose) {
                 LOG.info("Dependencies: {} -> [{}]", gav, artifacts);
@@ -517,24 +520,19 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             target = target + "-" + version;
         }
 
-        if (bootClasspath != null) {
-            for (String s : bootClasspath) {
-                if (s.contains(target)) {
-                    if (listener) {
-                        for (DownloadListener dl : downloadListeners) {
-                            dl.onDownloadDependency(groupId, artifactId, version);
-                        }
-                    }
-                    // already on classpath
-                    return true;
+        if (bootClasspath != null && sharesBootClasspath() && bootClasspath.contains(target)) {
+            if (listener) {
+                for (DownloadListener dl : downloadListeners) {
+                    dl.onDownloadDependency(groupId, artifactId, version);
                 }
             }
+            // already on classpath
+            return true;
         }
 
         if (classLoader instanceof URLClassLoader) {
-            // create path like target to match against the file url
-            String urlTarget = groupId + "/" + artifactId;
-            urlTarget = urlTarget.replace('.', '/');
+            // create path like target to match against the file url (the dots of the artifact id are kept)
+            String urlTarget = groupId.replace('.', '/') + "/" + artifactId;
             urlTarget += "/" + version + "/" + target + ".jar";
             urlTarget = FileUtil.normalizePath(urlTarget); // windows vs linux
             URLClassLoader ucl = (URLClassLoader) classLoader;
@@ -641,12 +639,27 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         mavenDownloader = mavenDownloaderImpl;
     }
 
+    /**
+     * Whether the class loader the JARs are added to sees the classpath the JVM was started with, so what is on it is
+     * not added (nor downloaded) again. A class loader without the application class loader as parent, such as for
+     * Hawtio, gets all the JARs.
+     */
+    private boolean sharesBootClasspath() {
+        if (classLoader == null) {
+            return true;
+        }
+        ClassLoader app = ClassLoader.getSystemClassLoader();
+        for (ClassLoader cl = classLoader; cl != null; cl = cl.getParent()) {
+            if (cl == app) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     protected void doInit() {
-        RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
-        if (mb != null) {
-            bootClasspath = mb.getClassPath().split("[:|;]");
-        }
+        bootClasspath = BootClasspath.of(System.getProperty("java.class.path"));
         ServiceHelper.initService(versionResolver, threadPool, mavenDownloader);
     }
 
@@ -671,8 +684,20 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             String parentGav,
             List<String> depIds, Set<String> extraRepositories,
             boolean transitively, boolean useApacheSnapshots) {
+        return resolveDependenciesViaAether(parentGav, depIds, extraRepositories, transitively, useApacheSnapshots, null);
+    }
+
+    /**
+     * @param available the artifacts that are already available (such as on the classpath), which are left out together
+     *                  with their dependencies, or null to resolve them all
+     */
+    public List<MavenArtifact> resolveDependenciesViaAether(
+            String parentGav,
+            List<String> depIds, Set<String> extraRepositories,
+            boolean transitively, boolean useApacheSnapshots, Predicate<MavenGav> available) {
         try {
-            return mavenDownloader.resolveArtifacts(parentGav, depIds, extraRepositories, transitively, useApacheSnapshots);
+            return mavenDownloader.resolveArtifacts(parentGav, depIds, extraRepositories, transitively, useApacheSnapshots,
+                    available);
         } catch (MavenResolutionException e) {
             String repos = (e.getRepositories() == null || e.getRepositories().isEmpty())
                     ? "(empty URL list)"

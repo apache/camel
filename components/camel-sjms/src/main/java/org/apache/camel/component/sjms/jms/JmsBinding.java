@@ -211,9 +211,9 @@ public class JmsBinding {
             } else if (message instanceof BytesMessage bytesMessage) {
                 LOG.trace("Extracting body as a BytesMessage from JMS message: {}", message);
                 return createByteArrayFromBytesMessage(bytesMessage);
-            } else if (message instanceof StreamMessage) {
+            } else if (message instanceof StreamMessage streamMessage) {
                 LOG.trace("Extracting body as a StreamMessage from JMS message: {}", message);
-                return message;
+                return createInputStreamFromStreamMessage(streamMessage);
             } else {
                 return null;
             }
@@ -284,6 +284,10 @@ public class JmsBinding {
             answer = jmsMessage.getObjectProperty(key);
         }
         return answer;
+    }
+
+    protected Object createInputStreamFromStreamMessage(StreamMessage message) {
+        return new StreamMessageInputStream(message);
     }
 
     protected byte[] createByteArrayFromBytesMessage(BytesMessage message) throws JMSException {

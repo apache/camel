@@ -490,8 +490,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         }
         for (String key : props.stringPropertyNames()) {
             String uKey = key.toUpperCase(Locale.US);
-            // need to ignore case
-            if (uKey.startsWith(uRootKey)) {
+            // need to ignore case; match the key itself or the prefix up to a '.' boundary so a
+            // sibling such as "database" is not captured for prefix "db"
+            if (uKey.equals(uRootKey) || uKey.startsWith(uRootKey + ".")) {
                 // strip prefix
                 String sKey = key.substring(rootKey.length());
                 if (sKey.startsWith(".")) {

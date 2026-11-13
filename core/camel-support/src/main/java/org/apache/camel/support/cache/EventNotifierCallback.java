@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support.cache;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -30,6 +32,7 @@ class EventNotifierCallback implements AsyncCallback {
     private final StopWatch watch;
     private final Exchange exchange;
     private final Endpoint endpoint;
+    private final AtomicBoolean sent = new AtomicBoolean();
 
     public EventNotifierCallback(AsyncCallback originalCallback, Exchange exchange,
                                  Endpoint endpoint) {
@@ -41,7 +44,16 @@ class EventNotifierCallback implements AsyncCallback {
 
     @Override
     public void done(boolean doneSync) {
-        SendHelper.notifySent(exchange, endpoint, watch);
+        notifySentOnce();
         originalCallback.done(doneSync);
+    }
+
+    /**
+     * Emits the sent event, once (the producer may throw after it called the callback).
+     */
+    void notifySentOnce() {
+        if (sent.compareAndSet(false, true)) {
+            SendHelper.notifySent(exchange, endpoint, watch);
+        }
     }
 }

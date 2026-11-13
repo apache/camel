@@ -522,11 +522,34 @@ path such as `+https://app.example.com/mcp+`, an entry without a scheme such as
 
 A refused request is logged at `DEBUG` level by the
 `org.apache.camel.component.mcp.server.vertx.VertxMcpStreamableServerTransportProvider`
-logger, with the `Origin` it carried.
+logger, with the `Origin` (or the `Host`) it carried.
 
 The check is independent of the platform-http CORS configuration: CORS only
 adds response headers for the browser, while the origin check refuses the
 request on the server.
+
+The `Host` header can be checked as well, with
+`camel.server.mcp-allowed-hosts`. It is not set by default, and then the `Host`
+header is not checked. When set, a request whose `Host` header is missing or not
+in the list gets HTTP 421 (Misdirected Request) with a JSON-RPC error, before
+its body is read and before any session is created. This protects a server on a
+private address against DNS rebinding: a hostile web page whose own host name
+resolves to the address of the server sends its own host name in the `Host`
+header, not one from the list.
+
+[source,properties]
+----
+camel.server.mcp-allowed-hosts = mcp.example.com, localhost:*, 127.0.0.1:*
+----
+
+Each entry is a host, or a host and a port, without a scheme. A port of `+*+`
+matches any port, and also a `Host` header without a port (the default port of
+the scheme), so `localhost:*` allows `localhost`, `localhost:8080` and
+`localhost:9876`. An entry without a port matches only a `Host` header without
+a port: `mcp.example.com` is the host name a client uses on the default port,
+behind a reverse proxy for example. The host is compared ignoring case. Write an
+IPv6 address in brackets, such as `[::1]:*`. An entry with a scheme or a path,
+and `+*+`, fail the startup with a message saying why.
 
 The main HTTP server listens on all network interfaces by default
 (`camel.server.host = 0.0.0.0`). When the MCP server is only meant for clients

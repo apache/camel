@@ -82,6 +82,14 @@ class McpServerInstructionsTest {
     }
 
     @Test
+    void severalOptionsAreCheckedInOneCatalogDocCall() {
+        String text = new McpServerInstructions().text();
+
+        // a model checked each option with a call of its own and ran out of calls (CAMEL-25632)
+        assertThat(text).contains("camel_catalog_doc (optionsFilter checks several options in one call: a,b,c)");
+    }
+
+    @Test
     void everyMappedToolIsMentionedAndIsAToolOfThisServer() throws IOException {
         String text = new McpServerInstructions().text();
         Set<String> toolNames = toolNames();

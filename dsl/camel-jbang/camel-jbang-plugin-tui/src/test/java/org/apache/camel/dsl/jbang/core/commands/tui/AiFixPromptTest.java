@@ -22,6 +22,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.markdown.MarkdownView;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -150,17 +153,47 @@ class AiFixPromptTest {
                 ```
                 Find the cause""");
 
-        // the question is quoted line by line, the code block is outside the quote (not rendered inside one)
+        // the question is quoted line by line, the code block too, its lines without the hard breaks
         assertThat(md).isEqualTo("""
                 > Exchanges fail at runtime on line 14 of orders.camel.yaml: 2 exchanges failed \s
                 > The source around it (> marks line 14): \s
+                > ```
+                > > 14 |   - to:
+                >   15 |       uri: direct
+                > ```
+                > Find the cause""");
+    }
 
+    @Test
+    void theQuotedCodeBlockIsShownInTheChat() {
+        String md = AiPanel.quoteQuestion("""
+                Look at this:
                 ```
                 > 14 |   - to:
                   15 |       uri: direct
                 ```
+                Find the cause""");
 
-                > Find the cause""");
+        // as the chat draws it, where the quote bar is a left one-eighth block
+        MarkdownView view = MarkdownView.builder().source(md).styles(Theme.chatMarkdownStyles())
+                .syntaxTheme(Theme.syntaxTheme()).build();
+        int height = view.computeHeight(40);
+        Buffer buffer = Buffer.empty(new Rect(0, 0, 40, height));
+        view.render(buffer.area(), buffer);
+        List<String> rows = new ArrayList<>();
+        for (int y = 0; y < height; y++) {
+            StringBuilder row = new StringBuilder();
+            for (int x = 0; x < 40; x++) {
+                row.append(buffer.get(x, y).symbol());
+            }
+            rows.add(row.toString().stripTrailing());
+        }
+
+        // the code block is drawn inside the quote, each row behind the quote bar
+        assertThat(rows).anySatisfy(row -> assertThat(row).startsWith("\u258e").contains("> 14 |   - to:"));
+        assertThat(rows).anySatisfy(row -> assertThat(row).startsWith("\u258e").contains("15 |       uri: direct"));
+        assertThat(rows.get(0)).startsWith("\u258e Look at this:");
+        assertThat(rows.get(rows.size() - 1)).startsWith("\u258e Find the cause");
     }
 
     @Test

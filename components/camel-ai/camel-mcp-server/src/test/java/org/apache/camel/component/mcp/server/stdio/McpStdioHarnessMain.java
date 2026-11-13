@@ -39,7 +39,7 @@ public final class McpStdioHarnessMain {
         String tags = args.length > 0 ? args[0] : "harness";
         if (args.length > 1 && "cli".equals(args[1])) {
             // as Camel CLI (camel run): the thread context class loader cannot see the downloaded jars, such as
-            // mcp-json-jackson2, while Camel Main configures the CamelContext
+            // mcp-json-jackson3, while Camel Main configures the CamelContext
             Thread.currentThread().setContextClassLoader(new HidingClassLoader(McpStdioHarnessMain.class.getClassLoader()));
         }
 

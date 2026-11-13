@@ -18,6 +18,7 @@ package org.apache.camel.tooling.maven;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.camel.Service;
 
@@ -61,6 +62,22 @@ public interface MavenDownloader extends Service {
             List<String> dependencyGAVs, Set<String> extraRepositories,
             boolean transitively, boolean useApacheSnapshots)
             throws MavenResolutionException;
+
+    /**
+     * Resolves the artifacts as {@link #resolveArtifacts(String, List, Set, boolean, boolean)} does, leaving out the
+     * artifacts that are already available, such as the JARs on the classpath: they are not downloaded, nor are their
+     * dependencies.
+     *
+     * @param available the artifacts that are already available (tested with their base version), or null to resolve
+     *                  them all
+     */
+    default List<MavenArtifact> resolveArtifacts(
+            String rootGav,
+            List<String> dependencyGAVs, Set<String> extraRepositories,
+            boolean transitively, boolean useApacheSnapshots, Predicate<MavenGav> available)
+            throws MavenResolutionException {
+        return resolveArtifacts(rootGav, dependencyGAVs, extraRepositories, transitively, useApacheSnapshots);
+    }
 
     /**
      * Overload for {@link MavenDownloader#resolveArtifacts(String, List, Set, boolean, boolean)}

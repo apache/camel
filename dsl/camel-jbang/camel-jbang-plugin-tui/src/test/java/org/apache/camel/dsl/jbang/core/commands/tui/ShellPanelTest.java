@@ -550,4 +550,25 @@ class ShellPanelTest {
         }
         return sb.toString();
     }
+
+    @Test
+    void encodeKeysWithTheirModifiers() {
+        // readline's word keys: Alt+B, Alt+F, Alt+Backspace are the key after an Esc
+        assertArrayEquals(new byte[] { 0x1b, 'b' }, ShellPanel.encodeKeyEvent(KeyEvent.ofChar('b', KeyModifiers.ALT)));
+        assertArrayEquals(new byte[] { 0x1b, 0x7f },
+                ShellPanel.encodeKeyEvent(KeyEvent.ofKey(KeyCode.BACKSPACE, KeyModifiers.ALT)));
+        assertArrayEquals(new byte[] { 0x1b, 0x02 },
+                ShellPanel.encodeKeyEvent(KeyEvent.ofChar('b', KeyModifiers.of(true, true, false))));
+        // xterm's modifier parameter, without an extra Esc for Alt
+        assertArrayEquals("\033[1;5D".getBytes(StandardCharsets.UTF_8),
+                ShellPanel.encodeKeyEvent(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.CTRL)));
+        assertArrayEquals("\033[1;3C".getBytes(StandardCharsets.UTF_8),
+                ShellPanel.encodeKeyEvent(KeyEvent.ofKey(KeyCode.RIGHT, KeyModifiers.ALT)));
+        assertArrayEquals("\033[3;5~".getBytes(StandardCharsets.UTF_8),
+                ShellPanel.encodeKeyEvent(KeyEvent.ofKey(KeyCode.DELETE, KeyModifiers.CTRL)));
+        assertArrayEquals("\033[1;2P".getBytes(StandardCharsets.UTF_8),
+                ShellPanel.encodeKeyEvent(KeyEvent.ofKey(KeyCode.F1, KeyModifiers.SHIFT)));
+        assertArrayEquals("\033[Z".getBytes(StandardCharsets.UTF_8),
+                ShellPanel.encodeKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.SHIFT)));
+    }
 }

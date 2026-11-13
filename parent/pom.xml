@@ -268,9 +268,9 @@
         <infinispan-protostream-version>6.0.7</infinispan-protostream-version>
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
-        <jackson-annotations-version>2.22</jackson-annotations-version>
+        <jackson-annotations-version>2.23</jackson-annotations-version>
         <jackson-jq-version>1.6.5</jackson-jq-version>
-        <jackson2-version>2.22.4</jackson2-version>
+        <jackson2-version>2.23.0</jackson2-version>
         <jackson3-version>3.2.4</jackson3-version>
         <jackrabbit-version>2.22.5</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
@@ -414,7 +414,7 @@
         <narayana-version>7.3.4.Final</narayana-version>
         <neo4j-version>6.3.0</neo4j-version>
         <netty-version>4.2.18.Final</netty-version>
-        <networknt-json-schema-validator-version>2.0.1</networknt-json-schema-validator-version>
+        <networknt-json-schema-validator-version>3.0.9</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.10</nimbus-jose-jwt>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>

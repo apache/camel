@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.controlbus;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- *
+ * The language command, turned on for simple with the allowedLanguages option of the component.
  */
 public class ControlBusLanguageSimpleStartRouteTest extends ContextTestSupport {
 
@@ -60,6 +61,13 @@ public class ControlBusLanguageSimpleStartRouteTest extends ContextTestSupport {
         status = template.requestBody("controlbus:language:simple",
                 "${camelContext.getRouteController().getRouteStatus('foo')}", String.class);
         assertEquals("Started", status);
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getComponent("controlbus", ControlBusComponent.class).setAllowedLanguages("simple");
+        return context;
     }
 
     @Override

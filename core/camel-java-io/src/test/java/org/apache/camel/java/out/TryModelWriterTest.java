@@ -84,6 +84,26 @@ class TryModelWriterTest {
     }
 
     @Test
+    void clausesSetBeforeTheStepsAreDumpedAfterThem() throws Exception {
+        // as the YAML DSL does when doCatch and doFinally are written above steps (CAMEL-25410)
+        TryDefinition def = new TryDefinition();
+        CatchDefinition clause = new CatchDefinition();
+        clause.getExceptions().add("java.lang.Exception");
+        clause.addOutput(new ToDefinition("mock:catch"));
+        FinallyDefinition finallyClause = new FinallyDefinition();
+        finallyClause.addOutput(new ToDefinition("mock:finally"));
+        def.setCatchClauses(List.of(clause));
+        def.setFinallyClause(finallyClause);
+        def.addOutput(new ToDefinition("mock:try1"));
+        def.addOutput(new ToDefinition("mock:try2"));
+        String output = dump(def);
+        Assertions.assertTrue(output.indexOf("mock:try1") < output.indexOf("mock:try2"), output);
+        Assertions.assertTrue(output.indexOf("mock:try2") < output.indexOf("mock:catch"), output);
+        Assertions.assertTrue(output.indexOf("mock:catch") < output.indexOf("mock:finally"), output);
+        Assertions.assertEquals(output.indexOf("mock:catch"), output.lastIndexOf("mock:catch"), output);
+    }
+
+    @Test
     void dumpingAfterAddingOutputPreservesNewStepAndMixedClauses() throws Exception {
         TryDefinition def = new TryDefinition();
         def.addOutput(new ToDefinition("mock:try"));
@@ -102,7 +122,12 @@ class TryModelWriterTest {
         Assertions.assertTrue(second.contains("mock:later"), second);
         Assertions.assertEquals(second.indexOf("mock:catch"), second.lastIndexOf("mock:catch"), second);
         Assertions.assertEquals(second.indexOf("mock:finally"), second.lastIndexOf("mock:finally"), second);
-        Assertions.assertEquals(3, def.getOutputs().size());
+        // the doCatch set as a property is kept in the outputs too (CAMEL-25410), and a step added later goes before
+        // the clauses: steps, doCatch, doFinally
+        Assertions.assertEquals(4, def.getOutputs().size());
+        Assertions.assertTrue(second.indexOf("mock:later") < second.indexOf("mock:catch"), second);
+        Assertions.assertSame(clause, def.getOutputs().get(2));
+        Assertions.assertSame(finallyClause, def.getOutputs().get(3));
     }
 
     private String dump(TryDefinition def) throws Exception {

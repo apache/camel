@@ -76,12 +76,23 @@ The `authentication` option chooses how the component logs in to HashiCorp Vault
 JWT login of Vault has a default role.
 
 | `cert`
-| `keyStore`: the TLS client certificate, see <<TLS>>. `role` is the name of the certificate role in Vault; without
+| `keyStore`: the TLS client certificate, see <<_tls,TLS>>. `role` is the name of the certificate role in Vault; without
 it, Vault tries every certificate role that trusts the certificate. The login needs the `https` scheme.
+
+| `aws-iam`
+| `role`: the Vault role of the application, which logs in with its AWS credentials, see <<_cloud_logins,Cloud logins>>. Without
+`role`, Vault takes the role named as the IAM principal of the application.
+
+| `azure-msi`
+| `role`: the Vault role of the application, which logs in with its Azure managed identity, see <<_cloud_logins,Cloud logins>>.
+
+| `gcp-gce`
+| `role`: the Vault role of the application, which logs in with the service account of its Google Compute Engine
+instance, see <<_cloud_logins,Cloud logins>>.
 |===
 
-When the login method is not mounted at its default path in Vault (`approle`, `kubernetes`, `jwt` or `cert`), set the
-path with `authMountPath`, without `auth/`.
+When the login method is not mounted at its default path in Vault (`approle`, `kubernetes`, `jwt`, `cert`, `aws` for
+`aws-iam`, `azure` for `azure-msi` or `gcp` for `gcp-gce`), set the path with `authMountPath`, without `auth/`.
 
 Camel renews the token before it expires, and logs in again when the token can no longer be renewed, such as when it
 reached its maximum time to live. A JWT read from a file is read again at every login, so a token that the platform
@@ -113,6 +124,10 @@ To present a client certificate to Vault, for the `cert` login or for a Vault th
 key. The key of a PEM file is not encrypted, in PKCS#8 (`-----BEGIN PRIVATE KEY-----`) or, for an RSA key, in PKCS#1
 (`-----BEGIN RSA PRIVATE KEY-----`).
 
+The trust store and the key store are read when the client is created, when the endpoint, the properties function or
+the secret refresh task starts. A certificate replaced in its file, such as a client certificate renewed before it
+expires, is used after a restart.
+
 For example, the properties function logs in with a client certificate:
 
 [source,properties]
@@ -125,6 +140,52 @@ camel.vault.hashicorp.authentication = cert
 camel.vault.hashicorp.role = my-application
 camel.vault.hashicorp.keyStore = /etc/vault/client.pem
 ----
+
+=== Cloud logins
+
+The `aws-iam` login signs a request to AWS STS with the credentials of the AWS SDK default chain: the environment
+variables, the system properties, a web identity token (such as IAM roles for service accounts on Amazon EKS), the
+profile, the container credentials (Amazon ECS) or the instance profile (Amazon EC2). Vault checks the request with
+STS. The login needs the AWS SDK: add the `software.amazon.awssdk:auth` dependency, in the version of the AWS SDK of
+the Camel AWS components. A web identity token also needs the `software.amazon.awssdk:sts` dependency, and an SSO
+profile the `software.amazon.awssdk:sso` and `software.amazon.awssdk:ssooidc` dependencies. Without the `sts`
+module, the AWS SDK skips the web identity token and takes the next credentials of the chain, such as those of the
+instance: so Camel refuses to start the login when a web identity token is set (`AWS_WEB_IDENTITY_TOKEN_FILE`) and
+the `sts` module is missing.
+
+The request is sent to `awsStsEndpoint`, by default the global endpoint `https://sts.amazonaws.com/`, which takes
+requests signed for `us-east-1`. Without `awsStsEndpoint` and `awsRegion`, the request is signed for `us-east-1`,
+whatever the region of the application, as `vault login -method=aws` does. To use a regional endpoint, set
+`awsStsEndpoint` and its region in `awsRegion`, as the AWS login of Vault is configured (`sts_endpoint` and
+`sts_region`); without `awsRegion`, the request is then signed for the region of the AWS SDK default region chain,
+such as the `AWS_REGION` environment variable. `awsIamServerId` sets the `X-Vault-AWS-IAM-Server-ID` header, when the
+AWS login of Vault requires one.
+
+For example, the properties function logs in with the AWS credentials of the application, through the STS endpoint
+of its region:
+
+[source,properties]
+----
+camel.vault.hashicorp.host = vault.example.com
+camel.vault.hashicorp.port = 8200
+camel.vault.hashicorp.scheme = https
+camel.vault.hashicorp.authentication = aws-iam
+camel.vault.hashicorp.role = my-application
+camel.vault.hashicorp.awsStsEndpoint = https://sts.eu-west-1.amazonaws.com
+camel.vault.hashicorp.awsRegion = eu-west-1
+----
+
+The `azure-msi` login asks the Azure instance metadata service (`169.254.169.254`) for a token of the managed identity
+of the virtual machine, for the resource `azureResource`, by default `https://management.azure.com/`, which must be
+the resource of the Azure login of Vault (`auth/azure/config`). `azureClientId` chooses a user-assigned managed
+identity, instead of the system-assigned one. The instance metadata service is on Azure virtual machines and scale
+sets. A pod of Azure Kubernetes Service with workload identity has a token in the file named by the
+`AZURE_FEDERATED_TOKEN_FILE` environment variable instead, for the `jwt` login with `jwtFile`.
+
+The `gcp-gce` login asks the metadata server of a Google Compute Engine instance for an identity token of the default
+service account of the instance, for a role of type `gce` of the GCP login of Vault.
+
+The metadata services are reached directly, never through an HTTP proxy.
 
 === OpenBao
 
@@ -403,7 +464,7 @@ camel.vault.hashicorp.namespace = namespace
 This will make the Properties function works even in the HashiCorp Cloud deployment option.
 
 The properties function logs in with a token by default. To log in another way, set the options of
-<<Logging in to HashiCorp Vault>> with the `camel.vault.hashicorp` prefix. For example, an application in a Kubernetes
+<<_logging_in_to_hashicorp_vault,Logging in to HashiCorp Vault>> with the `camel.vault.hashicorp` prefix. For example, an application in a Kubernetes
 pod logs in with the service account of the pod:
 
 [source,properties]
@@ -415,12 +476,13 @@ camel.vault.hashicorp.authentication = kubernetes
 camel.vault.hashicorp.role = my-application
 ----
 
-The properties function also reads these options from the environment variables
-`CAMEL_HASHICORP_VAULT_AUTHENTICATION`, `CAMEL_HASHICORP_VAULT_ROLE_ID`, `CAMEL_HASHICORP_VAULT_SECRET_ID`,
-`CAMEL_HASHICORP_VAULT_ROLE`, `CAMEL_HASHICORP_VAULT_JWT`, `CAMEL_HASHICORP_VAULT_JWT_FILE` and
-`CAMEL_HASHICORP_VAULT_AUTH_MOUNT_PATH`, and the settings of <<TLS>> from `CAMEL_HASHICORP_VAULT_TRUST_STORE`,
-`CAMEL_HASHICORP_VAULT_TRUST_STORE_PASSWORD`, `CAMEL_HASHICORP_VAULT_KEY_STORE` and
-`CAMEL_HASHICORP_VAULT_KEY_STORE_PASSWORD`. When any of the `CAMEL_HASHICORP_VAULT_*` environment variables is set, the
+The properties function also reads these options from the environment variables `CAMEL_HASHICORP_VAULT_AUTHENTICATION`,
+`CAMEL_HASHICORP_VAULT_ROLE_ID`, `CAMEL_HASHICORP_VAULT_SECRET_ID`, `CAMEL_HASHICORP_VAULT_ROLE`,
+`CAMEL_HASHICORP_VAULT_JWT`, `CAMEL_HASHICORP_VAULT_JWT_FILE` and `CAMEL_HASHICORP_VAULT_AUTH_MOUNT_PATH`, and the
+settings of <<_tls,TLS>> from `CAMEL_HASHICORP_VAULT_TRUST_STORE`, `CAMEL_HASHICORP_VAULT_TRUST_STORE_PASSWORD`,
+`CAMEL_HASHICORP_VAULT_KEY_STORE` and `CAMEL_HASHICORP_VAULT_KEY_STORE_PASSWORD`, and the settings of the <<_cloud_logins,Cloud logins>> from `CAMEL_HASHICORP_VAULT_AWS_IAM_SERVER_ID`, `CAMEL_HASHICORP_VAULT_AWS_REGION`,
+`CAMEL_HASHICORP_VAULT_AWS_STS_ENDPOINT`, `CAMEL_HASHICORP_VAULT_AZURE_RESOURCE` and
+`CAMEL_HASHICORP_VAULT_AZURE_CLIENT_ID`. When any of the `CAMEL_HASHICORP_VAULT_*` environment variables is set, the
 properties function takes all its settings from the environment variables, and none from the `camel.vault.hashicorp`
 configuration. The secret refresh task logs in the same way as the properties function.
 

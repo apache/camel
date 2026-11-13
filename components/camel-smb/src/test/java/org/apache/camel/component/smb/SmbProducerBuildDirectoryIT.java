@@ -37,7 +37,7 @@ public class SmbProducerBuildDirectoryIT extends SmbServerTestSupport {
 
         await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/buildDir/user/jono/jono.txt"))));
+                        new String(copyExistingFileContentFromContainer("/data/rw/buildDir/user/jono/jono.txt"))));
 
     }
 }

@@ -909,12 +909,7 @@ class SourceViewer {
             refactor.openRefactorPopup();
             return true;
         }
-        if (ke.isKey(KeyCode.LEFT) && ke.hasCtrl()) {
-            SourceEditorNavigation.moveWordLeft(editState);
-            return true;
-        }
-        if (ke.isKey(KeyCode.RIGHT) && ke.hasCtrl()) {
-            SourceEditorNavigation.moveWordRight(editState);
+        if (SourceEditorNavigation.handleWordKey(ke, editState, this::recordEditChange)) {
             return true;
         }
         if (pendingDiscard) {

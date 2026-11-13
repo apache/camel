@@ -43,10 +43,11 @@ final class TuiBackendHelper {
      * itself when {@code --record} configured the {@code tamboui.record*} system properties.
      */
     static TuiRunner createTuiRunner(Backend backend) throws Exception {
-        // TamboUI 0.7 turns on the Kitty keyboard protocol by default, and then some keys arrive differently
-        // (Ctrl+I vs Tab, Esc and Alt combinations); stay on the legacy keys until the key bindings are reviewed
+        // the Kitty keyboard protocol where the terminal has it (Kitty, Ghostty, WezTerm, iTerm2, foot, ...): keys
+        // arrive with their modifiers, so Shift+Enter is no plain Enter and Esc no start of an Alt key; a terminal
+        // without it ignores the request and sends the legacy keys
         return TuiRunner.create(
                 TuiConfig.builder().backend(backend).mouseCapture(true).bracketedPaste(true)
-                        .keyboardProtocol(KeyboardProtocol.LEGACY).build());
+                        .keyboardProtocol(KeyboardProtocol.AUTO).build());
     }
 }

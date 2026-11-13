@@ -33,9 +33,12 @@ import java.util.regex.PatternSyntaxException;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -45,9 +48,10 @@ import org.apache.camel.util.json.Jsoner;
  * {@code .cast} file.
  * <p>
  * A tape uses the <a href="https://github.com/charmbracelet/vhs">VHS</a> syntax (keys, {@code Type}, {@code Sleep},
- * {@code Wait /regex/}) plus commands for the TUI itself ({@code Caption}, {@code Highlight}, {@code Tab}, ...). The
- * keys go through the same queue as the keys an MCP client sends, so every key works, function keys and modifiers
- * included, and the TUI commands call the same tools an MCP client calls.
+ * {@code Wait /regex/}), the mouse commands of TamboUI ({@code Click}, {@code Drag}, {@code ScrollDown}, ...) plus
+ * commands for the TUI itself ({@code Caption}, {@code Highlight}, {@code Tab}, ...). The keys and the mouse events go
+ * through the same queue as the keys an MCP client sends, so every key works, function keys and modifiers included, and
+ * the TUI commands call the same tools an MCP client calls.
  */
 final class TapePlayer {
 
@@ -55,6 +59,9 @@ final class TapePlayer {
     interface Driver {
         /** Presses a key. */
         void key(KeyEvent event);
+
+        /** Clicks, drags or scrolls the mouse. */
+        void mouse(MouseEvent event);
 
         /** The screen as text, its rows separated by newlines; null before the first frame is rendered. */
         String screen();
@@ -68,10 +75,14 @@ final class TapePlayer {
 
     /** One step of a tape. */
     sealed interface Step
-            permits KeyStep, SleepStep, WaitStep, ToolStep, HighlightStep {
+            permits KeyStep, MouseStep, SleepStep, WaitStep, ToolStep, HighlightStep {
     }
 
     record KeyStep(KeyEvent event) implements Step {
+    }
+
+    /** A mouse event; a scroll at x and y -1 is at the centre of the screen when it plays, as in TamboUI. */
+    record MouseStep(MouseEvent event) implements Step {
     }
 
     record SleepStep(long millis) implements Step {
@@ -202,6 +213,29 @@ final class TapePlayer {
             case "integration" -> steps.add(new ToolStep("tui_navigate", Map.of("integration", unquote(args)), line));
             case "action" -> steps.add(new ToolStep("tui_action", Map.of("action", unquote(args)), line));
             case "theme" -> steps.add(new ToolStep("tui_set_theme", Map.of("theme", unquote(args)), line));
+            // the mouse commands of TamboUI, at 0-based cells of the screen
+            case "click", "rightclick", "middleclick" -> {
+                int[] cell = coordinates(args, 2);
+                MouseButton button = "click".equals(command)
+                        ? MouseButton.LEFT : "rightclick".equals(command) ? MouseButton.RIGHT : MouseButton.MIDDLE;
+                steps.add(new MouseStep(MouseEvent.press(button, cell[0], cell[1])));
+                steps.add(new MouseStep(MouseEvent.release(button, cell[0], cell[1])));
+                steps.add(new SleepStep(DEFAULT_TYPING_MILLIS));
+            }
+            case "mousedown" -> {
+                int[] cell = coordinates(args, 2);
+                steps.add(new MouseStep(MouseEvent.press(MouseButton.LEFT, cell[0], cell[1])));
+            }
+            case "mouseup" -> {
+                int[] cell = coordinates(args, 2);
+                steps.add(new MouseStep(MouseEvent.release(MouseButton.LEFT, cell[0], cell[1])));
+            }
+            case "mousemove" -> {
+                int[] cell = coordinates(args, 2);
+                steps.add(new MouseStep(MouseEvent.move(cell[0], cell[1])));
+            }
+            case "drag" -> addDrag(coordinates(args, 4), timing > 0 ? timing : TapeRecorder.DRAG_STEP_MILLIS, steps);
+            case "scrollup", "scrolldown", "scrollleft", "scrollright" -> addScroll(command, args, steps);
             default -> {
                 KeyEvent key = parseKey(head);
                 if (key == null) {
@@ -215,6 +249,66 @@ final class TapePlayer {
                 }
             }
         }
+    }
+
+    /** Presses the left button at the first cell, moves it cell by cell to the second, and releases it there. */
+    private static void addDrag(int[] c, long gap, List<Step> steps) {
+        steps.add(new MouseStep(MouseEvent.press(MouseButton.LEFT, c[0], c[1])));
+        int count = TapeRecorder.dragSteps(c[0], c[1], c[2], c[3]);
+        for (int k = 1; k <= count; k++) {
+            steps.add(new SleepStep(gap));
+            steps.add(new MouseStep(
+                    MouseEvent.drag(MouseButton.LEFT, c[0] + (c[2] - c[0]) * k / count,
+                            c[1] + (c[3] - c[1]) * k / count)));
+        }
+        steps.add(new MouseStep(MouseEvent.release(MouseButton.LEFT, c[2], c[3])));
+        steps.add(new SleepStep(DEFAULT_TYPING_MILLIS));
+    }
+
+    /**
+     * Scrolls the wheel: {@code ScrollDown}, {@code ScrollDown 3}, {@code ScrollDown 10 5} or
+     * {@code ScrollDown 3 10 5}.
+     */
+    private static void addScroll(String command, String args, List<Step> steps) {
+        int[] c = args.isEmpty() ? new int[0] : integers(args);
+        if (c == null || c.length > 3) {
+            throw new IllegalArgumentException("Scroll takes a count, a cell (x y) or both, as integers");
+        }
+        int count = c.length == 1 || c.length == 3 ? Math.max(1, c[0]) : 1;
+        int x = c.length == 2 ? c[0] : c.length == 3 ? c[1] : -1;
+        int y = c.length == 2 ? c[1] : c.length == 3 ? c[2] : -1;
+        for (int i = 0; i < count; i++) {
+            steps.add(new MouseStep(switch (command) {
+                case "scrollup" -> MouseEvent.scrollUp(x, y);
+                case "scrolldown" -> MouseEvent.scrollDown(x, y);
+                case "scrollleft" -> MouseEvent.scrollLeft(x, y);
+                default -> MouseEvent.scrollRight(x, y);
+            }));
+        }
+        steps.add(new SleepStep(DEFAULT_TYPING_MILLIS));
+    }
+
+    /** Exactly {@code expected} integer coordinates. */
+    private static int[] coordinates(String args, int expected) {
+        int[] c = integers(args);
+        if (c == null || c.length != expected) {
+            throw new IllegalArgumentException("Needs exactly " + expected + " integer coordinates");
+        }
+        return c;
+    }
+
+    /** The integers separated by whitespace, or null when one is not an integer. */
+    private static int[] integers(String args) {
+        String[] tokens = args.strip().split("\\s+");
+        int[] values = new int[tokens.length];
+        for (int i = 0; i < tokens.length; i++) {
+            try {
+                values[i] = Integer.parseInt(tokens[i]);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return values;
     }
 
     private static void addTyped(String text, long gap, List<Step> steps) {
@@ -370,6 +464,8 @@ final class TapePlayer {
         for (Step step : steps) {
             if (step instanceof KeyStep k) {
                 driver.key(k.event());
+            } else if (step instanceof MouseStep m) {
+                driver.mouse(atScreen(m.event(), driver.screen()));
             } else if (step instanceof SleepStep s) {
                 Thread.sleep(s.millis());
             } else if (step instanceof WaitStep w) {
@@ -382,6 +478,21 @@ final class TapePlayer {
         }
         Thread.sleep(END_PAUSE_MILLIS);
         driver.quit();
+    }
+
+    /** The event, a scroll with no cell (x and y -1) moved to the centre of the screen. */
+    static MouseEvent atScreen(MouseEvent event, String screen) {
+        if (event.x() >= 0 && event.y() >= 0) {
+            return event;
+        }
+        int x = 0;
+        int y = 0;
+        if (screen != null) {
+            String[] rows = screen.split("\n", -1);
+            x = CharWidth.of(rows[0]) / 2;
+            y = rows.length / 2;
+        }
+        return new MouseEvent(event.kind(), event.button(), x, y, event.modifiers());
     }
 
     private void waitFor(WaitStep wait, Driver driver) throws InterruptedException {

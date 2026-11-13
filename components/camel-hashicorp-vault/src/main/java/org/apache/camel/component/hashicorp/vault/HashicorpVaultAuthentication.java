@@ -31,7 +31,10 @@ enum HashicorpVaultAuthentication {
     APPROLE("approle", "AppRole"),
     KUBERNETES("kubernetes", "Kubernetes"),
     JWT("jwt", "JWT"),
-    CERT("cert", "TLS certificate");
+    CERT("cert", "TLS certificate"),
+    AWS_IAM("aws-iam", "AWS IAM"),
+    AZURE_MSI("azure-msi", "Azure managed identity"),
+    GCP_GCE("gcp-gce", "Google Compute Engine");
 
     private final String value;
     private final String displayName;

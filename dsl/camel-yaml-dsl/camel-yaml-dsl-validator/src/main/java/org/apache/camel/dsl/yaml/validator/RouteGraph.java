@@ -25,7 +25,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 /**
  * The routes of a file and the endpoints between them: what the route topology is at runtime, read from the source.
@@ -70,7 +70,7 @@ final class RouteGraph {
             if (from == null) {
                 continue;
             }
-            String id = route != null && route.has("id") ? route.get("id").asText() : null;
+            String id = route != null && route.has("id") ? route.get("id").asString("") : null;
             JsonNode steps = from.get("steps");
             if (steps == null && route != null) {
                 steps = route.get("steps");
@@ -89,13 +89,13 @@ final class RouteGraph {
         if (node == null) {
             return null;
         }
-        if (node.isTextual()) {
-            return node.asText();
+        if (node.isString()) {
+            return node.asString("");
         }
         if (!node.isObject() || !node.has("uri")) {
             return null;
         }
-        String uri = node.get("uri").asText();
+        String uri = node.get("uri").asString("");
         if (uri.indexOf(':') > 0) {
             return uri;
         }
@@ -105,7 +105,7 @@ final class RouteGraph {
         }
         for (String key : new String[] { "name", "destinationName", "topic", "queue", "path", "address" }) {
             if (parameters.has(key) && parameters.get(key).isValueNode()) {
-                return uri + ":" + parameters.get(key).asText();
+                return uri + ":" + parameters.get(key).asString("");
             }
         }
         return uri;
@@ -131,7 +131,7 @@ final class RouteGraph {
         if (!node.isObject()) {
             return;
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String name = it.next();
             JsonNode value = node.get(name);
             if (SENDS.contains(name)) {
@@ -212,7 +212,7 @@ final class RouteGraph {
     static Set<String> pathParameterNames(JsonNode path) {
         Set<String> answer = new TreeSet<>();
         if (path != null && path.isValueNode()) {
-            Matcher m = PATH_PARAMETER.matcher(path.asText());
+            Matcher m = PATH_PARAMETER.matcher(path.asString(""));
             while (m.find()) {
                 answer.add(m.group(1));
             }

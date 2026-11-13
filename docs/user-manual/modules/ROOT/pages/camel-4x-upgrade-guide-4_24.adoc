@@ -13,9 +13,32 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-opa - batch fail-open marker
+
+Batch evaluation now sets `CamelOpaDecisionFailedOpen=true` when any element proceeds because its decision point
+was unavailable and `failOpen=true`. Previously this marker was set only for single-element evaluation. Routes
+that inspect the marker after a batch should account for it applying to any element; the per-element outcome
+list identifies the affected elements. The existing `CamelOpaBatchDecision` Boolean list is unchanged.
+
+=== camel-controlbus - the language command is off by default
+
+The `language` command of the control bus (`controlbus:language:<name>`) evaluates the message body as an expression of the named language.
+It is now off by default: a `controlbus:language` endpoint fails when it is created unless its language is listed in the new `allowedLanguages` option, on the component or on the endpoint:
+
+[source,properties]
+----
+camel.component.controlbus.allowed-languages = simple
+----
+
+The `route` command (`controlbus:route?action=...`) is not affected.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
+
+=== camel-lra - promoted to Stable
+
+The `camel-lra` component has been promoted from _Preview_ to _Stable_ support level.
 
 === KeyValueRepository and State Store - namespace partitioning on shared backends
 
@@ -28,6 +51,15 @@ Starting in 4.24:
 * To maintain backward compatibility with un-namespaced entries written by Camel 4.23 on a shared backend without migrating keys, users can opt out of namespacing by configuring `namespaced=false` on the endpoint (`state-store:myStore?namespaced=false`) or on the component (`camel.component.state-store.namespaced=false`).
 * The Cache EIP stores keys directly without a namespace prefix, preserving documented cache invalidation recipes (`cache.delete(key)` and `cache.clear()`). Note that because cache keys are un-prefixed, calling `clear()` on a `KeyValueRepository` shared with the Cache EIP will clear all entries in that repository, including state-store entries. It is recommended to use a dedicated repository for the Cache EIP when co-located with state-store.
 * `KeyValueAggregationRepository` safely verifies entry types before unmarshalling, ignoring unexpected types gracefully instead of failing with a class cast exception.
+
+=== camel-core-model - doTry keeps doCatch and doFinally in its outputs
+
+`doCatch` and `doFinally` written as properties of `doTry` in the YAML DSL are now kept in the outputs of the
+`TryDefinition`, as the clauses of the Java and XML DSLs always were, after the steps whatever the order of the YAML
+keys. Code that walks `getOutputs()` (route dumps, tooling) now sees them, and `getCatchClauses()`,
+`getFinallyClause()` and `getOutputsWithoutCatches()` are derived from the outputs on each call: a clause removed from
+the outputs, for example with advice-with, is no longer used, and changing the list returned by `getCatchClauses()`
+no longer changes the doTry. Use `setCatchClauses` and `setFinallyClause`, or the outputs, instead.
 
 === camel-ehcache - shared CacheManager and changed defaults
 
@@ -92,6 +124,18 @@ exchange, and a tag or attribute from the header still overrides one from the UR
 A route that relied on a Simple expression in a header tag or attribute should use the `tags` / `attributes` URI
 option instead (for example `tags.customer=${header.customerId}`), or compute the value in the route before
 setting the header.
+
+=== camel-elasticsearch-rest-client - the document id and the index name are each sent as one path segment
+
+The producer now percent-encodes the document id and the index name, so each is sent as one path segment of the
+request and Elasticsearch takes it literally. Before, they were placed into the path as given: a `/`, `?` or `#` in
+the value changed the path of the request, and a space or a `%` made the request fail. A route that put extra path
+segments or request parameters into the document id or the index name must change.
+
+A document id of `.` or `..` is now rejected, as is an index name that is empty, `.` or `..`, or that contains `\`,
+`/`, `?`, `"`, `<`, `>`, `|`, `#` or a space. A comma separated list of index names and patterns, such as
+`logs-*,my_index`, still works. A `GET_BY_ID` response without the source of the document now gives a `null` body
+instead of failing with a `NullPointerException`.
 
 === camel-ognl removed
 
@@ -168,6 +212,17 @@ Required tool arguments whose names start with `camel` or `org.apache.camel.` (c
 now reject the invocation before the tool route runs. Previously, these arguments could pass the
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
+
+=== camel-azure-functions - invokeFunction checks the function app and the function name
+
+The `invokeFunction` operation now checks the function app and the function name, from the endpoint or from the
+`CamelAzureFunctionsFunctionApp` and `CamelAzureFunctionsFunctionName` headers, before it calls the function, and
+builds the URL with the function name encoded as a path. The exchange fails with an `IllegalArgumentException` when the
+function app is missing or is not an app name (letters, digits and hyphens, not starting or ending with a hyphen, at
+most 60 characters), or when the function name has a `?`, `#`, `\` or `%`, an empty segment, or a `.` or `..`
+segment. A function name of several segments, such as `products/42` for a function with a custom route, is still
+accepted. The `x-functions-key` header is only added to an `https` URL on an `azurewebsites.net` host. Valid
+configurations are not affected.
 
 === camel-mcp-server - the Origin header is checked on /mcp
 
@@ -258,6 +313,29 @@ is skipped. Before, the source transaction was rolled back and the record replay
 the route of the send (for example with `direct`) behaves the same way, as it did in 4.23. To replay the record, throw
 the exception again in the `doCatch` block, or end it with `rollback()`.
 
+=== camel-jms, camel-sjms, camel-sjms2 - an exception sent back with transferException is not rolled back
+
+With `transferException=true`, a consumer that sends the exception of a failed exchange back as the reply now always
+treats the message as processed. Before, when the exception was a `RuntimeCamelException`, or had one as a cause, the
+consumer also rethrew it: a transacted session was rolled back, so the request was redelivered and the reply was lost
+with it. Now the outcome does not depend on the type of the exception. To have a failed request redelivered, do not
+use `transferException` on that route.
+
+=== camel-sjms, camel-sjms2 - a received StreamMessage is an InputStream
+
+The camel-sjms and camel-sjms2 consumers now map a received `jakarta.jms.StreamMessage` to an `InputStream` over its
+bytes, as the camel-jms consumer does, so a body sent with `jmsMessageType=Stream` arrives as the bytes that were sent.
+Before, the body was the `jakarta.jms.StreamMessage` itself. To get the JMS message, use `mapJmsMessage=false`.
+
+=== camel-keycloak - Keycloak 26.8.2 requires the kc-admin-api client scope
+
+This is a change in Keycloak, not in Camel: from Keycloak 26.8.2 the Admin REST API accepts only access tokens that
+carry the built-in `kc-admin-api` client scope, and rejects other tokens with `401 Unauthorized`. The Keycloak upgrade
+assigns the scope to `admin-cli` and `security-admin-console` only. When the `keycloak` producer authenticates with
+`clientId` and `clientSecret` of your own client, assign `kc-admin-api` to that client as a default client scope; a
+pre-obtained `accessToken` must be issued with that scope too. Username and password authentication uses `admin-cli`
+and keeps working. The integration tests of camel-keycloak now run against Keycloak 26.8.2.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
@@ -278,6 +356,14 @@ The `org.apache.camel.model.Model` interface (and so `ModelCamelContext`) has a 
 returns the lock held while routes are added to or removed from the model. A custom implementation of `Model` must
 implement it (classes that extend `DefaultCamelContext` need no change). The Kamelet component now creates the routes of
 Kamelets holding this lock.
+
+=== camel-core - CamelContext has a new removeRouteTemplatesFromResources method
+
+The `CamelContext` interface has a new method `removeRouteTemplatesFromResources(String pattern)`, which removes the
+route templates loaded from a resource (such as a route file or a Kamelet) and keeps those without one (such as the route
+templates of a Java `RouteBuilder` added to the context). A custom implementation of `CamelContext` must implement it
+(classes that extend `DefaultCamelContext` need no change). The route reload of dev mode uses it, so a route template
+added from Java is kept across a reload, and a route created from it with a templated route in a file is created again.
 
 === camel-core - Route.clearRouteModel() is deprecated
 
@@ -371,6 +457,11 @@ failure. Now such a failure is redelivered as any other, from attempt 1, so such
 before. The `CamelRedelivered`, `CamelRedeliveryCounter` and `CamelRedeliveryMaxCounter` headers stay on the message
 after the redelivered step succeeded, as before.
 
+The same applies after a `doCatch` caught the failure of a route that the `doTry` called (such as with `direct`) and
+whose error handler redelivered it: a later failure (after the `doTry`, in a route the `doCatch` or `doFinally` block
+calls, in a calling route when the `doCatch` block throws, or in a route called later) is redelivered from attempt 1.
+The redelivery headers of the called route stay readable in the `doCatch` block.
+
 === camel-core - a nested split no longer changes the processed items of the outer split
 
 With `errorThreshold` or `maxFailedRecords` on a split that contains another split, the inner split changed the number of
@@ -448,6 +539,31 @@ documented with the default value `true`, the default it has always had at runti
 XML and YAML DSL schemas said `false`. Routes behave as before.
 
 Tools that read the default from the catalog or the schemas now see `true`.
+
+=== camel-core - resolveResource: the name of the resource has no scheme
+
+With `resolveResource=true` on an expression (new in 4.23), a result that starts with `resource:` must now name a
+resource without a scheme, which is loaded from the classpath. A result with a scheme (`resource:file:order.json`,
+`resource:classpath:...`, `resource:http:...`, `resource:ref:...`) or with `..` in the name fails with an
+`IllegalArgumentException` that says to give the name without a scheme. Before, any scheme was loaded, from any
+location.
+
+Drop the scheme: return `resource:order.json` instead of `resource:file:order.json`. The same name works with
+`camel run`, which puts the files given on the command line on the classpath, and after `camel export`, which puts them
+in `src/main/resources`.
+
+[source,yaml]
+----
+- setBody:
+    expression:
+      groovy:
+        expression: "counter == 1 ? 'resource:order.json' : 'resource:order-bad-email.json'"
+        resolveResource: true
+----
+
+Let the route choose the name, such as a fixed folder with a name the route picks, rather than taking it straight from
+the message. The `resource:` prefix on the expression text itself, such as `constant: "resource:file:order.json"`, is
+not affected.
 
 === camel-core - pollEnrich: the body is null after a timeout also for a message that creates its body on demand
 
@@ -892,7 +1008,7 @@ Without `synchronous()`, the exchange never completed (fixed by the same change)
 A `watermarkExpression` that throws on an item now fails that item, so `stopOnException`, `maxFailedRecords` and
 `errorThreshold` apply as for any failed item.
 
-=== camel-core - shareUnitOfWork: a part sent to seda no longer takes the on completions of the parent exchange
+=== camel-core - shareUnitOfWork and the topic load balancer: a part sent to seda no longer takes the on completions of the parent exchange
 
 Since Camel 4.14 the parts of a Split, Multicast or Recipient List with `shareUnitOfWork` use the unit of work of the
 parent exchange. A part that sent to an asynchronous endpoint without waiting for a reply (such as `seda` with an
@@ -917,6 +1033,10 @@ file that was not loaded yet with `convertBodyTo(String.class)` before sending t
 (moved, deleted, acknowledged) before the asynchronous processing is done: a failure of the seda route then fails the
 part, and so the split. The previous behaviour, where the consumer commits with the outcome of one seda copy, cannot be
 configured.
+
+The same applies to the copies that the topic load balancer (`loadBalance().topic()`) sends to each of its endpoints:
+they use the unit of work of the exchange too, and the first one sent to `seda` took the on completions of the exchange
+(such as the commit of the consumer), so they ran with the outcome of that copy. They now stay with the exchange.
 
 === camel-core - Tokenize: the token is literal text unless regex is true
 
@@ -3182,6 +3302,26 @@ parameter than the statement has placeholders: most JDBC drivers then fail with 
 ignore the extra parameter, so the statement still matches an expired entry. With `tableName` the statements are
 derived from the default statements, as before.
 
+=== camel-sql - JdbcOrphanLockAwareIdempotentRepository keeps confirmed keys
+
+`JdbcOrphanLockAwareIdempotentRepository` now confirms a key by setting its `createdAt` to null and no longer keeping
+it alive, so a confirmed key stays a duplicate after its instance stops, as in `JdbcMessageIdRepository`. Before,
+another instance took it over `lockMaxAgeMillis` later and processed the message again. Keys that are only added
+(the file consumer with `idempotentEager=false`) and keys written before the upgrade are still taken over. With
+`readLockRemoveOnRollback=false`, a failed file is confirmed too and is no longer retried by another instance.
+
+The `createdAt` column must allow null. The repository checks this when it starts (in a transaction that it rolls
+back); with a `NOT NULL` column, or a MySQL/MariaDB `TIMESTAMP` with `explicit_defaults_for_timestamp=OFF`, it logs a
+WARN and keys stay locks as before, and a confirm sends no statement. Confirmed keys have no age, so housekeeping by
+`createdAt` does not delete them: to purge them by age, add a column of your own (such as
+`insertedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP`) or set a `confirmQuery` that also stores the time of the confirm,
+and purge by that column. With the `idempotent` read locks of the file consumer and the default
+`readLockRemoveOnCommit=false`, the name of every processed file stays in the table; when the key is only a read
+lock, set `readLockRemoveOnCommit=true` with `readLockIdempotentReleaseDelay`. With a custom table set by custom
+queries instead of `tableName`, set `confirmQuery` too; set it to null or empty to keep the old behaviour. All
+instances sharing the table must run this version: older ones see a confirmed key as absent (before 4.14.6 and 4.18.2
+they take it over).
+
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
 In a `transacted()` route that uses a JTA transaction manager, `markRollbackOnlyLast()` now rolls back the
@@ -3820,6 +3960,20 @@ a `NoNodeException`, as it did without `create=true`.
 With `listChildren=true`, a failed write or delete of an InOut exchange now fails the exchange, instead of being
 replaced by the listing of the child _znodes_.
 
+=== camel-zookeeper-master - MasterRoutePolicy and route removal, and the consumer of a slave
+
+A `MasterRoutePolicy` stayed in the ZooKeeper group until the CamelContext stopped, also after its route was removed
+(with `removeRoute`, or by a route reload), so no other node became the master and the route ran nowhere in the
+cluster. The policy now leaves the group when its route is removed, so another node takes over, and joins it again when
+the route is added again. So a route reloaded on the master can now move to another node.
+
+On a node that is not the master, the policy now stops the consumer of its route again right after the route was
+started or resumed (from JMX, the controlbus or a route policy), and starts it when the node becomes the master. Before,
+the consumer of such a route kept running next to the one of the master. This includes a route left at
+`autoStartup=true`: it now consumes only once its node is the master, also when the CamelContext starts, so it does not
+consume while the node cannot reach ZooKeeper. Setting the route to `autoStartup=false` is still recommended, so the
+consumer does not run for a moment when the CamelContext starts.
+
 === camel-milo - each client connection has thread pools of its own
 
 A `milo-client` or `milo-browse` connection now handles the outcome of its write, method call, read and browse
@@ -4006,6 +4160,11 @@ component in full, and the rest by name in `moreOptions` (`limit` lists more in 
 set to `endpoint,component` and its `configKey`, instead of twice, and `matchedOptions` counts option names. A name
 that only matches a word of an EIP title (such as `retry`) no longer returns that EIP: the answer is a not-found with
 suggestions.
+
+A comma in the `optionsFilter` of `camel_catalog_doc` now separates several terms, each matched on its own, instead
+of being matched as part of the text; a term that matches no option is listed in `unmatchedTerms`. For an EIP, the
+options of its elements that match the filter are now listed under `nestedOptions` also when options of the EIP
+itself match, not only when none does.
 
 === camel-wasm - the endpoint runs WASI command modules (Breaking change)
 
@@ -4594,6 +4753,17 @@ in retry mode: 16 redeliveries and its default retry letter and dead letter topi
 `retryLetterTopic` and `deadLetterTopic` only apply when `maxRedeliverCount` is set. The consumer logs a WARN when it
 starts with one of these topics but no `maxRedeliverCount` (and for `retryLetterTopic` without `enableRetry`).
 
+=== camel-pulsar - the producer no longer sends a body with Java serialization
+
+The `pulsar` producer sends the body as a `byte[]`. A body that does not convert to one, such as a `Map`, a `List`, a
+number or a POJO, was sent with Java serialization, which only a Java client that deserializes it can read, and no body
+was sent as the bytes of a serialized `null`. Such a body, and no body, now fail with an `InvalidPayloadException`.
+Text, bytes, a stream and a file are sent as their content, as before.
+
+Marshal the body before the producer, for example with `marshal().json()`. To keep the old behaviour for now, set the
+new option `allowJavaSerializedObject=true` on the endpoint or the component. The option is deprecated from the start
+and will be removed in a future release.
+
 === camel-twitter - twitter-search applies its query options again
 
 Since Camel 4.0 (the upgrade to Twitter4J 4.1, whose `Query` is immutable) the `twitter-search` endpoint sent only the
@@ -5145,6 +5315,15 @@ URI shows in:
 * tracing: a `netty-http` endpoint now gets the span decorator of `netty-http` instead of the one of `http` or
   `https`, and the include and exclude patterns are matched against the new endpoint URI.
 * the `endpointName` tag of the Micrometer exchange event metrics.
+
+=== camel-netty-http - endpoint options are no longer sent to the server as query parameters
+
+The `netty-http` producer no longer sends some of its endpoint options, such as `cookieHandler`, `httpMethodRestrict`,
+`traceEnabled` and `exchangePattern`, to the HTTP server as query parameters. For example,
+`netty-http:http://localhost:8080/foo?bar=1&cookieHandler=#myCookieHandler` now calls
+`http://localhost:8080/foo?bar=1`. Before, the server also received the `cookieHandler` parameter. Only the
+query parameters that are not endpoint options are sent, as the documentation describes. To send a query parameter
+that has the same name as an endpoint option, set the query in the `CamelHttpQuery` header.
 
 === camel-netty - hostnameVerification verifies the host instead of failing
 
@@ -7940,11 +8119,11 @@ to your application, unless a library it uses still needs it; at most `jackson-a
 Jackson 2, for example an `ObjectMapper` it got through `camel-salesforce`, declare `jackson-databind` yourself.
 
 *Components that stay on Jackson 2.* `camel-jackson`, `camel-jacksonxml`, `camel-jackson-avro`, `camel-jackson-protobuf`,
-`camel-azure-cosmosdb`, `camel-elasticsearch`, `camel-jq`, `camel-jslt`, `camel-json-validator`, `camel-mcp-server`,
-`camel-metrics`, `camel-opa`, `camel-openai`, `camel-openapi-java`, `camel-opensearch`, `camel-quickjs`, `camel-rest-openapi`
-and `camel-tahu` still use Jackson 2. Where they take or return Jackson nodes, these are `com.fasterxml.jackson.databind.JsonNode`,
-not the `tools.jackson.databind.JsonNode` that `camel-jackson3` produces. In a route that mixes the two, such as a `jq`
-expression after `unmarshal().json()` in Camel JBang, pass the body between them as JSON text.
+`camel-azure-cosmosdb`, `camel-elasticsearch`, `camel-jq`, `camel-jslt`, `camel-metrics`, `camel-opa`, `camel-openai`,
+`camel-openapi-java`, `camel-opensearch`, `camel-quickjs`, `camel-rest-openapi` and `camel-tahu` still use Jackson 2. Where
+they take or return Jackson nodes, these are `com.fasterxml.jackson.databind.JsonNode`, not the
+`tools.jackson.databind.JsonNode` that `camel-jackson3` produces. In a route that mixes the two, such as a `jq` expression
+after `unmarshal().json()` in Camel JBang, pass the body between them as JSON text.
 
 *Jackson 2 nodes.* A component on Jackson 3 accepts JSON text, bytes, streams, Maps, Lists and `tools.jackson.databind.JsonNode`
 bodies. A `com.fasterxml.jackson.databind.JsonNode` is an ordinary bean to its mapper: pass it as JSON text, or produce it
@@ -8231,6 +8410,63 @@ Exceptions: `camel-huaweicloud-dms` and `camel-huaweicloud-iam` let a failure to
 unchecked `tools.jackson.core.JacksonException`, which is not an `IOException`, so `onException(IOException.class)` does not
 match it.
 
+=== Jackson 3 - camel-json-validator
+
+`camel-json-validator` now uses json-schema-validator 3 (`com.networknt`), which is built on Jackson 3
+(`tools.jackson`), and no longer brings Jackson 2 to your application.
+
+*Object mapper.* The `objectMapper` option of the endpoint is now a `tools.jackson.databind.ObjectMapper`, and the
+`objectMapper` and `useDefaultObjectMapper` options of the component only find a mapper of that type in the registry. A
+mapper that the `objectMapper` option of the component names, and that is not found or is a Jackson 2 mapper, now fails
+the creation of the endpoint with a `NoSuchBeanException`; it was ignored before. A Jackson 2 mapper that
+`useDefaultObjectMapper` found in the registry, such as one a runtime registers, is no longer used, without a warning:
+bind a Jackson 3 mapper with the same settings to keep them. With `useDefaultObjectMapper`, a single
+Jackson 3 mapper in the registry is now used to read the JSON. With the Jackson auto-configuration of Spring Boot
+(`spring-boot-starter-json`, which the web starters include), that is its `JsonMapper`, which uses the Jackson 3 defaults:
+content after the JSON value now fails the validation. To accept it again, set `spring.jackson.use-jackson2-defaults=true`,
+or `disabledDeserializationFeatures=FAIL_ON_TRAILING_TOKENS` on the endpoint.
+
+*Reading the JSON.* Without a mapper of your own, the body is read with the Jackson 2 defaults, as before: content after the
+first JSON value is ignored unless you enable `FAIL_ON_TRAILING_TOKENS` with the `enabledDeserializationFeatures` option.
+The limits are those of Jackson 3 (see *Limits* in <<_jackson_3,Jackson 3>>): JSON nested more than 500 levels deep now
+fails. A mapper of your own is read with its own settings. Unlike the components in *Jackson 2 nodes*, `camel-json-validator`
+still reads only JSON text, bytes and streams: a `Map` or `List` body fails, as before; marshal it to JSON first. The `enabledDeserializationFeatures` and `disabledDeserializationFeatures`
+options take the names of `tools.jackson.databind.DeserializationFeature`, and configure a copy of your mapper rather than
+the mapper itself. A name that Jackson 3 moved to another type of feature, such as `READ_ENUMS_USING_TO_STRING` (now an
+`EnumFeature`) or `ADJUST_DATES_TO_CONTEXT_TIME_ZONE` (now a `DateTimeFeature`), fails the creation of the endpoint.
+A body that is not JSON reaches the error handler with a `tools.jackson.core` exception as the cause; see *Exceptions* in
+<<_jackson_3,Jackson 3>>.
+
+*Validation.* json-schema-validator 3.0 also changed the outcome of some checks. Where the `format` keyword is asserted,
+`date-time` requires a `T` and an explicit offset, and `time` requires the seconds. See the
+https://github.com/networknt/json-schema-validator/blob/master/CHANGELOG.md[changelog of json-schema-validator] for the
+full list.
+
+*Custom error handlers and schema loaders.* The `JsonValidatorErrorHandler` and `JsonUriSchemaLoader` interfaces keep the
+same `com.networknt` types, but an `Error` gives the instance node as a `tools.jackson.databind.JsonNode`. The `mapper`
+field that a subclass of `DefaultJsonUriSchemaLoader` inherits is now a `tools.jackson.databind.ObjectMapper`: a subclass
+that uses or replaces it must move to Jackson 3.
+
+*YAML DSL validator.* `camel validate yaml` and the YAML DSL validator Maven plugin read the YAML with Jackson 3, which
+follows YAML 1.2: `yes`, `no`, `on` and `off` are no longer booleans, and `1_000` and `0b101` are no longer numbers. An
+option such as `streaming: yes` is now reported; the route fails to start with it, so write `true` or `false`.
+
+=== Jackson 3 - the MCP JSON module of camel-mcp-server and camel-openai
+
+`camel-mcp-server` and the MCP client of `camel-openai` now use the Jackson 3 JSON module of the MCP Java SDK,
+`io.modelcontextprotocol.sdk:mcp-json-jackson3`, instead of `mcp-json-jackson2`. `McpJsonDefaults.getMapper()` returns a
+mapper of that module. `camel-mcp-server` no longer brings `com.fasterxml.jackson.core:jackson-databind` to your application;
+`camel-openai` still does, for the OpenAI client.
+
+The module moved with `camel-json-validator`: `mcp-json-jackson2` needs json-schema-validator 2, and `mcp-json-jackson3` and
+`camel-json-validator` need json-schema-validator 3, which an application can only have one of. If your application declares
+`mcp-json-jackson2` itself, replace it with `mcp-json-jackson3`: with json-schema-validator 3, `mcp-json-jackson2` fails with a
+`NoSuchMethodError` as soon as it checks the schema of a tool.
+
+The mapper of `mcp-json-jackson3` uses the Jackson 3 defaults (see the table in <<_jackson_3,Jackson 3>>). This mainly
+changes the JSON of the SDK's own message records and of POJOs inside a `Map`, such as the order of their properties and
+how enums and dates are written.
+
 === camel-docling - the apiKeyHeader option is deprecated
 
 The `apiKeyHeader` option never had any effect: the name of the header that carries the API key is fixed in the
@@ -8260,3 +8496,24 @@ property of the bucket -- so `InfluxDb2Producer` never reads the option or the h
 Both are now deprecated with a note that says so. Remove `retentionPolicy` from the endpoint URI and stop setting the
 header: they are silently ignored. To control how long the data is kept, set the retention period on the bucket the
 endpoint writes to.
+
+=== camel-language - the CamelLanguageScript header is used once and removed
+
+With `allowTemplateFromHeader=true`, a script from the `CamelLanguageScript` header is now used for that message only.
+Before, with `cacheScript=true` it could replace the cached script of the endpoint, so later messages without the header
+ran it too. The header is now removed after use, so a later language endpoint in the route runs its own script instead
+of the header's. Set the header again before each language endpoint that should use it.
+
+=== camel-vertx - the component fails to start when the clustered Vert.x is not created
+
+When the component builds its own clustered Vert.x (the component `host` or `port` option is set and no `vertxOptions` is
+given), it waits for the EventBus to be ready before it reports itself started. That wait used to be ineffective: the
+result of the bounded wait was discarded and a failed build only logged a warning, so the component started with no
+Vert.x instance and the first endpoint, producer or consumer to use it failed with a `NullPointerException`.
+
+The component now fails to start, with the cause attached, when the clustered Vert.x cannot be built or is not ready within
+the `timeout` option. An application whose cluster join is slower than `timeout` (60 seconds by default) has to raise it.
+A Vert.x that completes after the timeout is closed, rather than being left joined to the cluster with nobody to stop it.
+
+`timeout` must now be a positive number of seconds on that path: `timeout=0` used to mean "do not wait", which left the
+component without a Vert.x, and is rejected with a clear message instead.
