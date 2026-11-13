@@ -24,6 +24,10 @@ list identifies the affected elements. The existing `CamelOpaBatchDecision` Bool
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
 
+=== camel-lra - promoted to Stable
+
+The `camel-lra` component has been promoted from _Preview_ to _Stable_ support level.
+
 === KeyValueRepository and State Store - namespace partitioning on shared backends
 
 In Camel 4.23, `state-store` endpoints stored keys directly into the underlying `KeyValueRepository` without namespacing. When a single `KeyValueRepository` was shared between multiple state stores, the Cache EIP, or repository adapters (such as `KeyValueAggregationRepository` or `KeyValueIdempotentRepository`), operations on one store (such as `clear()`) or key collisions could affect entries of another component or pattern.
