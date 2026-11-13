@@ -33,7 +33,7 @@
     <description>Camel OpenFGA Component</description>
 
     <properties>
-        <!-- the openfga/openfga image is only published for amd64 and arm64 -->
+        <!-- the openfga/openfga image is  published for amd64, arm64, and ppc64le -->
         <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
