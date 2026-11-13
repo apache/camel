@@ -373,6 +373,17 @@ assigns the scope to `admin-cli` and `security-admin-console` only. When the `ke
 pre-obtained `accessToken` must be issued with that scope too. Username and password authentication uses `admin-cli`
 and keeps working. The integration tests of camel-keycloak now run against Keycloak 26.8.2.
 
+=== camel-kubernetes - the context reload on a secret or config map update lists the resources
+
+With `camel.vault.kubernetes.refreshEnabled=true` or `camel.vault.kubernetescm.refreshEnabled=true`, the task that
+reloads the CamelContext now uses a Kubernetes informer: it lists the Secrets (or ConfigMaps) of the namespace and then
+watches them, and lists them again when the API server closes the watch (for example with 410 Gone), so an update made
+while the watch was closed still reloads the context. Before, it only watched them, and such an update was missed. When
+RBAC is enabled, the ServiceAccount now needs the `list` permission on `secrets` (or `configmaps`) in addition to
+`watch`. Without it the informer cannot start: the Kubernetes client logs an ERROR, the task a WARN, and it tries again
+with a delay that doubles up to 30 seconds. Creating or deleting a secret or config map still does not reload the
+context.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.

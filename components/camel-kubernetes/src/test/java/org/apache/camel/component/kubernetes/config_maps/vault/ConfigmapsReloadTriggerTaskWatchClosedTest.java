@@ -21,56 +21,125 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
-import io.fabric8.kubernetes.api.model.StatusBuilder;
-import io.fabric8.kubernetes.api.model.WatchEvent;
 import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
-import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.kubernetes.WatchControlDispatcher;
 import org.apache.camel.component.kubernetes.properties.ConfigMapPropertiesFunction;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.PluginHelper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The task that reloads the CamelContext when a config map is updated is submitted once, and the Kubernetes client
- * closes its watch for good, with an exception, when the API server answers 410 Gone (the resource version of the watch
- * is too old, which can happen to a long-running watch). The task must then watch again.
+ * The task that reloads the CamelContext when a config map is updated is submitted once, and watches the config maps
+ * until it is stopped. The API server closes a watch with 410 Gone when the resource version of the watch is too old
+ * (which can happen to a long-running watch), and then no longer has the events since that version. The task must then
+ * watch again, and must not miss an update made while it was not watching.
  */
-@EnableKubernetesMockClient
 class ConfigmapsReloadTriggerTaskWatchClosedTest {
 
-    private static final String WATCH_PATH = "/api/v1/namespaces/test/configmaps?allowWatchBookmarks=true&watch=true";
+    private WatchControlDispatcher dispatcher;
+    private KubernetesMockServer server;
+    private NamespacedKubernetesClient client;
 
-    KubernetesMockServer server;
-    NamespacedKubernetesClient client;
+    @BeforeEach
+    void setUp() {
+        dispatcher = new WatchControlDispatcher("/api/v1/namespaces/test/configmaps");
+        server = WatchControlDispatcher.createServer(dispatcher);
+        client = server.createClient();
+        client.configMaps().resource(new ConfigMapBuilder().withNewMetadata().withName("myconfigmap").endMetadata()
+                .addToData("greeting", "one").build()).create();
+    }
 
+    @AfterEach
+    void tearDown() {
+        client.close();
+        server.destroy();
+    }
+
+    /**
+     * The API server closes a watch with 410 Gone when the events since its resource version are gone, so an update
+     * made in that time is not sent to any watch.
+     */
     @Test
-    void testWatchAgainAfterTheWatchIsClosedWithAnError() throws Exception {
-        expectWatchClosedWithGone();
-        expectWatchWithUpdate();
+    void testUpdateMadeWhileTheWatchIsClosedIsNotMissed() throws Exception {
+        dispatcher.holdFirstWatch();
 
-        assertReloadIsTriggered();
-        assertEquals(2, server.getRequestCount());
+        CountDownLatch reloaded = new CountDownLatch(1);
+        try (CamelContext context = new DefaultCamelContext()) {
+            schedule(context, new ConfigmapsReloadTriggerTask(), reloaded);
+            dispatcher.awaitOpenWatches(1);
+
+            updateConfigMap("two");
+            dispatcher.closeHeldWatchWithGone();
+
+            assertTrue(reloaded.await(20, TimeUnit.SECONDS),
+                    "the update of the config map made while the watch was closed did not trigger a reload");
+        }
     }
 
     @Test
-    void testWatchAgainAfterAFailedAttemptToWatch() throws Exception {
-        expectWatchClosedWithGone();
-        // the first attempt to watch again fails
-        server.expect().withPath(WATCH_PATH)
-                .andReturn(403, new StatusBuilder().withCode(403).withReason("Forbidden").withMessage("forbidden").build())
-                .once();
-        expectWatchWithUpdate();
+    void testWatchAgainAfterTheWatchIsClosedWithAnError() throws Exception {
+        dispatcher.holdFirstWatch();
 
-        // watched again after 1 second, failed, and watched again after 2 more seconds
-        assertReloadIsTriggered();
-        assertEquals(3, server.getRequestCount());
+        CountDownLatch reloaded = new CountDownLatch(1);
+        try (CamelContext context = new DefaultCamelContext()) {
+            schedule(context, new ConfigmapsReloadTriggerTask(), reloaded);
+            dispatcher.awaitOpenWatches(1);
+            dispatcher.closeHeldWatchWithGone();
+            dispatcher.awaitOpenWatches(2);
+
+            updateConfigMap("two");
+
+            assertTrue(reloaded.await(20, TimeUnit.SECONDS),
+                    "the update of the config map after the watch was closed did not trigger a reload");
+        }
+    }
+
+    @Test
+    void testWatchAgainAfterAFailedAttemptToWatchAgain() throws Exception {
+        dispatcher.holdFirstWatch();
+
+        CountDownLatch reloaded = new CountDownLatch(1);
+        try (CamelContext context = new DefaultCamelContext()) {
+            schedule(context, new ConfigmapsReloadTriggerTask(), reloaded);
+            dispatcher.awaitOpenWatches(1);
+            // the first attempt to list or watch again fails
+            dispatcher.failNextRequest(403);
+            dispatcher.closeHeldWatchWithGone();
+            dispatcher.awaitOpenWatches(2);
+
+            updateConfigMap("two");
+
+            assertTrue(reloaded.await(20, TimeUnit.SECONDS),
+                    "the update of the config map after a failed attempt to watch again did not trigger a reload");
+        }
+    }
+
+    /**
+     * The config maps cannot be watched when the task starts, for example while the RBAC rules of the service account
+     * are not there yet.
+     */
+    @Test
+    void testWatchAgainAfterAFailedFirstAttemptToWatch() throws Exception {
+        dispatcher.failNextRequest(403);
+
+        CountDownLatch reloaded = new CountDownLatch(1);
+        try (CamelContext context = new DefaultCamelContext()) {
+            schedule(context, new ConfigmapsReloadTriggerTask(), reloaded);
+            dispatcher.awaitOpenWatches(1);
+
+            updateConfigMap("two");
+
+            assertTrue(reloaded.await(20, TimeUnit.SECONDS),
+                    "the update of the config map after a failed first attempt to watch did not trigger a reload");
+        }
     }
 
     /**
@@ -79,8 +148,6 @@ class ConfigmapsReloadTriggerTaskWatchClosedTest {
      */
     @Test
     void testStopEndsTheTaskThatWatches() throws Exception {
-        expectWatchWithUpdate();
-
         CountDownLatch reloaded = new CountDownLatch(1);
         AtomicReference<Thread> taskThread = new AtomicReference<>();
         try (CamelContext context = new DefaultCamelContext()) {
@@ -91,8 +158,10 @@ class ConfigmapsReloadTriggerTaskWatchClosedTest {
                     super.run();
                 }
             }, reloaded);
+            dispatcher.awaitOpenWatches(1);
 
             // the task has a watch
+            updateConfigMap("two");
             assertTrue(reloaded.await(20, TimeUnit.SECONDS), "the update of the config map did not trigger a reload");
         }
 
@@ -100,43 +169,11 @@ class ConfigmapsReloadTriggerTaskWatchClosedTest {
         Thread thread = taskThread.get();
         thread.join(20000);
         assertFalse(thread.isAlive(), "the stopped task still waits for its watch to be closed");
-        assertEquals(1, server.getRequestCount());
     }
 
-    private void expectWatchClosedWithGone() {
-        server.expect().withPath(WATCH_PATH)
-                .andUpgradeToWebSocket()
-                .open()
-                .waitFor(10)
-                .andEmit(new WatchEvent(
-                        new StatusBuilder().withCode(410).withReason("Expired").withMessage("too old resource version")
-                                .build(),
-                        "ERROR"))
-                .done()
-                .once();
-    }
-
-    private void expectWatchWithUpdate() {
-        server.expect().withPath(WATCH_PATH)
-                .andUpgradeToWebSocket()
-                .open()
-                .waitFor(10)
-                .andEmit(new WatchEvent(
-                        new ConfigMapBuilder().withNewMetadata().withName("myconfigmap").withNamespace("test")
-                                .withResourceVersion("2").endMetadata().build(),
-                        "MODIFIED"))
-                .done()
-                .once();
-    }
-
-    private void assertReloadIsTriggered() throws Exception {
-        CountDownLatch reloaded = new CountDownLatch(1);
-        try (CamelContext context = new DefaultCamelContext()) {
-            schedule(context, new ConfigmapsReloadTriggerTask(), reloaded);
-
-            assertTrue(reloaded.await(20, TimeUnit.SECONDS),
-                    "the update of the config map after the watch was closed did not trigger a reload");
-        }
+    private void updateConfigMap(String greeting) {
+        client.configMaps().withName("myconfigmap")
+                .edit(c -> new ConfigMapBuilder(c).addToData("greeting", greeting).build());
     }
 
     private void schedule(CamelContext context, ConfigmapsReloadTriggerTask task, CountDownLatch reloaded) throws Exception {

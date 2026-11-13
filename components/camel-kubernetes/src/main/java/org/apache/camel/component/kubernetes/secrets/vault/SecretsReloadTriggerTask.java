@@ -20,13 +20,12 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Secret;
-import io.fabric8.kubernetes.client.*;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.component.kubernetes.KubernetesInformerLoop;
 import org.apache.camel.component.kubernetes.properties.SecretPropertiesFunction;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.Metadata;
@@ -49,14 +48,9 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
     private KubernetesClient kubernetesClient;
     private SecretPropertiesFunction propertiesFunction;
     private volatile Instant startingTime;
-    // released when the current watch is closed with an error, when the wait before the next watch is over, and when
-    // this task is stopped
-    private volatile CountDownLatch released;
+    private volatile KubernetesInformerLoop<Secret> informerLoop;
 
     private static final Logger LOG = LoggerFactory.getLogger(SecretsReloadTriggerTask.class);
-
-    static final long WATCH_AGAIN_DELAY_MILLIS = 1000;
-    static final long WATCH_AGAIN_MAX_DELAY_MILLIS = 30000;
 
     @Override
     public CamelContext getCamelContext() {
@@ -104,6 +98,9 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
         }
 
         kubernetesClient = propertiesFunction.getClient();
+        informerLoop = new KubernetesInformerLoop<>(
+                this, "Secrets", kubernetesClient.secrets().inNamespace(kubernetesClient.getNamespace()), this::matchSecret,
+                this::onUpdate);
     }
 
     @Override
@@ -125,104 +122,33 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
         super.doStop();
 
         // ends the watch, or the wait before the next watch, of the thread that runs this task
-        CountDownLatch latch = released;
-        if (latch != null) {
-            latch.countDown();
+        KubernetesInformerLoop<Secret> loop = informerLoop;
+        if (loop != null) {
+            loop.stop();
         }
     }
 
     /**
-     * Watches the secrets until this task is stopped. This task is submitted only once, and the Kubernetes client
-     * closes a watch for good, with an exception, when the API server answers 410 Gone (the resource version of the
-     * watch is too old, which can happen to a long-running watch), so the secrets are watched again after
-     * {@link #WATCH_AGAIN_DELAY_MILLIS}. A watch that cannot be created is tried again with a delay that doubles up to
-     * {@link #WATCH_AGAIN_MAX_DELAY_MILLIS}; the first of these delays is {@link #WATCH_AGAIN_DELAY_MILLIS} when the
-     * task starts and twice that after a closed watch.
+     * Watches the secrets until this task is stopped, with an informer that lists them again when the Kubernetes client
+     * closes its watch (for example with 410 Gone, when the resource version of the watch is too old), so an update
+     * made while the secrets were not watched is not missed. See {@link KubernetesInformerLoop}.
      */
     @Override
     public void run() {
         startingTime = Instant.now();
-        long delay = WATCH_AGAIN_DELAY_MILLIS;
-        while (isRunAllowed()) {
-            final CountDownLatch isWatchClosed = new CountDownLatch(1);
-            released = isWatchClosed;
-            Watch watch = null;
-            try {
-                watch = watch(isWatchClosed);
-                delay = WATCH_AGAIN_DELAY_MILLIS;
-                // Wait till watch gets closed. A stop before the latch was published could not release it
-                if (isRunAllowed()) {
-                    isWatchClosed.await();
-                }
-            } catch (InterruptedException e) {
-                LOG.debug("Interrupted while waiting for the watch to close: {}", e.getMessage());
-                Thread.currentThread().interrupt();
-                return;
-            } catch (Exception e) {
-                if (!isRunAllowed()) {
-                    return;
-                }
-                LOG.warn("Cannot watch Kubernetes Secrets, trying again in {} ms: {}", delay, e.getMessage());
-                LOG.debug("Cannot watch Kubernetes Secrets", e);
-            } finally {
-                if (watch != null) {
-                    watch.close();
-                }
-            }
-            if (!waitBeforeWatchingAgain(delay)) {
-                return;
-            }
-            delay = Math.min(delay * 2, WATCH_AGAIN_MAX_DELAY_MILLIS);
-        }
+        informerLoop.run();
     }
 
-    private Watch watch(CountDownLatch isWatchClosed) {
-        return kubernetesClient.secrets().inNamespace(kubernetesClient.getNamespace()).watch(new Watcher<>() {
-            @Override
-            public void eventReceived(Action action, Secret secret) {
-                switch (action.name()) {
-                    case "MODIFIED":
-                        if (isReloadEnabled()) {
-                            if (matchSecret(secret.getMetadata().getName())) {
-                                LOG.info("Update for Kubernetes Secret: {} detected, triggering CamelContext reload",
-                                        secret.getMetadata().getName());
-                                ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
-                                if (reload != null) {
-                                    // trigger reload
-                                    reload.onReload(this);
-                                }
-                            }
-                        }
-                        break;
-                    default:
-                        LOG.debug("Not watched event {}", action.name());
-                }
+    private void onUpdate(Secret secret) {
+        if (isReloadEnabled()) {
+            LOG.info("Update for Kubernetes Secret: {} detected, triggering CamelContext reload",
+                    secret.getMetadata().getName());
+            ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
+            if (reload != null) {
+                // trigger reload
+                reload.onReload(this);
             }
-
-            @Override
-            public void onClose(WatcherException e) {
-                LOG.warn("The watch of Kubernetes Secrets was closed, watching again in {} ms: {}",
-                        WATCH_AGAIN_DELAY_MILLIS, e != null ? e.getMessage() : null);
-                isWatchClosed.countDown();
-            }
-        });
-    }
-
-    /**
-     * @return false if this task was stopped, or the thread interrupted, while waiting
-     */
-    private boolean waitBeforeWatchingAgain(long delay) {
-        CountDownLatch pause = new CountDownLatch(1);
-        released = pause;
-        try {
-            if (isRunAllowed()) {
-                pause.await(delay, TimeUnit.MILLISECONDS);
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return false;
         }
-        return isRunAllowed();
     }
 
     protected boolean matchSecret(String name) {
