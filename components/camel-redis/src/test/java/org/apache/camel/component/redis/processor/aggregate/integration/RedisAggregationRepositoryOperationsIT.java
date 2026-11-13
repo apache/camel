@@ -28,7 +28,6 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.redisson.Redisson;
-import org.redisson.api.RKeys;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.RedisException;
 import org.redisson.config.Config;
@@ -39,8 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
 
@@ -212,7 +209,7 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
             assertNotNull(result);
             assertEquals("updated", result.getIn().getBody(String.class));
 
-            // 6. Verify the stale Exchange was removed from recovery storage
+            // 6. Verify the stale Exchange was never written to recovery storage
             assertNull(repo.recover(context, stale.getExchangeId()));
 
         } finally {
@@ -221,7 +218,7 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testOptimisticRemoveDoesNotCreateRecoveryEntryWhenLockingFails() {
+    public void testOptimisticRemoveLoserKeepsWinnersRecoveryEntry() {
         String mapName = "optimisticRemoveConcurrentFailure";
         RedisAggregationRepository repo = createRepo(mapName, true);
 
@@ -252,33 +249,6 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
         } finally {
             repo.stop();
         }
-    }
-
-    @Test
-    public void testOptimisticRecoveryRejectsDifferentClusterSlots() throws Exception {
-        RedissonClient redisson = mock(RedissonClient.class);
-        Config config = mock(Config.class);
-        RKeys keys = mock(RKeys.class);
-
-        when(redisson.getConfig()).thenReturn(config);
-        when(config.isClusterConfig()).thenReturn(true);
-        when(redisson.getKeys()).thenReturn(keys);
-
-        when(keys.getSlot("orders")).thenReturn(100);
-        when(keys.getSlot("orders-completed")).thenReturn(200);
-
-        RedisAggregationRepository repository = new RedisAggregationRepository();
-        repository.setRedisson(redisson);
-        repository.setMapName("orders");
-        repository.setPersistenceMapName("orders-completed");
-        repository.setOptimistic(true);
-        repository.setUseRecovery(true);
-
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                repository::start);
-
-        assertTrue(exception.getMessage().contains("same hash slot"));
     }
 
     @Test

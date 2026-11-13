@@ -81,7 +81,6 @@ public class RedisAggregationRepository extends ServiceSupport
      * leaving the exchange in the active map. This ordering ensures that a storage failure never results in exchange
      * loss.
      */
-
     private static final String OPTIMISTIC_REMOVE_SCRIPT = """
             local current = redis.call('HGET', KEYS[1], ARGV[1])
 
@@ -99,9 +98,15 @@ public class RedisAggregationRepository extends ServiceSupport
     private RedissonClient redisson;
     @Metadata(description = "URL to remote Redis server", required = true)
     private String endpoint;
-    @Metadata(description = "Name of cache to use", required = true)
+    @Metadata(description = "Name of cache to use. On Redis Cluster with optimistic and useRecovery, "
+                            + "this cache and the persistence cache must hash to the same slot. "
+                            + "For example, use orders:{aggregation}.",
+              required = true)
     private String mapName;
-    @Metadata(label = "advanced", description = "Name of cache to use for completed exchanges")
+
+    @Metadata(label = "advanced",
+              description = "Name of cache to use for completed exchanges. On Redis Cluster with optimistic "
+                            + "and useRecovery, this cache and the active cache must hash to the same slot.")
     private String persistenceMapName;
     @Metadata(description = "Whether optimistic locking is in use")
     private boolean optimistic;

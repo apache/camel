@@ -6517,8 +6517,8 @@ on Redis Cluster, `mapName` and `persistenceMapName` must resolve to the same Re
 
 Use a common Redis hash tag to ensure both keys are assigned to the same slot. For example:
 
-* `mapName`: `orders:{aggregation}`
-* `persistenceMapName`: `orders:{aggregation}-completed`
+* `mapName`: +orders:{aggregation}+
+* `persistenceMapName`: +orders:{aggregation}-completed+
 
 Existing Redis Cluster configurations using different hash slots must update their map names
 before upgrading. Existing aggregation data may need to be migrated to the new Redis keys.
