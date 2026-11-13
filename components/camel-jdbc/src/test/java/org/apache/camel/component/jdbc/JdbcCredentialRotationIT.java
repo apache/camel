@@ -72,7 +72,6 @@ class JdbcCredentialRotationIT extends CamelTestSupport {
     @RegisterExtension
     static PostgresService postgres = PostgresServiceFactory.createSingletonService();
 
-    private JdbcComponent jdbcComponent;
     private HikariDataSource hikariDs;
 
     /**
@@ -133,8 +132,6 @@ class JdbcCredentialRotationIT extends CamelTestSupport {
 
     @Test
     void hikariCp_credentialRotation_newConnectionUsesNewPassword() throws Exception {
-        jdbcComponent = context.getComponent("jdbc", JdbcComponent.class);
-
         DefaultContextReloadStrategy reload = new DefaultContextReloadStrategy();
         context.addService(reload);
 
@@ -198,9 +195,6 @@ class JdbcCredentialRotationIT extends CamelTestSupport {
                                         .credential(new RotatingCredential())
                                         .addSecurityProvider(rotating))))) {
 
-            // Register the Agroal DataSource in the registry so it can be discovered by the component
-            context.getRegistry().bind("agroalRotationDs", agroalDs);
-
             // Build a temporary JdbcComponent wired to the Agroal DataSource
             JdbcComponent agroalComponent = new JdbcComponent();
             agroalComponent.setDataSource(agroalDs);
@@ -209,7 +203,8 @@ class JdbcCredentialRotationIT extends CamelTestSupport {
             // Step 1: verify the pool works with cred A — grab a PID
             int pidBefore;
             try (Connection conn = agroalDs.getConnection();
-                 var rs = conn.createStatement().executeQuery("SELECT pg_backend_pid() AS pid")) {
+                 Statement st = conn.createStatement();
+                 var rs = st.executeQuery("SELECT pg_backend_pid() AS pid")) {
                 assertTrue(rs.next(), "SELECT pg_backend_pid() must return a row");
                 pidBefore = rs.getInt("pid");
                 assertNotEquals(0, pidBefore, "pg_backend_pid() must return a non-zero value with credential A");
@@ -242,7 +237,8 @@ class JdbcCredentialRotationIT extends CamelTestSupport {
 
             // Step 5: verify the pool creates a new connection (different PID) with the new password
             try (Connection conn = agroalDs.getConnection();
-                 var rs = conn.createStatement().executeQuery("SELECT pg_backend_pid() AS pid")) {
+                 Statement st = conn.createStatement();
+                 var rs = st.executeQuery("SELECT pg_backend_pid() AS pid")) {
                 assertTrue(rs.next(), "SELECT pg_backend_pid() must return a row after rotation");
                 int pidAfter = rs.getInt("pid");
                 assertNotEquals(0, pidAfter, "pg_backend_pid() must return a non-zero value after rotation");
