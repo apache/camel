@@ -60,6 +60,22 @@ public class RedisAggregationRepository extends ServiceSupport
     private Map<String, DefaultExchangeHolder> persistedCache;
     private boolean shutdownRedisson;
 
+    /**
+     * Atomic Lua script for optimistic removal with recovery.
+     *
+     * <p>
+     * Implements compare-and-swap by comparing the current serialized exchange in the active map with the expected
+     * serialized holder. If they match, the script writes the holder to the recovery map and removes it from the active
+     * map atomically.
+     *
+     * <p>
+     * Returns 1 on success and 0 if the active exchange does not match the expected holder.
+     *
+     * <p>
+     * The comparison uses serialized bytes. Therefore, the configured Redisson codec must produce identical serialized
+     * bytes for the same holder when storing and comparing it.
+     */
+
     private static final String OPTIMISTIC_REMOVE_SCRIPT = """
             local current = redis.call('HGET', KEYS[1], ARGV[1])
 
@@ -67,7 +83,7 @@ public class RedisAggregationRepository extends ServiceSupport
                 return 0
             end
 
-            redis.call('HSET', KEYS[2], ARGV[3], ARGV[4])
+            redis.call('HSET', KEYS[2], ARGV[3], current)
             redis.call('HDEL', KEYS[1], ARGV[1])
 
             return 1
@@ -328,8 +344,7 @@ public class RedisAggregationRepository extends ServiceSupport
                         List.of(mapName, persistenceMapName),
                         key,
                         holder,
-                        exchange.getExchangeId(),
-                        holder);
+                        exchange.getExchangeId());
 
                 if (result == null || result.longValue() != 1L) {
                     LOG.warn(
@@ -427,13 +442,32 @@ public class RedisAggregationRepository extends ServiceSupport
         if (persistenceMapName == null) {
             persistenceMapName = String.format("%s%s", mapName, COMPLETED_SUFFIX);
         }
+
         if (redisson == null) {
             Config config = new Config();
             config.useSingleServer().setAddress(String.format("redis://%s", endpoint));
             redisson = Redisson.create(config);
             shutdownRedisson = true;
         }
+
+        // Redis Cluster requires both keys used by the Lua script
+        // to belong to the same hash slot.
+        if (optimistic && useRecovery && redisson.getConfig().isClusterConfig()) {
+            int activeSlot = redisson.getKeys().getSlot(mapName);
+            int recoverySlot = redisson.getKeys().getSlot(persistenceMapName);
+
+            if (activeSlot != recoverySlot) {
+                throw new IllegalArgumentException(
+                        "Redis Cluster requires mapName and persistenceMapName to use the same hash slot "
+                                                   + "when optimistic removal with recovery is enabled. "
+                                                   + "Configure both names with a common hash tag, for example: "
+                                                   + "mapName=orders:{aggregation}, "
+                                                   + "persistenceMapName=orders:{aggregation}-completed");
+            }
+        }
+
         cache = redisson.getMap(mapName);
+
         if (useRecovery) {
             persistedCache = redisson.getMap(persistenceMapName);
         }
