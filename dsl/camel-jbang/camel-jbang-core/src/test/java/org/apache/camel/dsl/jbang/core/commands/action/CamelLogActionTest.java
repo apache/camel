@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.sun.management.UnixOperatingSystemMXBean;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -30,7 +32,10 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.PreviousRun;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -130,6 +135,49 @@ class CamelLogActionTest extends ActionCommandTestSupport {
         assertThat(callWithSingleProcess(command("--prefix=true"))).isZero();
 
         assertThat(lines().get(0)).startsWith("orders    | ");
+    }
+
+    @Test
+    void aStackTraceStaysWithItsRecordInTheLogsOfSeveralIntegrations() throws Exception {
+        long otherPid = TEST_PID + 1;
+        writeStatusFile(TEST_PID, "orders");
+        writeStatusFile(otherPid, "billing");
+        writeLog(TEST_PID + ".log", line(-300, "Starting"), line(-100, "ERROR Failed"),
+                "java.lang.IllegalStateException: boom", "\tat com.acme.Orders.process(Orders.java:42)",
+                line(-1, "Stopping"));
+        writeLog(otherPid + ".log", line(-200, "Billing"), line(-50, "Billed"));
+        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CommandLineTestHelper.parse(command, "*", "--follow=false", "--logging-color=false");
+
+        assertThat(callWithResponse(command, new JsonObject(), otherPid)).isZero();
+
+        // by time, and the lines of the stack trace right after the record they belong to
+        List<String> lines = lines();
+        assertThat(lines).hasSize(7);
+        assertThat(lines.get(0)).endsWith(": Starting");
+        assertThat(lines.get(1)).endsWith(": Billing");
+        assertThat(lines.get(2)).endsWith(": ERROR Failed");
+        assertThat(lines.get(3)).endsWith("java.lang.IllegalStateException: boom");
+        assertThat(lines.get(4)).endsWith("at com.acme.Orders.process(Orders.java:42)");
+        assertThat(lines.get(5)).endsWith(": Billed");
+        assertThat(lines.get(6)).endsWith(": Stopping");
+    }
+
+    @Test
+    @EnabledOnOs({ OS.LINUX, OS.MAC })
+    void closesTheLogsItRead() throws Exception {
+        writeLog(TEST_PID + ".log", line(-300, "Starting"), line(-1, "Failed"));
+        UnixOperatingSystemMXBean os = (UnixOperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        // warm up: classes and the JARs they are loaded from
+        assertThat(callWithSingleProcess(command())).isZero();
+        long before = os.getOpenFileDescriptorCount();
+
+        // as the shell and the TUI run camel log, in their JVM
+        for (int i = 0; i < 50; i++) {
+            assertThat(callWithSingleProcess(command())).isZero();
+        }
+
+        assertThat(os.getOpenFileDescriptorCount() - before).as("open files").isLessThan(10);
     }
 
     @Test

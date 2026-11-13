@@ -37,10 +37,18 @@ public final class MavenCommand {
     }
 
     /**
-     * The Maven wrapper of the directory when it has one that can run, and otherwise mvn.
+     * The Maven wrapper of the directory when it has one that can run, and otherwise mvn (mvn.cmd on Windows, which a
+     * process cannot be started with as mvn).
      */
     public static String of(Path dir) {
-        Path wrapper = wrapper(dir);
-        return Files.isExecutable(wrapper) ? wrapper.toString() : "mvn";
+        return of(dir, FileUtil.isWindows());
+    }
+
+    static String of(Path dir, boolean windows) {
+        Path wrapper = dir.resolve(windows ? "mvnw.cmd" : "mvnw");
+        if (Files.isExecutable(wrapper)) {
+            return wrapper.toString();
+        }
+        return windows ? "mvn.cmd" : "mvn";
     }
 }

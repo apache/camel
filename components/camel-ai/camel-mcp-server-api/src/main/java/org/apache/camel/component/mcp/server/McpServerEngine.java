@@ -35,9 +35,11 @@ import org.apache.camel.Service;
  * <p>
  * Resources follow the same lifecycle through {@link #resourceAdded(McpServerResource)} and
  * {@link #resourceRemoved(String)}, driven by {@code ai-resource} routes. Both default to no-ops so an engine that
- * serves tools only keeps working unchanged; such an engine reports {@link #supportsResources()} as false. Prompts
- * follow the same opt-in lifecycle through {@link #promptAdded(McpServerPrompt)} and {@link #promptRemoved(String)},
- * driven by {@code ai-prompt} routes.
+ * serves tools only keeps working unchanged; such an engine reports {@link #supportsResources()} as false. Resource
+ * templates follow an independent opt-in lifecycle through {@link #resourceTemplateAdded(McpServerResourceTemplate)}
+ * and {@link #resourceTemplateRemoved(String)}, driven by {@code ai-resource} routes configured with
+ * {@code uriTemplate}. Prompts follow the same opt-in lifecycle through {@link #promptAdded(McpServerPrompt)} and
+ * {@link #promptRemoved(String)}, driven by {@code ai-prompt} routes.
  *
  * @since 4.22
  */
@@ -95,6 +97,33 @@ public interface McpServerEngine extends Service, CamelContextAware {
      * @since 4.23
      */
     default boolean supportsResources() {
+        return false;
+    }
+
+    /**
+     * Publishes a resource template. Called for the initial set and whenever a matching {@code ai-resource} template
+     * route starts or resumes. The bridge tracks the template only when this method returns normally.
+     *
+     * @throws McpServerRefusedException to refuse an overlapping or otherwise unsupported template
+     * @since                            4.24
+     */
+    default void resourceTemplateAdded(McpServerResourceTemplate resourceTemplate) {
+    }
+
+    /**
+     * Removes a resource template by its URI template.
+     *
+     * @since 4.24
+     */
+    default void resourceTemplateRemoved(String uriTemplate) {
+    }
+
+    /**
+     * Whether this engine serves MCP resource templates. Engines returning false ignore template callbacks.
+     *
+     * @since 4.24
+     */
+    default boolean supportsResourceTemplates() {
         return false;
     }
 

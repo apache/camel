@@ -37,6 +37,7 @@ import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.AvailablePortFinder.Port;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -66,6 +67,7 @@ class VertxMcpOriginTest {
     private CamelContext camelContext;
     private VertxMcpServerEngine engine;
     private int port;
+    private Port portHolder;
 
     @AfterEach
     void stop() {
@@ -74,6 +76,10 @@ class VertxMcpOriginTest {
         }
         if (camelContext != null) {
             camelContext.stop();
+        }
+        if (portHolder != null) {
+            portHolder.release();
+            portHolder = null;
         }
     }
 
@@ -209,7 +215,8 @@ class VertxMcpOriginTest {
     }
 
     private void start(List<String> allowedOrigins) throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
+        portHolder = AvailablePortFinder.find();
+        port = portHolder.getPort();
         camelContext = new DefaultCamelContext();
         MainHttpServer main = new MainHttpServer();
         main.setCamelContext(camelContext);

@@ -18,6 +18,8 @@ package org.apache.camel.cli.connector;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
@@ -341,10 +343,25 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         // a deleted request means the tool has given up on it
         if (request.exists()) {
             try {
-                IOHelper.writeText(reply.toJson(), output);
+                // written aside and moved in place: the tool reads the answer as soon as it is there (CAMEL-26911)
+                writeAtomically(reply.toJson(), output);
             } catch (Exception e) {
                 LOG.warn("Error writing action result: {} due to: {}", request, e.getMessage(), e);
             }
+        }
+    }
+
+    /**
+     * Writes the text to a file aside and moves it in place, so a reader never finds half of it, as the status file.
+     */
+    private static void writeAtomically(String text, File file) throws IOException {
+        File temporary = new File(file.getPath() + ".tmp");
+        IOHelper.writeText(text, temporary);
+        try {
+            Files.move(temporary.toPath(), file.toPath(), StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING);
+        } catch (AtomicMoveNotSupportedException e) {
+            Files.move(temporary.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
@@ -410,7 +427,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
                 // store debugs in a special file
                 LOG.trace("Updating debug file: {}", debugFile);
                 String data = json.toJson() + System.lineSeparator();
-                IOHelper.writeText(data, debugFile);
+                writeAtomically(data, debugFile);
             }
         } catch (Exception e) {
             // ignore
@@ -423,7 +440,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
                 // store replays in a special file
                 LOG.trace("Updating message-history file: {}", messageHistoryFile);
                 String data = json.toJson() + System.lineSeparator();
-                IOHelper.writeText(data, messageHistoryFile);
+                writeAtomically(data, messageHistoryFile);
             }
         } catch (Exception e) {
             // ignore
@@ -435,7 +452,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             if (json != null && !json.isEmpty()) {
                 LOG.trace("Updating error file: {}", errorFile);
                 String data = json.toJson() + System.lineSeparator();
-                IOHelper.writeText(data, errorFile);
+                writeAtomically(data, errorFile);
             }
         } catch (Exception e) {
             // ignore
@@ -472,7 +489,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             if (json != null) {
                 LOG.trace("Updating timeline file: {}", timelineFile);
                 String data = json.toJson() + System.lineSeparator();
-                IOHelper.writeText(data, timelineFile);
+                writeAtomically(data, timelineFile);
             }
         } catch (Exception e) {
             // ignore
@@ -518,18 +535,22 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         }
         if (messageHistoryFile != null) {
             FileUtil.deleteFile(messageHistoryFile);
+            FileUtil.deleteFile(new File(messageHistoryFile.getPath() + ".tmp"));
         }
         if (errorFile != null) {
             FileUtil.deleteFile(errorFile);
+            FileUtil.deleteFile(new File(errorFile.getPath() + ".tmp"));
         }
         if (debugFile != null) {
             FileUtil.deleteFile(debugFile);
+            FileUtil.deleteFile(new File(debugFile.getPath() + ".tmp"));
         }
         if (receiveFile != null) {
             FileUtil.deleteFile(receiveFile);
         }
         if (timelineFile != null) {
             FileUtil.deleteFile(timelineFile);
+            FileUtil.deleteFile(new File(timelineFile.getPath() + ".tmp"));
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);

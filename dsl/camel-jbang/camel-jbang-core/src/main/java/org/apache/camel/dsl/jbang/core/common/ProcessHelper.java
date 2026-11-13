@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,7 +48,38 @@ public final class ProcessHelper {
     /** Where the command line of a process is read on Linux. */
     private static volatile Path procRoot = Path.of("/proc");
 
+    /**
+     * How much older than its process the file of an integration may look and still be its own: the start time of a
+     * process is not exact on every OS, and the file system may have a clock of its own.
+     */
+    private static final long STALE_FILE_SLACK_MILLIS = 10000;
+
     private ProcessHelper() {
+    }
+
+    /**
+     * Whether a file of an integration in <tt>~/.camel</tt>, such as <tt>&lt;pid&gt;-status.json</tt>, was last written
+     * before the process with that pid started. The file is then left over from an integration that is gone, killed or
+     * crashed before it could remove its files, and the pid now belongs to another process, which must not be taken for
+     * that integration (CAMEL-26911).
+     *
+     * @param  ph   the process with the pid of the file
+     * @param  file the file
+     * @return      true when the file is older than the process; false when it is not, or when the start of the process
+     *              or the time of the file is not known
+     * @since       4.24
+     */
+    public static boolean isStale(ProcessHandle ph, Path file) {
+        Optional<Instant> start = ph.info().startInstant();
+        if (start.isEmpty()) {
+            return false;
+        }
+        try {
+            long written = Files.getLastModifiedTime(file).toMillis();
+            return written < start.get().toEpochMilli() - STALE_FILE_SLACK_MILLIS;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     /**

@@ -39,9 +39,15 @@ public class OpaSecurityPolicyHealthCheck extends AbstractHealthCheck implements
     private final String bearerToken;
     private final String policyPath;
     private final OpaHealthProbe probe;
+    private final boolean healthCheckBundles;
 
     public OpaSecurityPolicyHealthCheck(String serverUrl, String bearerToken, String policyPath,
                                         SSLContext sslContext) {
+        this(serverUrl, bearerToken, policyPath, sslContext, false);
+    }
+
+    public OpaSecurityPolicyHealthCheck(String serverUrl, String bearerToken, String policyPath,
+                                        SSLContext sslContext, boolean healthCheckBundles) {
         // serverUrl and policyPath together identify the decision this policy enforces, so two policies pointing at
         // different servers stay distinct; sanitized because the id is published in the health output
         super("camel", "security-policy:opa-" + URISupport.sanitizeUri(serverUrl + "/" + policyPath));
@@ -49,11 +55,12 @@ public class OpaSecurityPolicyHealthCheck extends AbstractHealthCheck implements
         this.bearerToken = bearerToken;
         this.policyPath = policyPath;
         this.probe = new OpaHealthProbe(sslContext);
+        this.healthCheckBundles = healthCheckBundles;
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        probe.probe(builder, serverUrl, bearerToken, policyPath);
+        probe.probe(builder, serverUrl, bearerToken, policyPath, healthCheckBundles);
     }
 
     @Override

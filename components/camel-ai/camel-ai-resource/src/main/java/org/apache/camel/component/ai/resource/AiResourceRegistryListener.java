@@ -46,4 +46,25 @@ public interface AiResourceRegistryListener {
      * @param spec the deregistered resource specification
      */
     void resourceDeregistered(String tag, AiResourceSpec spec);
+
+    /**
+     * Called after a resource-template specification has been registered. The default implementation is a no-op so
+     * adapters that only understand fixed resources remain source and binary compatible.
+     *
+     * @param tag  the tag the template was registered under, or {@code null} for the default pool
+     * @param spec the registered resource-template specification
+     * @since      4.24
+     */
+    default void resourceTemplateRegistered(String tag, AiResourceTemplateSpec spec) {
+    }
+
+    /**
+     * Called after a resource-template specification has been deregistered.
+     *
+     * @param tag  the tag the template was deregistered from, or {@code null} for the default pool
+     * @param spec the deregistered resource-template specification
+     * @since      4.24
+     */
+    default void resourceTemplateDeregistered(String tag, AiResourceTemplateSpec spec) {
+    }
 }

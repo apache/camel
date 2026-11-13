@@ -37,6 +37,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "evaluationMode": target.setEvaluationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "failopen":
         case "failOpen": target.setFailOpen(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckbundles":
+        case "healthCheckBundles": target.setHealthCheckBundles(property(camelContext, boolean.class, value)); return true;
         case "healthcheckenabled":
         case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
         case "includebody":
@@ -81,6 +83,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "evaluationMode": return java.lang.String.class;
         case "failopen":
         case "failOpen": return boolean.class;
+        case "healthcheckbundles":
+        case "healthCheckBundles": return boolean.class;
         case "healthcheckenabled":
         case "healthCheckEnabled": return boolean.class;
         case "includebody":
@@ -126,6 +130,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "evaluationMode": return target.getEvaluationMode();
         case "failopen":
         case "failOpen": return target.isFailOpen();
+        case "healthcheckbundles":
+        case "healthCheckBundles": return target.isHealthCheckBundles();
         case "healthcheckenabled":
         case "healthCheckEnabled": return target.isHealthCheckEnabled();
         case "includebody":

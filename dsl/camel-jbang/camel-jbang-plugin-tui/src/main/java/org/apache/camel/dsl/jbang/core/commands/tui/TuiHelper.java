@@ -75,12 +75,17 @@ final class TuiHelper {
                 continue;
             }
             // check process is still alive
-            if (!ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false)) {
+            ProcessHandle ph = ProcessHandle.of(pid).filter(ProcessHandle::isAlive).orElse(null);
+            if (ph == null) {
+                continue;
+            }
+            Path file = statusFileResolver.apply(Long.toString(pid));
+            if (file != null && ProcessHelper.isStale(ph, file)) {
+                // left over from an integration that is gone, and the pid is now another process
                 continue;
             }
             JsonObject root = loadStatus(pid, statusFileResolver);
             if (root != null) {
-                ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
                 String pName = ProcessHelper.extractName(root, ph);
                 pName = FileUtil.onlyName(pName);
                 if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {

@@ -16,15 +16,17 @@
  */
 package org.apache.camel.language.simple.functions;
 
+import java.util.Arrays;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.MathExpressionBuilder;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.StringQuoteHelper;
 
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArguments;
 
 /**
  * Built-in Simple math functions: {@code ${abs}}, {@code ${floor}}, {@code ${ceil}}, {@code ${sum}}, {@code ${max}},
@@ -77,7 +79,9 @@ public final class MathFunctionFactory implements SimpleLanguageFunctionFactory 
     private static String[] parseVariadicTokens(String remainder) {
         String values = StringHelper.beforeLast(remainder, ")");
         if (ObjectHelper.isNotEmpty(values)) {
-            return StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+            // a comma inside quotes or a nested function is part of the value; as before, an empty value is no value
+            return Arrays.stream(splitArguments(values)).filter(v -> v != null && !v.isBlank())
+                    .toArray(String[]::new);
         }
         // no values, such as ${sum()}, then use the message body
         return new String[] { "${body}" };
