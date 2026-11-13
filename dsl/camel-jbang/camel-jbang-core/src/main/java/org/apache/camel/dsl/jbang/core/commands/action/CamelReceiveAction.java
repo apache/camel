@@ -281,7 +281,9 @@ public class CamelReceiveAction extends ActionBaseCommand {
             if ("clear".equals(action)) {
                 Path f = getReceiveFile(Long.toString(process.pid()));
                 if (Files.exists(f)) {
-                    Files.writeString(f, "{}");
+                    // empty: the connector appends a line of JSON per batch, which an empty JSON object without
+                    // a new line would join, and that batch would be lost (CAMEL-26911)
+                    Files.writeString(f, "");
                 }
             } else {
                 printer().println("Starting to receive messages from existing Camel: " + process.name() + " (pid: "
