@@ -695,10 +695,15 @@ public class KameletMain extends MainCommandLineSupport {
         String sourceDir = getInitialProperties().getProperty(getInstanceType() + ".sourceDir");
 
         try {
+            // the dependencies the user gives (CLI, //DEPS, Kamelets): a run needs them, so it fails when one cannot be
+            // downloaded, while exporting and transforming keep going as far as they can
+            boolean requiredDependencies = !export && !transform;
+
             // dependencies from CLI
             Object dependencies = getInitialProperties().get(getInstanceType() + ".dependencies");
             if (dependencies != null) {
-                answer.addService(new CommandLineDependencyDownloader(answer, dependencies.toString()));
+                answer.addService(
+                        new CommandLineDependencyDownloader(answer, dependencies.toString(), requiredDependencies));
             }
 
             String springBootVersion = (String) getInitialProperties().get(getInstanceType() + ".springBootVersion");
@@ -717,7 +722,7 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getCamelContextExtension().getRegistry()
                     .bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
             answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
-                    new DependencyDownloaderStrategy(answer));
+                    new DependencyDownloaderStrategy(answer, requiredDependencies));
             // add support for automatic downloaded needed JARs from java imports
             new JavaKnownImportsDownloader(answer, knownDeps);
 
