@@ -254,6 +254,38 @@ The body comes back holding only the identifiers the check allowed, in the order
 rather than filtering a list you already have:
 
 [tabs]
+====
+Java::
++
+[source,java]
+------------------------------------------------------------
+to("openfga:listObjects?storeId={{fga.store}}&relation=reader"
+   + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}&type=document");
+// body becomes [document:budget, document:roadmap]
+------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:myDocuments
+      steps:
+        # the body becomes [document:budget, document:roadmap]
+        - to:
+            uri: openfga:listObjects
+            parameters:
+              storeId: "{{fga.store}}"
+              relation: reader
+              user: "user:${exchangeProperty.CamelKeycloakTokenSubject}"
+              type: document
+----
+====
+
+`listRelations` and `listUsers` round this out: what a subject may do with one object, and who may do something
+with it. Both replace the body with a `List<String>`.
+
 === Streaming object queries
 
 `streamedListObjects` uses OpenFGA's streamed object query and returns an
@@ -305,37 +337,6 @@ return the actual cancellable request future and its closeable response body;
 the application owns the SPI client's lifecycle. Endpoint credentials are not used
 to guess the configuration of an injected SDK client.
 
-====
-Java::
-+
-[source,java]
-------------------------------------------------------------
-to("openfga:listObjects?storeId={{fga.store}}&relation=reader"
-   + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}&type=document");
-// body becomes [document:budget, document:roadmap]
-------------------------------------------------------------
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:myDocuments
-      steps:
-        # the body becomes [document:budget, document:roadmap]
-        - to:
-            uri: openfga:listObjects
-            parameters:
-              storeId: "{{fga.store}}"
-              relation: reader
-              user: "user:${exchangeProperty.CamelKeycloakTokenSubject}"
-              type: document
-----
-====
-
-`listRelations` and `listUsers` round this out: what a subject may do with one object, and who may do something
-with it. Both replace the body with a `List<String>`.
 
 === Granting and revoking access
 
