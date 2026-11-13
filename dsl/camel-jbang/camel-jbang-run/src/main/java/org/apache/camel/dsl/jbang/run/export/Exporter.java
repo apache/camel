@@ -106,6 +106,59 @@ abstract class Exporter {
     }
 
     /**
+     * Whether the project can be exported to the export directory: the current directory (or one that contains it),
+     * whose files are kept, a directory that is empty or does not exist, or one that an earlier export created (it has
+     * the {@link ExportHelper#EXPORT_MARKER} file), which the export replaces so no stale files of it are left. The
+     * files of any other directory are not deleted without --clean-dir (CAMEL-26912).
+     */
+    protected boolean canExportTo() {
+        if (request.cleanExportDir || ExportHelper.isCurrentDirOrParent(request.exportDir)) {
+            return true;
+        }
+        Path dir = Path.of(request.exportDir);
+        if (Files.exists(dir.resolve(ExportHelper.EXPORT_MARKER)) || !ExportHelper.hasVisibleFiles(dir)) {
+            return true;
+        }
+        printer().printErr("Cannot export to " + dir.toAbsolutePath().normalize()
+                           + " because it has files that camel export did not create: use --clean-dir to delete them,"
+                           + " or export to another directory");
+        return false;
+    }
+
+    /**
+     * Cleans the export directory before the project is copied to it: with --clean-dir, when the user confirms it, or a
+     * directory that is not the current directory (see {@link #canExportTo()}).
+     *
+     * @return 0, or 1 when the user does not confirm --clean-dir
+     */
+    protected int cleanExportDir() {
+        if (request.cleanExportDir) {
+            String absPath = Path.of(request.exportDir).toAbsolutePath().toString();
+            if (!request.yes && !exportContext.confirm("Are you sure you want to delete " + absPath + "?")) {
+                return 1;
+            }
+            ExportHelper.cleanExportDir(request.exportDir);
+        } else if (!ExportHelper.isCurrentDirOrParent(request.exportDir)) {
+            // no stale data of an earlier export
+            ExportHelper.cleanExportDir(request.exportDir);
+        }
+        return 0;
+    }
+
+    /**
+     * Marks the export directory as created by camel export, so the next export to it may replace it. The current
+     * directory is not marked: an export from another directory must not delete the files of this one.
+     */
+    protected void markExportDir() throws IOException {
+        if (!ExportHelper.isCurrentDirOrParent(request.exportDir)) {
+            Files.writeString(Path.of(request.exportDir).resolve(ExportHelper.EXPORT_MARKER), """
+                    # Created by camel export, which replaces the files of this directory when it exports to it again.
+                    # Delete this file to keep them: camel export then needs --clean-dir to export here.
+                    """);
+        }
+    }
+
+    /**
      * The directory in the work directory where the project is built, before it is copied to the export directory.
      */
     protected Path buildDir() {
