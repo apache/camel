@@ -84,7 +84,7 @@ a missing header or session id gave `-32601` and an unknown session `-32603`.
 
 === camel-ai-resource - fixed resourceUri cannot contain braces
 
-Starting in Camel 4.24, `ai-resource` rejects a fixed `resourceUri` containing `{` or `}` at route startup. The MCP SDK interprets those characters as URI-template expressions. Routes that intend variable path segments must use `uriTemplate` instead, for example `ai-resource:customer?uriTemplate=camel:///customers/{id}`. If the braces are literal URI characters, percent-encode them as `%7B` and `%7D`.
+Starting in Camel 4.24, `ai-resource` rejects a fixed `resourceUri` containing `{` or `}` at route startup. The MCP SDK interprets those characters as URI-template expressions. Routes that intend variable path segments must use `uriTemplate` instead, for example `ai-resource:customer?uriTemplate=camel:///customers/\{id\}`. If the braces are literal URI characters, percent-encode them as `%7B` and `%7D`.
 
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
