@@ -391,8 +391,8 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("userFilters", userFilters);
             return this;
         }
-
-
+    
+        
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
@@ -406,12 +406,12 @@ public interface OpenfgaComponentBuilderFactory {
          * make this possible for future releases. By default the consumer will
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
-         *
+         * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         *
+         * 
          * Default: false
          * Group: consumer
-         *
+         * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
@@ -419,15 +419,15 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
-
+    
         /**
          * Unique durable cursor key for this store, filter and projection. Only
          * one consumer may own the key.
-         *
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         *
+         * 
          * Group: consumer
-         *
+         * 
          * @param checkpointKey the value to set
          * @return the dsl builder
          */
@@ -435,17 +435,17 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("checkpointKey", checkpointKey);
             return this;
         }
-
-
+    
+        
         /**
          * Maximum time to await the readChanges request for one consumer poll,
          * in milliseconds. Must be positive.
-         *
+         * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         *
+         * 
          * Default: 30000
          * Group: consumer (advanced)
-         *
+         * 
          * @param changePollTimeout the value to set
          * @return the dsl builder
          */
@@ -453,16 +453,16 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("changePollTimeout", changePollTimeout);
             return this;
         }
-
+    
         /**
          * Durable cursor storage, required for a readChanges consumer. The
          * application owns its lifecycle.
-         *
+         * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaCheckpointRepository&lt;/code&gt; type.
-         *
+         * 
          * Group: consumer (advanced)
-         *
+         * 
          * @param checkpointRepository the value to set
          * @return the dsl builder
          */
@@ -470,8 +470,8 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("checkpointRepository", checkpointRepository);
             return this;
         }
-
-
+    
+        
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -482,12 +482,12 @@ public interface OpenfgaComponentBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         *
+         * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         *
+         * 
          * Default: false
          * Group: producer
-         *
+         * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */

@@ -48,12 +48,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * The base URL of the OpenFGA HTTP API, without a trailing path. The
          * default assumes OpenFGA running as a sidecar on its standard HTTP
          * port.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Default: http://localhost:8080
          * Group: common
-         *
+         * 
          * @param apiUrl the value to set
          * @return the dsl builder
          */
@@ -70,11 +70,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * one it was reviewed with - without any change to the route. Pinning
          * also makes a model rollout a deliberate, reviewable configuration
          * change.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param authorizationModelId the value to set
          * @return the dsl builder
          */
@@ -95,12 +95,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * way. Like contextualTuples this is endpoint-only. A condition can
          * decide a relation, so letting a message choose the values it is
          * evaluated with would hand the caller the decision.
-         *
+         * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param conditionContext the value to set
          * @return the dsl builder
          */
@@ -121,13 +121,13 @@ public interface OpenFgaEndpointBuilderFactory {
          * way. Like contextualTuples this is endpoint-only. A condition can
          * decide a relation, so letting a message choose the values it is
          * evaluated with would hand the caller the decision.
-         *
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param conditionContext the value to set
          * @return the dsl builder
          */
@@ -142,11 +142,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * still grant access for a moment. Set HIGHER_CONSISTENCY on the paths
          * where that window matters, at the cost of latency. Left unset,
          * OpenFGA's own default applies.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param consistency the value to set
          * @return the dsl builder
          */
@@ -177,11 +177,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * to blank denies the exchange rather than being dropped: the route
          * asked for a tuple it did not get, and continuing without it would
          * answer a different question than the one configured.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param contextualTuples the value to set
          * @return the dsl builder
          */
@@ -195,11 +195,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * token the previous page returned -
          * ${header.CamelOpenFgaContinuationToken} - and page through without
          * the token being configured statically.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param continuationToken the value to set
          * @return the dsl builder
          */
@@ -214,11 +214,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * message is about. Unlike the subject, taking the object from a header
          * is normal and safe: the caller is entitled to say which resource it
          * wants, and the check is what decides whether it may have it.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param object the value to set
          * @return the dsl builder
          */
@@ -230,11 +230,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * How many entries a readTuples or readChanges page returns. Left
          * unset, OpenFGA's own default applies. A page is one request: this
          * bounds the answer, not the number of requests a route makes.
-         *
+         * 
          * The option is a: <code>java.lang.Integer</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param pageSize the value to set
          * @return the dsl builder
          */
@@ -246,12 +246,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * How many entries a readTuples or readChanges page returns. Left
          * unset, OpenFGA's own default applies. A page is one request: this
          * bounds the answer, not the number of requests a route makes.
-         *
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param pageSize the value to set
          * @return the dsl builder
          */
@@ -266,11 +266,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * resolving it from an inbound header lets the caller pick the weakest
          * one the model defines. Keep it literal, or derive it from something
          * the route controls such as ${header.CamelHttpMethod}.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param relation the value to set
          * @return the dsl builder
          */
@@ -282,11 +282,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * Comma-separated list of relations the listRelations operation asks
          * about, for example reader,writer,owner. Only the ones the subject
          * actually holds come back.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param relations the value to set
          * @return the dsl builder
          */
@@ -301,11 +301,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * of history to page through before reaching anything current. Parsed
          * when the endpoint starts, so a malformed value fails there rather
          * than on the first exchange.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param startTime the value to set
          * @return the dsl builder
          */
@@ -318,12 +318,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * and the authorization model, as returned by fga store create. The
          * store is the relationship graph that judges the exchange, so it comes
          * from the endpoint only and is never taken from a message header.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Required: true
          * Group: common
-         *
+         * 
          * @param storeId the value to set
          * @return the dsl builder
          */
@@ -335,11 +335,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * The object type to enumerate for the listObjects operation, for
          * example document. This is a type name from the authorization model,
          * so it is taken literally rather than evaluated.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param type the value to set
          * @return the dsl builder
          */
@@ -367,11 +367,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * serve both. An expression that resolves to blank, or to a bare user:
          * prefix, denies the exchange: an exchange carrying no identity is not
          * authorized, and failOpen does not apply to it.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param user the value to set
          * @return the dsl builder
          */
@@ -385,11 +385,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * user, or a type and a relation, team#member, to return the usersets
          * holding the relation rather than the individual subjects. Defaults to
          * user.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param userFilters the value to set
          * @return the dsl builder
          */
@@ -400,11 +400,11 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * Unique durable cursor key for this store, filter and projection. Only
          * one consumer may own the key.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: consumer
-         *
+         * 
          * @param checkpointKey the value to set
          * @return the dsl builder
          */
@@ -415,12 +415,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: consumer
-         *
+         * 
          * @param sendEmptyMessageWhenIdle the value to set
          * @return the dsl builder
          */
@@ -431,12 +431,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: consumer
-         *
+         * 
          * @param sendEmptyMessageWhenIdle the value to set
          * @return the dsl builder
          */
@@ -447,11 +447,11 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         *
+         * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Group: scheduler
-         *
+         * 
          * @param backoffErrorThreshold the value to set
          * @return the dsl builder
          */
@@ -462,11 +462,11 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         *
+         * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Group: scheduler
-         *
+         * 
          * @param backoffErrorThreshold the value to set
          * @return the dsl builder
          */
@@ -477,11 +477,11 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         *
+         * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Group: scheduler
-         *
+         * 
          * @param backoffIdleThreshold the value to set
          * @return the dsl builder
          */
@@ -492,11 +492,11 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         *
+         * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Group: scheduler
-         *
+         * 
          * @param backoffIdleThreshold the value to set
          * @return the dsl builder
          */
@@ -511,11 +511,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         *
+         * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Group: scheduler
-         *
+         * 
          * @param backoffMultiplier the value to set
          * @return the dsl builder
          */
@@ -530,11 +530,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         *
+         * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Group: scheduler
-         *
+         * 
          * @param backoffMultiplier the value to set
          * @return the dsl builder
          */
@@ -544,12 +544,12 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Milliseconds before the next poll.
-         *
+         * 
          * The option is a: <code>long</code> type.
-         *
+         * 
          * Default: 500
          * Group: scheduler
-         *
+         * 
          * @param delay the value to set
          * @return the dsl builder
          */
@@ -559,12 +559,12 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Milliseconds before the next poll.
-         *
+         * 
          * The option will be converted to a <code>long</code> type.
-         *
+         * 
          * Default: 500
          * Group: scheduler
-         *
+         * 
          * @param delay the value to set
          * @return the dsl builder
          */
@@ -575,12 +575,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: scheduler
-         *
+         * 
          * @param greedy the value to set
          * @return the dsl builder
          */
@@ -591,12 +591,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: scheduler
-         *
+         * 
          * @param greedy the value to set
          * @return the dsl builder
          */
@@ -606,12 +606,12 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Milliseconds before the first poll starts.
-         *
+         * 
          * The option is a: <code>long</code> type.
-         *
+         * 
          * Default: 1000
          * Group: scheduler
-         *
+         * 
          * @param initialDelay the value to set
          * @return the dsl builder
          */
@@ -621,12 +621,12 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Milliseconds before the first poll starts.
-         *
+         * 
          * The option will be converted to a <code>long</code> type.
-         *
+         * 
          * Default: 1000
          * Group: scheduler
-         *
+         * 
          * @param initialDelay the value to set
          * @return the dsl builder
          */
@@ -638,12 +638,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * Specifies a maximum limit of number of fires. So if you set it to 1,
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
-         *
+         * 
          * The option is a: <code>long</code> type.
-         *
+         * 
          * Default: 0
          * Group: scheduler
-         *
+         * 
          * @param repeatCount the value to set
          * @return the dsl builder
          */
@@ -655,12 +655,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * Specifies a maximum limit of number of fires. So if you set it to 1,
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
-         *
+         * 
          * The option will be converted to a <code>long</code> type.
-         *
+         * 
          * Default: 0
          * Group: scheduler
-         *
+         * 
          * @param repeatCount the value to set
          * @return the dsl builder
          */
@@ -671,12 +671,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         *
+         * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
-         *
+         * 
          * Default: TRACE
          * Group: scheduler
-         *
+         * 
          * @param runLoggingLevel the value to set
          * @return the dsl builder
          */
@@ -687,13 +687,13 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         *
+         * 
          * Default: TRACE
          * Group: scheduler
-         *
+         * 
          * @param runLoggingLevel the value to set
          * @return the dsl builder
          */
@@ -705,12 +705,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         *
+         * 
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         *
+         * 
          * Group: scheduler
-         *
+         * 
          * @param scheduledExecutorService the value to set
          * @return the dsl builder
          */
@@ -722,12 +722,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         *
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         *
+         * 
          * Group: scheduler
-         *
+         * 
          * @param scheduledExecutorService the value to set
          * @return the dsl builder
          */
@@ -738,12 +738,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
-         *
+         * 
          * The option is a: <code>java.lang.Object</code> type.
-         *
+         * 
          * Default: none
          * Group: scheduler
-         *
+         * 
          * @param scheduler the value to set
          * @return the dsl builder
          */
@@ -754,12 +754,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
-         *
+         * 
          * The option will be converted to a <code>java.lang.Object</code> type.
-         *
+         * 
          * Default: none
          * Group: scheduler
-         *
+         * 
          * @param scheduler the value to set
          * @return the dsl builder
          */
@@ -771,15 +771,15 @@ public interface OpenFgaEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler. This is a multi-value
          * option with prefix: scheduler.
-         *
+         * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
-         *
+         * 
          * Group: scheduler
-         *
+         * 
          * @param key the option key
          * @param value the option value
          * @return the dsl builder
@@ -792,15 +792,15 @@ public interface OpenFgaEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler. This is a multi-value
          * option with prefix: scheduler.
-         *
+         * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
-         *
+         * 
          * Group: scheduler
-         *
+         * 
          * @param values the values
          * @return the dsl builder
          */
@@ -810,12 +810,12 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: true
          * Group: scheduler
-         *
+         * 
          * @param startScheduler the value to set
          * @return the dsl builder
          */
@@ -825,12 +825,12 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: true
          * Group: scheduler
-         *
+         * 
          * @param startScheduler the value to set
          * @return the dsl builder
          */
@@ -840,12 +840,12 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         *
+         * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
-         *
+         * 
          * Default: MILLISECONDS
          * Group: scheduler
-         *
+         * 
          * @param timeUnit the value to set
          * @return the dsl builder
          */
@@ -855,13 +855,13 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         *
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         *
+         * 
          * Default: MILLISECONDS
          * Group: scheduler
-         *
+         * 
          * @param timeUnit the value to set
          * @return the dsl builder
          */
@@ -872,12 +872,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: true
          * Group: scheduler
-         *
+         * 
          * @param useFixedDelay the value to set
          * @return the dsl builder
          */
@@ -888,12 +888,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: true
          * Group: scheduler
-         *
+         * 
          * @param useFixedDelay the value to set
          * @return the dsl builder
          */
@@ -904,11 +904,11 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * The audience to request the access token for in the
          * client-credentials flow.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param apiAudience the value to set
          * @return the dsl builder
          */
@@ -919,11 +919,11 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * Pre-shared token sent to OpenFGA in the Authorization header, for a
          * server started with --authn-method preshared.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param apiToken the value to set
          * @return the dsl builder
          */
@@ -934,11 +934,11 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * The token endpoint the client-credentials flow exchanges its
          * credentials at.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param apiTokenIssuer the value to set
          * @return the dsl builder
          */
@@ -951,11 +951,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * server that authenticates through an OIDC provider. Setting it
          * selects that flow, so clientSecret, apiTokenIssuer and apiAudience
          * are then required too.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param clientId the value to set
          * @return the dsl builder
          */
@@ -965,11 +965,11 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Client secret for the OAuth 2.0 client-credentials flow.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param clientSecret the value to set
          * @return the dsl builder
          */
@@ -991,12 +991,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * proceed - returning the objects it never managed to filter would be
          * the leak the filtering was there to prevent - so a failure there is
          * reported as an error for the route's own error handling to deal with.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: security
-         *
+         * 
          * @param failOpen the value to set
          * @return the dsl builder
          */
@@ -1018,12 +1018,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * proceed - returning the objects it never managed to filter would be
          * the leak the filtering was there to prevent - so a failure there is
          * reported as an error for the route's own error handling to deal with.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: security
-         *
+         * 
          * @param failOpen the value to set
          * @return the dsl builder
          */
@@ -1033,11 +1033,11 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Space-separated scopes to request in the client-credentials flow.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param scopes the value to set
          * @return the dsl builder
          */
@@ -1051,12 +1051,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * client certificate to a server that requires mutual TLS - a SPIFFE
          * X.509-SVID obtained with camel-spiffe, for instance, so the workload
          * authenticates to the decision point as itself.
-         *
+         * 
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param sslContextParameters the value to set
          * @return the dsl builder
          */
@@ -1070,12 +1070,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * client certificate to a server that requires mutual TLS - a SPIFFE
          * X.509-SVID obtained with camel-spiffe, for instance, so the workload
          * authenticates to the decision point as itself.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param sslContextParameters the value to set
          * @return the dsl builder
          */
@@ -1107,12 +1107,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * make this possible for future releases. By default the consumer will
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: consumer (advanced)
-         *
+         * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
@@ -1133,12 +1133,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * make this possible for future releases. By default the consumer will
          * use the org.apache.camel.spi.ExceptionHandler to deal with
          * exceptions, that will be logged at WARN or ERROR level and ignored.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: consumer (advanced)
-         *
+         * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
@@ -1149,12 +1149,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * Maximum time to await the readChanges request for one consumer poll,
          * in milliseconds. Must be positive.
-         *
+         * 
          * The option is a: <code>long</code> type.
-         *
+         * 
          * Default: 30000
          * Group: consumer (advanced)
-         *
+         * 
          * @param changePollTimeout the value to set
          * @return the dsl builder
          */
@@ -1165,12 +1165,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * Maximum time to await the readChanges request for one consumer poll,
          * in milliseconds. Must be positive.
-         *
+         * 
          * The option will be converted to a <code>long</code> type.
-         *
+         * 
          * Default: 30000
          * Group: consumer (advanced)
-         *
+         * 
          * @param changePollTimeout the value to set
          * @return the dsl builder
          */
@@ -1181,12 +1181,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * Durable cursor storage, required for a readChanges consumer. The
          * application owns its lifecycle.
-         *
+         * 
          * The option is a:
          * <code>org.apache.camel.component.openfga.OpenFgaCheckpointRepository</code> type.
-         *
+         * 
          * Group: consumer (advanced)
-         *
+         * 
          * @param checkpointRepository the value to set
          * @return the dsl builder
          */
@@ -1197,12 +1197,12 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * Durable cursor storage, required for a readChanges consumer. The
          * application owns its lifecycle.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.openfga.OpenFgaCheckpointRepository</code> type.
-         *
+         * 
          * Group: consumer (advanced)
-         *
+         * 
          * @param checkpointRepository the value to set
          * @return the dsl builder
          */
@@ -1215,12 +1215,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         *
+         * 
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         *
+         * 
          * Group: consumer (advanced)
-         *
+         * 
          * @param exceptionHandler the value to set
          * @return the dsl builder
          */
@@ -1233,12 +1233,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         *
+         * 
          * Group: consumer (advanced)
-         *
+         * 
          * @param exceptionHandler the value to set
          * @return the dsl builder
          */
@@ -1248,11 +1248,11 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         *
+         * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         *
+         * 
          * Group: consumer (advanced)
-         *
+         * 
          * @param exchangePattern the value to set
          * @return the dsl builder
          */
@@ -1262,12 +1262,12 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         *
+         * 
          * Group: consumer (advanced)
-         *
+         * 
          * @param exchangePattern the value to set
          * @return the dsl builder
          */
@@ -1280,12 +1280,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         *
+         * 
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         *
+         * 
          * Group: consumer (advanced)
-         *
+         * 
          * @param pollStrategy the value to set
          * @return the dsl builder
          */
@@ -1298,12 +1298,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         *
+         * 
          * Group: consumer (advanced)
-         *
+         * 
          * @param pollStrategy the value to set
          * @return the dsl builder
          */
@@ -1317,12 +1317,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * connectTimeout setting, which as of openfga-sdk 0.10.1 is accepted
          * and then never read, leaving the connect phase bounded only by the
          * operating system.
-         *
+         * 
          * The option is a: <code>long</code> type.
-         *
+         * 
          * Default: 10000
          * Group: advanced
-         *
+         * 
          * @param connectTimeout the value to set
          * @return the dsl builder
          */
@@ -1336,12 +1336,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * connectTimeout setting, which as of openfga-sdk 0.10.1 is accepted
          * and then never read, leaving the connect phase bounded only by the
          * operating system.
-         *
+         * 
          * The option will be converted to a <code>long</code> type.
-         *
+         * 
          * Default: 10000
          * Group: advanced
-         *
+         * 
          * @param connectTimeout the value to set
          * @return the dsl builder
          */
@@ -1353,12 +1353,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * How many of a batchCheck's checks may be in flight at once. The batch
          * is issued as one request per object, so this bounds the load one
          * exchange puts on the server.
-         *
+         * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Default: 10
          * Group: advanced
-         *
+         * 
          * @param maxParallelRequests the value to set
          * @return the dsl builder
          */
@@ -1370,12 +1370,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * How many of a batchCheck's checks may be in flight at once. The batch
          * is issued as one request per object, so this bounds the load one
          * exchange puts on the server.
-         *
+         * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Default: 10
          * Group: advanced
-         *
+         * 
          * @param maxParallelRequests the value to set
          * @return the dsl builder
          */
@@ -1388,12 +1388,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * retrying, such as a rate limit or a 5xx. Set it to 0 to disable
          * retries; the overall wait a routing thread can spend on one exchange
          * grows with it.
-         *
+         * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Default: 3
          * Group: advanced
-         *
+         * 
          * @param maxRetries the value to set
          * @return the dsl builder
          */
@@ -1406,12 +1406,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * retrying, such as a rate limit or a 5xx. Set it to 0 to disable
          * retries; the overall wait a routing thread can spend on one exchange
          * grows with it.
-         *
+         * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Default: 3
          * Group: advanced
-         *
+         * 
          * @param maxRetries the value to set
          * @return the dsl builder
          */
@@ -1424,12 +1424,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * how to reach the server - apiUrl, storeId, the credentials, the
          * timeouts and sslContextParameters - is ignored, because they are
          * baked into the client that was handed over.
-         *
+         * 
          * The option is a:
          * <code>dev.openfga.sdk.api.client.OpenFgaClient</code> type.
-         *
+         * 
          * Group: advanced
-         *
+         * 
          * @param openFgaClient the value to set
          * @return the dsl builder
          */
@@ -1442,12 +1442,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * how to reach the server - apiUrl, storeId, the credentials, the
          * timeouts and sslContextParameters - is ignored, because they are
          * baked into the client that was handed over.
-         *
+         * 
          * The option will be converted to a
          * <code>dev.openfga.sdk.api.client.OpenFgaClient</code> type.
-         *
+         * 
          * Group: advanced
-         *
+         * 
          * @param openFgaClient the value to set
          * @return the dsl builder
          */
@@ -1460,12 +1460,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * connected. A request that times out is a failure to obtain a verdict
          * rather than a deny, so it fails closed - or proceeds when failOpen is
          * set.
-         *
+         * 
          * The option is a: <code>long</code> type.
-         *
+         * 
          * Default: 10000
          * Group: advanced
-         *
+         * 
          * @param readTimeout the value to set
          * @return the dsl builder
          */
@@ -1478,12 +1478,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * connected. A request that times out is a failure to obtain a verdict
          * rather than a deny, so it fails closed - or proceeds when failOpen is
          * set.
-         *
+         * 
          * The option will be converted to a <code>long</code> type.
-         *
+         * 
          * Default: 10000
          * Group: advanced
-         *
+         * 
          * @param readTimeout the value to set
          * @return the dsl builder
          */
@@ -1507,12 +1507,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * The base URL of the OpenFGA HTTP API, without a trailing path. The
          * default assumes OpenFGA running as a sidecar on its standard HTTP
          * port.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Default: http://localhost:8080
          * Group: common
-         *
+         * 
          * @param apiUrl the value to set
          * @return the dsl builder
          */
@@ -1529,11 +1529,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * one it was reviewed with - without any change to the route. Pinning
          * also makes a model rollout a deliberate, reviewable configuration
          * change.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param authorizationModelId the value to set
          * @return the dsl builder
          */
@@ -1554,12 +1554,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * way. Like contextualTuples this is endpoint-only. A condition can
          * decide a relation, so letting a message choose the values it is
          * evaluated with would hand the caller the decision.
-         *
+         * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param conditionContext the value to set
          * @return the dsl builder
          */
@@ -1580,13 +1580,13 @@ public interface OpenFgaEndpointBuilderFactory {
          * way. Like contextualTuples this is endpoint-only. A condition can
          * decide a relation, so letting a message choose the values it is
          * evaluated with would hand the caller the decision.
-         *
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param conditionContext the value to set
          * @return the dsl builder
          */
@@ -1601,11 +1601,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * still grant access for a moment. Set HIGHER_CONSISTENCY on the paths
          * where that window matters, at the cost of latency. Left unset,
          * OpenFGA's own default applies.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param consistency the value to set
          * @return the dsl builder
          */
@@ -1636,11 +1636,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * to blank denies the exchange rather than being dropped: the route
          * asked for a tuple it did not get, and continuing without it would
          * answer a different question than the one configured.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param contextualTuples the value to set
          * @return the dsl builder
          */
@@ -1654,11 +1654,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * token the previous page returned -
          * ${header.CamelOpenFgaContinuationToken} - and page through without
          * the token being configured statically.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param continuationToken the value to set
          * @return the dsl builder
          */
@@ -1673,11 +1673,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * message is about. Unlike the subject, taking the object from a header
          * is normal and safe: the caller is entitled to say which resource it
          * wants, and the check is what decides whether it may have it.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param object the value to set
          * @return the dsl builder
          */
@@ -1689,11 +1689,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * How many entries a readTuples or readChanges page returns. Left
          * unset, OpenFGA's own default applies. A page is one request: this
          * bounds the answer, not the number of requests a route makes.
-         *
+         * 
          * The option is a: <code>java.lang.Integer</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param pageSize the value to set
          * @return the dsl builder
          */
@@ -1705,12 +1705,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * How many entries a readTuples or readChanges page returns. Left
          * unset, OpenFGA's own default applies. A page is one request: this
          * bounds the answer, not the number of requests a route makes.
-         *
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param pageSize the value to set
          * @return the dsl builder
          */
@@ -1725,11 +1725,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * resolving it from an inbound header lets the caller pick the weakest
          * one the model defines. Keep it literal, or derive it from something
          * the route controls such as ${header.CamelHttpMethod}.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param relation the value to set
          * @return the dsl builder
          */
@@ -1741,11 +1741,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * Comma-separated list of relations the listRelations operation asks
          * about, for example reader,writer,owner. Only the ones the subject
          * actually holds come back.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param relations the value to set
          * @return the dsl builder
          */
@@ -1760,11 +1760,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * of history to page through before reaching anything current. Parsed
          * when the endpoint starts, so a malformed value fails there rather
          * than on the first exchange.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param startTime the value to set
          * @return the dsl builder
          */
@@ -1777,12 +1777,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * and the authorization model, as returned by fga store create. The
          * store is the relationship graph that judges the exchange, so it comes
          * from the endpoint only and is never taken from a message header.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Required: true
          * Group: common
-         *
+         * 
          * @param storeId the value to set
          * @return the dsl builder
          */
@@ -1794,11 +1794,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * The object type to enumerate for the listObjects operation, for
          * example document. This is a type name from the authorization model,
          * so it is taken literally rather than evaluated.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param type the value to set
          * @return the dsl builder
          */
@@ -1826,11 +1826,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * serve both. An expression that resolves to blank, or to a bare user:
          * prefix, denies the exchange: an exchange carrying no identity is not
          * authorized, and failOpen does not apply to it.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param user the value to set
          * @return the dsl builder
          */
@@ -1844,11 +1844,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * user, or a type and a relation, team#member, to return the usersets
          * holding the relation rather than the individual subjects. Defaults to
          * user.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: common
-         *
+         * 
          * @param userFilters the value to set
          * @return the dsl builder
          */
@@ -1859,11 +1859,11 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * The audience to request the access token for in the
          * client-credentials flow.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param apiAudience the value to set
          * @return the dsl builder
          */
@@ -1874,11 +1874,11 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * Pre-shared token sent to OpenFGA in the Authorization header, for a
          * server started with --authn-method preshared.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param apiToken the value to set
          * @return the dsl builder
          */
@@ -1889,11 +1889,11 @@ public interface OpenFgaEndpointBuilderFactory {
         /**
          * The token endpoint the client-credentials flow exchanges its
          * credentials at.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param apiTokenIssuer the value to set
          * @return the dsl builder
          */
@@ -1906,11 +1906,11 @@ public interface OpenFgaEndpointBuilderFactory {
          * server that authenticates through an OIDC provider. Setting it
          * selects that flow, so clientSecret, apiTokenIssuer and apiAudience
          * are then required too.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param clientId the value to set
          * @return the dsl builder
          */
@@ -1920,11 +1920,11 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Client secret for the OAuth 2.0 client-credentials flow.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param clientSecret the value to set
          * @return the dsl builder
          */
@@ -1946,12 +1946,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * proceed - returning the objects it never managed to filter would be
          * the leak the filtering was there to prevent - so a failure there is
          * reported as an error for the route's own error handling to deal with.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: security
-         *
+         * 
          * @param failOpen the value to set
          * @return the dsl builder
          */
@@ -1973,12 +1973,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * proceed - returning the objects it never managed to filter would be
          * the leak the filtering was there to prevent - so a failure there is
          * reported as an error for the route's own error handling to deal with.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: security
-         *
+         * 
          * @param failOpen the value to set
          * @return the dsl builder
          */
@@ -1988,11 +1988,11 @@ public interface OpenFgaEndpointBuilderFactory {
         }
         /**
          * Space-separated scopes to request in the client-credentials flow.
-         *
+         * 
          * The option is a: <code>java.lang.String</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param scopes the value to set
          * @return the dsl builder
          */
@@ -2006,12 +2006,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * client certificate to a server that requires mutual TLS - a SPIFFE
          * X.509-SVID obtained with camel-spiffe, for instance, so the workload
          * authenticates to the decision point as itself.
-         *
+         * 
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param sslContextParameters the value to set
          * @return the dsl builder
          */
@@ -2025,12 +2025,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * client certificate to a server that requires mutual TLS - a SPIFFE
          * X.509-SVID obtained with camel-spiffe, for instance, so the workload
          * authenticates to the decision point as itself.
-         *
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         *
+         * 
          * Group: security
-         *
+         * 
          * @param sslContextParameters the value to set
          * @return the dsl builder
          */
@@ -2058,12 +2058,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: producer (advanced)
-         *
+         * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
@@ -2081,12 +2081,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: producer (advanced)
-         *
+         * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
@@ -2100,12 +2100,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * connectTimeout setting, which as of openfga-sdk 0.10.1 is accepted
          * and then never read, leaving the connect phase bounded only by the
          * operating system.
-         *
+         * 
          * The option is a: <code>long</code> type.
-         *
+         * 
          * Default: 10000
          * Group: advanced
-         *
+         * 
          * @param connectTimeout the value to set
          * @return the dsl builder
          */
@@ -2119,12 +2119,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * connectTimeout setting, which as of openfga-sdk 0.10.1 is accepted
          * and then never read, leaving the connect phase bounded only by the
          * operating system.
-         *
+         * 
          * The option will be converted to a <code>long</code> type.
-         *
+         * 
          * Default: 10000
          * Group: advanced
-         *
+         * 
          * @param connectTimeout the value to set
          * @return the dsl builder
          */
@@ -2136,12 +2136,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * How many of a batchCheck's checks may be in flight at once. The batch
          * is issued as one request per object, so this bounds the load one
          * exchange puts on the server.
-         *
+         * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Default: 10
          * Group: advanced
-         *
+         * 
          * @param maxParallelRequests the value to set
          * @return the dsl builder
          */
@@ -2153,12 +2153,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * How many of a batchCheck's checks may be in flight at once. The batch
          * is issued as one request per object, so this bounds the load one
          * exchange puts on the server.
-         *
+         * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Default: 10
          * Group: advanced
-         *
+         * 
          * @param maxParallelRequests the value to set
          * @return the dsl builder
          */
@@ -2171,12 +2171,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * retrying, such as a rate limit or a 5xx. Set it to 0 to disable
          * retries; the overall wait a routing thread can spend on one exchange
          * grows with it.
-         *
+         * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Default: 3
          * Group: advanced
-         *
+         * 
          * @param maxRetries the value to set
          * @return the dsl builder
          */
@@ -2189,12 +2189,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * retrying, such as a rate limit or a 5xx. Set it to 0 to disable
          * retries; the overall wait a routing thread can spend on one exchange
          * grows with it.
-         *
+         * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Default: 3
          * Group: advanced
-         *
+         * 
          * @param maxRetries the value to set
          * @return the dsl builder
          */
@@ -2207,12 +2207,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * how to reach the server - apiUrl, storeId, the credentials, the
          * timeouts and sslContextParameters - is ignored, because they are
          * baked into the client that was handed over.
-         *
+         * 
          * The option is a:
          * <code>dev.openfga.sdk.api.client.OpenFgaClient</code> type.
-         *
+         * 
          * Group: advanced
-         *
+         * 
          * @param openFgaClient the value to set
          * @return the dsl builder
          */
@@ -2225,12 +2225,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * how to reach the server - apiUrl, storeId, the credentials, the
          * timeouts and sslContextParameters - is ignored, because they are
          * baked into the client that was handed over.
-         *
+         * 
          * The option will be converted to a
          * <code>dev.openfga.sdk.api.client.OpenFgaClient</code> type.
-         *
+         * 
          * Group: advanced
-         *
+         * 
          * @param openFgaClient the value to set
          * @return the dsl builder
          */
@@ -2243,12 +2243,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * connected. A request that times out is a failure to obtain a verdict
          * rather than a deny, so it fails closed - or proceeds when failOpen is
          * set.
-         *
+         * 
          * The option is a: <code>long</code> type.
-         *
+         * 
          * Default: 10000
          * Group: advanced
-         *
+         * 
          * @param readTimeout the value to set
          * @return the dsl builder
          */
@@ -2261,12 +2261,12 @@ public interface OpenFgaEndpointBuilderFactory {
          * connected. A request that times out is a failure to obtain a verdict
          * rather than a deny, so it fails closed - or proceeds when failOpen is
          * set.
-         *
+         * 
          * The option will be converted to a <code>long</code> type.
-         *
+         * 
          * Default: 10000
          * Group: advanced
-         *
+         * 
          * @param readTimeout the value to set
          * @return the dsl builder
          */
