@@ -2943,9 +2943,12 @@ or follows, like Enter does.
 * `camel run --background` waits up to 60 seconds for the integration to start (it was 20 seconds), and
   `--background-wait` takes how long, such as `--background-wait=2m` (`true` and `false` still work). An integration
   that is still starting after the wait exits with `124` and is left running; before, the command exited with `0`.
-* The output of an integration in the background goes to `~/.camel/<pid>-run.log`, whose path is printed. The log is
+* The output of an integration in the background goes to `~/.camel/<pid>-run.log`. The log is
   kept while the integration runs (it was removed once the integration had started), and `camel stop` removes it. With
   `--background-wait=false` the output goes to the log as well, instead of a pipe that nobody read.
+* The output only gets the warnings and errors of the logging, and what the integration prints otherwise (such as why
+  it cannot start): all of the logging is in `~/.camel/<pid>.log`, which `camel log` reads. Before, each line was written
+  to both files. The `Log:` line is printed once the integration has started, with the path of `~/.camel/<pid>.log`.
 * An integration that loads no routes exits with `1` and `No routes found in: <files>`, instead of running without
   doing anything, except with `--source-dir`, `--empty` or in dev mode, where files can be added later.
 * `camel run` and `camel dev` with `--max-seconds`, `--max-messages` or `--max-idle-seconds` exit at the limit also in
