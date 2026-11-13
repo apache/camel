@@ -302,6 +302,15 @@ The camel-sjms and camel-sjms2 consumers now map a received `jakarta.jms.StreamM
 bytes, as the camel-jms consumer does, so a body sent with `jmsMessageType=Stream` arrives as the bytes that were sent.
 Before, the body was the `jakarta.jms.StreamMessage` itself. To get the JMS message, use `mapJmsMessage=false`.
 
+=== camel-keycloak - Keycloak 26.8.2 requires the kc-admin-api client scope
+
+This is a change in Keycloak, not in Camel: from Keycloak 26.8.2 the Admin REST API accepts only access tokens that
+carry the built-in `kc-admin-api` client scope, and rejects other tokens with `401 Unauthorized`. The Keycloak upgrade
+assigns the scope to `admin-cli` and `security-admin-console` only. When the `keycloak` producer authenticates with
+`clientId` and `clientSecret` of your own client, assign `kc-admin-api` to that client as a default client scope; a
+pre-obtained `accessToken` must be issued with that scope too. Username and password authentication uses `admin-cli`
+and keeps working. The integration tests of camel-keycloak now run against Keycloak 26.8.2.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.

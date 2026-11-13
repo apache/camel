@@ -101,6 +101,12 @@ keycloak.setConfiguration(config);
 ----
 ====
 
+NOTE: From Keycloak 26.8.2 the Admin REST API accepts only access tokens that carry the built-in `kc-admin-api` client
+scope. Keycloak assigns that scope to its own `admin-cli` and `security-admin-console` clients, which username/password
+authentication uses, but not to your own clients. Assign `kc-admin-api` (as a default client scope) to the client
+used for client credentials, otherwise the operations fail with `401 Unauthorized`. A pre-obtained access token
+(`accessToken`) must be issued with that scope too.
+
 == Supported Operations
 
 The component supports the following operations:
