@@ -73,7 +73,7 @@ public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mul
     @UriPath
     @Metadata(required = true)
     private String address;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean pubSub;
 
     public VertxEndpoint(String uri, VertxComponent component, String address) {

@@ -71,6 +71,9 @@ class SpringBootExporter extends Exporter {
             printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
+        if (!canExportTo()) {
+            return 1;
+        }
         if (request.parentPom != null) {
             try {
                 MavenGav.parseStrictGav(request.parentPom);
@@ -199,20 +202,13 @@ class SpringBootExporter extends Exporter {
         }
         String appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
         copyReadme(buildDir.toString(), appJar);
-        if (request.cleanExportDir || !ExportHelper.isCurrentDirOrParent(request.exportDir)) {
-            // cleaning current dir can be a bit dangerous so only clean if explicit enabled
-            // otherwise always clean export-dir to avoid stale data
-            if (request.cleanExportDir) {
-                String absPath = Paths.get(request.exportDir).toAbsolutePath().toString();
-                if (!request.yes && !exportContext.confirm("Are you sure you want to delete " + absPath + "?")) {
-                    return 1;
-                }
-            }
-            ExportHelper.cleanExportDir(request.exportDir);
+        if (cleanExportDir() != 0) {
+            return 1;
         }
         // copy to export dir and remove work dir
         PathUtils.copyDirectory(buildDir, Paths.get(request.exportDir));
         createDeferredSymlinks(buildDir, Paths.get(request.exportDir));
+        markExportDir();
         PathUtils.deleteDirectory(buildDir);
 
         return 0;

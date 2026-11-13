@@ -20,7 +20,9 @@ import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.spi.Metadata;
 
 public class LangChain4jEmbeddingsHeaders {
-    @Metadata(description = "The Finish Reason.", javaType = "dev.langchain4j.model.output.FinishReason")
+    @Deprecated
+    @Metadata(description = "The Finish Reason.", javaType = "dev.langchain4j.model.output.FinishReason",
+              deprecationNote = "The producer no longer sets this header, as the EmbeddingResponse of LangChain4j has no finish reason.")
     public static final String FINISH_REASON = "CamelLangChain4jEmbeddingsFinishReason";
 
     @Metadata(description = "The Input Token Count.", javaType = "int")

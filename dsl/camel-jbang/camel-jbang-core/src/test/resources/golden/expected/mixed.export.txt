@@ -34,6 +34,7 @@ dependency=mvn\:org.apache.camel\:camel-bean\:${camel.version}
 dependency=mvn\:org.apache.camel\:camel-log\:${camel.version}
 
 # project files
+.camel-export
 .mvn/wrapper/maven-wrapper.jar
 .mvn/wrapper/maven-wrapper.properties
 AGENTS.md

@@ -56,9 +56,9 @@ public class OAIPMHProducer extends DefaultProducer {
         }
         Message msg = exchange.getIn();
         overrideHarvesterConfigs(msg, harvester);
-        // the headers apply to this exchange only, the endpoint is shared by all exchanges
+        // the header applies to this exchange only, the endpoint is shared by all exchanges
         boolean onlyFirst = getBooleanHeader(msg, OAIPMHConstants.ONLY_FIRST, endpoint.isOnlyFirst());
-        if (getBooleanHeader(msg, OAIPMHConstants.IGNORE_SSL_WARNINGS, endpoint.isIgnoreSSLWarnings())) {
+        if (endpoint.isIgnoreSSLWarnings()) {
             harvester.getHttpClient().setIgnoreSSLWarnings(true);
         }
         List<String> synHarvest = harvester.synHarvest(onlyFirst);

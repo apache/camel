@@ -410,7 +410,7 @@ public class Resequencer extends BaseProcessorSupport
      * Is the given exchange valid to be used.
      *
      * @param  exchange the given exchange
-     * @return          <tt>true</tt> if valid, <tt>false</tt> otherwise
+     * @return          <code>true</code> if valid, <code>false</code> otherwise
      */
     private boolean isValid(Exchange exchange) {
         Object result = null;

@@ -38,12 +38,11 @@ import org.apache.camel.support.PluginHelper;
 /**
  * Default {@link ProcessorFactory} that supports using 3rd party Camel components to implement the EIP
  * {@link Processor}.
- * <p/>
+ * <p>
  * The component should use the {@link FactoryFinder} SPI to specify a file with the name of the EIP model in the
- * directory of {@link #RESOURCE_PATH}. The file should contain a property with key <tt>class</tt> that refers to the
- * name of the {@link ProcessorFactory} the Camel component implement, which gets called for creating the
+ * directory of {@link #RESOURCE_PATH}. The file should contain a property with key <code>class</code> that refers to
+ * the name of the {@link ProcessorFactory} the Camel component implements, which gets called for creating the
  * {@link Processor}s for the EIP.
- * <p/>
  */
 @JdkService(ProcessorFactory.FACTORY)
 public class DefaultProcessorFactory implements ProcessorFactory, BootstrapCloseable {

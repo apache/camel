@@ -25,6 +25,7 @@ dependency=mvn\:org.apache.camel\:camel-timer\:${camel.version}
 dependency=mvn\:org.apache.camel\:camel-core-languages\:${camel.version}
 
 # project files
+.camel-export
 .mvn/wrapper/maven-wrapper.jar
 .mvn/wrapper/maven-wrapper.properties
 AGENTS.md

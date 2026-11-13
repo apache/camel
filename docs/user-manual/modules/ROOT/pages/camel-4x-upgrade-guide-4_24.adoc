@@ -32,6 +32,11 @@ camel.component.controlbus.allowed-languages = simple
 
 The `route` command (`controlbus:route?action=...`) is not affected.
 
+=== camel-clickup - the webhook signature check no longer logs signatures
+
+The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.
+The `InvalidMessageSignatureException` of a failed check no longer carries the calculated signature: `getCalculatedSignature()` returns `null` and is deprecated, as is the constructor that takes it.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
@@ -1373,17 +1378,14 @@ The Camel CLI parses its command lines, prints its help and completes its comman
 https://github.com/aeshell/aesh[aesh] instead of picocli. The commands and their options are the same. The help looks a
 little different: the default value of an option is on a line of its own (`Default: ...`).
 
-An argument `@file` is no longer replaced by the arguments in that file (picocli did that, such as
-`camel run @args.txt`). Give the arguments on the command line instead, for example `camel run $(cat args.txt)` in a
-shell script.
-
 A plugin of the Camel CLI (an implementation of `org.apache.camel.dsl.jbang.core.common.Plugin`) must be changed and
 built for Camel 4.24:
 
 * `Plugin.customize` takes a `CommandTree` instead of a picocli `CommandLine`. A command is added with
   `commandLine.addSubcommand("mycommand", new CommandTree(new MyCommand(main)))`.
 * The command classes use the aesh annotations: `@CommandDefinition` instead of `@Command` (the `footer` of the help
-  is an attribute of it), `@Option(name = "my-option")` instead of `@Option(names = "--my-option")` (with
+  is an attribute of it; aesh wraps the lines of the footer at 80 columns, except indented lines such as examples, so
+  keep a line of text within 80 columns), `@Option(name = "my-option")` instead of `@Option(names = "--my-option")` (with
   `hasValue = false` for a flag), `@OptionList` for an option with several values, `@Argument` or `@Arguments` instead
   of `@Parameters`, and the aesh `@Mixin`.
 * A class with the completion candidates of an option extends `org.apache.camel.dsl.jbang.core.common.CompletionCandidates`,
@@ -1520,13 +1522,15 @@ way as the `camel.uri` attribute, which shows the endpoint URI as `Endpoint.toSt
 
 Dashboards or queries that use the old values may need a change.
 
-=== camel-oaipmh - the CamelOaimphOnlyFirst and CamelOaimphIgnoreSSLWarnings headers apply to their message only
+=== camel-oaipmh - the CamelOaimphOnlyFirst header applies to its message only, and the CamelOaimphIgnoreSSLWarnings header is removed
 
-The `CamelOaimphOnlyFirst` and `CamelOaimphIgnoreSSLWarnings` headers now apply only to the message that has them.
-Before, the producer wrote them onto the endpoint, so after one message with `CamelOaimphOnlyFirst=true` every later
-message sent to that endpoint returned only the first page, and after one message with
-`CamelOaimphIgnoreSSLWarnings=true` every later message accepted a self-signed certificate. A message without the
-header uses the `onlyFirst` and `ignoreSSLWarnings` options of the endpoint.
+The `CamelOaimphOnlyFirst` header now applies only to the message that has it. Before, the producer wrote it onto the
+endpoint, so after one message with `CamelOaimphOnlyFirst=true` every later message sent to that endpoint returned only
+the first page. A message without the header uses the `onlyFirst` option of the endpoint.
+
+The producer no longer reads the `CamelOaimphIgnoreSSLWarnings` header, and the `OAIPMHConstants.IGNORE_SSL_WARNINGS`
+constant is removed. Use the `ignoreSSLWarnings` option of the endpoint instead; when only some repositories need it,
+send to them through an endpoint URI that sets the option.
 
 === camel-clickhouse - a query in a binary format returns a byte[] body
 
@@ -2071,6 +2075,22 @@ The `QUEUE_STATUS` and `SIP_PEERS` actions of the `asterisk` producer now wait f
 events, such as `QueueParamsEvent`, `QueueMemberEvent` and `PeerEntryEvent`. Before, the body was only the
 `ManagerResponse` saying that the list will follow, and the events were lost. A route that read that response from
 the body now finds it in `${body.response}`. `EXTENSION_STATE` still sets the `ManagerResponse` as the body.
+
+=== camel-jbang - camel export no longer deletes the files of a directory that no export created
+
+`camel export --dir=<dir>` to a directory other than the current one used to delete the files of that directory first,
+whatever they were. It now only does so for a directory that an earlier export created: the export writes a
+`.camel-export` file in it. Exporting to a directory with other files fails, and keeps them:
+
+----
+Cannot export to /home/me/project because it has files that camel export did not create: use --clean-dir to delete them, or export to another directory
+----
+
+This includes exporting to the directory of the exported files themselves from another directory (such as
+`camel export /work/route.camel.yaml --dir=/work`), which deleted the source files: use `--clean-dir --yes` for that.
+A directory that an earlier Camel version exported to has no `.camel-export` file yet: export to it once with
+`--clean-dir --yes`. An empty directory, one with only hidden files (such as `.git`), and the current directory are
+exported to as before.
 
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
@@ -2809,6 +2829,8 @@ xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]):
 * A name or pid that matches no running integration exits with `3`, instead of doing nothing and exiting with `0`.
   Without a name (all integrations) and nothing running, the command exits with `0` and prints
   `No running Camel integrations` on stderr.
+* An integration that stops before it answers the action exits with `3` as soon as it is gone, instead of waiting until
+  `--timeout` and exiting with `124`, such as a `camel cmd send` that waits for the reply of a slow route.
 * `camel eval expression` with a name or pid that matches no running integration exits with `3`, instead of starting
   a new Camel to evaluate in: only without a name, or with `--isolated`, a new Camel evaluates the expression. An
   evaluation that fails exits with `1`, and the `Using existing running Camel integration` line is printed on stderr.
@@ -6279,6 +6301,9 @@ contain the whole value. When a `Map` is marshalled, a `byte[]` value is accepte
   `?` (a user without a home, such as in a container), as the CLI then uses `$HOME`, and when a test gives the CLI a
   home of its own. The CLI sets the directory as the system property `camel.jbang.logDir`. A Quarkus app that
   `camel run` exports and runs also logs there.
+* `camel run --logging-json` writes `<pid>.log` too, as `camel run` does with and without color. The JSON is for the
+  console only: the file has the pattern that `camel log`, the TUI and the AI tools read, the same as without color.
+  Before, the file stayed empty with JSON logging, so they showed no log.
 
 === camel-jbang-mcp - runtime tools that changed behaviour
 
@@ -6925,6 +6950,22 @@ Other changes:
 The consumer now gives a message that its serializer cannot deserialize, such as one published by `redis-cli`, to the
 route as a `byte[]`. Previously the message was dropped with a WARN. A failed exchange of the consumer is now handed to
 its exception handler.
+
+=== camel-redis - Redis Cluster hash slot requirement for optimistic recovery
+
+When using `RedisAggregationRepository` with optimistic removal and recovery enabled
+on Redis Cluster, `mapName` and `persistenceMapName` must resolve to the same Redis hash slot.
+
+Use a common Redis hash tag to ensure both keys are assigned to the same slot. For example:
+
+* `mapName`: +orders:{aggregation}+
+* `persistenceMapName`: +orders:{aggregation}-completed+
+
+Existing Redis Cluster configurations using different hash slots must update their map names
+before upgrading. Existing aggregation data may need to be migrated to the new Redis keys.
+
+The repository now validates this configuration during startup and throws an
+`IllegalArgumentException` if the keys belong to different hash slots.
 
 === camel-spring-ws - the reply of a consumer, and File and stream bodies of the producer
 
@@ -8026,6 +8067,25 @@ dead letter channel or a handled `onException`, so that the item is marked consu
 `delay`, or set `backoffIdleThreshold` and `backoffMultiplier`: a poll counts only the items that it marked consumed,
 so a poll whose items all failed is an idle poll, after which a `greedy` consumer does not poll again at once.
 
+=== camel-jbang - runtime catalogs use the selected Camel version
+
+Spring Boot and Quarkus catalogs now report the resolved Camel core version and read EIP/model schemas from that
+version's catalog. Previously, they could combine the selected runtime's component schemas with the running CLI or
+MCP server's newer model schemas. A model absent from the selected catalog now remains absent.
+Runtime dependency coordinates still use the selected Spring Boot or Camel Quarkus version.
+
+A Quarkus BOM must identify both `org.apache.camel:camel-catalog` and
+`org.apache.camel.quarkus:camel-quarkus-catalog`. If either version or the selected catalog cannot be resolved,
+catalog loading fails instead of returning the running server's catalog.
+
+Spring Boot retains its existing fallback: if downloading `org.apache.camel:camel-catalog` for the requested
+version fails, it tries the running CLI's Camel version. The catalog reports the core version actually resolved.
+
+For Spring Boot, `camel export` and `camel run` without an explicit `--camel-version` now use the resolved core
+catalog version for Camel core dependencies in the generated project. For example, `--camel-spring-boot-version=4.8.0`
+uses Camel 4.8.0 instead of the running CLI's version when that catalog is available. Set `--camel-version` explicitly
+to retain a different core dependency version.
+
 === camel-jbang - the Quarkus Platform is looked up only for the Quarkus runtime
 
 With a runtime other than Quarkus, `camel run` and `camel export` no longer look up the Quarkus Platform in the Quarkus
@@ -8079,6 +8139,19 @@ The option metadata in the catalog (component, endpoint and header options, and 
 simple language) no longer has `"deprecationNote": ""`. The key is now present only when there is a note, as was
 already the case for options without `@Metadata`. Tools that read the catalog JSON get no key (null with
 `camel-tooling-model`) instead of an empty string.
+
+=== camel-catalog - no default value for java.lang.Boolean options that declare none
+
+A component or endpoint option of type `java.lang.Boolean` that declares no default value no longer has
+`"defaultValue": false` in the catalog, and the javadoc of its Endpoint DSL and Component DSL methods no longer says
+`Default: false`. The same holds for the `java.lang.Boolean` parameters of the API-based components. Such an option is
+often not `false` when it is not set: another option, a library or the remote service then decides. Routes behave as
+before.
+
+The `closeStreamAfterRead` option of `azure-storage-datalake` now has the default value `true` in the catalog, the value
+it has when it is not set.
+
+Tools that read the default value from the catalog get none for these options (null with `camel-tooling-model`).
 
 === camel-langchain4j-embeddings - the producer uses the EmbeddingRequest API of LangChain4j
 

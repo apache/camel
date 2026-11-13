@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The default strategy used in Camel to resolve the {@link ExceptionPolicyKey} that should handle the thrown exception.
- * <p/>
- * <b>Selection strategy:</b> <br/>
+ * <p>
+ * <b>Selection strategy:</b> <br>
  * This strategy applies the following rules:
  * <ul>
  * <li>Will walk the exception hierarchy from bottom upwards till the thrown exception, meaning that the most outer
@@ -39,17 +39,17 @@ import org.slf4j.LoggerFactory;
  * {@link #createExceptionIterable(Throwable)} provides the Iterator used for the walking.</li>
  * <li>The exception type must be configured with an Exception that is an instance of the thrown exception, this is
  * tested using the {@link #filter(ExceptionPolicyKey, Class, Throwable)} method. By default the filter uses
- * <tt>instanceof</tt> test.</li>
- * <li>If the exception type has <b>exactly</b> the thrown exception then its selected as its an exact match</li>
+ * <code>instanceof</code> test.</li>
+ * <li>If the exception type has <b>exactly</b> the thrown exception then it's selected as it's an exact match</li>
  * <li>Otherwise the type that has an exception that is the closest super of the thrown exception is selected (recurring
  * up the exception hierarchy)</li>
  * </ul>
- * <p/>
- * <b>Fine grained matching:</b> <br/>
- * If the {@link ExceptionPolicyKey} has a when defined with an expression the type is also matches against the current
- * exchange using the {@link #matchesWhen(ExceptionPolicyKey, org.apache.camel.Exchange)} method. This can be used to
- * for more fine grained matching, so you can e.g. define multiple sets of exception types with the same exception
- * class(es) but have a predicate attached to select which to select at runtime.
+ * <p>
+ * <b>Fine grained matching:</b> <br>
+ * If the {@link ExceptionPolicyKey} has a when defined with an expression the type is also matched against the current
+ * exchange using the {@link #matchesWhen(ExceptionPolicyKey, org.apache.camel.Exchange)} method. This can be used for
+ * more fine grained matching, so you can e.g. define multiple sets of exception types with the same exception class(es)
+ * but have a predicate attached to select which to select at runtime.
  */
 public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
@@ -202,7 +202,8 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
      * @param  type           the exception type
      * @param  exceptionClass the current exception class for testing
      * @param  exception      the thrown exception
-     * @return                <tt>true</tt> if the to current exception class is a candidate, <tt>false</tt> to skip it.
+     * @return                <code>true</code> if the current exception class is a candidate, <code>false</code> to
+     *                        skip it.
      */
     protected boolean filter(ExceptionPolicyKey type, Class<?> exceptionClass, Throwable exception) {
         // must be instance of check to ensure that the exceptionClass is one type of the thrown exception
@@ -211,16 +212,16 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     /**
      * Strategy method for matching the exception type with the current exchange.
-     * <p/>
+     * <p>
      * This default implementation will match as:
      * <ul>
      * <li>Always true if no when predicate on the exception type
-     * <li>Otherwise the when predicate is matches against the current exchange
+     * <li>Otherwise the when predicate is matched against the current exchange
      * </ul>
      *
      * @param  definition the exception definition
      * @param  exchange   the current {@link Exchange}
-     * @return            <tt>true</tt> if matched, <tt>false</tt> otherwise.
+     * @return            <code>true</code> if matched, <code>false</code> otherwise.
      */
     protected boolean matchesWhen(ExceptionPolicyKey definition, Exchange exchange) {
         if (definition.getWhen() == null) {
@@ -241,7 +242,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
     /**
      * Strategy method creating the iterator to walk the exception in the order Camel should use for find the
      * {@link ExceptionPolicyKey} should be used.
-     * <p/>
+     * <p>
      * The default iterator will walk from the bottom upwards (the last caused by going upwards to the exception)
      *
      * @param  exception the exception

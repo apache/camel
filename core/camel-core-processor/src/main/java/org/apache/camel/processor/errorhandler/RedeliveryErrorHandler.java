@@ -71,7 +71,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Base redeliverable error handler that also supports a final dead letter queue in case all redelivery attempts fail.
- * <p/>
+ * <p>
  * This implementation should contain all the error handling logic and the sub classes should only configure it
  * according to what they support.
  */
@@ -335,7 +335,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      * Performs a defensive copy of the exchange if needed
      *
      * @param      exchange the exchange
-     * @return              the defensive copy, or <tt>null</tt> if not needed (redelivery is not enabled).
+     * @return              the defensive copy, or <code>null</code> if not needed (redelivery is not enabled).
      * @deprecated          since 4.24.0. No longer called: redelivery only restores the IN message, so the error
      *                      handler keeps a copy of the IN message instead of the whole exchange.
      */
@@ -449,7 +449,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      * can see that the message was redelivered, but a later failure does not count on from them. The redelivery task
      * calls it when a redelivered step succeeded (CAMEL-26734), and a doCatch when it takes over the failure of a route
      * that the doTry called and whose error handler redelivered it (CAMEL-26857).
-     * <p/>
+     * <p>
      * Internal API, for the processors of Camel.
      */
     public static void markRedeliveryOver(Exchange exchange) {
@@ -461,9 +461,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
     /**
      * Evaluates a predicate of the error handler (such as handled or continued). A predicate that fails (throws an
-     * exception) is regarded as <tt>false</tt>, as the error handler must still handle the exchange (such as the dead
-     * letter channel which always handles the exchange). The original caused exception is kept, and the exception from
-     * the predicate is logged and added as suppressed to the original exception.
+     * exception) is regarded as <code>false</code>, as the error handler must still handle the exchange (such as the
+     * dead letter channel which always handles the exchange). The original caused exception is kept, and the exception
+     * from the predicate is logged and added as suppressed to the original exception.
      */
     static boolean matchesPredicate(Predicate predicate, Exchange exchange, String name) {
         try {
@@ -2307,7 +2307,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
          * Determines whether or not to continue if we are exhausted.
          *
          * @param  exchange the current exchange
-         * @return          <tt>true</tt> to continue, or <tt>false</tt> to exhaust.
+         * @return          <code>true</code> to continue, or <code>false</code> to exhaust.
          */
         private boolean shouldContinue(Exchange exchange) {
             if (continuedPredicate != null) {
@@ -2321,7 +2321,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
          * Determines whether or not to handle if we are exhausted.
          *
          * @param  exchange the current exchange
-         * @return          <tt>true</tt> to handle, or <tt>false</tt> to exhaust.
+         * @return          <code>true</code> to handle, or <code>false</code> to exhaust.
          */
         private boolean shouldHandle(Exchange exchange) {
             if (handledPredicate != null) {
@@ -2386,7 +2386,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         /**
          * Method for sleeping during redelivery attempts.
-         * <p/>
+         * <p>
          * This task is for the synchronous blocking. If using async delayed then a scheduled thread pool is used for
          * sleeping and trigger redeliveries.
          */

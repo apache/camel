@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * On completion strategy for {@link org.apache.camel.processor.idempotent.IdempotentConsumer}.
- * <p/>
- * This strategy adds the message id to the idempotent repository in cast the exchange was processed successfully. In
+ * <p>
+ * This strategy adds the message id to the idempotent repository in case the exchange was processed successfully. In
  * case of failure the message id is <b>not</b> added.
  */
 public class IdempotentOnCompletion implements Synchronization {

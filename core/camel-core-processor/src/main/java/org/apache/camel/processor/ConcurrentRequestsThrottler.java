@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A <a href="http://camel.apache.org/throttler.html">Throttler</a> will set a limit on the maximum number of message
  * exchanges which can be sent to a processor concurrently.
- * <p/>
+ * <p>
  * This pattern can be extremely useful if you have some external system which meters access; such as only allowing 10
  * concurrent requests; or if huge load can cause a particular system to malfunction or to reduce its throughput you
  * might want to introduce some throttling.
