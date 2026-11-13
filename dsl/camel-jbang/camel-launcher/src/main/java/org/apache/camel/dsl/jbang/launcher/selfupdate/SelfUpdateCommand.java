@@ -77,6 +77,8 @@ public class SelfUpdateCommand extends CamelCommand {
     private final ManifestFetcher fetcherOverride;
     private final InstallScriptFetcher scriptFetcherOverride;
     private final Map<String, String> installerEnvironmentOverride;
+    // Visible for testing: set to a short duration to avoid a 5-minute wait in tests
+    public long processWaitTimeoutSeconds = 5 * 60;
 
     public SelfUpdateCommand(CamelJBangMain main) {
         this(main, null, null, null);
@@ -386,7 +388,7 @@ public class SelfUpdateCommand extends CamelCommand {
             Future<String> outputFuture = drainer
                     .submit(() -> new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
             try {
-                boolean finished = process.waitFor(5, TimeUnit.MINUTES);
+                boolean finished = process.waitFor(processWaitTimeoutSeconds, TimeUnit.SECONDS);
                 if (!finished) {
                     // Kill grandchildren first (curl/wget etc.) before the shell, so they release the pipe
                     process.descendants().forEach(ProcessHandle::destroyForcibly);

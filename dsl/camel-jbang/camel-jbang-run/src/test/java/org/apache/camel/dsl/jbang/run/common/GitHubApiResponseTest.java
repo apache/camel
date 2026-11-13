@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.run.common;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -114,7 +115,7 @@ class GitHubApiResponseTest {
         statusCode = 404;
 
         assertThatThrownBy(() -> GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, new StringJoiner(",")))
-                .isInstanceOf(IOException.class)
+                .isInstanceOf(FileNotFoundException.class)
                 .hasMessageContaining("404");
     }
 
@@ -144,7 +145,7 @@ class GitHubApiResponseTest {
         statusCode = 404;
 
         assertThatThrownBy(() -> GistHelper.resolveGistAsRawFiles(url, null, null, null, new StringJoiner(",")))
-                .isInstanceOf(IOException.class)
+                .isInstanceOf(FileNotFoundException.class)
                 .hasMessageContaining("404");
     }
 

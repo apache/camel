@@ -41,7 +41,7 @@ import org.apache.camel.util.FileUtil;
  * - not part of the existing {@code latest.properties}/{@code X.Y.Z.properties} manifest format, which neither script's
  * own strict parser could tolerate being extended with new keys.
  */
-public final class InstallScriptFetcher {
+public class InstallScriptFetcher {
 
     private static final String DEFAULT_INSTALL_BASE_URL = "https://camel.apache.org";
     private static final Duration TIMEOUT = Duration.ofSeconds(30);
