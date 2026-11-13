@@ -35,6 +35,11 @@ recommends the daemon, opt-in and in stages, once the startup quick wins (CAMEL-
 (CAMEL-26940) are in, and not the native front: a daemon with a native client is as fast, for a fraction of the build
 and release work.
 
+The seconds a daemon saves are small next to the turns of the model. The reason to build it is that a command that
+answers at once gets called more: an agent that validates after every edit, looks an option up with `camel doc`
+instead of guessing it, and checks `camel status` after every reload makes fewer mistakes. With the Java client the
+daemon answers in 50-65 ms, under the 0.1 s at which a response feels instant, like a native command.
+
 == Motivation
 
 The numbers are from 2026-11-13: macOS on an Apple M4 Pro, JDK 25, the unpacked 4.24.0-SNAPSHOT `camel-launcher` with
@@ -58,10 +63,16 @@ The other sub-tasks of CAMEL-26935 cut what is not the JVM start:
 
 What is left after those is the JVM start of each command: about 0.15 s, for 3-50 ms of work.
 
+Those seconds are small next to the time of the agent itself: each command is a turn of the model, which takes several
+seconds, more with a local model. What a slow command costs is how often it is called. A command that answers like a
+native one can be run after every step: `camel validate` after every edit, `camel doc` to look an option up instead of
+guessing it, `camel status` after every reload. An agent that checks more makes fewer mistakes.
+
 == Goals
 
-- The short commands an agent runs most answer in well under 0.1 s: `version`, `ps`, `get`, `log`, `doc`, `catalog`,
-  `validate`, the `cmd` actions and `stop`.
+- The short commands an agent runs most answer in under 0.1 s, the usual limit for a response to feel instant, as a
+  native command does: `version`, `ps`, `get`, `log`, `doc`, `catalog`, `validate`, the `cmd` actions and `stop`.
+- Agents call them more often to check their work, and do better for it, as measured with the local-model benchmark.
 - They give the same output, JSON and exit codes as a new JVM, so an agent or a script cannot tell the difference.
 - It works on Linux, macOS and Windows, with the JDK the Camel CLI needs anyway.
 - Whenever the fast path cannot serve a command, the command runs in a new JVM as today.
@@ -269,8 +280,9 @@ daemon or a native front does not serve too, and the start of the daemon itself.
 == Risks
 
 - State that a command leaves behind for the next one: a static field, a system property, a catalog of another
-  version. The result is wrong output only with the daemon, the hardest kind of bug to report. Mitigations: the daemon
-  starts with the read-only commands, the tests compare both ways, and the switch above rules it out.
+  version. The result is wrong output only with the daemon, the hardest kind of bug to report, and agents that call
+  the CLI more also trust it more. Mitigations: the daemon starts with the read-only commands, the tests compare both
+  ways, and the switch above rules it out.
 - A daemon of an older version after an upgrade, or one without a plugin added since: the version check and the
   restart.
 - Agent sandboxes that block the socket, or stop the processes a command leaves in the background: the client then
@@ -296,23 +308,30 @@ daemon or a native front does not serve too, and the start of the daemon itself.
   command, `run` and the plugins included, with nothing new to run or to ship.
 . Then build the daemon, opt-in, in stages, each its own pull request:
 .. the protocol, the Java client in `camel.sh` and `camel.bat`, the lifecycle, and the read-only commands that take
-   no files (`version`, `ps`, `get`, `log` without `--follow`, `doc`, `catalog`, the `cmd` actions, `stop`), each
-   tested both ways;
+   no files (`version`, `ps`, `get`, `log` without `--follow`, `doc`, `catalog`, the `cmd` actions, `stop`). The
+   tests run each of them with and without the daemon and compare the output, as agents that call the CLI more also
+   trust it more;
 .. the directory, environment and terminal of the request, streaming and cancel: `validate`, `--watch` and
    `--follow`;
 .. child processes (`run --background`, `restart`) with the client's directory, environment and JVM options, and
-   readiness pushed over the WebSocket transport;
-.. a native client for the main platforms, with the Java client as the fallback, only if the 50 ms of the Java client
-   still matters by then.
+   readiness pushed over the WebSocket transport.
+. Keep the Java client. At 50-65 ms it answers under the 0.1 s at which a response feels instant, so the commands
+  already feel native. A native client for the main platforms, with the Java client as the fallback, is optional.
+. Tell the agents. Speed alone may not change how an agent uses the CLI, so the docs that agents read (the Camel CLI
+  pages, the instructions of the MCP server) say that the short commands are cheap to call, for example to validate
+  after every edit.
+. Measure the agents, not only the commands: run the local-model benchmark with and without the daemon, and compare
+  the CLI calls per task and the pass rate. Make the daemon the default only after a release as opt-in, and when the
+  benchmark shows the gain.
 . Do not build the native front. A daemon with a native client is as fast (21-37 ms measured, against 10-40 ms
   estimated), and the native front costs the most: the base classes of the commands change, GraalVM metadata must
   follow every command and option, aesh needs a change, and each release needs a binary per platform, all before the
   first command is faster.
-. Make the daemon the default only after a release as opt-in.
 
-The decision to make after the first step: whether the daemon is worth a process in the background. If the loop is at
-about 3 s by then, the daemon with the Java client takes about 1 s more off it (estimate: 8 short commands at about
-0.1 s each).
+The seconds alone would not pay for a process in the background. If the loop is at about 3 s after the first step, the
+daemon with the Java client takes about 1 s more off it (estimate: 8 short commands at about 0.1 s each), next to model
+turns of several seconds each. The gain to look for is in how the agents work, and that is what the benchmark
+measures.
 
 == Related tickets
 
