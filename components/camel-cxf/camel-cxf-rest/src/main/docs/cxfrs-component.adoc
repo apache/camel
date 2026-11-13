@@ -2,7 +2,7 @@
 :doctitle: CXF-RS
 :shortname: cxfrs
 :artifactid: camel-cxf-rest
-:description: Expose JAX-RS REST services using Apache CXF or connect to external REST services using CXF REST client.
+:description: Expose REST services described by JAX-RS resource classes, or send requests to REST services, using Apache CXF. The bindingStyle option decides how the consumer maps the request to the Camel message, and the httpClientAPI option decides which client API the producer uses.
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:

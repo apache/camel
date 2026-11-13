@@ -128,7 +128,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_CXF;
 
 /**
- * Expose SOAP WebServices using Apache CXF or connect to external WebServices using CXF WS client.
+ * Expose SOAP services, or invoke operations of SOAP services, using Apache CXF. The dataFormat option decides how the
+ * SOAP message is represented in the Camel message body.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = SCHEME_CXF, title = "CXF", syntax = "cxf:beanId:address",
              category = { Category.HTTP, Category.WEBSERVICE }, headersClass = CxfConstants.class)

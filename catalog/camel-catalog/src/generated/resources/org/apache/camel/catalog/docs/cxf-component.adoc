@@ -2,7 +2,7 @@
 :doctitle: CXF
 :shortname: cxf
 :artifactid: camel-cxf-soap
-:description: Expose SOAP WebServices using Apache CXF or connect to external WebServices using CXF WS client.
+:description: Expose SOAP services, or invoke operations of SOAP services, using Apache CXF. The dataFormat option decides how the SOAP message is represented in the Camel message body.
 :since: 1.0
 :supportlevel: Stable
 :tabs-sync-option:

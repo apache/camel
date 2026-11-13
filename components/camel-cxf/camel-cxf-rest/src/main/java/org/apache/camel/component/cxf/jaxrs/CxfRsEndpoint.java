@@ -71,7 +71,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_CXF_RS;
 
 /**
- * Expose JAX-RS REST services using Apache CXF or connect to external REST services using CXF REST client.
+ * Expose REST services described by JAX-RS resource classes, or send requests to REST services, using Apache CXF. The
+ * bindingStyle option decides how the consumer maps the request to the Camel message, and the httpClientAPI option
+ * decides which client API the producer uses.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = SCHEME_CXF_RS, title = "CXF-RS", syntax = "cxfrs:beanId:address",
              category = { Category.REST }, lenientProperties = true, headersClass = CxfConstants.class)

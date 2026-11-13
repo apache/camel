@@ -1375,8 +1375,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CXF (camel-cxf-soap)
-     * Expose SOAP WebServices using Apache CXF or connect to external
-     * WebServices using CXF WS client.
+     * Expose SOAP services, or invoke operations of SOAP services, using Apache
+     * CXF. The dataFormat option decides how the SOAP message is represented in
+     * the Camel message body.
      * 
      * Category: http,webservice
      * Since: 1.0
@@ -1389,8 +1390,10 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CXF-RS (camel-cxf-rest)
-     * Expose JAX-RS REST services using Apache CXF or connect to external REST
-     * services using CXF REST client.
+     * Expose REST services described by JAX-RS resource classes, or send
+     * requests to REST services, using Apache CXF. The bindingStyle option
+     * decides how the consumer maps the request to the Camel message, and the
+     * httpClientAPI option decides which client API the producer uses.
      * 
      * Category: rest
      * Since: 2.0
