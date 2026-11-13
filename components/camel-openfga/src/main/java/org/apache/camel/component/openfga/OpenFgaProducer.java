@@ -167,17 +167,17 @@ public class OpenFgaProducer extends DefaultAsyncProducer {
             callback.done(true);
             return true;
         }
-        OpenFgaAsyncExecutor executor = asyncExecutor;
-        if (executor == null) {
-            exchange.setException(new java.util.concurrent.CancellationException("Authorization producer is not started"));
-            callback.done(true);
-            return true;
-        }
         switch (getEndpoint().getOperation()) {
             case check, batchCheck, listObjects, listRelations, listUsers, expand ->
                 OpenFgaAuthorizer.clearDecisionHeaders(exchange);
             default -> {
             }
+        }
+        OpenFgaAsyncExecutor executor = asyncExecutor;
+        if (executor == null) {
+            exchange.setException(new java.util.concurrent.CancellationException("Authorization producer is not started"));
+            callback.done(true);
+            return true;
         }
         OpenFgaAuthorizer authorizer = getEndpoint().getAuthorizer();
         return executor.process(exchange, callback, snapshot -> {

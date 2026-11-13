@@ -18,6 +18,7 @@ package org.apache.camel.component.openfga;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +35,47 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class OpenFgaAsyncProducerTest {
+    @Test
+    void stoppedProducerClearsClaimedDecisionHeadersBeforeRejectingEachDecisionOperation() throws Exception {
+        for (OpenFgaOperation operation : List.of(OpenFgaOperation.check, OpenFgaOperation.batchCheck,
+                OpenFgaOperation.listObjects, OpenFgaOperation.listRelations, OpenFgaOperation.listUsers,
+                OpenFgaOperation.expand)) {
+            OpenFgaClient client = mock(OpenFgaClient.class);
+            try (Fixture fixture = new Fixture(client, configuration -> configuration.setFailOpen(true), operation)) {
+                fixture.producer.stop();
+                Exchange exchange = fixture.exchange();
+                exchange.getMessage().setBody("payload");
+                exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, true);
+                exchange.getMessage().setHeader(OpenFgaConstants.FAILED_OPEN, true);
+                exchange.getMessage().setHeader(OpenFgaConstants.DENY_REASON, "claimed-reason");
+                exchange.getMessage().setHeader(OpenFgaConstants.USER, "user:claimed");
+                exchange.getMessage().setHeader(OpenFgaConstants.OBJECT, "document:claimed");
+                exchange.getMessage().setHeader(OpenFgaConstants.RELATION, "claimed-relation");
+                exchange.getMessage().setHeader(OpenFgaConstants.STORE_ID, "claimed-store");
+                AtomicInteger callbacks = new AtomicInteger();
+
+                assertThat(fixture.producer.process(exchange, doneSync -> {
+                    assertThat(doneSync).isTrue();
+                    callbacks.incrementAndGet();
+                })).as(operation.name()).isTrue();
+
+                assertThat(callbacks).hasValue(1);
+                assertThat(exchange.getException()).isInstanceOf(CancellationException.class);
+                assertThat(exchange.getMessage().getBody()).isEqualTo("payload");
+                for (String header : List.of(OpenFgaConstants.ALLOWED, OpenFgaConstants.FAILED_OPEN,
+                        OpenFgaConstants.DENY_REASON, OpenFgaConstants.USER, OpenFgaConstants.OBJECT,
+                        OpenFgaConstants.RELATION, OpenFgaConstants.STORE_ID)) {
+                    assertThat(exchange.getMessage().getHeader(header)).as(operation + " " + header).isNull();
+                }
+                verifyNoInteractions(client);
+            }
+        }
+    }
+
     @Test
     void oneSubmissionWorkerCanHaveMultipleSdkRequestsPendingWithIndependentCapturedInputs() throws Exception {
         OpenFgaClient client = mock(OpenFgaClient.class);
