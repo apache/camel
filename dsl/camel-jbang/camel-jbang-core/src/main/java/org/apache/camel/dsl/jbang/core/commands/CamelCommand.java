@@ -324,9 +324,10 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
     }
 
     /**
-     * Whether the colors of {@link #printColored(Object)} are left out: the command prints to the console, and the
-     * output is not a terminal (a file or a pipe). A command that prints much text in colors, such as camel log, prints
-     * it without colors then, as the console takes the colors out of each piece of text, which is slow (CAMEL-26911).
+     * Whether the console strips the ANSI colors of {@link #printColored(Object)}: the command prints to the console,
+     * and the output is not a terminal (a file or a pipe). A command that prints much text in colors, such as camel
+     * log, prints it without colors then, as letting the console strip the colors of each piece of text is slow
+     * (CAMEL-26911).
      */
     protected boolean colorsStripped() {
         return printsToConsole() && AnsiConsole.out().getMode() == AnsiMode.Strip;
