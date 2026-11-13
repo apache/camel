@@ -25,9 +25,9 @@ import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.StringQuoteHelper;
 
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArgumentsKeepQuotes;
 
 /**
  * Built-in Simple miscellaneous functions: {@code ${isEmpty}}, {@code ${isAlpha}}, {@code ${isAlphaNumeric}},
@@ -110,14 +110,15 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
                 throw new SimpleParserException(
                         "Valid syntax: ${throwException(msg)} or ${throwException(msg,type)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-            if (tokens.length > 2) {
+            // a comma inside a quoted message or a nested function is part of the message
+            String[] tokens = splitArgumentsKeepQuotes(values);
+            if (tokens.length > 2 || tokens[0] == null) {
                 throw new SimpleParserException(
                         "Valid syntax: ${throwException(msg)} or ${throwException(msg,type)} was: " + function, index);
             }
-            // a comma inside a quoted message is part of the message
             msg = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
-            if (tokens.length == 2) {
+            if (tokens.length == 2 && tokens[1] != null) {
+                // a type left out is the default type
                 type = StringHelper.removeLeadingAndEndingQuotes(tokens[1]);
             }
             return MiscExpressionBuilder.throwExceptionExpression(msg, type);
@@ -129,8 +130,8 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException("Valid syntax: ${assert(exp,msg)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-            if (tokens.length != 2) {
+            String[] tokens = splitArgumentsKeepQuotes(values);
+            if (tokens.length != 2 || tokens[0] == null || tokens[1] == null) {
                 throw new SimpleParserException("Valid syntax: ${assert(exp,msg)} was: " + function, index);
             }
             return MiscExpressionBuilder.assertExpression(tokens[0], StringHelper.removeLeadingAndEndingQuotes(tokens[1]));
@@ -146,16 +147,19 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
                 throw new SimpleParserException(
                         "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function, index);
             }
-            if (values.contains(",")) {
-                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-                if (tokens.length > 2) {
-                    throw new SimpleParserException(
-                            "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function, index);
+            String[] tokens = splitArgumentsKeepQuotes(values);
+            if (tokens.length > 2 || tokens[tokens.length - 1] == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function, index);
+            }
+            if (tokens.length == 2) {
+                // an expression left out is the message body
+                if (tokens[0] != null) {
+                    exp = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
                 }
-                exp = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
                 type = StringHelper.removeLeadingAndEndingQuotes(tokens[1]);
             } else {
-                type = StringHelper.removeLeadingAndEndingQuotes(values.trim());
+                type = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
             }
             remainder = remainder.substring(end + 1);
             if (ObjectHelper.isNotEmpty(remainder)) {
@@ -196,19 +200,21 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
         remainder = ifStartsWithReturnRemainder("hash(", function);
         if (remainder != null) {
             String values = StringHelper.beforeLast(remainder, ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
+            if (values == null) {
                 throw new SimpleParserException(
                         "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, index);
             }
-            // a comma inside quotes is part of the value
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+            // ${hash()}: the message body with SHA-256, as documented; a comma inside quotes or a nested function is
+            // part of the value
+            String[] tokens = ObjectHelper.isEmpty(values) ? new String[] { null } : splitArgumentsKeepQuotes(values);
             if (tokens.length > 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, index);
             }
-            String value = StringHelper.removeLeadingAndEndingQuotes(tokens[0].trim());
-            if (tokens.length == 2) {
-                return MiscExpressionBuilder.hashExpression(value, StringHelper.removeLeadingAndEndingQuotes(tokens[1].trim()));
+            // a value left out is the message body, an algorithm left out is SHA-256
+            String value = tokens[0] != null ? StringHelper.removeLeadingAndEndingQuotes(tokens[0]) : "${body}";
+            if (tokens.length == 2 && tokens[1] != null) {
+                return MiscExpressionBuilder.hashExpression(value, StringHelper.removeLeadingAndEndingQuotes(tokens[1]));
             } else {
                 return MiscExpressionBuilder.hashExpression(value, "SHA-256");
             }
@@ -239,17 +245,17 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
                 throw new SimpleParserException(
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-            if (tokens.length != 3) {
+            String[] tokens = splitArgumentsKeepQuotes(values);
+            if (tokens.length != 3 || tokens[0] == null || tokens[1] == null || tokens[2] == null) {
                 throw new SimpleParserException(
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, index);
             }
             // the predicate keeps its quotes (CAMEL-22204); a quoted value loses its quotes, as with the ternary
             // operator, but unlike the ternary the text inside the quotes is still evaluated as Simple
             // ('Hello ${body}' gives Hello World)
-            return MiscExpressionBuilder.iifExpression(tokens[0].trim(),
-                    StringHelper.removeLeadingAndEndingQuotes(tokens[1].trim()),
-                    StringHelper.removeLeadingAndEndingQuotes(tokens[2].trim()));
+            return MiscExpressionBuilder.iifExpression(tokens[0],
+                    StringHelper.removeLeadingAndEndingQuotes(tokens[1]),
+                    StringHelper.removeLeadingAndEndingQuotes(tokens[2]));
         }
 
         remainder = ifStartsWithReturnRemainder("load(", function);

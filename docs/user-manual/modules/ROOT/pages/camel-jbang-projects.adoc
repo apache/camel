@@ -15,6 +15,10 @@ camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT
 
 NOTE: Without `--directory`, files are exported to the current directory. Use `--directory=../myproject` to copy to a separate folder.
 
+The export writes a `.camel-export` file in a separate folder, and replaces that folder when it exports to it again, so
+no stale files of the earlier export are left. It does not delete the files of a folder that no export created: the
+export fails, unless `--clean-dir` is given. Without `--directory`, the files of the current directory are kept.
+
 TIP: Run `camel export --help` for all options.
 
 Notes:

@@ -170,6 +170,31 @@ class ActionClientTest {
     }
 
     @Test
+    void textOfAnAnswerIsReadWhenItIsAllThere() throws Exception {
+        Files.writeString(CommandLineHelper.getCamelDir().resolve(PID + "-status.json"),
+                "{\"context\":{\"version\":\"4.23.0\"}}");
+        String answer = "{\"status\":\"success\",\"routes\":[{\"id\":\"route1\"}]}";
+        // an integration of an earlier Camel version writes the answer in place: half of it is there first
+        executor.submit(() -> {
+            Path dir = CommandLineHelper.getCamelDir();
+            Path request = await().atMost(5, TimeUnit.SECONDS).until(() -> requestFiles(dir), files -> !files.isEmpty())
+                    .get(0);
+            String id = request.getFileName().toString().substring((PID + "-action-").length()).replace(".json", "");
+            Path output = dir.resolve(PID + "-output-" + id + ".json");
+            Files.writeString(output, answer.substring(0, 20));
+            // several polls of the client find half the answer
+            await().pollDelay(500, TimeUnit.MILLISECONDS).atMost(1, TimeUnit.SECONDS).until(() -> true);
+            Files.writeString(output, answer);
+            Files.delete(request);
+            return null;
+        });
+
+        JsonObject request = new JsonObject();
+        request.put("action", "route-dump");
+        assertThat(ActionClient.executeText(PID, request, 5000)).isEqualTo(answer);
+    }
+
+    @Test
     void errorMessageComesFromTheAnswer() {
         assertThat(ActionClient.result(json("{\"status\":\"error\",\"exception\":{\"message\":\"Forced\"}}")).error())
                 .isEqualTo("Forced");

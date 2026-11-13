@@ -36,6 +36,7 @@ dependency=mvn\:org.apache.camel\:camel-platform-http-vertx\:${camel.version}
 dependency=mvn\:org.apache.camel\:camel-platform-http-jolokia\:${camel.version}
 
 # project files
+.camel-export
 .mvn/wrapper/maven-wrapper.jar
 .mvn/wrapper/maven-wrapper.properties
 AGENTS.md

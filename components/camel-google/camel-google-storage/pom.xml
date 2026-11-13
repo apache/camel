@@ -34,6 +34,10 @@
 
     <properties>
         <camel.surefire.forkTimeout>300</camel.surefire.forkTimeout>
+
+        <!-- Floci GCP is not available for these -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
@@ -73,6 +77,14 @@
             <version>${google-cloud-core-version}</version>
             <scope>test</scope>
             <classifier>tests</classifier>
+        </dependency>
+
+        <!-- test infra -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-google-storage</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>

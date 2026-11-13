@@ -191,11 +191,31 @@ public class NatsProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isEmpty(this.getEndpoint().getConfiguration().getConnection())) {
             LOG.debug("Closing Nats Connection");
             if (this.connection != null && !this.connection.getStatus().equals(Status.CLOSED)) {
+                // an interrupt during the flush is kept until the connection is closed
+                boolean interrupted = false;
                 if (this.getEndpoint().getConfiguration().isFlushConnection()) {
                     LOG.debug("Flushing Nats Connection");
-                    this.connection.flush(Duration.ofMillis(this.getEndpoint().getConfiguration().getFlushTimeout()));
+                    try {
+                        this.connection.flush(Duration.ofMillis(this.getEndpoint().getConfiguration().getFlushTimeout()));
+                    } catch (InterruptedException e) {
+                        interrupted = true;
+                        LOG.warn("Interrupted while flushing the NATS connection before stopping the producer of topic {}",
+                                this.getEndpoint().getConfiguration().getTopic());
+                    } catch (Exception e) {
+                        // best effort (jnats fails the flush of a connection that is not connected): the connection
+                        // of the producer must still be closed
+                        LOG.warn("Cannot flush the NATS connection before stopping the producer of topic {} due to: {}",
+                                this.getEndpoint().getConfiguration().getTopic(), e.toString());
+                        LOG.debug("Flush failure", e);
+                    }
                 }
-                this.connection.close();
+                try {
+                    this.connection.close();
+                } finally {
+                    if (interrupted) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
             }
         }
         super.doStop();
