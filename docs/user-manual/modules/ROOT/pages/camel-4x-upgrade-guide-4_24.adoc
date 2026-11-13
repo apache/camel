@@ -8639,11 +8639,12 @@ and the infra service that has it, instead of the stack trace of the container r
 
 === camel-jbang - camel run loads one version of each library
 
-`camel run` downloads the JARs of each component when it is first used. A library that is already loaded is now used,
-in the version that was loaded first, for the components that are loaded later, as the `dependencyManagement` of a
-Maven project would. Before, a later component that depended on another version of the library added that version as
-well, so the classpath could hold, for example, three versions of Netty, and a class was loaded from whichever JAR
-came first. Use `--verbose` to see the JARs added for each dependency.
+`camel run` downloads the JARs of each component when it is first used. It now keeps one version of each library: when
+a component used later depends on another version of a library that is already loaded, it gets the loaded version, as
+with the `dependencyManagement` of a Maven project.
+
+Before, the other version was added as well. The classpath could then hold, for example, three versions of Netty, and a
+class came from whichever JAR was first. Use `--verbose` to see the JARs added for each dependency.
 
 === camel-vertx - the component fails to start when the clustered Vert.x is not created
 

@@ -83,8 +83,8 @@ public interface MavenDownloader extends Service {
     /**
      * Resolves the artifacts as {@link #resolveArtifacts(String, List, Set, boolean, boolean, Predicate)} does, with
      * the versions of the managed artifacts: a transitive dependency on one of them gets its version, as with the
-     * dependencyManagement of a Maven project. For example, the libraries already loaded, so a library is not resolved
-     * again in another version.
+     * dependencyManagement of a Maven project. For example, camel run passes the libraries it has already loaded, so
+     * that a library is not resolved again in another version.
      *
      * @param managed the artifacts whose version is used for the transitive dependencies on them, or null
      * @since         4.24
