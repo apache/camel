@@ -284,18 +284,6 @@ final class FakeJava {
     }
 
     /**
-     * The BASEDIR of a launcher home as computed by camel.bat: {@code %~dp0}, the directory containing the script
-     * (bin\), with a trailing backslash as set by {@code %~dp0}.
-     *
-     * @deprecated Use {@link #batBasedirString(Path)} which captures the actual {@code %~dp0} from cmd.exe to handle
-     *             Windows 8.3 short-name aliasing correctly.
-     */
-    @Deprecated
-    static Path batBasedir(Path bin) {
-        return bin;
-    }
-
-    /**
      * The BASEDIR of a launcher home as computed by camel.sh: the directory of the script (bin/).
      */
     static Path basedir(Path bin) {

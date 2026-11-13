@@ -120,10 +120,10 @@ for f in "$LIBDIR"/camel-launcher-*.jar; do
   fi
 done
 
-# Class data sharing: the JVM keeps the classes that a command loads in an archive (one per command and Camel version,
-# in the cache directory of the user), which it creates when the command runs the first time, or again when the JDK
-# changed, so the command starts faster from then on. CAMEL_CDS=false turns it off, and so do CDS or AOT options of
-# JAVA_OPTS. A JVM without CDS (OpenJ9) ignores the options.
+# Class data sharing: the JVM keeps the classes that a command loads in an archive (one per command, Camel version
+# and install directory, in the cache directory of the user), which it creates when the command runs the first time,
+# or again when the JDK changed, so the command starts faster from then on. CAMEL_CDS=false turns it off, and so
+# do CDS or AOT options of JAVA_OPTS. A JVM without CDS (OpenJ9) ignores the options.
 CDS_FILE=
 camel_cds_file() {
   [ "$CAMEL_CDS" != "false" ] && [ -n "$LAUNCHER_JAR" ] || return 1

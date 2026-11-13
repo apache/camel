@@ -90,6 +90,9 @@ public final class PluginHelper {
     // the plugins warned about by compatibilityCheck, to warn once
     private static final Set<String> COMPATIBILITY_WARNED = ConcurrentHashMap.newKeySet();
 
+    /** Plugin config paths whose corrupt-file warning has already been printed this JVM run. */
+    private static final Set<String> WARNED_PLUGIN_PATHS = ConcurrentHashMap.newKeySet();
+
     private static final FactoryFinder FACTORY_FINDER
             = new DefaultFactoryFinder(new DefaultClassResolver(), FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/");
 
@@ -381,8 +384,8 @@ public final class PluginHelper {
         try {
             config = getPluginConfig();
         } catch (RuntimeCamelException e) {
-            // corrupt plugin JSON — warn and continue with no plugins
-            main.getOut().printErr("Warning: " + e.getMessage() + ". Use 'camel plugin' commands to fix or delete the file.");
+            // corrupt plugin JSON — warn once and continue with no plugins
+            warnCorruptPluginConfig(main.getOut(), e);
             return activePlugins;
         }
         if (config != null) {
@@ -830,12 +833,11 @@ public final class PluginHelper {
                 String text = Files.readString(f);
                 return (JsonObject) Jsoner.deserialize(text);
             }
-        } catch (IOException e) {
-            // file not readable — treat as absent
         } catch (Exception e) {
-            // JSON parsing error: file exists but is corrupt (truncated, invalid JSON)
+            // The file exists but cannot be read (AccessDeniedException, MalformedInputException)
+            // or the JSON is corrupt — either way throw so the caller does not silently overwrite it.
             throw new RuntimeCamelException(
-                    "Plugin configuration file exists but is corrupt: "
+                    "Plugin configuration file exists but is corrupt or unreadable: "
                                             + getCustomPluginConfigPath(configPath) + " (" + e.getMessage() + ")",
                     e);
         }
@@ -916,6 +918,17 @@ public final class PluginHelper {
             atomicWriteJson(f, plugins.toJson());
         } catch (IOException e) {
             throw new RuntimeCamelException("Failed to save plugin configuration", e);
+        }
+    }
+
+    /**
+     * Warns about a corrupt or unreadable plugin configuration file, once per path per JVM run, so multiple callers
+     * (e.g. {@code getActivePlugins} and {@code printAvailablePlugins}) do not repeat the message.
+     */
+    public static void warnCorruptPluginConfig(Printer printer, Exception e) {
+        String key = e.getMessage();
+        if (WARNED_PLUGIN_PATHS.add(key)) {
+            printer.printErr("Warning: " + e.getMessage() + ". Use 'camel plugin' commands to fix or delete the file.");
         }
     }
 

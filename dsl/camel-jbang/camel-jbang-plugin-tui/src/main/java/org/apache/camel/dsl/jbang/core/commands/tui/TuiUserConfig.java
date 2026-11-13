@@ -40,6 +40,33 @@ import org.apache.camel.dsl.jbang.run.common.Printer;
  */
 final class TuiUserConfig {
 
+    /** A printer that discards everything — safe for TUI operations where stderr goes to the TUI screen. */
+    private static final Printer SILENT_PRINTER = new Printer() {
+        @Override
+        public void println() {
+        }
+
+        @Override
+        public void println(String line) {
+        }
+
+        @Override
+        public void print(String output) {
+        }
+
+        @Override
+        public void printf(String format, Object... args) {
+        }
+
+        @Override
+        public void printDiagnostic(String line) {
+        }
+
+        @Override
+        public void printErr(String message) {
+        }
+    };
+
     /** The settings of a session started with --defaults, kept in memory only; null for the files. */
     private static volatile Map<String, String> session;
 
@@ -74,7 +101,7 @@ final class TuiUserConfig {
         boolean local = livesInLocal(key);
         String[] holder = { null };
         boolean ok = CommandLineHelper.loadProperties(props -> holder[0] = props.getProperty(key), local,
-                new Printer.SystemOutPrinter());
+                SILENT_PRINTER);
         if (!ok) {
             throw new RuntimeException("Could not parse TUI user config file");
         }
@@ -104,18 +131,17 @@ final class TuiUserConfig {
             throw new UncheckedIOException(e);
         }
         String trimmed = trimToNull(value);
-        Printer printer = new Printer.QuietPrinter(new Printer.SystemOutPrinter());
         boolean ok = CommandLineHelper.loadProperties(props -> {
             if (trimmed == null) {
                 props.remove(key);
             } else {
                 props.setProperty(key, trimmed);
             }
-            CommandLineHelper.storeProperties(props, printer, local);
-        }, local, printer);
+            CommandLineHelper.storeProperties(props, SILENT_PRINTER, local);
+        }, local, SILENT_PRINTER);
         if (!ok) {
-            // malformed file — do not overwrite; warn to stderr
-            printer.printErr("Warning: could not update TUI preference '" + key + "': config file is malformed.");
+            // malformed file — do not overwrite; throw so TUI callers (which catch RuntimeException) know
+            throw new RuntimeException("Could not update TUI preference '" + key + "': config file is malformed.");
         }
     }
 

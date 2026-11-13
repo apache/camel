@@ -57,8 +57,8 @@ for %%i in ("%BASEDIR%\..\lib\camel-launcher-*.jar") do (
   if errorlevel 1 if not defined LAUNCHER_JAR set "LAUNCHER_JAR=%%~fi"
 )
 
-@REM Class data sharing: the JVM keeps the classes that a command loads in an archive (one per command and Camel
-@REM version, in %LOCALAPPDATA%\camel-cli\cds), which it creates when the command runs the first time, or again when
+@REM Class data sharing: the JVM keeps the classes that a command loads in an archive (one per command, Camel
+@REM version and install directory, in %LOCALAPPDATA%\camel-cli\cds), which it creates when the command runs the first time, or again when
 @REM the JDK changed, so the command starts faster from then on. CAMEL_CDS=false turns it off, and so do CDS or AOT
 @REM options of JAVA_OPTS. A JVM without CDS (OpenJ9) ignores the options.
 set "CDS_FILE="

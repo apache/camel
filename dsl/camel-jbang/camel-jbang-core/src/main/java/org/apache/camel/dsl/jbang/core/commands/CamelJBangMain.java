@@ -610,7 +610,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
             }
         } catch (Exception e) {
             // corrupt plugin config — don't crash the help/banner output
-            out.printErr("Warning: " + e.getMessage() + ". Use 'camel plugin' commands to fix or delete the file.");
+            PluginHelper.warnCorruptPluginConfig(out, e);
         }
         // also consider already registered subcommands as installed
         Set<String> registered = commandLine.getSubcommands().keySet();

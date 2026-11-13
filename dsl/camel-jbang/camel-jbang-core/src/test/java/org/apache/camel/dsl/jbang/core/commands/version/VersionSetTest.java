@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
 import org.apache.camel.dsl.jbang.core.commands.config.BaseConfigTestSupport;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.junit.jupiter.api.Test;
@@ -135,7 +136,7 @@ class VersionSetTest extends BaseConfigTestSupport {
         Integer exitCode = command.doCall();
 
         // must return non-zero and leave the file untouched
-        assertEquals(1, exitCode, "exit code must be 1 on malformed config");
+        assertEquals(CliExitCode.FAILURE, exitCode, "exit code must be 1 on malformed config");
         String afterContent = Files.readString(
                 CommandLineHelper.getHomeDir().resolve(CommandLineHelper.USER_CONFIG));
         assertEquals(originalContent, afterContent, "malformed config file must not be overwritten");

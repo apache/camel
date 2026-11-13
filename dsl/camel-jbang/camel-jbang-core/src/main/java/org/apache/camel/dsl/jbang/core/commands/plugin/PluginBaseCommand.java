@@ -21,6 +21,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
 import org.aesh.command.option.Option;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
@@ -56,11 +57,16 @@ abstract class PluginBaseCommand extends CamelCommand {
     }
 
     JsonObject loadConfig() {
-        Path path = pluginConfigPath();
-        if (path != null) {
-            return PluginHelper.getOrCreatePluginConfig(path);
+        try {
+            Path path = pluginConfigPath();
+            if (path != null) {
+                return PluginHelper.getOrCreatePluginConfig(path);
+            }
+            return PluginHelper.getOrCreatePluginConfig();
+        } catch (RuntimeCamelException e) {
+            printer().printErr(e.getMessage() + ". Fix the JSON by hand or delete the file.");
+            throw e;
         }
-        return PluginHelper.getOrCreatePluginConfig();
     }
 
     void saveConfig(JsonObject plugins) {

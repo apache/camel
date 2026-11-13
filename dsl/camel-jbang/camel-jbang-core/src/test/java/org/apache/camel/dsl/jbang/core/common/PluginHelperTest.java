@@ -679,7 +679,6 @@ public class PluginHelperTest {
         // start with a valid config
         PluginHelper.createPluginConfig(tempDir);
         Path configPath = tempDir.resolve(PluginHelper.PLUGIN_CONFIG);
-        String original = Files.readString(configPath);
 
         // reading back produces the same object
         JsonObject read = PluginHelper.getPluginConfig(tempDir);

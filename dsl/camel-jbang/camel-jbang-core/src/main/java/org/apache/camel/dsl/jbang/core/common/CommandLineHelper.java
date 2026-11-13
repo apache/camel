@@ -45,11 +45,6 @@ public final class CommandLineHelper {
     /** Paths whose malformed-config warning has already been printed this JVM run, to avoid repeating it. */
     private static final Set<String> WARNED_PATHS = ConcurrentHashMap.newKeySet();
 
-    /** Clears the warn-once set. Call from tests that write a fresh config file at the same path. */
-    static void clearWarnedPathsForTesting() {
-        WARNED_PATHS.clear();
-    }
-
     public static final String USER_CONFIG = ".camel-cli.properties";
     public static final String LOCAL_USER_CONFIG = "camel-cli.properties";
     public static final String LEGACY_USER_CONFIG = ".camel-jbang-user.properties";
@@ -205,10 +200,9 @@ public final class CommandLineHelper {
     public static boolean loadProperties(Consumer<Properties> consumer, boolean local, Printer printer) {
         Path file = getUserPropertyFile(local);
         if (Files.isRegularFile(file) && Files.exists(file)) {
+            Properties prop = new OrderedProperties();
             try (InputStream is = Files.newInputStream(file)) {
-                Properties prop = new OrderedProperties();
                 prop.load(is);
-                consumer.accept(prop);
             } catch (Exception e) {
                 // Warn once per path per JVM run: camel run calls loadProperties from multiple code paths
                 // (resolveRepos, augmentWithUserConfiguration, printConfigurationValues) and each would
@@ -220,6 +214,7 @@ public final class CommandLineHelper {
                 }
                 return false;
             }
+            consumer.accept(prop);
         }
         return true;
     }
