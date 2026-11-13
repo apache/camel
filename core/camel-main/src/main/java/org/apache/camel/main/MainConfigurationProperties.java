@@ -586,7 +586,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * configuration parameters are loaded from the properties component. You can prefix the parameters in the
      * properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 -
      * camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1
-     * - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as
+     * - camel.language.name.option2=value2, where name is the name of the component, dataformat or language such as
      * seda,direct,jaxb.
      * <p>
      * The auto configuration also works for any options on components that are a complex type (not standard Java type)
@@ -911,8 +911,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * parameters are loaded from the properties component and configured as defaults (similar to spring-boot
      * auto-configuration). You can prefix the parameters in the properties file with: -
      * camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1
-     * - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2
-     * Where name is the name of the component, dataformat or language such as seda,direct,jaxb.
+     * - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2,
+     * where name is the name of the component, dataformat or language such as seda,direct,jaxb.
      * <p>
      * The auto configuration also works for any options on components that are a complex type (not standard Java type)
      * and there has been an explicit single bean instance registered to the Camel registry via the

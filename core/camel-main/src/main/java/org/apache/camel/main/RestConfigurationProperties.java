@@ -208,7 +208,7 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
     /**
      * Sets the binding mode to use.
      * <p>
-     * The possible values are: auto, off, json, xml, json_xml The default value is off
+     * The possible values are: auto, off, json, xml, json_xml. The default value is off.
      */
     public RestConfigurationProperties withBindingMode(String bindingMode) {
         setBindingMode(bindingMode);

@@ -852,7 +852,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * The global name to use for Log EIP
+     * The global name to use for Log EIP.
      *
      * The name is by default the routeId or the source:line if source location is enabled. You can also specify the
      * name using tokens:
@@ -866,7 +866,7 @@ public abstract class DefaultConfigurationProperties<T> {
      * ${nodePrefixId} - the node prefix id <br>
      * ${source} - the source:line (source location must be enabled) <br>
      * ${source.name} - the source filename (source location must be enabled) <br>
-     * ${source.line} - the source line number (source location must be enabled)
+     * ${source.line} - the source line number (source location must be enabled).
      *
      * For example to use the route and node id you can specify the name as: ${routeId}/${nodeId}
      */
@@ -2322,7 +2322,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * The global name to use for Log EIP
+     * The global name to use for Log EIP.
      *
      * The name is by default the routeId or the source:line if source location is enabled. You can also specify the
      * name using tokens:
@@ -2336,7 +2336,7 @@ public abstract class DefaultConfigurationProperties<T> {
      * ${nodePrefixId} - the node prefix id <br>
      * ${source} - the source:line (source location must be enabled) <br>
      * ${source.name} - the source filename (source location must be enabled) <br>
-     * ${source.line} - the source line number (source location must be enabled)
+     * ${source.line} - the source line number (source location must be enabled).
      *
      * For example to use the route and node id you can specify the name as: ${routeId}/${nodeId}
      */
