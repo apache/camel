@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.FileConstants;
+import org.apache.camel.component.file.FileOperations;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
@@ -127,6 +128,12 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     }
 
     protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to) {
+        if (operations instanceof FileOperations fileOperations) {
+            // check before the existing target is deleted, its parent directories are created and the file is renamed,
+            // as a symbolic link on the target path could otherwise move the file outside the starting directory
+            fileOperations.jailMoveToStartingDirectory(new File(to.getAbsoluteFilePath()));
+        }
+
         // deleting any existing files before renaming
         try {
             operations.deleteFile(to.getAbsoluteFilePath());

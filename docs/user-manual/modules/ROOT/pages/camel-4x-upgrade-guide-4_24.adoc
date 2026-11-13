@@ -2270,6 +2270,16 @@ which could cause the producer to create a spurious directory with a backslash i
 consumer to miss files in a backslash-named directory. On Windows, where `java.io.File` already
 normalizes both separators to `\`, this change has no effect.
 
+=== camel-file - the consumer's move, preMove and moveFailed resolve symbolic links for jailStartingDirectory
+
+With `jailStartingDirectory` enabled (the default), the file consumer now resolves symbolic links on the target of
+`move`, `preMove` and `moveFailed`, including the default `.camel` folder, when that target is inside the starting
+directory. A target that resolves outside the starting directory through a link is not used: the move fails like any
+other failed move, so the file stays where it is and the error is passed to the exception handler. Before, the existing
+target was deleted and the file was moved wherever the link pointed. Targets configured outside the starting directory
+(such as `move=../archive`) and links resolving inside it work as before. Set `jailStartingDirectory=false` to keep
+following links to other directories.
+
 === camel-flatpack - with splitRows each message has its own row, and a failing row fails the producer
 
 With `splitRows=true` (the default), every row message shared the one parsed `DataSet`, so the next row moved the row

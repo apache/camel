@@ -270,6 +270,21 @@ public class FileOperations implements GenericFileOperations<File> {
      * before it creates missing parent directories of the target.
      */
     void jailToStartingDirectory(File target) {
+        jailToStartingDirectory(target, "Cannot write file: ");
+    }
+
+    /**
+     * Checks the target of a consumer move (move, preMove, moveFailed and the default .camel folder) the same way as
+     * {@link #jailToStartingDirectory(File)} checks a producer target, before anything is deleted, created or renamed.
+     *
+     * @throws GenericFileOperationFailedException if the target is inside the starting directory but resolves outside
+     *                                             of it through a symbolic link
+     */
+    public void jailMoveToStartingDirectory(File target) {
+        jailToStartingDirectory(target, "Cannot move file to: ");
+    }
+
+    private void jailToStartingDirectory(File target, String failure) {
         if (!endpoint.isJailStartingDirectory()) {
             return;
         }
@@ -286,8 +301,7 @@ public class FileOperations implements GenericFileOperations<File> {
         }
         if (!within) {
             throw new GenericFileOperationFailedException(
-                    "Cannot write file: " + target + " as it resolves outside the starting directory: "
-                                                          + endpoint.getFile());
+                    failure + target + " as it resolves outside the starting directory: " + endpoint.getFile());
         }
     }
 
