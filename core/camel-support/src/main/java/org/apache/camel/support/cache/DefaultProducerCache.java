@@ -18,6 +18,7 @@ package org.apache.camel.support.cache;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -259,6 +260,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             return true;
         }
 
+        SentCallback sent = null;
         try {
             // emit event that the exchange is being sent, and record timing for sending the exchange using the producer
             final StopWatch watch;
@@ -269,24 +271,71 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             }
 
             // invoke the callback, which calls the producer (with the send hook around it if any)
-            return producerCallback.doInAsyncProducer(SendHelper.withSendHook(camelContext, producer), exchange, doneSync -> {
-                try {
-                    // emit event that the exchange was sent to the endpoint
-                    SendHelper.notifySent(exchange, endpoint, watch);
-
-                    // release back to the pool
-                    releaseProducer(endpoint, producer);
-                } finally {
-                    callback.done(doneSync);
-                }
-            });
-        } catch (Exception e) {
-            // ensure exceptions is caught and set on the exchange
-            if (exchange != null) {
-                exchange.setException(e);
+            sent = new SentCallback(endpoint, exchange, producer, watch, callback);
+            return producerCallback.doInAsyncProducer(SendHelper.withSendHook(camelContext, producer), exchange, sent);
+        } catch (Throwable e) {
+            if (sent != null && !sent.compareAndSet(false, true)) {
+                // the producer called the callback and then threw: the exchange is already continued (maybe on
+                // another thread), so it is not completed a second time and the exception is not set on it
+                LOG.warn("The producer of {} threw an exception after it completed the exchange. This exception is ignored.",
+                        endpoint, e);
+                return sent.doneSync;
             }
-            callback.done(true);
+            // ensure exceptions is caught and set on the exchange
+            exchange.setException(e);
+            if (sent != null) {
+                // the producer threw before it called the callback: complete the send as if it had called it
+                sent.complete(true);
+            } else {
+                callback.done(true);
+            }
             return true;
+        }
+    }
+
+    /**
+     * The callback of a send in {@link #doInAsyncProducer}: emits the sent event, releases the producer and calls the
+     * callback of the caller, once (also when the producer calls its callback and then throws).
+     */
+    private final class SentCallback extends AtomicBoolean implements AsyncCallback {
+        private final Endpoint endpoint;
+        private final Exchange exchange;
+        private final AsyncProducer producer;
+        private final StopWatch watch;
+        private final AsyncCallback callback;
+        private volatile boolean doneSync;
+
+        private SentCallback(Endpoint endpoint, Exchange exchange, AsyncProducer producer, StopWatch watch,
+                             AsyncCallback callback) {
+            this.endpoint = endpoint;
+            this.exchange = exchange;
+            this.producer = producer;
+            this.watch = watch;
+            this.callback = callback;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            if (compareAndSet(false, true)) {
+                complete(doneSync);
+            } else {
+                LOG.warn("The producer of {} completed the exchange after the send was completed (more than once, or after"
+                         + " it threw). This is ignored.",
+                        endpoint);
+            }
+        }
+
+        private void complete(boolean doneSync) {
+            this.doneSync = doneSync;
+            try {
+                // emit event that the exchange was sent to the endpoint
+                SendHelper.notifySent(exchange, endpoint, watch);
+
+                // release back to the pool
+                releaseProducer(endpoint, producer);
+            } finally {
+                callback.done(doneSync);
+            }
         }
     }
 
@@ -299,18 +348,22 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         // set property which endpoint we send to
         exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
 
-        // send the exchange using the processor
+        // send the exchange using the processor; an exception thrown by the producer is handled by doInAsyncProducer,
+        // which knows whether the producer called the callback before it threw
+        EventNotifierCallback notifier = null;
+        if (eventNotifierEnabled && camelContext.getCamelContextExtension().isEventNotificationApplicable()) {
+            notifier = new EventNotifierCallback(callback, exchange, endpoint);
+            callback = notifier;
+        }
         try {
-            if (eventNotifierEnabled && camelContext.getCamelContextExtension().isEventNotificationApplicable()) {
-                callback = new EventNotifierCallback(callback, exchange, endpoint);
-            }
             // invoke the asynchronous method
             return sharedInternalProcessor.process(exchange, callback, producer, resultProcessor);
-        } catch (Exception e) {
-            // ensure exceptions is caught and set on the exchange
-            exchange.setException(e);
-            callback.done(true);
-            return true;
+        } catch (Throwable e) {
+            if (notifier != null) {
+                // pair the sending event with a sent event, unless the callback did already
+                notifier.notifySentOnce();
+            }
+            throw e;
         }
     }
 
