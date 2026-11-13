@@ -921,6 +921,15 @@ exception was dropped and that callback continued the exchange as a success. A s
 and logged at WARN; before, the exchange was continued a second time. There is no option for the old behaviour; fix the
 processor to set the exception on the exchange and call the callback, as an `AsyncProcessor` must.
 
+=== camel-core - an Error of an on completion is logged, and the other on completions run
+
+An `Error` that is not a `VirtualMachineError` (such as an `AssertionError` or a `NoClassDefFoundError`), thrown by an
+on completion (`Synchronization`) of an exchange or by its `onBeforeRoute` / `onAfterRoute` callback, is now logged at
+WARN and ignored, as an exception already was. The other on completions still run (such as the commit or rollback of
+the consumer) and the exchange is no longer left inflight. Before, the `Error` was thrown on to the code that ran the
+on completions (such as the consumer, or the caller of a `ProducerTemplate`). An assertion inside an on completion no
+longer fails the caller: check its outcome in the route or the test instead.
+
 === camel-core - an Error of a contract transformer or validator, or in a transacted step, fails the exchange
 
 An `Error` that is not a `VirtualMachineError` (such as an `AssertionError` or a `NoClassDefFoundError`) now fails the
