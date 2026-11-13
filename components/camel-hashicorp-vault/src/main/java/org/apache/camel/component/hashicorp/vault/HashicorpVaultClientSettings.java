@@ -117,29 +117,43 @@ public final class HashicorpVaultClientSettings {
             settings.setAzureResource(environment.apply(AZURE_RESOURCE_ENV));
             settings.setAzureClientId(environment.apply(AZURE_CLIENT_ID_ENV));
         } else if (configuration != null) {
-            settings.setHost(configuration.getHost());
-            settings.setPort(configuration.getPort());
-            settings.setScheme(configuration.getScheme());
-            settings.setCloud(configuration.isCloud());
-            settings.setNamespace(configuration.getNamespace());
-            settings.setAuthentication(configuration.getAuthentication());
-            settings.setToken(configuration.getToken());
-            settings.setRoleId(configuration.getRoleId());
-            settings.setSecretId(configuration.getSecretId());
-            settings.setRole(configuration.getRole());
-            settings.setJwt(configuration.getJwt());
-            settings.setJwtFile(configuration.getJwtFile());
-            settings.setAuthMountPath(configuration.getAuthMountPath());
-            settings.setTrustStore(configuration.getTrustStore());
-            settings.setTrustStorePassword(configuration.getTrustStorePassword());
-            settings.setKeyStore(configuration.getKeyStore());
-            settings.setKeyStorePassword(configuration.getKeyStorePassword());
-            settings.setAwsIamServerId(configuration.getAwsIamServerId());
-            settings.setAwsRegion(configuration.getAwsRegion());
-            settings.setAwsStsEndpoint(configuration.getAwsStsEndpoint());
-            settings.setAzureResource(configuration.getAzureResource());
-            settings.setAzureClientId(configuration.getAzureClientId());
+            settings = fromConfiguration(configuration);
         }
+        return settings;
+    }
+
+    /**
+     * The settings of the vault configuration (camel.vault.hashicorp) alone, without the CAMEL_HASHICORP_VAULT_*
+     * environment variables of the properties function: such as for Camel on Spring Boot, which binds the vault
+     * configuration itself.
+     *
+     * @param configuration the vault configuration
+     * @since               4.24
+     */
+    public static HashicorpVaultClientSettings fromConfiguration(HashicorpVaultConfiguration configuration) {
+        HashicorpVaultClientSettings settings = new HashicorpVaultClientSettings();
+        settings.setHost(configuration.getHost());
+        settings.setPort(configuration.getPort());
+        settings.setScheme(configuration.getScheme());
+        settings.setCloud(configuration.isCloud());
+        settings.setNamespace(configuration.getNamespace());
+        settings.setAuthentication(configuration.getAuthentication());
+        settings.setToken(configuration.getToken());
+        settings.setRoleId(configuration.getRoleId());
+        settings.setSecretId(configuration.getSecretId());
+        settings.setRole(configuration.getRole());
+        settings.setJwt(configuration.getJwt());
+        settings.setJwtFile(configuration.getJwtFile());
+        settings.setAuthMountPath(configuration.getAuthMountPath());
+        settings.setTrustStore(configuration.getTrustStore());
+        settings.setTrustStorePassword(configuration.getTrustStorePassword());
+        settings.setKeyStore(configuration.getKeyStore());
+        settings.setKeyStorePassword(configuration.getKeyStorePassword());
+        settings.setAwsIamServerId(configuration.getAwsIamServerId());
+        settings.setAwsRegion(configuration.getAwsRegion());
+        settings.setAwsStsEndpoint(configuration.getAwsStsEndpoint());
+        settings.setAzureResource(configuration.getAzureResource());
+        settings.setAzureClientId(configuration.getAzureClientId());
         return settings;
     }
 

@@ -860,3 +860,7 @@ This will enable the feature so you'll be able to resolved properties, in your a
 ----
 foo = hashicorp:secret:database/password#string
 ----
+
+The early resolution logs in with the `camel.vault.hashicorp` options, as the properties function does: any login of
+<<_logging_in_to_hashicorp_vault,Logging in to HashiCorp Vault>>, and the trust store and key store of <<_tls,TLS>>. Once
+the properties are resolved, it revokes the token of its login.
