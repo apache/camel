@@ -46,7 +46,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonRecordSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +90,14 @@ public class TimelineDevConsole extends AbstractDevConsole {
             @Metadata(description = "p95 processing time per second in milliseconds, of the exchanges that came into this route") List<Long> p95Millis,
             @Metadata(description = "Max processing time per second in milliseconds, of the exchanges that came into this route") List<Long> maxMillis,
             @Metadata(description = "Redelivery attempts per second in this route") List<Long> redeliveryAttempts,
-            @Metadata(description = "Per second 1 when a camel-chaos rule had the route down (stall or a lifecycle fault), else 0 (only present with camel-chaos)") List<Long> down) {
+            @Metadata(description = "Per second 1 when a camel-chaos rule had the route down (stall or a lifecycle fault), else 0 (only present with camel-chaos)") List<Long> down,
+            @Metadata(description = "When the consumer of the route last polled, and last polled messages (only present for a route from a scheduled poll consumer)") Polling polling) {
+    }
+
+    public record Polling(
+            @Metadata(description = "Epoch time in milliseconds of the last poll (only present once the consumer has polled since it was started)") Long lastPollTimestamp,
+            @Metadata(description = "Epoch time in milliseconds of the last poll that polled messages (only present once a poll has polled any since the consumer was started)") Long lastPollMessagesTimestamp,
+            @Metadata(description = "Number of messages the last poll that polled messages gave (only present once a poll has polled any since the consumer was started)") Integer lastPollMessagesCount) {
     }
 
     public record RouteEvent(
@@ -331,10 +340,18 @@ public class TimelineDevConsole extends AbstractDevConsole {
         Response r = response(options, false);
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("Last %d seconds:%n", r.seconds()));
+        long now = System.currentTimeMillis();
         for (RouteSeries rs : r.routes()) {
-            sb.append(String.format("    %s: %d completed, %d recovered, %d handled, %d failed, %d redelivery attempts%n",
-                    rs.routeId(), sum(rs.completed()), sum(rs.recovered()), sum(rs.handled()), sum(rs.failed()),
-                    sum(rs.redeliveryAttempts())));
+            long completed = sum(rs.completed());
+            long recovered = sum(rs.recovered());
+            long handled = sum(rs.handled());
+            long failed = sum(rs.failed());
+            String quiet = "";
+            if (rs.polling() != null && completed + recovered + handled + failed == 0) {
+                quiet = " (" + quietPolling(rs.polling(), now) + ")";
+            }
+            sb.append(String.format("    %s: %d completed, %d recovered, %d handled, %d failed, %d redelivery attempts%s%n",
+                    rs.routeId(), completed, recovered, handled, failed, sum(rs.redeliveryAttempts()), quiet));
         }
         if (r.errors() != null) {
             sb.append("Errors:\n");
@@ -378,9 +395,13 @@ public class TimelineDevConsole extends AbstractDevConsole {
         // the from endpoint of each route, read before the recorder is locked: the routes have a lock of their own, and
         // the exchange events wait for the recorder
         Map<String, String> fromUris = new HashMap<>();
+        Map<String, Polling> polls = new HashMap<>();
         for (Route route : getCamelContext().getRoutes()) {
             if (route.getConsumer() != null) {
                 fromUris.put(route.getRouteId(), route.getConsumer().getEndpoint().getEndpointUri());
+            }
+            if (route.getConsumer() instanceof ScheduledPollConsumer spc) {
+                polls.put(route.getRouteId(), polling(spc));
             }
         }
         synchronized (rec) {
@@ -397,7 +418,8 @@ public class TimelineDevConsole extends AbstractDevConsole {
                         series(secs, routeId, rs -> rs.handled), series(secs, routeId, rs -> rs.failed),
                         series(secs, routeId, rs -> rs.inflight), series(secs, routeId, TimelineRecorder.RouteSecond::mean),
                         series(secs, routeId, rs -> rs.p95), series(secs, routeId, rs -> rs.max),
-                        series(secs, routeId, rs -> rs.attempts), chaosSeen ? downSeries(secs, routeId) : null));
+                        series(secs, routeId, rs -> rs.attempts), chaosSeen ? downSeries(secs, routeId) : null,
+                        polls.get(routeId)));
             }
             Map<String, Long[]> faults = new LinkedHashMap<>();
             for (int i = 0; i < secs.size(); i++) {
@@ -461,6 +483,30 @@ public class TimelineDevConsole extends AbstractDevConsole {
                 end, count, done, routes, errors.isEmpty() ? null : errors, chaos.isEmpty() ? null : chaos,
                 routeEvents.isEmpty() ? null : routeEvents, breakers.isEmpty() ? null : breakers,
                 exchanges ? kept : null);
+    }
+
+    private static Polling polling(ScheduledPollConsumer consumer) {
+        long lastPoll = consumer.getLastPollTimestamp();
+        long lastMessages = consumer.getLastPollMessagesTimestamp();
+        return new Polling(
+                lastPoll > 0 ? lastPoll : null, lastMessages > 0 ? lastMessages : null,
+                lastMessages > 0 ? consumer.getLastPollMessagesCount() : null);
+    }
+
+    /**
+     * What a polling route that did nothing in the seconds is doing: polling nothing (and since when), or not polling,
+     * so a quiet route can be told from one whose scheduler has stopped.
+     */
+    static String quietPolling(Polling polling, long now) {
+        if (polling.lastPollTimestamp() == null) {
+            return "not polled yet";
+        }
+        String lastPoll = "last poll " + ConsumerDevConsole.printAgo(polling.lastPollTimestamp(), now);
+        if (polling.lastPollMessagesTimestamp() == null) {
+            return "polled nothing since the consumer started, " + lastPoll;
+        }
+        long quiet = now - polling.lastPollMessagesTimestamp();
+        return "polled nothing for " + TimeUtils.printDuration(quiet, quiet < 1000) + ", " + lastPoll;
     }
 
     private static List<Long> downSeries(List<TimelineRecorder.Second> secs, String routeId) {

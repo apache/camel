@@ -20,8 +20,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The <a href="http://camel.apache.org/controlbus.html">Control Bus component</a> allows sending messages to a
@@ -30,23 +32,59 @@ import org.apache.camel.support.DefaultComponent;
 @Component("controlbus")
 public class ControlBusComponent extends DefaultComponent {
 
+    @Metadata(label = "security")
+    private String allowedLanguages;
+
     private ExecutorService executorService;
 
     public ControlBusComponent() {
     }
 
+    public String getAllowedLanguages() {
+        return allowedLanguages;
+    }
+
+    /**
+     * The names of the languages the language command may use, separated by comma, such as simple. The language command
+     * evaluates the message body as an expression, so it is off until the language is in this list: a
+     * controlbus:language endpoint whose language is not listed fails when it is created. The route actions are not
+     * affected. An endpoint can set its own list.
+     */
+    public void setAllowedLanguages(String allowedLanguages) {
+        this.allowedLanguages = allowedLanguages;
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ControlBusEndpoint answer = new ControlBusEndpoint(uri, this);
+        answer.setAllowedLanguages(allowedLanguages);
+        setProperties(answer, parameters);
 
         // does the control bus use a language
         if (remaining != null && remaining.startsWith("language:")) {
             String lan = remaining.substring(9);
+            if (!isAllowedLanguage(answer.getAllowedLanguages(), lan)) {
+                throw new IllegalArgumentException(
+                        "The language command of the control bus may not use the " + lan + " language: add " + lan
+                                                   + " to the allowedLanguages option of the controlbus component or"
+                                                   + " endpoint to turn it on");
+            }
             answer.setLanguage(getCamelContext().resolveLanguage(lan));
         }
 
-        setProperties(answer, parameters);
         return answer;
+    }
+
+    private static boolean isAllowedLanguage(String allowedLanguages, String language) {
+        if (ObjectHelper.isEmpty(allowedLanguages) || ObjectHelper.isEmpty(language)) {
+            return false;
+        }
+        for (String name : allowedLanguages.split(",")) {
+            if (name.trim().equals(language)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     ExecutorService getExecutorService() {

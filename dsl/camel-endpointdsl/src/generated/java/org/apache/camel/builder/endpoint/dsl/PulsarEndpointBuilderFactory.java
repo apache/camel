@@ -1445,6 +1445,50 @@ public interface PulsarEndpointBuilderFactory {
         }
 
         /**
+         * Whether the producer sends a body that does not convert to a byte
+         * array (such as a Map, a List, a number or a POJO) with Java
+         * serialization, as Camel did before 4.24. Such a message can only be
+         * read by a Java client that deserializes it. By default the producer
+         * fails such a body: marshal it first, for example to JSON. Deprecation
+         * note: Java serialization of the body is kept only for compatibility,
+         * and will be removed: marshal the body before sending it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
+         */
+        @Deprecated
+        default AdvancedPulsarEndpointProducerBuilder allowJavaSerializedObject(boolean allowJavaSerializedObject) {
+            doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
+            return this;
+        }
+        /**
+         * Whether the producer sends a body that does not convert to a byte
+         * array (such as a Map, a List, a number or a POJO) with Java
+         * serialization, as Camel did before 4.24. Such a message can only be
+         * read by a Java client that deserializes it. By default the producer
+         * fails such a body: marshal it first, for example to JSON. Deprecation
+         * note: Java serialization of the body is kept only for compatibility,
+         * and will be removed: marshal the body before sending it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
+         */
+        @Deprecated
+        default AdvancedPulsarEndpointProducerBuilder allowJavaSerializedObject(String allowJavaSerializedObject) {
+            doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during

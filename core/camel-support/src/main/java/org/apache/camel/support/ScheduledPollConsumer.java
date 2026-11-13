@@ -88,6 +88,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     // whether this consumer created the scheduler (and therefore configures it)
     private boolean consumerCreatedScheduler;
     private volatile boolean forceReady;
+    // when the last poll was done, and when the last poll that polled messages was done and how many (0 = not since start)
+    private volatile long lastPollTimestamp;
+    private volatile long lastPollMessagesTimestamp;
+    private volatile int lastPollMessagesCount;
 
     protected ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -214,7 +218,14 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                         boolean begin = pollStrategy.begin(this, getEndpoint());
                         if (begin) {
                             retryCounter++;
-                            polledMessages = poll();
+                            int polled = 0;
+                            try {
+                                polled = poll();
+                            } finally {
+                                // also a poll that failed, so a consumer that keeps failing is seen polling
+                                onPolled(currentGeneration, polled);
+                            }
+                            polledMessages = polled;
                             LOG.trace("Polled {} messages", polledMessages);
 
                             if (polledMessages == 0 && isSendEmptyMessageWhenIdle()) {
@@ -319,6 +330,24 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                 successCounter.longValue(), errorCounter.longValue());
 
         // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
+    }
+
+    /**
+     * Keeps when this poll was done, and when it polled messages also how many: a quiet consumer can then be told from
+     * one whose scheduler has stopped. The time is the system clock, as for the other timestamps that management and
+     * the developer consoles show (not {@code TimeSource}, which is for waits and durations).
+     */
+    private void onPolled(long currentGeneration, int polledMessages) {
+        if (currentGeneration != generation.get()) {
+            // the consumer has been stopped while polling, so the state (which has been reset) must not be updated
+            return;
+        }
+        long now = System.currentTimeMillis();
+        if (polledMessages > 0) {
+            lastPollMessagesCount = polledMessages;
+            lastPollMessagesTimestamp = now;
+        }
+        lastPollTimestamp = now;
     }
 
     /**
@@ -507,6 +536,38 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
      */
     public long getCounter() {
         return counter.get();
+    }
+
+    /**
+     * Epoch time in millis of the last poll, or 0 if the consumer has not polled since it was started. A poll that
+     * failed counts too.
+     *
+     * @since 4.24
+     */
+    public long getLastPollTimestamp() {
+        return lastPollTimestamp;
+    }
+
+    /**
+     * Epoch time in millis of the last poll that polled messages, or 0 if no poll has polled any since the consumer was
+     * started.
+     *
+     * @see   #getLastPollMessagesCount()
+     * @since 4.24
+     */
+    public long getLastPollMessagesTimestamp() {
+        return lastPollMessagesTimestamp;
+    }
+
+    /**
+     * The number of messages the last poll that polled messages gave, or 0 if no poll has polled any since the consumer
+     * was started.
+     *
+     * @see   #getLastPollMessagesTimestamp()
+     * @since 4.24
+     */
+    public int getLastPollMessagesCount() {
+        return lastPollMessagesCount;
     }
 
     /**
@@ -746,6 +807,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         backoffErrorBase.set(0);
         successCounter.set(0);
         counter.set(0);
+        lastPollTimestamp = 0;
+        lastPollMessagesTimestamp = 0;
+        lastPollMessagesCount = 0;
         // clear ready state
         firstPollDone = false;
         forceReady = false;

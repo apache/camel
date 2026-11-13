@@ -32,6 +32,9 @@ import java.util.function.Predicate;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.sanitizer.Sanitizer;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.spi.OnCompletionListener;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
@@ -108,6 +111,9 @@ class OnCompletionListenerTest extends ContextTestSupport {
     }
 
     @Test
+    // the queued copy has no consumer, so its commit never runs: the exchange sanitizer (mvn test -Psanitizer) reports it
+    // when the context stops
+    @ExpectSanitizerViolation(Violation.COMMIT_NEVER_RUN)
     void testCopyNotQueuedGivesItBack() throws Exception {
         context.getCamelContextExtension().addOnCompletionListener(recorder);
         Commit queued = new Commit("queued");
@@ -240,7 +246,7 @@ class OnCompletionListenerTest extends ContextTestSupport {
 
     @Test
     void testNoListener() throws Exception {
-        assertTrue(context.getCamelContextExtension().getOnCompletionListeners().isEmpty());
+        assertTrue(ownListeners().isEmpty());
         Commit commit = new Commit("commit");
 
         Exchange exchange = createExchangeWithBody("A");
@@ -256,9 +262,9 @@ class OnCompletionListenerTest extends ContextTestSupport {
         context.getCamelContextExtension().addOnCompletionListener(recorder);
         // an equal listener is added once
         context.getCamelContextExtension().addOnCompletionListener(recorder);
-        assertEquals(List.of(recorder), context.getCamelContextExtension().getOnCompletionListeners());
+        assertEquals(List.of(recorder), ownListeners());
         context.getCamelContextExtension().removeOnCompletionListener(recorder);
-        assertTrue(context.getCamelContextExtension().getOnCompletionListeners().isEmpty());
+        assertTrue(ownListeners().isEmpty());
 
         Commit commit = new Commit("commit");
         Exchange exchange = createExchangeWithBody("A");
@@ -268,6 +274,15 @@ class OnCompletionListenerTest extends ContextTestSupport {
 
         assertTrue(recorder.events.isEmpty());
         assertEquals(1, commit.runs.get());
+    }
+
+    /**
+     * The listeners installed, but the one of the exchange sanitizer when it is on (mvn test -Psanitizer).
+     */
+    private List<OnCompletionListener> ownListeners() {
+        return context.getCamelContextExtension().getOnCompletionListeners().stream()
+                .filter(l -> !l.getClass().getName().startsWith(Sanitizer.class.getPackageName() + "."))
+                .toList();
     }
 
     @Test

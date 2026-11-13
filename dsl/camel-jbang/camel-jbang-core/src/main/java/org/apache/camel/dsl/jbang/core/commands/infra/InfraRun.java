@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
@@ -47,6 +48,8 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelCLICommand;
 
@@ -57,6 +60,8 @@ import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelCLIComm
                            "  camel infra run kafka --background",
                            "  camel infra run ollama --property ollama.model=qwen2.5:0.5b" })
 public class InfraRun extends InfraBaseCommand {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InfraRun.class);
 
     @Arguments(required = true, description = "Service name")
     private List<String> serviceName;
@@ -283,6 +288,7 @@ public class InfraRun extends InfraBaseCommand {
         if (testInfraService.description() != null && !testInfraService.description().isEmpty()) {
             properties.put("description", testInfraService.description());
         }
+        addContainerDetails(actualService, properties);
 
         String jsonProperties = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(properties);
         printer().println(jsonProperties);
@@ -400,6 +406,50 @@ public class InfraRun extends InfraBaseCommand {
                 System.setProperty(name, previous);
             }
         });
+    }
+
+    /**
+     * Adds the name and id of the container a service runs in, so that {@code docker exec}, {@code docker logs} and
+     * {@code camel infra ps} can tell which container it is. A service that does not run in a container, such as an
+     * embedded broker, has none.
+     *
+     * @param service    the started service
+     * @param properties the service data to add the container details to
+     */
+    static void addContainerDetails(Object service, Map<String, Object> properties) {
+        Object container;
+        try {
+            container = service.getClass().getMethod("getContainer").invoke(service);
+        } catch (Exception e) {
+            // not a container service
+            return;
+        }
+        if (container == null) {
+            return;
+        }
+        String name = (String) invokeQuietly(container, "getContainerName");
+        if (name != null && !name.isBlank()) {
+            // Docker answers the name with a leading slash
+            properties.put("containerName", name.startsWith("/") ? name.substring(1) : name);
+        }
+        String id = (String) invokeQuietly(container, "getContainerId");
+        if (id != null && !id.isBlank()) {
+            // the short id, as docker ps shows it
+            properties.put("containerId", id.length() > 12 ? id.substring(0, 12) : id);
+        }
+    }
+
+    private static Object invokeQuietly(Object target, String methodName) {
+        try {
+            return target.getClass().getMethod(methodName).invoke(target);
+        } catch (InvocationTargetException e) {
+            // the service has the method, but it failed, such as when docker cannot be reached
+            LOG.debug("{}#{} failed", target.getClass().getSimpleName(), methodName, e.getCause());
+            return null;
+        } catch (Exception e) {
+            // not a container service
+            return null;
+        }
     }
 
     private static void clearInfraProperties() {

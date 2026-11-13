@@ -33,7 +33,7 @@ class SanitizerConfigurationPropertiesTest {
     void optionsFromPropertiesAreBoundAndPublished() throws Exception {
         Main main = new Main();
         main.addInitialProperty("camel.sanitizer.enabled", "true");
-        main.addInitialProperty("camel.sanitizer.checks", "callback");
+        main.addInitialProperty("camel.sanitizer.checks", "commit");
         main.addInitialProperty("camel.sanitizer.stack-depth", "0");
         main.addInitialProperty("camel.sanitizer.reportOnShutdown", "false");
         main.addInitialProperty("camel.sanitizer.pending-timeout", "5s");
@@ -42,14 +42,14 @@ class SanitizerConfigurationPropertiesTest {
         try {
             SanitizerConfigurationProperties config = main.configure().sanitizerConfig();
             assertTrue(config.getEnabled());
-            assertEquals("callback", config.getChecks());
+            assertEquals("commit", config.getChecks());
             assertEquals(0, config.getStackDepth());
             assertFalse(config.isReportOnShutdown());
             assertEquals("5s", config.getPendingTimeout());
 
             PropertiesComponent pc = main.getCamelContext().getPropertiesComponent();
             assertEquals("true", pc.resolveProperty("camel.sanitizer.enabled").orElse(null));
-            assertEquals("callback", pc.resolveProperty("camel.sanitizer.checks").orElse(null));
+            assertEquals("commit", pc.resolveProperty("camel.sanitizer.checks").orElse(null));
             assertEquals("0", pc.resolveProperty("camel.sanitizer.stackDepth").orElse(null));
             assertEquals("false", pc.resolveProperty("camel.sanitizer.reportOnShutdown").orElse(null));
             assertEquals("5s", pc.resolveProperty("camel.sanitizer.pendingTimeout").orElse(null));
@@ -68,7 +68,8 @@ class SanitizerConfigurationPropertiesTest {
         try {
             PropertiesComponent pc = main.getCamelContext().getPropertiesComponent();
             assertEquals("false", pc.resolveProperty("camel.sanitizer.enabled").orElse(null));
-            assertEquals("callback", pc.resolveProperty("camel.sanitizer.checks").orElse(null));
+            // not published when not set: camel-sanitizer decides (R1 only, and R1 and R2 in a test)
+            assertFalse(pc.resolveProperty("camel.sanitizer.checks").isPresent());
             assertEquals("8", pc.resolveProperty("camel.sanitizer.stackDepth").orElse(null));
             assertEquals("false", pc.resolveProperty("camel.sanitizer.reportOnShutdown").orElse(null));
             assertEquals("0", pc.resolveProperty("camel.sanitizer.pendingTimeout").orElse(null));

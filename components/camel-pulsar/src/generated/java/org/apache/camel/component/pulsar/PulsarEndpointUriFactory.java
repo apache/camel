@@ -24,10 +24,11 @@ public class PulsarEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(51);
+        Set<String> props = new HashSet<>(52);
         props.add("ackGroupTimeMillis");
         props.add("ackTimeoutMillis");
         props.add("ackTimeoutRedeliveryBackoff");
+        props.add("allowJavaSerializedObject");
         props.add("allowManualAcknowledgement");
         props.add("authenticationClass");
         props.add("authenticationParams");

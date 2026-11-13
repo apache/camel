@@ -79,6 +79,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     private boolean removeAllRoutes = true;
     private final List<Resource> previousSources = new ArrayList<>();
     /**
+     * The sources with the route templates that the routes of the last reload use, also through {@code kamelet:}: they
+     * are loaded before the other sources, so a route template is there when a route that uses it is created.
+     */
+    private final List<Resource> templateSources = new ArrayList<>();
+    /**
      * The content of the sources as they last loaded, at startup and then at each successful reload, by location: what
      * a failed reload goes back to.
      */
@@ -607,15 +612,19 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 // (the file of a route may have been removed since it loaded: on-demand reload only passes the files
                 // that exist, so its routes are removed like those of a changed file, CAMEL-25427)
                 // (a route from a templated route needs the file with the route template, and the file with the
-                // templated route, CAMEL-25598; a route from a Kamelet is created again by its parent route)
-                // (the file with the templated route is only loaded again when its route template comes from a file:
-                // a route template added from Java is removed below and nothing adds it again, so loading the
-                // templated route would fail the whole reload, CAMEL-25616)
-                getCamelContext().getRoutes().forEach(r -> addRouteSources(resources, sources, r));
+                // templated route, CAMEL-25598; a route from a Kamelet is created again by its parent route, and the
+                // file with its route template is loaded again when it is a file, CAMEL-25619)
+                templateSources.clear();
+                getCamelContext().getRoutes().forEach(r -> {
+                    addRouteSources(resources, sources, r);
+                    addTemplateSource(templateSources, r);
+                });
                 // first stop and remove all routes
                 getCamelContext().getRouteController().removeAllRoutes();
-                // remove left-over route templates and endpoints, so we can start on a fresh
-                getCamelContext().removeRouteTemplates("*");
+                // remove left-over route templates and endpoints, so we can start on a fresh: only the route templates
+                // that were loaded from a resource, as the reload loads those again; a route template added from Java
+                // has none, and nothing would add it back (CAMEL-25619)
+                getCamelContext().removeRouteTemplatesFromResources("*");
                 getCamelContext().getEndpointRegistry().clear();
             }
 
@@ -649,6 +658,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     }
                 }
             }
+
+            // the sources with route templates first, so a route template is there when a route that uses it is
+            // created (a route template used through kamelet:, CAMEL-25619)
+            templateSourcesFirst(sources);
 
             // just in case remember this set of sources as what was attempted previously to update
             // in case the update fails with an exception
@@ -861,10 +874,13 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 }
             }
         }
+        // the failed file goes back from memory at the end: it may have the route templates the others use
+        templateSourcesFirst(restore);
         try {
-            // a partial load may have left routes or endpoints behind
+            // a partial load may have left routes or endpoints behind (the route templates added from Java are kept,
+            // as in the reload, CAMEL-25619)
             getCamelContext().getRouteController().removeAllRoutes();
-            getCamelContext().removeRouteTemplates("*");
+            getCamelContext().removeRouteTemplatesFromResources("*");
             getCamelContext().getEndpointRegistry().clear();
             if (restore.isEmpty()) {
                 LOG.warn("Reload failed and there are no previous routes to restore: the application runs without"
@@ -887,16 +903,59 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     /**
      * Adds the sources of a route to the sources to load again: the file it was loaded from and, for a route from a
-     * templated route, the file of the templated route. A route from a Kamelet has none of its own: its parent route
-     * creates it again.
+     * templated route, the file of the templated route. The route template of a templated route is either in a file,
+     * which is loaded again, or added without a resource (from Java), which a reload keeps (CAMEL-25619).
+     * <p/>
+     * A route from a Kamelet is created again by its parent route. Its source is the file with its route template: when
+     * that is a file, it is loaded again too, as a route template that is only used through {@code kamelet:} has no
+     * route of its own that would bring it back (CAMEL-25619). A Kamelet from the classpath, such as from a Kamelet
+     * catalog, is loaded again by the kamelet component when it is used.
      */
     private static void addRouteSources(Collection<Resource> resources, List<Resource> sources, Route route) {
-        if (!route.isCreatedByKamelet()) {
+        if (route.isCreatedByKamelet()) {
+            if (isFile(route.getSourceResource())) {
+                addRouteSource(resources, sources, route.getSourceResource());
+            }
+        } else {
             addRouteSource(resources, sources, route.getSourceResource());
-            if (route.getSourceResource() != null) {
-                addRouteSource(resources, sources, route.getTemplatedRouteResource());
+            addRouteSource(resources, sources, route.getTemplatedRouteResource());
+        }
+    }
+
+    /**
+     * Adds the source of a route created from a route template (a templated route, or a Kamelet) to the sources with
+     * route templates: the file with its route template.
+     */
+    private static void addTemplateSource(List<Resource> templateSources, Route route) {
+        Resource rs = route.getSourceResource();
+        if (route.getRouteTemplateId() != null && rs != null && !equalResourceLocation(templateSources, rs)) {
+            templateSources.add(rs);
+        }
+    }
+
+    /**
+     * Moves the sources with route templates before the other sources, keeping the order of each.
+     */
+    private void templateSourcesFirst(List<Resource> sources) {
+        if (templateSources.isEmpty() || sources.size() < 2) {
+            return;
+        }
+        List<Resource> first = new ArrayList<>();
+        List<Resource> rest = new ArrayList<>();
+        for (Resource rs : sources) {
+            if (equalResourceLocation(templateSources, rs)) {
+                first.add(rs);
+            } else {
+                rest.add(rs);
             }
         }
+        sources.clear();
+        sources.addAll(first);
+        sources.addAll(rest);
+    }
+
+    private static boolean isFile(Resource resource) {
+        return resource != null && resource.getLocation() != null && resource.getLocation().startsWith("file:");
     }
 
     /**

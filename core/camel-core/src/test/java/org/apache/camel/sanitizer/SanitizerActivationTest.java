@@ -80,12 +80,113 @@ class SanitizerActivationTest {
         start(Map.of("camel.sanitizer.enabled", "true"), null, null);
         assertNotNull(Sanitizer.get(context));
         assertEquals(1, context.getCamelContextExtension().getStepListeners().size());
+        // rule R1 by default outside a test (R2 costs more per message)
+        assertTrue(Sanitizer.get(context).isCheckingCallbacks());
+        assertNull(Sanitizer.get(context).getCommits());
+        assertTrue(context.getCamelContextExtension().getOnCompletionListeners().isEmpty());
+        // and the still pending warning of R1, told by the notifier of the exchanges that are done
+        assertNotNull(Sanitizer.get(context).getPendingCalls());
+        assertEquals(1, context.getManagementStrategy().getEventNotifiers().stream()
+                .filter(SanitizerContextServicePlugin.ExchangeDoneNotifier.class::isInstance).count());
+    }
+
+    @Test
+    void bothRulesByDefaultInATest() throws Exception {
+        SanitizerTestSession session = SanitizerTestSession.open("defaultChecks");
+        try {
+            start(Map.of(), null, session);
+            assertTrue(Sanitizer.get(context).isCheckingCallbacks());
+            assertNotNull(Sanitizer.get(context).getCommits());
+            assertEquals(1, context.getCamelContextExtension().getOnCompletionListeners().size());
+            // R2 and the still pending warning of R1 are told by one notifier of the exchanges that are done
+            assertNotNull(Sanitizer.get(context).getPendingCalls());
+            assertEquals(1, context.getManagementStrategy().getEventNotifiers().stream()
+                    .filter(SanitizerContextServicePlugin.ExchangeDoneNotifier.class::isInstance).count());
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    void checksCallbackInATestIsRuleR1Only() throws Exception {
+        SanitizerTestSession session = SanitizerTestSession.open("callbackInATest");
+        try {
+            start(Map.of("camel.sanitizer.checks", "callback"), null, session);
+            assertTrue(Sanitizer.get(context).isCheckingCallbacks());
+            assertNull(Sanitizer.get(context).getCommits());
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    void bothRulesWithProfileDevInATest() throws Exception {
+        SanitizerTestSession session = SanitizerTestSession.open("devInATest");
+        try {
+            start(Map.of(), "dev", session);
+            assertNotNull(Sanitizer.get(context).getCommits());
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    void bothRulesWithChecksCallbackAndCommit() throws Exception {
+        start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.checks", "callback,commit"), null, null);
+        assertTrue(Sanitizer.get(context).isCheckingCallbacks());
+        assertNotNull(Sanitizer.get(context).getCommits());
+        assertEquals(1, context.getCamelContextExtension().getOnCompletionListeners().size());
+    }
+
+    @Test
+    void checksCallbackOnlyInstallsNoOnCompletionListener() throws Exception {
+        start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.checks", "callback"), null, null);
+        assertNull(Sanitizer.get(context).getCommits());
+        assertEquals(1, context.getCamelContextExtension().getStepListeners().size());
+        assertTrue(context.getCamelContextExtension().getOnCompletionListeners().isEmpty());
+        // the notifier stays for the still pending warning
+        assertNotNull(Sanitizer.get(context).getPendingCalls());
+        assertEquals(1, context.getManagementStrategy().getEventNotifiers().stream()
+                .filter(SanitizerContextServicePlugin.ExchangeDoneNotifier.class::isInstance).count());
+    }
+
+    @Test
+    void checksCallbackOnlyWithPendingTimeoutZeroAddsNoNotifier() throws Exception {
+        start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.checks", "callback",
+                "camel.sanitizer.pendingTimeout", "0"), null, null);
+        assertNull(Sanitizer.get(context).getCommits());
+        assertNull(Sanitizer.get(context).getPendingCalls());
+        assertTrue(context.getManagementStrategy().getEventNotifiers().stream()
+                .noneMatch(SanitizerContextServicePlugin.ExchangeDoneNotifier.class::isInstance));
+    }
+
+    @Test
+    void checksCommitOnlyDoesNotReportTheCallbacks() throws Exception {
+        SanitizerTestSession session = SanitizerTestSession.open("commitOnly");
+        try {
+            start(Map.of("camel.sanitizer.checks", " Commit "), null, session);
+            assertFalse(Sanitizer.get(context).isCheckingCallbacks());
+            assertNotNull(Sanitizer.get(context).getCommits());
+            // the step listener stays, to name the step of a report of R2
+            assertEquals(1, context.getCamelContextExtension().getStepListeners().size());
+            assertEquals(1, context.getCamelContextExtension().getOnCompletionListeners().size());
+            // the still pending warning follows the callbacks of R1, so it is off; the notifier stays for R2
+            assertNull(Sanitizer.get(context).getPendingCalls());
+            assertEquals(1, context.getManagementStrategy().getEventNotifiers().stream()
+                    .filter(SanitizerContextServicePlugin.ExchangeDoneNotifier.class::isInstance).count());
+            sendToBrokenRoute();
+            assertEquals(List.of(), session.drain());
+        } finally {
+            session.close();
+        }
     }
 
     @Test
     void onWithProfileDev() throws Exception {
         start(Map.of(), "dev", null);
         assertNotNull(Sanitizer.get(context));
+        // rule R1 by default
+        assertNull(Sanitizer.get(context).getCommits());
     }
 
     @Test
@@ -132,7 +233,8 @@ class SanitizerActivationTest {
         Exception e = assertThrows(Exception.class,
                 () -> start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.checks", "callback,threads"), null,
                         null));
-        assertTrue(messages(e).contains("camel.sanitizer.checks=callback,threads has the unknown check threads"),
+        assertTrue(messages(e).contains("camel.sanitizer.checks=callback,threads has the unknown check threads (the checks"
+                                        + " of this version: callback, commit)"),
                 messages(e));
         e = assertThrows(Exception.class,
                 () -> start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.stackDepth", "-1"), null, null));
@@ -146,12 +248,14 @@ class SanitizerActivationTest {
     }
 
     @Test
-    void pendingTimeoutZeroKeepsNoTableAndNoNotifier() throws Exception {
-        start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.pendingTimeout", "0"), null, null);
+    void pendingTimeoutZeroKeepsNoTable() throws Exception {
+        start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.checks", "callback,commit",
+                "camel.sanitizer.pendingTimeout", "0"), null, null);
         assertNotNull(Sanitizer.get(context));
         assertNull(Sanitizer.get(context).getPendingCalls());
-        assertTrue(context.getManagementStrategy().getEventNotifiers().stream()
-                .noneMatch(SanitizerContextServicePlugin.ExchangeDoneNotifier.class::isInstance));
+        // the notifier stays for R2
+        assertEquals(1, context.getManagementStrategy().getEventNotifiers().stream()
+                .filter(SanitizerContextServicePlugin.ExchangeDoneNotifier.class::isInstance).count());
     }
 
     @Test
@@ -167,6 +271,7 @@ class SanitizerActivationTest {
         start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.checks", "none"), null, null);
         assertNull(Sanitizer.get(context));
         assertTrue(context.getCamelContextExtension().getStepListeners().isEmpty());
+        assertTrue(context.getCamelContextExtension().getOnCompletionListeners().isEmpty());
     }
 
     @Test

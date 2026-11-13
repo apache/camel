@@ -24,8 +24,9 @@ public class ControlBusEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(9);
         props.add("action");
+        props.add("allowedLanguages");
         props.add("async");
         props.add("command");
         props.add("language");
