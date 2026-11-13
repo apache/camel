@@ -86,6 +86,7 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.annotations.PeriodicTask;
+import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.apache.camel.support.LoadOnDemandReloadStrategy;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
@@ -383,7 +384,7 @@ public class LocalCliConnector extends ServiceSupport
             } else if ("load".equals(action)) {
                 doActionLoadTask(root);
             } else if ("reload".equals(action)) {
-                doActionReloadTask();
+                doActionReloadTask(root);
             } else if ("debug".equals(action)) {
                 doActionDebugTask(root);
             } else if ("reset-stats".equals(action)) {
@@ -1411,7 +1412,11 @@ public class LocalCliConnector extends ServiceSupport
         }
     }
 
-    private void doActionReloadTask() {
+    private void doActionReloadTask(JsonObject root) throws IOException {
+        if (root.getBooleanOrDefault("changed", false)) {
+            doActionReloadChangedTask();
+            return;
+        }
         ContextReloadStrategy cr = camelContext.hasService(ContextReloadStrategy.class);
         if (cr != null) {
             cr.onReload("Camel CLI");
@@ -1421,6 +1426,43 @@ public class LocalCliConnector extends ServiceSupport
                 rr.onReload("Camel CLI");
             }
         }
+    }
+
+    /**
+     * Reloads the files changed since the last scan of dev mode now, and answers with them and the error when the
+     * reload failed (camel cmd reload --wait, CAMEL-26939). A context reload rebuilds the routes from what was loaded,
+     * so it does not load an edit.
+     */
+    private void doActionReloadChangedTask() throws IOException {
+        FileWatcherResourceReloadStrategy watcher = fileWatcher();
+        if (watcher == null) {
+            reportError("The integration does not watch its files, as it does not run in dev mode: restart it to load"
+                        + " what changed");
+            return;
+        }
+        int failed = watcher.getFailedCounter();
+        List<String> files = watcher.reloadChanged();
+        JsonObject result = new JsonObject();
+        result.put("files", new JsonArray(files));
+        writeOutput(result);
+        if (watcher.getFailedCounter() > failed) {
+            Exception cause = watcher.getLastError();
+            reportError(cause != null && cause.getMessage() != null ? cause.getMessage() : "Reloading failed");
+        }
+    }
+
+    /**
+     * The strategy that watches the files: the one that scans them, rather than the one that camel run --source-dir
+     * also has, which only reloads on demand.
+     */
+    private FileWatcherResourceReloadStrategy fileWatcher() {
+        FileWatcherResourceReloadStrategy answer = null;
+        for (ResourceReloadStrategy rr : camelContext.hasServices(ResourceReloadStrategy.class)) {
+            if (rr instanceof FileWatcherResourceReloadStrategy watcher && (answer == null || watcher.isRunning())) {
+                answer = watcher;
+            }
+        }
+        return answer;
     }
 
     private void doActionLoggerTask(JsonObject root) {
