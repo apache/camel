@@ -4,7 +4,7 @@
 :artifactid: camel-lra
 :description: Camel saga binding for Long-Running-Action framework
 :since: 2.21
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 
 *Since Camel {since}*

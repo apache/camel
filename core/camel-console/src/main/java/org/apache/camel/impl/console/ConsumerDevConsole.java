@@ -34,6 +34,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "consumer", displayName = "Consumers", description = "Display information about Camel consumers")
@@ -85,6 +86,9 @@ public class ConsumerDevConsole extends AbstractDevConsole {
             @Metadata(description = "The backoff multiplier (only present for scheduled poll consumers)") Long backoffMultiplier,
             @Metadata(description = "The backoff error threshold (only present for scheduled poll consumers)") Long backoffErrorThreshold,
             @Metadata(description = "The backoff idle threshold (only present for scheduled poll consumers)") Long backoffIdleThreshold,
+            @Metadata(description = "Epoch time in milliseconds of the last poll (only present for scheduled poll consumers that have polled since they were started)") Long lastPollTimestamp,
+            @Metadata(description = "Epoch time in milliseconds of the last poll that polled messages (only present for scheduled poll consumers that have polled messages since they were started)") Long lastPollMessagesTimestamp,
+            @Metadata(description = "Number of messages the last poll that polled messages gave (only present for scheduled poll consumers that have polled messages since they were started)") Integer lastPollMessagesCount,
             @Metadata(description = "The timer name (only present for camel-timer consumers)") String timerName,
             @Metadata(description = "Whether a fixed rate is used (only present for camel-timer consumers)") Boolean fixedRate,
             @Metadata(description = "The period (only present for camel-timer consumers)") Long period,
@@ -142,6 +146,15 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                                 "\n    Backoff(counter: %d multiplier: %d errorThreshold: %d, idleThreshold: %d )",
                                 mpc.getBackoffCounter(), mpc.getBackoffMultiplier(), mpc.getBackoffErrorThreshold(),
                                 mpc.getBackoffIdleThreshold()));
+                        Date lastPoll = mpc.getLastPollTimestamp();
+                        sb.append(
+                                String.format("%n    Last Poll: %s", lastPoll != null ? printAgo(lastPoll.getTime()) : "none"));
+                        Date lastMessages = mpc.getLastPollMessagesTimestamp();
+                        sb.append(String.format("%n    Last Poll With Messages: %s",
+                                lastMessages != null
+                                        ? printAgo(lastMessages.getTime()) + " (messages: " + mpc.getLastPollMessagesCount()
+                                          + ")"
+                                        : "none"));
                     }
                     if ("TimerConsumer".equals(mc.getServiceType())) {
                         // need to use JMX to gather details for camel-timer consumer
@@ -231,6 +244,9 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                     Long backoffMultiplier = null;
                     Long backoffErrorThreshold = null;
                     Long backoffIdleThreshold = null;
+                    Long lastPollTimestamp = null;
+                    Long lastPollMessagesTimestamp = null;
+                    Integer lastPollMessagesCount = null;
                     String timerName = null;
                     Boolean fixedRate = null;
                     Long period = null;
@@ -256,6 +272,11 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                         backoffMultiplier = (long) mpc.getBackoffMultiplier();
                         backoffErrorThreshold = (long) mpc.getBackoffErrorThreshold();
                         backoffIdleThreshold = (long) mpc.getBackoffIdleThreshold();
+                        lastPollTimestamp = timestampOf(mpc.getLastPollTimestamp());
+                        lastPollMessagesTimestamp = timestampOf(mpc.getLastPollMessagesTimestamp());
+                        if (lastPollMessagesTimestamp != null) {
+                            lastPollMessagesCount = mpc.getLastPollMessagesCount();
+                        }
                     }
                     if ("TimerConsumer".equals(mc.getServiceType())) {
                         scheduled = true;
@@ -287,7 +308,8 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                             mc.isHostedService(), inflight, scheduled, polling, firstPollDone, schedulerStarted,
                             schedulerClass, repeatCount, fixedDelay, initialDelay, delay, timeUnit, greedy,
                             runningLoggingLevel, totalCounter, errorCounter, successCounter, backoffCounter,
-                            backoffMultiplier, backoffErrorThreshold, backoffIdleThreshold, timerName, fixedRate,
+                            backoffMultiplier, backoffErrorThreshold, backoffIdleThreshold, lastPollTimestamp,
+                            lastPollMessagesTimestamp, lastPollMessagesCount, timerName, fixedRate,
                             period, stats));
                 }
             }
@@ -324,6 +346,18 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                 mr.getMeanProcessingTime(), mr.getMaxProcessingTime(), mr.getMinProcessingTime(),
                 p50, p95, p99, lastProcessingTime, deltaProcessingTime,
                 lastCreated, lastCompleted, lastFailureHandled, lastFailed);
+    }
+
+    /**
+     * How long ago the given time was, such as 47s ago, or 500ms ago under a second.
+     */
+    static String printAgo(long time) {
+        return printAgo(time, System.currentTimeMillis());
+    }
+
+    static String printAgo(long time, long now) {
+        long age = now - time;
+        return TimeUtils.printDuration(age, age < 1000) + " ago";
     }
 
     private static Long timestampOf(Date date) {

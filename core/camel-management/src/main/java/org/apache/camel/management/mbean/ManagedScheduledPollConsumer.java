@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -176,5 +177,22 @@ public class ManagedScheduledPollConsumer extends ManagedConsumer implements Man
     @Override
     public long getSuccessCounter() {
         return getConsumer().getSuccessCounter();
+    }
+
+    @Override
+    public Date getLastPollTimestamp() {
+        long time = getConsumer().getLastPollTimestamp();
+        return time > 0 ? new Date(time) : null;
+    }
+
+    @Override
+    public Date getLastPollMessagesTimestamp() {
+        long time = getConsumer().getLastPollMessagesTimestamp();
+        return time > 0 ? new Date(time) : null;
+    }
+
+    @Override
+    public int getLastPollMessagesCount() {
+        return getConsumer().getLastPollMessagesCount();
     }
 }

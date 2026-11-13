@@ -21,21 +21,31 @@ import org.apache.camel.component.mcp.server.conformance.McpServerPromptConforma
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
 import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterEach;
 
 /** Runs the prompt conformance kit against the Vert.x streamable HTTP engine. */
 class VertxMcpServerPromptConformanceTest extends McpServerPromptConformanceTestSupport {
 
-    private final int port = AvailablePortFinder.getNextAvailable();
+    private AvailablePortFinder.Port portRef;
+
+    @AfterEach
+    void releasePort() {
+        if (portRef != null) {
+            portRef.release();
+            portRef = null;
+        }
+    }
 
     @Override
     protected void customizeCamelContext(CamelContext camelContext) throws Exception {
+        portRef = AvailablePortFinder.find();
         VertxPlatformHttpServerConfiguration configuration = new VertxPlatformHttpServerConfiguration();
-        configuration.setBindPort(port);
+        configuration.setBindPort(portRef.getPort());
         camelContext.addService(new VertxPlatformHttpServer(configuration));
     }
 
     @Override
     protected String mcpServerBaseUrl() {
-        return "http://localhost:" + port;
+        return "http://localhost:" + portRef.getPort();
     }
 }

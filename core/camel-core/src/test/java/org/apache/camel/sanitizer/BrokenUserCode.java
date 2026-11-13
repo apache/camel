@@ -19,6 +19,7 @@ package org.apache.camel.sanitizer;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
@@ -28,9 +29,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.SynchronizationAdapter;
 
 /**
  * Processors and strategies of a user that break the contract of AsyncProcessor, for the tests of the sanitizer.
@@ -239,6 +243,68 @@ final class BrokenUserCode {
                 throw new IllegalArgumentException("Forced by RuntimeExceptionStrategy");
             }
             return newExchange;
+        }
+    }
+
+    /**
+     * The endpoint of a custom component whose consumer commits its message with an on completion, and creates and
+     * dones the unit of work of its exchanges itself: it calls done after the processing and again in finally, so the
+     * commit runs twice.
+     */
+    static final class DoneTwiceEndpoint extends DefaultEndpoint {
+
+        volatile DoneTwiceConsumer consumer;
+
+        DoneTwiceEndpoint(String uri, CamelContext camelContext) {
+            super(uri, null);
+            setCamelContext(camelContext);
+        }
+
+        @Override
+        public Producer createProducer() {
+            throw new UnsupportedOperationException("consumer only");
+        }
+
+        @Override
+        public Consumer createConsumer(Processor processor) {
+            consumer = new DoneTwiceConsumer(this, processor);
+            return consumer;
+        }
+    }
+
+    static final class DoneTwiceConsumer extends DefaultConsumer {
+
+        // how often the commit of a message ran
+        final AtomicInteger commits = new AtomicInteger();
+
+        DoneTwiceConsumer(DoneTwiceEndpoint endpoint, Processor processor) {
+            super(endpoint, processor);
+        }
+
+        /**
+         * Receives a message from the external system, routes it, and commits it with an on completion.
+         */
+        void receive(String body) throws Exception {
+            Exchange exchange = createExchange(false);
+            exchange.getMessage().setBody(body);
+            exchange.getExchangeExtension().addOnCompletion(new MessageCommit());
+            UnitOfWork uow = createUoW(exchange);
+            try {
+                getProcessor().process(exchange);
+                uow.done(exchange);
+            } finally {
+                // the bug: the unit of work is done again when the exchange is released
+                uow.done(exchange);
+                releaseExchange(exchange, false);
+            }
+        }
+
+        final class MessageCommit extends SynchronizationAdapter {
+
+            @Override
+            public void onDone(Exchange exchange) {
+                commits.incrementAndGet();
+            }
         }
     }
 }

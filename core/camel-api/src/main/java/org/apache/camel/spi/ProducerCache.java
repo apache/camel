@@ -139,7 +139,8 @@ public interface ProducerCache extends Service {
     /**
      * Sends an exchange to an endpoint using a supplied callback supporting the asynchronous routing engine.
      * <p/>
-     * If an exception was thrown during processing, it would be set on the given Exchange
+     * If an exception was thrown during processing, it would be set on the given Exchange, unless the producer had
+     * already completed the exchange (called the callback) before it threw: then the callback is not called again.
      *
      * @param  endpoint         the endpoint to send the exchange to
      * @param  exchange         the exchange, can be <tt>null</tt> if so then create a new exchange from the producer

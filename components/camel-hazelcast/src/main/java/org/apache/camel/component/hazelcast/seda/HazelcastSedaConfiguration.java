@@ -94,7 +94,8 @@ public class HazelcastSedaConfiguration {
     }
 
     /**
-     * Milliseconds before consumer continues polling after an error has occurred.
+     * Milliseconds before the consumer continues polling after an error has occurred, or after a transacted consumer
+     * rolled back the transaction of a failed exchange (the message is then on the queue again).
      */
     public void setOnErrorDelay(int onErrorDelay) {
         if (onErrorDelay < 0) {

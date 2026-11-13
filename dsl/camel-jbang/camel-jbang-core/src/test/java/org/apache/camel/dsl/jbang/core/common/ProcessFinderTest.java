@@ -18,6 +18,9 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +85,25 @@ class ProcessFinderTest {
 
         assertThat(ProcessFinder.findAll()).extracting(CamelProcess::pid).containsExactly(100L, 200L);
         assertThat(ProcessFinder.find("*")).extracting(CamelProcess::pid).containsExactly(100L, 200L);
+    }
+
+    @Test
+    void aStatusFileOlderThanItsProcessIsLeftOverAndFindsNothing() throws Exception {
+        Instant start = Instant.now().minus(Duration.ofMinutes(5));
+        // a status file left behind by an integration that was killed, and its pid is now another process
+        status(100, "orders", 5);
+        Files.setLastModifiedTime(CommandLineHelper.getCamelDir().resolve("100-status.json"),
+                FileTime.from(start.minus(Duration.ofHours(1))));
+        processes.add(handle(100, start));
+        // a running integration writes its status after it started
+        status(200, "billing", 5);
+        processes.add(handle(200, start));
+
+        // camel stop must not signal the process that now has the pid
+        assertThat(ProcessFinder.findAll()).extracting(CamelProcess::pid).containsExactly(200L);
+        assertThat(ProcessFinder.find("orders")).isEmpty();
+        assertThat(ProcessFinder.find("100")).isEmpty();
+        assertThat(ProcessFinder.find("billing")).extracting(CamelProcess::pid).containsExactly(200L);
     }
 
     @Test
@@ -197,11 +219,16 @@ class ProcessFinderTest {
     }
 
     private static ProcessHandle handle(long pid) {
+        return handle(pid, null);
+    }
+
+    private static ProcessHandle handle(long pid, Instant start) {
         ProcessHandle ph = mock(ProcessHandle.class);
         ProcessHandle.Info info = mock(ProcessHandle.Info.class);
         when(ph.pid()).thenReturn(pid);
         when(ph.info()).thenReturn(info);
         when(info.commandLine()).thenReturn(Optional.empty());
+        when(info.startInstant()).thenReturn(Optional.ofNullable(start));
         return ph;
     }
 }

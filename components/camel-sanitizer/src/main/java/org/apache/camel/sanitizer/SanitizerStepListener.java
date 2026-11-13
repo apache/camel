@@ -21,7 +21,8 @@ import org.apache.camel.spi.StepListener;
 
 /**
  * Rule R1 of the exchange sanitizer: the callback of each call of the processor of a step is called exactly once, and
- * {@code process(exchange, callback)} does not throw.
+ * {@code process(exchange, callback)} does not throw. With rule R2 on, it also tells R2 which step runs on a thread, so
+ * a report of R2 names the step where a commit was handed over.
  * <p/>
  * The record of a call ({@link StepCall}) is the state of the call that camel-core keeps in the callback of the call,
  * so it lives as long as anything can still call that callback. It holds ids, names, threads and stacks, never the
@@ -41,6 +42,7 @@ final class SanitizerStepListener implements StepListener {
         sanitizer.called();
         // only here may the exchange be read: the other events can come on a thread that does not own it
         StepCall call = new StepCall(sanitizer, exchange.getExchangeId(), routeId, nodeId);
+        sanitizer.stepStarted(call);
         sanitizer.pendingCalled(exchange, call);
         return call;
     }
@@ -48,6 +50,7 @@ final class SanitizerStepListener implements StepListener {
     @Override
     public void onStepReturn(Object state, boolean doneSync) {
         if (state instanceof StepCall call) {
+            sanitizer.stepEnded(call);
             sanitizer.pendingReturned(call, doneSync);
         }
     }
@@ -55,20 +58,23 @@ final class SanitizerStepListener implements StepListener {
     @Override
     public void onStepThrow(Object state, Throwable cause) {
         if (state instanceof StepCall call) {
-            call.threw(cause);
+            sanitizer.stepEnded(call);
+            if (sanitizer.isCheckingCallbacks()) {
+                call.threw(cause);
+            }
         }
     }
 
     @Override
     public void onStepCallback(Object state, boolean doneSync) {
-        if (state instanceof StepCall call) {
+        if (state instanceof StepCall call && sanitizer.isCheckingCallbacks()) {
             call.callback();
         }
     }
 
     @Override
     public String toString() {
-        return "ExchangeSanitizer[R1]";
+        return sanitizer.isCheckingCallbacks() ? "ExchangeSanitizer[R1]" : "ExchangeSanitizer[steps]";
     }
 
     /**
@@ -92,6 +98,8 @@ final class SanitizerStepListener implements StepListener {
         private Sanitizer.Trace firstCallback;
         private String thrown;
         private Sanitizer.Trace throwTrace;
+        // the call of the enclosing step on the same thread, while this one runs process there (only when R2 is on)
+        StepCall outer;
 
         // the stripe of the table of the pending calls (PendingCalls) the call went into: its lock guards the fields below
         volatile PendingCalls.Stripe stripe;

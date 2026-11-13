@@ -24,7 +24,7 @@ public class AiResourceEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(10);
         props.add("bridgeErrorHandler");
         props.add("description");
         props.add("exceptionHandler");
@@ -34,6 +34,7 @@ public class AiResourceEndpointUriFactory extends org.apache.camel.support.compo
         props.add("resourceUri");
         props.add("tags");
         props.add("title");
+        props.add("uriTemplate");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();

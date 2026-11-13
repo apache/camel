@@ -268,9 +268,9 @@
         <infinispan-protostream-version>6.0.7</infinispan-protostream-version>
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
-        <jackson-annotations-version>2.22</jackson-annotations-version>
+        <jackson-annotations-version>2.23</jackson-annotations-version>
         <jackson-jq-version>1.6.5</jackson-jq-version>
-        <jackson2-version>2.22.4</jackson2-version>
+        <jackson2-version>2.23.0</jackson2-version>
         <jackson3-version>3.2.4</jackson3-version>
         <jackrabbit-version>2.22.5</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>

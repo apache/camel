@@ -124,6 +124,18 @@
               "type": "integer",
               "description": "The backoff idle threshold (only present for scheduled poll consumers)"
             },
+            "lastPollTimestamp": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds of the last poll (only present for scheduled poll consumers that have polled since they were started)"
+            },
+            "lastPollMessagesTimestamp": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds of the last poll that polled messages (only present for scheduled poll consumers that have polled messages since they were started)"
+            },
+            "lastPollMessagesCount": {
+              "type": "integer",
+              "description": "Number of messages the last poll that polled messages gave (only present for scheduled poll consumers that have polled messages since they were started)"
+            },
             "timerName": {
               "type": "string",
               "description": "The timer name (only present for camel-timer consumers)"

@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,13 +34,17 @@ import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.server.transport.StdioServerTransportProvider;
+import io.modelcontextprotocol.spec.McpError;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.ai.tool.AiToolAnnotations;
 import org.apache.camel.component.mcp.server.McpPromptSdkSupport;
+import org.apache.camel.component.mcp.server.McpResourceReadResult;
 import org.apache.camel.component.mcp.server.McpServerEngine;
 import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerPrompt;
+import org.apache.camel.component.mcp.server.McpServerResource;
+import org.apache.camel.component.mcp.server.McpServerResourceTemplate;
 import org.apache.camel.component.mcp.server.McpServerTool;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.support.service.ServiceSupport;
@@ -75,6 +80,8 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
     private OutputStream outputStream;
     private PrintStream originalOut;
     private final List<McpServerFeatures.SyncToolSpecification> pendingTools = new ArrayList<>();
+    private final List<McpServerFeatures.SyncResourceSpecification> pendingResources = new ArrayList<>();
+    private final List<McpServerFeatures.SyncResourceTemplateSpecification> pendingResourceTemplates = new ArrayList<>();
     private final List<McpServerFeatures.SyncPromptSpecification> pendingPrompts = new ArrayList<>();
 
     // Package-private to allow tests to verify pending prompt lifecycle.
@@ -150,18 +157,26 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
         }
         server = McpServer.sync(transport)
                 .serverInfo(info.serverName(), info.version())
-                .capabilities(McpSchema.ServerCapabilities.builder().tools(true).prompts(true).build())
+                .capabilities(McpSchema.ServerCapabilities.builder().tools(true).resources(false, true).prompts(true).build())
                 .immediateExecution(true)
                 .build();
         for (McpServerFeatures.SyncToolSpecification spec : pendingTools) {
             addTool(spec);
         }
         pendingTools.clear();
+        for (McpServerFeatures.SyncResourceSpecification spec : pendingResources) {
+            addResource(spec);
+        }
+        pendingResources.clear();
+        for (McpServerFeatures.SyncResourceTemplateSpecification spec : pendingResourceTemplates) {
+            addResourceTemplate(spec);
+        }
+        pendingResourceTemplates.clear();
         for (McpServerFeatures.SyncPromptSpecification spec : pendingPrompts) {
             addPrompt(spec);
         }
         pendingPrompts.clear();
-        LOG.info("MCP server '{}' serving ai-tool and ai-prompt routes over stdio", info.serverName());
+        LOG.info("MCP server '{}' serving ai-tool, ai-resource and ai-prompt routes over stdio", info.serverName());
     }
 
     @Override
@@ -177,6 +192,8 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
             originalOut = null;
         }
         pendingTools.clear();
+        pendingResources.clear();
+        pendingResourceTemplates.clear();
         pendingPrompts.clear();
         transport = null;
     }
@@ -250,6 +267,154 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
             // notification fails when stdin is closed (the client went away); the tool must not fail the route
             LOG.warn("MCP tool {} added, but the client could not be notified: {}", spec.tool().name(), e.getMessage());
         }
+    }
+
+    @Override
+    public void resourceAdded(McpServerResource resource) {
+        McpSchema.Resource.Builder resourceBuilder = McpSchema.Resource.builder()
+                .uri(resource.uri())
+                .name(resource.name())
+                .description(resource.description())
+                .mimeType(resource.mimeType());
+        if (resource.title() != null && !resource.title().isBlank()) {
+            resourceBuilder.title(resource.title());
+        }
+        McpSchema.Resource mcpResource = resourceBuilder.build();
+        McpServerFeatures.SyncResourceSpecification spec = new McpServerFeatures.SyncResourceSpecification(
+                mcpResource,
+                (exchange, request) -> {
+                    McpResourceReadResult result = resource.handler().read();
+                    if (result.isError()) {
+                        throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+                                .message(result.errorMessage())
+                                .build();
+                    }
+                    McpSchema.ResourceContents contents;
+                    if (result.blob() != null) {
+                        contents = new McpSchema.BlobResourceContents(
+                                resource.uri(), resource.mimeType(),
+                                Base64.getEncoder().encodeToString(result.blob()));
+                    } else {
+                        contents = new McpSchema.TextResourceContents(resource.uri(), resource.mimeType(), result.text());
+                    }
+                    return new McpSchema.ReadResourceResult(List.of(contents));
+                });
+        if (server == null) {
+            pendingResources.add(spec);
+            LOG.debug("MCP resource queued until stdio server starts: {}", resource.uri());
+            return;
+        }
+        addResource(spec);
+    }
+
+    private void addResource(McpServerFeatures.SyncResourceSpecification spec) {
+        try {
+            server.addResource(spec);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            LOG.warn("MCP resource {} added, but the client could not be notified: {}",
+                    spec.resource().uri(), e.getMessage());
+        }
+    }
+
+    @Override
+    public void resourceRemoved(String resourceUri) {
+        pendingResources.removeIf(spec -> resourceUri.equals(spec.resource().uri()));
+        if (server == null) {
+            return;
+        }
+        try {
+            server.removeResource(resourceUri);
+            LOG.debug("MCP resource removed: {}", resourceUri);
+        } catch (Exception e) {
+            LOG.debug("Failed to remove MCP resource {}: {}", resourceUri, e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean supportsResources() {
+        return true;
+    }
+
+    @Override
+    public void resourceTemplateAdded(McpServerResourceTemplate resourceTemplate) {
+        McpSchema.ResourceTemplate.Builder builder = McpSchema.ResourceTemplate
+                .builder(resourceTemplate.uriTemplate(), resourceTemplate.name())
+                .description(resourceTemplate.description())
+                .mimeType(resourceTemplate.mimeType());
+        if (resourceTemplate.title() != null && !resourceTemplate.title().isBlank()) {
+            builder.title(resourceTemplate.title());
+        }
+        McpServerFeatures.SyncResourceTemplateSpecification spec = new McpServerFeatures.SyncResourceTemplateSpecification(
+                builder.build(),
+                (exchange, request) -> {
+                    McpResourceReadResult result = resourceTemplate.handler().read(request.uri());
+                    if (result.isError()) {
+                        throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+                                .message(result.errorMessage())
+                                .build();
+                    }
+                    McpSchema.ResourceContents contents;
+                    if (result.blob() != null) {
+                        contents = new McpSchema.BlobResourceContents(
+                                request.uri(), resourceTemplate.mimeType(),
+                                Base64.getEncoder().encodeToString(result.blob()));
+                    } else {
+                        contents = new McpSchema.TextResourceContents(
+                                request.uri(), resourceTemplate.mimeType(),
+                                result.text());
+                    }
+                    return new McpSchema.ReadResourceResult(List.of(contents));
+                });
+        if (server == null) {
+            pendingResourceTemplates.add(spec);
+            LOG.debug("MCP resource template queued until stdio server starts: {}", resourceTemplate.uriTemplate());
+            return;
+        }
+        addResourceTemplate(spec);
+    }
+
+    private void addResourceTemplate(McpServerFeatures.SyncResourceTemplateSpecification spec) {
+        try {
+            server.addResourceTemplate(spec);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            LOG.warn("MCP resource template {} added, but the client could not be notified: {}",
+                    spec.resourceTemplate().uriTemplate(), e.getMessage());
+        }
+    }
+
+    @Override
+    public void resourceTemplateRemoved(String uriTemplate) {
+        pendingResourceTemplates.removeIf(spec -> uriTemplate.equals(spec.resourceTemplate().uriTemplate()));
+        if (server == null) {
+            return;
+        }
+        try {
+            server.removeResourceTemplate(uriTemplate);
+            // MCP Java SDK 2.1.0 does not send resources/list_changed when a template is removed.
+            // Remove this workaround when the SDK's removeResourceTemplate() sends that notification itself.
+            server.notifyResourcesListChanged();
+            LOG.debug("MCP resource template removed: {}", uriTemplate);
+        } catch (Exception e) {
+            LOG.debug("Failed to remove MCP resource template {} or notify client: {}",
+                    uriTemplate, e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean supportsResourceTemplates() {
+        return true;
+    }
+
+    int pendingResourceCount() {
+        return pendingResources.size();
+    }
+
+    int pendingResourceTemplateCount() {
+        return pendingResourceTemplates.size();
     }
 
     @Override

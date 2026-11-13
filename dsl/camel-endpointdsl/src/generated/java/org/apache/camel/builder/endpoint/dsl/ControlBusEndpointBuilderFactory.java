@@ -178,6 +178,25 @@ public interface ControlBusEndpointBuilderFactory {
             doSetProperty("routeId", routeId);
             return this;
         }
+        /**
+         * The names of the languages the language command may use, separated by
+         * comma, such as simple. The language command evaluates the message
+         * body as an expression, so it is off until the language is in this
+         * list: a controlbus:language endpoint whose language is not listed
+         * fails when it is created. The route actions are not affected. When
+         * not set, the list of the component is used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param allowedLanguages the value to set
+         * @return the dsl builder
+         */
+        default ControlBusEndpointBuilder allowedLanguages(String allowedLanguages) {
+            doSetProperty("allowedLanguages", allowedLanguages);
+            return this;
+        }
     }
 
     /**

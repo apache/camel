@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -164,6 +165,35 @@ class MessageReceiverListenerImplTest {
                     "the SMPP endpoint's pattern must win over the receiver endpoint's");
         } finally {
             trxContext.stop();
+        }
+    }
+
+    @Test
+    void aMessageArrivingBeforeInitializationIsRejected() throws Exception {
+        DefaultCamelContext trxContext = new DefaultCamelContext();
+        trxContext.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:messageReceiver").routeId("messageReceiver").process(e -> {
+                });
+            }
+        });
+        when(endpoint.getCamelContext()).thenReturn(trxContext);
+
+        // the context is never started, so the StartupListener never runs and consumer/processor stay null
+        MessageReceiverListenerImpl listener = new MessageReceiverListenerImpl(endpoint, "messageReceiver");
+
+        try {
+            // makes the bounded wait return at once instead of taking its full timeout
+            Thread.currentThread().interrupt();
+
+            ProcessRequestException e
+                    = assertThrows(ProcessRequestException.class, () -> listener.onAcceptDeliverSm(deliverSm()));
+            assertTrue(e.getMessage().contains("not initialized"), e.getMessage());
+            assertTrue(Thread.currentThread().isInterrupted(), "the interrupt flag has to be restored");
+        } finally {
+            // clear the flag so it cannot leak into another test on this thread
+            Thread.interrupted();
         }
     }
 }

@@ -38,7 +38,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@UsesWorkingDirectory
 class DependencyUpdateTest extends CamelCommandBaseTestSupport {
 
     private File workingDir;
@@ -47,6 +46,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
     @Override
     public void setup() throws Exception {
         super.setup();
+        useTestWorkDir();
         workingDir = Files.createTempDirectory("camel-dependency-update-tests").toFile();
     }
 

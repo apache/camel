@@ -144,6 +144,7 @@ public final class SecurityUtils {
                 "component:http",
                 "component:https",
                 "component:jetty",
+                "component:pulsar",
                 "component:servlet",
                 "component:vertxhttp"));
         owners.put("allowlocalwebhookurls", Set.of(

@@ -42,6 +42,15 @@ On unmarshal, `mainFormatType` is the class of the primary data of the document:
             uri: mock:unmarshal
 ----
 
+=== Collection documents
+
+A JSON:API document whose primary data is an array, such as the answer to `GET /books`, is a collection document.
+
+* On unmarshal, a document whose `data` is an array gives a `java.util.List` of `mainFormatType` objects (an empty
+  list for `"data": []`). A document whose `data` is one resource object gives that object, as before.
+* On marshal, a `java.util.Collection` or an array of resource objects is written as a collection document, whose
+  `data` is an array. Any other body is written as one resource object.
+
 == Dependencies
 
 To use JsonAPI in your Camel routes, you need to add the dependency

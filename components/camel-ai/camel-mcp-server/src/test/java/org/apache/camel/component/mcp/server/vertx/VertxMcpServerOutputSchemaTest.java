@@ -32,6 +32,7 @@ import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.AvailablePortFinder.Port;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -52,52 +53,54 @@ class VertxMcpServerOutputSchemaTest {
 
     @Test
     void testEnginePublishesOutputSchemaAndStructuredContent() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
-        CamelContext camelContext = new DefaultCamelContext();
-        VertxMcpServerEngine engine = new VertxMcpServerEngine();
-        McpSyncClient client = null;
-        try {
-            MainHttpServer main = new MainHttpServer();
-            main.setCamelContext(camelContext);
-            main.setHost("0.0.0.0");
-            main.setPort(port);
-            camelContext.addService(main);
-            camelContext.start();
+        try (Port portHolder = AvailablePortFinder.find()) {
+            int port = portHolder.getPort();
+            CamelContext camelContext = new DefaultCamelContext();
+            VertxMcpServerEngine engine = new VertxMcpServerEngine();
+            McpSyncClient client = null;
+            try {
+                MainHttpServer main = new MainHttpServer();
+                main.setCamelContext(camelContext);
+                main.setHost("0.0.0.0");
+                main.setPort(port);
+                camelContext.addService(main);
+                camelContext.start();
 
-            engine.setCamelContext(camelContext);
-            engine.initialize(new McpServerInfo("output-schema", "1.0", "/mcp"));
-            engine.start();
+                engine.setCamelContext(camelContext);
+                engine.initialize(new McpServerInfo("output-schema", "1.0", "/mcp"));
+                engine.start();
 
-            JsonObject structured = new JsonObject();
-            structured.put("temperature", 21.5);
-            structured.put("unit", "celsius");
-            engine.toolAdded(tool("getWeather", "Get weather", OUTPUT_SCHEMA,
-                    arguments -> new McpToolCallResult(structured.toJson(), false, structured)));
+                JsonObject structured = new JsonObject();
+                structured.put("temperature", 21.5);
+                structured.put("unit", "celsius");
+                engine.toolAdded(tool("getWeather", "Get weather", OUTPUT_SCHEMA,
+                        arguments -> new McpToolCallResult(structured.toJson(), false, structured)));
 
-            client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port).build())
-                    .requestTimeout(Duration.ofSeconds(10))
-                    .initializationTimeout(Duration.ofSeconds(10))
-                    .build();
-            client.initialize();
+                client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port).build())
+                        .requestTimeout(Duration.ofSeconds(10))
+                        .initializationTimeout(Duration.ofSeconds(10))
+                        .build();
+                client.initialize();
 
-            List<McpSchema.Tool> tools = client.listTools().tools();
-            McpSchema.Tool weather = tools.stream().filter(t -> "getWeather".equals(t.name())).findFirst().orElseThrow();
+                List<McpSchema.Tool> tools = client.listTools().tools();
+                McpSchema.Tool weather = tools.stream().filter(t -> "getWeather".equals(t.name())).findFirst().orElseThrow();
 
-            assertThat(weather.outputSchema()).isNotNull();
-            assertThat(weather.outputSchema()).containsKey("properties");
+                assertThat(weather.outputSchema()).isNotNull();
+                assertThat(weather.outputSchema()).containsKey("properties");
 
-            McpSchema.CallToolResult result = client.callTool(new McpSchema.CallToolRequest("getWeather", Map.of()));
+                McpSchema.CallToolResult result = client.callTool(new McpSchema.CallToolRequest("getWeather", Map.of()));
 
-            assertThat(result.isError()).isFalse();
-            assertThat(result.structuredContent()).isNotNull();
-            assertThat(result.structuredContent()).isInstanceOf(Map.class);
-            assertThat(((Map<?, ?>) result.structuredContent()).get("temperature")).isEqualTo(21.5);
-        } finally {
-            if (client != null) {
-                client.closeGracefully();
+                assertThat(result.isError()).isFalse();
+                assertThat(result.structuredContent()).isNotNull();
+                assertThat(result.structuredContent()).isInstanceOf(Map.class);
+                assertThat(((Map<?, ?>) result.structuredContent()).get("temperature")).isEqualTo(21.5);
+            } finally {
+                if (client != null) {
+                    client.closeGracefully();
+                }
+                engine.stop();
+                camelContext.stop();
             }
-            engine.stop();
-            camelContext.stop();
         }
     }
 

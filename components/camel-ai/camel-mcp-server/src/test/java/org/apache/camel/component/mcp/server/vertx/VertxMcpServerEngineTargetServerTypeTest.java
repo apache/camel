@@ -38,6 +38,7 @@ import org.apache.camel.component.platform.http.main.ManagementHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.AvailablePortFinder.Port;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,94 +53,99 @@ class VertxMcpServerEngineTargetServerTypeTest {
 
     @Test
     void testEngineServesOnManagementServerOnly() throws Exception {
-        int mainPort = AvailablePortFinder.getNextAvailable();
-        int managementPort = AvailablePortFinder.getNextAvailable();
+        try (Port mainPortHolder = AvailablePortFinder.find();
+             Port managementPortHolder = AvailablePortFinder.find()) {
+            int mainPort = mainPortHolder.getPort();
+            int managementPort = managementPortHolder.getPort();
 
-        CamelContext camelContext = new DefaultCamelContext();
-        ManagementHttpServer management = new ManagementHttpServer();
-        VertxMcpServerEngine engine = new VertxMcpServerEngine();
-        McpSyncClient client = null;
-        try {
-            MainHttpServer main = new MainHttpServer();
-            main.setCamelContext(camelContext);
-            main.setHost("0.0.0.0");
-            main.setPort(mainPort);
-            camelContext.addService(main);
-            camelContext.start();
+            CamelContext camelContext = new DefaultCamelContext();
+            ManagementHttpServer management = new ManagementHttpServer();
+            VertxMcpServerEngine engine = new VertxMcpServerEngine();
+            McpSyncClient client = null;
+            try {
+                MainHttpServer main = new MainHttpServer();
+                main.setCamelContext(camelContext);
+                main.setHost("0.0.0.0");
+                main.setPort(mainPort);
+                camelContext.addService(main);
+                camelContext.start();
 
-            management.setCamelContext(camelContext);
-            management.setHost("0.0.0.0");
-            management.setPort(managementPort);
-            management.setPath("/");
-            management.start();
+                management.setCamelContext(camelContext);
+                management.setHost("0.0.0.0");
+                management.setPort(managementPort);
+                management.setPath("/");
+                management.start();
 
-            engine.setCamelContext(camelContext);
-            engine.setTargetServerType(VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT);
-            engine.initialize(new McpServerInfo("dev-tools", "1.0", "/mcp"));
-            engine.start();
-            engine.toolAdded(tool("current_pid", "The pid of this process",
-                    arguments -> new McpToolCallResult("pid-42", false)));
+                engine.setCamelContext(camelContext);
+                engine.setTargetServerType(VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT);
+                engine.initialize(new McpServerInfo("dev-tools", "1.0", "/mcp"));
+                engine.start();
+                engine.toolAdded(tool("current_pid", "The pid of this process",
+                        arguments -> new McpToolCallResult("pid-42", false)));
 
-            client = McpClient.sync(
-                    HttpClientStreamableHttpTransport.builder("http://localhost:" + managementPort).build())
-                    .requestTimeout(Duration.ofSeconds(10))
-                    .initializationTimeout(Duration.ofSeconds(10))
-                    .build();
-            McpSchema.InitializeResult init = client.initialize();
-            assertThat(init.serverInfo().name()).isEqualTo("dev-tools");
+                client = McpClient.sync(
+                        HttpClientStreamableHttpTransport.builder("http://localhost:" + managementPort).build())
+                        .requestTimeout(Duration.ofSeconds(10))
+                        .initializationTimeout(Duration.ofSeconds(10))
+                        .build();
+                McpSchema.InitializeResult init = client.initialize();
+                assertThat(init.serverInfo().name()).isEqualTo("dev-tools");
 
-            assertThat(client.listTools().tools())
-                    .extracting(McpSchema.Tool::name)
-                    .contains("current_pid");
+                assertThat(client.listTools().tools())
+                        .extracting(McpSchema.Tool::name)
+                        .contains("current_pid");
 
-            McpSchema.CallToolResult result = client.callTool(new McpSchema.CallToolRequest("current_pid", Map.of()));
-            assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
-            assertThat(result.content().toString()).contains("pid-42");
+                McpSchema.CallToolResult result = client.callTool(new McpSchema.CallToolRequest("current_pid", Map.of()));
+                assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
+                assertThat(result.content().toString()).contains("pid-42");
 
-            // the main server must not serve the management-targeted MCP endpoint
-            HttpResponse<String> onMainServer = HttpClient.newHttpClient().send(
-                    HttpRequest.newBuilder(URI.create("http://localhost:" + mainPort + "/mcp"))
-                            .header("Content-Type", "application/json")
-                            .header("Accept", "application/json, text/event-stream")
-                            .POST(HttpRequest.BodyPublishers.ofString("{}"))
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-            assertThat(onMainServer.statusCode()).isEqualTo(404);
-        } finally {
-            if (client != null) {
-                client.closeGracefully();
+                // the main server must not serve the management-targeted MCP endpoint
+                HttpResponse<String> onMainServer = HttpClient.newHttpClient().send(
+                        HttpRequest.newBuilder(URI.create("http://localhost:" + mainPort + "/mcp"))
+                                .header("Content-Type", "application/json")
+                                .header("Accept", "application/json, text/event-stream")
+                                .POST(HttpRequest.BodyPublishers.ofString("{}"))
+                                .build(),
+                        HttpResponse.BodyHandlers.ofString());
+                assertThat(onMainServer.statusCode()).isEqualTo(404);
+            } finally {
+                if (client != null) {
+                    client.closeGracefully();
+                }
+                engine.stop();
+                management.stop();
+                camelContext.stop();
             }
-            engine.stop();
-            management.stop();
-            camelContext.stop();
         }
     }
 
     @Test
     void testManagementTargetWithoutManagementServerFailsFast() throws Exception {
-        int mainPort = AvailablePortFinder.getNextAvailable();
+        try (Port mainPortHolder = AvailablePortFinder.find()) {
+            int mainPort = mainPortHolder.getPort();
 
-        CamelContext camelContext = new DefaultCamelContext();
-        VertxMcpServerEngine engine = new VertxMcpServerEngine();
-        try {
-            MainHttpServer main = new MainHttpServer();
-            main.setCamelContext(camelContext);
-            main.setHost("0.0.0.0");
-            main.setPort(mainPort);
-            camelContext.addService(main);
-            camelContext.start();
+            CamelContext camelContext = new DefaultCamelContext();
+            VertxMcpServerEngine engine = new VertxMcpServerEngine();
+            try {
+                MainHttpServer main = new MainHttpServer();
+                main.setCamelContext(camelContext);
+                main.setHost("0.0.0.0");
+                main.setPort(mainPort);
+                camelContext.addService(main);
+                camelContext.start();
 
-            engine.setCamelContext(camelContext);
-            engine.setTargetServerType(VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT);
-            engine.initialize(new McpServerInfo("dev-tools", "1.0", "/mcp"));
+                engine.setCamelContext(camelContext);
+                engine.setTargetServerType(VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT);
+                engine.initialize(new McpServerInfo("dev-tools", "1.0", "/mcp"));
 
-            // the main server router is present but an explicit management target must never fall back to it
-            assertThatThrownBy(engine::start)
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("management");
-        } finally {
-            engine.stop();
-            camelContext.stop();
+                // the main server router is present but an explicit management target must never fall back to it
+                assertThatThrownBy(engine::start)
+                        .isInstanceOf(IllegalStateException.class)
+                        .hasMessageContaining("management");
+            } finally {
+                engine.stop();
+                camelContext.stop();
+            }
         }
     }
 
