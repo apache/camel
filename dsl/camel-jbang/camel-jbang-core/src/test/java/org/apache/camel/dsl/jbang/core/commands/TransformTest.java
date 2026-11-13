@@ -32,13 +32,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@UsesWorkingDirectory
-class TransformTest {
+class TransformTest extends CamelCommandBaseTestSupport {
 
     private Path workingDir;
 
     @BeforeEach
-    public void setup() throws IOException {
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestWorkDir();
         Path base = Paths.get("target");
         workingDir = Files.createTempDirectory(base, "camel-transform");
     }

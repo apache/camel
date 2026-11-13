@@ -26,6 +26,7 @@ import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.CliExecutionExc
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -36,8 +37,14 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 /**
  * camel transform route: a route in another DSL, printed or written to a file or directory.
  */
-@UsesWorkingDirectory
 class TransformRouteTest extends CamelCommandBaseTestSupport {
+
+    @BeforeEach
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestWorkDir();
+    }
 
     private static final String YAML = """
             - route:
