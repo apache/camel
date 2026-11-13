@@ -86,6 +86,7 @@ public class OtherFunctionArgumentsTest extends AbstractSimpleFunctionFactoryTes
         assertEquals(42, evaluate("convertTo(,int)", Integer.class));
         assertEquals("42!", evaluate("function(shout,)", String.class));
         assertEquals(evaluate("hash(${body})", String.class), evaluate("hash(,SHA-256)", String.class));
+        assertEquals(evaluate("hash(${body})", String.class), evaluate("hash()", String.class));
         // the algorithm of hash is SHA-256, the separator of pad a space, of concat none
         assertEquals(evaluate("hash(${body})", String.class), evaluate("hash(${body},)", String.class));
         assertEquals("42   ", evaluate("pad(${body},5,)", String.class));

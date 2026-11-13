@@ -200,12 +200,13 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
         remainder = ifStartsWithReturnRemainder("hash(", function);
         if (remainder != null) {
             String values = StringHelper.beforeLast(remainder, ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
+            if (values == null) {
                 throw new SimpleParserException(
                         "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, index);
             }
-            // a comma inside quotes or a nested function is part of the value
-            String[] tokens = splitArgumentsKeepQuotes(values);
+            // ${hash()}: the message body with SHA-256, as documented; a comma inside quotes or a nested function is
+            // part of the value
+            String[] tokens = ObjectHelper.isEmpty(values) ? new String[] { null } : splitArgumentsKeepQuotes(values);
             if (tokens.length > 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, index);
