@@ -18,7 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.StringJoiner;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
@@ -32,6 +35,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.run.common.LogFileReader;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.UnitUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -40,8 +44,8 @@ import org.apache.camel.util.json.JsonObject;
  * get health, get error and log, each a JVM of its own.
  */
 @CommandDefinition(name = "status",
-                   description = "The state of a running Camel integration in one call: its routes, health, last errors,"
-                                 + " last reload and the end of its log",
+                   description = "The state of a running Camel integration in one call: where it runs and its files,"
+                                 + " its routes, health, last errors and last reload, its JVM, and the end of its log",
                    generateHelp = true,
                    footer = {
                            "Examples:",
@@ -100,17 +104,20 @@ public class IntegrationStatus extends ProcessBaseCommand {
     static JsonObject status(CamelProcess process, JsonObject errorFile, JsonObject log, int logLines, int errors) {
         JsonObject root = process.status();
         JsonObject context = root.get("context") instanceof JsonObject jo ? jo : new JsonObject();
+        JsonObject runtime = root.get("runtime") instanceof JsonObject jo ? jo : new JsonObject();
+        JsonArray routes = routes(root);
         JsonObject answer = new JsonObject();
         answer.put("pid", process.pid());
         answer.put("name", process.name());
         answer.put("camelVersion", context.getString("version"));
-        if (root.get("runtime") instanceof JsonObject runtime) {
-            answer.put("platform", runtime.getString("platform"));
-        }
+        answer.put("platform", runtime.getString("platform"));
         answer.put("state", context.getString("state"));
         answer.put("phase", context.getInteger("phase"));
         answer.put("uptime", context.getLong("uptime"));
         answer.put("devMode", context.getBoolean("devMode"));
+        // where it was started, and the files of its routes, as an agent edits them
+        answer.put("directory", runtime.getString("directory"));
+        answer.put("sources", sources(routes));
         JsonObject stats = context.get("statistics") instanceof JsonObject jo ? jo : null;
         if (stats != null) {
             JsonObject exchanges = new JsonObject();
@@ -119,13 +126,49 @@ public class IntegrationStatus extends ProcessBaseCommand {
             exchanges.put("inflight", number(stats.get("exchangesInflight")));
             answer.put("exchanges", exchanges);
         }
-        answer.put("routes", routes(root));
+        answer.put("routes", routes);
         answer.put("health", health(root));
         answer.put("http", http(root));
         answer.put("errors", errors(errorFile, errors));
         List<JsonObject> records = records(log);
         answer.put("reload", reload(stats, records));
+        answer.put("jvm", jvm(root, runtime));
         answer.put("log", new JsonArray(records.subList(0, Math.min(Math.max(logLines, 0), records.size()))));
+        return answer;
+    }
+
+    /**
+     * The files of the routes, without the line: <tt>orders.camel.yaml</tt>.
+     */
+    private static JsonArray sources(JsonArray routes) {
+        Set<String> files = new LinkedHashSet<>();
+        for (Object o : routes) {
+            if (o instanceof JsonObject route && route.getString("source") != null) {
+                files.add(route.getString("source").replaceFirst(":\\d+$", ""));
+            }
+        }
+        return new JsonArray(new ArrayList<>(files));
+    }
+
+    /**
+     * The Java version, the heap and the threads: a heap near its maximum, or a garbage collection that takes longer
+     * and longer, is trouble on its way.
+     */
+    private static JsonObject jvm(JsonObject root, JsonObject runtime) {
+        JsonObject answer = new JsonObject();
+        answer.put("javaVersion", runtime.getString("javaVersion"));
+        answer.put("javaVendor", runtime.getString("javaVendor"));
+        if (root.get("memory") instanceof JsonObject memory) {
+            answer.put("heapUsed", memory.getLong("heapMemoryUsed"));
+            answer.put("heapMax", memory.getLong("heapMemoryMax"));
+        }
+        if (root.get("threads") instanceof JsonObject threads) {
+            answer.put("threads", threads.getInteger("threadCount"));
+        }
+        if (root.get("gc") instanceof JsonObject gc) {
+            answer.put("gcCount", gc.getLong("collectionCount"));
+            answer.put("gcTime", gc.getLong("collectionTime"));
+        }
         return answer;
     }
 
@@ -141,6 +184,9 @@ public class IntegrationStatus extends ProcessBaseCommand {
             JsonObject jo = new JsonObject();
             jo.put("routeId", route.getString("routeId"));
             jo.put("from", route.getString("from"));
+            // where the route is: orders.camel.yaml:4, relative to the directory it was started from
+            String source = route.getString("source");
+            jo.put("source", source != null && source.startsWith("file:") ? source.substring(5) : source);
             JsonObject lastError = route.get("lastError") instanceof JsonObject le ? le : null;
             // as camel get route has it
             jo.put("status", lastError != null ? "Error" : route.getString("state"));
@@ -282,6 +328,15 @@ public class IntegrationStatus extends ProcessBaseCommand {
             sb.append(", dev mode");
         }
         printer().println(sb.toString());
+        if (status.getString("directory") != null) {
+            printer().println("Directory: " + status.getString("directory"));
+        }
+        JsonArray sources = status.getCollection("sources");
+        if (!sources.isEmpty()) {
+            StringJoiner files = new StringJoiner(", ");
+            sources.forEach(f -> files.add(f.toString()));
+            printer().println("Sources: " + files);
+        }
         if (status.get("exchanges") instanceof JsonObject ex) {
             printer().println("Exchanges: " + ex.getLong("total") + " total, " + ex.getLong("failed") + " failed, "
                               + ex.getLong("inflight") + " inflight");
@@ -291,6 +346,7 @@ public class IntegrationStatus extends ProcessBaseCommand {
         for (Object o : routes) {
             JsonObject r = (JsonObject) o;
             printer().println("  " + r.getString("routeId") + "  " + r.getString("status") + "  " + r.getString("from")
+                              + (r.getString("source") != null ? "  " + r.getString("source") : "")
                               + "  (" + r.getLong("total") + " total, " + r.getLong("failed") + " failed, "
                               + r.getLong("inflight") + " inflight)");
             if (r.get("lastError") instanceof JsonObject le) {
@@ -342,6 +398,27 @@ public class IntegrationStatus extends ProcessBaseCommand {
                 }
             }
             printer().println(rl.toString());
+        }
+        JsonObject jvm = status.getMap("jvm");
+        StringJoiner vm = new StringJoiner(", ");
+        if (jvm.getString("javaVersion") != null) {
+            vm.add("Java " + jvm.getString("javaVersion")
+                   + (jvm.getString("javaVendor") != null ? " (" + jvm.getString("javaVendor") + ")" : ""));
+        }
+        Long heapUsed = jvm.getLong("heapUsed");
+        if (heapUsed != null) {
+            Long heapMax = jvm.getLong("heapMax");
+            vm.add("heap " + UnitUtils.printUnitFromBytesDot(heapUsed)
+                   + (heapMax != null && heapMax > 0 ? " of " + UnitUtils.printUnitFromBytesDot(heapMax) : ""));
+        }
+        if (jvm.getInteger("threads") != null) {
+            vm.add(jvm.getInteger("threads") + " threads");
+        }
+        if (jvm.getLong("gcCount") != null) {
+            vm.add(jvm.getLong("gcCount") + " GCs (" + jvm.getLong("gcTime") + " ms)");
+        }
+        if (vm.length() > 0) {
+            printer().println("JVM: " + vm);
         }
         JsonArray log = status.getCollection("log");
         if (!log.isEmpty()) {

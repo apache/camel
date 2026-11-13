@@ -138,10 +138,12 @@ TIP: Use `camel get --watch` for continuous updates.
 
 === The state of one integration in one call
 
-`camel status` shows one integration: its state and uptime, the exchanges, each route with its counters and last
-error, the health checks that are down, the HTTP endpoints, the last errors, the reloads of dev mode with the outcome
-of the last one, and the end of its log. It is what `camel get route`, `camel get health`, `camel get error` and
-`camel log` show, in one command, which is what an AI agent wants after it has run or changed an integration:
+`camel status` shows one integration: its state and uptime, the folder it was started from and the files of its
+routes, the exchanges, each route with its counters, its file and line, and last error, the health checks that are
+down, the HTTP endpoints, the last errors, the reloads of dev mode with the outcome of the last one, the Java version,
+heap, threads and garbage collections of its JVM, and the end of its log. It is what `camel get route`,
+`camel get health`, `camel get error` and `camel log` show, in one command, which is what an AI agent wants after it
+has run or changed an integration:
 
 [source,bash]
 ----

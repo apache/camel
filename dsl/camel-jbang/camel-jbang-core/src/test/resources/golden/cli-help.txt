@@ -20,8 +20,9 @@ Running:
     script      Run Camel integration as shell script for terminal scripting
 
 Monitoring:
-    status      The state of a running Camel integration in one call: its
-                routes, health, last errors, last reload and the end of its log
+    status      The state of a running Camel integration in one call: where it
+                runs and its files, its routes, health, last errors and last
+                reload, its JVM, and the end of its log
     get         Get status of Camel integrations (use get --help to see sub
                 commands)
     top         Top status of Camel integrations (use top --help to see sub
@@ -6123,8 +6124,9 @@ Examples:
 Press Ctrl-C to exit.
 
 == camel status --help
-The state of a running Camel integration in one call: its routes, health, last
-errors, last reload and the end of its log
+The state of a running Camel integration in one call: where it runs and its
+files, its routes, health, last errors and last reload, its JVM, and the end of
+its log
 Usage: camel status [-h] [--json] [--log-lines=<log-lines>] [--errors=<errors>]
                      [<name>]
 
