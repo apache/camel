@@ -38,7 +38,6 @@ import dev.tamboui.style.Style;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
@@ -1466,27 +1465,8 @@ class TuiToolRegistry {
     }
 
     String callGetReadme(Map<String, Object> args) {
-        String name = args.get("name") instanceof String s ? s : null;
-        JsonObject response = facade.getReadme(name);
-        JsonObject summary = facade.getIntegrationSummary(name);
-        if (response == null) {
-            // the project's generated README: an overview, capabilities and route texts, partly AI-assisted
-            if (summary != null) {
-                return Jsoner.serialize(summary);
-            }
-            return name != null
-                    ? "No README found for integration '" + name + "'"
-                    : "No README found for the selected integration";
-        }
-        JsonObject result = new JsonObject();
-        String content = response.getString("content");
-        String file = response.getStringOrDefault("file", "README");
-        result.put("file", file);
-        result.put("content", content != null ? content : "");
-        if (summary != null) {
-            result.put("alsoSee", IntegrationSummary.FILE_NAME + ": an AI-assisted summary of the project (camel_get_files)");
-        }
-        return Jsoner.serialize(result);
+        return ReadmeTool.answer(facade, args.get("name") instanceof String s ? s : null,
+                args.get("aiSummary") instanceof Boolean b && b);
     }
 
     private String callControl(Map<String, Object> args) {
