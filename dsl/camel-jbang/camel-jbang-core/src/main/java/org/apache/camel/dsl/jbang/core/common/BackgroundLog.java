@@ -102,7 +102,9 @@ public final class BackgroundLog {
      * The log to show for an integration that has started: its log file, which has all of its logging, or its output
      * when it has no log file (its logging is off, JSON, or a logging configuration of its own).
      *
-     * @param output the output of the integration
+     * @param  pid    the pid of the integration
+     * @param  output the output of the integration
+     * @return        the log file of the integration, or its output when it has no log file
      */
     public static Path logOf(long pid, Path output) {
         Path log = CommandLineHelper.getCamelDir().resolve(pid + ".log");
