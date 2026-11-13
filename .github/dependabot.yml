@@ -45,6 +45,12 @@ updates:
       # Jackson 3 uses the 2.x jackson-annotations
       - dependency-name: "com.fasterxml.jackson.core:jackson-annotations"
         update-types: ["version-update:semver-major"]
+      # Jackson 3.3 Blackbird needs Java 25, and jtoon 3.0.0 (camel-toon) registers it, so camel-toon fails on Java 21:
+      # revisit when jtoon no longer registers Blackbird below Java 25, or when Camel's minimum Java is 25
+      - dependency-name: "tools.jackson:*"
+        versions: [">= 3.3.0"]
+      - dependency-name: "tools.jackson.*:*"
+        versions: [">= 3.3.0"]
       # sdk-core 9.25.0 and later need OkHttp 5, and the IBM SDKs of camel-ibm are built with OkHttp 4: revisit when they move to OkHttp 5
       - dependency-name: "com.ibm.cloud:sdk-core"
         versions: [">= 9.25.0"]
