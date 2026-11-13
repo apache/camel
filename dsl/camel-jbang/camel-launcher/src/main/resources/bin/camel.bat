@@ -87,8 +87,12 @@ set "_CDS_VERSION=!_CDS_VERSION:camel-launcher-=!"
 @REM Different install methods (SDKMAN, zip) place the launcher in different directories;
 @REM a shared archive from another install points at the wrong JAR or returns wrong install metadata.
 @REM Pass BASEDIR via environment to avoid trailing-backslash breaking PowerShell string quoting.
+set "_CDS_INSTALL_HASH="
 set "_CDS_PS_INPUT=!BASEDIR!"
-for /f "delims=" %%h in ('powershell -NoProfile -Command "$b=[System.Text.Encoding]::UTF8.GetBytes($env:_CDS_PS_INPUT);$h=[System.Security.Cryptography.SHA256]::Create().ComputeHash($b);($h[0..3]|ForEach-Object{$_.ToString(\"x2\")}) -join \"\""') do set "_CDS_INSTALL_HASH=%%h"
+set "_CDS_PS_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
+if exist "!_CDS_PS_EXE!" (
+  for /f "delims=" %%h in ('"!_CDS_PS_EXE!" -NoProfile -NonInteractive -Command "$b=[System.Text.Encoding]::UTF8.GetBytes($env:_CDS_PS_INPUT);$h=[System.Security.Cryptography.SHA256]::Create().ComputeHash($b);($h[0..3]|ForEach-Object{$_.ToString(\"x2\")}) -join \"\"" 2^>nul') do set "_CDS_INSTALL_HASH=%%h"
+)
 if not defined _CDS_INSTALL_HASH set "_CDS_INSTALL_HASH=default"
 set "_CDS_DIR=!LOCALAPPDATA!\camel-cli\cds\!_CDS_VERSION!\!_CDS_INSTALL_HASH!"
 @REM the JVM does not start when the directory of the archive is missing
