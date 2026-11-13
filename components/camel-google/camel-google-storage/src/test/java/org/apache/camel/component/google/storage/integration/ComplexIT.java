@@ -17,24 +17,37 @@
 package org.apache.camel.component.google.storage.integration;
 
 import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.security.KeyPairGenerator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.storage.GoogleCloudStorageConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.test.infra.google.storage.services.GoogleStorageLocalContainerInfraService;
+import org.apache.camel.test.infra.google.storage.services.GoogleStorageService;
+import org.apache.camel.test.infra.google.storage.services.GoogleStorageServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-@EnabledIfEnvironmentVariable(named = "GOOGLE_APPLICATION_CREDENTIALS", matches = ".*",
-                              disabledReason = "Application credentials were not provided")
-public class ComplexIT extends CamelTestSupport {
+/**
+ * Runs against the Cloud Storage service of Floci GCP, or with {@code -Dgoogle.instance.type=remote} against the one of
+ * the project of the application default credentials, such as the key of the {@code GOOGLE_APPLICATION_CREDENTIALS}
+ * environment variable.
+ */
+class ComplexIT extends CamelTestSupport {
 
-    @EndpointInject
-    private ProducerTemplate template;
+    @RegisterExtension
+    static GoogleStorageService service = GoogleStorageServiceFactory.createService();
 
     @EndpointInject("mock:bucket1")
     private MockEndpoint mockBucket1;
@@ -46,13 +59,39 @@ public class ComplexIT extends CamelTestSupport {
     private MockEndpoint mockProcessed;
 
     @Override
+    protected void bindToRegistry(Registry registry) throws Exception {
+        if (service instanceof GoogleStorageLocalContainerInfraService) {
+            // the endpoints take the client of the registry; against Google Cloud, they build their own
+            registry.bind("storageClient", createLocalStorageClient());
+        }
+    }
+
+    // Floci GCP gives an access token to a service account of any key, at the token address of the key: unlike no
+    // credentials, the ones of a key made for the test can sign the download links
+    private static Storage createLocalStorageClient() throws Exception {
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+        generator.initialize(2048);
+        ServiceAccountCredentials credentials = ServiceAccountCredentials.newBuilder()
+                .setClientEmail("camel@" + service.projectId() + ".iam.gserviceaccount.com")
+                .setPrivateKeyId("camel")
+                .setPrivateKey(generator.generateKeyPair().getPrivate())
+                .setProjectId(service.projectId())
+                .setTokenServerUri(URI.create(service.endpoint() + "/token"))
+                .build();
+        return StorageOptions.newBuilder()
+                .setHost(service.endpoint())
+                .setProjectId(service.projectId())
+                .setCredentials(credentials)
+                .build()
+                .getService();
+    }
+
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 final int numberOfObjects = 3;
-                //final String serviceAccountKeyFile = "somefile.json";
-                final String serviceAccountKeyFile = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
                 final String bucket1 = "camel_test_bucket1";
                 final String bucket2 = "camel_test_bucket2";
                 final String bucket3 = "camel_test_processed_bucket";
@@ -60,20 +99,19 @@ public class ComplexIT extends CamelTestSupport {
 
                 //upload 3 file into bucket1
                 byte[] payload = "Camel rocks!".getBytes();
-                ByteArrayInputStream bais = new ByteArrayInputStream(payload);
-                from("timer:timer1?repeatCount=" + numberOfObjects)
+                from("timer:timer1?includeMetadata=true&repeatCount=" + numberOfObjects)
                         .process(exchange -> {
-                            String filename = "file_" + ((int) (Math.random() * 10000)) + ".txt";
+                            String filename = "file_" + exchange.getProperty(Exchange.TIMER_COUNTER) + ".txt";
                             exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, filename);
-                            exchange.getIn().setBody(bais);
+                            exchange.getIn().setBody(new ByteArrayInputStream(payload));
                         })
-                        .to("google-storage://" + bucket1 + "?serviceAccountKey=file:" + serviceAccountKeyFile)
+                        .to("google-storage://" + bucket1)
                         .log("upload file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}")
                         .to("mock:bucket1");
 
                 //poll from bucket1, moving processed into bucket_processed and deleting original
-                from("google-storage://" + bucket1 + "?serviceAccountKey=file:" + serviceAccountKeyFile
-                     + "&moveAfterRead=true"
+                from("google-storage://" + bucket1
+                     + "?moveAfterRead=true"
                      + "&destinationBucket=" + bucket3
                      + "&autoCreateBucket=true"
                      + "&deleteAfterRead=true"
@@ -84,26 +122,26 @@ public class ComplexIT extends CamelTestSupport {
 
                 //upload these files to bucket2
                 from("direct:processed")
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile)
+                        .to("google-storage://" + bucket2)
                         .log("uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}")
                         .process(exchange -> {
                             exchange.getIn().setHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 86400000L); //1 day
                         })
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile
-                            + "&operation=createDownloadLink")
+                        .to("google-storage://" + bucket2
+                            + "?operation=createDownloadLink")
                         .log("URL for ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName} =${body}")
                         .to("mock:bucket2");
 
                 //list all buckets
                 from("timer:timer1?repeatCount=1&fixedRate=true&period=10000")
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile
-                            + "&operation=listBuckets")
+                        .to("google-storage://" + bucket2
+                            + "?operation=listBuckets")
                         .log("list buckets:${body}");
 
                 //list all object of the bucket2 and send result to direct:moreinfo and direct:copy
                 from("timer:timer1?repeatCount=1&fixedRate=true&period=10000")
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile
-                            + "&operation=listObjects")
+                        .to("google-storage://" + bucket2
+                            + "?operation=listObjects")
                         .log("list " + bucket2 + " objects body:${body}")
                         .split(bodyAs(List.class))
                         .log("splitted: ${body}")
@@ -115,8 +153,8 @@ public class ComplexIT extends CamelTestSupport {
                             String fileName = blob.getName();
                             exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, fileName);
                         })
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile
-                            + "&operation=getObject")
+                        .to("google-storage://" + bucket2
+                            + "?operation=getObject")
                         .log("get object bucket:${header.CamelGoogleCloudStorageBucketName} object:${header.CamelGoogleCloudStorageObjectName}, body:${body}");
 
                 //copy object
@@ -129,8 +167,8 @@ public class ComplexIT extends CamelTestSupport {
                             exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_BUCKET_NAME, bucket4);
                             exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_OBJECT_NAME, copyFileName);
                         })
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile
-                            + "&operation=copyObject")
+                        .to("google-storage://" + bucket2
+                            + "?operation=copyObject")
                         .log("${body}");
 
             }
@@ -138,13 +176,12 @@ public class ComplexIT extends CamelTestSupport {
     }
 
     @Test
-    public void sendIn() throws Exception {
+    void sendIn() throws Exception {
         mockBucket1.expectedMessageCount(3);
         mockBucket2.expectedMessageCount(3);
         mockProcessed.expectedMessageCount(3);
 
-        Thread.sleep(10000);
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
 }
