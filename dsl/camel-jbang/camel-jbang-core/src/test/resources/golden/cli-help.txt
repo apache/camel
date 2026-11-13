@@ -20,6 +20,8 @@ Running:
     script      Run Camel integration as shell script for terminal scripting
 
 Monitoring:
+    status      The state of a running Camel integration in one call: its
+                routes, health, last errors, last reload and the end of its log
     get         Get status of Camel integrations (use get --help to see sub
                 commands)
     top         Top status of Camel integrations (use top --help to see sub
@@ -6120,6 +6122,30 @@ Examples:
 
 Press Ctrl-C to exit.
 
+== camel status --help
+The state of a running Camel integration in one call: its routes, health, last
+errors, last reload and the end of its log
+Usage: camel status [-h] [--json] [--log-lines=<log-lines>] [--errors=<errors>]
+                     [<name>]
+
+Options:
+  -h, --help                Display this help and exit
+      --json                Output in JSON Format: one document, with the routes
+                            as camel get route has them, and the log records
+                            newest first
+      --log-lines=<log-lines>
+                            How many of the last log records to show
+                            Default: 20
+      --errors=<errors>     How many of the last errors to show
+                            Default: 5
+  <name>                    Name or pid of the running Camel integration
+                            (default: the only one running)
+
+Examples:
+  camel status
+  camel status myapp --json
+  camel status myapp --log-lines=50
+
 == camel stop --help
 Shuts down running Camel integrations
 Usage: camel stop [-h] [--kill] [--timeout=<timeout>] [--no-wait] [<name>]
@@ -6801,7 +6827,7 @@ Examples:
 == camel no-such-command
 exit: 2
 stderr:
-  ERROR: 'camel no-such-command' is not a subcommand of 'camel'. Available: run, dev, stop, restart, ps, log, shell, script, get, top, trace, hawtio, jolokia, cmd, bind, init, export, debug, eval, explain, transform, dirty, doctor, sbom, nano, config, dependency, version, update, wrapper, completion, plugin, catalog, doc, infra, ask, harden, overview, semantic. See 'camel --help'.
+  ERROR: 'camel no-such-command' is not a subcommand of 'camel'. Available: run, dev, stop, restart, ps, log, shell, script, status, get, top, trace, hawtio, jolokia, cmd, bind, init, export, debug, eval, explain, transform, dirty, doctor, sbom, nano, config, dependency, version, update, wrapper, completion, plugin, catalog, doc, infra, ask, harden, overview, semantic. See 'camel --help'.
   Usage: camel [-hV] [COMMAND]
   Try 'camel --help' for more information.
   Maybe a specific Camel CLI plugin must be installed? (Try 'camel plugin --help' for more information)

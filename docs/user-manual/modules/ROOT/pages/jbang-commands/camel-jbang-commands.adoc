@@ -43,6 +43,7 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-script.adoc[camel script] | Run Camel integration as shell script for terminal scripting
 | xref:jbang-commands/camel-jbang-semantic.adoc[camel semantic] | List semantic definitions and expert contracts
 | xref:jbang-commands/camel-jbang-shell.adoc[camel shell] | Interactive Camel CLI shell.
+| xref:jbang-commands/camel-jbang-status.adoc[camel status] | The state of a running Camel integration in one call: its routes, health, last errors, last reload and the end of its log
 | xref:jbang-commands/camel-jbang-stop.adoc[camel stop] | Shuts down running Camel integrations
 | xref:jbang-commands/camel-jbang-top.adoc[camel top] | Top status of Camel integrations
 | xref:jbang-commands/camel-jbang-trace.adoc[camel trace] | Tail message traces from running Camel integrations

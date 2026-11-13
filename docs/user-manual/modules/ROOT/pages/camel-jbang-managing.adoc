@@ -136,6 +136,22 @@ Use `--remote` to break down TOTAL into remote/total pairs.
 
 TIP: Use `camel get --watch` for continuous updates.
 
+=== The state of one integration in one call
+
+`camel status` shows one integration: its state and uptime, the exchanges, each route with its counters and last
+error, the health checks that are down, the HTTP endpoints, the last errors, the reloads of dev mode with the outcome
+of the last one, and the end of its log. It is what `camel get route`, `camel get health`, `camel get error` and
+`camel log` show, in one command, which is what an AI agent wants after it has run or changed an integration:
+
+[source,bash]
+----
+camel status cheese --json
+----
+
+With `--json` it prints one document: the routes have the fields of `camel get route --json`, `uptime` is in millis,
+and the log records are newest first. Without a name it shows the only integration that runs. `--log-lines` and
+`--errors` say how many log records and errors to show (20 and 5).
+
 == Route status
 
 See per-route statistics across all running integrations:
