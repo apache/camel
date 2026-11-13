@@ -3477,6 +3477,46 @@ public class StaticEndpointBuilders {
         return CamundaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Cedar (camel-cedar)
+     * Embedded Cedar authorization policies
+     * 
+     * Category: security
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-cedar
+     * 
+     * Syntax: <code>cedar:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform. Only authorize is supported.
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static CedarEndpointBuilderFactory.CedarEndpointBuilder cedar(String path) {
+        return cedar("cedar", path);
+    }
+    /**
+     * Cedar (camel-cedar)
+     * Embedded Cedar authorization policies
+     * 
+     * Category: security
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-cedar
+     * 
+     * Syntax: <code>cedar:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform. Only authorize is supported.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static CedarEndpointBuilderFactory.CedarEndpointBuilder cedar(String componentName, String path) {
+        return CedarEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
      * 

@@ -9,6 +9,7 @@ quarkus:dev
 
 
 # project files
+.camel-export
 .mvn/wrapper/maven-wrapper.jar
 .mvn/wrapper/maven-wrapper.properties
 AGENTS.md

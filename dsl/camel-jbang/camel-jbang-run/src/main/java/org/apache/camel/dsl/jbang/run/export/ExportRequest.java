@@ -206,8 +206,8 @@ public class ExportRequest {
     /**
      * The working directory of the export: the run settings of the dependency resolution and the project being built
      * are kept there, and the directory is deleted and created again on each export. The default is the .camel-jbang
-     * directory in the current directory, as with camel export; use a directory of its own for each export that runs at
-     * the same time.
+     * directory in the current directory, as with camel export. Exports that use the same work directory run one at a
+     * time; use a directory of its own for each export that runs at the same time.
      */
     public Path workDir = CamelHome.getWorkDir();
 

@@ -171,9 +171,13 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         log.trace("Running purge task to see if any entries have been timed out");
         try {
             purge();
-        } catch (Exception t) {
-            // must catch and log exception otherwise the executor will now schedule next purgeTask
-            log.warn("Exception occurred during purge task. This exception will be ignored.", t);
+        } catch (VirtualMachineError t) {
+            // left as before: a JVM-level failure still ends the purge task
+            throw t;
+        } catch (Throwable t) {
+            // must catch and log exception (also an Error) otherwise the executor will not schedule the next purgeTask,
+            // and no entry would ever time out again
+            log.warn("Exception or error occurred during purge task. This exception or error will be ignored.", t);
         }
     }
 
@@ -243,6 +247,13 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         for (Listener<K, V> listener : listeners) {
             try {
                 listener.timeoutMapEvent(type, key, value);
+            } catch (VirtualMachineError t) {
+                // left as before: a JVM-level failure is thrown on (and ends the purge task when it purges)
+                throw t;
+            } catch (Error t) {
+                // the other entries that expired with this one are still evicted
+                log.warn("Error in a listener of the timeout map for key: {} ({} event). This error is ignored.", key, type,
+                        t);
             } catch (Exception t) {
                 // Ignore
             }

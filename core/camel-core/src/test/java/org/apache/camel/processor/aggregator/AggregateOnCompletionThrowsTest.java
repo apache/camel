@@ -38,24 +38,34 @@ import org.apache.camel.support.KeyValueAggregationRepository;
 import org.apache.camel.support.MemoryKeyValueRepository;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * An aggregation strategy whose onCompletion throws (its javadoc says it must not): the aggregated exchange is booked
  * as in progress already, and its group has been removed from the repository. The aggregated exchange must then be
  * failed, as when the thread pool rejects it, so that the aggregator no longer counts it as in progress and a
- * recoverable repository recovers it, instead of skipping it forever as being in progress.
+ * recoverable repository recovers it, instead of skipping it forever as being in progress. An Error that is not a
+ * VirtualMachineError (such as a NoClassDefFoundError of a class used by the strategy) is handled as an exception.
  */
 class AggregateOnCompletionThrowsTest extends ContextTestSupport {
+
+    enum Failure {
+        EXCEPTION,
+        ERROR
+    }
 
     private final AtomicBoolean throwOnce = new AtomicBoolean(true);
     private final Set<String> alwaysThrow = ConcurrentHashMap.newKeySet();
     private final List<String> failures = new CopyOnWriteArrayList<>();
     private final List<Exchange> handled = new CopyOnWriteArrayList<>();
+    private Failure failure = Failure.EXCEPTION;
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -105,8 +115,10 @@ class AggregateOnCompletionThrowsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    void testFailedBatchCompletionSendsOtherGroups() throws Exception {
+    @ParameterizedTest
+    @EnumSource(Failure.class)
+    void testFailedBatchCompletionSendsOtherGroups(Failure failure) throws Exception {
+        this.failure = failure;
         AggregateProcessor aggregator = addRoute(recoverableRepository(), true);
 
         // the batch consumer completes the groups A and B at once: whichever group's onCompletion throws is
@@ -118,15 +130,17 @@ class AggregateOnCompletionThrowsTest extends ContextTestSupport {
         sendBatch("A1", "A");
         sendBatch("B1", "B");
         Exchange last = sendBatch("A2", "A");
-        assertInstanceOf(IllegalStateException.class, last.getException());
+        assertFailedWith(failure, last);
 
         assertMockEndpointsSatisfied();
         await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(0, aggregator.getInProgressCompleteExchanges()));
     }
 
-    @Test
-    void testRecoverGoesOnAfterAnExchangeThatFailsAgain() throws Exception {
+    @ParameterizedTest
+    @EnumSource(Failure.class)
+    void testRecoverGoesOnAfterAnExchangeThatFailsAgain(Failure failure) throws Exception {
+        this.failure = failure;
         addRoute(new OrderedRecoverableRepository(), false);
         // onCompletion of A1+A2 throws each time, so it fails again each time the recover task resubmits it, and it is
         // the first one the recover task finds: the recover task must still go on and recover B1+B2
@@ -141,11 +155,20 @@ class AggregateOnCompletionThrowsTest extends ContextTestSupport {
         // onCompletion of B1+B2 throws once (throwOnce), so it is in the completed store too
         send("B1", "B");
         Exchange last = send("B2", "B");
-        assertInstanceOf(IllegalStateException.class, last.getException());
+        assertFailedWith(failure, last);
 
         assertMockEndpointsSatisfied();
         // and A1+A2 was recovered and failed again
         assertTrue(failures.stream().filter("A1+A2"::equals).count() >= 2);
+    }
+
+    private static void assertFailedWith(Failure failure, Exchange exchange) {
+        if (failure == Failure.ERROR) {
+            // the message that completed the group fails with the Error, as before
+            assertNotNull(exchange.getException(NoClassDefFoundError.class));
+        } else {
+            assertInstanceOf(IllegalStateException.class, exchange.getException());
+        }
     }
 
     private static KeyValueAggregationRepository recoverableRepository() {
@@ -184,6 +207,9 @@ class AggregateOnCompletionThrowsTest extends ContextTestSupport {
                     }
                 });
                 if (alwaysThrow.contains(body) || throwOnce.compareAndSet(true, false)) {
+                    if (failure == Failure.ERROR) {
+                        throw new NoClassDefFoundError("onCompletion failed for " + body);
+                    }
                     throw new IllegalStateException("onCompletion failed for " + body);
                 }
             }

@@ -21,6 +21,8 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.styra.opa.OPAClient;
 import com.sun.net.httpserver.HttpServer;
@@ -45,6 +47,8 @@ public class OpaSecurityPolicyHealthCheckTest extends CamelTestSupport {
 
     private static HttpServer server;
     private static String serverUrl;
+    private static final AtomicBoolean bundlesActivated = new AtomicBoolean();
+    private static final AtomicReference<String> query = new AtomicReference<>();
 
     private final OpaSecurityPolicy policy = new OpaSecurityPolicy();
 
@@ -59,7 +63,9 @@ public class OpaSecurityPolicyHealthCheckTest extends CamelTestSupport {
     private static String startHealthyServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
         server.createContext("/health", exchange -> {
-            exchange.sendResponseHeaders(200, -1);
+            query.set(exchange.getRequestURI().getRawQuery());
+            int status = "bundles=true".equals(query.get()) && !bundlesActivated.get() ? 500 : 200;
+            exchange.sendResponseHeaders(status, -1);
             try (OutputStream out = exchange.getResponseBody()) {
                 out.flush();
             }
@@ -70,6 +76,8 @@ public class OpaSecurityPolicyHealthCheckTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        bundlesActivated.set(false);
+        query.set(null);
         serverUrl = startHealthyServer();
         policy.setPolicyPath("authz/allow");
         policy.setServerUrl(serverUrl);
@@ -172,4 +180,25 @@ public class OpaSecurityPolicyHealthCheckTest extends CamelTestSupport {
         // an injected client may point anywhere, so probing serverUrl would report on the wrong server
         assertThat(registered()).hasSize(1);
     }
+
+    @Test
+    void passesThePolicyBundleRequirementToItsRegisteredCheck() throws Exception {
+        OpaSecurityPolicy bundlePolicy = new OpaSecurityPolicy(serverUrl + "/", "authz/bundles");
+        bundlePolicy.setHealthCheckBundles(true);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:bundles").policy(bundlePolicy).to("mock:bundleResult");
+            }
+        });
+        HealthCheck check = registered().stream()
+                .filter(hc -> hc.getId().contains("authz/bundles"))
+                .findFirst().orElseThrow();
+
+        assertThat(check.call(Map.of()).getState()).isEqualTo(HealthCheck.State.DOWN);
+        assertThat(query.get()).isEqualTo("bundles=true");
+        bundlesActivated.set(true);
+        assertThat(check.call(Map.of()).getState()).isEqualTo(HealthCheck.State.UP);
+    }
+
 }
