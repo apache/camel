@@ -59,7 +59,9 @@ public @interface ExpectSanitizerViolation {
     Violation[] value();
 
     /**
-     * The id of the step where it is reported, such as {@code process1}; any step when empty.
+     * The id of the step where it is reported, such as {@code process1}; any step when empty. For rule R2 it is the
+     * step that ran on the thread where the violation was found (such as the {@code to} step that handed a commit
+     * over), and a commit that never ran or ran twice has no step: leave it empty.
      */
     String step() default "";
 }
