@@ -28,7 +28,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,17 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Integration tests for Google Firestore Producer operations.
  *
  * <p>
- * These tests require valid Google Cloud credentials. To run:
+ * These tests run against the Firestore service of Floci GCP, or against the one of a Google Cloud project as
+ * {@link GoogleFirestoreITSupport} describes.
  * </p>
- *
- * <pre>
- * mvn verify -pl components/camel-google/camel-google-firestore \
- *     -Dgoogle.firestore.serviceAccountKey=/path/to/service-account.json \
- *     -Dgoogle.firestore.projectId=my-project-id
- * </pre>
  */
-@EnabledIf(value = "org.apache.camel.component.google.firestore.integration.GoogleFirestoreITSupport#hasCredentials",
-           disabledReason = "Google Firestore credentials not provided. Set google.firestore.serviceAccountKey and google.firestore.projectId system properties.")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GoogleFirestoreProducerIT extends GoogleFirestoreITSupport {
 

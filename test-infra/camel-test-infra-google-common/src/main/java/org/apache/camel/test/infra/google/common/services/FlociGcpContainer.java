@@ -47,4 +47,12 @@ public class FlociGcpContainer extends GenericContainer<FlociGcpContainer> {
     public String serviceAddress() {
         return String.format("http://%s:%d", getHost(), getMappedPort(SERVICE_PORT));
     }
+
+    /**
+     * The address of the emulator for the gRPC clients, which connect to it in plain text, for example
+     * {@code localhost:32768}
+     */
+    public String grpcAddress() {
+        return String.format("%s:%d", getHost(), getMappedPort(SERVICE_PORT));
+    }
 }

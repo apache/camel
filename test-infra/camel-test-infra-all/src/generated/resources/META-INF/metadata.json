@@ -571,6 +571,17 @@
   "serviceVersion" : "1.22.2-static",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.google.firestore.services.GoogleFirestoreInfraService",
+  "description" : "Local Google Cloud Firestore service with Floci GCP",
+  "implementation" : "org.apache.camel.test.infra.google.firestore.services.GoogleFirestoreLocalContainerInfraService",
+  "alias" : [ "google" ],
+  "aliasImplementation" : [ "firestore" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-google-firestore",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.12.0",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.opensearch.services.OpenSearchInfraService",
   "description" : "OpenSearch is a distributed search and analytics engine",
   "implementation" : "org.apache.camel.test.infra.opensearch.services.OpenSearchLocalContainerInfraService",
