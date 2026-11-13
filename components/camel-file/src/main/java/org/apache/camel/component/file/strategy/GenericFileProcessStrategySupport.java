@@ -17,18 +17,21 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.FileConstants;
-import org.apache.camel.component.file.FileOperations;
+import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
@@ -45,6 +48,8 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
 
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     protected CamelContext camelContext;
+    // files already reported as skipped as their move target resolves outside the starting directory (bounded)
+    private final Map<String, Boolean> skippedMoveTargetOutsideStartingDirectory = LRUCacheFactory.newLRUCache(1000);
 
     @Override
     public CamelContext getCamelContext() {
@@ -128,11 +133,8 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     }
 
     protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to) {
-        if (operations instanceof FileOperations fileOperations) {
-            // check before the existing target is deleted, its parent directories are created and the file is renamed,
-            // as a symbolic link on the target path could otherwise move the file outside the starting directory
-            fileOperations.jailMoveToStartingDirectory(new File(to.getAbsoluteFilePath()));
-        }
+        // the operations refuse a target that resolves outside the starting directory (see
+        // GenericFileOperations.isWithinStartingDirectory) before anything is deleted, created or renamed
 
         // deleting any existing files before renaming
         try {
@@ -158,6 +160,86 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         return to;
     }
 
+    /**
+     * Evaluates the targets the file is moved to before the file is processed, and checks them with
+     * {@link GenericFileOperations#isWithinStartingDirectory(String)}: the preMove target, then the move and moveFailed
+     * targets of the file where preMove puts it. A file with a target that is refused is skipped, rather than processed
+     * and then failing its move, which would leave the file in place to be consumed again on every poll. A target that
+     * cannot be evaluated yet is checked again when the file is moved. Only done for the local file endpoint with
+     * jailStartingDirectory enabled.
+     *
+     * @return <tt>true</tt> to process the file, <tt>false</tt> to skip it
+     */
+    protected boolean acceptMoveTargets(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file,
+            GenericFileRenamer<T> beginRenamer, GenericFileRenamer<T> commitRenamer, GenericFileRenamer<T> failureRenamer) {
+        if (!endpoint.isJailStartingDirectory() || !(endpoint instanceof FileEndpoint)) {
+            // only the local file operations resolve symbolic links, so do not evaluate the targets for nothing
+            return true;
+        }
+        GenericFile<T> current = file;
+        if (beginRenamer != null) {
+            GenericFile<T> to = evaluateMoveTarget(operations, endpoint, exchange, file, beginRenamer);
+            if (to == null) {
+                // the move and moveFailed targets depend on the preMove target
+                return true;
+            }
+            if (!acceptMoveTarget(operations, endpoint, file, to)) {
+                return false;
+            }
+            current = to;
+        }
+        return evaluateAndAcceptMoveTarget(operations, endpoint, exchange, file, current, commitRenamer)
+                && evaluateAndAcceptMoveTarget(operations, endpoint, exchange, file, current, failureRenamer);
+    }
+
+    private boolean evaluateAndAcceptMoveTarget(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file,
+            GenericFile<T> current, GenericFileRenamer<T> renamer) {
+        if (renamer == null) {
+            return true;
+        }
+        GenericFile<T> to = evaluateMoveTarget(operations, endpoint, exchange, current, renamer);
+        return to == null || acceptMoveTarget(operations, endpoint, file, to);
+    }
+
+    private GenericFile<T> evaluateMoveTarget(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file,
+            GenericFileRenamer<T> renamer) {
+        try {
+            // evaluate with a copy, the same way as when the file is moved
+            Exchange copy = ExchangeHelper.createCopy(exchange, true);
+            if (endpoint instanceof FileEndpoint fe) {
+                file.bindToExchange(copy, fe.isProbeContentType());
+            } else {
+                file.bindToExchange(copy);
+            }
+            copy.getMessage().setMessageId(exchange.getMessage().getMessageId());
+            copy.setExchangeId(exchange.getExchangeId());
+            return renamer.renameFile(operations, copy, file);
+        } catch (Exception e) {
+            LOG.debug("Cannot evaluate the move target of file: {} before it is processed due to: {}", file, e.getMessage());
+            return null;
+        }
+    }
+
+    private boolean acceptMoveTarget(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFile<T> file, GenericFile<T> to) {
+        String target = to.getAbsoluteFilePath();
+        if (operations.isWithinStartingDirectory(target)) {
+            return true;
+        }
+        String source = file.getAbsoluteFilePath();
+        String message = "Skipping file: {} as the target it would be moved to: {} resolves outside the starting directory: {}";
+        // such a file stays where it is and is listed again on every poll, so only warn the first time
+        if (skippedMoveTargetOutsideStartingDirectory.put(source, Boolean.TRUE) == null) {
+            LOG.warn(message, source, target, endpoint.getConfiguration().getDirectory());
+        } else {
+            LOG.debug(message, source, target, endpoint.getConfiguration().getDirectory());
+        }
+        return false;
+    }
+
     protected void deleteLocalWorkFile(Exchange exchange) {
         // delete local work file, if it was used (eg by ftp component)
         String local = exchange.getIn().getHeader(FileConstants.FILE_LOCAL_WORK_PATH, String.class);
@@ -180,6 +262,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
 
     @Override
     protected void doStop() throws Exception {
+        skippedMoveTargetOutsideStartingDirectory.clear();
         ServiceHelper.stopService(exclusiveReadLockStrategy);
     }
 

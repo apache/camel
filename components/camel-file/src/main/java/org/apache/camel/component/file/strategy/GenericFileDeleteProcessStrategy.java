@@ -43,6 +43,11 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
             return false;
         }
 
+        // skip the file before it is processed if it cannot be moved where it would be moved to
+        if (!acceptMoveTargets(operations, endpoint, exchange, file, beginRenamer, null, failureRenamer)) {
+            return false;
+        }
+
         // okay we got the file then execute the begin renamer
         if (beginRenamer != null) {
             GenericFile<T> newName = beginRenamer.renameFile(operations, exchange, file);

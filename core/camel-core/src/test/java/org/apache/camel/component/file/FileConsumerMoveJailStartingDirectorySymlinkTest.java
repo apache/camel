@@ -23,11 +23,16 @@ import java.nio.file.Path;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,14 +45,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * With jailStartingDirectory (the default) the file consumer must not move a consumed file (move, preMove, moveFailed
  * and the default .camel folder) through a symbolic link that lives inside the starting directory and resolves outside
- * of it.
+ * of it. Such a file is skipped before it is processed, so it is not processed again on every poll.
  */
 class FileConsumerMoveJailStartingDirectorySymlinkTest extends ContextTestSupport {
 
-    private static final String QUERY = "?initialDelay=0&delay=100"
+    private static final String QUERY = "?initialDelay=0&delay=100&pollStrategy=#countPolls"
                                         + "&exceptionHandler=#moveErrors&onCompletionExceptionHandler=#moveErrors";
 
     private final Queue<Throwable> moveErrors = new ConcurrentLinkedQueue<>();
+    private final AtomicInteger polls = new AtomicInteger();
     private Path inbox;
     private Path outside;
     private Path outsideFile;
@@ -63,6 +69,12 @@ class FileConsumerMoveJailStartingDirectorySymlinkTest extends ContextTestSuppor
         outside = Files.createDirectories(testDirectory("outside"));
         outsideFile = Files.writeString(outside.resolve("hello.txt"), "Outside");
         context.getRegistry().bind("moveErrors", new CollectingExceptionHandler());
+        context.getRegistry().bind("countPolls", new DefaultPollingConsumerPollStrategy() {
+            @Override
+            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
+                polls.incrementAndGet();
+            }
+        });
     }
 
     @Test
@@ -72,7 +84,7 @@ class FileConsumerMoveJailStartingDirectorySymlinkTest extends ContextTestSuppor
 
         consume(QUERY, false);
 
-        assertMoveRefused(file);
+        assertSkipped(file);
     }
 
     @Test
@@ -82,7 +94,7 @@ class FileConsumerMoveJailStartingDirectorySymlinkTest extends ContextTestSuppor
 
         consume(QUERY + "&move=done", false);
 
-        assertMoveRefused(file);
+        assertSkipped(file);
     }
 
     @Test
@@ -92,8 +104,19 @@ class FileConsumerMoveJailStartingDirectorySymlinkTest extends ContextTestSuppor
 
         consume(QUERY + "&preMove=inprogress&noop=true", false);
 
-        assertMoveRefused(file);
-        assertEquals(0, getMockEndpoint("mock:result").getReceivedCounter());
+        assertSkipped(file);
+    }
+
+    @Test
+    void moveFolderBelowPreMoveFolderLinkingOutsideStartingDirectoryIsNotUsed() throws Exception {
+        // the default .camel folder is relative to where preMove puts the file
+        Path file = Files.writeString(inbox.resolve("hello.txt"), "Hello World");
+        Files.createDirectories(inbox.resolve("inprogress"));
+        createSymbolicLink(inbox.resolve("inprogress/.camel"), outside);
+
+        consume(QUERY + "&preMove=inprogress", false);
+
+        assertSkipped(file);
     }
 
     @Test
@@ -103,7 +126,17 @@ class FileConsumerMoveJailStartingDirectorySymlinkTest extends ContextTestSuppor
 
         consume(QUERY + "&moveFailed=failed", true);
 
-        assertMoveRefused(file);
+        assertSkipped(file);
+    }
+
+    @Test
+    void moveFailedFolderLinkingOutsideStartingDirectoryIsNotUsedWithDelete() throws Exception {
+        Path file = Files.writeString(inbox.resolve("hello.txt"), "Hello World");
+        createSymbolicLink(inbox.resolve("failed"), outside);
+
+        consume(QUERY + "&delete=true&moveFailed=failed", true);
+
+        assertSkipped(file);
     }
 
     @Test
@@ -114,7 +147,7 @@ class FileConsumerMoveJailStartingDirectorySymlinkTest extends ContextTestSuppor
 
         consume(QUERY + "&recursive=true", false);
 
-        assertMoveRefused(file);
+        assertSkipped(file);
     }
 
     @Test
@@ -124,7 +157,31 @@ class FileConsumerMoveJailStartingDirectorySymlinkTest extends ContextTestSuppor
 
         consume(QUERY + "&renameUsingCopy=true", false);
 
-        assertMoveRefused(file);
+        assertSkipped(file);
+    }
+
+    @Test
+    void moveTargetKnownOnlyWhenProcessedIsCheckedWhenMoved() throws Exception {
+        // the route sets the folder, so the target is only known once the file is processed
+        Path file = Files.writeString(inbox.resolve("hello.txt"), "Hello World");
+        createSymbolicLink(inbox.resolve("done"), outside);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(fileUri(inbox, QUERY + "&move=${exchangeProperty.folder}/${file:onlyname}"))
+                        .setProperty("folder", constant("done"))
+                        .convertBodyTo(String.class).to("mock:result");
+            }
+        });
+        context.start();
+
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !moveErrors.isEmpty());
+
+        assertEquals("Outside", readString(outsideFile), "the file outside the starting directory must not be replaced");
+        assertTrue(Files.exists(file), "the consumed file must stay where it is");
+        assertTrue(moveErrors.stream().anyMatch(e -> String.valueOf(e.getMessage())
+                .contains("as it resolves outside the starting directory")), moveErrors.toString());
     }
 
     @Test
@@ -166,14 +223,18 @@ class FileConsumerMoveJailStartingDirectorySymlinkTest extends ContextTestSuppor
         assertTrue(moveErrors.isEmpty(), moveErrors.toString());
     }
 
-    private void assertMoveRefused(Path file) {
-        // wait until the move was either refused or done
-        await().atMost(10, TimeUnit.SECONDS).until(() -> !moveErrors.isEmpty() || !Files.exists(file));
+    private void assertSkipped(Path file) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        mock.setAssertPeriod(200);
 
+        // the file is listed on every poll, and skipped each time
+        await().atMost(10, TimeUnit.SECONDS).until(() -> polls.get() >= 5);
+
+        mock.assertIsSatisfied();
         assertEquals("Outside", readString(outsideFile), "the file outside the starting directory must not be replaced");
-        assertTrue(Files.exists(file), "the consumed file must stay where it is");
-        assertTrue(moveErrors.stream().anyMatch(e -> String.valueOf(e.getMessage())
-                .contains("as it resolves outside the starting directory")), moveErrors.toString());
+        assertTrue(Files.exists(file), "the skipped file must stay where it is");
+        assertTrue(moveErrors.isEmpty(), moveErrors.toString());
     }
 
     private void consume(String query, boolean fail) throws Exception {

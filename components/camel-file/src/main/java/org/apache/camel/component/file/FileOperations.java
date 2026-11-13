@@ -88,6 +88,9 @@ public class FileOperations implements GenericFileOperations<File> {
     @Override
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         File file = new File(name);
+        // such as an existing file in a folder the producer moves existing files to (moveExisting), or the existing
+        // target of a consumer move, which must not be deleted through a symbolic link resolving outside
+        jailToStartingDirectory(file, "Cannot delete file: ");
         return FileUtil.deleteFile(file);
     }
 
@@ -96,6 +99,9 @@ public class FileOperations implements GenericFileOperations<File> {
         boolean renamed;
         File file = new File(from);
         File target = new File(to);
+        // the consumer moves (move, preMove, moveFailed and the default .camel folder), and the producer renames
+        // (tempFileName and moveExisting) a file onto the target, so check it before anything is renamed or copied
+        jailToStartingDirectory(target, "Cannot rename file: " + from + " to: ");
         try {
             if (endpoint.isRenameUsingCopy()) {
                 renamed = FileUtil.renameFileUsingCopy(file, target);
@@ -213,6 +219,8 @@ public class FileOperations implements GenericFileOperations<File> {
                 // the directory already exists
                 return true;
             } else {
+                // the missing directories must not be created through a symbolic link resolving outside
+                jailToStartingDirectory(path, "Cannot create directory: ");
                 LOG.trace("Building directory: {}", path);
                 return buildDirectory(path, endpoint.getDirectoryPermissions(), absolute, endpoint.isAutoCreateStepwise());
             }
@@ -274,27 +282,15 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     /**
-     * Checks the target of a consumer move (move, preMove, moveFailed and the default .camel folder) the same way as
-     * {@link #jailToStartingDirectory(File)} checks a producer target, before anything is deleted, created or renamed.
+     * Checks a path before it is written, deleted, renamed onto or created as a directory.
      *
-     * @throws GenericFileOperationFailedException if the target is inside the starting directory but resolves outside
-     *                                             of it through a symbolic link
+     * @throws GenericFileOperationFailedException if the path is inside the starting directory but resolves outside of
+     *                                             it through a symbolic link
      */
-    public void jailMoveToStartingDirectory(File target) {
-        jailToStartingDirectory(target, "Cannot move file to: ");
-    }
-
     private void jailToStartingDirectory(File target, String failure) {
-        if (!endpoint.isJailStartingDirectory()) {
-            return;
-        }
-        Path startingDirectory = endpoint.getFile().toPath();
-        if (!target.toPath().toAbsolutePath().normalize().startsWith(startingDirectory.toAbsolutePath().normalize())) {
-            return;
-        }
         boolean within;
         try {
-            within = GenericFileHelper.isWithinDirectoryResolvingLinks(target.toPath(), startingDirectory);
+            within = isWithinStartingDirectoryResolvingLinks(target);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(
                     "Cannot verify file: " + target + " is within the starting directory: " + endpoint.getFile(), e);
@@ -303,6 +299,33 @@ public class FileOperations implements GenericFileOperations<File> {
             throw new GenericFileOperationFailedException(
                     failure + target + " as it resolves outside the starting directory: " + endpoint.getFile());
         }
+    }
+
+    /**
+     * Whether the path stays within the starting directory once symbolic links are resolved. Always true when
+     * jailStartingDirectory is disabled, and for a path that is lexically outside the starting directory (such as a
+     * move to ../archive the route author configured).
+     */
+    @Override
+    public boolean isWithinStartingDirectory(String name) {
+        try {
+            return isWithinStartingDirectoryResolvingLinks(new File(name));
+        } catch (IOException e) {
+            // such as a dangling symbolic link
+            LOG.debug("Cannot resolve file: {} against the starting directory due to: {}", name, e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean isWithinStartingDirectoryResolvingLinks(File target) throws IOException {
+        if (endpoint == null || !endpoint.isJailStartingDirectory()) {
+            return true;
+        }
+        Path startingDirectory = endpoint.getFile().toPath();
+        if (!target.toPath().toAbsolutePath().normalize().startsWith(startingDirectory.toAbsolutePath().normalize())) {
+            return true;
+        }
+        return GenericFileHelper.isWithinDirectoryResolvingLinks(target.toPath(), startingDirectory);
     }
 
     @Override
