@@ -1368,10 +1368,14 @@ Examples:
 
 == camel cmd reload --help
 Trigger reloading Camel
-Usage: camel cmd reload [-h] [--timeout=<timeout>] [<name>]
+Usage: camel cmd reload [-h] [--wait] [--json] [--timeout=<timeout>] [<name>]
 
 Options:
   -h, --help               Display this help and exit
+      --wait               Reload the files changed since the last scan of dev
+                           mode now, and wait for the outcome: the files
+                           reloaded, or why the reload failed
+      --json               The outcome of --wait as JSON
       --timeout=<timeout>  How long to wait for the integration to answer, in
                            millis or as a duration such as 30s
                            Default: 10000
@@ -1380,6 +1384,8 @@ Options:
 
 Examples:
   camel cmd reload
+  camel cmd reload myapp --wait
+  camel cmd reload myapp --wait --json
 
 == camel cmd reset-stats --help
 Reset performance statistics
