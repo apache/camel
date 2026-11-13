@@ -1374,9 +1374,13 @@ abstract class Exporter {
         copyApplicationPropertiesFiles(srcResourcesDir.toPath());
     }
 
+    /**
+     * The scheme of a file, such as classpath or github, or null for a file without scheme. A single letter is the
+     * drive of a path on Windows (C:\work\route.camel.yaml), not a scheme (CAMEL-26912).
+     */
     protected static String getScheme(String name) {
         int pos = name.indexOf(":");
-        if (pos != -1) {
+        if (pos > 1) {
             return name.substring(0, pos);
         }
         return null;
