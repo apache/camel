@@ -262,6 +262,14 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         this.identityUri = identityUri;
     }
 
+    /**
+     * The http address to call, which is the endpoint uri: the uri without the endpoint options, which are bound when
+     * the endpoint is created (CAMEL-26485).
+     */
+    void setAddressUri(String addressUri) {
+        setEndpointUri(addressUri);
+    }
+
     private String getIdentityUri() {
         return identityUri != null ? identityUri : getEndpointUri();
     }
