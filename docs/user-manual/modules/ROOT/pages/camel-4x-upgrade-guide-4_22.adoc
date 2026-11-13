@@ -670,6 +670,15 @@ or in the `fileName` option before the message reaches the producer.
 `copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`
 and `CamelAzureStorageBlobSourceBlobContainerName`) with an `IllegalArgumentException`.
 
+=== camel-netty-http - endpoint options are no longer sent to the server as query parameters
+
+The `netty-http` producer no longer sends some of its endpoint options, such as `cookieHandler`, `httpMethodRestrict`,
+`traceEnabled` and `exchangePattern`, to the HTTP server as query parameters. For example,
+`netty-http:http://localhost:8080/foo?bar=1&cookieHandler=#myCookieHandler` now calls
+`http://localhost:8080/foo?bar=1`. Before, the server also received the `cookieHandler` parameter. Only the
+query parameters that are not endpoint options are sent, as the documentation describes. To send a query parameter
+that has the same name as an endpoint option, set the query in the `CamelHttpQuery` header.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
