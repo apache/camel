@@ -544,10 +544,9 @@ public final class MainHelper {
     }
 
     /**
-     * Loads the entire stream into memory as a String and returns it.
-     * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
-     * <p/>
+     * Loads the entire stream into memory and puts each line into the given map, with the key computed by the given
+     * function.
+     * <p>
      * Warning, don't use for crazy big streams :)
      */
     private static void loadLines(
