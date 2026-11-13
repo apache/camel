@@ -47,6 +47,9 @@ import org.apache.camel.spi.annotations.DslProperty;
            eipSteps = @BodyType(Carrier.UNCHANGED))
 public class TryDefinition extends OutputDefinition<TryDefinition> {
 
+    // the doCatch and doFinally clauses are kept in outputs (the single source of truth, CAMEL-25410): these fields
+    // are only the YAML DSL properties (doCatch and doFinally written as properties of doTry), and a cache derived
+    // from outputs by checkInitialized
     @DslProperty
     @XmlTransient
     private List<CatchDefinition> catchClauses;
@@ -64,9 +67,9 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     protected TryDefinition(TryDefinition source) {
+        // the clauses are in the outputs, which super copies: the cache fields are derived again from the copied outputs
+        // (copying them too would give the copy two instances of each clause)
         super(source);
-        this.catchClauses = ProcessorDefinitionHelper.deepCopyDefinitions(source.catchClauses);
-        this.finallyClause = source.finallyClause != null ? source.finallyClause.copyDefinition() : null;
     }
 
     @Override
@@ -162,34 +165,60 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     // Properties
     // -------------------------------------------------------------------------
 
+    /**
+     * Adds the doCatch clauses to the outputs (before the doFinally, if any), where the clauses of a doTry are kept.
+     * Used by the YAML DSL for doCatch written as a property of doTry.
+     */
     @XmlTransient
     public void setCatchClauses(List<CatchDefinition> catchClauses) {
-        this.catchClauses = catchClauses;
+        if (catchClauses != null) {
+            for (CatchDefinition catchClause : catchClauses) {
+                if (!outputs.contains(catchClause)) {
+                    catchClause.setParent(this);
+                    configureChild(catchClause);
+                    outputs.add(indexOfFinally(), catchClause);
+                }
+            }
+        }
+        initialized = false;
     }
 
+    /**
+     * The doCatch clauses, in the order of the outputs where they are kept.
+     */
     public List<CatchDefinition> getCatchClauses() {
-        if (catchClauses == null) {
-            checkInitialized();
-        }
+        refresh();
         return catchClauses;
     }
 
+    /**
+     * Sets the doFinally clause in the outputs, where the clauses of a doTry are kept, replacing any other. Used by the
+     * YAML DSL for doFinally written as a property of doTry.
+     */
     @XmlTransient
     public void setFinallyClause(FinallyDefinition finallyClause) {
-        this.finallyClause = finallyClause;
+        outputs.removeIf(o -> o instanceof FinallyDefinition && o != finallyClause);
+        if (finallyClause != null && !outputs.contains(finallyClause)) {
+            finallyClause.setParent(this);
+            configureChild(finallyClause);
+            outputs.add(finallyClause);
+        }
+        initialized = false;
     }
 
+    /**
+     * The doFinally clause from the outputs, or null if there is none.
+     */
     public FinallyDefinition getFinallyClause() {
-        if (finallyClause == null) {
-            checkInitialized();
-        }
+        refresh();
         return finallyClause;
     }
 
+    /**
+     * The outputs that are the steps of the doTry block: all outputs except the doCatch and doFinally clauses.
+     */
     public List<ProcessorDefinition<?>> getOutputsWithoutCatches() {
-        if (outputsWithoutCatches == null) {
-            checkInitialized();
-        }
+        refresh();
         return outputsWithoutCatches;
     }
 
@@ -211,6 +240,18 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         // reset end counter as we are adding some outputs
         endCounter = 0;
         super.addOutput(output);
+        // a step added to this doTry itself (not to the doCatch or doFinally the Java DSL is building, which takes it
+        // as its own output) after a clause, such as YAML steps after doCatch written as a property, goes before the
+        // clauses: the runtime takes the steps from anywhere in the outputs, and the outputs then read (and are dumped)
+        // as steps, doCatch and doFinally in this order
+        if (!(output instanceof CatchDefinition) && !(output instanceof FinallyDefinition)
+                && !outputs.isEmpty() && outputs.get(outputs.size() - 1) == output) {
+            int index = indexOfFirstClause();
+            if (index < outputs.size() - 1) {
+                outputs.remove(outputs.size() - 1);
+                outputs.add(index, output);
+            }
+        }
     }
 
     protected ProcessorDefinition<?> onEndDoTry() {
@@ -230,28 +271,56 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     /**
-     * Checks whether or not this object has been initialized
+     * Derives the clauses and the steps from the outputs again: the outputs can be changed directly (for example by
+     * advice-with), so a clause that is no longer in the outputs must not stay in the cache.
+     */
+    private void refresh() {
+        initialized = false;
+        checkInitialized();
+    }
+
+    private int indexOfFinally() {
+        for (int i = 0; i < outputs.size(); i++) {
+            if (outputs.get(i) instanceof FinallyDefinition) {
+                return i;
+            }
+        }
+        return outputs.size();
+    }
+
+    private int indexOfFirstClause() {
+        for (int i = 0; i < outputs.size(); i++) {
+            if (outputs.get(i) instanceof CatchDefinition || outputs.get(i) instanceof FinallyDefinition) {
+                return i;
+            }
+        }
+        return outputs.size();
+    }
+
+    /**
+     * Checks whether or not this object has been initialized, and derives the doCatch and doFinally clauses and the
+     * steps from the outputs if not.
      */
     protected void checkInitialized() {
         if (!initialized) {
             initialized = true;
-            outputsWithoutCatches = new ArrayList<>();
-            if (catchClauses == null) {
-                catchClauses = new ArrayList<>();
-            }
+            List<ProcessorDefinition<?>> steps = new ArrayList<>();
+            List<CatchDefinition> catches = new ArrayList<>();
+            FinallyDefinition doFinally = null;
             int doFinallyCounter = 0;
             for (ProcessorDefinition<?> output : outputs) {
                 if (output instanceof CatchDefinition catchDefinition) {
-                    if (!catchClauses.contains(output)) {
-                        catchClauses.add(catchDefinition);
-                    }
+                    catches.add(catchDefinition);
                 } else if (output instanceof FinallyDefinition finallyDefinition) {
                     ++doFinallyCounter;
-                    finallyClause = finallyDefinition;
+                    doFinally = finallyDefinition;
                 } else {
-                    outputsWithoutCatches.add(output);
+                    steps.add(output);
                 }
             }
+            outputsWithoutCatches = steps;
+            catchClauses = catches;
+            finallyClause = doFinally;
             if (doFinallyCounter > 1) {
                 throw new IllegalArgumentException(
                         "Multiple finally clauses added: " + doFinallyCounter);

@@ -36,6 +36,15 @@ Starting in 4.24:
 * The Cache EIP stores keys directly without a namespace prefix, preserving documented cache invalidation recipes (`cache.delete(key)` and `cache.clear()`). Note that because cache keys are un-prefixed, calling `clear()` on a `KeyValueRepository` shared with the Cache EIP will clear all entries in that repository, including state-store entries. It is recommended to use a dedicated repository for the Cache EIP when co-located with state-store.
 * `KeyValueAggregationRepository` safely verifies entry types before unmarshalling, ignoring unexpected types gracefully instead of failing with a class cast exception.
 
+=== camel-core-model - doTry keeps doCatch and doFinally in its outputs
+
+`doCatch` and `doFinally` written as properties of `doTry` in the YAML DSL are now kept in the outputs of the
+`TryDefinition`, as the clauses of the Java and XML DSLs always were, after the steps whatever the order of the YAML
+keys. Code that walks `getOutputs()` (route dumps, tooling) now sees them, and `getCatchClauses()`,
+`getFinallyClause()` and `getOutputsWithoutCatches()` are derived from the outputs on each call: a clause removed from
+the outputs, for example with advice-with, is no longer used, and changing the list returned by `getCatchClauses()`
+no longer changes the doTry. Use `setCatchClauses` and `setFinallyClause`, or the outputs, instead.
+
 === camel-ehcache - shared CacheManager and changed defaults
 
 The following user-visible changes take effect in 4.24:
