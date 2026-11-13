@@ -737,8 +737,12 @@ public class Splitter extends MulticastProcessor {
                 String value;
                 try {
                     value = watermarkExpression.evaluate(subExchange, String.class);
-                } catch (Exception e) {
-                    // fail the item, as an exception thrown here would make the split exchange hang (never complete)
+                } catch (VirtualMachineError e) {
+                    // left as before: the application must not handle a JVM-level failure with Camel's error handling
+                    throw e;
+                } catch (Throwable e) {
+                    // fail the item, as an exception (or an Error such as a NoClassDefFoundError) thrown here would
+                    // make the split exchange hang (never complete)
                     subExchange.setException(e);
                     return;
                 }
