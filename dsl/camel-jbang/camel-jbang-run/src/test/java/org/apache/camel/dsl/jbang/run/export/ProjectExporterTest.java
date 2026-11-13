@@ -16,12 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.run.export;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -146,6 +148,47 @@ class ProjectExporterTest {
         assertThat(xpath.evaluate(
                 "/project/dependencyManagement/dependencies/dependency[artifactId='camel-spring-boot-bom']/version", pom))
                 .isEqualTo("4.8.0");
+    }
+
+    @Test
+    void keepsTheEscapesAndTheEncodingOfTheApplicationProperties() throws Exception {
+        Path route = writeRoute("shop");
+        // as an editor saves it, in UTF-8
+        String source = """
+                path=C:\\\\temp\\\\new
+                regex=^\\\\d+$
+                my.key\\ with\\ space=1
+                greeting=Hej æøå
+                euro=5 \\u20ac
+                """;
+        Files.writeString(dir.resolve("application.properties"), source, StandardCharsets.UTF_8);
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.baseDir = dir;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+        assertThat(exit).as(printer.getOutput()).isZero();
+
+        // the exported project reads the same properties as camel run reads from the application.properties
+        Path exported = exportDir.resolve("src/main/resources/application.properties");
+        Properties expected = load(dir.resolve("application.properties"));
+        Properties actual = load(exported);
+        assertThat(expected.getProperty("path")).isEqualTo("C:\\temp\\new");
+        for (String key : List.of("path", "regex", "my.key with space", "greeting", "euro")) {
+            assertThat(actual.getProperty(key)).as(key).isEqualTo(expected.getProperty(key));
+        }
+        // and the UTF-8 text is written as it was, for a runtime that reads it in UTF-8 (Quarkus)
+        assertThat(Files.readAllLines(exported, StandardCharsets.UTF_8)).contains("greeting=Hej æøå");
+    }
+
+    private static Properties load(Path file) throws Exception {
+        Properties answer = new Properties();
+        try (InputStream is = Files.newInputStream(file)) {
+            answer.load(is);
+        }
+        return answer;
     }
 
     @Test
