@@ -273,6 +273,16 @@ Apache MINA SSHD leaves it off by default, so a small request, such as one that 
 listing, could wait for the server to acknowledge the previous reply. The `org.apache.sshd.config.tcp-nodelay` system
 property no longer applies to the connections of `mina-sftp`.
 
+=== camel-atmosphere-websocket - events carry the query parameters of their own connection
+
+With the `events` init-param of `CamelWebSocketServlet` set to `true`, the open, close and error event exchanges now carry
+the query parameters of the request that opened their websocket connection, with the names and values URL-decoded.
+This is also the case with the JSR 356 transport, which Atmosphere uses on current servlet containers, where the
+parameters of the connection did not reach its events before. Before, the event headers came from the last HTTP request
+that the servlet handled for the endpoint, and their values were not URL-decoded, so a route that used these headers
+can see different values. `WebsocketConsumer.sendEventNotification` takes the query parameters of the connection as a
+third argument.
+
 === camel-master - the consumer keeps the leadership until its delegated consumer has stopped
 
 When a `master:` consumer stops (its route stops, or the CamelContext shuts down), it now stops the delegated consumer

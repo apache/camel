@@ -48,6 +48,13 @@ public class WebsocketQueryParameterTest extends WebsocketCamelRouterWithInitPar
     }
 
     @Test
+    void testQueryMapDecodesNamesAndValues() {
+        Map<String, String> map = WebsocketConsumer.getQueryMap("name=John%20Doe&city=S%C3%A3o+Paulo&a%26b=c%3Dd&bad=%zz");
+
+        assertEquals(Map.of("name", "John Doe", "city", "S\u00e3o Paulo", "a&b", "c=d", "bad", "%zz"), map);
+    }
+
+    @Test
     void testQueryMapNoQuery() {
         assertTrue(WebsocketConsumer.getQueryMap(null).isEmpty());
     }
