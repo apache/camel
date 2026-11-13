@@ -263,6 +263,65 @@ class ProjectExporterTest {
         return new ExportContext().withPrinter(new StringPrinter()).withDependencyResolver(resolver);
     }
 
+    @Test
+    void replacesTheDirectoryOfAnEarlierExport() throws Exception {
+        Path exportDir = dir.resolve("export");
+        assertThat(export(request(writeRoute("first"), exportDir))).isZero();
+        assertThat(exportDir.resolve(ExportHelper.EXPORT_MARKER)).exists();
+
+        // the export replaces the earlier one, so no stale files of it are left
+        assertThat(export(request(writeRoute("second"), exportDir))).isZero();
+        assertThat(exportDir.resolve("src/main/resources/camel")).isDirectoryContaining("glob:**/second.camel.yaml")
+                .isDirectoryNotContaining("glob:**/first.camel.yaml");
+        assertThat(exportDir.resolve(ExportHelper.EXPORT_MARKER)).exists();
+    }
+
+    @Test
+    void keepsTheFilesOfADirectoryThatNoExportCreated() throws Exception {
+        Path exportDir = Files.createDirectories(dir.resolve("export"));
+        Path todo = Files.writeString(exportDir.resolve("TODO.txt"), "my notes");
+        Path notes = Files.writeString(Files.createDirectories(exportDir.resolve("docs")).resolve("notes.txt"), "more");
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request(writeRoute("hello"), exportDir));
+
+        assertThat(exit).isEqualTo(1);
+        assertThat(printer.getOutput()).contains("Cannot export to " + exportDir.toAbsolutePath(), "--clean-dir");
+        assertThat(todo).hasContent("my notes");
+        assertThat(notes).hasContent("more");
+        assertThat(exportDir.resolve("pom.xml")).doesNotExist();
+        // nothing was resolved: the export stops before it boots the integration
+        assertThat(resolved).isEmpty();
+
+        // unless they are deleted on purpose
+        ExportRequest request = request(writeRoute("hello"), exportDir);
+        request.cleanExportDir = true;
+        request.yes = true;
+        assertThat(export(request)).isZero();
+        assertThat(todo).doesNotExist();
+        assertThat(exportDir.resolve("pom.xml")).exists();
+    }
+
+    @Test
+    void exportsToADirectoryWithOnlyHiddenFiles() throws Exception {
+        // such as a clone of an empty Git repository
+        Path exportDir = Files.createDirectories(dir.resolve("export"));
+        Path git = Files.writeString(Files.createDirectories(exportDir.resolve(".git")).resolve("HEAD"), "ref");
+
+        assertThat(export(request(writeRoute("hello"), exportDir))).isZero();
+        assertThat(exportDir.resolve("pom.xml")).exists();
+        assertThat(git).hasContent("ref");
+    }
+
+    private int export(ExportRequest request) throws Exception {
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+        assertThat(exit).as(printer.getOutput()).isNotNegative();
+        return exit;
+    }
+
     private Path writeRoute(String name) throws Exception {
         Path route = dir.resolve(name + ".camel.yaml");
         Files.writeString(route, """

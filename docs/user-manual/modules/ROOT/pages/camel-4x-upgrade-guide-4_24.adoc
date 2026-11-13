@@ -2079,6 +2079,22 @@ events, such as `QueueParamsEvent`, `QueueMemberEvent` and `PeerEntryEvent`. Bef
 `ManagerResponse` saying that the list will follow, and the events were lost. A route that read that response from
 the body now finds it in `${body.response}`. `EXTENSION_STATE` still sets the `ManagerResponse` as the body.
 
+=== camel-jbang - camel export no longer deletes the files of a directory that no export created
+
+`camel export --dir=<dir>` to a directory other than the current one used to delete the files of that directory first,
+whatever they were. It now only does so for a directory that an earlier export created: the export writes a
+`.camel-export` file in it. Exporting to a directory with other files fails, and keeps them:
+
+----
+Cannot export to /home/me/project because it has files that camel export did not create: use --clean-dir to delete them, or export to another directory
+----
+
+This includes exporting to the directory of the exported files themselves from another directory (such as
+`camel export /work/route.camel.yaml --dir=/work`), which deleted the source files: use `--clean-dir --yes` for that.
+A directory that an earlier Camel version exported to has no `.camel-export` file yet: export to it once with
+`--clean-dir --yes`. An empty directory, one with only hidden files (such as `.git`), and the current directory are
+exported to as before.
+
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
 `camel validate source` and `camel overview` now use the same rules for a `direct:`, `seda:` or `disruptor:` endpoint
