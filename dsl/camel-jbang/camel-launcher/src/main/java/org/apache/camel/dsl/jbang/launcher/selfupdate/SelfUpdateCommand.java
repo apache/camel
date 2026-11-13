@@ -393,7 +393,7 @@ public class SelfUpdateCommand extends CamelCommand {
                     // Kill grandchildren first (curl/wget etc.) before the shell, so they release the pipe
                     process.descendants().forEach(ProcessHandle::destroyForcibly);
                     process.destroyForcibly();
-                    printer().printErr("installer timed out after 5 minutes");
+                    printer().printErr("installer timed out after " + processWaitTimeoutSeconds + " seconds");
                     return CliExitCode.TIMEOUT;
                 }
                 int exit = process.exitValue();
