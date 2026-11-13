@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import io.modelcontextprotocol.client.McpClient;
@@ -31,6 +33,7 @@ import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
  * End-to-end stdio MCP test: the MCP Java SDK client launches {@link McpStdioHarnessMain} as a subprocess (the same
@@ -56,6 +59,93 @@ class StdioMcpServerProcessIT {
                     = client.callTool(new McpSchema.CallToolRequest("say_hello", Map.of("name", "Camel")));
             assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
             assertThat(textOf(result)).isEqualTo("Hello Camel");
+        } finally {
+            if (client != null) {
+                client.closeGracefully();
+            }
+        }
+    }
+
+    @Test
+    void testStdioMcpServerListsAndReadsFixedResourcesAndResourceTemplates() {
+        McpSyncClient client = null;
+        try {
+            client = createClient();
+            client.initialize();
+
+            List<McpSchema.Resource> resources = client.listResources().resources();
+            assertThat(resources).extracting(McpSchema.Resource::uri)
+                    .contains("camel:///stdio/config")
+                    .doesNotContain("camel:///stdio/hidden");
+
+            McpSchema.Resource fixedResource = resources.stream()
+                    .filter(resource -> "camel:///stdio/config".equals(resource.uri()))
+                    .findFirst()
+                    .orElseThrow();
+            assertThat(fixedResource.title()).isEqualTo("Fixed stdio resource");
+
+            List<McpSchema.ResourceTemplate> templates = client.listResourceTemplates().resourceTemplates();
+            assertThat(templates).extracting(McpSchema.ResourceTemplate::uriTemplate)
+                    .contains("camel:///stdio/customers/{customerId}")
+                    .doesNotContain("camel:///stdio/hidden/{id}", "camel:///stdio/other/{id}");
+
+            McpSchema.ReadResourceResult fixedResult
+                    = client.readResource(new McpSchema.ReadResourceRequest("camel:///stdio/config"));
+            assertThat(fixedResult.contents()).hasSize(1);
+            assertThat(fixedResult.contents().get(0)).isInstanceOf(McpSchema.TextResourceContents.class);
+            McpSchema.TextResourceContents fixedContents
+                    = (McpSchema.TextResourceContents) fixedResult.contents().get(0);
+            assertThat(fixedContents.uri()).isEqualTo("camel:///stdio/config");
+            assertThat(fixedContents.text()).isEqualTo("stdio-fixed-resource");
+
+            McpSchema.ReadResourceResult templateResult = client.readResource(
+                    new McpSchema.ReadResourceRequest("camel:///stdio/customers/42"));
+            assertThat(templateResult.contents()).hasSize(1);
+            assertThat(templateResult.contents().get(0)).isInstanceOf(McpSchema.TextResourceContents.class);
+            McpSchema.TextResourceContents templateContents
+                    = (McpSchema.TextResourceContents) templateResult.contents().get(0);
+            assertThat(templateContents.uri()).isEqualTo("camel:///stdio/customers/42");
+            assertThat(templateContents.text()).isEqualTo("camel:///stdio/customers/42|42");
+        } finally {
+            if (client != null) {
+                client.closeGracefully();
+            }
+        }
+    }
+
+    @Test
+    void testStdioMcpServerNotifiesConnectedClientWhenTemplateRouteStopsAndStarts() {
+        AtomicInteger notifications = new AtomicInteger();
+        McpSyncClient client = null;
+        try {
+            client = createClient("default", resources -> notifications.incrementAndGet());
+            client.initialize();
+
+            assertThat(client.listResourceTemplates().resourceTemplates())
+                    .extracting(McpSchema.ResourceTemplate::uriTemplate)
+                    .contains("camel:///stdio/customers/{customerId}");
+
+            int beforeStop = notifications.get();
+            McpSchema.CallToolResult stopped
+                    = client.callTool(new McpSchema.CallToolRequest("stop_customer_template", Map.of()));
+            assertThat(stopped.isError()).isNotEqualTo(Boolean.TRUE);
+            assertThat(textOf(stopped)).isEqualTo("stopped");
+            await().atMost(10, TimeUnit.SECONDS).until(() -> notifications.get() > beforeStop);
+
+            assertThat(client.listResourceTemplates().resourceTemplates())
+                    .extracting(McpSchema.ResourceTemplate::uriTemplate)
+                    .doesNotContain("camel:///stdio/customers/{customerId}");
+
+            int beforeStart = notifications.get();
+            McpSchema.CallToolResult started
+                    = client.callTool(new McpSchema.CallToolRequest("start_customer_template", Map.of()));
+            assertThat(started.isError()).isNotEqualTo(Boolean.TRUE);
+            assertThat(textOf(started)).isEqualTo("started");
+            await().atMost(10, TimeUnit.SECONDS).until(() -> notifications.get() > beforeStart);
+
+            assertThat(client.listResourceTemplates().resourceTemplates())
+                    .extracting(McpSchema.ResourceTemplate::uriTemplate)
+                    .contains("camel:///stdio/customers/{customerId}");
         } finally {
             if (client != null) {
                 client.closeGracefully();
@@ -138,14 +228,22 @@ class StdioMcpServerProcessIT {
     }
 
     private static McpSyncClient createClient(String mode) {
+        return createClient(mode, null);
+    }
+
+    private static McpSyncClient createClient(
+            String mode, Consumer<List<McpSchema.Resource>> resourcesChangeConsumer) {
         List<String> command = harnessCommand(mode);
         ServerParameters parameters = ServerParameters.builder(command.get(0))
                 .args(command.subList(1, command.size()))
                 .build();
-        return McpClient.sync(new StdioClientTransport(parameters, McpJsonDefaults.getMapper()))
+        var builder = McpClient.sync(new StdioClientTransport(parameters, McpJsonDefaults.getMapper()))
                 .requestTimeout(Duration.ofSeconds(20))
-                .initializationTimeout(Duration.ofSeconds(20))
-                .build();
+                .initializationTimeout(Duration.ofSeconds(20));
+        if (resourcesChangeConsumer != null) {
+            builder.resourcesChangeConsumer(resourcesChangeConsumer);
+        }
+        return builder.build();
     }
 
     private static List<String> harnessCommand(String mode) {

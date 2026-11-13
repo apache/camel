@@ -52,6 +52,12 @@ public final class ExportHelper {
      */
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
 
+    /**
+     * The file that camel export writes in the directory it exports to, other than the current directory: a later
+     * export may replace that directory (CAMEL-26912).
+     */
+    public static final String EXPORT_MARKER = ".camel-export";
+
     public static final int MAX_RESOURCE_DIR_FILES = 1000;
 
     private ExportHelper() {
@@ -142,6 +148,26 @@ public final class ExportHelper {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Whether the directory has files or directories that are not hidden. A directory that does not exist has none.
+     */
+    public static boolean hasVisibleFiles(Path dir) {
+        if (!Files.isDirectory(dir)) {
+            return false;
+        }
+        try (Stream<Path> paths = Files.list(dir)) {
+            return paths.anyMatch(p -> {
+                try {
+                    return !Files.isHidden(p);
+                } catch (IOException e) {
+                    return true;
+                }
+            });
+        } catch (IOException e) {
+            return true;
         }
     }
 

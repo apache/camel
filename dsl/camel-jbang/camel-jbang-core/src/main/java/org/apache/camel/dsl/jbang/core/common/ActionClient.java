@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -204,7 +205,25 @@ public final class ActionClient {
      * @throws IOException when the action cannot be written
      */
     public static String executeText(long pid, JsonObject request, long timeout) throws IOException {
-        return exchange(pid, versionOf(pid), request, timeout, true, text -> text).reply();
+        // the answer once it is all there, as an integration of an earlier Camel version writes it in place
+        // (CAMEL-26911): JSON once it parses, other text once it reads the same at two polls
+        AtomicReference<String> previous = new AtomicReference<>();
+        return exchange(pid, versionOf(pid), request, timeout, true, text -> {
+            if (isJson(text)) {
+                return text;
+            }
+            boolean json = text.stripLeading().startsWith("{") || text.stripLeading().startsWith("[");
+            return !json && text.equals(previous.getAndSet(text)) ? text : null;
+        }).reply();
+    }
+
+    private static boolean isJson(String text) {
+        try {
+            Jsoner.deserialize(text);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // the answer to an action, as read, or null; and whether the integration took the action

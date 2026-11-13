@@ -226,7 +226,9 @@ public class CamelTraceAction extends ActionBaseCommand {
             for (CamelProcess process : findProcesses(name)) {
                 Path f = getTraceFile(Long.toString(process.pid()));
                 if (Files.exists(f)) {
-                    Files.writeString(f, "{}");
+                    // empty: the connector appends a line of JSON per batch, which an empty JSON object without
+                    // a new line would join, and that batch would be lost (CAMEL-26911)
+                    Files.writeString(f, "");
                 }
             }
             return 0;

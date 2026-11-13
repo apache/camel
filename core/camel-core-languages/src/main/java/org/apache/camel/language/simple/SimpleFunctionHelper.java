@@ -159,6 +159,21 @@ public final class SimpleFunctionHelper {
     }
 
     /**
+     * Splits the arguments of a function as {@link #splitArgumentsAsWritten(String)} does (an empty argument is kept in
+     * its place, a comma inside a nested function does not split), with the white space around each argument removed
+     * and its quotes kept, for a function that removes the quotes of some of its arguments only. An argument left out
+     * (nothing, or only white space, between the commas) is {@code null}.
+     */
+    public static String[] splitArgumentsKeepQuotes(String values) {
+        String[] tokens = splitArgumentsAsWritten(values);
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i].trim();
+            tokens[i] = token.isEmpty() ? null : token;
+        }
+        return tokens;
+    }
+
+    /**
      * The expression argument of a function as {@link #splitArguments(String)} gives it, or {@code ${body}} when it is
      * left out, such as in {@code ${replace(a,b,)}}.
      */

@@ -1726,7 +1726,16 @@ public class DoclingProducer extends DefaultProducer {
         return DoclingContentExtractor.extract(response, outputFormat);
     }
 
-    private OutputFormat mapToOutputFormat(String outputFormat) {
+    /**
+     * Maps the {@code outputFormat} of the exchange to the format asked of docling-serve.
+     * <p>
+     * docling-serve fills only the content fields of the formats it was asked for, and it has no field for the split
+     * pages: {@code DocumentResponse} carries {@code doctagsContent}, {@code htmlContent}, {@code jsonContent},
+     * {@code markdownContent} and {@code textContent}, and the html one is filled only when HTML is requested. Asking
+     * it for {@code html_split_page} therefore returns a response whose content fields are all null, and the exchange
+     * body comes out empty, so it fails with the reason instead.
+     */
+    OutputFormat mapToOutputFormat(String outputFormat) {
         if (outputFormat == null) {
             return OutputFormat.MARKDOWN;
         }
@@ -1745,7 +1754,11 @@ public class DoclingProducer extends DefaultProducer {
             case "doctags":
                 return OutputFormat.DOCTAGS;
             case "html_split_page":
-                return OutputFormat.HTML_SPLIT_PAGE;
+                throw new IllegalArgumentException(
+                        "outputFormat " + outputFormat + " is not supported: docling-serve does not return the split"
+                                                   + " page HTML in the response body, so the exchange body would be"
+                                                   + " empty. Use outputFormat=html to get the HTML of the whole"
+                                                   + " document");
             default:
                 return OutputFormat.MARKDOWN;
         }

@@ -45,8 +45,9 @@ server in `components/camel-ai/camel-mcp-server`.
 
 * A consumer endpoint, `ai-resource:resourceName?resourceUri=...`, registering a route as a
   read-only resource in a CamelContext-scoped registry, with no MCP dependency.
-* Publication of the selected resources over MCP `resources/list` and `resources/read` by the
-  existing bridge, reusing its tag selection, timeout and error sanitization.
+* Publication of selected resources over MCP `resources/list` and `resources/read`, and URI
+  templates over `resources/templates/list` and template-backed `resources/read`, reusing the
+  existing bridge tag selection, timeout and error sanitization.
 * No breakage for the two out-of-tree `McpServerEngine` implementations (camel-quarkus-mcp-server,
   the Spring Boot starter): they must keep compiling and passing the conformance kit untouched.
 
@@ -55,7 +56,6 @@ server in `components/camel-ai/camel-mcp-server`.
 The following are deliberately left out of the first iteration, in line with the reporter's
 "keep it simple for v1, but plan for extension":
 
-* *Resource templates* (`resources/templates/list`, uri template variables bound to headers).
 * *Per-resource subscriptions* (`resources/subscribe`). The server advertises
   `resources(subscribe=false, listChanged=true)`.
 * *Prompts* (`prompts/*`). The SPI is shaped so prompts can follow the same default-method pattern,
@@ -71,15 +71,18 @@ A new component module, sibling to `camel-ai-tool`, depending only on `camel-sup
 [source,text]
 ----
 ai-resource:resourceName
-  ?resourceUri=camel:///config/app.json   (required, the client-facing address)
+  ?resourceUri=camel:///config/app.json   (fixed address; alternative to uriTemplate)
+  OR uriTemplate=crm://customers/{id}    (RFC 6570 level 1; whole path segments)
   &tags=crm                               (selection, same semantics as ai-tool)
   &description=...                        (shown in resources/list)
   &mimeType=application/json              (default text/plain)
   &title=...                              (optional display title)
 ----
 
-The path parameter is the human-readable *name*; the `resourceUri` option is the *identity*. MCP
-addresses resources by uri, so uniqueness and collision rules are on the uri, not the name.
+The path parameter is the human-readable *name*. Exactly one of `resourceUri` (a fixed identity)
+or `uriTemplate` (a family of identities with one variable per complete path segment) is
+configured. Uniqueness and collision rules are enforced on the concrete URI/template, not the
+human-readable name.
 
 `AiResourceRegistry` mirrors `AiToolRegistry`: a context plugin mapping tags to specs, with a
 listener interface for adapters that need to react to routes starting and stopping, and a default
@@ -104,11 +107,15 @@ the body at runtime:
 default void resourceAdded(McpServerResource resource) { }
 default void resourceRemoved(String resourceUri) { }
 default boolean supportsResources() { return false; }
+default void resourceTemplateAdded(McpServerResourceTemplate template) { }
+default void resourceTemplateRemoved(String uriTemplate) { }
+default boolean supportsResourceTemplates() { return false; }
 ----
 
-Existing engines keep compiling and behave exactly as before. The bridge consults
-`supportsResources()` and logs a single WARN when `ai-resource` routes match the configured tags on
-an engine that cannot serve them, so the situation is visible rather than silent.
+Existing engines keep compiling and behave exactly as before because all resource and template
+callbacks have defaults. The bridge consults `supportsResources()` for fixed resources and
+`supportsResourceTemplates()` for URI templates, logging a single WARN for a selected route
+whose corresponding capability is not implemented by the engine.
 
 `McpResourceReadResult` is the resource counterpart of `McpToolCallResult`: exactly one of `text`
 and `blob` is set on success, and a non-null `errorMessage` marks a failure. It is *not* an in-band
@@ -158,7 +165,6 @@ Everything described above, with the resource conformance kit run against the Ve
 
 Follow-up issues in camel-quarkus and camel-spring-boot, as described in "Cascade".
 
-=== Step 3 (optional): templates and prompts
+=== Step 3 (optional): prompts
 
-Only if usage asks for them. Both fit the same shape: `resourceTemplateAdded` and `promptAdded` as
-further default methods, with their own opt-in conformance classes.
+Prompts remain a separate follow-up capability, using the same opt-in default-method pattern.

@@ -470,7 +470,11 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             // set property with the uri of the endpoint enriched so we can use that for tracing etc
             exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
 
-        } catch (Exception e) {
+        } catch (VirtualMachineError e) {
+            // left as before: the application must not handle a JVM-level failure with Camel's error handling
+            throw e;
+        } catch (Throwable e) {
+            // also an Error of the aggregation strategy (such as a NoClassDefFoundError), as for an exception
             exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
             // the resource was not aggregated, so release it as failed now (such as rolling back a polled file),
             // and not together with the exchange, which may still complete successfully (such as by redelivery)
@@ -489,7 +493,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
         }
     }
 
-    private static void doneResourceAsFailed(Exchange resourceExchange, Exception cause) {
+    private static void doneResourceAsFailed(Exchange resourceExchange, Throwable cause) {
         if (resourceExchange != null) {
             if (cause != null && resourceExchange.getException() == null) {
                 resourceExchange.setException(cause);

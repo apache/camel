@@ -143,7 +143,7 @@ public final class RuntimeUtil {
             }
             content = content + System.lineSeparator() + sj;
 
-            name = CamelHome.CAMEL_JBANG_WORK_DIR + "/log4j2.properties";
+            name = CamelHome.getWorkDir().resolve("log4j2.properties").toString();
             Files.writeString(Paths.get(name), content);
             // the categories are part of what the command asks for
             location = Path.of(name).toAbsolutePath().toUri() + "#" + content.hashCode();
