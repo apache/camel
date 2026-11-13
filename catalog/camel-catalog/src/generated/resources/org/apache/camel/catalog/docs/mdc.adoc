@@ -35,7 +35,7 @@ And later you had to make sure to provide MDC context propagation in async compo
     .setHeader("myCustomMDCKey", simple("myCustomKeyValue"))
 ----
 
-include the MDC service and additionally instruct the Camel application to treat that header as a MDC trace (via `camel.mdc.customHeaders=myCustomMDCKey` or `*` to include all headers). You won't need any longer to worry about context propagation as the propagation will be done via Camel Exchange instead.
+include the MDC service and additionally instruct the Camel application to treat that header as a MDC trace (via `camel.mdc.customExchangeHeaders=myCustomMDCKey` or `*` to include all headers). You won't need any longer to worry about context propagation as the propagation will be done via Camel Exchange instead.
 
 NOTE: you won't also need any longer to hack the code using Java DSL, as you can put headers in any Camel DSL.
 
@@ -60,7 +60,7 @@ This is the list of default MDC values included in each execution:
 * camel.contextId
 * camel.threadId
 
-If they exist in the Exchange, then, they will be included in the MDC. You can use `camel.mdc.customHeaders` and `camel.mdc.customProperties` to include any further header and property you need to trace.
+If they exist in the Exchange, then, they will be included in the MDC. You can use `camel.mdc.customExchangeHeaders` and `camel.mdc.customExchangeProperties` to include any further header and property you need to trace.
 
 == Configuration
 
