@@ -2415,3 +2415,12 @@ way as the `camel.uri` attribute, which shows the endpoint URI as `Endpoint.toSt
   is.
 
 Dashboards or queries that use the old values may need a change.
+
+=== ThrottlingExceptionRoutePolicy
+
+`ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer
+is suspended before the setter returns) rather than waiting for the next `onExchangeDone()` callback.
+This is the intended behaviour and makes the `keepOpen` toggle deterministic, but callers that previously
+relied on the setter being inert until an exchange arrived must be aware of the change.
+Setting `keepOpen` back to `false` remains deferred: the half-open timer attempts to close the circuit on
+its next tick (after `halfOpenAfter` milliseconds, default 30 s).
