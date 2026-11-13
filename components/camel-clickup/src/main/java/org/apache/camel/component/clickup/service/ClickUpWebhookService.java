@@ -18,6 +18,8 @@ package org.apache.camel.component.clickup.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Optional;
 import java.util.Set;
 
@@ -80,30 +82,39 @@ public class ClickUpWebhookService {
             throw new RuntimeException("The webhook HTTP request doesn't contain the 'x-signature' header.");
         }
 
-        String messageBody;
+        byte[] messageBytes;
         try (InputStream body = message.getBody(InputStream.class)) {
-            messageBody = new String(body.readAllBytes());
+            // the signature covers the bytes as they arrived: decoding and re-encoding them first would turn a
+            // malformed sequence into U+FFFD and change what is hashed
+            messageBytes = body.readAllBytes();
 
-            LOG.debug("Message body {} to be validated against the given signature {}", messageBody, signature);
+            // the signature authenticates the event, so it stays out of the log
+            LOG.debug("Message body {} to be validated against the given signature",
+                    new String(messageBytes, StandardCharsets.UTF_8));
 
             body.reset();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        String calculatedSignature = Utils.computeMessageHMAC(messageBody, sharedSecret);
+        String messageBody = new String(messageBytes, StandardCharsets.UTF_8);
+        String calculatedSignature = Utils.computeMessageHMAC(messageBytes, sharedSecret);
 
         signature = signature.toLowerCase();
         calculatedSignature = calculatedSignature.toLowerCase();
 
-        boolean signatureMatches = calculatedSignature.equals(signature);
+        // constant time, so that a wrong signature cannot be refined one character at a time
+        boolean signatureMatches = MessageDigest.isEqual(
+                calculatedSignature.getBytes(StandardCharsets.US_ASCII),
+                signature.getBytes(StandardCharsets.US_ASCII));
         if (!signatureMatches) {
-            LOG.debug("The message signature {} does not match {}.", signature, calculatedSignature);
+            LOG.debug("The message signature does not match.");
 
-            throw new InvalidMessageSignatureException(messageBody, signature, calculatedSignature);
+            // the calculated signature is the valid one for this body, so it stays out of the exception too
+            throw new InvalidMessageSignatureException(messageBody, signature);
         }
 
-        LOG.debug("The message signature {} matches {}.", signature, calculatedSignature);
+        LOG.debug("The message signature matches.");
     }
 
 }

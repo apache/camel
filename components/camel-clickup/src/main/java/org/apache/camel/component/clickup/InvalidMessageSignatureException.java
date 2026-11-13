@@ -22,6 +22,17 @@ public class InvalidMessageSignatureException extends RuntimeException {
     private final String messageSignature;
     private final String calculatedSignature;
 
+    public InvalidMessageSignatureException(String message, String messageSignature) {
+        this.message = message;
+        this.messageSignature = messageSignature;
+        this.calculatedSignature = null;
+    }
+
+    /**
+     * @deprecated the calculated signature is the valid signature of the message, so it should not travel with the
+     *             exception; use {@link #InvalidMessageSignatureException(String, String)}
+     */
+    @Deprecated(since = "4.18.6")
     public InvalidMessageSignatureException(String message, String messageSignature, String calculatedSignature) {
         this.message = message;
         this.messageSignature = messageSignature;
@@ -37,6 +48,10 @@ public class InvalidMessageSignatureException extends RuntimeException {
         return messageSignature;
     }
 
+    /**
+     * @deprecated the webhook consumer no longer sets the calculated signature, so this returns null for its exceptions
+     */
+    @Deprecated(since = "4.18.6")
     public String getCalculatedSignature() {
         return calculatedSignature;
     }
