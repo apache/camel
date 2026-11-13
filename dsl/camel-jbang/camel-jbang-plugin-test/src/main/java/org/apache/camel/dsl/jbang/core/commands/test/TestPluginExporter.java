@@ -41,6 +41,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.citrusframework.CitrusSettings;
 import org.citrusframework.CitrusVersion;
+import org.citrusframework.jbang.cli.util.CodeAnalyzer;
+import org.citrusframework.jbang.cli.util.DelegatingCodeAnalyzer;
 import org.citrusframework.util.FileUtils;
 
 /**
@@ -79,18 +81,19 @@ public class TestPluginExporter implements PluginExporter {
         }
 
         // add default Citrus dependencies as defined in Citrus JBang
-        deps.add(asDependency("citrus-base"));
-        deps.add(asDependency("citrus-junit-jupiter"));
-        deps.add(asDependency("citrus-http"));
-        deps.add(asDependency("citrus-yaml"));
-        deps.add(asDependency("citrus-xml"));
-        deps.add(asDependency("citrus-groovy"));
-        deps.add(asDependency("citrus-validation-text"));
-        deps.add(asDependency("citrus-validation-xml"));
-        deps.add(asDependency("citrus-validation-json"));
-        deps.add(asDependency("citrus-validation-yaml"));
+        deps.add(asCitrusDependency("citrus-base"));
+        deps.add(asCitrusDependency("citrus-junit-jupiter"));
+        deps.add(asCitrusDependency("citrus-yaml"));
+        deps.add(asCitrusDependency("citrus-xml"));
+        deps.add(asCitrusDependency("citrus-groovy"));
+        deps.add(asCitrusDependency("citrus-validation-text"));
+        deps.add(asCitrusDependency("citrus-validation-xml"));
+        deps.add(asCitrusDependency("citrus-validation-json"));
+        deps.add(asCitrusDependency("citrus-validation-yaml"));
 
         Path testDir = Path.of(".").resolve("test");
+        deps.addAll(detectDependenciesFromTestSources(testDir));
+
         if (Files.exists(testDir.resolve("jbang.properties"))) {
             try (FileInputStream fis = new FileInputStream(testDir.resolve("jbang.properties").toFile())) {
                 Properties props = new Properties();
@@ -104,14 +107,14 @@ public class TestPluginExporter implements PluginExporter {
                     }
                     if (dependency.startsWith("org.citrusframework:")) {
                         // construct proper Citrus Maven GAV from just the artifact id
-                        deps.add(asDependency(extractArtifactId(dependency)));
+                        deps.add(asCitrusDependency(extractArtifactId(dependency)));
                     } else if (dependency.startsWith("org.apache.camel")) {
                         // remove version from GAV, because we generally use the Camel bom
                         String[] parts = dependency.split(":");
-                        deps.add("mvn@test:%s:%s".formatted(parts[0], parts[1]));
+                        deps.add(asDependency(parts[0], parts[1]));
                     } else {
                         // add as test scoped dependency
-                        deps.add("mvn@test:" + dependency);
+                        deps.add(asDependency(dependency));
                     }
                 }
             } catch (IOException e) {
@@ -195,6 +198,53 @@ public class TestPluginExporter implements PluginExporter {
     }
 
     /**
+     * Scans Citrus test files in the given directory using the Citrus code analyzer to detect required modules and
+     * dependencies. Supports YAML, XML and Groovy test sources.
+     */
+    private Set<String> detectDependenciesFromTestSources(Path testDir) {
+        Set<String> deps = new HashSet<>();
+        DelegatingCodeAnalyzer analyzer = new DelegatingCodeAnalyzer();
+        try (Stream<Path> paths = Files.list(testDir)) {
+            paths.filter(p -> !p.getFileName().toString().startsWith("."))
+                    .filter(p -> {
+                        String ext = FileUtils.getFileExtension(p.getFileName().toString());
+                        return CitrusSettings.getTestFileNamePattern(ext)
+                                .stream()
+                                .map(Pattern::compile)
+                                .anyMatch(pattern -> pattern.matcher(p.getFileName().toString()).matches());
+                    })
+                    .forEach(path -> {
+                        try {
+                            CodeAnalyzer.ScanResult result = analyzer.scan(path);
+                            for (String module : result.modules()) {
+                                deps.add(asCitrusDependency(module));
+                            }
+                            for (String dependency : result.dependencies()) {
+                                deps.add(asScannedDependency(dependency));
+                            }
+                        } catch (Exception e) {
+                            // ignore scan errors for unsupported file types or missing catalog
+                        }
+                    });
+        } catch (IOException e) {
+            // ignore if test directory cannot be listed
+        }
+
+        return deps;
+    }
+
+    private String asScannedDependency(String dependency) {
+        String[] parts = dependency.split(":");
+        if (parts[0].equals("org.citrusframework")) {
+            return asCitrusDependency(parts[1]);
+        } else if (parts[0].startsWith("org.apache.camel")) {
+            return asDependency(parts[0], parts[1]);
+        } else {
+            return asDependency(dependency);
+        }
+    }
+
+    /**
      * Read and process given test source. Apply common postprocessing steps on test source code. For instance makes
      * sure that relative file paths get replaced with proper classpath resource paths.
      */
@@ -241,7 +291,19 @@ public class TestPluginExporter implements PluginExporter {
         return dependency.split(":")[1];
     }
 
-    private String asDependency(String artifactName) {
-        return "mvn@test:org.citrusframework:%s:${citrus.version}".formatted(artifactName);
+    private String asCitrusDependency(String artifactName) {
+        return asDependency("org.citrusframework", artifactName, "${citrus.version}");
+    }
+
+    private String asDependency(String gav) {
+        return "mvn@test:%s".formatted(gav);
+    }
+
+    private String asDependency(String groupId, String artifactName) {
+        return "mvn@test:%s:%s".formatted(groupId, artifactName);
+    }
+
+    private String asDependency(String groupId, String artifactName, String version) {
+        return "mvn@test:%s:%s:%s".formatted(groupId, artifactName, version);
     }
 }
