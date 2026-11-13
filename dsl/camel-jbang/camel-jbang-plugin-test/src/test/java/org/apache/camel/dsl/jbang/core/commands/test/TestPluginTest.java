@@ -112,6 +112,37 @@ class TestPluginTest {
     }
 
     @Test
+    public void shouldAlwaysIncludeDefaultDependencies() throws IOException {
+        Path testDir = Path.of(".").resolve("test");
+        Files.createDirectories(testDir);
+        try {
+            TestPluginExporter exporter = new TestPluginExporter();
+            Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
+
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-base:${citrus.version}"),
+                    "Should always include citrus-base as default dependency");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-junit-jupiter:${citrus.version}"),
+                    "Should always include citrus-junit-jupiter as default dependency");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-yaml:${citrus.version}"),
+                    "Should always include citrus-yaml as default dependency");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-xml:${citrus.version}"),
+                    "Should always include citrus-xml as default dependency");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-groovy:${citrus.version}"),
+                    "Should always include citrus-groovy as default dependency");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-validation-text:${citrus.version}"),
+                    "Should always include citrus-validation-text as default dependency");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-validation-xml:${citrus.version}"),
+                    "Should always include citrus-validation-xml as default dependency");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-validation-json:${citrus.version}"),
+                    "Should always include citrus-validation-json as default dependency");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-validation-yaml:${citrus.version}"),
+                    "Should always include citrus-validation-yaml as default dependency");
+        } finally {
+            Files.deleteIfExists(testDir);
+        }
+    }
+
+    @Test
     public void shouldProduceValidMavenPropertyReferences() throws IOException {
         Path testDir = Path.of(".").resolve("test");
         Files.createDirectories(testDir);
@@ -124,12 +155,116 @@ class TestPluginTest {
             Assertions.assertFalse(deps.contains("mvn@test:org.citrusframework:citrus-junit5:${citrus.version}"),
                     "Should not include legacy citrus-junit5 dependency");
             for (String dep : deps) {
-                Assertions.assertFalse(dep.contains("\\"),
-                        "Dependency should not contain backslash escapes: " + dep);
-                Assertions.assertTrue(dep.contains("${citrus.version}"),
-                        "Dependency should contain valid Maven property reference: " + dep);
+                if (dep.contains("org.citrusframework")) {
+                    Assertions.assertFalse(dep.contains("\\"),
+                            "Dependency should not contain backslash escapes: " + dep);
+                    Assertions.assertTrue(dep.contains("${citrus.version}"),
+                            "Dependency should contain valid Maven property reference: " + dep);
+                }
             }
         } finally {
+            Files.deleteIfExists(testDir);
+        }
+    }
+
+    @Test
+    public void shouldDetectDependenciesFromYamlTestSources() throws IOException {
+        Path testDir = Path.of(".").resolve("test");
+        Files.createDirectories(testDir);
+        Path yamlFile = testDir.resolve("my-test.citrus.it.yaml");
+        try {
+            Files.writeString(yamlFile, """
+                    name: my-test
+                    actions:
+                      - sql:
+                          datasource: "myDataSource"
+                      - send:
+                          endpoint: "kafka:myTopic"
+                      - echo:
+                          message: "Hello"
+                    """);
+
+            TestPluginExporter exporter = new TestPluginExporter();
+            Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
+
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-sql:${citrus.version}"),
+                    "Should auto-detect citrus-sql from sql action");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-kafka:${citrus.version}"),
+                    "Should auto-detect citrus-kafka from kafka endpoint");
+
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-base:${citrus.version}"),
+                    "Should still include default citrus-base dependency");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-junit-jupiter:${citrus.version}"),
+                    "Should still include default citrus-junit-jupiter dependency");
+        } finally {
+            Files.deleteIfExists(yamlFile);
+            Files.deleteIfExists(testDir);
+        }
+    }
+
+    @Test
+    public void shouldNotAddExtraDepsWithoutMatchingActions() throws IOException {
+        Path testDir = Path.of(".").resolve("test");
+        Files.createDirectories(testDir);
+        Path yamlFile = testDir.resolve("simple.citrus.it.yaml");
+        try {
+            Files.writeString(yamlFile, """
+                    name: simple-test
+                    actions:
+                      - echo:
+                          message: "Hello"
+                    """);
+
+            TestPluginExporter exporter = new TestPluginExporter();
+            Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
+
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-base:${citrus.version}"),
+                    "Should still include default citrus-base dependency");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-junit-jupiter:${citrus.version}"),
+                    "Should still include default citrus-junit-jupiter dependency");
+            Assertions.assertFalse(deps.contains("mvn@test:org.citrusframework:citrus-kafka:${citrus.version}"),
+                    "Should not include citrus-kafka when no kafka endpoint is used");
+            Assertions.assertFalse(deps.contains("mvn@test:org.citrusframework:citrus-sql:${citrus.version}"),
+                    "Should not include citrus-sql when no sql action is used");
+        } finally {
+            Files.deleteIfExists(yamlFile);
+            Files.deleteIfExists(testDir);
+        }
+    }
+
+    @Test
+    public void shouldDetectDependenciesFromMultipleYamlFiles() throws IOException {
+        Path testDir = Path.of(".").resolve("test");
+        Files.createDirectories(testDir);
+        Path sqlTest = testDir.resolve("sql-test.citrus.it.yaml");
+        Path kafkaTest = testDir.resolve("kafka-test.citrus.yaml");
+        try {
+            Files.writeString(sqlTest, """
+                    name: sql-test
+                    actions:
+                      - sql:
+                          datasource: "myDataSource"
+                    """);
+            Files.writeString(kafkaTest, """
+                    name: kafka-test
+                    endpoints:
+                      - kafka:
+                          topic: "myTopic"
+                    actions:
+                      - echo:
+                          message: "Hello"
+                    """);
+
+            TestPluginExporter exporter = new TestPluginExporter();
+            Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
+
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-sql:${citrus.version}"),
+                    "Should detect citrus-sql from first YAML file");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-kafka:${citrus.version}"),
+                    "Should detect citrus-kafka from second YAML file");
+        } finally {
+            Files.deleteIfExists(sqlTest);
+            Files.deleteIfExists(kafkaTest);
             Files.deleteIfExists(testDir);
         }
     }
