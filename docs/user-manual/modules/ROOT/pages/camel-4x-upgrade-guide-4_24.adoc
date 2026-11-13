@@ -24,6 +24,10 @@ list identifies the affected elements. The existing `CamelOpaBatchDecision` Bool
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
 
+=== camel-lra - promoted to Stable
+
+The `camel-lra` component has been promoted from _Preview_ to _Stable_ support level.
+
 === KeyValueRepository and State Store - namespace partitioning on shared backends
 
 In Camel 4.23, `state-store` endpoints stored keys directly into the underlying `KeyValueRepository` without namespacing. When a single `KeyValueRepository` was shared between multiple state stores, the Cache EIP, or repository adapters (such as `KeyValueAggregationRepository` or `KeyValueIdempotentRepository`), operations on one store (such as `clear()`) or key collisions could affect entries of another component or pattern.
@@ -35,6 +39,15 @@ Starting in 4.24:
 * To maintain backward compatibility with un-namespaced entries written by Camel 4.23 on a shared backend without migrating keys, users can opt out of namespacing by configuring `namespaced=false` on the endpoint (`state-store:myStore?namespaced=false`) or on the component (`camel.component.state-store.namespaced=false`).
 * The Cache EIP stores keys directly without a namespace prefix, preserving documented cache invalidation recipes (`cache.delete(key)` and `cache.clear()`). Note that because cache keys are un-prefixed, calling `clear()` on a `KeyValueRepository` shared with the Cache EIP will clear all entries in that repository, including state-store entries. It is recommended to use a dedicated repository for the Cache EIP when co-located with state-store.
 * `KeyValueAggregationRepository` safely verifies entry types before unmarshalling, ignoring unexpected types gracefully instead of failing with a class cast exception.
+
+=== camel-core-model - doTry keeps doCatch and doFinally in its outputs
+
+`doCatch` and `doFinally` written as properties of `doTry` in the YAML DSL are now kept in the outputs of the
+`TryDefinition`, as the clauses of the Java and XML DSLs always were, after the steps whatever the order of the YAML
+keys. Code that walks `getOutputs()` (route dumps, tooling) now sees them, and `getCatchClauses()`,
+`getFinallyClause()` and `getOutputsWithoutCatches()` are derived from the outputs on each call: a clause removed from
+the outputs, for example with advice-with, is no longer used, and changing the list returned by `getCatchClauses()`
+no longer changes the doTry. Use `setCatchClauses` and `setFinallyClause`, or the outputs, instead.
 
 === camel-ehcache - shared CacheManager and changed defaults
 
@@ -302,6 +315,15 @@ The camel-sjms and camel-sjms2 consumers now map a received `jakarta.jms.StreamM
 bytes, as the camel-jms consumer does, so a body sent with `jmsMessageType=Stream` arrives as the bytes that were sent.
 Before, the body was the `jakarta.jms.StreamMessage` itself. To get the JMS message, use `mapJmsMessage=false`.
 
+=== camel-keycloak - Keycloak 26.8.2 requires the kc-admin-api client scope
+
+This is a change in Keycloak, not in Camel: from Keycloak 26.8.2 the Admin REST API accepts only access tokens that
+carry the built-in `kc-admin-api` client scope, and rejects other tokens with `401 Unauthorized`. The Keycloak upgrade
+assigns the scope to `admin-cli` and `security-admin-console` only. When the `keycloak` producer authenticates with
+`clientId` and `clientSecret` of your own client, assign `kc-admin-api` to that client as a default client scope; a
+pre-obtained `accessToken` must be issued with that scope too. Username and password authentication uses `admin-cli`
+and keeps working. The integration tests of camel-keycloak now run against Keycloak 26.8.2.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
@@ -322,6 +344,14 @@ The `org.apache.camel.model.Model` interface (and so `ModelCamelContext`) has a 
 returns the lock held while routes are added to or removed from the model. A custom implementation of `Model` must
 implement it (classes that extend `DefaultCamelContext` need no change). The Kamelet component now creates the routes of
 Kamelets holding this lock.
+
+=== camel-core - CamelContext has a new removeRouteTemplatesFromResources method
+
+The `CamelContext` interface has a new method `removeRouteTemplatesFromResources(String pattern)`, which removes the
+route templates loaded from a resource (such as a route file or a Kamelet) and keeps those without one (such as the route
+templates of a Java `RouteBuilder` added to the context). A custom implementation of `CamelContext` must implement it
+(classes that extend `DefaultCamelContext` need no change). The route reload of dev mode uses it, so a route template
+added from Java is kept across a reload, and a route created from it with a templated route in a file is created again.
 
 === camel-core - Route.clearRouteModel() is deprecated
 
@@ -492,6 +522,31 @@ documented with the default value `true`, the default it has always had at runti
 XML and YAML DSL schemas said `false`. Routes behave as before.
 
 Tools that read the default from the catalog or the schemas now see `true`.
+
+=== camel-core - resolveResource: the name of the resource has no scheme
+
+With `resolveResource=true` on an expression (new in 4.23), a result that starts with `resource:` must now name a
+resource without a scheme, which is loaded from the classpath. A result with a scheme (`resource:file:order.json`,
+`resource:classpath:...`, `resource:http:...`, `resource:ref:...`) or with `..` in the name fails with an
+`IllegalArgumentException` that says to give the name without a scheme. Before, any scheme was loaded, from any
+location.
+
+Drop the scheme: return `resource:order.json` instead of `resource:file:order.json`. The same name works with
+`camel run`, which puts the files given on the command line on the classpath, and after `camel export`, which puts them
+in `src/main/resources`.
+
+[source,yaml]
+----
+- setBody:
+    expression:
+      groovy:
+        expression: "counter == 1 ? 'resource:order.json' : 'resource:order-bad-email.json'"
+        resolveResource: true
+----
+
+Let the route choose the name, such as a fixed folder with a name the route picks, rather than taking it straight from
+the message. The `resource:` prefix on the expression text itself, such as `constant: "resource:file:order.json"`, is
+not affected.
 
 === camel-core - pollEnrich: the body is null after a timeout also for a message that creates its body on demand
 
@@ -3237,6 +3292,26 @@ parameter than the statement has placeholders: most JDBC drivers then fail with 
 ignore the extra parameter, so the statement still matches an expired entry. With `tableName` the statements are
 derived from the default statements, as before.
 
+=== camel-sql - JdbcOrphanLockAwareIdempotentRepository keeps confirmed keys
+
+`JdbcOrphanLockAwareIdempotentRepository` now confirms a key by setting its `createdAt` to null and no longer keeping
+it alive, so a confirmed key stays a duplicate after its instance stops, as in `JdbcMessageIdRepository`. Before,
+another instance took it over `lockMaxAgeMillis` later and processed the message again. Keys that are only added
+(the file consumer with `idempotentEager=false`) and keys written before the upgrade are still taken over. With
+`readLockRemoveOnRollback=false`, a failed file is confirmed too and is no longer retried by another instance.
+
+The `createdAt` column must allow null. The repository checks this when it starts (in a transaction that it rolls
+back); with a `NOT NULL` column, or a MySQL/MariaDB `TIMESTAMP` with `explicit_defaults_for_timestamp=OFF`, it logs a
+WARN and keys stay locks as before, and a confirm sends no statement. Confirmed keys have no age, so housekeeping by
+`createdAt` does not delete them: to purge them by age, add a column of your own (such as
+`insertedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP`) or set a `confirmQuery` that also stores the time of the confirm,
+and purge by that column. With the `idempotent` read locks of the file consumer and the default
+`readLockRemoveOnCommit=false`, the name of every processed file stays in the table; when the key is only a read
+lock, set `readLockRemoveOnCommit=true` with `readLockIdempotentReleaseDelay`. With a custom table set by custom
+queries instead of `tableName`, set `confirmQuery` too; set it to null or empty to keep the old behaviour. All
+instances sharing the table must run this version: older ones see a confirmed key as absent (before 4.14.6 and 4.18.2
+they take it over).
+
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
 In a `transacted()` route that uses a JTA transaction manager, `markRollbackOnlyLast()` now rolls back the
@@ -3874,6 +3949,20 @@ a `NoNodeException`, as it did without `create=true`.
 
 With `listChildren=true`, a failed write or delete of an InOut exchange now fails the exchange, instead of being
 replaced by the listing of the child _znodes_.
+
+=== camel-zookeeper-master - MasterRoutePolicy and route removal, and the consumer of a slave
+
+A `MasterRoutePolicy` stayed in the ZooKeeper group until the CamelContext stopped, also after its route was removed
+(with `removeRoute`, or by a route reload), so no other node became the master and the route ran nowhere in the
+cluster. The policy now leaves the group when its route is removed, so another node takes over, and joins it again when
+the route is added again. So a route reloaded on the master can now move to another node.
+
+On a node that is not the master, the policy now stops the consumer of its route again right after the route was
+started or resumed (from JMX, the controlbus or a route policy), and starts it when the node becomes the master. Before,
+the consumer of such a route kept running next to the one of the master. This includes a route left at
+`autoStartup=true`: it now consumes only once its node is the master, also when the CamelContext starts, so it does not
+consume while the node cannot reach ZooKeeper. Setting the route to `autoStartup=false` is still recommended, so the
+consumer does not run for a moment when the CamelContext starts.
 
 === camel-milo - each client connection has thread pools of its own
 
@@ -4653,6 +4742,17 @@ starts without a dead letter policy, as the `maxRedeliverCount` option documents
 in retry mode: 16 redeliveries and its default retry letter and dead letter topics. As without retry mode,
 `retryLetterTopic` and `deadLetterTopic` only apply when `maxRedeliverCount` is set. The consumer logs a WARN when it
 starts with one of these topics but no `maxRedeliverCount` (and for `retryLetterTopic` without `enableRetry`).
+
+=== camel-pulsar - the producer no longer sends a body with Java serialization
+
+The `pulsar` producer sends the body as a `byte[]`. A body that does not convert to one, such as a `Map`, a `List`, a
+number or a POJO, was sent with Java serialization, which only a Java client that deserializes it can read, and no body
+was sent as the bytes of a serialized `null`. Such a body, and no body, now fail with an `InvalidPayloadException`.
+Text, bytes, a stream and a file are sent as their content, as before.
+
+Marshal the body before the producer, for example with `marshal().json()`. To keep the old behaviour for now, set the
+new option `allowJavaSerializedObject=true` on the endpoint or the component. The option is deprecated from the start
+and will be removed in a future release.
 
 === camel-twitter - twitter-search applies its query options again
 

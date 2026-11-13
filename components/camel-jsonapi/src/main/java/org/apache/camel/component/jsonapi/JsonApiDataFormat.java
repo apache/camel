@@ -16,11 +16,17 @@
  */
 package org.apache.camel.component.jsonapi;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.github.jasminb.jsonapi.JSONAPIDocument;
 import com.github.jasminb.jsonapi.ResourceConverter;
 import org.apache.camel.CamelContext;
@@ -38,17 +44,21 @@ import org.apache.camel.support.service.ServiceSupport;
  * JSonApi data format for marshal/unmarshal
  */
 @Dataformat("jsonApi")
-@BodyTypes(marshalIn = @BodyType(value = Carrier.POJO,
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },
                                  description = "One resource object of a class dataFormatTypes names, annotated with @Type and"
-                                               + " @Id of JSONAPI-Converter. A Map or a List fails"),
+                                               + " @Id of JSONAPI-Converter, or a Collection or an array of them, written as a"
+                                               + " collection document whose data is an array. A Map fails"),
            marshalOut = @BodyType(value = Carrier.STREAM, format = "json",
                                   description = "The JSON:API document in the stream cache, or a byte array when stream"
                                                 + " caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
-           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.NULL }, javaTypeOption = "mainFormatType",
+           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL }, javaTypeOption = "mainFormatType",
                                     description = "The primary data as an object of the class mainFormatType names, or no body"
-                                                  + " when the data is null. A document whose data is an array fails"))
+                                                  + " when the data is null. A collection document, whose data is an array, gives"
+                                                  + " a List of them"))
 public class JsonApiDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+
+    private static final JsonFactory JSON_FACTORY = new JsonFactory();
 
     private CamelContext camelContext;
 
@@ -87,7 +97,15 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         ResourceConverter converter = new ResourceConverter(dataFormatTypeClasses);
-        byte[] objectAsBytes = converter.writeDocument(new JSONAPIDocument<>(graph));
+        byte[] objectAsBytes;
+        if (graph instanceof Collection<?> collection) {
+            // a collection document: its data is an array of resource objects
+            objectAsBytes = converter.writeDocumentCollection(new JSONAPIDocument<>(collection));
+        } else if (graph instanceof Object[] array) {
+            objectAsBytes = converter.writeDocumentCollection(new JSONAPIDocument<>(Arrays.asList(array)));
+        } else {
+            objectAsBytes = converter.writeDocument(new JSONAPIDocument<>(graph));
+        }
         stream.write(objectAsBytes);
     }
 
@@ -100,14 +118,41 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
     public Object unmarshal(Exchange exchange, Object body) throws Exception {
         ResourceConverter converter = new ResourceConverter(dataFormatTypeClasses);
 
+        // the converter reads the whole document into a tree anyway, so read it once as bytes and look at its data
+        byte[] data = body instanceof byte[] arr
+                ? arr : exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, body);
+
         JSONAPIDocument<?> doc;
-        if (body instanceof byte[] arr) {
-            doc = converter.readDocument(arr, mainFormatTypeClass);
+        if (isCollectionDocument(data)) {
+            doc = converter.readDocumentCollection(data, mainFormatTypeClass);
         } else {
-            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
-            doc = converter.readDocument(is, mainFormatTypeClass);
+            doc = converter.readDocument(data, mainFormatTypeClass);
         }
         return doc.get();
+    }
+
+    /**
+     * Whether the primary data of the document (the top level data member) is an array, which makes it a collection
+     * document. Only the tokens before the data member are read. Input that is not a JSON object answers false, so the
+     * converter reports it as before.
+     */
+    private static boolean isCollectionDocument(byte[] data) {
+        try (JsonParser parser = JSON_FACTORY.createParser(data)) {
+            if (parser.nextToken() != JsonToken.START_OBJECT) {
+                return false;
+            }
+            while (parser.nextToken() == JsonToken.FIELD_NAME) {
+                String name = parser.currentName();
+                JsonToken value = parser.nextToken();
+                if ("data".equals(name)) {
+                    return value == JsonToken.START_ARRAY;
+                }
+                parser.skipChildren();
+            }
+            return false;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     public String getDataFormatTypes() {

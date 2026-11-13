@@ -73,6 +73,16 @@ The following routes send a message to the `orders` topic every five seconds, an
             message: "Received ${body}"
 ----
 
+=== Message body
+
+The producer sends the body as a byte array: text, bytes, a stream or a file are sent as their content. A body that
+does not convert to a byte array, such as a `Map`, a `List`, a number or a POJO, fails, and so does no body: marshal it
+first, for example to JSON with `marshal().json()`. The consumer gives the payload as a byte array, so convert or
+unmarshal it in the route.
+
+Before Camel 4.24 such a body was sent with Java serialization, which only a Java client that deserializes it can
+read. The deprecated `allowJavaSerializedObject` option turns this back on for compatibility, and will be removed.
+
 === Producer sequence ids and deduplication
 
 With a `producerName` and deduplication enabled on the broker, the producer continues the sequence ids after the

@@ -1982,23 +1982,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteTryDefinition(TryDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
-        List<ProcessorDefinition<?>> outputs = new ArrayList<>(def.getOutputs());
-        for (CatchDefinition clause : def.getCatchClauses()) {
-            if (!outputs.contains(clause)) {
-                int index = outputs.size();
-                for (int i = 0; i < outputs.size(); i++) {
-                    if (outputs.get(i) instanceof FinallyDefinition) {
-                        index = i;
-                        break;
-                    }
-                }
-                outputs.add(index, clause);
-            }
-        }
-        if (def.getFinallyClause() != null && !outputs.contains(def.getFinallyClause())) {
-            outputs.add(def.getFinallyClause());
-        }
-        doWriteOutputs(jo, outputs, this::doWriteProcessorDefinitionRef);
+        doWriteOutputs(jo, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         return jo;
     }
     protected JsonObject doWriteUnmarshalDefinition(UnmarshalDefinition def) {

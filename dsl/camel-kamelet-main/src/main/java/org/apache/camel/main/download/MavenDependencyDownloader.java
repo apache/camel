@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -647,7 +648,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     private static String managementKey(MavenGav gav) {
-        return gav.getGroupId() + ":" + gav.getArtifactId() + ":" + gav.getClassifier() + ":" + gav.getPackaging();
+        return gav.getGroupId() + ":" + gav.getArtifactId() + ":" + Objects.toString(gav.getClassifier(), "") + ":"
+               + Objects.toString(gav.getPackaging(), "");
     }
 
     /**

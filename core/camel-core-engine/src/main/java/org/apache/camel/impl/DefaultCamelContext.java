@@ -77,6 +77,7 @@ import org.apache.camel.spi.ValidatorKey;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.LocalBeanRegistry;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.scan.AssignableToPackageScanFilter;
@@ -433,6 +434,19 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     public void removeRouteTemplates(String pattern) throws Exception {
         if (!isLockModel()) {
             model.removeRouteTemplateDefinitions(pattern);
+        }
+    }
+
+    @Override
+    public void removeRouteTemplatesFromResources(String pattern) throws Exception {
+        if (!isLockModel()) {
+            List<RouteTemplateDefinition> remove = new ArrayList<>();
+            for (RouteTemplateDefinition def : new ArrayList<>(model.getRouteTemplateDefinitions())) {
+                if (def.getResource() != null && PatternHelper.matchPattern(def.getId(), pattern)) {
+                    remove.add(def);
+                }
+            }
+            model.removeRouteTemplateDefinitions(remove);
         }
     }
 
