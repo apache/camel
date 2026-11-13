@@ -399,6 +399,18 @@ public final class StringHelper {
         return value;
     }
 
+    /**
+     * Splits the value on the given separator, up to the given number of parts.
+     * <p>
+     * The separator may be more than one character long, such as <tt>::</tt>. The returned array always has
+     * <tt>count</tt> elements, and any trailing elements are left as <tt>null</tt> when the value contains fewer
+     * separators than requested.
+     *
+     * @param  value  the value to split
+     * @param  needle the separator to split on (may be multiple characters)
+     * @param  count  the maximum number of parts to split into
+     * @return        the value split into at most count parts
+     */
     public static String[] splitOnCharacter(String value, String needle, int count) {
         String[] rc = new String[count];
         rc[0] = value;
@@ -409,7 +421,7 @@ public final class StringHelper {
                 return rc;
             }
             rc[i - 1] = v.substring(0, p);
-            rc[i] = v.substring(p + 1);
+            rc[i] = v.substring(p + needle.length());
         }
         return rc;
     }

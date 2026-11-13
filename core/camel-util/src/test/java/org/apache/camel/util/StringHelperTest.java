@@ -694,6 +694,27 @@ public class StringHelperTest {
     }
 
     @Test
+    public void testSplitOnCharacterMultiChar() {
+        String[] list = splitOnCharacter("foo::bar", "::", 2);
+        assertEquals(2, list.length);
+        assertEquals("foo", list[0]);
+        assertEquals("bar", list[1]);
+
+        list = splitOnCharacter("foo::bar::baz", "::", 3);
+        assertEquals(3, list.length);
+        assertEquals("foo", list[0]);
+        assertEquals("bar", list[1]);
+        assertEquals("baz", list[2]);
+
+        // the separator characters must not leak into the following value
+        list = splitOnCharacter("a=>b=>c", "=>", 3);
+        assertEquals(3, list.length);
+        assertEquals("a", list[0]);
+        assertEquals("b", list[1]);
+        assertEquals("c", list[2]);
+    }
+
+    @Test
     public void testLimitLength() {
         String s = "ABCDEFGHIJKLMNOPQRST";
         assertEquals(s, StringHelper.limitLength("ABCDEFGHIJKLMNOPQRST", 30));
