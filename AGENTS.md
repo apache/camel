@@ -126,7 +126,8 @@ Camel is a large, long-lived project — code often looks "wrong" but exists for
    with Camel),
    [`good-to-know.adoc`](design/good-to-know.adoc) (proposed hint rules in the catalog, facts per component),
    [`cli-short-commands.adoc`](design/cli-short-commands.adoc) (proposed resident daemon for the short commands of
-   the Camel CLI, and why not a native front).
+   the Camel CLI, and why not a native front),
+   [`cedar.adoc`](design/cedar.adoc) (proposed `camel-cedar`, embedded Cedar authorization).
 5. **Understand the broader context**: if a module replaced another (e.g. `camel-opentelemetry2`), understand what was
    intentionally changed vs. accidentally omitted.
 6. **Check if the fix reverts prior work**: if so, stop and reconsider; if still justified, say so in the PR description.
