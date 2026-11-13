@@ -98,7 +98,6 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param wrappedStyle the value to set
@@ -119,7 +118,6 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param wrappedStyle the value to set
@@ -573,7 +571,6 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param allowStreaming the value to set
@@ -596,7 +593,6 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param allowStreaming the value to set
@@ -1081,7 +1077,6 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param wrappedStyle the value to set
@@ -1102,7 +1097,6 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param wrappedStyle the value to set
@@ -1675,7 +1669,6 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param allowStreaming the value to set
@@ -1698,7 +1691,6 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param allowStreaming the value to set
@@ -2184,7 +2176,6 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param wrappedStyle the value to set
@@ -2205,7 +2196,6 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param wrappedStyle the value to set
@@ -2506,7 +2496,6 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param allowStreaming the value to set
@@ -2529,7 +2518,6 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param allowStreaming the value to set

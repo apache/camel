@@ -28,10 +28,20 @@ public class CommandLineDependencyDownloader extends ServiceSupport {
     private final CamelContext camelContext;
     private final DependencyDownloader downloader;
     private final String dependencies;
+    private final boolean required;
 
     public CommandLineDependencyDownloader(CamelContext camelContext, String dependencies) {
+        this(camelContext, dependencies, false);
+    }
+
+    /**
+     * @param required whether a dependency that cannot be downloaded fails (with a {@link DownloadException}), instead
+     *                 of logging the error: when running, the application needs the dependencies the user asked for
+     */
+    public CommandLineDependencyDownloader(CamelContext camelContext, String dependencies, boolean required) {
         this.camelContext = camelContext;
         this.dependencies = dependencies;
+        this.required = required;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 
@@ -52,7 +62,11 @@ public class CommandLineDependencyDownloader extends ServiceSupport {
 
         if (!gavs.isEmpty()) {
             for (MavenGav gav : gavs) {
-                downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+                if (required) {
+                    downloader.downloadRequiredDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+                } else {
+                    downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+                }
             }
         }
     }

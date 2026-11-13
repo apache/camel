@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.dsl.jbang.run.RunFiles;
@@ -210,8 +211,9 @@ public final class IntegrationLauncher {
                 removeConsoleOutput(output);
                 return result;
             }
-            RuntimeHelper.ProcessInfo info = findByPid(pid);
-            if (info != null && started(pid)) {
+            // its own status first: finding it among all the integrations reads all of their status files
+            RuntimeHelper.ProcessInfo info = started(pid) ? findByPid(pid) : null;
+            if (info != null) {
                 // the name the other tools find the process by: the one the caller gave, else the Camel context name
                 // (the source file name without its extensions); the pid is in the result as well
                 String started = runName != null && !runName.isBlank()
@@ -237,7 +239,7 @@ public final class IntegrationLauncher {
                 return result;
             }
             try {
-                Thread.sleep(250);
+                Thread.sleep(ProcessFinder.STATUS_POLL_INTERVAL);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
@@ -753,11 +755,11 @@ public final class IntegrationLauncher {
             keepCommand(p, cmd);
             long deadline = System.currentTimeMillis() + STARTUP_TIMEOUT_MS;
             while (System.currentTimeMillis() < deadline && p.isAlive()) {
-                if (findByPid(p.pid()) != null && started(p.pid())) {
+                if (started(p.pid()) && findByPid(p.pid()) != null) {
                     removeWhenEnded(p, output);
                     return "Restarted " + (name != null ? name : "pid " + pid) + " as pid " + p.pid();
                 }
-                Thread.sleep(250);
+                Thread.sleep(ProcessFinder.STATUS_POLL_INTERVAL);
             }
             if (!p.isAlive()) {
                 boolean kept = stoppedByRestart(directory, name);

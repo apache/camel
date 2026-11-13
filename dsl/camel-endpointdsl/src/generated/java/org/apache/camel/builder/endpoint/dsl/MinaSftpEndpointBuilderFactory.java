@@ -3048,7 +3048,6 @@ public interface MinaSftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param existDirCheckUsingLs the value to set
@@ -3066,7 +3065,6 @@ public interface MinaSftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param existDirCheckUsingLs the value to set
@@ -4935,7 +4933,6 @@ public interface MinaSftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param existDirCheckUsingLs the value to set
@@ -4953,7 +4950,6 @@ public interface MinaSftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param existDirCheckUsingLs the value to set
@@ -6337,7 +6333,6 @@ public interface MinaSftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param existDirCheckUsingLs the value to set
@@ -6355,7 +6350,6 @@ public interface MinaSftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param existDirCheckUsingLs the value to set

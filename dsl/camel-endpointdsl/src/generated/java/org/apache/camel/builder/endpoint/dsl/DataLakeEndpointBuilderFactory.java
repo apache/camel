@@ -95,7 +95,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -111,7 +111,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -1521,7 +1521,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -1537,7 +1537,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -2383,7 +2383,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -2399,7 +2399,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set

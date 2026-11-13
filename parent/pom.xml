@@ -61,7 +61,7 @@
         <activemq-version>5.19.11</activemq-version>
         <activemq6-version>6.3.2</activemq6-version>
         <activemq-artemis-version>2.57.0</activemq-artemis-version>
-        <aesh-version>3.19</aesh-version>
+        <aesh-version>3.19.1</aesh-version>
         <agroal-version>3.2.1</agroal-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
         <alibabacloud-oss-version>0.6.1</alibabacloud-oss-version>
@@ -2742,6 +2742,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-semantic</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-semantic-micrometer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -127,7 +127,6 @@ public interface CxfComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Whether to allow CXF to keep the last message part of an incoming
          * SOAP message as a javax.xml.transform.Source read from the stream,
@@ -141,7 +140,6 @@ public interface CxfComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param allowStreaming the value to set

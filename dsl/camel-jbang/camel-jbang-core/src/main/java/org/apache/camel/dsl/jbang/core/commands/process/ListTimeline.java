@@ -48,7 +48,8 @@ import org.apache.camel.util.json.Jsoner;
                    description = "Get what the routes did per second, the errors, and the failed and slowest exchanges",
                    generateHelp = true,
                    footer = {
-                           "The integration records the last 5 minutes (the timeline dev console, on in profile dev).",
+                           "The integration records the last 5 minutes (the timeline dev console, on in",
+                           "profile dev).",
                            "",
                            "Examples:",
                            "  camel get timeline",

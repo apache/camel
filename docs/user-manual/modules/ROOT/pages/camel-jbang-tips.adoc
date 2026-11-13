@@ -187,3 +187,27 @@ curl -X DELETE http://0.0.0.0:8080/q/upload/bar.java
 curl -X DELETE http://0.0.0.0:8080/q/upload/*.java
 curl -X DELETE http://0.0.0.0:8080/q/upload/*
 ----
+
+== Arguments from a file
+
+A long command line can be kept in a file, and given as `@file`: the CLI replaces it with the arguments in that file.
+
+For example, `run.txt` with:
+
+[source,text]
+----
+# the routes and the options to run them with
+run orders.yaml payments.yaml
+--dev
+--property=app.name="My Shop"
+----
+
+[source,bash]
+----
+camel @run.txt
+camel run @routes.txt --dev
+----
+
+The arguments are separated by spaces or line breaks, quotes group words, a line that starts with `#` is a comment,
+and a file can name other files with `@`. Use `@@` for an argument that starts with `@` itself. A file that does not
+exist is a usage error (exit code `2`).

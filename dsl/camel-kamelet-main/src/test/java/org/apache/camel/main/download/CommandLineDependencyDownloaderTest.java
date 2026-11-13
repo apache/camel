@@ -26,6 +26,8 @@ import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CommandLineDependencyDownloaderTest {
 
@@ -54,7 +56,43 @@ class CommandLineDependencyDownloaderTest {
                 "org.apache.camel:camel-whatsapp:1.2.3"), downloaded);
     }
 
+    @Test
+    void requiredDependenciesAreDownloadedAsRequired() throws Exception {
+        List<String> downloaded = new ArrayList<>();
+        try (SimpleCamelContext context = new SimpleCamelContext()) {
+            context.addService(recordingDownloader(context, downloaded));
+
+            CommandLineDependencyDownloader command = new CommandLineDependencyDownloader(
+                    context, "com.example:first:1.0, com.example:second:2.0", true);
+            command.init();
+        }
+
+        assertEquals(List.of("required:com.example:first:1.0", "required:com.example:second:2.0"), downloaded);
+    }
+
+    @Test
+    void requiredDependencyThatCannotBeDownloadedFails() throws Exception {
+        DownloadException failure = new DownloadException("Cannot download dependency: com.example:missing:1.0");
+        List<String> downloaded = new ArrayList<>();
+        try (SimpleCamelContext context = new SimpleCamelContext()) {
+            context.addService(recordingDownloader(context, downloaded, failure));
+
+            CommandLineDependencyDownloader command = new CommandLineDependencyDownloader(
+                    context, "com.example:missing:1.0, com.example:second:2.0", true);
+
+            assertSame(failure, assertThrows(DownloadException.class, command::init));
+        }
+
+        // the run stops at the first dependency that cannot be downloaded
+        assertEquals(List.of("required:com.example:missing:1.0"), downloaded);
+    }
+
     private static DependencyDownloader recordingDownloader(SimpleCamelContext context, List<String> downloaded) {
+        return recordingDownloader(context, downloaded, null);
+    }
+
+    private static DependencyDownloader recordingDownloader(
+            SimpleCamelContext context, List<String> downloaded, DownloadException requiredFailure) {
         return (DependencyDownloader) Proxy.newProxyInstance(
                 CommandLineDependencyDownloaderTest.class.getClassLoader(),
                 new Class[] { DependencyDownloader.class },
@@ -71,6 +109,13 @@ class CommandLineDependencyDownloaderTest {
                         }
                         case "downloadDependency" -> {
                             downloaded.add(args[0] + ":" + args[1] + ":" + args[2]);
+                            return null;
+                        }
+                        case "downloadRequiredDependency" -> {
+                            downloaded.add("required:" + args[0] + ":" + args[1] + ":" + args[2]);
+                            if (requiredFailure != null) {
+                                throw requiredFailure;
+                            }
                             return null;
                         }
                         case "alreadyOnClasspath" -> {

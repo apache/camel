@@ -40,6 +40,7 @@ import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.jline.jansi.AnsiConsole;
+import org.jline.jansi.AnsiMode;
 
 public abstract class CamelCommand implements Command<CommandInvocation>, CommandTree.ParsedCommandAware {
 
@@ -324,6 +325,16 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
         } else {
             printer().println(String.valueOf(text));
         }
+    }
+
+    /**
+     * Whether the console strips the ANSI colors of {@link #printColored(Object)}: the command prints to the console,
+     * and the output is not a terminal (a file or a pipe). A command that prints much text in colors, such as camel
+     * log, prints it without colors then, as letting the console strip the colors of each piece of text is slow
+     * (CAMEL-26911).
+     */
+    protected boolean colorsStripped() {
+        return printsToConsole() && AnsiConsole.out().getMode() == AnsiMode.Strip;
     }
 
     private boolean printsToConsole() {

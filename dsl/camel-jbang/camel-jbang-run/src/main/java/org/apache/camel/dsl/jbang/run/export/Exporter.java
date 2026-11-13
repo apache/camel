@@ -676,6 +676,8 @@ abstract class Exporter {
         // expression): they stay at the resources root, where the reference resolves, instead of camel-groovy where
         // they would be compiled as scripts and be out of reach of the reference (CAMEL-24853)
         Set<String> resourceReferenced = resourceReferencedFiles(prop.getProperty("camel.main.routesIncludePattern"));
+        // the file of the project that each file of the export is copied to: two files must not end up as one
+        Map<Path, Path> copied = new HashMap<>();
 
         for (String k : SETTINGS_PROP_SOURCE_KEYS) {
             String files;
@@ -766,6 +768,7 @@ abstract class Exporter {
                     }
                     if (!java) {
                         if (kamelet) {
+                            claim(copied, out, source);
                             ExportHelper.safeCopy(source, out, true);
                             if (request.symbolicLink) {
                                 deferredSymlinks.put(out, source);
@@ -777,12 +780,16 @@ abstract class Exporter {
                                     .replace(".jkube.yaml", ".yaml")
                                     .replace(".jkube.yml", ".yml");
                             out = srcCamelResourcesDir.getParent().getParent().resolve("jkube").resolve(name);
+                            claim(copied, out, source);
                             Files.createDirectories(out.getParent());
                             ExportHelper.safeCopy(source, out, true);
                             if (request.symbolicLink) {
                                 deferredSymlinks.put(out, source);
                             }
                         } else {
+                            if (!Files.isDirectory(source)) {
+                                claim(copied, out, source);
+                            }
                             Files.createDirectories(out.getParent());
                             ExportHelper.safeCopy(getClass().getClassLoader(), scheme, source, out, true);
                             if (request.symbolicLink) {
@@ -814,6 +821,7 @@ abstract class Exporter {
                                 }
                             }
                         }
+                        claim(copied, out, source);
                         if (request.javaLiveReload) {
                             ExportHelper.safeCopy(source, out, true);
                             if (request.symbolicLink) {
@@ -877,6 +885,24 @@ abstract class Exporter {
         return false;
     }
 
+    /**
+     * Claims the file of the project that a file of the export is copied to: two files with the same name in different
+     * directories (x/route.camel.yaml and y/route.camel.yaml) would be the same file of the project, and one of them
+     * would be lost (CAMEL-26912). The same file given twice is copied once.
+     */
+    private void claim(Map<Path, Path> copied, Path out, Path source) {
+        Path from = source.toAbsolutePath().normalize();
+        Path target = out.toAbsolutePath().normalize();
+        Path previous = copied.putIfAbsent(target, from);
+        if (previous != null && !previous.equals(from)) {
+            Path build = buildDir().toAbsolutePath().normalize();
+            Path name = target.startsWith(build) ? build.relativize(target) : target;
+            throw new ExportException(
+                    "Cannot export " + previous + " and " + from + " as both would be "
+                                      + name.toString().replace('\\', '/') + " in the exported project: rename one of them");
+        }
+    }
+
     protected void adjustJavaSourceFileLine(String line, OutputStream fos) throws Exception {
         // noop
     }
@@ -886,7 +912,8 @@ abstract class Exporter {
             Function<Properties, Object> customize)
             throws Exception {
         Properties settingsProps = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(settingsProps, settings);
+        // the run settings are written in UTF-8 (see RunSettings)
+        RuntimeUtil.loadProperties(settingsProps, settings, StandardCharsets.UTF_8);
 
         Properties profileProps = new CamelCaseOrderedProperties();
         if (Files.exists(profile)) {
@@ -965,10 +992,11 @@ abstract class Exporter {
             }
         }
 
-        // write all the properties
+        // write all the properties, in the encoding of a properties file (ISO-8859-1), as the application.properties of
+        // the export was read: its text is written back as it was, also UTF-8 text, which is read as ISO-8859-1
         Files.createDirectories(targetDir);
         Path appPropsPath = targetDir.resolve("application.properties");
-        Files.writeString(appPropsPath, content.toString(), StandardCharsets.UTF_8);
+        Files.writeString(appPropsPath, content.toString(), StandardCharsets.ISO_8859_1);
     }
 
     protected void prepareApplicationProperties(Properties properties) {
@@ -1047,8 +1075,12 @@ abstract class Exporter {
         FileUtil.setPosixFilePermissions(camelCmdPath, "rwxr-xr-x");
     }
 
+    /**
+     * The line of a property in the application.properties of the exported project, escaped as a properties file needs
+     * it (see {@link ExportHelper#propertyLine(String, String)}), or null to leave the property out.
+     */
     protected String applicationPropertyLine(String key, String value) {
-        return key + "=" + value;
+        return ExportHelper.propertyLine(key, value);
     }
 
     /**
@@ -1195,12 +1227,13 @@ abstract class Exporter {
         if (sb.isEmpty()) {
             return;
         }
-        String content = Files.exists(file) ? Files.readString(file) : "";
+        // in the encoding of a properties file, which keeps the bytes of the file as they are
+        String content = Files.exists(file) ? Files.readString(file, StandardCharsets.ISO_8859_1) : "";
         if (!content.isEmpty() && !content.endsWith("\n")) {
             content += "\n";
         }
         content += "# developer console (--console), only for the dev profile\n" + sb;
-        Files.writeString(file, content);
+        Files.writeString(file, content, StandardCharsets.ISO_8859_1);
     }
 
     public static String jibMavenPluginVersion(Path settings, Properties prop) {

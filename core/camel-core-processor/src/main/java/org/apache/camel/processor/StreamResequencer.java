@@ -165,8 +165,8 @@ public class StreamResequencer extends BaseProcessorSupport
 
     /**
      * Sets whether to ignore invalid exchanges which cannot be used by this stream resequencer.
-     * <p/>
-     * Default is <tt>false</tt>, by which an {@link CamelExchangeException} is thrown if the {@link Exchange} is
+     * <p>
+     * Default is <code>false</code>, by which a {@link CamelExchangeException} is thrown if the {@link Exchange} is
      * invalid.
      */
     public void setIgnoreInvalidExchanges(boolean ignoreInvalidExchanges) {

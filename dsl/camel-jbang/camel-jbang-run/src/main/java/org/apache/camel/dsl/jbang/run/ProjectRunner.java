@@ -16,7 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.run;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
@@ -46,6 +50,57 @@ public class ProjectRunner extends ProjectExporter {
      * The directory with the projects that are exported to be run, one directory per run.
      */
     public static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
+
+    /**
+     * The file in the directory of a run with the pid of the process that runs it (the Camel CLI): a run that is killed
+     * or crashes cannot remove its directory, and a later run removes it (CAMEL-26912). The file is hidden, as the
+     * project of the run is exported to the directory.
+     */
+    static final String RUN_PID_FILE = ".camel-run-pid";
+
+    /**
+     * Creates the directory of a run in {@link #RUN_PLATFORM_DIR}, with the pid of this process, and removes the
+     * directories of the earlier runs whose process is gone.
+     */
+    public static Path createRunDir() throws IOException {
+        removeStaleRunDirs();
+        Path dir = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
+        Files.createDirectories(dir);
+        Files.writeString(dir.resolve(RUN_PID_FILE), Long.toString(ProcessHandle.current().pid()));
+        return dir;
+    }
+
+    /**
+     * Removes the directories of the runs in {@link #RUN_PLATFORM_DIR} whose process is gone, killed or crashed before
+     * it could remove the directory. The directories of the runs that are running are kept, and so are the directories
+     * without the pid of their process (of an earlier Camel version), which may still be running.
+     */
+    public static void removeStaleRunDirs() {
+        removeStaleRunDirs(Paths.get(RUN_PLATFORM_DIR));
+    }
+
+    static void removeStaleRunDirs(Path runDirs) {
+        if (!Files.isDirectory(runDirs)) {
+            return;
+        }
+        try (Stream<Path> dirs = Files.list(runDirs)) {
+            for (Path dir : dirs.filter(Files::isDirectory).toList()) {
+                Path pidFile = dir.resolve(RUN_PID_FILE);
+                long pid;
+                try {
+                    pid = Long.parseLong(Files.readString(pidFile).trim());
+                } catch (IOException | NumberFormatException e) {
+                    // not known which process runs it
+                    continue;
+                }
+                if (!ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false)) {
+                    RunPipeline.removeDir(dir);
+                }
+            }
+        } catch (IOException e) {
+            // best effort: the directory was removed by a later run, or cannot be listed (permissions, I/O)
+        }
+    }
 
     public ProjectRunner() {
         this(new RunContext());

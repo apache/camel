@@ -32,6 +32,9 @@ import org.apache.http.Header;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResult;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -111,6 +114,19 @@ class MavenDownloaderImplTest {
         if (localServer != null) {
             localServer.shutdown(2, TimeUnit.SECONDS);
         }
+    }
+
+    @Test
+    void testRemoteSnapshotHasBaseVersion() {
+        // a SNAPSHOT downloaded from a remote repository is resolved with its timestamped version
+        ArtifactResult result = new ArtifactResult(new ArtifactRequest());
+        result.setArtifact(new DefaultArtifact("org.apache.camel:camel-api:jar:4.24.0-20261112.143700-31")
+                .setFile(new File("camel-api-4.24.0-20261112.143700-31.jar")));
+
+        MavenArtifact artifact = MavenDownloaderImpl.toMavenArtifact(result);
+
+        assertEquals("org.apache.camel:camel-api:4.24.0-SNAPSHOT", artifact.getGav().toString());
+        assertEquals("camel-api-4.24.0-20261112.143700-31.jar", artifact.getFile().getName());
     }
 
     @Test

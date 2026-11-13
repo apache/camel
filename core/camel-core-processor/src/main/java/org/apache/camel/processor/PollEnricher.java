@@ -67,7 +67,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * A content enricher that enriches input data by first obtaining additional data from a <i>resource</i> represented by
  * an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of input data
  * and additional data is delegated to an {@link AggregationStrategy} object.
- * <p/>
+ * <p>
  * Uses a {@link org.apache.camel.PollingConsumer} to obtain the additional data as opposed to {@link Enricher} that
  * uses a {@link org.apache.camel.Producer}.
  *
@@ -206,7 +206,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
 
     /**
      * Sets the timeout to use when polling.
-     * <p/>
+     * <p>
      * Use 0 to use receiveNoWait, Use -1 to use receive with no timeout (which will block until data is available).
      *
      * @param timeout timeout in millis.
@@ -556,7 +556,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
 
     /**
      * Strategy to pre check polling.
-     * <p/>
+     * <p>
      * Is currently used to prevent doing poll enrich from a file based endpoint when the current route also started
      * from a file based endpoint as that is not currently supported.
      *

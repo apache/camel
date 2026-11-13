@@ -45,11 +45,12 @@ Restart an integration (stop + re-launch):
 camel restart dude
 Stopping Camel integration: dude (PID: 62506)
 Restarted Camel integration: dude (PID: 63010)
-Log: ~/.camel/restart-62506-1234.log
+Log: ~/.camel/63010.log
 ----
 
-`camel restart` waits until the integration has stopped, and until the new one has started, and keeps the output of
-the new integration in the log file it prints. When the new integration stops right away, it prints the end of the log
+`camel restart` waits until the integration has stopped, and until the new one has started, and prints the log file
+of the new integration (its output, the warnings and errors and what it prints otherwise, is in
+`~/.camel/<pid>-run.log`). When the new integration stops right away, it prints the end of the log
 and exits with code `1`; when it is still starting after `--timeout`, it exits with code `124` and leaves it running.
 
 Stop all integrations (omit the name):
@@ -106,8 +107,8 @@ Use `--background` to run an integration as a background process (Camel Main onl
 ----
 $ camel run chuck.yaml --background
 Running Camel Main: chuck in background with PID: 80093 (waiting to startup)
-Log: /home/user/.camel/80093-run.log
 Camel Main: chuck (state: Running)
+Log: /home/user/.camel/80093.log
 ----
 
 Use `camel ps` to list, `camel log` to tail output, and `camel stop` to shut down.
@@ -117,7 +118,9 @@ Set how long with `--background-wait`, such as `--background-wait=2m`, or do not
 An integration that fails to start prints its log and exits with `1`.
 One that is still starting after the wait exits with `124`, and is left running.
 
-The output of the integration goes to `~/.camel/<pid>-run.log`, which `camel stop` removes.
+The logging of the integration goes to `~/.camel/<pid>.log`, which `camel log` reads.
+Its output goes to `~/.camel/<pid>-run.log`, which `camel stop` removes: the warnings and errors of the logging, and
+what the integration prints otherwise, such as why it cannot start.
 
 == Getting status
 

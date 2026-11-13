@@ -153,6 +153,11 @@ public class CamelLogAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (loggingColor && colorsStripped()) {
+            // the console would take the colors out of each line, which is many times slower than to print the lines
+            // without colors, and gives the same output
+            loggingColor = false;
+        }
         // a previous run has ended, so there is nothing to follow
         follow = !previous && isFollowing(follow, durationOption.getDuration());
         if (follow && EnvironmentHelper.isEmbedded()) {

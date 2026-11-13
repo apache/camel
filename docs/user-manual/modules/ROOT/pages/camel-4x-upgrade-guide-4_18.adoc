@@ -303,6 +303,14 @@ The producer now discards that session, so the next exchange opens a fresh one.
 The default behaviour is unchanged: `disconnectOnNoReply` defaults to `true`, which already closed the session on a
 timeout. Setting `disconnectOnNoReply=false` no longer keeps the producer session open after a timeout.
 
+=== camel-oaipmh - the CamelOaimphOnlyFirst and CamelOaimphIgnoreSSLWarnings headers apply to their message only
+
+The `CamelOaimphOnlyFirst` and `CamelOaimphIgnoreSSLWarnings` headers now apply only to the message that has them.
+Before, the producer wrote them onto the endpoint, so after one message with such a header every later message sent to
+that endpoint used its value too. A message without the header uses the `onlyFirst` and `ignoreSSLWarnings` options of
+the endpoint. A route that relied on a header value carrying over to later messages must set the header on each
+message, or set the option on the endpoint URI.
+
 === camel-oauth - the bearer token processor is stateless and reads the HTTP request headers
 
 `OAuthBearerTokenProcessor` no longer creates or updates the OAuth session, and no longer sets the
@@ -797,6 +805,48 @@ The `netty-http` producer no longer sends some of its endpoint options, such as 
 `http://localhost:8080/foo?bar=1`. Before, the server also received the `cookieHandler` parameter. Only the
 query parameters that are not endpoint options are sent, as the documentation describes. To send a query parameter
 that has the same name as an endpoint option, set the query in the `CamelHttpQuery` header.
+
+=== camel-pulsar - the producer no longer replaces the body with the message id
+
+After sending, the producer used to overwrite the message body with the `MessageId` returned by the
+broker, so every step after the `to("pulsar:...")` saw a `MessageId` instead of the payload, and a route
+such as `.to("pulsar:a").to("pulsar:b")` published a Java-serialized `MessageId` to the second topic.
+That behaviour dates from the asynchronous send added in 3.20 (CAMEL-16030).
+
+The body is now left untouched, and the assigned id is reported on the new
+`CamelPulsarProducerMessageId` header instead.
+
+A route that read the `MessageId` from the body must read that header instead.
+
+=== camel-pqc - FileBasedKeyLifecycleManager restricts keyId to a flat file name
+
+`FileBasedKeyLifecycleManager` now confines every key file to its configured key directory. A `keyId`
+(supplied through the `CamelPQCKeyId` / `CamelPQCNewKeyId` headers) that contains a forward slash, a
+backslash, a null character, or that would otherwise resolve outside the key directory is now rejected
+with an `IllegalArgumentException`.
+
+Previously a `keyId` such as `tenant-a/signing` resolved into a subdirectory of the key directory.
+Deployments that organised keys that way must switch to a flat `keyId` (for example `tenant-a-signing`).
+Only the file-based manager is affected; the in-memory and cloud-backed managers were never file-path
+based.
+
+=== camel-core - default TLS protocols and cipher suites of SSLContextParameters
+
+The default secure socket protocols filter of `SSLContextParameters` now also excludes `TLSv1` and `TLSv1.1` (so
+`TLSv1.2` is the minimum), and the default cipher suites filter also excludes the `3DES` cipher suites. The default
+filters of an `SSLServerSocket` are now applied over the default (enabled) protocols and cipher suites of the JVM, as
+they already were for an `SSLSocket` and `SSLEngine`. Previously they were applied over all the supported protocols
+and cipher suites, which enabled `TLSv1` and `TLSv1.1` on a server socket (unless disabled in the JVM security
+configuration).
+
+To use an older protocol (not recommended) configure it explicitly using `secureSocketProtocols`.
+
+=== camel-netty, camel-netty-http - client authentication of sslContextParameters
+
+A Netty consumer using `sslContextParameters` now uses the client authentication of its server parameters
+(`clientAuthentication` of `SSLContextServerParameters`, or `camel.ssl.clientAuthentication` with global SSL), also
+when the `needClientAuth` option is not enabled. Previously `needClientAuth=false` (the default) turned the client
+authentication off.
 
 == Upgrading from 4.18.4 to 4.18.5
 
