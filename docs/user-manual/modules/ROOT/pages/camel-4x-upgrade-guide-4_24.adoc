@@ -32,6 +32,11 @@ camel.component.controlbus.allowed-languages = simple
 
 The `route` command (`controlbus:route?action=...`) is not affected.
 
+=== camel-clickup - the webhook signature check no longer logs signatures
+
+The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.
+The `InvalidMessageSignatureException` of a failed check no longer carries the calculated signature: `getCalculatedSignature()` returns `null` and is deprecated, as is the constructor that takes it.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
@@ -104,6 +109,17 @@ In previous versions, string values supplied in the `CamelJpaParameters` header 
 Starting in 4.24, parameter values provided via the `CamelJpaParameters` header are used as-is and bound literally as query parameters without expression evaluation. The endpoint URI option `parameters` continues to support Simple expression evaluation for route-configured parameters.
 
 Routes that previously relied on evaluating Simple expressions within the `CamelJpaParameters` header should evaluate those expressions in the route before setting the header value.
+
+=== camel-openfga - writeTuples and the read operations carry a relationship condition
+
+`writeTuples` now honours a relationship condition set on a tuple in the message body: a `ClientTupleKey` built with
+`.condition(..)`, or a `Map` whose `condition` entry is a map of a `name` and an optional `context`. Before, only the
+`user`, `relation` and `object` of a tuple were written and any condition was dropped, so a conditioned grant was
+stored unconditioned. A tuple with no condition is still written unconditioned, and `deleteTuples` still deletes by
+identity and ignores a condition.
+
+`readTuples` and `readChanges` now add a `condition` entry (a map of `name` and `context`) to each result map when the
+stored tuple has one, so a condition can be read back and round-tripped into a write.
 
 === camel-mcp-server - error replies on /mcp are JSON-RPC error responses
 
@@ -850,6 +866,19 @@ longer separates two arguments; a parenthesis outside a nested function is text,
 after an unquoted `(` or `{` no longer separates two values: quote a value with a lone parenthesis. A lone quote at the
 end of an argument is now kept: `+${replace(b,x')}+` replaces with `x'`.
 
+=== camel-core - Simple: the other functions with arguments keep an empty argument too
+
+The rules of the entry above now also apply to `concat`, `pad`, `convertTo`, `iif`, `hash`, `assert`, `throwException`,
+`function`, `range`, `random`, `sum`, `max`, `min` and `average`: a comma inside a nested function, such as
+`+${header.s.substring(1,3)}+`, no longer separates two arguments, and an argument left out stays in its place. Where
+the function has a default for it, that default is used: `+${concat(,x,-)}+` gives the body, `-` and `x` (it gave `x-`),
+`+${hash(,SHA3-256)}+` hashes the body with SHA3-256 (it hashed the text `SHA3-256`). Where it has none it is refused,
+such as `+${throwException(,java.io.IOException)}+`, `+${concat(x,)}+` or `+${function(,f)}+`, and a stray comma after
+the last argument that was ignored is now an error, such as `+${iif(p,a,b,)}+` or `+${hash(v,SHA-1,)}+`: remove the
+comma (which gives the result of before for each of these examples). A lone quote at the end of an argument is now kept,
+as in the entry above. An empty value of `sum`, `max`, `min` or `average` is still no value. `+${hash()}+` now hashes
+the body with SHA-256, as documented (it was refused).
+
 === camel-core - a route called from a doTry uses the error handler of its EIPs
 
 A route that a `doTry` calls from its steps, or from its `doCatch` or `doFinally` blocks (with `direct`, `seda`,
@@ -892,7 +921,12 @@ exchange as an exception does (wrapped in a `CamelExecutionException`), also whe
 * by a transformer or validator of the input or output type of a route (`inputType`, `outputType`). Before, it was
   thrown to the caller of the route without the end of the unit of work, so the exchange could stay inflight;
 * by a plain `Processor` of a transacted exchange in a step without an error handler of its own (such as in a `doTry`,
-  `doCatch` or `doFinally` block). Before, a `doCatch` did not get it, and it was thrown to the caller.
+  `doCatch` or `doFinally` block). Before, a `doCatch` did not get it, and it was thrown to the caller;
+* by the `AggregationStrategy` of an `enrich` or `pollEnrich` (as a `CamelExchangeException` caused by it, as for an
+  exception of the strategy), and the resource is released as failed. Before, for `enrich` the `Error` was thrown to the
+  caller and the exchange stayed inflight; for `pollEnrich` the resource (such as a polled file) was not released;
+* by the watermark expression of a `split`: it fails that item, as an exception does. Before, it was thrown to the
+  caller and the split exchange stayed inflight.
 
 A `VirtualMachineError` is left as before. See the next section.
 
@@ -1353,17 +1387,14 @@ The Camel CLI parses its command lines, prints its help and completes its comman
 https://github.com/aeshell/aesh[aesh] instead of picocli. The commands and their options are the same. The help looks a
 little different: the default value of an option is on a line of its own (`Default: ...`).
 
-An argument `@file` is no longer replaced by the arguments in that file (picocli did that, such as
-`camel run @args.txt`). Give the arguments on the command line instead, for example `camel run $(cat args.txt)` in a
-shell script.
-
 A plugin of the Camel CLI (an implementation of `org.apache.camel.dsl.jbang.core.common.Plugin`) must be changed and
 built for Camel 4.24:
 
 * `Plugin.customize` takes a `CommandTree` instead of a picocli `CommandLine`. A command is added with
   `commandLine.addSubcommand("mycommand", new CommandTree(new MyCommand(main)))`.
 * The command classes use the aesh annotations: `@CommandDefinition` instead of `@Command` (the `footer` of the help
-  is an attribute of it), `@Option(name = "my-option")` instead of `@Option(names = "--my-option")` (with
+  is an attribute of it; aesh wraps the lines of the footer at 80 columns, except indented lines such as examples, so
+  keep a line of text within 80 columns), `@Option(name = "my-option")` instead of `@Option(names = "--my-option")` (with
   `hasValue = false` for a flag), `@OptionList` for an option with several values, `@Argument` or `@Arguments` instead
   of `@Parameters`, and the aesh `@Mixin`.
 * A class with the completion candidates of an option extends `org.apache.camel.dsl.jbang.core.common.CompletionCandidates`,
@@ -1500,13 +1531,15 @@ way as the `camel.uri` attribute, which shows the endpoint URI as `Endpoint.toSt
 
 Dashboards or queries that use the old values may need a change.
 
-=== camel-oaipmh - the CamelOaimphOnlyFirst and CamelOaimphIgnoreSSLWarnings headers apply to their message only
+=== camel-oaipmh - the CamelOaimphOnlyFirst header applies to its message only, and the CamelOaimphIgnoreSSLWarnings header is removed
 
-The `CamelOaimphOnlyFirst` and `CamelOaimphIgnoreSSLWarnings` headers now apply only to the message that has them.
-Before, the producer wrote them onto the endpoint, so after one message with `CamelOaimphOnlyFirst=true` every later
-message sent to that endpoint returned only the first page, and after one message with
-`CamelOaimphIgnoreSSLWarnings=true` every later message accepted a self-signed certificate. A message without the
-header uses the `onlyFirst` and `ignoreSSLWarnings` options of the endpoint.
+The `CamelOaimphOnlyFirst` header now applies only to the message that has it. Before, the producer wrote it onto the
+endpoint, so after one message with `CamelOaimphOnlyFirst=true` every later message sent to that endpoint returned only
+the first page. A message without the header uses the `onlyFirst` option of the endpoint.
+
+The producer no longer reads the `CamelOaimphIgnoreSSLWarnings` header, and the `OAIPMHConstants.IGNORE_SSL_WARNINGS`
+constant is removed. Use the `ignoreSSLWarnings` option of the endpoint instead; when only some repositories need it,
+send to them through an endpoint URI that sets the option.
 
 === camel-clickhouse - a query in a binary format returns a byte[] body
 
@@ -2051,6 +2084,22 @@ The `QUEUE_STATUS` and `SIP_PEERS` actions of the `asterisk` producer now wait f
 events, such as `QueueParamsEvent`, `QueueMemberEvent` and `PeerEntryEvent`. Before, the body was only the
 `ManagerResponse` saying that the list will follow, and the events were lost. A route that read that response from
 the body now finds it in `${body.response}`. `EXTENSION_STATE` still sets the `ManagerResponse` as the body.
+
+=== camel-jbang - camel export no longer deletes the files of a directory that no export created
+
+`camel export --dir=<dir>` to a directory other than the current one used to delete the files of that directory first,
+whatever they were. It now only does so for a directory that an earlier export created: the export writes a
+`.camel-export` file in it. Exporting to a directory with other files fails, and keeps them:
+
+----
+Cannot export to /home/me/project because it has files that camel export did not create: use --clean-dir to delete them, or export to another directory
+----
+
+This includes exporting to the directory of the exported files themselves from another directory (such as
+`camel export /work/route.camel.yaml --dir=/work`), which deleted the source files: use `--clean-dir --yes` for that.
+A directory that an earlier Camel version exported to has no `.camel-export` file yet: export to it once with
+`--clean-dir --yes`. An empty directory, one with only hidden files (such as `.git`), and the current directory are
+exported to as before.
 
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
@@ -3989,6 +4038,17 @@ the consumer of such a route kept running next to the one of the master. This in
 `autoStartup=true`: it now consumes only once its node is the master, also when the CamelContext starts, so it does not
 consume while the node cannot reach ZooKeeper. Setting the route to `autoStartup=false` is still recommended, so the
 consumer does not run for a moment when the CamelContext starts.
+
+=== camel-zookeeper-master - the zookeeper.password system property, and a group factory of the application
+
+The `zookeeper.password` system property is now used when no `zooKeeperPassword` is configured: the ZooKeeper client
+that the component creates then sends the `digest` authorization `fabric:<password>`. Before, the property was read but
+not used, so a deployment that set it connected without that authorization.
+
+A `ManagedGroupFactory` bound in the registry, or set with `setManagedGroupFactory`, is no longer closed when a
+`zookeeper-master` consumer, a `MasterRoutePolicy` or the component stops. The application that created it owns its
+lifecycle, as for a `CuratorFramework` bound in the registry. A group factory and a client that Camel created are
+still closed on stop, and created again on the next start.
 
 === camel-milo - each client connection has thread pools of its own
 
@@ -8533,3 +8593,10 @@ A Vert.x that completes after the timeout is closed, rather than being left join
 
 `timeout` must now be a positive number of seconds on that path: `timeout=0` used to mean "do not wait", which left the
 component without a Vert.x, and is rejected with a clear message instead.
+
+=== camel-docling - html_split_page is rejected by docling-serve
+
+`outputFormat=html_split_page` produced an empty body on the docling-serve path: the request asked docling-serve for
+the split pages, whose content it does not return in the response, so every content field of the reply was empty. It
+now fails with an `IllegalArgumentException` that names the reason and the way out, `outputFormat=html` to get the
+HTML of the whole document.

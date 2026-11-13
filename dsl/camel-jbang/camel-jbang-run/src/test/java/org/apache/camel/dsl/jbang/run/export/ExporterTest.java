@@ -35,4 +35,15 @@ class ExporterTest {
                 .containsEntry("id", "custom1")
                 .containsEntry("url", "https://other.repo/releases");
     }
+
+    @Test
+    public void aDriveOfWindowsIsNoScheme() {
+        assertThat(Exporter.getScheme("classpath:tls/keystore.jks")).isEqualTo("classpath");
+        assertThat(Exporter.getScheme("file:C:\\certs\\keystore.jks")).isEqualTo("file");
+        assertThat(Exporter.getScheme("github:apache:camel-kamelets-examples:jbang/hello-java")).isEqualTo("github");
+        // the export kept \certs\keystore.jks of it, which is not the file
+        assertThat(Exporter.getScheme("C:\\certs\\keystore.jks")).isNull();
+        assertThat(Exporter.getScheme("c:/certs/keystore.jks")).isNull();
+        assertThat(Exporter.getScheme("route.camel.yaml")).isNull();
+    }
 }

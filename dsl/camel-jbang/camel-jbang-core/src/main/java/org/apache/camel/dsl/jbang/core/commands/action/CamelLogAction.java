@@ -24,6 +24,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,6 +52,7 @@ import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.run.common.PreviousRun;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -160,82 +162,87 @@ public class CamelLogAction extends ActionBaseCommand {
 
         Map<Long, Row> rows = new LinkedHashMap<>();
 
-        // before reading, as an integration that starts later is read with them too
-        if (find != null) {
-            findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-            findPatterns = quoteAndCompilePatterns(find);
-        }
-        if (grep != null) {
-            findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-            grepPatterns = quoteAndCompilePatterns(grep);
-        }
-
-        if (previous) {
-            previousRun(rows);
-        } else {
-            // find new pids
-            updatePids(rows);
-            if (rows.isEmpty() && !follow) {
-                // shown once: a name that matches no running integration is not found
-                findRunning();
+        try {
+            // before reading, as an integration that starts later is read with them too
+            if (find != null) {
+                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+                findPatterns = quoteAndCompilePatterns(find);
             }
-        }
-        if (!rows.isEmpty()) {
-            // read existing log files (skip by tail/since)
-            Date limit = null;
-            if (since != null) {
-                long millis;
-                if (StringHelper.isDigit(since)) {
-                    // is in seconds by default
-                    millis = TimeUtils.toMilliSeconds(since) * 1000;
-                } else {
-                    millis = TimeUtils.toMilliSeconds(since);
+            if (grep != null) {
+                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+                grepPatterns = quoteAndCompilePatterns(grep);
+            }
+
+            if (previous) {
+                previousRun(rows);
+            } else {
+                // find new pids
+                updatePids(rows);
+                if (rows.isEmpty() && !follow) {
+                    // shown once: a name that matches no running integration is not found
+                    findRunning();
                 }
-                limit = new Date(System.currentTimeMillis() - millis);
             }
-            if (startup) {
-                follow = false;
-                // only log startup logs until Camel was started
-                tailStartupLogFiles(rows);
-                dumpLogFiles(rows, 0);
-            } else if (tail != 0) {
-                // dump existing log lines
-                tailLogFiles(rows, tail, limit);
-                dumpLogFiles(rows, tail);
-            }
-        }
-
-        if (follow) {
-            boolean waitMessage = true;
-            // until Enter is pressed, or the --duration has passed
-            CommandHelper.RunUntil running = CommandHelper.RunUntil.start(durationOption.getDuration());
-            StopWatch watch = new StopWatch();
-            do {
-                if (rows.isEmpty()) {
-                    if (waitMessage) {
-                        printer().println("Waiting for logs ...");
-                        waitMessage = false;
-                    }
-                    Thread.sleep(500);
-                    updatePids(rows);
-                } else {
-                    waitMessage = true;
-                    if (watch.taken() > 500) {
-                        // check for new logs
-                        updatePids(rows);
-                        watch.restart();
-                    }
-                    int lines = readLogFiles(rows);
-                    if (lines > 0) {
-                        dumpLogFiles(rows, 0);
+            if (!rows.isEmpty()) {
+                // read existing log files (skip by tail/since)
+                Date limit = null;
+                if (since != null) {
+                    long millis;
+                    if (StringHelper.isDigit(since)) {
+                        // is in seconds by default
+                        millis = TimeUtils.toMilliSeconds(since) * 1000;
                     } else {
-                        Thread.sleep(100);
+                        millis = TimeUtils.toMilliSeconds(since);
                     }
+                    limit = new Date(System.currentTimeMillis() - millis);
                 }
-            } while (running.isRunning());
-        }
+                if (startup) {
+                    follow = false;
+                    // only log startup logs until Camel was started
+                    tailStartupLogFiles(rows);
+                    dumpLogFiles(rows, 0);
+                } else if (tail != 0) {
+                    // dump existing log lines
+                    tailLogFiles(rows, tail, limit);
+                    dumpLogFiles(rows, tail);
+                }
+            }
 
-        return 0;
+            if (follow) {
+                boolean waitMessage = true;
+                // until Enter is pressed, or the --duration has passed
+                CommandHelper.RunUntil running = CommandHelper.RunUntil.start(durationOption.getDuration());
+                StopWatch watch = new StopWatch();
+                do {
+                    if (rows.isEmpty()) {
+                        if (waitMessage) {
+                            printer().println("Waiting for logs ...");
+                            waitMessage = false;
+                        }
+                        Thread.sleep(500);
+                        updatePids(rows);
+                    } else {
+                        waitMessage = true;
+                        if (watch.taken() > 500) {
+                            // check for new logs
+                            updatePids(rows);
+                            watch.restart();
+                        }
+                        int lines = readLogFiles(rows);
+                        if (lines > 0) {
+                            dumpLogFiles(rows, 0);
+                        } else {
+                            Thread.sleep(100);
+                        }
+                    }
+                } while (running.isRunning());
+            }
+
+            return 0;
+        } finally {
+            // the readers of the logs, also when camel log runs in the JVM of the shell or the TUI (CAMEL-26911)
+            rows.values().forEach(r -> IOHelper.close(r.reader));
+        }
     }
 
     /**
@@ -333,7 +340,11 @@ public class CamelLogAction extends ActionBaseCommand {
             }
         }
         for (long pid : remove) {
-            rows.remove(pid);
+            // the integration has stopped: its log is not read anymore
+            Row row = rows.remove(pid);
+            if (row != null) {
+                IOHelper.close(row.reader);
+            }
         }
     }
 
@@ -385,13 +396,21 @@ public class CamelLogAction extends ActionBaseCommand {
 
     private void dumpLogFiles(Map<Long, Row> rows, int tail) {
         Set<String> names = new HashSet<>();
-        List<String> lines = new ArrayList<>();
+        // the records of the logs: a line with a timestamp, and the lines after it without one, such as a stack trace
+        List<LogRecord> records = new ArrayList<>();
+        final SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_MAIN);
         for (Row row : rows.values()) {
             Queue<String> queue = row.fifo;
             if (queue != null) {
+                LogRecord current = null;
                 for (String l : queue) {
                     names.add(row.name);
-                    lines.add(row.name + "| " + l);
+                    String timestamp = timestampOf(sdf, l);
+                    if (current == null || timestamp != null) {
+                        current = new LogRecord(timestamp, new ArrayList<>());
+                        records.add(current);
+                    }
+                    current.lines().add(row.name + "| " + l);
                 }
                 row.fifo.clear();
             }
@@ -399,42 +418,13 @@ public class CamelLogAction extends ActionBaseCommand {
 
         // only sort if there are multiple Camels running
         if (names.size() > 1) {
-            // sort lines
-            final SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_MAIN);
-            lines.sort((l1, l2) -> {
-                l1 = unescapeAnsi(l1);
-                l2 = unescapeAnsi(l2);
-
-                String t1 = StringHelper.after(l1, "| ");
-                t1 = StringHelper.before(t1, "  ");
-                String t2 = StringHelper.after(l2, "| ");
-                t2 = StringHelper.before(t2, "  ");
-
-                // there may be a stacktrace and no timestamps
-                if (t1 != null) {
-                    try {
-                        sdf.parse(t1);
-                    } catch (ParseException e) {
-                        t1 = null;
-                    }
-                }
-                if (t2 != null) {
-                    try {
-                        sdf.parse(t2);
-                    } catch (ParseException e) {
-                        t2 = null;
-                    }
-                }
-
-                if (t1 == null && t2 == null) {
-                    return 0;
-                } else if (t1 == null) {
-                    return -1;
-                } else if (t2 == null) {
-                    return 1;
-                }
-                return t1.compareTo(t2);
-            });
+            // by the time of the records, which keeps a stack trace with its record (CAMEL-26911); the sort is stable,
+            // so the records of a log at the same time stay in order
+            records.sort(Comparator.comparing(LogRecord::timestamp, Comparator.nullsFirst(Comparator.naturalOrder())));
+        }
+        List<String> lines = new ArrayList<>();
+        for (LogRecord r : records) {
+            lines.addAll(r.lines());
         }
         if (tail > 0) {
             // cut according to tail
@@ -512,6 +502,28 @@ public class CamelLogAction extends ActionBaseCommand {
             printlnColored(line);
         } else {
             printer().println(line);
+        }
+    }
+
+    /**
+     * A record of a log: a line with its timestamp, and the lines after it without a timestamp.
+     */
+    private record LogRecord(String timestamp, List<String> lines) {
+    }
+
+    /**
+     * The timestamp at the start of a line of a log, or null for a line without one (such as a line of a stack trace).
+     */
+    private String timestampOf(SimpleDateFormat sdf, String line) {
+        String t = StringHelper.before(unescapeAnsi(line), "  ");
+        if (t == null) {
+            return null;
+        }
+        try {
+            sdf.parse(t);
+            return t;
+        } catch (ParseException e) {
+            return null;
         }
     }
 

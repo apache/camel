@@ -117,19 +117,38 @@ public final class OpaHealthProbe implements AutoCloseable {
     public static void probe(
             HealthCheckResultBuilder builder, String serverUrl, String bearerToken, String policyPath,
             SSLContext sslContext) {
+        probe(builder, serverUrl, bearerToken, policyPath, sslContext, false);
+    }
+
+    /**
+     * Probes server readiness, optionally requiring activation of OPA's configured bundles.
+     *
+     * @param healthCheckBundles whether to include OPA's configured bundle activation in readiness
+     */
+    public static void probe(
+            HealthCheckResultBuilder builder, String serverUrl, String bearerToken, String policyPath,
+            SSLContext sslContext, boolean healthCheckBundles) {
         try (OpaHealthProbe probe = new OpaHealthProbe(sslContext)) {
-            probe.probe(builder, serverUrl, bearerToken, policyPath);
+            probe.probe(builder, serverUrl, bearerToken, policyPath, healthCheckBundles);
         }
     }
 
     public void probe(HealthCheckResultBuilder builder, String serverUrl, String bearerToken, String policyPath) {
+        probe(builder, serverUrl, bearerToken, policyPath, false);
+    }
+
+    public void probe(
+            HealthCheckResultBuilder builder, String serverUrl, String bearerToken, String policyPath,
+            boolean healthCheckBundles) {
         builder.detail("opa.serverUrl", URISupport.sanitizeUri(serverUrl));
         builder.detail("opa.policyPath", policyPath);
+        builder.detail("opa.healthCheckBundles", healthCheckBundles);
 
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 // a serverUrl with a trailing slash would build //health, which OPA's router answers with a
                 // redirect the client is not configured to follow - reporting a healthy server DOWN on HTTP 301
-                .uri(URI.create(FileUtil.stripTrailingSeparator(serverUrl) + "/health"))
+                .uri(URI.create(FileUtil.stripTrailingSeparator(serverUrl) + "/health"
+                                + (healthCheckBundles ? "?bundles=true" : "")))
                 .timeout(TIMEOUT)
                 .GET();
         if (ObjectHelper.isNotEmpty(bearerToken)) {
