@@ -18,19 +18,29 @@ package org.apache.camel.component.google.firestore.integration;
 
 import java.util.UUID;
 
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.FirestoreOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.firestore.GoogleFirestoreComponent;
 import org.apache.camel.component.google.firestore.GoogleFirestoreConfiguration;
+import org.apache.camel.spi.OnCamelContextStopped;
+import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.test.infra.google.firestore.common.GoogleFirestoreProperties;
+import org.apache.camel.test.infra.google.firestore.services.GoogleFirestoreService;
+import org.apache.camel.test.infra.google.firestore.services.GoogleFirestoreServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Base support class for Google Firestore integration tests.
  *
  * <p>
- * To run integration tests, provide the following system properties:
+ * The tests run against the Firestore service of Floci GCP. To run them against the Firestore of a Google Cloud
+ * project, provide the following system properties:
  * </p>
  * <ul>
+ * <li>{@code google.instance.type=remote}</li>
  * <li>{@code google.firestore.serviceAccountKey} - Path to the service account JSON key file</li>
  * <li>{@code google.firestore.projectId} - Google Cloud project ID</li>
  * <li>{@code google.firestore.databaseId} - (Optional) Firestore database ID, defaults to "(default)"</li>
@@ -42,6 +52,7 @@ import org.junit.jupiter.api.TestInstance;
  *
  * <pre>
  * mvn verify -pl components/camel-google/camel-google-firestore \
+ *     -Dgoogle.instance.type=remote \
  *     -Dgoogle.firestore.serviceAccountKey=/path/to/service-account.json \
  *     -Dgoogle.firestore.projectId=my-project-id
  * </pre>
@@ -49,24 +60,13 @@ import org.junit.jupiter.api.TestInstance;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class GoogleFirestoreITSupport extends CamelTestSupport {
 
-    protected static final String SERVICE_ACCOUNT_KEY = System.getProperty("google.firestore.serviceAccountKey");
-    protected static final String PROJECT_ID = System.getProperty("google.firestore.projectId");
-    protected static final String DATABASE_ID = System.getProperty("google.firestore.databaseId");
+    @RegisterExtension
+    public static GoogleFirestoreService service = GoogleFirestoreServiceFactory.createSingletonService();
 
     /**
      * Test collection name with unique suffix to avoid conflicts between test runs.
      */
     protected static final String TEST_COLLECTION = "camel-test-" + UUID.randomUUID().toString().substring(0, 8);
-
-    /**
-     * Checks if credentials are available to run integration tests.
-     *
-     * @return true if service account key and project ID are provided
-     */
-    public static boolean hasCredentials() {
-        return SERVICE_ACCOUNT_KEY != null && !SERVICE_ACCOUNT_KEY.isEmpty()
-                && PROJECT_ID != null && !PROJECT_ID.isEmpty();
-    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -82,21 +82,43 @@ public abstract class GoogleFirestoreITSupport extends CamelTestSupport {
      */
     protected void addFirestoreComponent(CamelContext context) {
         GoogleFirestoreConfiguration configuration = new GoogleFirestoreConfiguration();
+        configuration.setProjectId(service.projectId());
 
-        if (SERVICE_ACCOUNT_KEY != null) {
-            configuration.setServiceAccountKey("file:" + SERVICE_ACCOUNT_KEY);
-        }
-        if (PROJECT_ID != null) {
-            configuration.setProjectId(PROJECT_ID);
-        }
-        if (DATABASE_ID != null) {
-            configuration.setDatabaseId(DATABASE_ID);
+        if (isRemote()) {
+            configuration.setServiceAccountKey(
+                    "file:" + System.getProperty(GoogleFirestoreProperties.SERVICE_ACCOUNT_KEY));
+            String databaseId = System.getProperty(GoogleFirestoreProperties.DATABASE_ID);
+            if (databaseId != null) {
+                configuration.setDatabaseId(databaseId);
+            }
+        } else {
+            // Floci GCP is reached as an emulator: in plain text, with any credentials
+            Firestore client = FirestoreOptions.newBuilder()
+                    .setProjectId(service.projectId())
+                    .setEmulatorHost(service.endpoint())
+                    .build()
+                    .getService();
+            configuration.setFirestoreClient(client);
+            // the endpoints do not close a client that they did not build: it goes with the context
+            context.addLifecycleStrategy(LifecycleStrategySupport.adapt((OnCamelContextStopped) stopped -> {
+                try {
+                    client.close();
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            }));
         }
 
         GoogleFirestoreComponent component = new GoogleFirestoreComponent(context);
         component.setConfiguration(configuration);
 
         context.addComponent("google-firestore", component);
+    }
+
+    // the service is the one of a Google Cloud project with -Dgoogle.instance.type=remote, and the one of Floci GCP
+    // otherwise
+    private static boolean isRemote() {
+        return "remote".equals(System.getProperty("google.instance.type"));
     }
 
     /**
