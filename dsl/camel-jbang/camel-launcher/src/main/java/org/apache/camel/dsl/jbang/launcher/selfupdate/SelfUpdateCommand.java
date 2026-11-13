@@ -26,6 +26,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
@@ -368,10 +372,25 @@ public class SelfUpdateCommand extends CamelCommand {
             // pin-state file for this run. Set last so it can never be dropped by the override block above.
             pb.environment().put("CAMEL_INSTALL_SELF_UPDATE", "true");
             Process process = pb.start();
-            String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            int exit = process.waitFor();
-            printer().print(output);
-            return exit;
+            // Drain stdout in a separate thread to prevent the subprocess from blocking on a full pipe buffer.
+            // Then wait with a timeout to prevent an indefinitely stalled installer from hanging the CLI.
+            ExecutorService drainer = Executors.newSingleThreadExecutor();
+            Future<String> outputFuture = drainer
+                    .submit(() -> new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
+            try {
+                boolean finished = process.waitFor(5, TimeUnit.MINUTES);
+                if (!finished) {
+                    process.destroyForcibly();
+                    printer().printErr("installer timed out after 5 minutes");
+                    return 1;
+                }
+                String output = outputFuture.get(10, TimeUnit.SECONDS);
+                int exit = process.exitValue();
+                printer().print(output);
+                return exit;
+            } finally {
+                drainer.shutdown();
+            }
         } catch (SelfUpdateException e) {
             printer().printErr(e.getMessage());
             return 1;

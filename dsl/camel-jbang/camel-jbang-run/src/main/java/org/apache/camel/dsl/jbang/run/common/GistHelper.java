@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.run.common;
 
+import java.io.IOException;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -23,6 +24,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.StringJoiner;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.util.FileUtil;
 import tools.jackson.databind.JsonNode;
@@ -86,8 +88,11 @@ public final class GistHelper {
 
         // use JDK http client to call github api
         HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
-        HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(url)).timeout(Duration.ofSeconds(20)).build(),
-                HttpResponse.BodyHandlers.ofString());
+        Duration timeout = Duration.ofSeconds(20);
+        HttpRequest req = HttpRequest.newBuilder(new URI(url)).timeout(timeout).build();
+        // sendAsync + get(timeout) bounds both headers and body reads; HttpRequest.timeout() only covers headers
+        HttpResponse<String> res = hc.sendAsync(req, HttpResponse.BodyHandlers.ofString())
+                .get(timeout.toSeconds(), TimeUnit.SECONDS);
 
         if (res.statusCode() == 200) {
             ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
@@ -115,6 +120,13 @@ public final class GistHelper {
                     all.add(u);
                 }
             }
+        } else {
+            String rateHint = (res.statusCode() == 403 || res.statusCode() == 429)
+                    ? " (rate limit exceeded - set GITHUB_TOKEN to increase the limit)"
+                    : "";
+            throw new IOException(
+                    "GitHub Gist API request failed with HTTP " + res.statusCode() + rateHint
+                                  + " for URL: " + url);
         }
     }
 

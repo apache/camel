@@ -40,15 +40,21 @@ class GitHubApiResponseTest {
     private HttpServer server;
     private String url;
     private volatile String response;
+    private volatile int statusCode = 200;
 
     @BeforeEach
     void startServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
         server.createContext("/", exchange -> {
-            byte[] body = response.getBytes(StandardCharsets.UTF_8);
-            exchange.sendResponseHeaders(200, body.length);
-            exchange.getResponseBody().write(body);
-            exchange.close();
+            if (statusCode != 200) {
+                exchange.sendResponseHeaders(statusCode, -1);
+                exchange.close();
+            } else {
+                byte[] body = response.getBytes(StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(200, body.length);
+                exchange.getResponseBody().write(body);
+                exchange.close();
+            }
         });
         server.start();
         url = "http://localhost:" + server.getAddress().getPort() + "/";
@@ -93,5 +99,33 @@ class GitHubApiResponseTest {
         GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, all);
 
         assertThat(all).hasToString(GitHubHelper.asGithubSingleUrl("https://github.com/me/repo/blob/main/route.java"));
+    }
+
+    @Test
+    void nonOkGithubResponseThrows() {
+        statusCode = 404;
+
+        assertThatThrownBy(() -> GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, new StringJoiner(",")))
+                .isInstanceOf(java.io.IOException.class)
+                .hasMessageContaining("404");
+    }
+
+    @Test
+    void rateLimitedGithubResponseThrowsWithHint() {
+        statusCode = 403;
+
+        assertThatThrownBy(() -> GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, new StringJoiner(",")))
+                .isInstanceOf(java.io.IOException.class)
+                .hasMessageContaining("403")
+                .hasMessageContaining("GITHUB_TOKEN");
+    }
+
+    @Test
+    void nonOkGistResponseThrows() {
+        statusCode = 404;
+
+        assertThatThrownBy(() -> GistHelper.resolveGistAsRawFiles(url, null, null, null, new StringJoiner(",")))
+                .isInstanceOf(java.io.IOException.class)
+                .hasMessageContaining("404");
     }
 }
