@@ -1,6 +1,6 @@
 {
   "groups": [
-    { "name": "camel.jbang", "description": "Camel JBang configurations" }
+    { "name": "camel.jbang", "description": "Camel CLI configurations" }
   ],
   "properties": [
     { "name": "camel.jbang.camel-version", "required": false, "description": "The version of Apache Camel to use", "type": "string", "javaType": "String", "secret": false },
