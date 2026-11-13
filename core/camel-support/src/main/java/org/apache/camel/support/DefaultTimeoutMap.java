@@ -177,7 +177,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         } catch (Throwable t) {
             // must catch and log exception (also an Error) otherwise the executor will not schedule the next purgeTask,
             // and no entry would ever time out again
-            log.warn("Exception or error occurred during purge task. This exception will be ignored.", t);
+            log.warn("Exception or error occurred during purge task. This exception or error will be ignored.", t);
         }
     }
 
