@@ -36,9 +36,10 @@ recommends the daemon, opt-in and in stages, once the startup quick wins (CAMEL-
 and release work.
 
 The seconds a daemon saves are small next to the turns of the model. The reason to build it is that a command that
-answers at once gets called more: an agent that validates after every edit, looks an option up with `camel doc`
-instead of guessing it, and checks `camel status` after every reload makes fewer mistakes. With the Java client the
-daemon answers in 50-65 ms, under the 0.1 s at which a response feels instant, like a native command.
+answers at once can be called after every step: an agent that validates after every edit, looks an option up with
+`camel doc` instead of guessing it, and checks `camel status` after every reload makes fewer mistakes. Speed alone
+does not make an agent do that, it has to be told (see the motivation), but speed makes it cheap to do. With the Java
+client the daemon answers in 50-65 ms, under the 0.1 s at which a response feels instant, like a native command.
 
 == Motivation
 
@@ -68,11 +69,19 @@ seconds, more with a local model. What a slow command costs is how often it is c
 native one can be run after every step: `camel validate` after every edit, `camel doc` to look an option up instead of
 guessing it, `camel status` after every reload. An agent that checks more makes fewer mistakes.
 
+The AI panel of the TUI shows that speed alone is not enough. Its tools run in the process (the same code as the MCP
+server, `camel doc` and `camel validate`): 0-24 ms a call, 0.17 % of the time of an answer. In a pilot of 9 beginner
+questions with a local model (qwen3.6:35b, one run, so examples rather than rates), the model still did not look
+things up by itself. It answered a question that the doc of the file component answers without reading that doc, and
+got it wrong; with a hint in the question it read the doc and got it right. It suggested six options that do not
+exist, and validated nothing in 9 answers. A lookup also costs context: the doc of the file component is 17K
+characters, and three docs in one answer forced a compaction of the history.
+
 == Goals
 
 - The short commands an agent runs most answer in under 0.1 s, the usual limit for a response to feel instant, as a
   native command does: `version`, `ps`, `get`, `log`, `doc`, `catalog`, `validate`, the `cmd` actions and `stop`.
-- Agents call them more often to check their work, and do better for it, as measured with the local-model benchmark.
+- Agents that are told to check their work with them do so, and do better for it.
 - They give the same output, JSON and exit codes as a new JVM, so an agent or a script cannot tell the difference.
 - It works on Linux, macOS and Windows, with the JDK the Camel CLI needs anyway.
 - Whenever the fast path cannot serve a command, the command runs in a new JVM as today.
@@ -317,12 +326,15 @@ daemon or a native front does not serve too, and the start of the daemon itself.
    readiness pushed over the WebSocket transport.
 . Keep the Java client. At 50-65 ms it answers under the 0.1 s at which a response feels instant, so the commands
   already feel native. A native client for the main platforms, with the Java client as the fallback, is optional.
-. Tell the agents. Speed alone may not change how an agent uses the CLI, so the docs that agents read (the Camel CLI
-  pages, the instructions of the MCP server) say that the short commands are cheap to call, for example to validate
-  after every edit.
-. Measure the agents, not only the commands: run the local-model benchmark with and without the daemon, and compare
-  the CLI calls per task and the pass rate. Make the daemon the default only after a release as opt-in, and when the
-  benchmark shows the gain.
+. Tell the agents. Speed alone does not change how an agent uses the CLI, so what agents read (the Camel CLI pages,
+  the instructions of the MCP server, the system prompt of the AI panel) says that the short commands are cheap to
+  call: look an option up instead of guessing it, asking only for the options needed (the `optionsFilter` of
+  `camel_catalog_doc`) as a whole doc page costs context, and validate every snippet before answering.
+. Measure the agents, not only the commands. The local-model benchmark runs in the AI panel of the TUI, whose tools
+  run in the process, so it measures the instruction, not the daemon: run it with and without the instruction, and
+  compare the pass rate, the calls and the invented options per answer, the compactions and the time of the model.
+  The daemon needs a benchmark that drives `camel` through a shell. Make the daemon the default only after a release
+  as opt-in, and when that benchmark shows the gain.
 . Do not build the native front. A daemon with a native client is as fast (21-37 ms measured, against 10-40 ms
   estimated), and the native front costs the most: the base classes of the commands change, GraalVM metadata must
   follow every command and option, aesh needs a change, and each release needs a binary per platform, all before the
@@ -330,8 +342,8 @@ daemon or a native front does not serve too, and the start of the daemon itself.
 
 The seconds alone would not pay for a process in the background. If the loop is at about 3 s after the first step, the
 daemon with the Java client takes about 1 s more off it (estimate: 8 short commands at about 0.1 s each), next to model
-turns of several seconds each. The gain to look for is in how the agents work, and that is what the benchmark
-measures.
+turns of several seconds each. The gain to look for is in how the agents work, and that is what the benchmarks
+measure.
 
 == Related tickets
 
