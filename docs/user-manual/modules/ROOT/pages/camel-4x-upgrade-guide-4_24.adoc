@@ -8067,6 +8067,25 @@ dead letter channel or a handled `onException`, so that the item is marked consu
 `delay`, or set `backoffIdleThreshold` and `backoffMultiplier`: a poll counts only the items that it marked consumed,
 so a poll whose items all failed is an idle poll, after which a `greedy` consumer does not poll again at once.
 
+=== camel-jbang - runtime catalogs use the selected Camel version
+
+Spring Boot and Quarkus catalogs now report the resolved Camel core version and read EIP/model schemas from that
+version's catalog. Previously, they could combine the selected runtime's component schemas with the running CLI or
+MCP server's newer model schemas. A model absent from the selected catalog now remains absent.
+Runtime dependency coordinates still use the selected Spring Boot or Camel Quarkus version.
+
+A Quarkus BOM must identify both `org.apache.camel:camel-catalog` and
+`org.apache.camel.quarkus:camel-quarkus-catalog`. If either version or the selected catalog cannot be resolved,
+catalog loading fails instead of returning the running server's catalog.
+
+Spring Boot retains its existing fallback: if downloading `org.apache.camel:camel-catalog` for the requested
+version fails, it tries the running CLI's Camel version. The catalog reports the core version actually resolved.
+
+For Spring Boot, `camel export` and `camel run` without an explicit `--camel-version` now use the resolved core
+catalog version for Camel core dependencies in the generated project. For example, `--camel-spring-boot-version=4.8.0`
+uses Camel 4.8.0 instead of the running CLI's version when that catalog is available. Set `--camel-version` explicitly
+to retain a different core dependency version.
+
 === camel-jbang - the Quarkus Platform is looked up only for the Quarkus runtime
 
 With a runtime other than Quarkus, `camel run` and `camel export` no longer look up the Quarkus Platform in the Quarkus
@@ -8612,14 +8631,3 @@ component without a Vert.x, and is rejected with a clear message instead.
 the split pages, whose content it does not return in the response, so every content field of the reply was empty. It
 now fails with an `IllegalArgumentException` that names the reason and the way out, `outputFormat=html` to get the
 HTML of the whole document.
-
-=== camel-jbang - runtime catalogs use the selected Camel version
-
-Spring Boot and Quarkus catalogs now report the selected Camel core version and read EIP/model schemas from that
-version's catalog. Previously, they could combine the selected runtime's component schemas with the running CLI or
-MCP server's newer model schemas. A model absent from the selected catalog now remains absent.
-Runtime dependency coordinates still use the selected Spring Boot or Camel Quarkus version.
-
-A Quarkus BOM must identify both `org.apache.camel:camel-catalog` and
-`org.apache.camel.quarkus:camel-quarkus-catalog`. If either version or the selected catalog cannot be resolved,
-catalog loading fails instead of returning the running server's catalog.

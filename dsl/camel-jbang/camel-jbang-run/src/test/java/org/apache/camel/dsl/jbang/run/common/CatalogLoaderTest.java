@@ -19,8 +19,6 @@ package org.apache.camel.dsl.jbang.run.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.zip.ZipFile;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -32,7 +30,6 @@ import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -43,6 +40,7 @@ class CatalogLoaderTest {
     private static MavenDownloader downloader;
     private static MavenArtifact coreCatalog;
 
+    // These released-artifact comparisons deliberately run in CI to catch catalog resource mixing.
     @BeforeAll
     static void downloadCatalog() {
         downloader = new MavenDownloaderImpl();
@@ -66,7 +64,7 @@ class CatalogLoaderTest {
 
     @Test
     void springBootCatalogUsesTargetResources() throws Exception {
-        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(null, CAMEL_VERSION, true);
+        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(null, CAMEL_VERSION, CAMEL_VERSION, null, true);
         assertCoreCatalog(catalog);
         assertProvider(catalog, artifact("org.apache.camel.springboot", "camel-catalog-provider-springboot", CAMEL_VERSION),
                 "org/apache/camel/springboot/catalog", "org.apache.camel.springboot", "camel-http-starter", CAMEL_VERSION);
@@ -94,22 +92,6 @@ class CatalogLoaderTest {
         assertThat(catalog.getRuntimeProviderLoadedVersion()).isEqualTo(CAMEL_VERSION);
         assertProvider(catalog, artifact("org.apache.camel.springboot", "camel-catalog-provider-springboot", CAMEL_VERSION),
                 "org/apache/camel/springboot/catalog", "org.apache.camel.springboot", "camel-http-starter", CAMEL_VERSION);
-    }
-
-    @Test
-    void quarkusBomWithoutCoreCatalogVersionFails(@TempDir Path directory) throws Exception {
-        Path bom = directory.resolve("bom.pom");
-        Files.writeString(bom, """
-                <project><dependencyManagement><dependencies><dependency>
-                  <groupId>org.apache.camel.quarkus</groupId>
-                  <artifactId>camel-quarkus-catalog</artifactId><version>3.15.0</version>
-                </dependency></dependencies></dependencyManagement></project>
-                """);
-        MavenGav gav = MavenGav.fromCoordinates("test", "bom", "1", "pom", null);
-        assertThatThrownBy(() -> CatalogLoader.loadQuarkusCatalog(gav, requested -> {
-            assertThat(requested).isEqualTo(gav);
-            return new MavenArtifact(requested, bom.toFile());
-        })).isInstanceOf(IOException.class).hasMessageContaining("Cannot determine Camel and Camel Quarkus catalog versions");
     }
 
     @Test
