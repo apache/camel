@@ -106,7 +106,7 @@ class GitHubApiResponseTest {
         statusCode = 404;
 
         assertThatThrownBy(() -> GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, new StringJoiner(",")))
-                .isInstanceOf(java.io.IOException.class)
+                .isInstanceOf(IOException.class)
                 .hasMessageContaining("404");
     }
 
@@ -115,9 +115,9 @@ class GitHubApiResponseTest {
         statusCode = 403;
 
         assertThatThrownBy(() -> GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, new StringJoiner(",")))
-                .isInstanceOf(java.io.IOException.class)
+                .isInstanceOf(IOException.class)
                 .hasMessageContaining("403")
-                .hasMessageContaining("GITHUB_TOKEN");
+                .hasMessageContaining("access denied");
     }
 
     @Test
@@ -125,7 +125,7 @@ class GitHubApiResponseTest {
         statusCode = 404;
 
         assertThatThrownBy(() -> GistHelper.resolveGistAsRawFiles(url, null, null, null, new StringJoiner(",")))
-                .isInstanceOf(java.io.IOException.class)
+                .isInstanceOf(IOException.class)
                 .hasMessageContaining("404");
     }
 }

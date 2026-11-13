@@ -37,6 +37,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.FileUtil;
@@ -372,17 +373,24 @@ public class SelfUpdateCommand extends CamelCommand {
             // pin-state file for this run. Set last so it can never be dropped by the override block above.
             pb.environment().put("CAMEL_INSTALL_SELF_UPDATE", "true");
             Process process = pb.start();
-            // Drain stdout in a separate thread to prevent the subprocess from blocking on a full pipe buffer.
-            // Then wait with a timeout to prevent an indefinitely stalled installer from hanging the CLI.
-            ExecutorService drainer = Executors.newSingleThreadExecutor();
+            // Drain stdout in a separate thread to prevent the subprocess from blocking on a full pipe buffer in
+            // the gap before waitFor() returns. Then wait with a timeout to prevent an indefinitely stalled
+            // installer from hanging the CLI.
+            ExecutorService drainer = Executors.newSingleThreadExecutor(r -> {
+                Thread t = new Thread(r, "camel-self-update-drainer");
+                t.setDaemon(true);
+                return t;
+            });
             Future<String> outputFuture = drainer
                     .submit(() -> new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
             try {
                 boolean finished = process.waitFor(5, TimeUnit.MINUTES);
                 if (!finished) {
+                    // Kill grandchildren first (curl/wget etc.) before the shell, so they release the pipe
+                    process.descendants().forEach(ProcessHandle::destroyForcibly);
                     process.destroyForcibly();
                     printer().printErr("installer timed out after 5 minutes");
-                    return 1;
+                    return CliExitCode.TIMEOUT;
                 }
                 String output = outputFuture.get(10, TimeUnit.SECONDS);
                 int exit = process.exitValue();

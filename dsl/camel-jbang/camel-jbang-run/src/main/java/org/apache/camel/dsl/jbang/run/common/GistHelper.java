@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.run.common;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -24,7 +25,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.StringJoiner;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.util.FileUtil;
 import tools.jackson.databind.JsonNode;
@@ -89,10 +92,29 @@ public final class GistHelper {
         // use JDK http client to call github api
         HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
         Duration timeout = Duration.ofSeconds(20);
-        HttpRequest req = HttpRequest.newBuilder(new URI(url)).timeout(timeout).build();
+        HttpRequest.Builder reqBuilder = HttpRequest.newBuilder(new URI(url)).timeout(timeout);
+        // Send GITHUB_TOKEN as Authorization header when set, but only to api.github.com (never leak to other hosts)
+        String token = System.getenv("GITHUB_TOKEN");
+        if (token != null && !token.isBlank() && "api.github.com".equals(new URI(url).getHost())) {
+            reqBuilder.header("Authorization", "Bearer " + token);
+        }
+        HttpRequest req = reqBuilder.build();
         // sendAsync + get(timeout) bounds both headers and body reads; HttpRequest.timeout() only covers headers
-        HttpResponse<String> res = hc.sendAsync(req, HttpResponse.BodyHandlers.ofString())
-                .get(timeout.toSeconds(), TimeUnit.SECONDS);
+        var future = hc.sendAsync(req, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> res;
+        try {
+            res = future.get(timeout.toSeconds(), TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            throw new IOException(
+                    "GitHub Gist API request timed out after " + timeout.toSeconds() + " seconds for URL: " + url, e);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof IOException ioe) {
+                throw ioe;
+            }
+            throw new IOException("GitHub Gist API request failed for URL: " + url, cause);
+        }
 
         if (res.statusCode() == 200) {
             ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
@@ -120,14 +142,35 @@ public final class GistHelper {
                     all.add(u);
                 }
             }
+        } else if (res.statusCode() == 404) {
+            throw new FileNotFoundException("GitHub Gist API request failed with HTTP 404 for URL: " + url);
         } else {
-            String rateHint = (res.statusCode() == 403 || res.statusCode() == 429)
-                    ? " (rate limit exceeded - set GITHUB_TOKEN to increase the limit)"
-                    : "";
+            String hint = rateLimitHint(res, token);
             throw new IOException(
-                    "GitHub Gist API request failed with HTTP " + res.statusCode() + rateHint
-                                  + " for URL: " + url);
+                    "GitHub Gist API request failed with HTTP " + res.statusCode() + hint + " for URL: " + url);
         }
+    }
+
+    /**
+     * Returns a hint string for rate-limit or access-denied errors (403/429).
+     */
+    private static String rateLimitHint(HttpResponse<String> res, String token) {
+        int status = res.statusCode();
+        if (status == 429) {
+            return token != null && !token.isBlank()
+                    ? " (rate limit exceeded)"
+                    : " (rate limit exceeded - set GITHUB_TOKEN to increase the limit)";
+        }
+        if (status == 403) {
+            String remaining = res.headers().firstValue("x-ratelimit-remaining").orElse(null);
+            if ("0".equals(remaining)) {
+                return token != null && !token.isBlank()
+                        ? " (rate limit exceeded)"
+                        : " (rate limit exceeded - set GITHUB_TOKEN to increase the limit)";
+            }
+            return " (access denied - the repository may be private or blocked)";
+        }
+        return "";
     }
 
 }
