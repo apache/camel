@@ -48,16 +48,21 @@ class CatalogServiceTest {
         };
         for (int pass = 0; pass < 2; pass++) {
             for (String[] request : requests) {
+                String scenario = "runtime=" + request[0] + ", camelVersion=" + request[1]
+                                  + ", platformBom=" + request[2] + ", pass=" + pass;
                 CamelCatalog catalog = service.loadCatalog(request[0], request[1], request[2]);
-                assertThat(catalog.getCatalogVersion()).isEqualTo("4.8.0");
-                assertThat(catalog.modelJSonSchema("split")).isEqualTo(targetSplit).doesNotContain("errorThreshold");
-                assertThat(catalog.modelJSonSchema("tokenizer")).isNull();
-                assertThat(catalog.componentModel("http").getArtifactId()).isEqualTo(request[3]);
-                assertThat(catalog.componentModel("http").getVersion()).isEqualTo(request[4]);
+                assertThat(catalog.getCatalogVersion()).as("%s: core version", scenario).isEqualTo("4.8.0");
+                assertThat(catalog.modelJSonSchema("split")).as("%s: split schema", scenario).isEqualTo(targetSplit)
+                        .doesNotContain("errorThreshold");
+                assertThat(catalog.modelJSonSchema("tokenizer")).as("%s: missing tokenizer schema", scenario).isNull();
+                assertThat(catalog.componentModel("http").getArtifactId()).as("%s: provider artifact", scenario)
+                        .isEqualTo(request[3]);
+                assertThat(catalog.componentModel("http").getVersion()).as("%s: provider version", scenario)
+                        .isEqualTo(request[4]);
                 var result = tools.camel_configuration_validate("camel.component.http.max-total-connections=20",
                         request[0], request[1], request[2]);
-                assertThat(result.camelVersion()).isEqualTo("4.8.0");
-                assertThat(result.summary().valid()).isEqualTo(1);
+                assertThat(result.camelVersion()).as("%s: validation version", scenario).isEqualTo("4.8.0");
+                assertThat(result.summary().valid()).as("%s: valid configurations", scenario).isEqualTo(1);
             }
             CamelCatalog current = service.loadCatalog("main", BUILTIN_VERSION, null);
             assertThat(current.getCatalogVersion()).isEqualTo(BUILTIN_VERSION);
