@@ -32,6 +32,11 @@ camel.component.controlbus.allowed-languages = simple
 
 The `route` command (`controlbus:route?action=...`) is not affected.
 
+=== camel-clickup - the webhook signature check no longer logs signatures
+
+The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.
+The `InvalidMessageSignatureException` of a failed check no longer carries the calculated signature: `getCalculatedSignature()` returns `null` and is deprecated, as is the constructor that takes it.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
