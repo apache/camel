@@ -83,8 +83,8 @@ camel debug hello.yaml --background
 
 This is useful in CI or non-interactive sessions where no TTY is available.
 Unlike the interactive mode, `camel debug --background` does not require a terminal:
-it launches the Camel integration with the route debugger enabled, writes its output to
-`~/.camel/<pid>-run.log`, and waits up to `--background-wait` (60 seconds by default) for
+it launches the Camel integration with the route debugger enabled, writes its logging to
+`~/.camel/<pid>.log` (and the warnings, errors and other output to `~/.camel/<pid>-run.log`), and waits up to `--background-wait` (60 seconds by default) for
 the integration to start.
 It exits with `0` once the integration is running, with the integration's exit code when it
 fails to start, and with `124` when it is still starting at the end of the wait.

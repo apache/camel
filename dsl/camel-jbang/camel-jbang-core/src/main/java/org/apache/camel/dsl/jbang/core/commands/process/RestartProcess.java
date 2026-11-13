@@ -104,7 +104,7 @@ public class RestartProcess extends ProcessBaseCommand {
 
         awaitStarted(started, displayName, log);
         printer().println("Restarted Camel integration: " + displayName + " (PID: " + started.pid() + ")");
-        printer().println("Log: " + log);
+        printer().println("Log: " + BackgroundLog.logOf(started.pid(), log));
         return 0;
     }
 
