@@ -105,6 +105,17 @@ Starting in 4.24, parameter values provided via the `CamelJpaParameters` header 
 
 Routes that previously relied on evaluating Simple expressions within the `CamelJpaParameters` header should evaluate those expressions in the route before setting the header value.
 
+=== camel-openfga - writeTuples and the read operations carry a relationship condition
+
+`writeTuples` now honours a relationship condition set on a tuple in the message body: a `ClientTupleKey` built with
+`.condition(..)`, or a `Map` whose `condition` entry is a map of a `name` and an optional `context`. Before, only the
+`user`, `relation` and `object` of a tuple were written and any condition was dropped, so a conditioned grant was
+stored unconditioned. A tuple with no condition is still written unconditioned, and `deleteTuples` still deletes by
+identity and ignores a condition.
+
+`readTuples` and `readChanges` now add a `condition` entry (a map of `name` and `context`) to each result map when the
+stored tuple has one, so a condition can be read back and round-tripped into a write.
+
 === camel-mcp-server - error replies on /mcp are JSON-RPC error responses
 
 With the embedded HTTP server (Camel Main and Camel JBang), a request on `/mcp` that fails before it reaches the MCP
