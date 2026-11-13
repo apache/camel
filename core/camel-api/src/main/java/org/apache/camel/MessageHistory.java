@@ -52,10 +52,10 @@ public interface MessageHistory {
     long getElapsed();
 
     /**
-     * The elapsed time since created.
+     * The elapsed time in millis since created, such as how long the node has been processing while it is not done.
      */
     default long getElapsedSinceCreated() {
-        return System.nanoTime() - getTime();
+        return System.currentTimeMillis() - getTime();
     }
 
     /**
