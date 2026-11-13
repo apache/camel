@@ -35,6 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -720,6 +721,21 @@ public class PluginHelperTest {
         Files.writeString(userConfig, "{ \"plugins\": { \"foo\":", StandardOpenOption.CREATE);
 
         assertThrows(RuntimeException.class, () -> PluginHelper.getPluginConfig());
+    }
+
+    @Test
+    void corruptPluginJsonDoesNotCrashGetActivePlugins() throws Exception {
+        // A truncated/corrupt plugin JSON must not crash camel run, camel --help, etc.
+        // getActivePlugins must warn and return empty map instead of throwing.
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, "{ \"plugins\": { \"foo\":", StandardOpenOption.CREATE);
+
+        StringPrinter out = new StringPrinter();
+        CamelJBangMain main = new CamelJBangMain().withPrinter(out);
+        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "run");
+
+        assertThat(plugins).isEmpty();
+        assertThat(out.getStderr()).contains("corrupt");
     }
 
     @Test

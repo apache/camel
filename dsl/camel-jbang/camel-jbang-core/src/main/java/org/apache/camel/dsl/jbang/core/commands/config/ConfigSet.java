@@ -24,6 +24,7 @@ import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -63,7 +64,7 @@ public class ConfigSet extends CamelCommand {
             CommandLineHelper.storeProperties(properties, printer(), local);
         }, local, printer())) {
             printer().printErr("Cannot set configuration: the configuration file is malformed. Fix it by hand first.");
-            return 1;
+            return CliExitCode.FAILURE;
         }
 
         return 0;

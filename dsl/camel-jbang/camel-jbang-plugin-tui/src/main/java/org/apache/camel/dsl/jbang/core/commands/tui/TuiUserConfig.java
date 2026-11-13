@@ -100,15 +100,19 @@ final class TuiUserConfig {
             throw new UncheckedIOException(e);
         }
         String trimmed = trimToNull(value);
-        CommandLineHelper.loadProperties(props -> {
+        Printer printer = new Printer.QuietPrinter(new Printer.SystemOutPrinter());
+        boolean ok = CommandLineHelper.loadProperties(props -> {
             if (trimmed == null) {
                 props.remove(key);
             } else {
                 props.setProperty(key, trimmed);
             }
-            CommandLineHelper.storeProperties(props,
-                    new Printer.QuietPrinter(new Printer.SystemOutPrinter()), local);
-        }, local);
+            CommandLineHelper.storeProperties(props, printer, local);
+        }, local, printer);
+        if (!ok) {
+            // malformed file — do not overwrite; warn to stderr
+            printer.printErr("Warning: could not update TUI preference '" + key + "': config file is malformed.");
+        }
     }
 
     private static boolean livesInLocal(String key) {

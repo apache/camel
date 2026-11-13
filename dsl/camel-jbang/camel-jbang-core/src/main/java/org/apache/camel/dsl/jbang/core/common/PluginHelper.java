@@ -372,7 +372,14 @@ public final class PluginHelper {
     public static Map<String, Plugin> getActivePlugins(
             CamelJBangMain main, String repos, String target, boolean legacyContributors) {
         Map<String, Plugin> activePlugins = new HashMap<>();
-        JsonObject config = getPluginConfig();
+        JsonObject config;
+        try {
+            config = getPluginConfig();
+        } catch (RuntimeCamelException e) {
+            // corrupt plugin JSON — warn and continue with no plugins
+            main.getOut().printErr("Warning: " + e.getMessage() + ". Use 'camel plugin' commands to fix or delete the file.");
+            return activePlugins;
+        }
         if (config != null) {
             CamelCatalog catalog = new DefaultCamelCatalog();
             String version = catalog.getCatalogVersion();
@@ -792,27 +799,17 @@ public final class PluginHelper {
     }
 
     public static JsonObject getOrCreatePluginConfig() {
-        try {
-            JsonObject existing = getPluginConfig();
-            if (existing != null) {
-                return existing;
-            }
-        } catch (RuntimeCamelException e) {
-            // file exists but is corrupt — do NOT overwrite with a fresh config
-            throw e;
+        JsonObject existing = getPluginConfig();
+        if (existing != null) {
+            return existing;
         }
         return createPluginConfig();
     }
 
     public static JsonObject getOrCreatePluginConfig(Path configPath) {
-        try {
-            JsonObject existing = getPluginConfig(configPath);
-            if (existing != null) {
-                return existing;
-            }
-        } catch (RuntimeCamelException e) {
-            // file exists but is corrupt — do NOT overwrite with a fresh config
-            throw e;
+        JsonObject existing = getPluginConfig(configPath);
+        if (existing != null) {
+            return existing;
         }
         return createPluginConfig(configPath);
     }

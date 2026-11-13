@@ -488,7 +488,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
             plugin.customize(answer, this);
         }
         withErrorHandling(answer);
-        CommandLineHelper.augmentWithUserConfiguration(answer);
+        CommandLineHelper.augmentWithUserConfiguration(answer, out);
         return answer;
     }
 
