@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -26,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -63,11 +65,25 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
     }
 
     public void download(Logger log, Runnable task, String gav) {
+        download(log, task, gav, false);
+    }
+
+    /**
+     * Downloads, and waits for the download to complete.
+     *
+     * @param required whether to throw a {@link DownloadException} when the download fails, instead of logging the
+     *                 error
+     */
+    public void download(Logger log, Runnable task, String gav, boolean required) {
         Future<?> future = executorService.submit(task);
-        awaitCompletion(log, future, gav);
+        awaitCompletion(log, future, gav, required);
     }
 
     void awaitCompletion(Logger log, Future<?> future, String gav) {
+        awaitCompletion(log, future, gav, false);
+    }
+
+    void awaitCompletion(Logger log, Future<?> future, String gav, boolean required) {
         StopWatch watch = new StopWatch();
         boolean done = false;
         while (!done) {
@@ -78,9 +94,19 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
                 // not done
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                // stop the download too: Maven Resolver moves a file in place only when it is complete,
+                // so an aborted transfer leaves no partial artifact, and the next run downloads it again
+                future.cancel(true);
+                if (required) {
+                    throw new DownloadException("Interrupted while downloading: " + gav, e);
+                }
                 log.error("Interrupted while downloading: {}", e.getMessage(), e);
                 return;
             } catch (Exception e) {
+                Throwable cause = e instanceof ExecutionException && e.getCause() != null ? e.getCause() : e;
+                if (required) {
+                    throw new DownloadException("Cannot download dependency: " + gav + " due to: " + reason(cause), cause);
+                }
                 log.error("Error downloading: {} due to: {}", gav, e.getMessage(), e);
                 return;
             }
@@ -109,6 +135,19 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
                 log.debug(msg);
             }
         }
+    }
+
+    /**
+     * Why the download failed: the message of Maven Resolver (such as the artifact that could not be found, and in
+     * which repositories), else the message of the cause.
+     */
+    private static String reason(Throwable cause) {
+        for (Throwable t = cause; t != null; t = t.getCause()) {
+            if (t instanceof MavenResolutionException && t.getMessage() != null) {
+                return t.getMessage();
+            }
+        }
+        return cause.getMessage();
     }
 
     @Override

@@ -16,9 +16,16 @@
  */
 package org.apache.camel.test.infra.artemis.services;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil.PortConfig;
 import org.apache.camel.test.infra.messaging.services.MessagingContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -48,15 +55,50 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
                 .waitingFor(Wait.forListeningPort());
     }
 
+    /**
+     * A container with its ports on the same ports of the host, as {@code camel infra run artemis} runs it: the core
+     * acceptor (61616) and the web console (8161), and MQTT and AMQP only when {@link ArtemisProperties#ARTEMIS_PORTS}
+     * asks for them, as mosquitto (1883) and RabbitMQ (5672) use the same ports.
+     */
     public static ArtemisContainer withFixedPort() {
         ArtemisContainer container = new ArtemisContainer();
         ContainerEnvironmentUtil.configurePorts(container, true,
-                ContainerEnvironmentUtil.PortConfig.primary(DEFAULT_ACCEPTOR_PORT),
-                ContainerEnvironmentUtil.PortConfig.secondary(DEFAULT_MQTT_PORT),
-                ContainerEnvironmentUtil.PortConfig.secondary(DEFAULT_AMQP_PORT),
-                ContainerEnvironmentUtil.PortConfig.secondary(DEFAULT_ADMIN_PORT));
+                fixedPorts(System.getProperty(ArtemisProperties.ARTEMIS_PORTS)).toArray(PortConfig[]::new));
 
         return container;
+    }
+
+    /**
+     * The ports to map on the same ports of the host.
+     *
+     * @param  protocols                the protocols to map as well, comma separated ({@code mqtt}, {@code amqp},
+     *                                  {@code all}), or {@code null}
+     * @return                          the ports
+     * @throws IllegalArgumentException for a protocol that is not one of them
+     */
+    static List<PortConfig> fixedPorts(String protocols) {
+        Set<PortConfig> ports = new LinkedHashSet<>();
+        ports.add(PortConfig.primary(DEFAULT_ACCEPTOR_PORT));
+        ports.add(PortConfig.secondary(DEFAULT_ADMIN_PORT));
+        if (protocols != null) {
+            for (String protocol : protocols.split(",")) {
+                switch (protocol.trim().toLowerCase(Locale.ROOT)) {
+                    case "mqtt" -> ports.add(PortConfig.secondary(DEFAULT_MQTT_PORT));
+                    case "amqp" -> ports.add(PortConfig.secondary(DEFAULT_AMQP_PORT));
+                    case "all" -> {
+                        ports.add(PortConfig.secondary(DEFAULT_MQTT_PORT));
+                        ports.add(PortConfig.secondary(DEFAULT_AMQP_PORT));
+                    }
+                    case "" -> {
+                        // nothing between two commas
+                    }
+                    default -> throw new IllegalArgumentException(
+                            "Unknown protocol " + protocol.trim() + " in " + ArtemisProperties.ARTEMIS_PORTS
+                                                                  + ": use mqtt, amqp or all");
+                }
+            }
+        }
+        return new ArrayList<>(ports);
     }
 
     /**

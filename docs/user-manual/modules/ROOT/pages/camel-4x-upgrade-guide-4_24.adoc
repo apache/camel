@@ -2943,9 +2943,12 @@ or follows, like Enter does.
 * `camel run --background` waits up to 60 seconds for the integration to start (it was 20 seconds), and
   `--background-wait` takes how long, such as `--background-wait=2m` (`true` and `false` still work). An integration
   that is still starting after the wait exits with `124` and is left running; before, the command exited with `0`.
-* The output of an integration in the background goes to `~/.camel/<pid>-run.log`, whose path is printed. The log is
+* The output of an integration in the background goes to `~/.camel/<pid>-run.log`. The log is
   kept while the integration runs (it was removed once the integration had started), and `camel stop` removes it. With
   `--background-wait=false` the output goes to the log as well, instead of a pipe that nobody read.
+* The output only gets the warnings and errors of the logging, and what the integration prints otherwise (such as why
+  it cannot start): all of the logging is in `~/.camel/<pid>.log`, which `camel log` reads. Before, each line was written
+  to both files. The `Log:` line is printed once the integration has started, with the path of `~/.camel/<pid>.log`.
 * An integration that loads no routes exits with `1` and `No routes found in: <files>`, instead of running without
   doing anything, except with `--source-dir`, `--empty` or in dev mode, where files can be added later.
 * `camel run` and `camel dev` with `--max-seconds`, `--max-messages` or `--max-idle-seconds` exit at the limit also in
@@ -8624,6 +8627,16 @@ Before, with `cacheScript=true` it could replace the cached script of the endpoi
 ran it too. The header is now removed after use, so a later language endpoint in the route runs its own script instead
 of the header's. Set the header again before each language endpoint that should use it.
 
+=== camel-jbang - camel infra run artemis maps MQTT and AMQP only on request
+
+`camel infra run artemis` maps the core acceptor (61616) and the web console (8161) on the host, and no longer the
+MQTT (1883) and AMQP (5672) ports, which are the ports of mosquitto and RabbitMQ: Artemis failed to start next to
+`camel infra run mosquitto`. Map them with `--property artemis.ports=mqtt,amqp` (or `all`).
+The `withFixedPort()` container of `camel-test-infra-artemis` maps the same ports, and reads the same property.
+
+A service that does not start because a port it maps on the host is taken now fails with one line that names the port,
+and the infra service that has it, instead of the stack trace of the container runtime.
+
 === camel-vertx - the component fails to start when the clustered Vert.x is not created
 
 When the component builds its own clustered Vert.x (the component `host` or `port` option is set and no `vertxOptions` is
@@ -8638,6 +8651,24 @@ A Vert.x that completes after the timeout is closed, rather than being left join
 `timeout` must now be a positive number of seconds on that path: `timeout=0` used to mean "do not wait", which left the
 component without a Vert.x, and is rejected with a clear message instead.
 
+=== camel-jbang - camel run stops when a dependency it was given cannot be downloaded
+
+`camel run` now stops with exit code 1 when a dependency given with `--dep`, `camel.jbang.dependencies`, a `//DEPS`
+line or the dependencies of a Kamelet cannot be downloaded, and prints why on one line, such as
+`ERROR: Cannot download dependency: com.acme:foo:1.0 due to: ... Could not find artifact com.acme:foo:jar:1.0 in central (...)`.
+Before, it logged the error with the stack trace, started the routes without the dependency, and exited with 0.
+In dev mode (`--dev`), a reload with a `//DEPS` line that cannot be downloaded fails, and the routes keep running as
+they were. Other commands of the Camel CLI that fail to download a dependency also exit with 1 and print one line,
+instead of exiting with 70 and printing the stack trace (use `--verbose` for the stack trace). `camel export` still
+writes the dependency to the exported project.
+
+=== camel-docling - html_split_page is rejected by docling-serve
+
+`outputFormat=html_split_page` produced an empty body on the docling-serve path: the request asked docling-serve for
+the split pages, whose content it does not return in the response, so every content field of the reply was empty. It
+now fails with an `IllegalArgumentException` that names the reason and the way out, `outputFormat=html` to get the
+HTML of the whole document.
+
 === camel-aws2-transcribe - the protocol option is deprecated
 
 The `protocol` option never had any effect. Nothing reads it: the Transcribe client is built by the shared
@@ -8648,10 +8679,3 @@ if it configured the proxy.
 It is now deprecated, with a `deprecationNote` that says so, and its description no longer claims to configure a proxy.
 Remove `protocol` from the endpoint URI or the configuration. To send the client's traffic through a proxy, use
 `proxyProtocol` together with `proxyHost` and `proxyPort`, which the shared client builder does apply.
-
-=== camel-docling - html_split_page is rejected by docling-serve
-
-`outputFormat=html_split_page` produced an empty body on the docling-serve path: the request asked docling-serve for
-the split pages, whose content it does not return in the response, so every content field of the reply was empty. It
-now fails with an `IllegalArgumentException` that names the reason and the way out, `outputFormat=html` to get the
-HTML of the whole document.
