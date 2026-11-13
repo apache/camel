@@ -8627,6 +8627,16 @@ Before, with `cacheScript=true` it could replace the cached script of the endpoi
 ran it too. The header is now removed after use, so a later language endpoint in the route runs its own script instead
 of the header's. Set the header again before each language endpoint that should use it.
 
+=== camel-jbang - camel infra run artemis maps MQTT and AMQP only on request
+
+`camel infra run artemis` maps the core acceptor (61616) and the web console (8161) on the host, and no longer the
+MQTT (1883) and AMQP (5672) ports, which are the ports of mosquitto and RabbitMQ: Artemis failed to start next to
+`camel infra run mosquitto`. Map them with `--property artemis.ports=mqtt,amqp` (or `all`).
+The `withFixedPort()` container of `camel-test-infra-artemis` maps the same ports, and reads the same property.
+
+A service that does not start because a port it maps on the host is taken now fails with one line that names the port,
+and the infra service that has it, instead of the stack trace of the container runtime.
+
 === camel-vertx - the component fails to start when the clustered Vert.x is not created
 
 When the component builds its own clustered Vert.x (the component `host` or `port` option is set and no `vertxOptions` is
