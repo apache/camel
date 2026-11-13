@@ -8612,3 +8612,14 @@ component without a Vert.x, and is rejected with a clear message instead.
 the split pages, whose content it does not return in the response, so every content field of the reply was empty. It
 now fails with an `IllegalArgumentException` that names the reason and the way out, `outputFormat=html` to get the
 HTML of the whole document.
+
+=== camel-jbang - runtime catalogs use the selected Camel version
+
+Spring Boot and Quarkus catalogs now report the selected Camel core version and read EIP/model schemas from that
+version's catalog. Previously, they could combine the selected runtime's component schemas with the running CLI or
+MCP server's newer model schemas. A model absent from the selected catalog now remains absent.
+Runtime dependency coordinates still use the selected Spring Boot or Camel Quarkus version.
+
+A Quarkus BOM must identify both `org.apache.camel:camel-catalog` and
+`org.apache.camel.quarkus:camel-quarkus-catalog`. If either version or the selected catalog cannot be resolved,
+catalog loading fails instead of returning the running server's catalog.
