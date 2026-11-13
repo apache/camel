@@ -342,6 +342,8 @@ public class ToolContext {
         String answer;
         try {
             answer = ActionClient.executeText(pid, request, ACTION_TIMEOUT);
+        } catch (ActionClient.StoppedException e) {
+            throw new ToolExecutionException(e.getMessage());
         } catch (IOException e) {
             throw new ToolExecutionException(
                     "Cannot send the action " + action + " to the integration with pid " + pid + ": " + e.getMessage());

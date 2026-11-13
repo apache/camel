@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "CedarEntityUidExpression",
+    "javaType": "org.apache.camel.component.cedar.CedarEntityUidExpression",
+    "interfaceType": "org.apache.camel.Expression",
+    "title": "Cedar Entity Uid Expression",
+    "description": "Builds a Cedar EntityUID from a configured type and constant ID or exchange property, without constructing policy code.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cedar",
+    "version": "4.24.0-SNAPSHOT",
+    "properties": { "entityType": { "index": 0, "kind": "property", "displayName": "Entity Type", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Cedar entity type name, for example User or App::Document." }, "id": { "index": 1, "kind": "property", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Constant entity identifier. Configure exactly one of id and exchangeProperty." }, "exchangeProperty": { "index": 2, "kind": "property", "displayName": "Exchange Property", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Exchange property containing the entity identifier as a String. Configure exactly one of id and exchangeProperty. A verified identity must be populated by authentication before this expression runs." } }
+  }
+}
+

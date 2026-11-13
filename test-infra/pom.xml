@@ -67,7 +67,9 @@
         <module>camel-test-infra-arangodb</module>
         <module>camel-test-infra-apicurio-registry</module>
         <module>camel-test-infra-consul</module>
+        <module>camel-test-infra-google-common</module>
         <module>camel-test-infra-google-pubsub</module>
+        <module>camel-test-infra-google-storage</module>
         <module>camel-test-infra-infinispan</module>
         <module>camel-test-infra-microprofile-lra</module>
         <module>camel-test-infra-minio</module>

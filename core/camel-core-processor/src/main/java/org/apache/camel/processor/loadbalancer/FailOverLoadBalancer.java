@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This FailOverLoadBalancer will failover to use next processor when an exception occurred
- * <p/>
+ * <p>
  * This implementation mirrors the logic from the {@link org.apache.camel.processor.Pipeline} in the async variation as
  * the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the pipeline to
  * ensure it works the same and the async routing engine is flawless.
@@ -116,7 +116,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
      * Should the given failed Exchange failover?
      *
      * @param  exchange the exchange that failed
-     * @return          <tt>true</tt> to failover
+     * @return          <code>true</code> to failover
      */
     protected boolean shouldFailOver(Exchange exchange) {
         if (exchange == null) {

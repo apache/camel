@@ -255,7 +255,11 @@ final class CatalogBodyTypes {
         }
         Set<String> configurable = new HashSet<>();
         for (BaseOptionModel option : model.getComponentOptions()) {
-            configurable.add(option.getName());
+            // an insecure option (allowJavaSerializedObject, transferExchange) is an opt-in: it keeps its default when
+            // the step does not set it, as one turned on for the whole component is reported by the security policy
+            if (!isInsecure(option)) {
+                configurable.add(option.getName());
+            }
         }
         Map<String, String> set = values(node != null && node.isObject() ? node.get("parameters") : null);
         String text = node != null && node.isString() ? node.asString()
@@ -297,6 +301,13 @@ final class CatalogBodyTypes {
             // not an endpoint the catalog can read, such as one of a component it does not have
             return Optional.empty();
         }
+    }
+
+    /**
+     * Whether the option is one of the insecure opt-ins: security insecure:ssl, insecure:serialization or insecure:dev.
+     */
+    private static boolean isInsecure(BaseOptionModel option) {
+        return option.getSecurity() != null && option.getSecurity().startsWith("insecure:");
     }
 
     /**

@@ -44,6 +44,7 @@ import org.apache.camel.spi.OAuthTokenValidationConfig;
 import org.apache.camel.spi.OAuthTokenValidationFactory;
 import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.AvailablePortFinder.Port;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -58,15 +59,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class McpServerMainOAuthTest {
 
     private static final HttpClient HTTP = HttpClient.newHttpClient();
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
-    private static final String RESOURCE_URI = "https://localhost:" + PORT + "/mcp";
-    private static final String RESOURCE_METADATA_URI
-            = "https://localhost:" + PORT + "/.well-known/oauth-protected-resource/mcp";
-    private static final String MISSING_TOKEN_CHALLENGE
-            = "Bearer resource_metadata=\"" + RESOURCE_METADATA_URI + "\", scope=\"mcp:read mcp:write\"";
-    private static final String INVALID_TOKEN_CHALLENGE
-            = "Bearer error=\"invalid_token\", resource_metadata=\"" + RESOURCE_METADATA_URI
-              + "\", scope=\"mcp:read mcp:write\"";
+    private static AvailablePortFinder.Port portRef;
+    private static int PORT;
+    private static String RESOURCE_URI;
+    private static String RESOURCE_METADATA_URI;
+    private static String MISSING_TOKEN_CHALLENGE;
+    private static String INVALID_TOKEN_CHALLENGE;
     private static final String INITIALIZE_REQUEST = """
             {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18",
             "capabilities":{},"clientInfo":{"name":"oauth-test","version":"1"}}}
@@ -76,6 +74,13 @@ class McpServerMainOAuthTest {
 
     @BeforeAll
     static void startMain() throws Exception {
+        portRef = AvailablePortFinder.find();
+        PORT = portRef.getPort();
+        RESOURCE_URI = "https://localhost:" + PORT + "/mcp";
+        RESOURCE_METADATA_URI = "https://localhost:" + PORT + "/.well-known/oauth-protected-resource/mcp";
+        MISSING_TOKEN_CHALLENGE = "Bearer resource_metadata=\"" + RESOURCE_METADATA_URI + "\", scope=\"mcp:read mcp:write\"";
+        INVALID_TOKEN_CHALLENGE = "Bearer error=\"invalid_token\", resource_metadata=\"" + RESOURCE_METADATA_URI
+                                  + "\", scope=\"mcp:read mcp:write\"";
         main = new Main();
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
@@ -115,6 +120,9 @@ class McpServerMainOAuthTest {
     static void stopMain() {
         if (main != null) {
             main.stop();
+        }
+        if (portRef != null) {
+            portRef.release();
         }
     }
 
@@ -212,20 +220,22 @@ class McpServerMainOAuthTest {
 
     @Test
     void rejectsNonRootHttpContextPathWhenOAuthEngineStarts() {
-        Main nonRootMain = new Main();
-        nonRootMain.addInitialProperty("camel.server.enabled", "true");
-        nonRootMain.addInitialProperty("camel.server.port", String.valueOf(AvailablePortFinder.getNextAvailable()));
-        nonRootMain.addInitialProperty("camel.server.path", "/api");
-        nonRootMain.addInitialProperty("camel.server.mcp-enabled", "true");
-        nonRootMain.addInitialProperty("camel.server.mcp-oauth-profile", "mcp-test");
-        nonRootMain.addInitialProperty("camel.server.mcp-resource-uri", "https://localhost/mcp");
+        try (Port portHolder = AvailablePortFinder.find()) {
+            Main nonRootMain = new Main();
+            nonRootMain.addInitialProperty("camel.server.enabled", "true");
+            nonRootMain.addInitialProperty("camel.server.port", String.valueOf(portHolder.getPort()));
+            nonRootMain.addInitialProperty("camel.server.path", "/api");
+            nonRootMain.addInitialProperty("camel.server.mcp-enabled", "true");
+            nonRootMain.addInitialProperty("camel.server.mcp-oauth-profile", "mcp-test");
+            nonRootMain.addInitialProperty("camel.server.mcp-resource-uri", "https://localhost/mcp");
 
-        try {
-            assertThatThrownBy(nonRootMain::start)
-                    .hasStackTraceContaining(
-                            "RFC 9728 protected-resource metadata must be available at the origin root");
-        } finally {
-            nonRootMain.stop();
+            try {
+                assertThatThrownBy(nonRootMain::start)
+                        .hasStackTraceContaining(
+                                "RFC 9728 protected-resource metadata must be available at the origin root");
+            } finally {
+                nonRootMain.stop();
+            }
         }
     }
 

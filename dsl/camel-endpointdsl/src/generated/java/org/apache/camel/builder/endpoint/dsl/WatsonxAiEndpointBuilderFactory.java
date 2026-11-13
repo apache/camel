@@ -136,7 +136,6 @@ public interface WatsonxAiEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param detectHap the value to set
@@ -152,7 +151,6 @@ public interface WatsonxAiEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param detectHap the value to set
@@ -195,7 +193,6 @@ public interface WatsonxAiEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param detectPii the value to set
@@ -211,7 +208,6 @@ public interface WatsonxAiEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param detectPii the value to set
@@ -497,7 +493,6 @@ public interface WatsonxAiEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param returnDocuments the value to set
@@ -513,7 +508,6 @@ public interface WatsonxAiEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param returnDocuments the value to set

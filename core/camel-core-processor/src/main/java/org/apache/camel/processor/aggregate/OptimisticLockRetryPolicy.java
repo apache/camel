@@ -22,24 +22,24 @@ import org.apache.camel.util.TimeSource;
 
 /**
  * Class to control how failed optimistic locks are tried. This policy supports random and exponential back-off delays.
- * <p/>
+ * <p>
  * If {@code randomBackOff} is enabled and a value is supplied for {@code retryDelay} the value will be ignored.
- * <p/>
+ * <p>
  * If {@code randomBackOff} is enabled and no value is set for {@code maximumRetryDelay}, a default value of 1000ms will
  * be used, the random delay will be between 0 and 1000 milliseconds.
- * <p/>
+ * <p>
  * If both {@code randomBackOff} and {@code exponentialBackOff} are enabled, {@code exponentialBackOff} will take
  * precedence.
- * <p/>
+ * <p>
  * If {@code exponentialBackOff} is enabled and a value is set for {@code maximumRetryDelay}, the retry delay will keep
  * doubling in value until it reaches or exceeds {@code maximumRetryDelay}. After it has reached or exceeded
  * {@code maximumRetryDelay} the value of {@code maximumRetryDelay} will be used as the retry delay.
- * <p/>
+ * <p>
  * If both {@code exponentialBackOff} and {@code randomBackOff} are disabled, the value of {@code retryDelay} will be
  * used as the retry delay and remain constant through all the retry attempts.
- * <p/>
+ * <p>
  * If the value of {@code maximumRetries} is set above zero, retry attempts will stop at the value specified.
- * <p/>
+ * <p>
  * The default behaviour of this policy is to retry forever and exponentially increase the back-off delay starting with
  * 50ms.
  */

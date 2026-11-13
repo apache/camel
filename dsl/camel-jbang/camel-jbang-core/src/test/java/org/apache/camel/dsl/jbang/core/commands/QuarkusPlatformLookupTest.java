@@ -29,6 +29,7 @@ import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,8 +42,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * When camel export looks up the Quarkus Platform in the Quarkus Extension Registry: for the Quarkus runtime, which
  * runs on it, and not for the other runtimes (CAMEL-26673).
  */
-@UsesWorkingDirectory
-class QuarkusPlatformLookupTest {
+class QuarkusPlatformLookupTest extends CamelCommandBaseTestSupport {
 
     private static final String ROUTE = "src/test/resources/golden/yaml/hello.camel.yaml";
 
@@ -51,6 +51,13 @@ class QuarkusPlatformLookupTest {
 
     // the Quarkus Platform that the registry of the tests has for this Camel version
     private static final String REGISTRY_QUARKUS_VERSION = "3.35.3";
+
+    @BeforeEach
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestWorkDir();
+    }
 
     @ParameterizedTest
     @EnumSource(value = RuntimeType.class, names = { "main", "springBoot" })

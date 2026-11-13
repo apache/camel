@@ -28,6 +28,7 @@ import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.AvailablePortFinder.Port;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,60 +50,70 @@ class VertxMcpSessionEvictionTest {
 
     @Test
     void evictsIdleSessionWithoutDelete() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
-        VertxMcpServerEngine engine = startEngine(port, new McpServerInfo("eviction", "1.0", "/mcp", 0, 500));
-        try {
-            initializeSession(port);
-            assertThat(engine.sessionCount()).isEqualTo(1);
+        try (Port portHolder = AvailablePortFinder.find()) {
+            int port = portHolder.getPort();
+            VertxMcpServerEngine engine = startEngine(port, new McpServerInfo("eviction", "1.0", "/mcp", 0, 500));
+            try {
+                initializeSession(port);
+                assertThat(engine.sessionCount()).isEqualTo(1);
 
-            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(engine.sessionCount()).isZero());
-        } finally {
-            engine.stop();
+                await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(engine.sessionCount()).isZero());
+            } finally {
+                engine.stop();
+            }
         }
     }
 
     @Test
     void postOnlySessionSurvivesKeepAliveUntilIdle() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
-        VertxMcpServerEngine engine = startEngine(port, new McpServerInfo("eviction", "1.0", "/mcp", 300, 10_000));
-        try {
-            String sessionId = initializeSession(port);
+        try (Port portHolder = AvailablePortFinder.find()) {
+            int port = portHolder.getPort();
+            // keep-alive interval 300 ms, idle TTL 10 s — session must stay alive while POSTs keep arriving
+            VertxMcpServerEngine engine = startEngine(port, new McpServerInfo("eviction", "1.0", "/mcp", 300, 10_000));
+            try {
+                String sessionId = initializeSession(port);
 
-            await().during(2, TimeUnit.SECONDS).atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
-                assertThat(postWithSession(port, sessionId, INITIALIZED_NOTIFICATION)).isEqualTo(202);
-                assertThat(engine.sessionCount()).isEqualTo(1);
-            });
-        } finally {
-            engine.stop();
+                await().during(500, TimeUnit.MILLISECONDS).atMost(1500, TimeUnit.MILLISECONDS).untilAsserted(() -> {
+                    assertThat(postWithSession(port, sessionId, INITIALIZED_NOTIFICATION)).isEqualTo(202);
+                    assertThat(engine.sessionCount()).isEqualTo(1);
+                });
+            } finally {
+                engine.stop();
+            }
         }
     }
 
     @Test
     void activeSessionSurvivesIdleEviction() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
-        VertxMcpServerEngine engine = startEngine(port, new McpServerInfo("eviction", "1.0", "/mcp", 0, 2_000));
-        try {
-            String sessionId = initializeSession(port);
+        try (Port portHolder = AvailablePortFinder.find()) {
+            int port = portHolder.getPort();
+            // TTL 300 ms so each POST must call touch() or the session would be evicted between polls
+            VertxMcpServerEngine engine = startEngine(port, new McpServerInfo("eviction", "1.0", "/mcp", 0, 300));
+            try {
+                String sessionId = initializeSession(port);
 
-            await().during(2, TimeUnit.SECONDS).atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
-                assertThat(postWithSession(port, sessionId, INITIALIZED_NOTIFICATION)).isEqualTo(202);
-                assertThat(engine.sessionCount()).isEqualTo(1);
-            });
-        } finally {
-            engine.stop();
+                await().during(1, TimeUnit.SECONDS).atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+                    assertThat(postWithSession(port, sessionId, INITIALIZED_NOTIFICATION)).isEqualTo(202);
+                    assertThat(engine.sessionCount()).isEqualTo(1);
+                });
+            } finally {
+                engine.stop();
+            }
         }
     }
 
     @Test
     void explicitDeleteRemovesSessionImmediately() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
-        VertxMcpServerEngine engine = startEngine(port, new McpServerInfo("eviction", "1.0", "/mcp", 0, 60_000));
-        try {
-            String sessionId = initializeSession(port);
-            assertThat(deleteSession(port, sessionId)).isEqualTo(200);
-            assertThat(engine.sessionCount()).isZero();
-        } finally {
-            engine.stop();
+        try (Port portHolder = AvailablePortFinder.find()) {
+            int port = portHolder.getPort();
+            VertxMcpServerEngine engine = startEngine(port, new McpServerInfo("eviction", "1.0", "/mcp", 0, 60_000));
+            try {
+                String sessionId = initializeSession(port);
+                assertThat(deleteSession(port, sessionId)).isEqualTo(200);
+                assertThat(engine.sessionCount()).isZero();
+            } finally {
+                engine.stop();
+            }
         }
     }
 

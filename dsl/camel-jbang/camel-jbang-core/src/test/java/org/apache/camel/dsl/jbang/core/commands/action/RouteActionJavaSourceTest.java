@@ -23,8 +23,8 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.commands.UsesWorkingDirectory;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
@@ -33,6 +33,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -44,8 +45,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * routes are dumped from a CamelContext that is never started, so nothing is compiled and a source that does not
  * compile (here: a processor class that does not exist) still gets its diagram.
  */
-@UsesWorkingDirectory
-class RouteActionJavaSourceTest {
+class RouteActionJavaSourceTest extends CamelCommandBaseTestSupport {
+
+    @BeforeEach
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestWorkDir();
+    }
 
     private static final String ORDERS = """
             import org.apache.camel.builder.RouteBuilder;

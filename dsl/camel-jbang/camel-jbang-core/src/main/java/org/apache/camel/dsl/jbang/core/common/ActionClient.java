@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -38,7 +39,7 @@ import org.apache.camel.util.json.Jsoner;
  * <tt>{pid}-output-{id}.json</tt>), so clients never take each other's answers; an older integration only reads the
  * shared <tt>{pid}-action.json</tt>. An integration on Camel 4.24 or later answers every action, also one without a
  * result, so no answer is a timeout; an older integration does not answer an action without a result, which is then
- * sent but not confirmed.
+ * sent but not confirmed. An integration that stops before it answers is not waited for until the timeout.
  */
 public final class ActionClient {
 
@@ -120,6 +121,16 @@ public final class ActionClient {
         }
     }
 
+    /**
+     * The integration stopped before it answered the action.
+     */
+    public static final class StoppedException extends IOException {
+
+        public StoppedException(long pid, String action) {
+            super(stopped(pid, action));
+        }
+    }
+
     private ActionClient() {
     }
 
@@ -191,6 +202,10 @@ public final class ActionClient {
             return new ActionResult(Status.UNCONFIRMED, null, null, null);
         }
         String action = request.getString("action");
+        if (exchange.stopped()) {
+            // exit code 3, as for an integration that is not running
+            return new ActionResult(Status.ERROR, null, stopped(pid, action), "not-found");
+        }
         return new ActionResult(
                 Status.TIMEOUT, null, "No answer from the integration with pid " + pid + " to the action " + action
                                       + " within " + timeout + " millis",
@@ -200,15 +215,43 @@ public final class ActionClient {
     /**
      * Runs an action and returns the answer as the integration wrote it, for tools that pass it on as text.
      *
-     * @return             the answer, or <tt>null</tt> when there is none in time
-     * @throws IOException when the action cannot be written
+     * @return                  the answer, or <tt>null</tt> when there is none in time
+     * @throws StoppedException when the integration stopped before it answered
+     * @throws IOException      when the action cannot be written
      */
     public static String executeText(long pid, JsonObject request, long timeout) throws IOException {
-        return exchange(pid, versionOf(pid), request, timeout, true, text -> text).reply();
+        // the answer once it is all there, as an integration of an earlier Camel version writes it in place
+        // (CAMEL-26911): JSON once it parses, other text once it reads the same at two polls
+        AtomicReference<String> previous = new AtomicReference<>();
+        Exchange<String> exchange = exchange(pid, versionOf(pid), request, timeout, true, text -> {
+            if (isJson(text)) {
+                return text;
+            }
+            boolean json = text.stripLeading().startsWith("{") || text.stripLeading().startsWith("[");
+            return !json && text.equals(previous.getAndSet(text)) ? text : null;
+        });
+        if (exchange.stopped()) {
+            throw new StoppedException(pid, request.getString("action"));
+        }
+        return exchange.reply();
     }
 
-    // the answer to an action, as read, or null; and whether the integration took the action
-    private record Exchange<T>(T reply, boolean taken) {
+    private static boolean isJson(String text) {
+        try {
+            Jsoner.deserialize(text);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static String stopped(long pid, String action) {
+        return "The integration with pid " + pid + " stopped before it answered the action " + action;
+    }
+
+    // the answer to an action, as read, or null; whether the integration took the action; and whether it stopped before
+    // it answered
+    private record Exchange<T>(T reply, boolean taken, boolean stopped) {
     }
 
     private static <T> Exchange<T> exchange(
@@ -230,6 +273,9 @@ public final class ActionClient {
             Files.deleteIfExists(outputFile);
         }
         Path temporary = dir.resolve(pid + "-" + UUID.randomUUID() + ".tmp");
+        // an integration that cannot be seen from here, such as one in a container that shares the Camel directory, is
+        // waited for until the timeout
+        ProcessHandle process = ProcessHandle.of(pid).filter(ProcessHandle::isAlive).orElse(null);
         try {
             Files.writeString(temporary, request.toJson());
             // the integration must never read half an action
@@ -243,16 +289,21 @@ public final class ActionClient {
                     Thread.currentThread().interrupt();
                     break;
                 }
+                // before the answer is read, as an integration may answer just before it stops
+                boolean alive = process == null || process.isAlive();
                 if (waitForAnswer) {
                     T reply = readReply(outputFile, reader);
                     if (reply != null) {
-                        return new Exchange<>(reply, true);
+                        return new Exchange<>(reply, true, false);
                     }
                 } else if (!Files.exists(actionFile)) {
-                    return new Exchange<>(null, true);
+                    return new Exchange<>(null, true, false);
+                }
+                if (!alive) {
+                    return new Exchange<>(null, false, true);
                 }
             }
-            return new Exchange<>(null, false);
+            return new Exchange<>(null, false, false);
         } finally {
             // removing an action the integration has not taken yet cancels it
             Files.deleteIfExists(temporary);

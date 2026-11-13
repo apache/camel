@@ -30,8 +30,18 @@ import java.util.Deque;
  * The output of an integration that runs in the background (camel run --background, camel restart): the file
  * <tt>~/.camel/&lt;pid&gt;-run.log</tt>, as nobody reads the output of a process in the background. The log stays while
  * the integration runs, and camel stop removes it (camel dirty removes the log of an integration that is gone).
+ * <p/>
+ * The logging of the integration goes to its log file <tt>~/.camel/&lt;pid&gt;.log</tt> (which camel log reads), so the
+ * output only gets the warnings and errors of the logging (CAMEL-26911), and what the integration prints otherwise,
+ * such as why it could not start.
  */
 public final class BackgroundLog {
+
+    /**
+     * The environment variable with the lowest level the logging configurations of the CLI print to the console. The
+     * integrations in the background get WARN; a Camel that does not know it prints all of its logging, as before.
+     */
+    static final String CONSOLE_LOG_LEVEL = "CAMEL_CLI_CONSOLE_LOG_LEVEL";
 
     private BackgroundLog() {
     }
@@ -83,7 +93,22 @@ public final class BackgroundLog {
         Path log = Files.createTempFile(dir, "run-", ".log");
         pb.redirectErrorStream(true);
         pb.redirectOutput(log.toFile());
+        // the logging is in the log file of the integration already, so not all of it again in the output
+        pb.environment().put(CONSOLE_LOG_LEVEL, "WARN");
         return log;
+    }
+
+    /**
+     * The log to show for an integration that has started: its log file, which has all of its logging, or its output
+     * when it has no log file (its logging is off, JSON, or a logging configuration of its own).
+     *
+     * @param  pid    the pid of the integration
+     * @param  output the output of the integration
+     * @return        the log file of the integration, or its output when it has no log file
+     */
+    public static Path logOf(long pid, Path output) {
+        Path log = CommandLineHelper.getCamelDir().resolve(pid + ".log");
+        return Files.exists(log) ? log : output;
     }
 
     /**

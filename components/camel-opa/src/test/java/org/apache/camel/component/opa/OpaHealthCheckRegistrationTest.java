@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.opa;
 
+import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
+import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
@@ -74,4 +78,55 @@ public class OpaHealthCheckRegistrationTest extends CamelTestSupport {
         assertThat(ids).anySatisfy(id -> assertThat(id).contains("opa-primary"));
         assertThat(ids).anySatisfy(id -> assertThat(id).contains("opa-secondary"));
     }
+
+    @Test
+    void passesTheEndpointBundleRequirementToItsRegisteredCheck() throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        AtomicReference<String> query = new AtomicReference<>();
+        server.createContext("/health", exchange -> {
+            query.set(exchange.getRequestURI().getRawQuery());
+            exchange.sendResponseHeaders(200, -1);
+            exchange.close();
+        });
+        server.start();
+        try {
+            OpaEndpoint endpoint = context.getEndpoint(
+                    "opa:authz/bundles?serverUrl=http://localhost:" + server.getAddress().getPort(), OpaEndpoint.class);
+            endpoint.getConfiguration().setHealthCheckBundles(true);
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:bundles").to(endpoint);
+                }
+            });
+            HealthCheck check = registeredChecks().stream()
+                    .filter(hc -> hc.getId().contains("authz/bundles"))
+                    .findFirst().orElseThrow();
+            check.setEnabled(true);
+
+            assertThat(check.call(Map.of()).getState()).isEqualTo(HealthCheck.State.UP);
+            assertThat(query.get()).isEqualTo("bundles=true");
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void skipsTheServerProbeInWasmModeEvenWhenBundlesAreRequired() throws Exception {
+        OpaConfiguration configuration = new OpaConfiguration();
+        configuration.setEvaluationMode("wasm");
+        configuration.setHealthCheckBundles(true);
+        OpaEndpoint endpoint = new OpaEndpoint("opa:authz/wasm", new OpaComponent(context), configuration);
+        OpaProducer producer = new OpaProducer(endpoint);
+        int previousCount = registeredChecks().size();
+        try {
+            // Exercise the producer's registration independently from loading a compiled WASM fixture.
+            producer.start();
+
+            assertThat(registeredChecks()).hasSize(previousCount);
+        } finally {
+            producer.stop();
+        }
+    }
+
 }

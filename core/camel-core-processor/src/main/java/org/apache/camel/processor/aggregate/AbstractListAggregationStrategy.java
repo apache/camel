@@ -26,11 +26,11 @@ import org.apache.camel.ExchangePropertyKey;
 
 /**
  * Aggregate all exchanges into a {@link List} of values defined by the {@link #getValue(Exchange)} call. The combined
- * Exchange will hold all the aggregated exchanges in a {@link java.util.List} as a exchange property with the key
+ * Exchange will hold all the aggregated exchanges in a {@link java.util.List} as an exchange property with the key
  * {@link org.apache.camel.Exchange#GROUPED_EXCHANGE}.
- * <p/>
+ * <p>
  * The method {@link #isStoreAsBodyOnCompletion()} determines if the aggregated {@link List} should be stored on the
- * {@link org.apache.camel.Message#setBody(Object)} or be kept as a property on the exchange. <br/>
+ * {@link org.apache.camel.Message#setBody(Object)} or be kept as a property on the exchange. <br>
  * The default behavior to store as message body, allows to more easily group together a list of values and have its
  * result stored as a {@link List} on the completed {@link Exchange}.
  */
@@ -39,8 +39,8 @@ public abstract class AbstractListAggregationStrategy<V> implements AggregationS
     /**
      * This method is implemented by the sub-class and is called to retrieve an instance of the value that will be
      * aggregated and forwarded to the receiving end point.
-     * <p/>
-     * If <tt>null</tt> is returned, then the value is <b>not</b> added to the {@link List}.
+     * <p>
+     * If <code>null</code> is returned, then the value is <b>not</b> added to the {@link List}.
      *
      * @param  exchange The exchange that is used to retrieve the value from
      * @return          An instance of V that is the associated value of the passed exchange
@@ -49,10 +49,10 @@ public abstract class AbstractListAggregationStrategy<V> implements AggregationS
 
     /**
      * Whether to store the completed aggregated {@link List} as message body, or to keep as property on the exchange.
-     * <p/>
-     * The default behavior is <tt>true</tt> to store as message body.
+     * <p>
+     * The default behavior is <code>true</code> to store as message body.
      *
-     * @return <tt>true</tt> to store as message body, <tt>false</tt> to keep as property on the exchange.
+     * @return <code>true</code> to store as message body, <code>false</code> to keep as property on the exchange.
      */
     public boolean isStoreAsBodyOnCompletion() {
         return true;

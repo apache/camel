@@ -74,6 +74,12 @@ public class OpaConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private boolean batch;
 
+    @UriParam(label = "advanced", defaultValue = "false",
+              description = "Whether the server readiness check also requires activation of OPA's configured bundles."
+                            + " Sends /health?bundles=true. Does not enable health checks, change policy evaluation"
+                            + " or guarantee a particular policy revision. Not used in wasm mode or with an injected client.")
+    private boolean healthCheckBundles;
+
     @UriParam(label = "advanced",
               description = "An existing OPAClient to use. When set, serverUrl and bearerToken are ignored.")
     @Metadata(autowired = true)
@@ -307,6 +313,18 @@ public class OpaConfiguration implements Cloneable {
     /**
      * An already-configured {@link OPAClient} to use instead of letting the endpoint create one.
      */
+    public boolean isHealthCheckBundles() {
+        return healthCheckBundles;
+    }
+
+    /**
+     * Whether the server readiness check also requires activation of OPA's configured bundles. Does not enable health
+     * checks or change policy evaluation. Not used in wasm mode or with an injected client.
+     */
+    public void setHealthCheckBundles(boolean healthCheckBundles) {
+        this.healthCheckBundles = healthCheckBundles;
+    }
+
     public OPAClient getOpaClient() {
         return opaClient;
     }

@@ -51,6 +51,18 @@ public class AggregateIntervalTaskExceptionTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
     }
 
+    @Test
+    public void testIntervalTaskSurvivesError() throws Exception {
+        getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
+
+        template.sendBodyAndHeader("direct:error", "A", "id", "1");
+        template.sendBodyAndHeader("direct:error", "B", "id", "1");
+
+        // the first interval tick with data gets an Error (not a VirtualMachineError) from getKeys(), and the
+        // scheduler survives it too
+        MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -58,9 +70,15 @@ public class AggregateIntervalTaskExceptionTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new UseLatestAggregationStrategy())
-                        .aggregationRepository(new FailOnceRepository())
+                        .aggregationRepository(new FailOnceRepository(false))
                         .completionInterval(500)
                         .to("mock:result");
+
+                from("direct:error")
+                        .aggregate(header("id"), new UseLatestAggregationStrategy())
+                        .aggregationRepository(new FailOnceRepository(true))
+                        .completionInterval(500)
+                        .to("mock:error");
             }
         };
     }
@@ -69,6 +87,11 @@ public class AggregateIntervalTaskExceptionTest extends ContextTestSupport {
 
         private final MemoryAggregationRepository delegate = new MemoryAggregationRepository();
         private final AtomicInteger getKeysCount = new AtomicInteger();
+        private final boolean error;
+
+        FailOnceRepository(boolean error) {
+            this.error = error;
+        }
 
         @Override
         public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
@@ -94,6 +117,9 @@ public class AggregateIntervalTaskExceptionTest extends ContextTestSupport {
         public Set<String> getKeys() {
             Set<String> keys = delegate.getKeys();
             if (keys != null && !keys.isEmpty() && getKeysCount.incrementAndGet() == 1) {
+                if (error) {
+                    throw new NoClassDefFoundError("Simulated missing class");
+                }
                 throw new RuntimeException("Simulated repository failure");
             }
             return keys;

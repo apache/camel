@@ -63,11 +63,11 @@ public class DataLakeConfiguration implements Cloneable {
     private Duration timeout;
     @UriParam(description = "path in azure data lake for operations")
     private String path = "/";
-    @UriParam(description = "recursively include all paths")
+    @UriParam(description = "recursively include all paths", defaultValue = "false")
     private Boolean recursive = false;
     @UriParam(description = "maximum number of results to show at a time")
     private Integer maxResults = 1000;
-    @UriParam(description = "whether or not to use upn")
+    @UriParam(description = "whether or not to use upn", defaultValue = "false")
     private Boolean userPrincipalNameReturned = false;
     @UriParam(description = "regular expression for matching file names")
     private String regex;
@@ -79,13 +79,14 @@ public class DataLakeConfiguration implements Cloneable {
     private Long dataCount;
     @UriParam(description = "no of retries to a given request")
     private int maxRetryRequests;
-    @UriParam(description = "check for closing stream after read")
+    @UriParam(description = "check for closing stream after read", defaultValue = "true")
     private Boolean closeStreamAfterRead = true;
     @UriParam(description = "download link expiration time")
     private Long downloadLinkExpiration;
-    @UriParam(description = "Whether or not uncommitted data is to be retained after the operation")
+    @UriParam(description = "Whether or not uncommitted data is to be retained after the operation", defaultValue = "false")
     private Boolean retainUncommitedData = false;
-    @UriParam(description = "Whether or not a file changed event raised indicates completion (true) or modification (false)")
+    @UriParam(description = "Whether or not a file changed event raised indicates completion (true) or modification (false)",
+              defaultValue = "false")
     private Boolean close = false;
     @UriParam(description = "The final length of the file, including previously committed data, used by flushToFile.")
     private Long position;

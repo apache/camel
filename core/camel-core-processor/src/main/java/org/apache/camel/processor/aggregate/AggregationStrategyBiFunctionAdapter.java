@@ -23,10 +23,10 @@ import org.apache.camel.Exchange;
 
 /**
  * An {@link AggregationStrategy} that adapts to a {@link BiFunction}.
- * <p/>
+ * <p>
  * This allows end users to use {@link BiFunction} for the aggregation logic, instead of having to implement the Camel
  * API {@link AggregationStrategy}.
- * <p/>
+ * <p>
  * This is supported for example by camel-joor that makes it possible to write a {@link BiFunction} as a lambda script
  * that can be compiled and used by Camel.
  */

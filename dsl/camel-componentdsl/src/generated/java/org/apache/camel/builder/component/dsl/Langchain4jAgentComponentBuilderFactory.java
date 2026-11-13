@@ -101,7 +101,6 @@ public interface Langchain4jAgentComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Whether LangChain4j should compensate when a tool execution fails.
          * Only supported in inline agent creation mode (agentConfiguration
@@ -110,7 +109,6 @@ public interface Langchain4jAgentComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param compensateOnToolErrors the value to set
@@ -137,7 +135,6 @@ public interface Langchain4jAgentComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Whether multiple tools requested in a single LLM turn are executed
          * concurrently. Camel route tools run on isolated exchange copies. Only
@@ -147,7 +144,6 @@ public interface Langchain4jAgentComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param executeToolsConcurrently the value to set

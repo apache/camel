@@ -53,7 +53,7 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
      *                                     current exchange IN message body?
      * @param retryWhile                   retry while
      * @param executorService              the {@link java.util.concurrent.ScheduledExecutorService} to be used for
-     *                                     redelivery thread pool. Can be <tt>null</tt>.
+     *                                     redelivery thread pool. Can be <code>null</code>.
      * @param onPrepareProcessor           a custom {@link org.apache.camel.Processor} to prepare the
      *                                     {@link org.apache.camel.Exchange} before handled by the failure processor /
      *                                     dead letter channel.
