@@ -19,7 +19,9 @@ package org.apache.camel.component.vertx;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxBuilder;
 import io.vertx.core.VertxOptions;
@@ -162,34 +164,67 @@ public class VertxComponent extends DefaultComponent {
             createdVertx = true;
 
             final CountDownLatch latch = new CountDownLatch(1);
+            final AtomicReference<Throwable> failure = new AtomicReference<>();
+            // the callback writes here rather than to the field, so a build that completes after the timeout
+            // cannot leave a half-published Vert.x behind
+            final AtomicReference<Vertx> created = new AtomicReference<>();
+            Future<Vertx> clusteredVertx = null;
 
             // lets using a host / port if a host name is specified
             if (clustered) {
+                if (timeout <= 0) {
+                    throw new IllegalArgumentException(
+                            "The timeout option must be a positive number of seconds, was: " + timeout);
+                }
+
                 LOG.info("Creating Clustered Vertx {}:{}", vertxOptions.getEventBusOptions().getHost(),
                         vertxOptions.getEventBusOptions().getPort());
                 // use the async api as we want to wait for the eventbus to be ready before we are in started state
-                vertxFactory.buildClustered().onComplete(event -> {
+                clusteredVertx = vertxFactory.buildClustered();
+                clusteredVertx.onComplete(event -> {
                     if (event.cause() != null) {
-                        LOG.warn("Error creating Clustered Vertx {}:{} due {}", host, port,
-                                event.cause().getMessage(), event.cause());
+                        failure.set(event.cause());
                     } else if (event.succeeded()) {
-                        vertx = event.result();
-                        LOG.info("EventBus is ready: {}", vertx);
+                        created.set(event.result());
                     }
 
                     latch.countDown();
                 });
             } else {
                 LOG.info("Creating Non-Clustered Vertx");
-                vertx = vertxFactory.build();
-                LOG.info("EventBus is ready: {}", vertx);
+                created.set(vertxFactory.build());
                 latch.countDown();
             }
 
             if (latch.getCount() > 0) {
                 LOG.info("Waiting for EventBus to be ready using {} sec as timeout", timeout);
-                latch.await(timeout, TimeUnit.SECONDS);
+                if (!latch.await(timeout, TimeUnit.SECONDS)) {
+                    // the build is still running: a node that joins the cluster after we gave up would keep its
+                    // event-loop threads alive with nobody left to close it. onSuccess also fires at once if the
+                    // future completed between the await and this registration, so no window is left open
+                    clusteredVertx.onSuccess(v -> {
+                        LOG.warn("Closing the Vert.x that became ready after the timeout of {} seconds,"
+                                 + " as the component start has already failed",
+                                timeout);
+                        v.close();
+                    });
+                    throw new IllegalStateException(
+                            "The Vert.x EventBus was not ready within the timeout of " + timeout + " seconds");
+                }
             }
+
+            // the component must not reach the started state with a half-built Vert.x: every endpoint created
+            // afterwards would dereference it
+            if (failure.get() != null) {
+                throw new IllegalStateException(
+                        "Error creating Clustered Vertx " + host + ":" + port, failure.get());
+            }
+            if (created.get() == null) {
+                throw new IllegalStateException("The Vert.x instance was not created");
+            }
+
+            vertx = created.get();
+            LOG.info("EventBus is ready: {}", vertx);
         } else {
             LOG.debug("Using Vertx instance set on the component level.");
         }

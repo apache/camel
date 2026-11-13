@@ -20,14 +20,13 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -105,8 +104,11 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         this.lock = new ReentrantLock();
         this.contextStarted = new AtomicBoolean();
         this.routeCount = new AtomicInteger();
-        this.routes = new TreeSet<>();
-        this.nonSupervisedRoutes = new HashSet<>();
+        // other threads (JMX, the developer console, a route reload, a start or stop of a route) read these sets
+        // without a lock while routes are added and removed at runtime: concurrent sets, ordered as before (startup
+        // order, then the order of initialization)
+        this.routes = new ConcurrentSkipListSet<>();
+        this.nonSupervisedRoutes = ConcurrentHashMap.newKeySet();
         this.routeManager = new RouteManager();
     }
 

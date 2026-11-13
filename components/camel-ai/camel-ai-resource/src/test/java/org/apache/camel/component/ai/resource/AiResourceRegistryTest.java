@@ -17,7 +17,9 @@
 package org.apache.camel.component.ai.resource;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -141,7 +143,108 @@ public class AiResourceRegistryTest {
         assertThat(registry.getResources().get("crm")).containsExactly(spec);
     }
 
+    @Test
+    public void testTemplateSpecEqualityAndHashCode() {
+        AiResourceTemplateSpec first = template("customer", "crm://customers/{id}");
+        AiResourceTemplateSpec same = template("customer", "crm://customers/{id}");
+        AiResourceTemplateSpec different = template("order", "crm://orders/{id}");
+
+        assertThat(first)
+                .isEqualTo(same)
+                .hasSameHashCodeAs(same)
+                .isNotEqualTo(different);
+
+        assertThat(new HashSet<>(List.of(first, same)))
+                .as("Equal template specs must behave consistently in hash-based collections")
+                .hasSize(1);
+    }
+
+    @Test
+    public void testTemplateRegistrationAndLookup() {
+        AiResourceTemplateSpec spec = template("customer", "crm://customers/{id}");
+
+        registry.putTemplate("crm", spec);
+
+        assertThat(registry.getResourceTemplates().get("crm")).containsExactly(spec);
+        assertThat(registry.getResourceTemplatesByTag("crm")).containsExactly(spec);
+        assertThat(spec.match("crm://customers/42")).hasValue(Map.of("id", "42"));
+    }
+
+    @Test
+    public void testDuplicateTemplateUriIsRejectedWithinEachPool() {
+        registry.putTemplate("crm", template("customer", "crm://customers/{id}"));
+        assertThatThrownBy(() -> registry.putTemplate("crm", template("other", "crm://customers/{id}")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Duplicate resource uriTemplate");
+
+        registry.putDefaultTemplate(template("default_customer", "crm://defaults/{id}"));
+        assertThatThrownBy(() -> registry.putDefaultTemplate(template("other_default", "crm://defaults/{id}")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Duplicate resource uriTemplate");
+    }
+
+    @Test
+    public void testOverlappingTemplatesAreRejectedWithinSameTag() {
+        AiResourceTemplateSpec byId = template("customer", "crm://customers/{id}");
+        AiResourceTemplateSpec byNumber = template("byNumber", "crm://customers/{number}");
+
+        registry.putTemplate("crm", byId);
+
+        assertThatThrownBy(() -> registry.putTemplate("crm", byNumber))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Overlapping resource uriTemplate");
+
+        assertThat(registry.getResourceTemplatesByTag("crm")).containsExactly(byId);
+    }
+
+    @Test
+    public void testOverlappingDefaultAndTaggedTemplatesAreRetainedForAdapterSelection() {
+        AiResourceTemplateSpec tagged = template("customer", "crm://customers/{id}");
+        AiResourceTemplateSpec untagged = template("byNumber", "crm://customers/{number}");
+
+        registry.putTemplate("crm", tagged);
+        registry.putDefaultTemplate(untagged);
+
+        assertThat(registry.getResourceTemplatesByTag("crm")).containsExactlyInAnyOrder(tagged, untagged);
+    }
+
+    @Test
+    public void testOverlappingTemplatesAreRejectedAcrossTags() {
+        AiResourceTemplateSpec byId = template("customer", "crm://customers/{id}");
+        AiResourceTemplateSpec byNumber = template("byNumber", "crm://customers/{number}");
+
+        registry.putTemplate("crm", byId);
+
+        assertThatThrownBy(() -> registry.putTemplate("ops", byNumber))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Overlapping resource uriTemplate");
+
+        assertThat(registry.getResourceTemplates()).containsOnlyKeys("crm");
+    }
+
+    @Test
+    public void testTemplateSnapshotHasDeterministicTagOrder() {
+        registry.putTemplate("ops", template("order", "crm://orders/{id}"));
+        registry.putTemplate("crm", template("customer", "crm://customers/{id}"));
+
+        assertThat(new ArrayList<>(registry.getResourceTemplates().keySet()))
+                .containsExactly("crm", "ops");
+    }
+
+    @Test
+    public void testTemplateRemovalAndDefaultPool() {
+        AiResourceTemplateSpec spec = template("customer", "crm://customers/{id}");
+        registry.putDefaultTemplate(spec);
+        assertThat(registry.getResourceTemplatesByTag("crm")).containsExactly(spec);
+        registry.removeDefaultTemplate(spec);
+        assertThat(registry.getAllResourceTemplates()).isEmpty();
+    }
+
     private static AiResourceSpec spec(String name, String uri) {
         return new AiResourceSpec(name, uri, "desc", "text/plain", null, null);
+    }
+
+    private static AiResourceTemplateSpec template(String name, String uriTemplate) {
+        return new AiResourceTemplateSpec(name, uriTemplate, "desc", "text/plain", null, null);
     }
 }

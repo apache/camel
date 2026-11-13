@@ -25,11 +25,11 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.EscapeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.StringQuoteHelper;
 
 import static org.apache.camel.language.simple.SimpleFunctionHelper.expressionOrBody;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArguments;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArgumentsKeepQuotes;
 
 /**
  * Built-in Simple string functions: {@code ${replace}}, {@code ${substring}}, {@code ${substringBefore}},
@@ -259,17 +259,18 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${pad(len)} or ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function,
-                        index);
+                        "Valid syntax: ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-            if (tokens.length < 2 || tokens.length > 3) {
+            // a comma inside quotes or a nested function is part of the argument
+            String[] tokens = splitArgumentsKeepQuotes(values);
+            if (tokens.length < 2 || tokens.length > 3 || tokens[0] == null || tokens[1] == null) {
                 throw new SimpleParserException(
                         "Valid syntax: ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function, index);
             }
             exp = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
             len = StringHelper.removeLeadingAndEndingQuotes(tokens[1]);
-            if (tokens.length == 3) {
+            // a separator left out is a space
+            if (tokens.length == 3 && tokens[2] != null) {
                 separator = StringHelper.removeLeadingAndEndingQuotes(tokens[2]);
             }
             return StringExpressionBuilder.padExpression(exp, len, separator);
@@ -287,18 +288,23 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                                                 + function,
                         index);
             }
-            // a comma inside quotes is part of the value, such as ${concat('Hello, ')}
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-            if (tokens.length > 3) {
+            // a comma inside quotes or a nested function is part of the value, such as ${concat('Hello, ')}
+            String[] tokens = splitArgumentsKeepQuotes(values);
+            // the expression that must be given: the only one, or the second one when there are more
+            int expIdx = tokens.length == 1 ? 0 : 1;
+            if (tokens.length > 3 || tokens[expIdx] == null) {
                 throw new SimpleParserException(
                         "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: "
                                                 + function,
                         index);
             }
             if (tokens.length >= 2) {
-                exp1 = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
+                // a first expression left out is the message body, a separator left out is none
+                if (tokens[0] != null) {
+                    exp1 = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
+                }
                 exp2 = StringHelper.removeLeadingAndEndingQuotes(tokens[1]);
-                if (tokens.length == 3) {
+                if (tokens.length == 3 && tokens[2] != null) {
                     separator = StringHelper.removeLeadingAndEndingQuotes(tokens[2]);
                 }
             } else {

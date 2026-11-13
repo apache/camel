@@ -36,13 +36,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@UsesWorkingDirectory
-class InitTest {
+class InitTest extends CamelCommandBaseTestSupport {
 
     private Path workingDir;
 
     @BeforeEach
-    public void beforeEach() throws IOException {
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestWorkDir();
         Path base = Paths.get("target");
         workingDir = Files.createTempDirectory(base, "camel-init");
     }

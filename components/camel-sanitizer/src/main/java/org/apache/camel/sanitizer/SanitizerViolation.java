@@ -58,21 +58,23 @@ public final class SanitizerViolation {
     }
 
     /**
-     * The id of the exchange.
+     * The id of the exchange. For rule R2, the exchange the commit was added for (the exchange of the consumer).
      */
     public String getExchangeId() {
         return exchangeId;
     }
 
     /**
-     * The id of the route of the step.
+     * The id of the route of the step. For rule R2, the route of the step where it was found, or else the route the
+     * commit's exchange came from.
      */
     public String getRouteId() {
         return routeId;
     }
 
     /**
-     * The id of the step, such as {@code process1} or {@code to2}.
+     * The id of the step, such as {@code process1} or {@code to2}. For rule R2, the step that ran on the thread where
+     * it was found (such as the {@code to} step that handed the commit over), or {@code null}.
      */
     public String getStepId() {
         return stepId;
@@ -80,7 +82,7 @@ public final class SanitizerViolation {
 
     /**
      * The class name of the processor of the step (looking through the delegates that Camel puts around a processor),
-     * or {@code null} if it could not be found.
+     * or {@code null} if it could not be found. For rule R2, the class name of the commit (the on completion).
      */
     public String getProcessor() {
         return processor;

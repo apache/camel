@@ -38,6 +38,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "evaluationMode": target.getConfiguration().setEvaluationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "failopen":
         case "failOpen": target.getConfiguration().setFailOpen(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckbundles":
+        case "healthCheckBundles": target.getConfiguration().setHealthCheckBundles(property(camelContext, boolean.class, value)); return true;
         case "includebody":
         case "includeBody": target.getConfiguration().setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includeheaders":
@@ -84,6 +86,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "evaluationMode": return java.lang.String.class;
         case "failopen":
         case "failOpen": return boolean.class;
+        case "healthcheckbundles":
+        case "healthCheckBundles": return boolean.class;
         case "includebody":
         case "includeBody": return boolean.class;
         case "includeheaders":
@@ -126,6 +130,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "evaluationMode": return target.getConfiguration().getEvaluationMode();
         case "failopen":
         case "failOpen": return target.getConfiguration().isFailOpen();
+        case "healthcheckbundles":
+        case "healthCheckBundles": return target.getConfiguration().isHealthCheckBundles();
         case "includebody":
         case "includeBody": return target.getConfiguration().isIncludeBody();
         case "includeheaders":

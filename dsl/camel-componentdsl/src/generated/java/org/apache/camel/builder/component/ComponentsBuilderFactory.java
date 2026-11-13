@@ -1100,6 +1100,19 @@ public interface ComponentsBuilderFactory {
         return CamundaComponentBuilderFactory.camunda();
     }
     /**
+     * Cedar (camel-cedar)
+     * Embedded Cedar authorization policies
+     * 
+     * Category: security
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-cedar
+     * 
+     * @return the dsl builder
+     */
+    static CedarComponentBuilderFactory.CedarComponentBuilder cedar() {
+        return CedarComponentBuilderFactory.cedar();
+    }
+    /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
      * 
@@ -1375,8 +1388,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CXF (camel-cxf-soap)
-     * Expose SOAP WebServices using Apache CXF or connect to external
-     * WebServices using CXF WS client.
+     * Expose SOAP services, or invoke operations of SOAP services, using Apache
+     * CXF.
      * 
      * Category: http,webservice
      * Since: 1.0
@@ -1389,8 +1402,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CXF-RS (camel-cxf-rest)
-     * Expose JAX-RS REST services using Apache CXF or connect to external REST
-     * services using CXF REST client.
+     * Expose REST services described by JAX-RS resource classes, or send
+     * requests to REST services, using Apache CXF.
      * 
      * Category: rest
      * Since: 2.0

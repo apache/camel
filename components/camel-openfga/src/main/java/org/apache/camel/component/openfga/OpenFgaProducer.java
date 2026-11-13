@@ -36,6 +36,7 @@ import dev.openfga.sdk.api.client.model.ClientReadChangesRequest;
 import dev.openfga.sdk.api.client.model.ClientReadChangesResponse;
 import dev.openfga.sdk.api.client.model.ClientReadRequest;
 import dev.openfga.sdk.api.client.model.ClientReadResponse;
+import dev.openfga.sdk.api.client.model.ClientRelationshipCondition;
 import dev.openfga.sdk.api.client.model.ClientTupleKey;
 import dev.openfga.sdk.api.client.model.ClientTupleKeyWithoutCondition;
 import dev.openfga.sdk.api.configuration.ClientBatchCheckClientOptions;
@@ -47,6 +48,7 @@ import dev.openfga.sdk.api.configuration.ClientReadChangesOptions;
 import dev.openfga.sdk.api.configuration.ClientReadOptions;
 import dev.openfga.sdk.api.model.ConsistencyPreference;
 import dev.openfga.sdk.api.model.FgaObject;
+import dev.openfga.sdk.api.model.RelationshipCondition;
 import dev.openfga.sdk.api.model.TupleChange;
 import dev.openfga.sdk.api.model.TupleKey;
 import dev.openfga.sdk.api.model.User;
@@ -403,6 +405,12 @@ public class OpenFgaProducer extends DefaultProducer {
                 entry.put("user", key.getUser());
                 entry.put("relation", key.getRelation());
                 entry.put("object", key.getObject());
+                // a stored tuple can carry a relationship condition; surface it so a route can read it back and feed
+                // it straight into a write, the same way the identity parts round-trip
+                RelationshipCondition condition = key.getCondition();
+                if (condition != null) {
+                    entry.put("condition", conditionAsMap(condition));
+                }
                 entry.put("timestamp", tuple.getTimestamp());
                 tuples.add(entry);
             }
@@ -446,6 +454,10 @@ public class OpenFgaProducer extends DefaultProducer {
                 entry.put("user", key.getUser());
                 entry.put("relation", key.getRelation());
                 entry.put("object", key.getObject());
+                RelationshipCondition condition = key.getCondition();
+                if (condition != null) {
+                    entry.put("condition", conditionAsMap(condition));
+                }
                 // the enum's name rather than the enum, so a route can compare against "WRITE" without importing
                 // an SDK type, and so the body marshals without a custom serializer
                 entry.put("operation", change.getOperation() != null ? change.getOperation().name() : null);
@@ -586,7 +598,13 @@ public class OpenFgaProducer extends DefaultProducer {
     private void writeTuples(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
         List<ClientTupleKey> tuples = new ArrayList<>();
         for (Tuple tuple : resolveTuples(exchange, authorizer)) {
-            tuples.add(new ClientTupleKey().user(tuple.user).relation(tuple.relation)._object(tuple.object));
+            ClientTupleKey key = new ClientTupleKey().user(tuple.user).relation(tuple.relation)._object(tuple.object);
+            if (tuple.condition != null) {
+                // carry the relationship condition from the input; rebuilding the tuple from its three identity parts
+                // alone would store an unconditioned tuple in place of the conditioned one the route asked for
+                key.condition(tuple.condition);
+            }
+            tuples.add(key);
         }
         // the write options carry no authorizationModelId - unlike every query's options - so the model this writes
         // against is the one pinned on the client, which OpenFgaClientFactory already set from the configuration
@@ -629,8 +647,8 @@ public class OpenFgaProducer extends DefaultProducer {
             // a part that is configured but resolved to nothing, like a partly configured triple, is a mistake rather
             // than an invitation to fill the rest in from the message, so validated() reports which part it was
             return List.of(validated(new Tuple(
-                    authorizer.rawUser(exchange), authorizer.rawRelation(exchange), authorizer.rawObject(exchange)),
-                    true));
+                    authorizer.rawUser(exchange), authorizer.rawRelation(exchange), authorizer.rawObject(exchange),
+                    null), true));
         }
 
         List<Tuple> tuples = new ArrayList<>();
@@ -654,11 +672,16 @@ public class OpenFgaProducer extends DefaultProducer {
 
     private Tuple toTuple(Object element) {
         if (element instanceof ClientTupleKeyWithoutCondition key) {
-            return validated(new Tuple(key.getUser(), key.getRelation(), key.getObject()), false);
+            // getCondition() lives on the ClientTupleKey subtype only, so a tuple that carries a relationship
+            // condition arrives here as the supertype; read the condition when the concrete type has one
+            ClientRelationshipCondition condition
+                    = key instanceof ClientTupleKey conditioned ? conditioned.getCondition() : null;
+            return validated(new Tuple(key.getUser(), key.getRelation(), key.getObject(), condition), false);
         }
         if (element instanceof Map<?, ?> map) {
             return validated(new Tuple(
-                    stringValue(map, "user"), stringValue(map, "relation"), stringValue(map, "object")), false);
+                    stringValue(map, "user"), stringValue(map, "relation"), stringValue(map, "object"),
+                    toCondition(map.get("condition"))), false);
         }
         throw new IllegalArgumentException(
                 "A relationship tuple must be a Map with user, relation and object entries, or a ClientTupleKey, but was "
@@ -698,6 +721,49 @@ public class OpenFgaProducer extends DefaultProducer {
     private static String stringValue(Map<?, ?> map, String key) {
         Object value = map.get(key);
         return value != null ? value.toString().trim() : null;
+    }
+
+    /**
+     * Builds the relationship condition a write should carry from the way the body expressed it: an SDK
+     * {@link ClientRelationshipCondition} as is, or a {@code Map} of {@code name} and {@code context} - the shape
+     * {@link #readTuples} and {@link #readChanges} project a stored condition as, so a route can feed one straight
+     * back. A body with no condition keeps writing an unconditioned tuple.
+     */
+    private static ClientRelationshipCondition toCondition(Object raw) {
+        if (raw == null) {
+            return null;
+        }
+        if (raw instanceof ClientRelationshipCondition condition) {
+            return condition;
+        }
+        if (raw instanceof Map<?, ?> map) {
+            String name = stringValue(map, "name");
+            if (ObjectHelper.isEmpty(name)) {
+                throw new IllegalArgumentException(
+                        "A relationship tuple condition must name a condition, but the condition entry had no name");
+            }
+            ClientRelationshipCondition condition = new ClientRelationshipCondition().name(name);
+            Object context = map.get("context");
+            if (context != null) {
+                condition.context(context);
+            }
+            return condition;
+        }
+        throw new IllegalArgumentException(
+                "A relationship tuple condition must be a Map with name and context entries or a"
+                                           + " ClientRelationshipCondition, but was " + raw.getClass().getName());
+    }
+
+    /**
+     * Projects a stored condition the server returned as a {@code Map} of {@code name} and {@code context}, mirroring
+     * how {@code operation} is projected as a {@code String} rather than an SDK type, so the read body marshals without
+     * a custom serializer and a route can round-trip it back into a write.
+     */
+    private static Map<String, Object> conditionAsMap(RelationshipCondition condition) {
+        Map<String, Object> projected = new LinkedHashMap<>();
+        projected.put("name", condition.getName());
+        projected.put("context", condition.getContext());
+        return projected;
     }
 
     /**
@@ -817,17 +883,20 @@ public class OpenFgaProducer extends DefaultProducer {
     }
 
     /**
-     * A relationship tuple on its way to OpenFGA, before it is turned into whichever SDK type the operation needs.
+     * A relationship tuple on its way to OpenFGA, before it is turned into whichever SDK type the operation needs. The
+     * condition is optional and only the write path carries it; a delete is by identity and ignores it.
      */
     private static final class Tuple {
         private final String user;
         private final String relation;
         private final String object;
+        private final ClientRelationshipCondition condition;
 
-        private Tuple(String user, String relation, String object) {
+        private Tuple(String user, String relation, String object, ClientRelationshipCondition condition) {
             this.user = user;
             this.relation = relation;
             this.object = object;
+            this.condition = condition;
         }
     }
 }

@@ -79,7 +79,12 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
      *                   the exchange is returned.
      */
     protected Exchange copyExchangeStrategy(Processor processor, Exchange exchange) {
-        return exchange.copy();
+        Exchange copy = exchange.copy();
+        // the copy keeps the unit of work of the exchange: share it, so a copy sent to an asynchronous endpoint (such
+        // as seda with an InOnly exchange) hands over only the on completions it added itself, and not those of the
+        // exchange (such as the commit of its consumer), which run when the exchange is done, with its outcome
+        copy.getExchangeExtension().setSharedUnitOfWork(exchange.getUnitOfWork());
+        return copy;
     }
 
 }

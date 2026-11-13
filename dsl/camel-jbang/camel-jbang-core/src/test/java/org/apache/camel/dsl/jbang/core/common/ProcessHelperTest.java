@@ -19,7 +19,9 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -247,6 +249,28 @@ class ProcessHelperTest {
         return String.join(":", jars);
     }
 
+    @Test
+    void aFileWrittenBeforeItsProcessStartedIsStale() throws Exception {
+        Instant start = Instant.parse("2026-11-13T08:00:00Z");
+        Path file = proc.resolve("100-status.json");
+        Files.writeString(file, "{}");
+
+        // left over from an integration that is gone: the pid is now another process
+        Files.setLastModifiedTime(file, FileTime.from(start.minus(Duration.ofHours(1))));
+        assertThat(ProcessHelper.isStale(started(start), file)).isTrue();
+        // the start of a process is not exact on every OS, and a file system may have a clock of its own
+        Files.setLastModifiedTime(file, FileTime.from(start.minusSeconds(5)));
+        assertThat(ProcessHelper.isStale(started(start), file)).isFalse();
+        // written by the process
+        Files.setLastModifiedTime(file, FileTime.from(start.plusSeconds(30)));
+        assertThat(ProcessHelper.isStale(started(start), file)).isFalse();
+
+        // not known
+        Files.setLastModifiedTime(file, FileTime.from(start.minus(Duration.ofHours(1))));
+        assertThat(ProcessHelper.isStale(started(null), file)).isFalse();
+        assertThat(ProcessHelper.isStale(started(start), proc.resolve("200-status.json"))).isFalse();
+    }
+
     private static JsonObject root(String contextName) {
         JsonObject root = new JsonObject();
         root.put("context", new JsonObject(Map.of("name", contextName)));
@@ -260,6 +284,14 @@ class ProcessHelperTest {
         when(ph.info()).thenReturn(info);
         when(ph.parent()).thenReturn(Optional.ofNullable(parent));
         when(ph.children()).thenAnswer(inv -> Stream.empty());
+        return ph;
+    }
+
+    private static ProcessHandle started(Instant start) {
+        ProcessHandle.Info info = mock(ProcessHandle.Info.class);
+        when(info.startInstant()).thenReturn(Optional.ofNullable(start));
+        ProcessHandle ph = mock(ProcessHandle.class);
+        when(ph.info()).thenReturn(info);
         return ph;
     }
 }
