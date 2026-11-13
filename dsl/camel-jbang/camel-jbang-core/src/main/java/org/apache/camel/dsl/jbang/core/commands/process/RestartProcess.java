@@ -155,7 +155,7 @@ public class RestartProcess extends ProcessBaseCommand {
                     && context.getIntegerOrDefault("phase", 0) == STARTED) {
                 return;
             }
-            Thread.sleep(200);
+            Thread.sleep(ProcessFinder.STATUS_POLL_INTERVAL);
         }
         throw CliException.timeout("Camel integration " + displayName + " (PID: " + started.pid() + ") did not start within "
                                    + TimeUtils.printDuration(timeout) + "; it is still starting, the log is in "

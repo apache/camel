@@ -24,7 +24,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.AfterEach;
@@ -119,8 +121,38 @@ class FileCliConnectorTransportTest {
         long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         // an action per status update took at least 4 seconds
         assertThat(elapsed).isLessThan(2500);
-        // and the status is not collected more often
-        assertThat(snapshots.statuses.get() - statuses).isLessThanOrEqualTo((int) (elapsed / 1000) + 2);
+        // and the status is not collected for every action: every second, and after actions at most every 200 millis
+        assertThat(snapshots.statuses.get() - statuses).isLessThanOrEqualTo((int) (elapsed / 1000 + elapsed / 200) + 2);
+    }
+
+    @Test
+    void statusIsWrittenAsSoonAsCamelHasStarted() {
+        // CAMEL-26936: camel run --background waits for Camel to have started, and not also for the next status
+        snapshots.phaseOf = context;
+        transport.updateDelay(60_000);
+        File status = file(PID + "-status.json");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> phase(status) != null);
+        assertThat(phase(status)).isLessThan(5);
+
+        // Camel would start a connector of its own, which writes the same status file
+        context.getCamelContextExtension().getContextPlugin(CliConnectorFactory.class).setEnabled(false);
+        context.start();
+
+        await().atMost(5, TimeUnit.SECONDS).until(() -> Integer.valueOf(5).equals(phase(status)));
+    }
+
+    @Test
+    void statusIsWrittenAfterAnAction() {
+        // CAMEL-26936: a camel get right after a camel cmd shows what the action did
+        snapshots.phaseOf = context;
+        transport.updateDelay(60_000);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> phase(file(PID + "-status.json")) != null);
+        int statuses = snapshots.statuses.get();
+
+        writeAction(action("result"), "r1");
+        assertThat(awaitJson(file(PID + "-output-r1.json"))).containsEntry("value", "42");
+
+        await().atMost(5, TimeUnit.SECONDS).until(() -> snapshots.statuses.get() > statuses);
     }
 
     @Test
@@ -353,6 +385,14 @@ class FileCliConnectorTransportTest {
         return await().atMost(10, TimeUnit.SECONDS).until(() -> readJson(file), jo -> jo != null);
     }
 
+    /**
+     * The phase of Camel in the status file, or null when the status has none.
+     */
+    private static Integer phase(File status) {
+        JsonObject json = readJson(status);
+        return json != null ? json.getInteger("phase") : null;
+    }
+
     private static JsonObject readJson(File file) {
         try {
             String text = Files.readString(file.toPath());
@@ -366,6 +406,8 @@ class FileCliConnectorTransportTest {
     private static final class EmptySnapshots implements CliSnapshotProducer {
         // thrown once by the next status
         volatile Error error;
+        // when set, the status has the phase of this Camel
+        volatile CamelContext phaseOf;
         final AtomicInteger statuses = new AtomicInteger();
 
         @Override
@@ -376,7 +418,12 @@ class FileCliConnectorTransportTest {
                 error = null;
                 throw e;
             }
-            return new JsonObject();
+            JsonObject status = new JsonObject();
+            CamelContext camel = phaseOf;
+            if (camel != null) {
+                status.put("phase", camel.getCamelContextExtension().getStatusPhase());
+            }
+            return status;
         }
 
         @Override

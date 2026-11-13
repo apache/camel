@@ -49,7 +49,10 @@ import org.slf4j.LoggerFactory;
  * Deleting the <tt>{pid}</tt> lock file shuts down the integration.
  * <p/>
  * The snapshots are written every second (every 100 millis in debug mode), and the action files are looked for about
- * every 100 millis in between, on the same thread, so an action does not wait up to a second for its answer.
+ * every 100 millis in between, on the same thread, so an action does not wait up to a second for its answer. The status
+ * is also written as soon as Camel changes phase, such as when it has started, and after actions are answered (at most
+ * every 200 millis), so a <tt>camel run --background</tt> is told that Camel has started without waiting for the next
+ * status, and a <tt>camel get</tt> right after a <tt>camel cmd</tt> shows what the action did.
  * <p/>
  * An action with a request id (<tt>{pid}-action-{requestId}.json</tt>) always gets a reply in
  * <tt>{pid}-output-{requestId}.json</tt>: <tt>{"status":"failed","error":"..."}</tt> when it is unknown, throws or
@@ -75,6 +78,10 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private int delay = 1000;
     private long counter;
     private final Map<File, PendingAction> pending = new HashMap<>();
+    // the phase of Camel when the status was last written, when it was written, and whether an action was answered since
+    private int statusPhase = -1;
+    private long statusWritten;
+    private boolean answered;
 
     // an action file this young that cannot be read may still be written: the Camel CLI before 4.24 writes it in place
     private static final long UNREADABLE_GRACE_MS = 2000;
@@ -82,6 +89,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private static final long STOP_POLL_TIMEOUT_MS = 5000;
     // how often the action files are looked for between two snapshots
     private static final int ACTION_POLL_MS = 100;
+    // how often at most the status is written for the actions answered between two snapshots, as collecting it costs
+    private static final long ANSWERED_STATUS_MS = 200;
 
     private record PendingAction(File output, boolean replyAlways, CompletableFuture<CliActionOutcome> outcome) {
     }
@@ -202,10 +211,16 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
 
     /**
      * Looks for actions between two snapshots, so an action is answered in about 100 millis instead of up to a second.
+     * Writes the status when Camel has changed phase since it was last written, and when an action was answered (at
+     * most every 200 millis).
      */
     protected void actionPollTask() {
         if (polling()) {
             actionTask();
+            if (statusPhase != camelContext.getCamelContextExtension().getStatusPhase()
+                    || (answered && TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - statusWritten) >= ANSWERED_STATUS_MS)) {
+                statusTask();
+            }
         }
     }
 
@@ -312,6 +327,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             LOG.warn("Error writing action result: {} due to: {}", request, e.getMessage(), e);
         } finally {
             FileUtil.deleteFile(request);
+            // the status shows what the action did
+            answered = true;
         }
     }
 
@@ -379,6 +396,9 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     }
 
     protected void statusTask() {
+        statusPhase = camelContext.getCamelContextExtension().getStatusPhase();
+        statusWritten = System.nanoTime();
+        answered = false;
         try {
             // even during termination then collect status as we want to see status changes during stopping
             JsonObject root = snapshots.status();
