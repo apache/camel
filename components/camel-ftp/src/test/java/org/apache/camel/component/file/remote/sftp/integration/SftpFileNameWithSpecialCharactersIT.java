@@ -20,12 +20,19 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,8 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The sftp component uses a remote file or directory name as it is, also when it contains {@code *}, {@code ?} or
- * {@code \}, which the JSch library would otherwise read as wildcards and as an escape character.
+ * The sftp component uses a remote file or directory name as it is, also when it contains {@code *} or {@code ?}, which
+ * the JSch library would otherwise read as wildcards. A {@code \} is a path separator, in every operation.
  */
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 @DisabledOnOs(value = OS.WINDOWS, disabledReason = "Windows does not allow *, ? and \\ in file names")
@@ -75,12 +82,63 @@ class SftpFileNameWithSpecialCharactersIT extends CamelTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { ".?", ".*" })
-    void storeFileInDirectoryWithWildcardName(String directory) throws Exception {
-        template.sendBodyAndHeader(sftpUri("inbox"), "stored", Exchange.FILE_NAME, directory + "/hello.txt");
+    @CsvSource({ ".?, true", ".*, true", ".?, false", ".*, false" })
+    void storeFileInDirectoryWithWildcardName(String directory, boolean existDirCheckUsingLs) throws Exception {
+        template.sendBodyAndHeader(sftpUri("inbox") + "&existDirCheckUsingLs=" + existDirCheckUsingLs, "stored",
+                Exchange.FILE_NAME, directory + "/hello.txt");
 
         assertEquals("stored", Files.readString(inbox.resolve(directory).resolve("hello.txt")));
         assertFalse(Files.exists(base.resolve("hello.txt")));
+    }
+
+    @Test
+    void chmodDirectoryOnlyChangesCreatedDirectory() throws Exception {
+        Path other = Files.createDirectories(inbox.resolve("d1"));
+        Set<PosixFilePermission> mode = Files.getPosixFilePermissions(other);
+
+        template.sendBodyAndHeader(sftpUri("inbox") + "&chmodDirectory=777", "stored", Exchange.FILE_NAME, "d?/hello.txt");
+
+        assertEquals("stored", Files.readString(inbox.resolve("d?").resolve("hello.txt")));
+        assertEquals(PosixFilePermissions.fromString("rwxrwxrwx"), Files.getPosixFilePermissions(inbox.resolve("d?")));
+        assertEquals(mode, Files.getPosixFilePermissions(other));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void appendToFileWithWildcardInName(boolean stepwise) throws Exception {
+        Files.writeString(inbox.resolve("data-?.txt"), "first ");
+        Files.writeString(inbox.resolve("data-1.txt"), "other");
+
+        template.sendBodyAndHeader(sftpUri("inbox") + "&fileExist=Append&stepwise=" + stepwise, "second",
+                Exchange.FILE_NAME, "data-?.txt");
+
+        assertEquals("first second", Files.readString(inbox.resolve("data-?.txt")));
+        assertEquals("other", Files.readString(inbox.resolve("data-1.txt")));
+    }
+
+    @Test
+    void checksumFileOfFileWithWildcardInName() throws Exception {
+        Files.writeString(inbox.resolve("data-1.txt.MD5"), "other");
+
+        template.sendBodyAndHeader(sftpUri("inbox") + "&checksumFileAlgorithm=MD5", "stored", Exchange.FILE_NAME,
+                "data-?.txt");
+
+        assertEquals("stored", Files.readString(inbox.resolve("data-?.txt")));
+        assertTrue(Files.exists(inbox.resolve("data-?.txt.MD5")));
+        assertEquals("other", Files.readString(inbox.resolve("data-1.txt.MD5")));
+    }
+
+    @Test
+    void storeAgainWithBackslashInNameKeepsFileWithThatLiteralName() throws Exception {
+        String uri = sftpUri("inbox") + "&tempPrefix=inprogress-";
+        template.sendBodyAndHeader(uri, "first", Exchange.FILE_NAME, "sub\\file.txt");
+        // the \ is a path separator, so a file with this literal name is another file
+        Files.writeString(inbox.resolve("sub\\file.txt"), "unrelated");
+
+        template.sendBodyAndHeader(uri, "second", Exchange.FILE_NAME, "sub\\file.txt");
+
+        assertEquals("second", Files.readString(inbox.resolve("sub").resolve("file.txt")));
+        assertEquals("unrelated", Files.readString(inbox.resolve("sub\\file.txt")));
     }
 
     @Test
@@ -103,13 +161,14 @@ class SftpFileNameWithSpecialCharactersIT extends CamelTestSupport {
     void chmodOnlyChangesStoredFile(boolean stepwise) throws Exception {
         Path other = inbox.resolve("data-1.txt");
         Files.writeString(other, "other");
-        String mode = Files.getPosixFilePermissions(other).toString();
+        Set<PosixFilePermission> mode = Files.getPosixFilePermissions(other);
 
         template.sendBodyAndHeader(sftpUri("inbox") + "&chmod=777&stepwise=" + stepwise, "stored",
                 Exchange.FILE_NAME, "data-?.txt");
 
         assertEquals("stored", Files.readString(inbox.resolve("data-?.txt")));
-        assertEquals(mode, Files.getPosixFilePermissions(other).toString());
+        assertEquals(PosixFilePermissions.fromString("rwxrwxrwx"), Files.getPosixFilePermissions(inbox.resolve("data-?.txt")));
+        assertEquals(mode, Files.getPosixFilePermissions(other));
     }
 
     @ParameterizedTest
@@ -171,6 +230,73 @@ class SftpFileNameWithSpecialCharactersIT extends CamelTestSupport {
         assertFalse(Files.exists(inbox.resolve("data-?.txt")));
         assertEquals("other", Files.readString(inbox.resolve("data-1.txt")));
         assertEquals("done before", Files.readString(done.resolve("data-2.txt")));
+    }
+
+    @Test
+    void consumeFileWithWildcardInNameToLocalWorkDirectory() throws Exception {
+        Files.writeString(inbox.resolve("data-?.txt"), "wanted");
+        Files.writeString(inbox.resolve("data-1.txt"), "other");
+        Path work = Files.createTempDirectory(base, "work");
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("wanted");
+        mock.expectedHeaderReceived(Exchange.FILE_NAME, "data-?.txt");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(sftpUri("inbox") + "&fileName=data-?.txt&noop=true&initialDelay=0&delay=60000"
+                     + "&localWorkDirectory=" + work)
+                        .convertBodyTo(String.class).to("mock:result");
+            }
+        });
+
+        mock.assertIsSatisfied();
+        assertEquals("other", Files.readString(inbox.resolve("data-1.txt")));
+    }
+
+    @Test
+    void failedStepwiseRetrieveChangesBackToTheStartingDirectory() throws Exception {
+        // the endpoint directory is relative to the home directory of the server, so the consumer changes to it
+        // from the directory it started in, at every poll
+        Files.writeString(inbox.resolve("data-1.txt"), "other");
+        AtomicInteger polls = new AtomicInteger();
+        context.getRegistry().bind("countingPollStrategy", new PollingConsumerPollStrategy() {
+            @Override
+            public boolean begin(Consumer consumer, Endpoint endpoint) {
+                polls.incrementAndGet();
+                return true;
+            }
+
+            @Override
+            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
+                // noop
+            }
+
+            @Override
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
+                return false;
+            }
+        });
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("wanted");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(sftpUri("inbox") + "&useList=false&fileName=data-*.txt&ignoreFileNotFoundOrPermissionError=true"
+                     + "&stepwise=true&initialDelay=0&delay=100&pollStrategy=#countingPollStrategy")
+                        .convertBodyTo(String.class).to("mock:result");
+            }
+        });
+
+        // the retrieve of data-*.txt fails at these polls, as there is no file with that name
+        await().atMost(10, TimeUnit.SECONDS).until(() -> polls.get() >= 3);
+        Files.writeString(inbox.resolve("data-*.txt"), "wanted");
+
+        mock.assertIsSatisfied();
+        assertEquals("other", Files.readString(inbox.resolve("data-1.txt")));
     }
 
     private String sftpUri(String directory) {

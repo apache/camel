@@ -98,6 +98,15 @@ configurations are not affected.
 The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.
 The `InvalidMessageSignatureException` of a failed check no longer carries the calculated signature: `getCalculatedSignature()` returns `null` and is deprecated, as is the constructor that takes it.
 
+=== camel-ftp - sftp uses remote file and directory names as given
+
+The `sftp` component now uses a remote file or directory name exactly as given, also when it contains `*` or `?`.
+Before, the JSch library read `*` and `?` in the name as wildcards, so storing, retrieving, deleting, renaming, listing
+or changing to a directory could resolve the name to another file or directory whose name matched. If you relied on a
+wildcard to select a file, use the real name of the file in the producer, and the `include` or `antInclude` option of a
+consumer that lists the directory instead of a wildcard in `fileName` with `useList=false`. See the
+xref:components::sftp-component.adoc[SFTP component].
+
 === camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
 
 A `hazelcast-seda` consumer now restores the headers and exchange properties of an exchange that a producer with

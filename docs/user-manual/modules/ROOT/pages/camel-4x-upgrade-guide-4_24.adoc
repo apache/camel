@@ -325,15 +325,20 @@ xref:components::sftp-component.adoc[SFTP component].
 
 === camel-ftp - sftp uses remote file and directory names as given
 
-The `sftp` component now uses a remote file or directory name exactly as given, also when it contains `*`, `?` or `\`.
-Before, the name was passed on to the JSch library, which reads `*` and `?` as wildcards and `\` as an escape
-character, so storing, retrieving, deleting, renaming, listing or changing to a directory could resolve the name to
-another file or directory whose name matched, or fail when more than one name matched.
+The `sftp` component now uses a remote file or directory name exactly as given, also when it contains `*` or `?`.
+Before, the name was passed on to the JSch library, which reads `*` and `?` as wildcards, so storing, retrieving,
+deleting, renaming, listing or changing to a directory could resolve the name to another file or directory whose name
+matched, or fail when more than one name matched. With the default `separator=UNIX`, a `\` in a name is a path
+separator, as before.
 
-If you relied on such a name to select a file, for example a consumer with `useList=false` and a wildcard in
-`fileName`, or a wildcard in the `CamelFileName` header of the producer, select the files with the `include` or
-`antInclude` option of a consumer that lists the directory instead. See the
-xref:components::sftp-component.adoc[SFTP component].
+If you relied on a wildcard to select a file or a directory:
+
+* A consumer with `useList=false` and a wildcard in `fileName`: list the directory instead, and select the files with
+the `include` or `antInclude` option.
+* A producer with a wildcard in the `CamelFileName` header or the `fileName` option: use the real name of the file.
+* A wildcard in the directory of the endpoint: use the real name of the directory.
+
+See the xref:components::sftp-component.adoc[SFTP component].
 
 === camel-kafka - exactlyOnce: a rejected send that a doCatch catches skips the record
 

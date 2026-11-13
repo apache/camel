@@ -663,6 +663,8 @@ public class SftpOperations
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         lock.lock();
         try {
+            // normalize the name as the store does, so the file that is deleted is the one that is checked and stored
+            name = endpoint.getConfiguration().normalizePath(name);
             LOG.debug("Deleting file: {}", name);
             reconnectIfNecessary(null);
             channel.rm(quotePathForJsch(name));
@@ -1033,8 +1035,11 @@ public class SftpOperations
      * {@code rename}, {@code chmod}, {@code cd}, {@code ls}, {@code lstat} and {@code readlink}, resolve it with JSch's
      * own pattern matching, which treats {@code *} and {@code ?} as wildcards and {@code \} as an escape character that
      * is removed. Every such call in this class escapes its path, so that the server works on the file or directory
-     * with exactly the given name, as the other file based components do. {@link ChannelSftp#mkdir(String)} sends its
-     * path as it is, so it is not escaped. This mirrors JSch's own (package-private) {@code Util.quote}.
+     * with exactly the given name, also when it contains {@code *} or {@code ?}, as the other file based components do.
+     * A {@code \} is a path separator with the default {@code separator} option, and the name is normalized to
+     * {@code /} before it gets here; a {@code \} that is left is escaped, so that JSch does not remove it.
+     * {@link ChannelSftp#mkdir(String)} sends its path as it is, so it is not escaped. This mirrors JSch's own
+     * (package-private) {@code Util.quote}.
      *
      * @param  path the literal path
      * @return      the path with {@code \}, {@code *} and {@code ?} escaped for JSch
@@ -1099,8 +1104,9 @@ public class SftpOperations
 
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
+        String currentDir = null;
+        boolean retrieved = false;
         try {
-            String currentDir = null;
             GenericFile<ChannelSftp.LsEntry> target
                     = (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
@@ -1139,17 +1145,16 @@ public class SftpOperations
             }
 
             createResultHeadersFromExchange(null, exchange);
-
-            // change back to current directory if we changed directory
-            if (currentDir != null) {
-                changeCurrentDirectory(currentDir);
-            }
+            retrieved = true;
             return true;
         } catch (SftpException e) {
             createResultHeadersFromExchange(e, exchange);
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
+        } finally {
+            // change back to current directory if we changed directory
+            changeBackToDirectory(currentDir, retrieved);
         }
     }
 
@@ -1205,8 +1210,9 @@ public class SftpOperations
         } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local, e);
         }
+        String currentDir = null;
+        boolean retrieved = false;
         try {
-            String currentDir = null;
             // store the java.io.File handle as the body
             file.setBody(local);
 
@@ -1228,12 +1234,7 @@ public class SftpOperations
             }
 
             channel.get(quotePathForJsch(remoteName), os);
-
-            // change back to current directory if we changed directory
-            if (currentDir != null) {
-                changeCurrentDirectory(currentDir);
-            }
-
+            retrieved = true;
         } catch (SftpException e) {
             createResultHeadersFromExchange(e, exchange);
             LOG.trace("Error occurred during retrieving file: {} to local directory. Deleting local work file: {}", name, temp);
@@ -1249,6 +1250,8 @@ public class SftpOperations
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
             IOHelper.close(os, "retrieve: " + name, LOG);
+            // change back to current directory if we changed directory
+            changeBackToDirectory(currentDir, retrieved);
         }
 
         createResultHeadersFromExchange(null, exchange);
@@ -1296,17 +1299,43 @@ public class SftpOperations
                 targetName = FileUtil.stripPath(name);
             }
 
-            // store the file
-            answer = doStoreFile(name, targetName, exchange);
-
-            // change back to current directory if we changed directory
-            if (currentDir != null) {
-                changeCurrentDirectory(currentDir);
+            boolean stored = false;
+            try {
+                // store the file
+                answer = doStoreFile(name, targetName, exchange);
+                stored = true;
+            } finally {
+                // change back to current directory if we changed directory
+                changeBackToDirectory(currentDir, stored);
             }
 
             return answer;
         } finally {
             lock.unlock();
+        }
+    }
+
+    /**
+     * Changes back to the directory that a stepwise operation started in, also when the operation failed, so that the
+     * next operation does not start in the directory of the file. When the operation failed, a failure to change back
+     * is only logged, so that it does not hide why the operation failed.
+     *
+     * @param directory the directory to change back to, or {@code null} if the operation did not change directory
+     * @param succeeded whether the operation succeeded
+     */
+    private void changeBackToDirectory(String directory, boolean succeeded) {
+        if (directory == null) {
+            return;
+        }
+        if (succeeded) {
+            changeCurrentDirectory(directory);
+            return;
+        }
+        try {
+            changeCurrentDirectory(directory);
+        } catch (GenericFileOperationFailedException e) {
+            LOG.debug("Cannot change back to directory: {} after a failed operation due to: {}", directory, e.getMessage(),
+                    e);
         }
     }
 
@@ -1435,6 +1464,8 @@ public class SftpOperations
     public FileAttributes getFileAttributes(String name) throws GenericFileOperationFailedException {
         lock.lock();
         try {
+            // normalize the name as the store does, so the file that is checked is the one that is stored
+            name = endpoint.getConfiguration().normalizePath(name);
             SftpATTRS attrs;
             try {
                 attrs = lstat(name);
