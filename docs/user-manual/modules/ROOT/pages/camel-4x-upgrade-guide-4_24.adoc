@@ -303,6 +303,18 @@ support it on the path, the component lists the directory as before. `readLock=c
 modification time of a symbolic link itself, as the directory listing reported them. See the
 xref:components::sftp-component.adoc[SFTP component].
 
+=== camel-ftp - sftp uses remote file and directory names as given
+
+The `sftp` component now uses a remote file or directory name exactly as given, also when it contains `*`, `?` or `\`.
+Before, the name was passed on to the JSch library, which reads `*` and `?` as wildcards and `\` as an escape
+character, so storing, retrieving, deleting, renaming, listing or changing to a directory could resolve the name to
+another file or directory whose name matched, or fail when more than one name matched.
+
+If you relied on such a name to select a file, for example a consumer with `useList=false` and a wildcard in
+`fileName`, or a wildcard in the `CamelFileName` header of the producer, select the files with the `include` or
+`antInclude` option of a consumer that lists the directory instead. See the
+xref:components::sftp-component.adoc[SFTP component].
+
 === camel-kafka - exactlyOnce: a rejected send that a doCatch catches skips the record
 
 With `exactlyOnce`, a Kafka send through the source producer after an earlier send failed in the same transaction is
