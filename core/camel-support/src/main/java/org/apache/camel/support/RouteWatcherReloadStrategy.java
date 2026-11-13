@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
@@ -869,7 +870,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             for (Resource rs : failed) {
                 byte[] content = rs != null ? lastGoodContentOf(rs) : null;
                 if (content != null && !equalResourceLocation(restore, rs)) {
-                    restore.add(ResourceHelper.fromBytes(rs.getLocation(), content));
+                    restore.add(lastLoaded(rs, content));
                     fromMemory++;
                 }
             }
@@ -899,6 +900,32 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                      + " without routes until the file is fixed",
                     e.getMessage(), e);
         }
+    }
+
+    /**
+     * The content a file last loaded with, kept in memory, as the resource that stands for the file in a restore. It
+     * has the URI of the file, so the next reload knows it is the file that is saved, and loads the saved file in its
+     * place. A URI made from the location is not the URI of the file: the location of a file in the current folder is
+     * relative (camel run), and a location with a space in it is no URI at all (CAMEL-26943).
+     */
+    private static Resource lastLoaded(Resource file, byte[] content) {
+        URI uri = file.getURI();
+        return new ResourceSupport("mem", file.getLocation()) {
+            @Override
+            public boolean exists() {
+                return true;
+            }
+
+            @Override
+            public URI getURI() {
+                return uri;
+            }
+
+            @Override
+            public InputStream getInputStream() {
+                return new ByteArrayInputStream(content);
+            }
+        };
     }
 
     /**
