@@ -766,6 +766,25 @@ relied on the setter being inert until an exchange arrived must be aware of the 
 Setting `keepOpen` back to `false` remains deferred: the half-open timer attempts to close the circuit on
 its next tick (after `halfOpenAfter` milliseconds, default 30 s).
 
+=== camel-jbang - runtime catalogs use the selected Camel version
+
+Spring Boot and Quarkus catalogs now report the resolved Camel core version and read EIP/model schemas from that
+version's catalog. Previously, they could combine the selected runtime's component schemas with the running CLI or
+MCP server's newer model schemas. A model absent from the selected catalog now remains absent.
+Runtime dependency coordinates still use the selected Spring Boot or Camel Quarkus version.
+
+A Quarkus BOM must identify both `org.apache.camel:camel-catalog` and
+`org.apache.camel.quarkus:camel-quarkus-catalog`. If either version or the selected catalog cannot be resolved,
+catalog loading fails instead of returning the running server's catalog.
+
+Spring Boot retains its existing fallback: if downloading `org.apache.camel:camel-catalog` for the requested
+version fails, it tries the running CLI's Camel version. The catalog reports the core version actually resolved.
+
+For Spring Boot, `camel export` and `camel run` without an explicit `--camel-version` now use the resolved core
+catalog version for Camel core dependencies in the generated project. For example, `--camel-spring-boot-version=4.8.0`
+uses Camel 4.8.0 instead of the running CLI's version when that catalog is available. Set `--camel-version` explicitly
+to retain a different core dependency version.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
