@@ -483,12 +483,11 @@ final class TuiToolDefinitions {
                 List.of("section")), r::callToggleTraceDisplay));
         tools.add(tool(toolDef(
                 "tui_get_readme",
-                "Returns the README/documentation content from a running integration, or its project's "
-                                  + "integration summary when there is no README. "
-                                  + "Useful for understanding what the integration does, its configuration, and usage. "
-                                  + "If no name is provided, returns the README for the currently selected integration.",
-                Map.of("name", propDef("string",
-                        "Integration name. If omitted, uses the currently selected integration."))),
+                "The README of an integration; without one, the facts derived from its route sources, or with "
+                                  + "aiSummary=true camel-summary.md, partly AI-written (aiWritten).",
+                Map.of("name", propDef("string", "Integration name (default: the selected one)"),
+                        "aiSummary", propDef("boolean",
+                                "Without a README, camel-summary.md instead of the facts; only when the user asks"))),
                 r::callGetReadme, READ_ONLY, CORE));
         tools.add(tool(toolDef(
                 "tui_infra",
