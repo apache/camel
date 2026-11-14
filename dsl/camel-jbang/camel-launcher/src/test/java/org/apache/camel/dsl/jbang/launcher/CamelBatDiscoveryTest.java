@@ -414,7 +414,8 @@ class CamelBatDiscoveryTest {
     }
 
     @Test
-    void rejectsNonnumericMajorAndContinuesToFallback(@TempDir Path base) throws Exception {
+    void rejectsAnEarlyAccessJdkBelowTheMinimumAndContinuesToFallback(@TempDir Path base) throws Exception {
+        // 17-ea is Java 17 (the version is split on the dash too), which is below the minimum
         Path h = home(base);
         Path earlyAccess = FakeJava.writeFakeJava(base.resolve("early-access"), "java", JAVA17_EA, 0, "EARLY");
         Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA21, 0, "FALLBACK");
