@@ -79,19 +79,20 @@ public final class RepeatedToolCalls {
         }
         // Peek at the current count without incrementing. The increment happens only after a successful answer
         // (recordSuccessfulAnswer), so a call that throws an exception does not consume the retry budget.
-        int current = counts.getOrDefault(key(tool.name(), args, tool.deterministicWhen()), 0);
+        String key = key(tool.name(), args, tool.deterministicWhen());
+        int current = counts.getOrDefault(key, 0);
         if (current < FULL_ANSWERS) {
             // Will be incremented by recordSuccessfulAnswer; answer in full.
             return null;
         }
         // Already answered FULL_ANSWERS times; the next identical call gets the note.
         // Increment so timesAsked keeps growing (allows the model to see the repetition count rising).
-        int times = counts.merge(key(tool.name(), args, tool.deterministicWhen()), 1, Integer::sum);
+        int times = counts.merge(key, 1, Integer::sum);
         JsonObject note = new JsonObject();
         note.put("repeated", true);
         note.put("tool", tool.name());
         note.put("timesAsked", times);
-        JsonObject miss = misses.get(key(tool.name(), args, tool.deterministicWhen()));
+        JsonObject miss = misses.get(key);
         if (miss != null) {
             // the hint of the tool is for an answer that was found, such as writing the file with the options it
             // gave; a miss gives no options, so the note says what the answer was and what to ask instead (CAMEL-26932)
