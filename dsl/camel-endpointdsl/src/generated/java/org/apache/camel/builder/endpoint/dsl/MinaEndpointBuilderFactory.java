@@ -735,39 +735,6 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If sync is enabled this option dictates MinaConsumer which logging
-         * level to use when logging a there is no reply to send back.
-         * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
-         * 
-         * Default: WARN
-         * Group: consumer (advanced)
-         * 
-         * @param noReplyLogLevel the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
-            doSetProperty("noReplyLogLevel", noReplyLogLevel);
-            return this;
-        }
-        /**
-         * If sync is enabled this option dictates MinaConsumer which logging
-         * level to use when logging a there is no reply to send back.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
-         * 
-         * Default: WARN
-         * Group: consumer (advanced)
-         * 
-         * @param noReplyLogLevel the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(String noReplyLogLevel) {
-            doSetProperty("noReplyLogLevel", noReplyLogLevel);
-            return this;
-        }
-        /**
          * This option has no effect. A synchronous consumer always closes its
          * session when it has no reply to send back, and the producer always
          * closes its session on a reply timeout.
@@ -829,6 +796,39 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder maximumPoolSize(String maximumPoolSize) {
             doSetProperty("maximumPoolSize", maximumPoolSize);
+            return this;
+        }
+        /**
+         * If sync is enabled this option dictates the logging level to use when
+         * logging that there is no reply to send back.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
+            return this;
+        }
+        /**
+         * If sync is enabled this option dictates the logging level to use when
+         * logging that there is no reply to send back.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(String noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
         /**
@@ -1601,6 +1601,39 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
+         * If sync is enabled this option dictates the logging level to use when
+         * logging that there is no reply to send back.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointProducerBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
+            return this;
+        }
+        /**
+         * If sync is enabled this option dictates the logging level to use when
+         * logging that there is no reply to send back.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointProducerBuilder noReplyLogLevel(String noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
+            return this;
+        }
+        /**
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
@@ -2261,6 +2294,39 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointBuilder maximumPoolSize(String maximumPoolSize) {
             doSetProperty("maximumPoolSize", maximumPoolSize);
+            return this;
+        }
+        /**
+         * If sync is enabled this option dictates the logging level to use when
+         * logging that there is no reply to send back.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
+            return this;
+        }
+        /**
+         * If sync is enabled this option dictates the logging level to use when
+         * logging that there is no reply to send back.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinaEndpointBuilder noReplyLogLevel(String noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
         /**

@@ -444,25 +444,6 @@ public interface NettyHttpComponentBuilderFactory {
     
         
         /**
-         * If sync is enabled this option dictates NettyConsumer which logging
-         * level to use when logging a there is no reply to send back.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
-         * 
-         * Default: WARN
-         * Group: consumer (advanced)
-         * 
-         * @param noReplyLogLevel the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpComponentBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
-            doSetProperty("noReplyLogLevel", noReplyLogLevel);
-            return this;
-        }
-    
-        
-        /**
          * If the server (NettyConsumer) catches an
          * java.nio.channels.ClosedChannelException then its logged using this
          * logging level. This is used to avoid logging the closed channel
@@ -951,6 +932,25 @@ public interface NettyHttpComponentBuilderFactory {
          */
         default NettyHttpComponentBuilder nettyHttpBinding(org.apache.camel.component.netty.http.NettyHttpBinding nettyHttpBinding) {
             doSetProperty("nettyHttpBinding", nettyHttpBinding);
+            return this;
+        }
+    
+        
+        /**
+         * If sync is enabled this option dictates the logging level to use when
+         * logging that there is no reply to send back.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpComponentBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
     
@@ -1574,7 +1574,6 @@ public interface NettyHttpComponentBuilderFactory {
             case "executorService": ((NettyHttpComponent) component).setExecutorService((io.netty.util.concurrent.EventExecutorGroup) value); return true;
             case "maximumPoolSize": ((NettyHttpComponent) component).setMaximumPoolSize((int) value); return true;
             case "nettyServerBootstrapFactory": getOrCreateConfiguration((NettyHttpComponent) component).setNettyServerBootstrapFactory((org.apache.camel.component.netty.NettyServerBootstrapFactory) value); return true;
-            case "noReplyLogLevel": getOrCreateConfiguration((NettyHttpComponent) component).setNoReplyLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "serverClosedChannelExceptionCaughtLogLevel": getOrCreateConfiguration((NettyHttpComponent) component).setServerClosedChannelExceptionCaughtLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "serverExceptionCaughtLogLevel": getOrCreateConfiguration((NettyHttpComponent) component).setServerExceptionCaughtLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "serverInitializerFactory": getOrCreateConfiguration((NettyHttpComponent) component).setServerInitializerFactory((org.apache.camel.component.netty.ServerInitializerFactory) value); return true;
@@ -1600,6 +1599,7 @@ public interface NettyHttpComponentBuilderFactory {
             case "headerFilterStrategy": ((NettyHttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "nativeTransport": getOrCreateConfiguration((NettyHttpComponent) component).setNativeTransport((boolean) value); return true;
             case "nettyHttpBinding": ((NettyHttpComponent) component).setNettyHttpBinding((org.apache.camel.component.netty.http.NettyHttpBinding) value); return true;
+            case "noReplyLogLevel": getOrCreateConfiguration((NettyHttpComponent) component).setNoReplyLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "options": getOrCreateConfiguration((NettyHttpComponent) component).setOptions((java.util.Map) value); return true;
             case "receiveBufferSize": getOrCreateConfiguration((NettyHttpComponent) component).setReceiveBufferSize((int) value); return true;
             case "receiveBufferSizePredictor": getOrCreateConfiguration((NettyHttpComponent) component).setReceiveBufferSizePredictor((int) value); return true;
