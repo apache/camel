@@ -24,6 +24,7 @@ import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
+import org.apache.camel.dsl.jbang.run.IntegrationStartException;
 import org.apache.camel.dsl.jbang.run.RunPipeline;
 import org.apache.camel.dsl.jbang.run.RunRequest;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
@@ -350,8 +351,9 @@ class RunTest extends CamelCommandBaseTestSupport {
         CommandLineTestHelper.parse(command, "route.yaml");
         assertThat(command.toRunRequest(Path.of(".")).keepPreviousLog).isTrue();
         // with the exit code camel run exits with for the exception
-        assertThat(command.runContext().failureExitCode(new FailedToStartRouteException("route1", "boom")))
-                .isEqualTo(CliExitCode.INTERNAL);
+        assertThat(command.runContext().failureExitCode(
+                new IntegrationStartException(new FailedToStartRouteException("route1", "boom"))))
+                .isEqualTo(CliExitCode.FAILURE);
 
         // not a Camel that another command runs in its JVM (such as camel cmd send --local)
         assertThat(new Run(new CamelJBangMain()).toRunRequest(Path.of(".")).keepPreviousLog).isFalse();
