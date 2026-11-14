@@ -45,6 +45,17 @@ An atmopshere-websocket endpoint can either write data to the socket or
 read from the socket, depending on whether the endpoint is configured as
 the producer or the consumer, respectively.
 
+== Connection Events
+
+When the init-param `events` of the `CamelWebSocketServlet` is set to `true`, the consumer also routes an exchange,
+without a body, when a websocket connection opens, closes or fails. The `CamelAtmosphereWebsocketEventType` header
+holds the type of the event (`1` open, `0` close, `-1` error), and the `CamelAtmosphereWebsocketConnectionKey` header
+the key of the connection.
+
+The query parameters of the request that opened the connection are set as headers on the events of that
+connection, with their names and values URL-decoded. The header filter strategy of the endpoint applies, so for
+example a parameter whose name starts with `Camel` is not set as a header.
+
 == Examples
 
 === Consumer Example

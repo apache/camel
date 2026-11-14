@@ -17,6 +17,8 @@
 package org.apache.camel.component.atmosphere.websocket;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +45,6 @@ import org.atmosphere.websocket.WebSocketProtocol;
  */
 public class WebsocketConsumer extends ServletConsumer {
     private boolean enableEventsResending;
-    private Map<String, String> queryMap = new HashMap<>();
     private AtmosphereFramework framework;
     private final AtmosphereFrameworkInitializer initializer;
 
@@ -81,7 +82,6 @@ public class WebsocketConsumer extends ServletConsumer {
     }
 
     void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        this.queryMap = getQueryMap(request.getQueryString());
         framework.doCometSupport(AtmosphereRequestImpl.wrap(request), AtmosphereResponseImpl.wrap(response));
     }
 
@@ -97,7 +97,7 @@ public class WebsocketConsumer extends ServletConsumer {
         getAsyncProcessor().process(exchange, cb);
     }
 
-    public void sendEventNotification(String connectionKey, int eventType) {
+    public void sendEventNotification(String connectionKey, int eventType, Map<String, String> queryParameters) {
         final Exchange exchange = createExchange(true);
 
         // set header
@@ -105,7 +105,7 @@ public class WebsocketConsumer extends ServletConsumer {
         exchange.getIn().setHeader(WebsocketConstants.EVENT_TYPE, eventType);
 
         HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
-        for (Map.Entry<String, String> param : queryMap.entrySet()) {
+        for (Map.Entry<String, String> param : queryParameters.entrySet()) {
             if (headerFilterStrategy == null
                     || !headerFilterStrategy.applyFilterToExternalHeaders(param.getKey(), param.getValue(), exchange)) {
                 exchange.getIn().setHeader(param.getKey(), param.getValue());
@@ -144,9 +144,18 @@ public class WebsocketConsumer extends ServletConsumer {
                 }
                 // a parameter without a value (?foo or ?foo=) gets an empty value, and a value may contain =
                 String[] nameval = param.split("=", 2);
-                map.put(nameval[0], nameval.length > 1 ? nameval[1] : "");
+                map.put(decode(nameval[0]), nameval.length > 1 ? decode(nameval[1]) : "");
             }
         }
         return map;
+    }
+
+    private static String decode(String text) {
+        try {
+            return URLDecoder.decode(text, StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            // not valid URL encoding, so keep the text as is
+            return text;
+        }
     }
 }
