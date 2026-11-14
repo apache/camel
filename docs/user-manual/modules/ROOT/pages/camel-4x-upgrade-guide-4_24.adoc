@@ -1433,6 +1433,13 @@ built for Camel 4.24:
 * A test sets the options of a command with `CommandLineTestHelper.parse(command, args...)` (in the test jar of
   `camel-jbang-core`) instead of `CommandLine.populateCommand`.
 
+=== camel-jbang - camel validate exits with 66 for a missing file or nothing to validate
+
+`camel validate yaml` of a file that does not exist now exits with code `66` (file not found), as `validate source` and
+`validate properties` do; before, it reported a validation error with code `1`. `camel validate source` and
+`camel validate normalize` given no file they can handle (such as `notes.txt`) now exit with code `66`; before, they
+reported success with code `0`.
+
 === camel-jbang - plugins declare which commands they contribute to
 
 A CLI plugin can now declare which built-in commands it participates in beyond its own command, using the
@@ -1459,6 +1466,15 @@ with code `1` (fix the route) instead of `70` (internal error), and prints the e
 The stack trace is in the log of the integration, and is no longer printed a second time on stderr (add `--verbose`
 for it). Scripts that checked for `70` after a failed start should check for `1`.
 
+=== camel-jbang - a name of a running integration matches only that integration
+
+A name given to `camel stop`, `camel get`, `camel cmd`, `camel trace` and the other commands for running integrations
+is still a prefix, but when an integration has exactly that name, the name now matches only that integration. With
+`orders` and `orders-v2` running, `camel stop orders` stops only `orders` (before, it stopped both), and
+`camel cmd send orders` sends to `orders` (before, it failed because the name matched two integrations). The same
+applies to the CamelContext name, and to the `nameOrPid` argument of the runtime tools of the MCP server. To act on
+all integrations whose names start with `orders`, use `orders*`.
+
 === camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
 
 A circuit breaker in the steps of a `doTry` no longer ends that `doTry` for the steps after it. Before, when the
@@ -1469,6 +1485,15 @@ the failure was thrown from the `doTry`. Now such failures go to the `doCatch`, 
 A failure of the fallback itself is now also caught by the `doCatch` (before, it was thrown from the `doTry`).
 
 To have those steps use the error handler of the route, move them out of the `doTry` block.
+
+=== camel-jbang - camel cmd send without a name sends to the integration that runs
+
+`camel cmd send` without an integration name started a Camel of its own, without routes, and sent from there. That is
+still so for an endpoint of a system outside the integrations (such as `kafka:topic`). Without `--endpoint`, the
+message went nowhere and was reported as sent. An endpoint that only an integration has (`direct:`, `seda:`, `stub:`,
+a route id) waited for the timeout. Now both go to the integration that runs. With none running, or several, the
+command exits with `3` and says what to give. A send without an endpoint to an integration without routes is now
+an error, rather than reported as sent.
 
 === camel-aws2-kinesis - each endpoint uses its own client
 
@@ -1579,6 +1604,17 @@ The producer no longer reads the `CamelOaimphIgnoreSSLWarnings` header, and the 
 constant is removed. Use the `ignoreSSLWarnings` option of the endpoint instead; when only some repositories need it,
 send to them through an endpoint URI that sets the option.
 
+=== camel-jbang - camel run options win over application.properties
+
+An option given to `camel run` on the command line now wins over the same setting in `application.properties`. Before,
+the file won for most options: with `camel.main.tracing=false` in the file, `--trace` printed nothing, and with
+`camel.jbang.console=false`, `--console` had no effect. This applies to `--trace`, `--backlog-trace`, `--console`,
+`--health`, `--metrics`, `--mcp`, `--openapi-ui`, `--stub`, `--modeline`, `--ignore-loading-error`, `--lazy-bean`,
+`--prompt`, `--gav`, `--open-api`, `--verbose`, `--jfr`, `--source-dir`, `--data-dir`, `--exclude`,
+`--camel-version`, `--kamelets-version`, `--java-version`, `--background`, `--background-wait`, `--jvm-debug`, the
+Maven settings options and the logging options. An
+option that is not given still takes its value from the file.
+
 === camel-clickhouse - a query in a binary format returns a byte[] body
 
 A `query` with a binary `format` (such as `RowBinary`, `Native`, `Parquet`, `Arrow` or `Avro`) now returns the result
@@ -1589,6 +1625,13 @@ returns a `String`.
 Inserting a `List` of `Map` now fails with a `ClickHouseException` that says why, and so does a `List` of objects when no
 class is registered on the `Client` for the table. Before, both failed with a `NullPointerException` from the ClickHouse
 client.
+
+=== camel-jbang - a local camel-cli.properties no longer hides the global one
+
+When the current directory has a `camel-cli.properties`, the Camel CLI used it instead of the global
+`~/.camel-cli.properties`, so a project file with one key dropped all the global settings, such as `repos`,
+`camel-version` or `runtime`. The local file is now laid over the global one: its keys win, and the other global keys
+still apply.
 
 === camel-clickup - an event of another kind than taskTimeTrackedUpdated reaches the route
 
@@ -2751,12 +2794,20 @@ A script that checks the exit code of a command must take these changes into acc
 * A source file of `camel cmd route-diagram`, `camel cmd route-structure` and `camel cmd route-topology` that does not
   exist exits with `66` instead of `1`. The parts of a Java route the parser could not read are printed as a warning on
   stderr (also with `--json`, which lists them in `unread` as before).
+* `camel cmd route-structure --json` has the routes of `--filter`, in the order of `--sort`, with the code of
+  `--brief` or `--description`, as the text output: these options were ignored with `--json`. A filter that matches no
+  route exits with `3` instead of `0` with all the routes.
 * A file or directory that does not exist exits with `66` instead of `1`: a source file or `--source-dir` of
-  `camel run`, the route file of `camel explain` and `camel harden` (checked before the LLM is contacted), and the
-  `pom.xml` of `camel dependency runtime`.
+  `camel run`, the route file of `camel explain` and `camel harden` (checked before the LLM is contacted), the
+  `pom.xml` of `camel dependency runtime`, a file of `camel export`, `camel kubernetes run` and `camel dependency list`, `copy` and `sbom`
+  (whose "Path does not exist" is now on stderr), and a file of `camel transform route`, which now names it.
 * A name that does not exist exits with `3` instead of `1`: the Kamelet of `camel init --from-kamelet`, the service of
   `camel infra run`, the key of `camel config get`, the name given to `camel doc`, and the plugin of
   `camel plugin delete`.
+* `camel cmd receive --action=start --endpoint=<pattern>` exits with `3`, "No endpoint matching", when the pattern
+  matches no endpoint of the integration, instead of `0`. With `--output=json`, the line "Starting to receive messages
+  ..." is printed on stderr, so stdout has only the JSON, and `--action=status --output=json` prints JSON instead of the
+  table.
 * `camel cmd memory-leak` and `camel restart` exit with `3` when no running integration, or more than one, matches the
   name. `camel cmd memory-leak` exits with `124` when the integration does not reply in time.
 * `camel init` without a file, or with `--from-kamelet` and a file that is not a `.kamelet.yaml` file,
