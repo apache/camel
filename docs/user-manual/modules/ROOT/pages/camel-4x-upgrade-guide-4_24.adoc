@@ -258,17 +258,19 @@ default. Scheme and host are compared ignoring case and a default port may be le
 not of the form `scheme://host[:port]` fail the startup. Stdio mode is not affected.
 
 Spring Boot applications using `camel-mcp-server-starter` with Spring AI's
-Streamable HTTP transport now check the `Origin` header in the same way. By
-default, only loopback origins are allowed. Configure
-`camel.mcp-server.allowed-origins` to allow browser clients from other origins,
-for example:
+Streamable HTTP transport also validate the `Origin` header on every request
+(`POST`, the SSE `GET`, and `DELETE`). Requests without an `Origin` header are
+accepted. Requests with an `Origin` header are accepted only when the origin
+matches the allowed list; other origins receive HTTP 403. By default, only
+loopback origins are allowed. Configure `camel.mcp-server.allowed-origins` to
+allow browser clients from other origins, for example:
 
 [source,properties]
 ----
 camel.mcp-server.allowed-origins = https://app.example.com, http://localhost:*
 ----
 
-The configured list replaces the loopback defaults. An application-provided
+The configured list replaces the loopback default. An application-provided
 Spring AI transport provider must configure its own Origin validator. This
 Spring Boot transport change does not affect the Quarkus engine.
 
