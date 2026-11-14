@@ -2125,6 +2125,14 @@ that a route sends to and no route consumes, so they report the same endpoints o
 
 So `camel validate` can report an endpoint it did not report before.
 
+=== camel-jbang - camel validate properties reports a key of a group Camel does not have
+
+`camel validate properties`, `camel validate source` and the AI file tools now report a `camel.*` key of a group
+Camel does not have when a Camel key is near it, such as `camel.tracing.enabled` (for `camel.trace.enabled`),
+`camel.profile` (for `camel.main.profile`) and `camel.kafka.brokers` (for `camel.component.kafka.brokers`). Camel
+ignores such a key without a warning, so the line had no effect. A file with one, which passed before, now fails the
+check.
+
 === camel-jbang - the AI file tools stay inside the project directory, also through a symbolic link
 
 The file tools of `camel mcp`, `camel ask` and the TUI AI agents (`camel_validate_source`, `camel_get_files`,

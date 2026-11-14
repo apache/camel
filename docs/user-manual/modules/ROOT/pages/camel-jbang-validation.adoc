@@ -124,6 +124,12 @@ is reported before the application fails to start:
 camel validate properties application.properties application-prod.properties
 ----
 
+A key of a group Camel does not have is reported too, as Camel ignores it without a warning: the line has no effect.
+The message names the key that was meant, such as `camel.trace.enabled` for `camel.tracing.enabled`,
+`camel.main.profile` for `camel.profile`, and `camel.component.kafka.brokers` for `camel.kafka.brokers`. A key that
+is near no Camel key is left alone, as `camel.` can also start a property of your own, such as
+`camel.kafka.topic.orders` used as `{{camel.kafka.topic.orders}}` in a route.
+
 `camel validate source` runs the same check on the `.properties` files it is given.
 
 == Normalizing YAML routes

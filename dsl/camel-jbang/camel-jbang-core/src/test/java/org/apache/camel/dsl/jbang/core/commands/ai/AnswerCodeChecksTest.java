@@ -124,10 +124,15 @@ class AnswerCodeChecksTest {
                 camel.server.context-path=/api
                 camel.jbang.dependencies=org.example:orders:1.0
                 orders.directory=orders
+                camel.tracing.enabled=true
+                camel.kafka.topic.logs=otlp_logs
                 """), CATALOG);
-        assertThat(marks).extracting(Mark::line).containsExactly(2);
+        assertThat(marks).extracting(Mark::line).containsExactly(2, 5);
         assertThat(marks.get(0).message()).startsWith("`camel.server.context-path` is not a Camel option (")
                 .contains("camel.rest.contextPath");
+        // a group Camel does not have, which camel-main drops without a word; the key of the user's own is left alone
+        assertThat(marks.get(1).message()).startsWith("`camel.tracing.enabled` is not a Camel option (")
+                .contains("did you mean camel.trace.enabled?");
 
         marks = AnswerChecks.checkCode(answer("properties", """
                 camel.main.name=orders

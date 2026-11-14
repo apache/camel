@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -154,10 +156,116 @@ final class PropertiesChecks {
                 }
                 return null;
             }
+            // camel.tracing.enabled: a group Camel does not have, which the catalog leaves to the caller
+            String unknown = unknownGroupHint(line, catalog);
+            if (unknown != null) {
+                return unknown;
+            }
         } catch (Exception e) {
             // ignore validation errors
         }
         return extra != null ? extra.apply(line) : null;
+    }
+
+    /**
+     * The camel.* prefixes Camel reads besides the groups of the main model: in camel-main, the keys the user names
+     * (beans, variables, Kamelets, route templates), the options of the CamelContext and the dev consoles as they are,
+     * and the global options; the prefixes of components (camel.kubernetes-config, camel.oauth, camel.knative,
+     * camel.wolf-defender), the virtual threads (camel.threads.virtual.enabled), the resource loader and the
+     * customizers; and the keys of the Camel CLI, its TUI, MCP server, launcher and test infra, and the defaults of its
+     * commands (camel.run.dev). Without dashes and in lower case, as a group is compared.
+     */
+    private static final Set<String> OTHER_GROUPS = Set.of("component", "dataformat", "language", "beans", "variable",
+            "kamelet", "routetemplate", "context", "devconsole", "globaloptions", "kubernetesconfig", "oauth", "knative",
+            "wolfdefender", "threads", "resource", "customizer", "jbang", "tui", "cli", "mcp", "catalog", "launcher",
+            "infra", "run", "export");
+
+    /** The camel.* groups of other runtimes: the Camel Spring Boot starters and Camel K. */
+    private static final Set<String> OTHER_RUNTIME_GROUPS = Set.of("springboot", "servlet", "cloud", "openapi",
+            "springdoc", "observation", "micrometer", "clustered", "mcpserver", "k");
+
+    /**
+     * camel.tracing.enabled=true: a key of a group Camel does not have. camel-main puts each camel.* key in its group
+     * and drops one of a group it does not know without a word, so the tracing the line was meant to turn on stays off.
+     * The catalog leaves such a key to the caller, as it judges only its own groups (CAMEL-26960).
+     * <p>
+     * Said only when the key that was meant is near: the option in a group of a near name (camel.trace.enabled), a dash
+     * for the dot of a group (camel.metrics-enabled: camel.metrics.enabled), an option of camel.main (camel.profile:
+     * camel.main.profile), an option of a component without component. (camel.kafka.brokers), or a group of a near
+     * name. A key that is near none of them is left alone: camel. is also a prefix of keys of the user's own, such as
+     * camel.kafka.topic.logs used as {{camel.kafka.topic.logs}} in a route. Null as well when the group is one Camel
+     * reads.
+     */
+    static String unknownGroupHint(String line, CamelCatalog catalog) {
+        String key = line.contains("=") ? line.substring(0, line.indexOf('=')).trim() : line.trim();
+        MainModel mm = catalog.mainModel();
+        if (!key.startsWith("camel.") || mm == null) {
+            return null;
+        }
+        String rest = key.substring("camel.".length());
+        int dot = rest.indexOf('.');
+        String group = dot > 0 ? rest.substring(0, dot) : rest;
+        String after = dot > 0 ? rest.substring(dot) : "";
+        Set<String> options = new HashSet<>();
+        Map<String, String> groups = new LinkedHashMap<>();
+        for (var o : mm.getOptions()) {
+            options.add(normalized(o.getName()));
+            String name = o.getName().substring(o.getName().indexOf('.') + 1);
+            String first = name.contains(".") ? name.substring(0, name.indexOf('.')) : name;
+            groups.putIfAbsent(normalized(first), first);
+        }
+        // camel.route-template[0].name: the index of an item of the group is not part of its name
+        String unknown = normalized(group.replaceFirst("\\[.*", ""));
+        if (unknown.isEmpty() || groups.containsKey(unknown) || OTHER_GROUPS.contains(unknown)
+                || OTHER_RUNTIME_GROUPS.contains(unknown)) {
+            return null;
+        }
+        String meant = null;
+        String dotted = "camel." + group.replaceFirst("-", ".") + after;
+        if (group.contains("-") && options.contains(normalized(dotted))) {
+            meant = dotted;
+        }
+        List<String> near = groups.values().stream().filter(g -> isNear(unknown, normalized(g)))
+                .sorted(Comparator.comparingInt(g -> editDistance(unknown, normalized(g)))).toList();
+        for (String g : near) {
+            if (meant == null && dot > 0 && options.contains(normalized("camel." + g + after))) {
+                meant = "camel." + g + after;
+            }
+        }
+        if (meant == null && dot < 0 && options.contains(normalized("camel.main." + group))) {
+            meant = "camel.main." + group;
+        }
+        if (meant == null && dot > 0 && isComponentOption(catalog, group, rest.substring(dot + 1))) {
+            meant = "camel.component." + group + after;
+        }
+        if (meant == null && !near.isEmpty()) {
+            meant = "camel." + near.get(0) + ".*";
+        }
+        return meant == null
+                ? null
+                : group + "    Unknown option (camel." + group + " is not a group of Camel options; did you mean " + meant
+                  + "?)";
+    }
+
+    /** Whether the option is one of the component, as a camel.component.name.option key sets it. */
+    private static boolean isComponentOption(CamelCatalog catalog, String component, String option) {
+        var model = catalog.findComponentNames().contains(component) ? catalog.componentModel(component) : null;
+        return model != null && model.getComponentOptions().stream()
+                .anyMatch(o -> normalized(o.getName()).equals(normalized(option)));
+    }
+
+    /** A group name as it is compared: camel-main reads the keys without regard to case, and dashes as camel case. */
+    private static String normalized(String name) {
+        return name.replace("-", "").toLowerCase(Locale.ROOT);
+    }
+
+    /** Whether a group name is near another: one starts the other, they start with the same four letters, or a typo. */
+    private static boolean isNear(String unknown, String group) {
+        int same = 0;
+        while (same < unknown.length() && same < group.length() && unknown.charAt(same) == group.charAt(same)) {
+            same++;
+        }
+        return unknown.startsWith(group) || group.startsWith(unknown) || same >= 4 || editDistance(unknown, group) <= 2;
     }
 
     /**
