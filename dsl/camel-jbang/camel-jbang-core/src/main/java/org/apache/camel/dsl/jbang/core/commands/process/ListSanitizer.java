@@ -88,8 +88,8 @@ public class ListSanitizer extends ProcessWatchCommand {
             row.uptime = extractSince(ph);
             // camel-sanitizer is new in Camel 4.24: an older integration cannot have it, and would not answer
             String version = context.getString("version");
-            JsonObject answer = version != null && !ActionClient.isAtLeast(version, 4, 24)
-                    ? new JsonObject() : loadSanitizer(ph.pid());
+            row.beforeSanitizer = version != null && !ActionClient.isAtLeast(version, 4, 24);
+            JsonObject answer = row.beforeSanitizer ? new JsonObject() : loadSanitizer(ph.pid());
             row.answered = answer != null;
             row.sanitizer = answer != null && !answer.isEmpty() ? answer : null;
             integrations.add(row);
@@ -107,11 +107,11 @@ public class ListSanitizer extends ProcessWatchCommand {
     /**
      * Asks the integration for the sanitizer dev console: its answer; an empty object when the integration does not
      * have camel-sanitizer, or its CLI connector does not know the action (before Camel 4.24); null when it did not
-     * answer.
+     * answer. Without --report it asks without the reports of the violations and the still pending warnings, which the
+     * table does not show.
      */
     JsonObject loadSanitizer(long pid) {
-        JsonObject request = new JsonObject();
-        request.put("action", "sanitizer");
+        JsonObject request = sanitizerRequest();
         try {
             ActionClient.ActionResult result = ActionClient.execute(pid, request, ActionClient.DEFAULT_TIMEOUT);
             if (result.status() == ActionClient.Status.TIMEOUT) {
@@ -122,6 +122,15 @@ public class ListSanitizer extends ProcessWatchCommand {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    JsonObject sanitizerRequest() {
+        JsonObject request = new JsonObject();
+        request.put("action", "sanitizer");
+        if (!report) {
+            request.put("report", "false");
+        }
+        return request;
     }
 
     private void printViolations(List<Row> integrations) {
@@ -225,10 +234,11 @@ public class ListSanitizer extends ProcessWatchCommand {
                     }
                 }
             }
+            // the kinds at the level of the rules: under the last rule, they would look as if they were of that rule
             if (s.get("kinds") instanceof JsonObject kinds) {
                 for (Map.Entry<String, Object> e : kinds.entrySet()) {
                     if (e.getValue() instanceof Number n && n.longValue() > 0) {
-                        printer().println("    " + e.getKey() + ": " + n);
+                        printer().println("  " + e.getKey() + ": " + n);
                     }
                 }
             }
@@ -286,7 +296,13 @@ public class ListSanitizer extends ProcessWatchCommand {
             }
         }
         if (!any && !integrations.isEmpty()) {
-            printer().printDiagnostic("No running integration has camel-sanitizer: run it with camel run --sanitizer");
+            if (integrations.stream().allMatch(r -> r.beforeSanitizer)) {
+                // camel run --sanitizer would not help them
+                printer().printDiagnostic(
+                        "No running integration has camel-sanitizer: it is new in Camel 4.24, and they are older");
+            } else {
+                printer().printDiagnostic("No running integration has camel-sanitizer: run it with camel run --sanitizer");
+            }
         }
     }
 
@@ -295,6 +311,8 @@ public class ListSanitizer extends ProcessWatchCommand {
         String name;
         long uptime;
         boolean answered;
+        // older than Camel 4.24, which has camel-sanitizer: not asked
+        boolean beforeSanitizer;
         JsonObject sanitizer;
 
         boolean isOn() {

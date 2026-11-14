@@ -30,10 +30,11 @@ import org.apache.camel.util.json.JsonObject;
  * The report of the exchange sanitizer: the violations with their stacks, the counts per rule, the commits followed
  * (rule R2), and the calls reported still pending (warnings of rule R1).
  * <p/>
- * The console only reads, and has no options. The report holds ids, names, threads, stacks and the class and message of
- * an exception, never bodies or headers; an exception message can still carry message data, so the console is for
- * development (over HTTP it is served only when the developer consoles are switched on, such as with
- * {@code camel.management.devConsoleEnabled=true} of Camel Main).
+ * The console only reads. Its option {@link #REPORT} leaves out the full report of each violation and the still pending
+ * warnings, for a caller that shows only the fields, such as the table of camel get sanitizer. The report holds ids,
+ * names, threads, stacks and the class and message of an exception, never bodies or headers; an exception message can
+ * still carry message data, so the console is for development (over HTTP it is served only when the developer consoles
+ * are switched on, such as with {@code camel.management.devConsoleEnabled=true} of Camel Main).
  *
  * @since 4.24
  */
@@ -49,7 +50,7 @@ public class SanitizerDevConsole extends AbstractDevConsole {
             @Metadata(description = "The id of the route of the step (for R2 without a step, the route of the consumer)") String routeId,
             @Metadata(description = "The id of the step, such as process1 or to2 (for R2, the step that ran on the thread where it was found, only when there was one)") String stepId,
             @Metadata(description = "The class name of the processor of the step, such as the processor or the bean of a user (only when it was found); for R2 the class of the commit") String processor,
-            @Metadata(description = "The full report of the violation, as logged: where it happened, the threads and their stacks, the class and message of what was thrown, and the usual fix") String report) {
+            @Metadata(description = "The full report of the violation, as logged: where it happened, the threads and their stacks, the class and message of what was thrown, and the usual fix (only with the report option)") String report) {
     }
 
     public record Response(
@@ -63,8 +64,13 @@ public class SanitizerDevConsole extends AbstractDevConsole {
             @Metadata(description = "The violations, the first 1000 in the order they were reported (only when it is on)") List<ViolationEntry> violations,
             @Metadata(description = "The calls of steps pending now, whose callback has not come yet (only when the still pending warning of R1 is on)") Long pendingCalls,
             @Metadata(description = "The calls reported still pending: warnings, not violations (only when the still pending warning of R1 is on)") Long stillPending,
-            @Metadata(description = "The still pending warnings, the first 1000 as logged (only when the still pending warning of R1 is on)") List<String> stillPendingWarnings) {
+            @Metadata(description = "The still pending warnings, the first 1000 as logged (only when the still pending warning of R1 is on, and with the report option)") List<String> stillPendingWarnings) {
     }
+
+    @Metadata(label = "query",
+              description = "Whether to include the full report of each violation and the still pending warnings; without it only the fields and the counts, as the table of camel get sanitizer shows them",
+              javaType = "java.lang.Boolean", defaultValue = "true")
+    public static final String REPORT = "report";
 
     public SanitizerDevConsole() {
         super("camel", "sanitizer", "Sanitizer",
@@ -93,6 +99,7 @@ public class SanitizerDevConsole extends AbstractDevConsole {
             root.put("reason", offReason());
             return root;
         }
+        boolean report = optionBoolean(options, REPORT, true);
         // the list before the counts, so each violation listed is counted (one reported meanwhile is only counted)
         List<SanitizerViolation> violations = sanitizer.getViolations();
         root.put("calls", sanitizer.getCallCount());
@@ -127,17 +134,21 @@ public class SanitizerDevConsole extends AbstractDevConsole {
             if (v.getProcessor() != null) {
                 jo.put("processor", v.getProcessor());
             }
-            jo.put("report", v.getText());
+            if (report) {
+                jo.put("report", v.getText());
+            }
             list.add(jo);
         }
         root.put("violations", list);
         PendingCalls pending = sanitizer.getPendingCalls();
         if (pending != null) {
             // the warnings before the count, so each warning listed is counted
-            List<String> warnings = sanitizer.getStillPendingReports();
+            List<String> warnings = report ? sanitizer.getStillPendingReports() : null;
             root.put("pendingCalls", (long) pending.size());
             root.put("stillPending", sanitizer.getStillPendingCount());
-            root.put("stillPendingWarnings", new JsonArray(warnings));
+            if (warnings != null) {
+                root.put("stillPendingWarnings", new JsonArray(warnings));
+            }
         }
         return root;
     }

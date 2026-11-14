@@ -44,6 +44,8 @@ class ListSanitizerActionTest extends ActionCommandTestSupport {
                 .isZero();
 
         assertThat(readActionFile(TEST_PID).getString("action")).isEqualTo("sanitizer");
+        // the table does not show the reports
+        assertThat(readActionFile(TEST_PID).getString("report")).isEqualTo("false");
         String line = printer.getOutput().lines().filter(l -> l.contains("EX-1")).findFirst().orElseThrow();
         assertThat(line).contains("orders", "R1", "process threw before calling the callback", "price");
     }

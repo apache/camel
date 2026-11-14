@@ -80,6 +80,51 @@ class RunPipelineTest {
     }
 
     @Test
+    void debuggingWithTheSanitizerTurnsOffItsStillPendingWarning() {
+        // camel debug runs camel run with --prop=camel.debug.enabled=true: a breakpoint holds the calls of the steps
+        // around it, which are not callbacks still pending
+        RunRequest request = request();
+        request.sanitizer = true;
+        request.applicationProperties = new String[] { "camel.debug.enabled=true" };
+        KameletMain main = new KameletMain("jbang");
+
+        new RunPipeline(request).applySanitizerRuntimeOptions(main, null);
+
+        // an initial property, which the application properties and the command line override
+        assertThat(main.getInitialProperties().getProperty("camel.sanitizer.pendingTimeout")).isEqualTo("0");
+    }
+
+    @Test
+    void debuggingWithTheSanitizerKeepsAPendingTimeoutThatIsSet() {
+        RunRequest request = request();
+        request.sanitizer = true;
+        request.applicationProperties
+                = new String[] { "camel.debug.enabled=true", "camel.sanitizer.pendingTimeout=5m" };
+        KameletMain main = new KameletMain("jbang");
+        new RunPipeline(request).applySanitizerRuntimeOptions(main, null);
+        assertThat(main.getInitialProperties().getProperty("camel.sanitizer.pendingTimeout")).isNull();
+
+        request.applicationProperties = null;
+        Properties profile = new Properties();
+        profile.setProperty("camel.debug.enabled", "true");
+        profile.setProperty("camel.sanitizer.pendingTimeout", "5m");
+        main = new KameletMain("jbang");
+        new RunPipeline(request).applySanitizerRuntimeOptions(main, profile);
+        assertThat(main.getInitialProperties().getProperty("camel.sanitizer.pendingTimeout")).isNull();
+    }
+
+    @Test
+    void runningWithTheSanitizerKeepsItsStillPendingWarning() {
+        RunRequest request = request();
+        request.sanitizer = true;
+        KameletMain main = new KameletMain("jbang");
+
+        new RunPipeline(request).applySanitizerRuntimeOptions(main, new Properties());
+
+        assertThat(main.getInitialProperties().getProperty("camel.sanitizer.pendingTimeout")).isNull();
+    }
+
+    @Test
     void applyMcpStdioOverridesProfileHttpTransport() {
         RunRequest request = request();
         request.mcpStdio = true;

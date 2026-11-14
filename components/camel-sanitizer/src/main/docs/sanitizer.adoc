@@ -278,13 +278,19 @@ it was found, if any); `--report` shows the counts per rule and per kind, the co
 the report says that R2 is not checked), each violation with its threads and stacks, and the still pending warnings
 (`--json` for both). An integration with still pending warnings and no violation is named on stderr.
 
-The `sanitizer` developer console only reads, and has no options. In JSON it has `enabled` (and the `reason` when it is
-off), `calls` (the calls of steps checked), `commits` (the commits followed, with R2), `total` (the violations
-reported, also those past the first 1000 that are counted but not listed), `rules` and `kinds` (the counts per rule and
-per kind), `violations` (each with its rule, kind, route, step, processor, exchange id and full report), and, with the
-still pending warning on, `pendingCalls` (the calls pending now), `stillPending` (the warnings so far) and
-`stillPendingWarnings` (the first 1000, as logged). As text it is the report that is logged when the context stops,
-followed by the still pending warnings. Like every developer console, it is served over HTTP only when the developer
+With the debugger on (`camel debug --sanitizer`, or `camel.debug.enabled=true`), `camel run` sets
+`camel.sanitizer.pendingTimeout=0` unless it is set: an exchange held at a breakpoint keeps the calls of the steps
+around it pending (such as a `to` of a `direct` route, a split or an enrich), which would be reported after a minute as
+callbacks still pending. The other checks stay on.
+
+The `sanitizer` developer console only reads. Its option `report` (default `true`) says whether the JSON has the full
+report of each violation and the still pending warnings; `camel get sanitizer` asks without them for its table. In JSON
+it has `enabled` (and the `reason` when it is off), `calls` (the calls of steps checked), `commits` (the commits
+followed, with R2), `total` (the violations reported, also those past the first 1000 that are counted but not listed),
+`rules` and `kinds` (the counts per rule and per kind), `violations` (each with its rule, kind, route, step, processor,
+exchange id and, with `report`, its full report), and, with the still pending warning on, `pendingCalls` (the calls
+pending now), `stillPending` (the warnings so far) and, with `report`, `stillPendingWarnings` (the first 1000, as
+logged). As text it is the report that is logged when the context stops, followed by the still pending warnings. Like every developer console, it is served over HTTP only when the developer
 consoles are switched on (with Camel Main, `camel.management.devConsoleEnabled=true`, an `insecure:dev` option); the
 Camel CLI asks the integration for it through the CLI connector. An exception message in a report can carry message
 data, so keep the console to development.

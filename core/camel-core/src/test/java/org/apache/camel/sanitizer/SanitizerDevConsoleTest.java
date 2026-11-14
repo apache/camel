@@ -220,6 +220,37 @@ class SanitizerDevConsoleTest extends ContextTestSupport {
         String text = (String) console().call(DevConsole.MediaType.TEXT);
         assertTrue(text.contains("1 call reported still pending (warnings)"), text);
         assertTrue(text.contains("callback still pending (R1, a warning)"), text);
+
+        // without the report: the counts, not the warnings
+        json = (JsonObject) console().call(DevConsole.MediaType.JSON, Map.of(SanitizerDevConsole.REPORT, "false"));
+        assertEquals(1L, json.getLong("stillPending"));
+        assertEquals(1L, json.getLong("pendingCalls"));
+        assertFalse(json.containsKey("stillPendingWarnings"), json::toJson);
+    }
+
+    @Test
+    @ExpectSanitizerViolation(value = Violation.THREW_BEFORE_CALLBACK, step = "throws")
+    void withoutTheReportTheViolationsHaveTheirFieldsOnly() {
+        template.send("direct:throws", e -> e.getMessage().setBody("x"));
+        awaitViolation();
+
+        // as camel get sanitizer asks for its table
+        JsonObject json = (JsonObject) console().call(DevConsole.MediaType.JSON, Map.of(SanitizerDevConsole.REPORT, "false"));
+
+        assertEquals(1L, json.getLong("total"));
+        JsonObject kinds = json.getMap("kinds");
+        assertEquals(1L, kinds.getLong("THREW_BEFORE_CALLBACK"));
+        JsonObject v = ((JsonArray) json.get("violations")).getMap(0);
+        assertEquals("THREW_BEFORE_CALLBACK", v.getString("kind"));
+        assertEquals("throws", v.getString("stepId"));
+        assertEquals(BrokenUserCode.ThrowsInProcess.class.getName(), v.getString("processor"));
+        assertFalse(v.containsKey("report"), v::toJson);
+
+        // the option is true by default, and does not change the text
+        v = ((JsonArray) ((JsonObject) console().call(DevConsole.MediaType.JSON)).get("violations")).getMap(0);
+        assertNotNull(v.getString("report"));
+        String text = (String) console().call(DevConsole.MediaType.TEXT, Map.of(SanitizerDevConsole.REPORT, "false"));
+        assertTrue(text.contains("Forced by ThrowsInProcess"), text);
     }
 
     @Test

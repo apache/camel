@@ -7476,6 +7476,18 @@
 				"summary": "Sanitizer",
 				"description": "The violations of the exchange sanitizer, with their stacks, the counts per rule, and the calls still pending",
 				"operationId": "sanitizer",
+				"parameters": [
+					{
+						"name": "report",
+						"in": "query",
+						"description": "Whether to include the full report of each violation and the still pending warnings; without it only the fields and the counts, as the table of camel get sanitizer shows them",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Sanitizer output",
@@ -7553,7 +7565,7 @@
 													},
 													"report": {
 														"type": "string",
-														"description": "The full report of the violation, as logged: where it happened, the threads and their stacks, the class and message of what was thrown, and the usual fix"
+														"description": "The full report of the violation, as logged: where it happened, the threads and their stacks, the class and message of what was thrown, and the usual fix (only with the report option)"
 													}
 												}
 											},
@@ -7572,7 +7584,7 @@
 											"items": {
 												"type": "string"
 											},
-											"description": "The still pending warnings, the first 1000 as logged (only when the still pending warning of R1 is on)"
+											"description": "The still pending warnings, the first 1000 as logged (only when the still pending warning of R1 is on, and with the report option)"
 										}
 									},
 									"required": [

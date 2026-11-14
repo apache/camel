@@ -93,7 +93,9 @@ class ListSanitizerTest extends ProcessCommandTestSupport {
         String out = printer.getStdout();
         assertThat(out).contains("orders (pid " + TEST_PID + "): 1 violations in 42 calls of steps checked, R2 not checked"
                                  + " (camel.sanitizer.checks=callback,commit)");
-        assertThat(out).contains("  R1: 1").contains("    COMPLETED_TWICE: 1").doesNotContain("THREW_BEFORE_CALLBACK");
+        // the kinds at the level of the rules, so a kind of R1 does not look as if it were of the rule above it
+        assertThat(out).contains("  R1: 1").contains("\n  COMPLETED_TWICE: 1").doesNotContain("    COMPLETED_TWICE")
+                .doesNotContain("THREW_BEFORE_CALLBACK");
         // without the commits followed, R2 is not checked: no count of 0 for it
         assertThat(out).doesNotContain("  R2:");
         assertThat(out).contains("first call of the callback: thread price-timeout-1",
@@ -140,7 +142,7 @@ class ListSanitizerTest extends ProcessCommandTestSupport {
         String out = printer.getStdout();
         assertThat(out).contains("orders (pid " + TEST_PID + "): 2 violations in 42 calls of steps checked, 7 commits"
                                  + " followed, 1 calls reported still pending (warnings), 1 pending now");
-        assertThat(out).contains("  R1: 1", "  R2: 1", "    COMMIT_NEVER_RUN: 1");
+        assertThat(out).contains("  R1: 1", "  R2: 1", "\n  COMMIT_NEVER_RUN: 1").doesNotContain("    COMMIT_NEVER_RUN");
         assertThat(out).contains(STILL_PENDING);
 
         assertThat(run(withCommitAndStillPending(), "--report", "--json")).isZero();
@@ -238,8 +240,23 @@ class ListSanitizerTest extends ProcessCommandTestSupport {
 
         assertThat(run(command, root)).isZero();
 
+        // camel run --sanitizer would not help an integration before Camel 4.24
         assertThat(printer.getStderr())
-                .contains("No running integration has camel-sanitizer: run it with camel run --sanitizer");
+                .contains("No running integration has camel-sanitizer: it is new in Camel 4.24, and they are older")
+                .doesNotContain("camel run --sanitizer");
+    }
+
+    @Test
+    void theTableAsksWithoutTheReports() throws Exception {
+        ListSanitizer command = new ListSanitizer(new CamelJBangMain().withPrinter(new StringPrinter()));
+        CommandLineTestHelper.parse(command);
+        assertThat(command.sanitizerRequest().getString("action")).isEqualTo("sanitizer");
+        // the table and its JSON do not show the reports of the violations or the still pending warnings
+        assertThat(command.sanitizerRequest().getString("report")).isEqualTo("false");
+
+        command = new ListSanitizer(new CamelJBangMain().withPrinter(new StringPrinter()));
+        CommandLineTestHelper.parse(command, "--report");
+        assertThat(command.sanitizerRequest()).doesNotContainKey("report");
     }
 
     private int run(JsonObject answer, String... args) throws Exception {

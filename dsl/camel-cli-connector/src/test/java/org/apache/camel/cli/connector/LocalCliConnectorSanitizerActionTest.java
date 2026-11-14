@@ -16,6 +16,7 @@
  */
 package org.apache.camel.cli.connector;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
@@ -71,7 +72,10 @@ class LocalCliConnectorSanitizerActionTest {
     }
 
     private JsonObject sanitizer() throws Exception {
-        JsonObject action = new JsonObject();
+        return sanitizer(new JsonObject());
+    }
+
+    private JsonObject sanitizer(JsonObject action) throws Exception {
         action.put("action", "sanitizer");
         CliActionOutcome outcome = CliActionOutcome.dispatch(connector, (JsonObject) Jsoner.deserialize(action.toJson()))
                 .get(10, TimeUnit.SECONDS);
@@ -96,6 +100,21 @@ class LocalCliConnectorSanitizerActionTest {
         assertThat(violation.getString("stepId")).isEqualTo("price");
         assertThat(violation.getString("processor")).isEqualTo(ThrowsInProcess.class.getName());
         assertThat(violation.getString("report")).contains("Forced by ThrowsInProcess");
+    }
+
+    @Test
+    void theReportsAreLeftOutWithReportFalse() throws Exception {
+        start("dev");
+        context.createProducerTemplate().send("direct:start", e -> e.getMessage().setBody("x"));
+
+        // as camel get sanitizer asks for its table
+        JsonObject answer = sanitizer(new JsonObject(Map.of("report", "false")));
+
+        assertThat(answer.getLong("total")).isEqualTo(1);
+        JsonObject violation = ((JsonArray) answer.get("violations")).getMap(0);
+        assertThat(violation.getString("kind")).isEqualTo("THREW_BEFORE_CALLBACK");
+        assertThat(violation.getString("stepId")).isEqualTo("price");
+        assertThat(violation).doesNotContainKey("report");
     }
 
     @Test
