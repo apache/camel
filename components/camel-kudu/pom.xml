@@ -31,45 +31,14 @@
     <name>Camel :: Kudu</name>
     <description>Camel Apache Kudu support</description>
 
-    <properties>
-        <camel.surefire.fork.vmargs>--add-opens java.base/java.net=ALL-UNNAMED</camel.surefire.fork.vmargs>
-    </properties>
     <profiles>
         <profile>
-            <!-- kudu-binary is only available for Linux or macOS on x86 64 -->
-            <id>NotLinux</id>
-            <activation>
-                <os>
-                    <family>!Linux</family>
-                </os>
-            </activation>
-            <properties>
-                <maven.test.skip>true</maven.test.skip>
-                <os.detected.classifier>linux-x86_64</os.detected.classifier> <!-- Fake classifier to allow dependency resolution. kudu-binary will not be executed anyway on Windows -->
-            </properties>
-        </profile>
-        <profile>
-            <!-- kudu-binary is only available for Linux or macOS on x86 64 -->
-            <id>Notx86</id>
-            <activation>
-                <os>
-                    <arch>!amd64</arch>
-                </os>
-            </activation>
-            <properties>
-                <maven.test.skip>true</maven.test.skip>
-                <os.detected.classifier>linux-x86_64</os.detected.classifier> <!-- Fake classifier to allow dependency resolution. kudu-binary will not be executed anyway on Windows -->
-            </properties>
-        </profile>
-        <profile>
-            <!-- kudu-binary is only available for Linux or macOS on x86 64 -->
             <id>release</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
-                <os.detected.classifier>linux-x86_64</os.detected.classifier> <!-- Fake classifier to allow dependency resolution. kudu-binary will not be executed anyway on Windows -->
             </properties>
         </profile>
     </profiles>
@@ -100,43 +69,17 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-migrationsupport</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- Spin a kudu cluster to run integration tests -->
-        <!-- as described in
-        https://kudu.apache.org/docs/developing.html#_using_the_kudu_binary_test_jar -->
+        <!-- Testcontainers for spinning up a Kudu cluster (master + tablet server) -->
         <dependency>
-            <groupId>org.apache.kudu</groupId>
-            <artifactId>kudu-test-utils</artifactId>
-            <version>${kudu-version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-slf4j2-impl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.kudu</groupId>
-            <artifactId>kudu-binary</artifactId>
-            <version>${kudu-version}</version>
-            <!--suppress UnresolvedMavenProperty -->
-            <classifier>${os.detected.classifier}</classifier>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
