@@ -45,6 +45,8 @@ import org.citrusframework.CitrusVersion;
 import org.citrusframework.jbang.cli.util.CodeAnalyzer;
 import org.citrusframework.jbang.cli.util.DelegatingCodeAnalyzer;
 import org.citrusframework.util.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Exporter adds test related source files, build properties and dependencies to the exported project. Exporter looks
@@ -53,6 +55,8 @@ import org.citrusframework.util.FileUtils;
  * src/test/resources directory.
  */
 public class TestPluginExporter implements PluginExporter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TestPluginExporter.class);
 
     public static final Pattern NAME_SEPARATOR_PATTERN = Pattern.compile("[-._]([a-z])");
 
@@ -213,7 +217,7 @@ public class TestPluginExporter implements PluginExporter {
                                 deps.add(asScannedDependency(dependency));
                             }
                         } catch (IOException e) {
-                            // ignore scan errors for missing catalog
+                            LOG.debug("Failed to scan {} for dependencies: {}", path, e.getMessage());
                         }
                     });
         } catch (IOException e) {
@@ -225,6 +229,9 @@ public class TestPluginExporter implements PluginExporter {
 
     private String asScannedDependency(String dependency) {
         String[] parts = dependency.split(":");
+        if (parts.length < 2) {
+            return asDependency(dependency);
+        }
         if (parts[0].equals("org.citrusframework")) {
             return asCitrusDependency(parts[1]);
         } else if (parts[0].startsWith("org.apache.camel")) {
