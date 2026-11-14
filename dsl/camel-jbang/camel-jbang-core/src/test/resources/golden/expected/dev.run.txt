@@ -44,10 +44,10 @@ camel.main.durationMaxAction=stop
 camel.main.modeline=true
 camel.main.name=hello
 camel.main.routesIncludePattern=file:src/test/resources/golden/yaml/hello.camel.yaml
-camel.main.routesReloadDirectory=src/test/resources/golden/yaml
+camel.main.routesReloadDirectory=src/test/resources/golden
 camel.main.routesReloadDirectoryRecursive=true
 camel.main.routesReloadEnabled=true
-camel.main.routesReloadPattern=src/test/resources/golden/yaml/hello.camel.yaml,src/test/resources/golden/groovy/Greeting.groovy
+camel.main.routesReloadPattern=yaml/hello.camel.yaml,groovy/Greeting.groovy
 camel.main.shutdownTimeout=5
 
 # override properties

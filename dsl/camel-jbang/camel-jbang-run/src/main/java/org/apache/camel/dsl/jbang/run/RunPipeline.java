@@ -1115,20 +1115,10 @@ public class RunPipeline {
                 main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", "true");
             } else {
                 dataDirWithoutSourceDir.run();
-                String pattern = sjReload.toString();
-                String reloadDir = ".";
-                // use current dir, however if we run a file that are in another folder, then we should track that folder instead
-                for (String r : sjReload.toString().split(",")) {
-                    String path = FileUtil.onlyPath(r);
-                    if (path != null && !path.equals(".camel-jbang")) {
-                        reloadDir = path;
-                        break;
-                    }
-                }
-                main.addInitialProperty("camel.main.routesReloadDirectory", reloadDir);
-                main.addInitialProperty("camel.main.routesReloadPattern", pattern);
-                main.addInitialProperty("camel.main.routesReloadDirectoryRecursive",
-                        isReloadRecursive(pattern) ? "true" : "false");
+                ReloadFolder reload = reloadFolder(List.of(sjReload.toString().split(",")));
+                main.addInitialProperty("camel.main.routesReloadDirectory", reload.directory());
+                main.addInitialProperty("camel.main.routesReloadPattern", reload.pattern());
+                main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", Boolean.toString(reload.recursive()));
             }
             if (request.maxMessages <= 0 && request.maxSeconds <= 0 && request.maxIdleSeconds <= 0) {
                 // do not shutdown the JVM but stop routes when max duration is triggered, so a reload can start them
@@ -1138,14 +1128,61 @@ public class RunPipeline {
         }
     }
 
-    private static boolean isReloadRecursive(String reload) {
-        for (String part : reload.split(",")) {
-            String dir = FileUtil.onlyPath(part);
-            if (dir != null) {
-                return true;
+    /**
+     * The folder dev mode watches for the files given on the command line, and the pattern of those files.
+     *
+     * @param directory the folder, relative to the current directory unless a file was given by its absolute path
+     * @param pattern   the files, relative to the folder
+     * @param recursive whether a file is in a sub folder of the folder
+     */
+    public record ReloadFolder(String directory, String pattern, boolean recursive) {
+    }
+
+    /**
+     * The folder to watch for the files given on the command line: the deepest folder that has all of them, with the
+     * files relative to it. The folder of the first file in another folder was watched, so a change of a file in the
+     * current directory, such as application.properties, was not seen, and ./application.properties did not match the
+     * pattern of the files (CAMEL-26930). The files in .camel-jbang, which the watch leaves out, do not widen it.
+     */
+    public static ReloadFolder reloadFolder(Collection<String> files) {
+        Path cwd = Paths.get("").toAbsolutePath();
+        Path internal = cwd.resolve(".camel-jbang");
+        List<Path> paths = new ArrayList<>();
+        boolean absolute = false;
+        Path dir = null;
+        for (String file : files) {
+            if (file == null || file.isBlank()) {
+                continue;
+            }
+            Path path = Paths.get(file.trim());
+            absolute |= path.isAbsolute();
+            path = cwd.resolve(path).normalize();
+            paths.add(path);
+            Path parent = path.getParent() != null ? path.getParent() : cwd;
+            if (!parent.startsWith(internal)) {
+                dir = dir == null ? parent : commonFolder(dir, parent);
             }
         }
-        return false;
+        if (dir == null) {
+            dir = cwd;
+        }
+        StringJoiner pattern = new StringJoiner(",");
+        boolean recursive = false;
+        for (Path path : paths) {
+            String relative = dir.relativize(path).toString().replace('\\', '/');
+            recursive |= relative.contains("/");
+            pattern.add(relative);
+        }
+        String directory = absolute ? dir.toString() : cwd.relativize(dir).toString();
+        return new ReloadFolder(directory.isEmpty() ? "." : directory, pattern.toString(), recursive);
+    }
+
+    private static Path commonFolder(Path a, Path b) {
+        Path answer = a;
+        while (answer != null && !b.startsWith(answer)) {
+            answer = answer.getParent();
+        }
+        return answer != null ? answer : a.getRoot();
     }
 
     /**
