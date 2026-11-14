@@ -104,6 +104,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
             String output = printer.getOutput();
             assertTrue(output.startsWith("["), "JSON output should be array");
             assertTrue(output.contains("timer:tick"));
+            assertTrue(output.contains("Timer"), "Consumer suffix should be removed from type");
         }
     }
 
@@ -126,7 +127,7 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         c.put("id", "route1");
         c.put("uri", "timer:tick");
         c.put("state", "Started");
-        c.put("class", "org.apache.camel.component.timer.TimerConsumer");
+        c.put("clazz", "org.apache.camel.component.timer.TimerConsumer");
         c.put("inflight", 0);
         c.put("polling", false);
         c.put("scheduled", false);
