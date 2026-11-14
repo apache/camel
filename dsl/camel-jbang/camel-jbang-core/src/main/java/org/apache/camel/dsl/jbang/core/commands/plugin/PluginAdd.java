@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.aesh.command.CommandDefinition;
@@ -24,6 +26,7 @@ import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginCompatibility;
 import org.apache.camel.dsl.jbang.core.common.PluginCompatibility.Compat;
@@ -36,8 +39,11 @@ import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Older;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Result;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Selected;
 import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Unavailable;
+import org.apache.camel.dsl.jbang.run.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.main.download.DependencyDownloader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.json.JsonObject;
 
@@ -121,6 +127,9 @@ public class PluginAdd extends PluginBaseCommand {
                         repositories = knownRepos;
                     }
                 }
+            } else if (gav == null && artifactId == null && !resolves()) {
+                // stored, a plugin that cannot be loaded broke every camel run and camel export (CAMEL-26931)
+                throw unknownPlugin(name);
             }
         }
 
@@ -181,6 +190,44 @@ public class PluginAdd extends PluginBaseCommand {
         saveConfig(pluginConfig);
         printer().printf("Plugin %s added%n", name);
         return 0;
+    }
+
+    /**
+     * Whether a plugin of a name that is neither a Camel plugin nor a known one can be loaded, as it is when used: from
+     * the classpath, or as org.apache.camel:camel-jbang-plugin-&lt;command&gt;.
+     */
+    private boolean resolves() {
+        if (command == null) {
+            command = name;
+        }
+        try {
+            // quietly: the answer says why it is not added
+            return downloadPlugin(null, new StringPrinter()).isPresent();
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    /**
+     * A plugin that is neither a Camel plugin nor a known one, given without --gav or --artifactId, and that cannot be
+     * loaded: exit code 3, with the plugins of a similar name.
+     */
+    static CliException unknownPlugin(String name) {
+        List<String> names = new ArrayList<>();
+        for (PluginType type : PluginType.values()) {
+            names.add(type.getName());
+        }
+        for (JsonObject known : PluginHelper.loadKnownPlugins()) {
+            String n = known.getString("name");
+            if (n != null) {
+                names.add(n);
+            }
+        }
+        List<String> similar = SuggestSimilarHelper.didYouMean(names, name);
+        return CliException.notFound("Unknown plugin: " + name
+                                     + (similar.isEmpty() ? "" : ". Did you mean: " + String.join(", ", similar))
+                                     + ". camel plugin list shows the plugins; give --gav (or --artifactId) to add a"
+                                     + " plugin of your own");
     }
 
     /**
@@ -336,7 +383,14 @@ public class PluginAdd extends PluginBaseCommand {
      * Downloads the plugin, as when it is used.
      */
     Optional<Plugin> downloadPlugin(String dependency) {
-        return PluginHelper.getPlugin(command, cliVersion(), dependency, repositories, printer());
+        return downloadPlugin(dependency, printer());
+    }
+
+    /**
+     * Downloads the plugin, as when it is used, reporting to the given printer.
+     */
+    Optional<Plugin> downloadPlugin(String dependency, Printer printer) {
+        return PluginHelper.getPlugin(command, cliVersion(), dependency, repositories, printer);
     }
 
 }

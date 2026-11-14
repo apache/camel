@@ -19,7 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -31,6 +33,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.dsl.jbang.run.common.CatalogLoader;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -360,18 +363,58 @@ public class ToolContext {
             if (!result.isOk()) {
                 throw new ToolExecutionException(result.error());
             }
+            if (unescapeCodeLines(json)) {
+                return json.toJson();
+            }
         }
         return answer;
     }
 
     public JsonObject readErrorFile() {
         requireProcess();
-        return RuntimeHelper.readErrorFile(pid);
+        JsonObject errors = RuntimeHelper.readErrorFile(pid);
+        unescapeCodeLines(errors);
+        return errors;
     }
 
     public JsonObject readHistoryFile() {
         requireProcess();
-        return RuntimeHelper.readHistoryFile(pid);
+        JsonObject history = RuntimeHelper.readHistoryFile(pid);
+        unescapeCodeLines(history);
+        return history;
+    }
+
+    /**
+     * Unescapes the lines of source code, so they are as they are in the file. The dev consoles escape each line of a
+     * {@code code} list as JSON text in JSON. The CLI commands undo this when they print the lines, but the AI tools
+     * gave the lines as they came, so the agent saw {@code \"} that is not in the file (CAMEL-26932).
+     *
+     * @return whether a line was changed
+     */
+    static boolean unescapeCodeLines(Object node) {
+        boolean changed = false;
+        if (node instanceof JsonObject jo) {
+            for (Map.Entry<String, Object> e : jo.entrySet()) {
+                if ("code".equals(e.getKey()) && e.getValue() instanceof JsonArray lines) {
+                    for (Object line : lines) {
+                        if (line instanceof JsonObject l && l.get("code") instanceof String code) {
+                            String text = Jsoner.unescape(code);
+                            if (!text.equals(code)) {
+                                l.put("code", text);
+                                changed = true;
+                            }
+                        }
+                    }
+                } else {
+                    changed |= unescapeCodeLines(e.getValue());
+                }
+            }
+        } else if (node instanceof Collection<?> list) {
+            for (Object o : list) {
+                changed |= unescapeCodeLines(o);
+            }
+        }
+        return changed;
     }
 
     public String stopApplication() {

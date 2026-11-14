@@ -191,8 +191,13 @@ public class AuthoringTools {
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
             @ToolArg(description = "File path relative to the directory, e.g. src/main/resources/camel/foo.camel.yaml,"
                                    + " to read; omitted lists the files",
-                     required = false) String file) {
-        return call("camel_get_files", args("directory", directory, "file", file), null, clientRoot(roots));
+                     required = false) String file,
+            @ToolArg(description = "The first line of the file to read, from 1 (default 1). A large file comes in parts:"
+                                   + " the answer says the offset of the next part",
+                     required = false) Integer offset,
+            @ToolArg(description = "How many lines of the file to read (default 2000)", required = false) Integer limit) {
+        return call("camel_get_files", args("directory", directory, "file", file, "offset", offset, "limit", limit), null,
+                clientRoot(roots));
     }
 
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
