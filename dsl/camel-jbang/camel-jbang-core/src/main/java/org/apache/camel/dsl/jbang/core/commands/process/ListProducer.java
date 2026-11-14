@@ -97,7 +97,8 @@ public class ListProducer extends ProcessWatchCommand {
                     row.uri = o.getString("uri");
                     row.id = o.getString("routeId");
                     row.state = o.getString("state");
-                    row.className = o.getString("class");
+                    // the console says clazz (class before Camel 4.23)
+                    row.className = o.getStringOrDefault("clazz", o.getString("class"));
                     row.singleton = o.getBoolean("singleton");
                     row.remote = o.getBoolean("remote");
                     row.uptime = extractSince(ph);
@@ -188,6 +189,9 @@ public class ListProducer extends ProcessWatchCommand {
 
     private String getType(Row r) {
         String s = r.className;
+        if (s == null) {
+            return "";
+        }
         if (s.endsWith("Producer")) {
             s = s.substring(0, s.length() - 8);
         }

@@ -17,11 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.impl.console.ProducerDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -163,7 +166,35 @@ class ListProducerTest extends ProcessCommandTestSupport {
             String output = printer.getOutput();
             assertTrue(output.startsWith("["), "JSON output should be array");
             assertTrue(output.contains("direct:out"));
-            assertTrue(output.contains("Log"), "Producer suffix should be removed from type");
+            assertTrue(output.contains("\"type\":\"org.apache.camel.component.log.Log\""),
+                    "Producer suffix should be removed from type");
+        }
+    }
+
+    @Test
+    void testProducerOfOlderCamelVersion() throws Exception {
+        // Camel 4.22 and older say class
+        JsonObject p = producer("route1", "direct:out");
+        p.put("class", p.remove("clazz"));
+        JsonObject root = new JsonObject();
+        root.put("context", contextObj());
+        root.put("producers", producerContainer(p));
+        writeStatusFile(TEST_PID, root);
+
+        ListProducer command = new ListProducer(new CamelJBangMain().withPrinter(printer));
+        command.sort = "pid";
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            assertTrue(printer.getOutput().contains("\"type\":\"org.apache.camel.component.log.Log\""));
         }
     }
 
@@ -181,14 +212,11 @@ class ListProducerTest extends ProcessCommandTestSupport {
         return container;
     }
 
+    // built from the record of the producer console, so a renamed key breaks this test
     private static JsonObject producer(String routeId, String uri) {
-        JsonObject p = new JsonObject();
-        p.put("routeId", routeId);
-        p.put("uri", uri);
-        p.put("state", "Started");
-        p.put("class", "org.apache.camel.component.log.LogProducer");
-        p.put("singleton", true);
-        p.put("remote", false);
-        return p;
+        ProducerDevConsole.ProducerEntry entry = new ProducerDevConsole.ProducerEntry(
+                uri, "Started", "org.apache.camel.component.log.LogProducer", false, true, routeId, null);
+        JsonObject response = JsonRecordSupport.toJsonObject(new ProducerDevConsole.Response(List.of(entry)));
+        return (JsonObject) ((JsonArray) response.get("producers")).get(0);
     }
 }
