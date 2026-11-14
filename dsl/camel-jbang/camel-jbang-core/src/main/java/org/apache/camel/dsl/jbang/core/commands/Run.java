@@ -1407,8 +1407,9 @@ public class Run extends CamelCommand implements CommandLifecycle {
                                            + waited + "; the log is in "
                                            + BackgroundLog.logOf(p.pid(), logPath));
             }
-            printer().println(kind + ": " + name + " (state: " + extractState(state) + ")");
             if (!internal) {
+                // not for the Camel of camel eval and transform: X=$(camel eval ...) got this line too (CAMEL-26931)
+                printer().println(kind + ": " + name + " (state: " + extractState(state) + ")");
                 // started: its log file has all of its logging, and the output only the warnings and errors
                 printer().println("Log: " + BackgroundLog.logOf(p.pid(), logPath));
             }

@@ -182,9 +182,11 @@ public class Doctor extends CamelCommand {
             downloader.build();
             CamelCatalog catalog = new DefaultCamelCatalog();
             String version = catalog.getCatalogVersion();
+            // a SNAPSHOT of the CLI is in the Apache snapshots repository: without it, the check failed on every
+            // SNAPSHOT CLI (CAMEL-26931)
             downloader.resolveArtifacts(
                     List.of("org.apache.camel:camel-api:" + version),
-                    Set.of(), false, false);
+                    Set.of(), false, version.endsWith("-SNAPSHOT"));
             report("maven", "Maven", OK, "Artifact resolution (OK)");
         } catch (MavenResolutionException e) {
             // camel run downloads the dependencies of the routes
