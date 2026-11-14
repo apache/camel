@@ -152,7 +152,9 @@ public interface Transcribe2EndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the Transcribe client.
+         * The protocol to use when instantiating the Transcribe client.
+         * Deprecation note: Not used: nothing reads this option when the
+         * Transcribe client is built.
          * 
          * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
          * type.
@@ -163,12 +165,15 @@ public interface Transcribe2EndpointBuilderFactory {
          * @param protocol the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default Transcribe2EndpointBuilder protocol(software.amazon.awssdk.core.Protocol protocol) {
             doSetProperty("protocol", protocol);
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the Transcribe client.
+         * The protocol to use when instantiating the Transcribe client.
+         * Deprecation note: Not used: nothing reads this option when the
+         * Transcribe client is built.
          * 
          * The option will be converted to a
          * <code>software.amazon.awssdk.core.Protocol</code> type.
@@ -179,6 +184,7 @@ public interface Transcribe2EndpointBuilderFactory {
          * @param protocol the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default Transcribe2EndpointBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
             return this;

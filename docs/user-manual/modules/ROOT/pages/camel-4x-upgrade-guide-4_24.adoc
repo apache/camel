@@ -8702,3 +8702,14 @@ writes the dependency to the exported project.
 the split pages, whose content it does not return in the response, so every content field of the reply was empty. It
 now fails with an `IllegalArgumentException` that names the reason and the way out, `outputFormat=html` to get the
 HTML of the whole document.
+
+=== camel-aws2-transcribe - the protocol option is deprecated
+
+The `protocol` option never had any effect. Nothing reads it: the Transcribe client is built by the shared
+`AwsClientBuilderUtil`, which takes the region, the endpoint override and the proxy settings, and `getProtocol()` is
+called only by the generated configurer. Its description was also the one belonging to `proxyProtocol`, so it read as
+if it configured the proxy.
+
+It is now deprecated, with a `deprecationNote` that says so, and its description no longer claims to configure a proxy.
+Remove `protocol` from the endpoint URI or the configuration. To send the client's traffic through a proxy, use
+`proxyProtocol` together with `proxyHost` and `proxyPort`, which the shared client builder does apply.
