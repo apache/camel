@@ -291,6 +291,7 @@ class RunTest extends CamelCommandBaseTestSupport {
         command.applyProfileProperties(command.toRunRequest(null), backgroundAndDebugProperties());
 
         assertThat(command.background).isFalse();
+        assertThat(command.backgroundWait).isEqualTo(BackgroundWait.DEFAULT);
         assertThat(command.jvmDebugPort).isZero();
     }
 
