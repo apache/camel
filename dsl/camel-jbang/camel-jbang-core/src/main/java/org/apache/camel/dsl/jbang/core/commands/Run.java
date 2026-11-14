@@ -25,11 +25,13 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.CommandLifecycle;
@@ -382,6 +384,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
             return runExample();
         }
 
+        expandWildcards();
         checkFilesExist();
         skipCitrusTests();
         printRunConfiguration();
@@ -394,6 +397,53 @@ public class Run extends CamelCommand implements CommandLifecycle {
         // before the run is prepared, as stdout carries the MCP protocol only
         mcpStdioMode = serverOptions.mcpStdio;
         printConfigurationValues("Running integration with the following configuration:");
+    }
+
+    /**
+     * Expands a local file name with a wildcard, such as {@code *} or {@code routes/*.yaml}, to the files it matches,
+     * as a Unix shell does with {@code camel run *}. A shell that does not, such as the Windows command prompt, or a
+     * quoted {@code '*'}, passed the wildcard on, and camel run failed with "No routes found in: *" (CAMEL-26930). As
+     * in a shell, a hidden file matches only a wildcard that starts with a dot. A wildcard that matches nothing exits
+     * with code 66.
+     */
+    void expandWildcards() {
+        if (files == null || files.isEmpty()) {
+            return;
+        }
+        List<String> answer = new ArrayList<>();
+        for (String file : files) {
+            // a local file, not file: (a resource pattern) nor a remote one; a single letter is a drive on Windows
+            String scheme = getScheme(file);
+            boolean local = scheme == null || scheme.length() == 1;
+            String name = FileUtil.stripPath(file);
+            String dir = FileUtil.onlyPath(file);
+            boolean wildcard = local && (name.contains("*") || name.contains("?"))
+                    && (dir == null || !dir.contains("*") && !dir.contains("?"));
+            if (!wildcard) {
+                answer.add(file);
+                continue;
+            }
+            Path folder = Paths.get(dir != null ? dir : ".");
+            List<String> matches = new ArrayList<>();
+            if (Files.isDirectory(folder)) {
+                PathMatcher matcher = folder.getFileSystem().getPathMatcher("glob:" + name);
+                try (Stream<Path> list = Files.list(folder)) {
+                    list.map(Path::getFileName)
+                            .filter(p -> matcher.matches(p) && (name.startsWith(".") || !p.toString().startsWith(".")))
+                            .map(p -> dir != null ? dir + "/" + p : p.toString())
+                            .sorted()
+                            .forEach(matches::add);
+                } catch (IOException e) {
+                    throw CliException.failure("Cannot list the files of " + folder + ": " + e.getMessage());
+                }
+            }
+            if (matches.isEmpty()) {
+                throw CliException.fileNotFound("No file matches: " + file);
+            }
+            answer.addAll(matches);
+        }
+        files.clear();
+        files.addAll(answer);
     }
 
     /**
