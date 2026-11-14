@@ -183,6 +183,25 @@ does not fix it the answer is shown as it is with a *Simple check* line under it
 and the error, and the AI log has the exchange. Placeholders that are not simple (a Maven
 `$\{camel-version}`, a shell variable) are left alone.
 
+The code blocks of an answer are checked for what does not exist: a key or an option the YAML DSL does
+not have (`multiplier` in a `redeliveryPolicy`, where the option is `backOffMultiplier`), an option the
+component of an endpoint does not have (`deleteAfterRead` on `file`), and a `camel.*` key that is not a
+Camel option (`camel.server.context-path`), in any block. A snippet is checked as a part of what it
+belongs to: a `from:` without its route, a list of steps and a single EIP as the steps of a route, and a
+`redeliveryPolicy:` under an `onException`. Each mistake is marked with a line under its code block,
+with its line in the block and the hint of the validator when it has one:
+
+[source,text]
+----
+✗ line 5: `deleteAfterRead` is not an option of the `file` component (did you mean `delete`?)
+----
+
+The answer is not sent back for a correction, which would cost a local model the whole answer again.
+The model is told of the marks, and of a simple expression it did not fix, with your next question, so
+its next answer does not repeat them. What a snippet leaves out on purpose is not marked: a required
+option, the steps of a route, a placeholder value, the options of an EIP shown without the EIP. *Copy*
+still copies only the code of a block.
+
 Press *Ctrl+U* while the AI panel is open to toggle the AI Usage view. It shows token consumption from
 the embedded AI prompt (*TUI ask*) and from LLM calls made by the monitored integration (*integration*),
 the latter taken from OpenTelemetry GenAI spans when observability is enabled on the integration. The

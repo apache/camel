@@ -204,4 +204,47 @@ public class SourceValidatorPropertiesTest {
         assertThat(msgs.get(0)).contains("Unknown option").contains("period is an endpoint option of timer")
                 .contains("timer:name?period=...");
     }
+
+    /**
+     * CAMEL-26960: a key of a group Camel does not have, which camel-main drops without a word, with the key that was
+     * meant.
+     */
+    @Test
+    void aKeyOfAGroupCamelDoesNotHaveSaysWhichKeyWasMeant() {
+        List<String> msgs = SourceValidator.validateProperties("""
+                camel.tracing.enabled=true
+                camel.profile=production
+                camel.metrics-enabled=true
+                camel.kafka.brokers=localhost:9092
+                camel.mian.name=orders
+                camel.opentelemtry.enabled=true
+                """, catalog, null);
+        assertThat(msgs).hasSize(6);
+        assertThat(msgs.get(0)).isEqualTo("Line 1: tracing    Unknown option (camel.tracing is not a group of Camel"
+                                          + " options; did you mean camel.trace.enabled?)");
+        assertThat(msgs.get(1)).endsWith("did you mean camel.main.profile?)");
+        assertThat(msgs.get(2)).endsWith("did you mean camel.metrics.enabled?)");
+        assertThat(msgs.get(3)).endsWith("did you mean camel.component.kafka.brokers?)");
+        assertThat(msgs.get(4)).endsWith("did you mean camel.main.name?)");
+        assertThat(msgs.get(5)).endsWith("did you mean camel.opentelemetry.enabled?)");
+    }
+
+    @Test
+    void theKeysCamelReadsBesidesItsGroupsAndTheKeysOfTheUserAreLeftAlone() {
+        assertThat(SourceValidator.validateProperties("""
+                camel.beans.orderIds=#class:org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository
+                camel.variable.greeting=Hello
+                camel.kamelet.my-source.period=5000
+                camel.route-template[0].template-id=myTemplate
+                camel.jbang.dependencies=org.example:orders:1.0
+                camel.mcp.security.redaction.enabled=true
+                camel.tui.theme=light
+                camel.routeController.enabled=true
+                camel.kubernetes-config.mount-path-secrets=/etc/camel/secrets/
+                camel.threads.virtual.enabled=true
+                camel.servlet.mapping.context-path=/api
+                camel.kafka.topic.logs=otlp_logs
+                camel.myapp.greeting=hello
+                """, catalog, null)).isEmpty();
+    }
 }

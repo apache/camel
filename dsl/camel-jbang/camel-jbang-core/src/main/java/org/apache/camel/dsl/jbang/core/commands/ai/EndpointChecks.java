@@ -187,7 +187,9 @@ final class EndpointChecks {
                     int mapIndent = -1;
                     for (int k = j + 1; k < lines.length; k++) {
                         String paramLine = lines[k];
-                        if (paramLine.isBlank()) {
+                        if (paramLine.isBlank() || paramLine.trim().startsWith("#")) {
+                            // a commented-out option is not one: "# idempotentRepository: ..." was reported as the
+                            // unknown option '# idempotentRepository' (CAMEL-26960)
                             continue;
                         }
                         int paramIndent = countLeadingSpaces(paramLine);
