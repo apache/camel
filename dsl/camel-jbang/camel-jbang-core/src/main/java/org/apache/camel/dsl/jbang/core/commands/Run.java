@@ -851,6 +851,15 @@ public class Run extends CamelCommand implements CommandLifecycle {
         }
 
         // okay we have validated all input and are ready to run
+        if (camelVersion == null && isDebugMode() && LauncherHelper.isRunningFromLauncher()) {
+            // the launcher has no jbang: a JVM of the launcher with the JVM options (CAMEL-26930)
+            if (debugOptions.openTelemetryAgent) {
+                printer().printErr("The --open-telemetry-agent option is not supported when running from camel-launcher.");
+                printer().printDiagnostic("Install Camel CLI via JBang to use it: jbang app install camel@apache/camel");
+                return CliExitCode.USAGE;
+            }
+            return runLauncherJvm();
+        }
         if (camelVersion != null || isDebugMode()) {
             // TODO: debug camel specific version
             boolean custom = false;
@@ -1217,6 +1226,72 @@ public class Run extends CamelCommand implements CommandLifecycle {
             // wait for that process to exit as we run in foreground
             return p.waitFor();
         }
+    }
+
+    /**
+     * Runs this integration in a new JVM of the launcher, with the JVM options of --jvm-debug and --jvm-args. Before,
+     * they ran it through jbang, which the launcher does not need, and which ran another Camel build on its own JDK.
+     */
+    protected int runLauncherJvm() throws Exception {
+        List<String> cmds = createLauncherJvmCommand(LauncherHelper.getCamelCommand());
+
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(cmds);
+        markSpawned(pb);
+
+        if (verbose) {
+            printer().println(String.join(" ", cmds));
+        }
+
+        if (background) {
+            return runBackgroundProcess(pb, "Camel Main");
+        } else {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+            Process p = pb.start();
+            this.spawnPid = p.pid();
+            // wait for that process to exit as we run in foreground
+            return p.waitFor();
+        }
+    }
+
+    /**
+     * The command that runs this integration in a new JVM of the launcher: the java command of the launcher, with the
+     * JVM options of --jvm-debug (suspended until a debugger attaches, as jbang --debug does) and --jvm-args, and the
+     * run options without them.
+     *
+     * @param camelCommand the command of the launcher ({@link LauncherHelper#getCamelCommand()}): java, its options,
+     *                     -jar and the launcher JAR
+     */
+    List<String> createLauncherJvmCommand(List<String> camelCommand) {
+        List<String> cmds;
+        if (originalArgs() != null) {
+            cmds = new ArrayList<>(originalArgs());
+        } else {
+            cmds = new ArrayList<>();
+            cmds.add("run");
+        }
+        if (background) {
+            cmds = BackgroundWait.withoutBackgroundOptions(cmds);
+        }
+        List<String> jvm = new ArrayList<>();
+        // tooling may signal to run JMX debugger in suspended mode via JVM system property
+        String debugSuspend = System.getProperty(BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME);
+        if (debugSuspend != null) {
+            jvm.add("-D" + BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME + "=" + debugSuspend);
+        }
+        if (jvmDebugPort > 0) {
+            jvm.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=localhost:" + jvmDebugPort);
+            cmds.removeIf(arg -> arg.startsWith("--jvm-debug"));
+        }
+        if (jvmArgs != null && !jvmArgs.isBlank()) {
+            jvm.addAll(Arrays.asList(jvmArgs.trim().split("\\s+")));
+            cmds.removeIf(a -> a.startsWith("--jvm-args"));
+        }
+        List<String> answer = new ArrayList<>(camelCommand);
+        int jar = answer.indexOf("-jar");
+        answer.addAll(jar >= 0 ? jar : answer.size(), jvm);
+        answer.addAll(cmds);
+        return answer;
     }
 
     // The jbang command that runs this integration in a new JVM.
