@@ -431,7 +431,7 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Expected type is
-         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial]. Mandatory* header if PDF document is encrypted.
+         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial]. Deprecated.* This header has never been read by the component. PDFBox 2+ decrypts documents at load time (via the password argument to Loader.loadPDF); by the time the producer receives a PDDocument, decryption has already occurred or failed. Use Loader.loadPDF(bytes, password) in a type converter or a Processor before the PDF endpoint instead. Deprecation note: Never read by the component: PDDocument is decrypted when it is loaded, and the byte[] converter loads it without a password.
          * 
          * The option is a: {@code
          * org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial} type.
@@ -440,6 +440,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * @return the name of the header {@code PdfDecryptionMaterial}.
          */
+        @Deprecated
         public String pdfDecryptionMaterial() {
             return "CamelPdfDecryptionMaterial";
         }
