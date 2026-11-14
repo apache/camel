@@ -84,6 +84,48 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether batchCheck fans out individual checks (client, the compatible
+         * default) or uses the native server BatchCheck API (server, requires
+         * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
+         * and correlates responses back to the original objects. Failures never
+         * fall back to an unfiltered result or another mode.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openfga.OpenFgaBatchCheckMode</code>
+         * type.
+         * 
+         * Default: client
+         * Group: producer
+         * 
+         * @param batchCheckMode the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder batchCheckMode(org.apache.camel.component.openfga.OpenFgaBatchCheckMode batchCheckMode) {
+            doSetProperty("batchCheckMode", batchCheckMode);
+            return this;
+        }
+        /**
+         * Whether batchCheck fans out individual checks (client, the compatible
+         * default) or uses the native server BatchCheck API (server, requires
+         * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
+         * and correlates responses back to the original objects. Failures never
+         * fall back to an unfiltered result or another mode.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openfga.OpenFgaBatchCheckMode</code>
+         * type.
+         * 
+         * Default: client
+         * Group: producer
+         * 
+         * @param batchCheckMode the value to set
+         * @return the dsl builder
+         */
+        default OpenFgaEndpointBuilder batchCheckMode(String batchCheckMode) {
+            doSetProperty("batchCheckMode", batchCheckMode);
+            return this;
+        }
+        /**
          * Context passed to the CEL expressions of any conditioned relation the
          * check touches, as a map resolved from the registry -
          * conditionContext=#myContext. A map rather than an expression on
@@ -677,9 +719,43 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
-         * How many of a batchCheck's checks may be in flight at once. The batch
-         * is issued as one request per object, so this bounds the load one
-         * exchange puts on the server.
+         * Maximum number of checks per native server BatchCheck request, from 1
+         * to 50. Applies only when batchCheckMode=server; the SDK splits larger
+         * input lists into requests of at most this size.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointBuilder maxBatchSize(int maxBatchSize) {
+            doSetProperty("maxBatchSize", maxBatchSize);
+            return this;
+        }
+        /**
+         * Maximum number of checks per native server BatchCheck request, from 1
+         * to 50. Applies only when batchCheckMode=server; the SDK splits larger
+         * input lists into requests of at most this size.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointBuilder maxBatchSize(String maxBatchSize) {
+            doSetProperty("maxBatchSize", maxBatchSize);
+            return this;
+        }
+        /**
+         * How many HTTP requests a batchCheck may have in flight at once. In
+         * client mode each request checks one object; in server mode each
+         * request checks up to maxBatchSize objects.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -694,9 +770,9 @@ public interface OpenFgaEndpointBuilderFactory {
             return this;
         }
         /**
-         * How many of a batchCheck's checks may be in flight at once. The batch
-         * is issued as one request per object, so this bounds the load one
-         * exchange puts on the server.
+         * How many HTTP requests a batchCheck may have in flight at once. In
+         * client mode each request checks one object; in server mode each
+         * request checks up to maxBatchSize objects.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

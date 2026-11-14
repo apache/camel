@@ -23,6 +23,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -380,6 +381,25 @@ class OpenFgaIT extends CamelTestSupport {
         // bob was granted the roadmap, and the announcement is public
         assertThat(out.getMessage().getBody(List.class))
                 .containsExactly("document:roadmap", "document:announcement");
+    }
+
+    @Test
+    void filtersWithNativeServerBatchesAcrossChunkBoundaries() {
+        List<String> objects = new ArrayList<>();
+        for (int i = 0; i < 53; i++) {
+            objects.add("document:roadmap");
+        }
+        objects.add("document:budget");
+        objects.add("document:announcement");
+
+        Exchange out = template.request(
+                openfga("batchCheck", "relation=reader&user=user:bob&batchCheckMode=server&maxBatchSize=50"),
+                e -> e.getMessage().setBody(objects));
+
+        assertThat(out.getException()).isNull();
+        List<String> expected = new ArrayList<>(objects);
+        expected.remove("document:budget");
+        assertThat(out.getMessage().getBody(List.class)).containsExactlyElementsOf(expected);
     }
 
     @Test
