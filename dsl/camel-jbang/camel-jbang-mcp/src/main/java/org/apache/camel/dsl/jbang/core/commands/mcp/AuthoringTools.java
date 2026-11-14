@@ -537,7 +537,7 @@ public class AuthoringTools {
         }
         JsonObject result = call(tool, args, catalogService, configure);
         if (repeatedCalls != null) {
-            repeatedCalls.recordSuccessfulAnswer(connection, tool, args);
+            repeatedCalls.recordSuccessfulAnswer(connection, tool, args, result);
         }
         return result;
     }

@@ -265,6 +265,24 @@ class AuthoringToolsTest {
     }
 
     @Test
+    void aThirdIdenticalCatalogMissGetsTheSuggestionsNotTheWriteHint() {
+        // CAMEL-26932: a miss is answered as data, so it still counts; its note says what to ask instead
+        AuthoringTools counted = new AuthoringTools();
+        counted.repeatedCalls = new RepeatedCallSessions();
+        McpConnection agent = connection("agent-1");
+
+        JsonObject first = counted.camel_catalog_doc(agent, "kafak", null, null, null, null, null, null, null, null, null);
+        counted.camel_catalog_doc(agent, "kafak", null, null, null, null, null, null, null, null, null);
+        JsonObject third = counted.camel_catalog_doc(agent, "kafak", null, null, null, null, null, null, null, null, null);
+
+        assertThat(first.getString("error")).contains("kafak");
+        assertThat(third.getBoolean("repeated")).isTrue();
+        assertThat(third.getString("note")).startsWith("The answer was: Artifact not found: kafak.")
+                .contains("Use one of the suggestions instead: kafka.")
+                .doesNotContain("camel_write_file");
+    }
+
+    @Test
     void aThirdIdenticalCatalogCallOfAConnectionGetsAShortNote() {
         AuthoringTools counted = new AuthoringTools();
         counted.repeatedCalls = new RepeatedCallSessions();

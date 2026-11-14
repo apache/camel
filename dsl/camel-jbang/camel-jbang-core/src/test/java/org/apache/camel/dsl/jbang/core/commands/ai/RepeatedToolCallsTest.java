@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -61,6 +62,42 @@ class RepeatedToolCallsTest {
         JsonObject fourth = calls.repeatOf(catalogDoc, sql);
         assertThat(fourth.getInteger("timesAsked")).isEqualTo(4);
         assertThat(fourth.getString("note")).contains("You asked this 4 times now");
+    }
+
+    @Test
+    void aRepeatedMissSaysWhatTheAnswerWasAndStillCounts() {
+        // the hint of the tool, to write the file with the options the answer gave, did not fit a miss (CAMEL-26932)
+        Map<String, String> kafak = Map.of("name", "kafak");
+        JsonObject miss = new JsonObject();
+        miss.put("error", "Artifact not found: kafak");
+        miss.put("suggestions", new JsonArray(List.of("kafka")));
+        for (int i = 0; i < 2; i++) {
+            assertThat(calls.repeatOf(catalogDoc, kafak)).isNull();
+            calls.recordSuccessfulAnswer(catalogDoc, kafak, miss);
+        }
+
+        JsonObject note = calls.repeatOf(catalogDoc, kafak);
+        assertThat(note.getBoolean("repeated")).isTrue();
+        assertThat(note.getInteger("timesAsked")).isEqualTo(3);
+        assertThat(note.getString("note"))
+                .startsWith("The answer was: Artifact not found: kafak. Use one of the suggestions instead: kafka.")
+                .contains("You asked this 3 times now")
+                .doesNotContain("camel_write_file");
+        assertThat(note.get("suggestions")).isEqualTo(List.of("kafka"));
+    }
+
+    @Test
+    void aRepeatedMissWithoutSuggestionsSaysToAskWithOtherArguments() {
+        Map<String, String> nope = Map.of("name", "nosuchthing");
+        JsonObject miss = new JsonObject();
+        miss.put("error", "Artifact not found: nosuchthing");
+        calls.recordSuccessfulAnswer(catalogDoc, nope, miss);
+        calls.recordSuccessfulAnswer(catalogDoc, nope, miss);
+
+        JsonObject note = calls.repeatOf(catalogDoc, nope);
+        assertThat(note.getString("note"))
+                .startsWith("The answer was: Artifact not found: nosuchthing. Ask with other arguments instead.");
+        assertThat(note.get("suggestions")).isNull();
     }
 
     /**

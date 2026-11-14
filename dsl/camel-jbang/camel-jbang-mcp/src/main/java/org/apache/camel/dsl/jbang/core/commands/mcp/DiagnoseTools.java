@@ -82,7 +82,7 @@ public class DiagnoseTools {
             CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
             JsonObject answer = ErrorDiagnoser.diagnose(error, catalog);
             if (repeatedCalls != null) {
-                repeatedCalls.recordSuccessfulAnswer(connection, "camel_error_diagnose", diagArgs);
+                repeatedCalls.recordSuccessfulAnswer(connection, "camel_error_diagnose", diagArgs, answer);
             }
             return answer;
         } catch (ToolCallException e) {
