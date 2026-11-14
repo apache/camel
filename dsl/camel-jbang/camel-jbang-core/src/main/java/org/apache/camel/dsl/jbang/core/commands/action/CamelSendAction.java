@@ -185,9 +185,10 @@ public class CamelSendAction extends ActionBaseCommand {
                 }
             }
         }
-        // timeout cannot be too low
-        if (timeout < 5000) {
-            timeout = 5000;
+        // the integration bounds the send by the timeout as given: a timeout below 5 seconds was raised to 5 seconds
+        // without a word, while the send itself was not bounded at all (CAMEL-26929)
+        if (timeout <= 0) {
+            throw CliException.usage("--timeout must be more than 0, was: " + timeout);
         }
         if (repeat < 0 || repeat > MAX_MESSAGES) {
             throw CliException.usage("--repeat must be between 1 and " + MAX_MESSAGES + ", was: " + repeat);

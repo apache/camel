@@ -58,12 +58,24 @@ class CamelSendActionResultTest extends ActionCommandTestSupport {
         assertThat(action.getString("endpoint")).isEqualTo("direct:start");
         assertThat(action.getString("body")).isEqualTo("hello");
         assertThat(action.getString("exchangePattern")).isEqualTo("InOnly");
-        // the timeout is at least 5 seconds
-        assertThat(action.getLong("pollTimeout")).isEqualTo(5000L);
+        // the timeout as given: it was raised to 5 seconds without a word, and the integration bounds the send by it
+        // (CAMEL-26929)
+        assertThat(action.getLong("pollTimeout")).isEqualTo(100L);
         JsonArray headers = action.getCollection("headers");
         JsonObject header = headers.getMap(0);
         assertThat(header.getString("key")).isEqualTo("id");
         assertThat(header.getString("value")).isEqualTo("1");
+    }
+
+    @Test
+    void aTimeoutOfZeroIsAUsageError() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+
+        assertThatThrownBy(() -> callWithResponse(command("orders", "--endpoint=direct:start", "--timeout=0"),
+                answer("success")))
+                .isInstanceOfSatisfying(CliException.class,
+                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.USAGE))
+                .hasMessage("--timeout must be more than 0, was: 0");
     }
 
     @Test

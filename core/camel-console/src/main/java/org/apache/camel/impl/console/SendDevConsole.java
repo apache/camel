@@ -22,7 +22,12 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -39,6 +44,7 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonRecordSupport;
 
@@ -64,7 +70,7 @@ public class SendDevConsole extends AbstractDevConsole {
     private int bodyMaxChars = 32 * 1024;
 
     @Metadata(defaultValue = "20000", label = "advanced",
-              description = "Timeout when using poll mode")
+              description = "Timeout of the send, or of the poll in poll mode, in millis")
     private int pollTimeout = 20000;
 
     @Metadata(label = "query", description = "Maximum size of the message body to include in the dump",
@@ -84,7 +90,7 @@ public class SendDevConsole extends AbstractDevConsole {
               javaType = "java.lang.Boolean")
     public static final String POLL = "poll";
 
-    @Metadata(label = "query", description = "Timeout when using poll mode",
+    @Metadata(label = "query", description = "Timeout of the send, or of the poll in poll mode, in millis",
               javaType = "java.lang.Integer", defaultValue = "20000")
     public static final String POLL_TIMEOUT = "pollTimeout";
 
@@ -141,9 +147,9 @@ public class SendDevConsole extends AbstractDevConsole {
         }
         String exchangePattern = optionString(options, EXCHANGE_PATTERN);
         boolean poll = optionBoolean(options, POLL, false);
+        // bounds the send as well as the poll: a send to direct:nope waited for the 30 seconds of direct, longer than
+        // the CLI waits for the answer (CAMEL-26929)
         int timeout = optionInt(options, POLL_TIMEOUT, pollTimeout);
-        // give extra time as CLI needs to process reply also
-        timeout += 5000;
 
         Endpoint target = null;
         Exchange out = null;
@@ -162,7 +168,9 @@ public class SendDevConsole extends AbstractDevConsole {
         }
         long taken = watch.taken();
         String status = "success";
-        if (cause != null) {
+        if (cause instanceof SendTimeoutException) {
+            status = "timeout";
+        } else if (cause != null) {
             status = "error";
         } else if (poll && out == null) {
             status = "timeout";
@@ -206,9 +214,9 @@ public class SendDevConsole extends AbstractDevConsole {
         }
         String exchangePattern = optionString(options, EXCHANGE_PATTERN);
         boolean poll = optionBoolean(options, POLL, false);
+        // bounds the send as well as the poll: a send to direct:nope waited for the 30 seconds of direct, longer than
+        // the CLI waits for the answer (CAMEL-26929)
         int timeout = optionInt(options, POLL_TIMEOUT, pollTimeout);
-        // give extra time as CLI needs to process reply also
-        timeout += 5000;
 
         Endpoint target = null;
         Exchange out = null;
@@ -227,7 +235,9 @@ public class SendDevConsole extends AbstractDevConsole {
         }
         long taken = watch.taken();
         String status = "success";
-        if (cause != null) {
+        if (cause instanceof SendTimeoutException) {
+            status = "timeout";
+        } else if (cause != null) {
             status = "error";
         } else if (poll && out == null) {
             status = "timeout";
@@ -270,18 +280,57 @@ public class SendDevConsole extends AbstractDevConsole {
             if (poll) {
                 out = consumer.receive(target, timeout);
             } else {
-                final String mep = exchangePattern;
-                out = producer.send(target, exchange -> {
-                    exchange.getMessage().setBody(inputBody);
-                    if (!inputHeaders.isEmpty()) {
-                        exchange.getMessage().setHeaders(inputHeaders);
-                    }
-                    exchange.setPattern(
-                            "InOut".equals(mep) ? ExchangePattern.InOut : ExchangePattern.InOnly);
-                });
+                Exchange exchange = target.createExchange(
+                        "InOut".equals(exchangePattern) ? ExchangePattern.InOut : ExchangePattern.InOnly);
+                exchange.getMessage().setBody(inputBody);
+                if (!inputHeaders.isEmpty()) {
+                    exchange.getMessage().setHeaders(inputHeaders);
+                }
+                if (isDirectWithoutConsumer(target)) {
+                    // direct waits 30 seconds for a consumer by default: no route will start to consume it now
+                    throw new CamelExchangeException("No consumers available on endpoint: " + target, exchange);
+                }
+                CompletableFuture<Exchange> future = producer.asyncSend(target, exchange);
+                try {
+                    out = future.get(timeout, TimeUnit.MILLISECONDS);
+                } catch (TimeoutException e) {
+                    // the exchange goes on in the integration, but the caller has its answer
+                    throw new SendTimeoutException(exchange, timeout);
+                } catch (ExecutionException e) {
+                    throw e.getCause() instanceof Exception ex ? ex : e;
+                }
             }
         }
         return out;
+    }
+
+    /**
+     * Whether the endpoint is a direct endpoint that no route consumes from.
+     */
+    private boolean isDirectWithoutConsumer(Endpoint target) {
+        String key = target.getEndpointKey();
+        if (key == null || !key.startsWith("direct:")) {
+            return false;
+        }
+        String path = StringHelper.before(key, "?", key);
+        for (Route route : getCamelContext().getRoutes()) {
+            String consumer = route.getEndpoint().getEndpointKey();
+            if (consumer != null && path.equals(StringHelper.before(consumer, "?", consumer))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * The send did not complete within the timeout.
+     */
+    private static final class SendTimeoutException extends CamelExchangeException {
+
+        SendTimeoutException(Exchange exchange, long timeout) {
+            super("The send did not complete within " + timeout + " millis (the exchange goes on in the integration)",
+                  exchange);
+        }
     }
 
     private Endpoint findTarget(String endpoint) {

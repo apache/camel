@@ -54,6 +54,9 @@ public class SendDevConsoleTest extends AbstractDevConsoleTest {
             public void configure() {
                 from("direct:start").routeId("myRoute")
                         .to("mock:result");
+                from("direct:slow").routeId("slowRoute")
+                        .delay(2000)
+                        .to("mock:slow");
             }
         };
     }
@@ -70,6 +73,62 @@ public class SendDevConsoleTest extends AbstractDevConsoleTest {
         JsonObject jsonOut = callJson(console, options);
         assertNotNull(jsonOut.getString("status"));
         assertNotNull(jsonOut.getString("endpoint"));
+    }
+
+    @Test
+    public void testSendIsBoundedByTheTimeout() {
+        // the timeout was for --poll only: the send waited as long as the route took (CAMEL-26929)
+        DevConsole console = startedSendConsole();
+
+        Map<String, Object> options = createOptions("direct:slow", "Hello");
+        options.put(SendDevConsole.POLL_TIMEOUT, "200");
+        JsonObject out = callJson(console, options);
+
+        assertEquals("timeout", out.getString("status"), out.toJson());
+        assertTrue(out.getLong("elapsed") < 1500, "answered at the timeout: " + out.toJson());
+        JsonObject exception = map(out, "exception");
+        assertNotNull(exception, out.toJson());
+        assertTrue(exception.getString("message").startsWith("The send did not complete within 200 millis"),
+                exception.toJson());
+    }
+
+    @Test
+    public void testSendCompletesWithinTheTimeout() {
+        DevConsole console = startedSendConsole();
+
+        Map<String, Object> options = createOptions("direct:start", "Hello");
+        options.put(SendDevConsole.EXCHANGE_PATTERN, "InOut");
+        options.put(SendDevConsole.POLL_TIMEOUT, "5000");
+        JsonObject out = callJson(console, options);
+
+        assertEquals("success", out.getString("status"), out.toJson());
+        assertEquals("Hello", map(map(out, "message"), "body").getString("value"), out.toJson());
+    }
+
+    @Test
+    public void testSendToDirectWithoutConsumerFailsAtOnce() {
+        // direct waits 30 seconds for a consumer by default, longer than the CLI waits for the answer (CAMEL-26929)
+        DevConsole console = startedSendConsole();
+
+        Map<String, Object> options = createOptions("direct:nope", "Hello");
+        JsonObject out = callJson(console, options);
+
+        assertEquals("error", out.getString("status"), out.toJson());
+        assertTrue(out.getLong("elapsed") < 1500, out.toJson());
+        assertTrue(map(out, "exception").getString("message").startsWith("No consumers available on endpoint: direct://nope"),
+                out.toJson());
+
+        // a direct endpoint with options of its own is the endpoint of its route
+        options = createOptions("direct:start?timeout=1000", "Hello");
+        assertEquals("success", callJson(console, options).getString("status"));
+    }
+
+    private static JsonObject map(JsonObject jo, String key) {
+        Map<?, ?> map = (Map<?, ?>) jo.get(key);
+        assertNotNull(map, key + " in " + jo.toJson());
+        JsonObject answer = new JsonObject();
+        map.forEach((k, v) -> answer.put(String.valueOf(k), v));
+        return answer;
     }
 
     @Test
