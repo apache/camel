@@ -2193,7 +2193,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("jsonView", def.getJsonViewTypeName(), null);
         doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute("instanceClassName", def.getInstanceClassName(), null);
-        doWriteAttribute("library", toString(def.getLibrary()), "avroJackson");
+        doWriteAttribute("library", toString(def.getLibrary()), "Jackson");
         doWriteAttribute("objectMapper", def.getObjectMapper(), null);
         doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
         doWriteAttribute("include", def.getInclude(), null);
