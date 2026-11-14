@@ -85,7 +85,9 @@ public final class RunProfileProperties {
             if (sourceDir != null) {
                 profilePropertiesPath = Paths.get(sourceDir).resolve("application-" + profile + ".properties");
             } else {
-                profilePropertiesPath = Paths.get("application-" + profile + ".properties");
+                // next to application.properties: the current directory was read, so a run of the files of another
+                // folder took application.properties from there and the profile from here (CAMEL-26930)
+                profilePropertiesPath = baseDir.resolve("application-" + profile + ".properties");
             }
             // application-profile.properties should override standard application.properties
             Properties override = loadExisting(profilePropertiesPath, loadedFiles, eachFile);

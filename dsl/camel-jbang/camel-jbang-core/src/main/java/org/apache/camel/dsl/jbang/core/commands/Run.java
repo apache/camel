@@ -1662,24 +1662,32 @@ public class Run extends CamelCommand implements CommandLifecycle {
         Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
         Object t = c.getData(DataFlavor.stringFlavor);
         if (t != null) {
-            String fn = workDir + "/" + CLIPBOARD_GENERATED_FILE + "." + ext;
+            String fqn = null;
             if ("java".equals(ext)) {
-                String fqn = determineClassName(t.toString());
+                fqn = determineClassName(t.toString());
                 if (fqn == null) {
                     // wrap code in wrapper
                     return loadFromCode(t.toString(), "ClipboardRoute", true);
                 }
-                // drop package in file name
-                String cn = fqn;
-                if (fqn.contains(".")) {
-                    cn = cn.substring(cn.lastIndexOf('.') + 1);
-                }
-                fn = cn + ".java";
             }
-            Files.writeString(Paths.get(fn), t.toString());
+            Path fn = clipboardFile(workDir, ext, fqn);
+            Files.createDirectories(fn.getParent());
+            Files.writeString(fn, t.toString());
             file = "file:" + fn;
         }
         return file;
+    }
+
+    /**
+     * The file the clipboard is written to, in the work directory: a Java class in a file of its class name (without
+     * the package). The class was written into the current directory, over a file of that name (CAMEL-26930).
+     */
+    static Path clipboardFile(Path workDir, String ext, String className) {
+        if (className != null) {
+            String simple = className.contains(".") ? className.substring(className.lastIndexOf('.') + 1) : className;
+            return workDir.resolve(simple + ".java");
+        }
+        return workDir.resolve(CLIPBOARD_GENERATED_FILE + "." + ext);
     }
 
     private boolean isLoggingLevelFromCommandLine() {
