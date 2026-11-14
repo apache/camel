@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -32,6 +33,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.ThreadPoolProfile;
@@ -325,6 +327,15 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
             final String endpointClassName = endpointClass.getName();
             ExecutorService executorService = executorServices.pools.get(endpointClassName);
             if (executorService == null || executorService.isShutdown()) {
+                final ServiceStatus status = context.getStatus();
+                if (status == ServiceStatus.Stopping || status == ServiceStatus.Stopped) {
+                    // a pool created now could be created after the ExecutorServiceManager shut down the pools of
+                    // this CamelContext, and then nothing would shut it down until the CamelContext is started and
+                    // stopped again
+                    throw new RejectedExecutionException(
+                            "CamelContext " + context.getName() + " is " + status + ", no thread pool is created for "
+                                                         + endpointClassName);
+                }
                 final ExecutorServiceManager manager = context.getExecutorServiceManager();
 
                 // try to lookup a pool first based on profile
@@ -346,6 +357,14 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         }
     }
 
+    /**
+     * The thread pool that the producers of this endpoint call the API in: one pool per endpoint class per
+     * CamelContext, shut down when the CamelContext stops.
+     *
+     * @return                            the thread pool
+     * @throws RejectedExecutionException when the CamelContext is stopping or stopped and the pool is not there, or
+     *                                    shut down: no pool is created then
+     */
     public final ExecutorService getExecutorService() {
         ExecutorService answer = executorService;
         // the pool is shut down when the CamelContext stops, and this endpoint may be used again after a restart
