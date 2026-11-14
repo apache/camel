@@ -190,6 +190,7 @@ in the diagram.
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view
 - `m` — toggle metrics
+- `w` — toggle the live flow: dots on the arrows, the stuck steps marked
 - `y` — toggle the body types each step has been reached with, beside the arrows
 - `n` — toggle description labels
 - `PgUp/PgDn` — scroll detail panel (when detail is on)

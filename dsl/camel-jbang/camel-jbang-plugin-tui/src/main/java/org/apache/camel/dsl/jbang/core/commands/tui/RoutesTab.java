@@ -744,6 +744,7 @@ class RoutesTab extends AbstractDiagramTab {
             } else if (!diagram.getEipNodeBoxes().isEmpty()) {
                 toggles.add(new SubViewBar.Toggle(
                         "+/-", "", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))));
+                toggles.add(new SubViewBar.Toggle("w", "flow", diagram.zoom.flow().isEnabled() ? "on" : "off"));
                 toggles.add(new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"));
                 toggles.add(new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
             }

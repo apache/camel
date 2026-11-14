@@ -98,7 +98,8 @@ state: `a` ai (off shows only what the sources and the runtime
 say: no AI labels, notes or capabilities; it does not change the AI
 overview setting; with no summary yet it has the AI write one, as
 `/overview` does), `b` view (business: labels and what capabilities achieve;
-technical: route ids and endpoints), `m` metrics, `e` external, `y` types
+technical: route ids and endpoints), `m` metrics, `e` external, `w` flow
+(the messages moving through a route), `y` types
 (the body types on the arrows of a route), `+/-` zoom (how much room a step of a route takes;
 fit when `z` chose it for the screen), `d` detail, `g` group, `u` utility (one setting for the architecture
 and the topology, so both show the same groups), `x` errors (the
@@ -196,6 +197,29 @@ lists them all with their kind, and in the topology the Info panel of a
 route says how many of its steps were reached with more than one type
 (`⚠ 1 mixed · 2 varied`).
 
+## Live Flow
+
+With the metrics on, a route diagram shows where the messages go while
+the integration runs, so the busy part of a large route stands out at a
+glance. `w` turns it off and on (kept for the next start).
+
+- **Dots on the arrows** move along an arrow while messages reach the
+  step below it: the more messages a second, the faster and closer
+  together they are. They are red when most of the messages fail there.
+  In compact the head of an arrow lights up as a dot comes in. In bare
+  and overview the lines light up instead, as a dot would look like the
+  mark of a step there, and in the overview, which has hardly any lines
+  between its steps, the light passes over the steps themselves.
+- **Stuck**: a step where exchanges wait and none has finished for a
+  few seconds has a spinner in its top border, with how many wait and
+  how long ago the step last finished one (`⠹ 3 inflight · 12s`), or
+  `none done` when it never did, such as a call to a system that does
+  not answer.
+
+The rates come from the counts the diagram reloads about once a second;
+the dots move in between, about 12 frames a second, only
+while something moves.
+
 ## Route Structure Preview
 
 A compact tree structure preview appears in the bottom-right corner
@@ -259,6 +283,8 @@ you an at-a-glance view of where you are in the route.
 - `x` — show or hide the route's error handling, in a frame below it
 - `y` — show the body types each step has been reached with, beside the
   arrows into the steps
+- `w` — live flow on or off: dots on the arrows, the stuck steps marked
+  (with the metrics on)
 - `g` — go to node (fuzzy search popup)
 - `+` / `-` — zoom in or out: detailed (boxes with up to three lines),
   compact (the default: boxes with one line, the steps closer together) and bare (a

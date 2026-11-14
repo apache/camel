@@ -81,6 +81,11 @@ abstract class AbstractDiagramTab extends AbstractTab {
         return diagram.isShowDiagram();
     }
 
+    /** The route diagram on screen shows messages moving, and its next frame is due. */
+    boolean isFlowFrameDue() {
+        return diagram.isShowDiagram() && !topologyMode && diagramMetrics && diagram.zoom.flow().frameDue();
+    }
+
     /**
      * The source shown over the diagram while its search is typed, or the go to node popup, which filters by typing.
      */
@@ -168,6 +173,12 @@ abstract class AbstractDiagramTab extends AbstractTab {
         if (ke.isChar('p')) {
             // the mini panels cover a corner of the diagram: the map and the tree of the route
             diagram.zoom.togglePanels();
+            ctx.backgroundExecutor.execute(diagram.zoom::persist);
+            return true;
+        }
+        if (!topologyMode && ke.isCharIgnoreCase('w')) {
+            // the messages moving through the route: dots on the arrows, the busy steps warmer
+            diagram.zoom.flow().setEnabled(!diagram.zoom.flow().isEnabled());
             ctx.backgroundExecutor.execute(diagram.zoom::persist);
             return true;
         }

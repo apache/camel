@@ -16,6 +16,7 @@ See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages
   topology and in a route, and in a box of its own in the architecture
 * <<_external_endpoints,*External endpoints*>> -- what the integration consumes from and sends to outside
 * <<_metrics_and_source_code,*Metrics and source*>> -- throughput and timing on the boxes, and the source a box comes from
+* <<_live_flow,*Live flow*>> -- dots move along the arrows of a route where the messages go, and a stuck step is marked
 * <<_body_types,*Body types*>> -- the types of the bodies each step has been reached with, on the arrows into the steps
 
 == Route Topology Diagram
@@ -241,6 +242,27 @@ Press *e* to cycle through three modes for external endpoints:
 * Press *c* to view the source code of the selected route, with syntax highlighting
 * Press *b* (or *n*) to switch between the business view (labels) and the technical view (route ids and endpoints)
 
+=== Live Flow
+
+With the metrics on, a route diagram shows where the messages go while the integration runs, so the busy part of a
+large route stands out at a glance, not only as counts that go up. Press *w* to turn it off and on; the choice is kept
+for the next start.
+
+* *Dots on the arrows* move along an arrow while messages reach the step below it: the more messages a second, the
+  faster and closer together they are. They are red when most of the messages fail there.
+* At the compact level the head of an arrow lights up as a dot comes in. At the bare and overview levels the lines light
+  up instead, as a dot would look like the mark of a step there, and in the overview, which has hardly any lines between
+  its steps, the light passes over the steps themselves. The steps keep the colours of their kind at every level.
+* *A stuck step*, where exchanges wait and none has finished for a few seconds, has a spinner in its top border, with how
+  many wait and how long ago the step last finished one (`⠹ 3 inflight · 12s`), or `none done` when it never did, such
+  as a call to a system that does not answer.
+
+The rates come from the counts the diagram loads about once a second, so the flow costs the integration nothing more.
+The dots move in between, about 12 frames a second, and only while something moves: an idle integration draws no
+frames.
+
+image::jbang/camel-tui-diagram-live-flow.gif[The orders route with the live flow: dots go along the arrows and split at the choice, most of them to the warehouse branch; then the sync route, whose delay step is stuck with 219 exchanges and none done]
+
 === Body Types
 
 When the integration runs with the message history on, such as with `camel run --dev`, Camel keeps the body types
@@ -305,6 +327,7 @@ camel-xml-io, while a Spring Boot or Quarkus application may not.
 | *Esc* | Go back (previous route or topology)
 | *t* | Jump to topology view
 | *m* | Toggle metrics overlay
+| *w* | In a route: the live flow on or off (with the metrics on): dots on the arrows the messages go along, and the stuck steps marked
 | *y* | In a route: show the body types each step has been reached with, beside the arrows into the steps
 | *+* / *-* | In a route, the topology and the architecture: zoom in or out (detailed, compact, bare, and in a route overview)
 | *z* | In a route, the topology and the architecture: fit, the most detail in which it fits the screen

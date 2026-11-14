@@ -562,6 +562,7 @@ class DiagramTab extends AbstractDiagramTab {
             case ROUTE -> List.of(view, new SubViewBar.Toggle("x", "errors", errorsToggle()),
                     new SubViewBar.Toggle("+/-", "", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))),
                     new SubViewBar.Toggle("m", "metrics", metrics),
+                    new SubViewBar.Toggle("w", "flow", diagram.zoom.flow().isEnabled() ? "on" : "off"),
                     new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"),
                     new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"), panelsToggle());
         };

@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +163,10 @@ public class RouteDiagramWidget implements Widget {
         foldHits.clear();
         arrowCells.clear();
         arrowEnds.clear();
+        flowArrows.clear();
+        if (flow != null) {
+            updateFlow();
+        }
 
         if (errorFrame != null) {
             drawErrorFrame(buffer, area);
@@ -185,6 +190,10 @@ public class RouteDiagramWidget implements Widget {
                     drawArrow(buffer, area, ln.parentNode, ln);
                 }
             }
+        }
+        // the dots over the lines, before the boxes
+        for (FlowArrow arrow : flowArrows) {
+            drawFlowDots(buffer, area, arrow);
         }
 
         // Nodes (on top, skip the structural "route" node)
@@ -295,6 +304,24 @@ public class RouteDiagramWidget implements Widget {
     /** The route has error handling: a dim mark on its from box, whether the error handling is shown or not. */
     public RouteDiagramWidget withErrorMark(boolean mark) {
         this.errorMark = mark;
+        return this;
+    }
+
+    private FlowAnimation flow;
+    /** The arrows the dots of the flow move on, in the order the messages go along their cells. */
+    private final List<FlowArrow> flowArrows = new ArrayList<>();
+
+    /** The cells of an arrow before its head, and its head (boxed steps only), which lights up as a dot comes in. */
+    private record FlowArrow(String key, int fromRow, List<int[]> cells, int[] head) {
+    }
+
+    /**
+     * The messages moving through the route (with the metrics on): dots on the arrows that move faster and closer
+     * together the more messages there are (at the overview, a light over the steps), and the steps where exchanges
+     * wait with none finishing marked as stuck.
+     */
+    public RouteDiagramWidget withFlow(FlowAnimation flow) {
+        this.flow = flow != null && flow.isEnabled() && showMetrics ? flow : null;
         return this;
     }
 
@@ -492,7 +519,8 @@ public class RouteDiagramWidget implements Widget {
             // a remote endpoint is an edge of the integration: its own color, as in the topology
             eipColor = external ? externalColor() : getEipColor(node.type);
         }
-        Style borderStyle = Style.EMPTY.fg(eipColor);
+        String stuck = highlighted ? null : stuckText(node);
+        Style borderStyle = stuck != null ? Theme.warning().bold() : Style.EMPTY.fg(eipColor);
         if (selected) {
             borderStyle = borderStyle.patch(selectionStyle());
         }
@@ -547,6 +575,10 @@ public class RouteDiagramWidget implements Widget {
             // bodies of more than one kind reach the step: it needs attention
             writeText(buffer, area, row, col + boxWidth - 3, BodyTypes.MARK, Theme.warning());
         }
+        if (stuck != null) {
+            // exchanges wait here with none finishing: how many, and for how long, in the top border
+            writeText(buffer, area, row, col + 1, stuck, borderStyle);
+        }
 
         // Link indicator for nodes that connect to other routes
         String linkedRouteId = findLinkedRouteId(node);
@@ -591,6 +623,7 @@ public class RouteDiagramWidget implements Widget {
                 && to.id != null && highlightNodeIds.contains(to.id);
 
         drawArrowPath(buffer, area, fromCx, fromBottom, toCx, toTop, dashed, external, bothHighlighted);
+        addFlowArrow(to, fromCx, fromBottom, toCx, toTop);
         if (density != RouteDensity.OVERVIEW) {
             // the steps of the overview are next to each other: no room for a count
             addArrowEnd(to, fromCx, fromBottom, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
@@ -611,6 +644,7 @@ public class RouteDiagramWidget implements Widget {
                 && to.id != null && highlightNodeIds.contains(to.id);
 
         drawArrowPath(buffer, area, fromCx, fromRow, toCx, toTop, dashed, false, highlighted);
+        addFlowArrow(to, fromCx, fromRow, toCx, toTop);
         if (density != RouteDensity.OVERVIEW) {
             addArrowEnd(to, fromCx, fromRow, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
         }
@@ -1090,7 +1124,8 @@ public class RouteDiagramWidget implements Widget {
         } else if (stat != null && stat.exchangesFailed > 0) {
             color = highlightFailColor();
         } else {
-            color = isExternalEndpoint(node) ? externalColor() : getEipColor(node.type);
+            // no lines between the steps: the light of the messages passes over the steps themselves
+            color = lit(isExternalEndpoint(node) ? externalColor() : getEipColor(node.type), node, row);
         }
         String cell;
         if ("from".equals(node.type)) {
@@ -1148,6 +1183,200 @@ public class RouteDiagramWidget implements Widget {
 
     static List<String> wrapText(String text, int maxWidth) {
         return DiagramText.wrap(text, maxWidth, MAX_WRAP_LINES);
+    }
+
+    // ---- the flow of the messages ----
+
+    private static final String SPINNER = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
+    /** The cell of a line lit up as it is: no dot on it. */
+    private static final char LIT = 0;
+
+    private String flowKey(LayoutNode node) {
+        return layoutRoute.routeId + "/" + node.id;
+    }
+
+    /**
+     * The counts of the steps to the flow: of each step for when it is stuck, and of the arrow into it for its dots.
+     */
+    private void updateFlow() {
+        Map<String, StatInfo> stats = new HashMap<>();
+        for (LayoutNode ln : layoutRoute.nodes) {
+            if (ln.id == null || ln.treeNode == null || "route".equals(ln.type)) {
+                continue;
+            }
+            if (ln.treeNode.info.stat != null) {
+                stats.put(flowKey(ln), ln.treeNode.info.stat);
+            }
+            StatInfo in = resolveStatInfo(ln);
+            if (in != null) {
+                stats.put(flowKey(ln) + ">", in);
+            }
+        }
+        flow.update(stats);
+    }
+
+    /** The cells of an arrow as drawn by {@link #drawArrowPath}, in the order a message goes along them. */
+    private void addFlowArrow(LayoutNode to, int fromCx, int fromRow, int toCx, int toRow) {
+        if (flow == null || to.id == null || fromRow >= toRow) {
+            return;
+        }
+        // a boxed step has the head of the arrow above it; without boxes the line goes on to the mark of the step
+        int end = density.boxed() ? toRow - 1 : toRow;
+        List<int[]> cells = new ArrayList<>();
+        if (fromCx == toCx) {
+            for (int r = fromRow; r < end; r++) {
+                cells.add(new int[] { r, fromCx });
+            }
+        } else {
+            int midRow = fromRow + (toRow - fromRow) / 2;
+            for (int r = fromRow; r < midRow; r++) {
+                cells.add(new int[] { r, fromCx });
+            }
+            int step = toCx > fromCx ? 1 : -1;
+            for (int c = fromCx; c != toCx + step; c += step) {
+                cells.add(new int[] { midRow, c });
+            }
+            for (int r = midRow + 1; r < end; r++) {
+                cells.add(new int[] { r, toCx });
+            }
+        }
+        int[] head = density.boxed() ? new int[] { toRow - 1, toCx } : null;
+        flowArrows.add(new FlowArrow(flowKey(to) + ">", fromRow, cells, head));
+    }
+
+    /** The dots on an arrow that messages go along, red when most of them fail. */
+    private void drawFlowDots(Buffer buffer, Rect area, FlowArrow arrow) {
+        FlowAnimation.Track t = flow.get(arrow.key());
+        if (t == null || t.rate() <= 0) {
+            return;
+        }
+        int spacing = FlowAnimation.spacing(t.rate());
+        long moved = (long) Math.floor(t.phase());
+        // the foreground of the theme: the dots are lights on the lines, whatever the colours of the steps are
+        Color head = t.failRate() * 2 > t.rate() ? failColor() : Theme.baseFg();
+        Color tail = mix(head, Theme.muted().fg().orElse(Color.GRAY), 0.5);
+        List<int[]> cells = arrow.cells();
+        // without boxes a dot would look like the mark of a step: the line itself lights up there
+        char dot = density.boxed() ? '●' : LIT;
+        char trail = density.boxed() ? '•' : LIT;
+        // the head last: an arrow of a compact route is only its head, which then lights up as the dots come by
+        int last = arrow.head() != null ? cells.size() : cells.size() - 1;
+        for (int i = 0; i <= last; i++) {
+            // counted from the top of the diagram: below a box the dots go on at the same pace
+            if (Math.floorMod(arrow.fromRow() + i - moved, spacing) == 0) {
+                if (i == cells.size()) {
+                    flowDot(buffer, area, arrow.head(), ARROW, Style.EMPTY.fg(head).bold(), true);
+                } else {
+                    flowDot(buffer, area, cells.get(i), dot,
+                            density.boxed() ? Style.EMPTY.fg(head) : Style.EMPTY.fg(head).bold(), false);
+                }
+                if (i > 0) {
+                    flowDot(buffer, area, cells.get(i - 1), trail, Style.EMPTY.fg(tail), false);
+                }
+            }
+        }
+    }
+
+    /**
+     * A dot on a line of an arrow, or its head lit up: a count, a label or the frame of a block on the way stays.
+     */
+    private void flowDot(Buffer buffer, Rect area, int[] cell, char ch, Style style, boolean onHead) {
+        int x = area.x() + cell[1] - scrollX;
+        int y = area.y() + cell[0] - scrollY;
+        if (x < area.left() || x >= area.right() || y < area.top() || y >= area.bottom()) {
+            return;
+        }
+        String existing = buffer.get(x, y).symbol();
+        // a head on the line of a branch (compact) is the head of that arrow, not a cell of its line
+        if (onHead
+                ? !existing.equals(String.valueOf(ARROW))
+                : !existing.isEmpty() && (Character.isLetterOrDigit(existing.codePointAt(0))
+                        || existing.charAt(0) == SCOPE_H || existing.charAt(0) == SCOPE_V
+                        || existing.charAt(0) == ARROW)) {
+            return;
+        }
+        if (ch == LIT && existing.isBlank()) {
+            return;
+        }
+        buffer.setString(x, y, ch == LIT ? existing : String.valueOf(ch), style);
+    }
+
+    /**
+     * The colour of a step of the overview as the light of the messages into it passes over it, at the pace of the dots
+     * on the lines of the other zoom levels: the steps of a busy path light up one after another.
+     */
+    private Color lit(Color base, LayoutNode node, int row) {
+        FlowAnimation.Track t = flow != null && node.id != null ? flow.get(flowKey(node) + ">") : null;
+        if (t == null || t.rate() <= 0) {
+            return base;
+        }
+        int spacing = FlowAnimation.spacing(t.rate());
+        int at = Math.floorMod(row - (long) Math.floor(t.phase()), spacing);
+        Color light = t.failRate() * 2 > t.rate() ? failColor() : Theme.baseFg();
+        if (at == 0) {
+            return mix(base, light, 0.7);
+        }
+        return at == spacing - 1 ? mix(base, light, 0.35) : base;
+    }
+
+    /** The colour between two colours, {@code t} of the way from the first. */
+    static Color mix(Color from, Color to, double t) {
+        if (t <= 0) {
+            return from;
+        }
+        try {
+            Color.Rgb a = from.toRgb();
+            Color.Rgb b = to.toRgb();
+            return Color.rgb(
+                    a.r() + (int) Math.round((b.r() - a.r()) * t),
+                    a.g() + (int) Math.round((b.g() - a.g()) * t),
+                    a.b() + (int) Math.round((b.b() - a.b()) * t));
+        } catch (RuntimeException e) {
+            // a colour without RGB (the default of the terminal)
+            return t < 0.5 ? from : to;
+        }
+    }
+
+    /**
+     * The text in the top border of a step where exchanges wait with none finishing: a spinner, how many, and how long;
+     * or null. A step with steps inside it (a choice, a split) waits for them, so only the step itself has it.
+     */
+    private String stuckText(LayoutNode node) {
+        if (flow == null || node.id == null || node.treeNode == null || "from".equals(node.type)
+                || !node.treeNode.children.isEmpty()) {
+            return null;
+        }
+        FlowAnimation.Track t = flow.get(flowKey(node));
+        long waited = flow.stuckMillis(t);
+        if (waited < 0) {
+            return null;
+        }
+        char spin = SPINNER.charAt((int) (flow.now() / 100 % SPINNER.length()));
+        // since the step last finished an exchange, as the integration says; the time the diagram has watched it else
+        StatInfo stat = node.treeNode.info.stat;
+        String age;
+        if (stat != null && stat.lastCompletedExchangeTimestamp > 0) {
+            age = duration(Math.max(waited, System.currentTimeMillis() - stat.lastCompletedExchangeTimestamp));
+        } else if (stat != null && stat.exchangesTotal == 0) {
+            age = "none done";
+        } else {
+            age = duration(waited);
+        }
+        String head = " " + spin + " ";
+        for (String text : List.of(head + t.inflight() + " inflight · " + age + " ",
+                head + t.inflight() + " · " + age + " ", head + age + " ")) {
+            if (CharWidth.of(text) <= boxWidth - 5) {
+                return text;
+            }
+        }
+        return null;
+    }
+
+    private static String duration(long millis) {
+        if (millis < 60_000) {
+            return millis / 1000 + "s";
+        }
+        return millis < 3_600_000 ? millis / 60_000 + "m" : millis / 3_600_000 + "h";
     }
 
     private void setChar(Buffer buffer, Rect area, int gridRow, int gridCol, char ch, Style style) {
