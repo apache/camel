@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.camel.dsl.jbang.run.RunPipeline;
 import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
 import org.apache.camel.dsl.jbang.run.common.MavenResolver;
@@ -173,8 +174,9 @@ public class ProjectExporter {
         try {
             verifyExportFiles(request.files);
         } catch (FileNotFoundException ex) {
-            printer().println(ex.getMessage());
-            return 1;
+            // as camel run: on stderr, and exit 66; it was on stdout, with exit 1 (CAMEL-26931)
+            printer().printErr(ex.getMessage());
+            return RunPipeline.FILE_NOT_FOUND;
         }
 
         ExportRequest copy = new ExportRequest(request);

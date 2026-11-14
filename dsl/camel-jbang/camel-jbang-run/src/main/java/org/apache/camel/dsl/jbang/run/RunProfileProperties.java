@@ -165,28 +165,39 @@ public final class RunProfileProperties {
     }
 
     /**
-     * Configures the request with what the properties of a file set, as camel run does with its options.
+     * Configures the request with what the properties of a file set, as camel run does with its options. An option
+     * given on the command line wins over the file (CAMEL-26930).
      */
     public static void applyTo(RunRequest request, Properties properties) {
         request.mavenResolver = MavenResolver.of(properties, request.mavenResolver);
-        request.mavenSettings = properties.getProperty(MAVEN_SETTINGS, request.mavenSettings);
-        request.mavenSettingsSecurity = properties.getProperty(MAVEN_SETTINGS_SECURITY, request.mavenSettingsSecurity);
-        request.mavenCentralEnabled = "true"
-                .equals(properties.getProperty(MAVEN_CENTRAL_ENABLED, request.mavenCentralEnabled ? "true" : "false"));
-        request.mavenApacheSnapshotEnabled = "true".equals(properties.getProperty(MAVEN_APACHE_SNAPSHOTS,
-                request.mavenApacheSnapshotEnabled ? "true" : "false"));
-        request.openapi = properties.getProperty(OPEN_API, request.openapi);
-        request.packageScanJars
-                = "true".equals(properties.getProperty(PACKAGE_SCAN_JARS, request.packageScanJars ? "true" : "false"));
-        request.camelVersion = properties.getProperty(CAMEL_VERSION, request.camelVersion);
-        request.kameletsVersion = properties.getProperty(KAMELETS_VERSION, request.kameletsVersion);
+        request.mavenSettings = value(request, "maven-settings", properties, MAVEN_SETTINGS, request.mavenSettings);
+        request.mavenSettingsSecurity = value(request, "maven-settings-security", properties, MAVEN_SETTINGS_SECURITY,
+                request.mavenSettingsSecurity);
+        request.mavenCentralEnabled = "true".equals(value(request, "maven-central-enabled", properties,
+                MAVEN_CENTRAL_ENABLED, request.mavenCentralEnabled ? "true" : "false"));
+        request.mavenApacheSnapshotEnabled = "true".equals(value(request, "maven-apache-snapshot-enabled", properties,
+                MAVEN_APACHE_SNAPSHOTS, request.mavenApacheSnapshotEnabled ? "true" : "false"));
+        request.openapi = value(request, "open-api", properties, OPEN_API, request.openapi);
+        request.packageScanJars = "true".equals(value(request, "package-scan-jars", properties, PACKAGE_SCAN_JARS,
+                request.packageScanJars ? "true" : "false"));
+        request.camelVersion = value(request, "camel-version", properties, CAMEL_VERSION, request.camelVersion);
+        request.kameletsVersion = value(request, "kamelets-version", properties, KAMELETS_VERSION, request.kameletsVersion);
         request.springBootVersion = properties.getProperty(SPRING_BOOT_VERSION, request.springBootVersion);
-        request.javaVersion = properties.getProperty(JAVA_VERSION, request.javaVersion);
+        request.javaVersion = value(request, "java-version", properties, JAVA_VERSION, request.javaVersion);
         request.quarkusPlatform = QuarkusPlatform.of(properties,
                 request.quarkusPlatform != null ? request.quarkusPlatform : new QuarkusPlatform());
-        request.gav = properties.getProperty(GAV, request.gav);
-        request.stub = properties.getProperty(STUB, request.stub);
-        request.dataDir = properties.getProperty(DATA_DIR, request.dataDir);
-        request.excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(properties, EXCLUDES, request.excludes);
+        request.gav = value(request, "gav", properties, GAV, request.gav);
+        request.stub = value(request, "stub", properties, STUB, request.stub);
+        request.dataDir = value(request, "data-dir", properties, DATA_DIR, request.dataDir);
+        if (!request.given("exclude")) {
+            request.excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(properties, EXCLUDES, request.excludes);
+        }
+    }
+
+    /**
+     * The value of the option when it is given on the command line, else the value of the file, else the default.
+     */
+    private static String value(RunRequest request, String option, Properties properties, String key, String value) {
+        return request.given(option) ? value : properties.getProperty(key, value);
     }
 }

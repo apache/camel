@@ -47,6 +47,8 @@ camel.main.routesIncludePattern=file:src/test/resources/golden/options/hello.cam
 camel.server.enabled=true
 
 # override properties
+camel.jbang.console=true
+camel.jbang.gav=com.acme:golden:2.0
 camel.management.port=9191
 camel.metrics.logMetricsOnShutdown=false
 camel.server.port=8181
