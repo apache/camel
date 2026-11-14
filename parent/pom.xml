@@ -538,7 +538,7 @@
         <tahu-version>1.0.21</tahu-version>
         <tamboui-version>0.7.0</tamboui-version>
         <testcontainers-version>2.0.5</testcontainers-version>
-        <thymeleaf-version>3.1.5.RELEASE</thymeleaf-version>
+        <thymeleaf-version>3.1.6.RELEASE</thymeleaf-version>
         <tika-version>4.1.0</tika-version>
         <twilio-version>13.1.0</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
