@@ -31,6 +31,12 @@ final class HealthHistory {
     static final byte UNKNOWN = -1;
     static final byte READY = 1;
     static final byte LIVE = 2;
+    /**
+     * The most seconds between two reads that say the same that are taken to have said it too. The TUI reads about once
+     * a second while a diagram is on screen, a little over a second apart, so now and then a second has no read of its
+     * own: a gap in the strip that was never a change.
+     */
+    static final int BRIDGED_SECONDS = 2;
 
     // per pid: a ring of the last SECONDS seconds, and the second its last value is of
     private final Map<String, Ring> rings = new ConcurrentHashMap<>();
@@ -56,9 +62,12 @@ final class HealthHistory {
         Ring ring = rings.computeIfAbsent(info.pid, k -> new Ring());
         synchronized (ring) {
             if (ring.last >= 0 && second > ring.last) {
-                // the seconds in between were not read: not known
+                // the seconds in between were not read: not known, unless only a second or two between two reads
+                // that say the same
+                byte before = ring.values[(int) (ring.last % SECONDS)];
+                byte between = second - ring.last - 1 <= BRIDGED_SECONDS && before == value ? value : UNKNOWN;
                 for (long s = ring.last + 1; s < second && s <= ring.last + SECONDS; s++) {
-                    ring.values[(int) (s % SECONDS)] = UNKNOWN;
+                    ring.values[(int) (s % SECONDS)] = between;
                 }
             }
             if (second >= ring.last) {
