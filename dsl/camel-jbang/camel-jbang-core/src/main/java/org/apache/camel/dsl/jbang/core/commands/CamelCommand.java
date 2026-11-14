@@ -337,6 +337,22 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
         return printsToConsole() && AnsiConsole.out().getMode() == AnsiMode.Strip;
     }
 
+    /**
+     * Whether the command prints in colors: as --logging-color says when it is given, else only when it prints to a
+     * terminal, as the default of the option is colors. In a file or a pipe, which an AI agent or a script reads, the
+     * ANSI codes of the colors are noise (CAMEL-26929). A command that prints to another printer than the console keeps
+     * its option.
+     *
+     * @param  loggingColor the --logging-color option
+     * @return              whether to print in colors
+     */
+    protected boolean colorOutput(boolean loggingColor) {
+        if (!loggingColor || isOptionGiven("--logging-color")) {
+            return loggingColor;
+        }
+        return !printsToConsole() || EnvironmentHelper.hasTerminal();
+    }
+
     private boolean printsToConsole() {
         return printer() instanceof Printer.SystemOutPrinter && !EnvironmentHelper.isEmbedded();
     }

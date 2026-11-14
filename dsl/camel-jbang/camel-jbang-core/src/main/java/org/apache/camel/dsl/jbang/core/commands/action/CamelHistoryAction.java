@@ -159,6 +159,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // no ANSI codes of colors in a file or a pipe, unless --logging-color is given
+        loggingColor = colorOutput(loggingColor);
         if (it) {
             // cannot run in watch mode for interactive
             watch = false;

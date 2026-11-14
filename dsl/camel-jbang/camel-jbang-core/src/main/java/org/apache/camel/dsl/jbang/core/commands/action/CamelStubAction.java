@@ -122,6 +122,8 @@ public class CamelStubAction extends ActionWatchCommand {
 
     @Override
     protected Integer doWatchCall() throws Exception {
+        // no ANSI codes of colors in a file or a pipe, unless --logging-color is given
+        loggingColor = colorOutput(loggingColor);
         // setup table helper
         tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);
