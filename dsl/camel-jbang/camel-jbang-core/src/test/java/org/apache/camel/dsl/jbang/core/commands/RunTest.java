@@ -334,6 +334,20 @@ class RunTest extends CamelCommandBaseTestSupport {
         assertThat(pb.environment()).containsEntry(Run.SPAWNED_RUN, "true");
     }
 
+    @Test
+    void theBackgroundAndDebugOptionsGivenOnTheCommandLineWinOverTheProperties() {
+        Run command = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(command, "--background-wait=1000", "--jvm-debug=5005", "route.yaml");
+        command.spawned = false;
+
+        command.applyProfileProperties(command.toRunRequest(null), backgroundAndDebugProperties());
+
+        assertThat(command.backgroundWait).isEqualTo(1000);
+        assertThat(command.jvmDebugPort).isEqualTo(5005);
+        // not given: the file
+        assertThat(command.background).isTrue();
+    }
+
     private static Properties backgroundAndDebugProperties() {
         Properties properties = new Properties();
         properties.setProperty("camel.jbang.background", "true");

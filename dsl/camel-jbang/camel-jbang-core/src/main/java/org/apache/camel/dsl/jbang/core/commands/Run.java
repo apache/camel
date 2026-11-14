@@ -1168,12 +1168,17 @@ public class Run extends CamelCommand implements CommandLifecycle {
             // a JVM this command started runs the integration itself: the properties must not make it start
             // another JVM, in the background or with a debugger, and that one another, without end
             if (!spawned) {
-                background = "true".equals(answer.getProperty(BACKGROUND, background ? "true" : "false"));
+                // and an option given on the command line wins over the file
+                if (!request.given("background")) {
+                    background = "true".equals(answer.getProperty(BACKGROUND, background ? "true" : "false"));
+                }
                 String wait = answer.getProperty(BACKGROUND_WAIT);
-                if (wait != null) {
+                if (wait != null && !request.given("background-wait")) {
                     backgroundWait = BackgroundWait.parse(wait);
                 }
-                jvmDebugPort = parseJvmDebugPort(answer.getProperty(JVM_DEBUG, Integer.toString(jvmDebugPort)));
+                if (!request.given("jvm-debug")) {
+                    jvmDebugPort = parseJvmDebugPort(answer.getProperty(JVM_DEBUG, Integer.toString(jvmDebugPort)));
+                }
             }
         }
         // what this command reads itself to run in another JVM (with another Camel version)
