@@ -2747,6 +2747,10 @@ A script that checks the exit code of a command must take these changes into acc
   cannot be generated and `70` for an unexpected error, instead of `4`, `2`, `3` and `4`.
 * `camel transform dataweave` exits with `2` without `--input` or `--expression`, and with `66` when the input path does
   not exist or holds no `.dwl` files, instead of `1`.
+* `camel cmd send --timeout` bounds the send in the integration: a send that does not complete in time is `Timeout`
+  with exit `124`, and the exchange goes on in the integration. Before, it only bounded how long the CLI waited, and a
+  timeout below 5 seconds was raised to 5 seconds. A send to a `direct` endpoint that no route consumes fails at once
+  with "No consumers available" and exit `1`, instead of waiting 30 seconds for a consumer.
 * `camel cmd sql` exits with `124` instead of `1` when the query does not answer in time.
 * A source file of `camel cmd route-diagram`, `camel cmd route-structure` and `camel cmd route-topology` that does not
   exist exits with `66` instead of `1`. The parts of a Java route the parser could not read are printed as a warning on
