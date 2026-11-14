@@ -30,7 +30,7 @@ ticket is shared, so leave it unassigned.
   It appears in one-line places, such as the component list on the website. The build keeps the Javadoc only up to the
   first line that ends with a period.
 - Change only description text: no option names, default values, labels or types. If you find such a problem, for
-  example a wrong label, report it in the pull request description, so that the reviewers can decide how to fix it.
+  example a wrong label, report it in the pull request description. The reviewers can then decide how to fix it.
 
 ## Regenerating the files
 
