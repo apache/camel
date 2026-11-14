@@ -1095,15 +1095,15 @@ xref:next@components:others:chaos.adoc#_chaos_in_a_pipeline[Chaos in a pipeline]
 
 With xref:next@components:others:sanitizer.adoc[camel-sanitizer] (`camel run --sanitizer`), a running integration
 reports where the processors of its routes break the contract of `AsyncProcessor`, such as a callback called twice or a
-processor that throws instead of calling its callback (rule R1), and warns about a step whose callback has not come
-(still pending). With `camel.sanitizer.checks=callback,commit` it also reports where the commit of a consumer runs
-twice, never, or with the outcome of another exchange (rule R2, which is on by default only in tests, as it costs more
-per message):
+processor that throws instead of calling its callback (rule R1), or one that returns a value other than the one its
+callback is called with (rule R3), and warns about a step whose callback has not come (still pending). With
+`camel.sanitizer.checks=callback,commit,threads` it also reports where the commit of a consumer runs twice, never, or
+with the outcome of another exchange (rule R2, which is on by default only in tests, as it costs more per message):
 
 [source,bash]
 ----
 camel run * --sanitizer
-camel run * --sanitizer --prop camel.sanitizer.checks=callback,commit
+camel run * --sanitizer --prop camel.sanitizer.checks=callback,commit,threads
 camel get sanitizer
 camel get sanitizer myapp --report
 ----

@@ -11,7 +11,8 @@
 
 The `camel-sanitizer` module is a checker for development and tests. It watches the calls of the steps of the routes
 of a running Camel application and reports, when it happens, that a processor breaks the contract of `AsyncProcessor`
-(a callback called twice, or a processor that throws instead of calling its callback), or that the commit of a consumer
+(a callback called twice, a processor that throws instead of calling its callback, or one that returns a value other
+than the one its callback is called with), or that the commit of a consumer
 runs twice, never, or with the outcome of another exchange. It also warns about a step whose callback has not come. It
 checks the code of Camel users as much as Camel's own: a custom `AsyncProcessor`, the producer or the consumer of a
 custom component, a bean. A test that runs a broken path fails with a report that names the step and the class.
@@ -32,7 +33,7 @@ Add the `camel-sanitizer` dependency, in test scope for tests (see <<_in_a_test,
 
 == The rules it checks
 
-The sanitizer checks two rules in this version.
+The sanitizer checks three rules in this version: R1, R2, and the first part of R3.
 
 === R1: the callback of a step is called exactly once
 
@@ -154,12 +155,12 @@ race between parts that is not synchronized otherwise. To hunt races between the
 `camel.sanitizer.pendingTimeout=0`: the other checks of R1 stay on, and the table and its lock are not used. R2 takes
 one lock of its records of the context when an exchange or a part gets its unit of work, at each add, handover and run
 of an on completion, and when an exchange is done; in a test, where R2 is on by default, set
-`camel.sanitizer.checks=callback` as well to leave that out too.
+`camel.sanitizer.checks=callback,threads` as well to leave that out too.
 
 === R2: each consumer commit runs exactly once, for the unit of work that owns it
 
 R2 is checked by default only in a test (a CamelContext built on a thread the JUnit extension marked); elsewhere, such
-as with `camel run` or profile `dev`, `camel.sanitizer.checks=callback,commit` turns it on.
+as with `camel run` or profile `dev`, `camel.sanitizer.checks=callback,commit,threads` turns it on.
 
 A _commit_ is the on completion (`Synchronization`) that a consumer adds to the exchange before it routes it
 (`exchange.getExchangeExtension().addOnCompletion(...)`), to commit or roll back its message when the exchange is done,
@@ -229,6 +230,62 @@ pending warning uses too (one notifier for both, added when either is on).
 With `camel.sanitizer.checks=commit` only, the step listener is still installed (each step is still wrapped, and the
 report still counts the calls of steps), so a report of R2 can name the step that handed a commit over.
 
+=== R3: one thread at a time
+
+An exchange can move between threads, but it is never used by two threads at the same time. This version checks the
+first part of the rule: the contract of `AsyncProcessor` at the call of each step. The value the callback of a call is
+called with (`doneSync`) must be the value `process(exchange, callback)` returns, and `true` means that the callback
+was called already, on the calling thread. A caller that uses the return value
+continues the exchange when `process` returns `true`, and leaves it to the callback when it returns `false`; a
+processor that returns the other value lets two threads continue the same exchange, or none. Most callers in Camel go
+on through the callback and do not use the return value, so in a route the mismatch is usually harmless today; it still
+breaks the contract, and the same processor breaks under a caller that uses it. It reports:
+
+* *process returned true, and its callback was called on another thread* (`RETURNED_TRUE_CALLBACK_ON_OTHER_THREAD`):
+the processor handed the exchange to another thread, which called the callback, and then returned `true` as if it had
+done the work itself (such as a processor that waits for its worker). With `false` the caller and that thread can both
+continue the exchange; with `true` that thread continued it while `process` still ran. The report has the thread and
+stack of the callback, and the return.
+* *process returned true before its callback was called* (`RETURNED_TRUE_BEFORE_CALLBACK`): `process` returned `true`,
+and the callback then came on another thread, or with `true`. The caller went on before the work of the processor was
+done.
+* *process returned false, and its callback was called with true* (`RETURNED_FALSE_CALLBACK_TRUE`): in either order,
+on any thread.
+
+The contract allows one case where the two values differ, and it is not reported: a processor that hands its callback
+to the reactive executor returns the value of the processor it calls, and the reactive executor then calls the callback
+with `false` on the calling thread, at once or after the work that thread is running. The channel of a step without an
+error handler does this, so a step that calls such a channel directly sees it: for example a `choice` whose branch has
+one step, in a route with `noErrorHandler()`.
+So a callback with `false` on the thread that called `process` is never reported, whatever `process` returns and whether it comes before or after the return. The check relies on the
+default reactive executor of camel-core, which runs a callback on the thread that scheduled it.
+
+Only the first call of the callback is compared (a second call is R1), and a call whose `process` threw is not
+compared (R1 reports it). The check is at the processor of each step, below its error handler, as R1 is; the channel of
+a step always continues the exchange through the reactive executor, so the value it returns itself says nothing and is
+not checked. It costs little: a small record per call, and a stack only for a callback on another thread before the
+return, or when a violation is reported. It is on by default, also with profile `dev`.
+
+A report of R3 looks like this:
+
+[source,text]
+----
+Exchange sanitizer: process returned true, and its callback was called on another thread (R3)
+  exchange 5A1B...-0000000000000001, route prices, step lookup, processor com.acme.PriceLookup
+  the callback was called with false: thread price-worker-2
+      at com.acme.PriceLookup.lambda$process$0(PriceLookup.java:38)
+      ...
+  then process returned true: thread Camel (camel-1) thread #3 - timer://prices
+      at org.apache.camel.support.StepHelper.process(StepHelper.java:63)
+      at org.apache.camel.processor.errorhandler.RedeliveryErrorHandler.processOutput(RedeliveryErrorHandler.java:266)
+      ...
+  process(exchange, callback) must return the value its callback is called with (see AsyncProcessor).
+  Usual fix: when the work goes on another thread, return false from process and let that thread call the callback with false; return true only after the callback was called with true on the calling thread.
+----
+
+The second part of R3, a short watch window at sampled points where a thread waits for another one that uses the same
+exchange, is not in this version.
+
 == Switching it on
 
 With the `camel-sanitizer` JAR on the classpath, the sanitizer is switched on with profile `dev`, with
@@ -260,22 +317,22 @@ and the sanitizer is not tested with Camel Quarkus yet.
 == In development
 
 `camel run --sanitizer` adds the dependency; with profile `dev`, the default of `camel run`, the sanitizer is on and
-checks R1. R2 is on by default only in a test, as it costs more per message (see the `checks` option);
-`camel.sanitizer.checks=callback,commit` turns it on in the run too. Violations are logged at WARN when they happen,
+checks R1 and R3. R2 is on by default only in a test, as it costs more per message (see the `checks` option);
+`camel.sanitizer.checks=callback,commit,threads` turns it on in the run too. Violations are logged at WARN when they happen,
 and the report is also in the `sanitizer` developer console and in the Camel CLI:
 
 [source,bash]
 ----
 camel run * --sanitizer
-camel run * --sanitizer --prop camel.sanitizer.checks=callback,commit
+camel run * --sanitizer --prop camel.sanitizer.checks=callback,commit,threads
 camel get sanitizer
 camel get sanitizer myapp --report
 ----
 
-`camel get sanitizer` lists the violations of the running integrations with their rule (R1 or R2), kind, route, step,
+`camel get sanitizer` lists the violations of the running integrations with their rule (R1, R2 or R3), kind, route, step,
 processor and exchange (for R2 the processor column is the class of the commit, and the step is the one that ran where
 it was found, if any); `--report` shows the counts per rule and per kind, the commits followed (with R2; without it,
-the report says that R2 is not checked), each violation with its threads and stacks, and the still pending warnings
+the report says that R2 is not checked, and likewise for R3), each violation with its threads and stacks, and the still pending warnings
 (`--json` for both). An integration with still pending warnings and no violation is named on stderr.
 
 With the debugger on (`camel debug --sanitizer`, or `camel.debug.enabled=true`), `camel run` sets
@@ -285,7 +342,8 @@ callbacks still pending. The other checks stay on.
 
 The `sanitizer` developer console only reads. Its option `report` (default `true`) says whether the JSON has the full
 report of each violation and the still pending warnings; `camel get sanitizer` asks without them for its table. In JSON
-it has `enabled` (and the `reason` when it is off), `calls` (the calls of steps checked), `commits` (the commits
+it has `enabled` (and the `reason` when it is off), `checks` (the checks that run, as in `camel.sanitizer.checks`),
+`calls` (the calls of steps checked), `commits` (the commits
 followed, with R2), `total` (the violations reported, also those past the first 1000 that are counted but not listed),
 `rules` and `kinds` (the counts per rule and per kind), `violations` (each with its rule, kind, route, step, processor,
 exchange id and, with `report`, its full report), and, with the still pending warning on, `pendingCalls` (the calls
@@ -305,8 +363,8 @@ The options are read from the properties component, and are camel-main options (
 
 |`camel.sanitizer.enabled` |`false` (`true` with profile `dev` or `@CamelSanitizer`) |Install the sanitizer. Ignored
 with profile `prod`.
-|`camel.sanitizer.checks` |`callback` (`callback,commit` in a test) |The checks to run, separated by commas:
-`callback` (R1) and `commit` (R2); `none` installs nothing, and an empty value is the default. An unknown check stops
+|`camel.sanitizer.checks` |`callback,threads` (`callback,commit,threads` in a test) |The checks to run, separated by
+commas: `callback` (R1), `commit` (R2) and `threads` (R3); `none` installs nothing, and an empty value is the default. An unknown check stops
 the application from starting. R2 is on by default only for a CamelContext built on a thread the JUnit extension
 marked (a test with `@CamelSanitizer`, or the CI switch): it costs more per message than R1, and its records take one
 lock for the whole context.
@@ -314,7 +372,7 @@ lock for the whole context.
 thread, which costs least.
 |`camel.sanitizer.pendingTimeout` |`60s` |How long an exchange waits, with nothing happening in it, before its
 innermost pending call is reported as still pending (a warning, which never fails a test), such as `60s` or `500`
-(milliseconds). `0` turns the warning off; use it, with `checks=callback`, when hunting races between the parts of a
+(milliseconds). `0` turns the warning off; use it, with `checks=callback,threads`, when hunting races between the parts of a
 parallel split, which share one lock of the table (and of the records of R2). It needs the `callback` check (R1): with
 `commit` only there is no warning.
 |`camel.sanitizer.reportOnShutdown` |`true` |Log the report when the context stops, if there was a violation or a still

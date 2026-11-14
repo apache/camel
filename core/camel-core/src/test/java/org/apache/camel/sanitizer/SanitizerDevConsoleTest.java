@@ -104,7 +104,7 @@ class SanitizerDevConsoleTest extends ContextTestSupport {
         assertEquals(true, json.get("enabled"));
         assertTrue(json.getLong("calls") >= 2, json::toJson);
         assertEquals(1L, json.getLong("total"));
-        assertEquals(Map.of("R1", 1L, "R2", 0L), json.getMap("rules"));
+        assertEquals(Map.of("R1", 1L, "R2", 0L, "R3", 0L), json.getMap("rules"));
         JsonObject kinds = json.getMap("kinds");
         // every kind, also those not reported
         assertEquals(Violation.values().length, kinds.size());
@@ -158,8 +158,10 @@ class SanitizerDevConsoleTest extends ContextTestSupport {
 
         assertEquals(true, json.get("enabled"));
         assertEquals(0L, json.getLong("total"));
-        assertEquals(Map.of("R1", 0L, "R2", 0L), json.getMap("rules"));
+        assertEquals(Map.of("R1", 0L, "R2", 0L, "R3", 0L), json.getMap("rules"));
         assertEquals(List.of(), json.get("violations"));
+        // all three rules run in a test
+        assertEquals(List.of("callback", "commit", "threads"), json.get("checks"));
         // R2 (on by default in a test) and the still pending warning are on
         assertNotNull(json.getLong("commits"), json::toJson);
         assertEquals(0L, json.getLong("pendingCalls"));
@@ -179,7 +181,7 @@ class SanitizerDevConsoleTest extends ContextTestSupport {
 
         JsonObject json = (JsonObject) console().call(DevConsole.MediaType.JSON);
 
-        assertEquals(Map.of("R1", 0L, "R2", 1L), json.getMap("rules"));
+        assertEquals(Map.of("R1", 0L, "R2", 1L, "R3", 0L), json.getMap("rules"));
         JsonObject kinds = json.getMap("kinds");
         assertEquals(1L, kinds.getLong("COMMIT_NEVER_RUN"));
         assertTrue(json.getLong("commits") >= 1, json::toJson);
@@ -277,9 +279,9 @@ class SanitizerDevConsoleTest extends ContextTestSupport {
     }
 
     @Test
-    void withProfileDevOutsideATestOnlyR1() throws Exception {
-        // as with camel run --sanitizer: profile dev, on a thread the extension did not mark, so the checks are R1 only
-        // (callback, the default outside a test) and the console has no commits
+    void withProfileDevOutsideATestR1AndR3() throws Exception {
+        // as with camel run --sanitizer: profile dev, on a thread the extension did not mark, so the checks are R1 and
+        // R3 (callback,threads, the default outside a test) and the console has no commits
         ExecutorService builder = Executors.newSingleThreadExecutor();
         CamelContext dev = builder.submit(() -> {
             CamelContext c = new DefaultCamelContext();
@@ -291,7 +293,8 @@ class SanitizerDevConsoleTest extends ContextTestSupport {
             JsonObject json = (JsonObject) resolve(dev).call(DevConsole.MediaType.JSON);
             assertEquals(true, json.get("enabled"), json::toJson);
             assertFalse(json.containsKey("commits"), json::toJson);
-            assertEquals(Map.of("R1", 0L, "R2", 0L), json.getMap("rules"));
+            assertEquals(List.of("callback", "threads"), json.get("checks"));
+            assertEquals(Map.of("R1", 0L, "R2", 0L, "R3", 0L), json.getMap("rules"));
             assertEquals(0L, json.getLong("stillPending"));
         } finally {
             dev.stop();
