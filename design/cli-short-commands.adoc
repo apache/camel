@@ -5,10 +5,12 @@ authors:
 reviewers: []
 approvers: []
 creation-date: 2026-11-13
-last-updated: 2026-11-13
+last-updated: 2026-11-14
 status: proposed
 see-also:
   - "CAMEL-26942"
+  - "CAMEL-26961"
+  - "CAMEL-26960"
   - "CAMEL-26935"
   - "CAMEL-26937"
   - "CAMEL-26938"
@@ -38,8 +40,11 @@ against 10-40 ms estimated), for a fraction of the build and release work.
 The seconds a daemon saves are small next to the turns of the model. The reason to build it is that a command that
 answers at once can be called after every step. An agent makes fewer mistakes when it validates after every edit, looks
 an option up with `camel doc` instead of guessing it, and checks `camel status` after every reload. Speed alone
-does not make an agent do that, it has to be told (see the motivation), but speed makes it cheap to do. With the Java
-client the daemon answers in 50-65 ms, under the 0.1 s at which a response feels instant, like a native command.
+does not make an agent do that, and telling it to is not enough: in a benchmark with a local model, an instruction to
+check made the model read more, but it checked none of the code it wrote (see the motivation). The checks have to run
+whether the model asks for them or not, for example in a hook of the agent that validates every edited file, and a
+check that runs on every edit is where a fast command pays the most. With the Java client the daemon answers in
+50-65 ms, under the 0.1 s at which a response feels instant, like a native command.
 
 == Motivation
 
@@ -76,6 +81,31 @@ things up by itself. It answered a question that the doc of the file component a
 got it wrong; with a hint in the question it read the doc and got it right. It suggested six options that do not
 exist, and validated nothing in 9 answers. A lookup also costs context: the doc of the file component is 17K
 characters, and three docs in one answer forced a compaction of the history.
+
+Two full runs on the night of 2026-11-13 then asked the same model 53 questions about 5 example apps, 3 times each,
+the second with an instruction at the start of each conversation: look options up with `camel_catalog_doc`, and check
+every snippet with `camel_validate_source` before you answer. Per run of 159 answers, without and with the
+instruction:
+
+- The first question of each conversation, the one with the instruction, was always "what does this app do". The
+  model read more for it (3.9 tool calls per answer instead of 2.1) and passed it 12 of 15 times instead of 8. Most
+  of that gain is one app: in the first run, the model answered from the AI-written summary that the readme tool
+  returned, and left a step out. Since CAMEL-26946 that tool returns the facts of the routes by default.
+- On the questions after it, the instruction faded: 0.10 lookups and no validation per answer. Yet the model wrote
+  2.6 times as much code in all (221 code blocks instead of 84) and validated none of it: its 3 calls of
+  `camel_validate_source`, all on the first question, checked the route file of the app, not a snippet. Options that
+  do not exist went from 6 in 4 answers to 32 in 14, all after the first question, and "how can I make it better"
+  passed 5 of 15 times instead of 12.
+- It cost context and time: 13 compactions of the history instead of 6, and 8.1 s of model time per answer instead
+  of 5.8 s.
+- In all, 128 answers passed instead of 130: 4 more on the first question, 6 fewer on the others.
+
+This is one model and one run each. The changes in code, invented options, compactions and time are well beyond the
+variance between the rounds; most changes in the pass rate of a single question are not.
+
+Telling the model to check made it read more and write more, not check what it wrote. The check of the code in an
+answer has to run whether the model asks for it or not: CAMEL-26960 proposes to mark the mistakes in the code of an
+answer, such as an option that does not exist, in the AI panel and in `camel ask`.
 
 == Goals
 
@@ -326,15 +356,23 @@ daemon or a native front does not serve too, and the start of the daemon itself.
    readiness pushed over the WebSocket transport.
 . Keep the Java client. At 50-65 ms it answers under the 0.1 s at which a response feels instant, so the commands
   already feel native. A native client for the main platforms, with the Java client as the fallback, is optional.
-. Tell the agents. Speed alone does not change how an agent uses the CLI, so what agents read (the Camel CLI pages,
-  the instructions of the MCP server, the system prompt of the AI panel) says that the short commands are cheap to
-  call: look an option up instead of guessing it, asking only for the options needed (the `optionsFilter` of
-  `camel_catalog_doc`) as a whole doc page costs context, and validate every snippet before answering.
+. Tell the agents, and check for them. Speed alone does not change how an agent uses the CLI, so what agents read
+  (the Camel CLI pages, the instructions of the MCP server, the system prompt of the AI panel) says that the short
+  commands are cheap to call: look an option up instead of guessing it, asking only for the options needed (the
+  `optionsFilter` of `camel_catalog_doc`) as a whole doc page costs context. Telling is not enough for the checks:
+  told to validate every snippet, the local model wrote more code and validated none of it (see the motivation). So
+  the checks run without the agent's choice. The AI panel and `camel ask` mark the mistakes in the code of an answer
+  (CAMEL-26960). The MCP server already validates a file before `camel_write_file` writes it. An agent that edits
+  files with its own tools needs a hook that runs `camel validate yaml` on each edited route file, and the Camel CLI
+  pages show one. That hook runs on every edit, so it is where the daemon saves the most.
 . Measure the agents, not only the commands. The local-model benchmark runs in the AI panel of the TUI, whose tools
-  run in the process, so it measures the instruction, not the daemon: run it with and without the instruction, and
-  compare the pass rate, the calls and the invented options per answer, the compactions and the time of the model.
-  The daemon needs a benchmark that drives `camel` through a shell. Make the daemon the default only after a release
-  as opt-in, and when that benchmark shows the gain.
+  run in the process, so it measures the instruction and the checks, not the daemon. It compares the pass rate, the
+  calls and the invented options per answer, the compactions and the time of the model. After the run with the
+  instruction in the first message (see the motivation), next are a run with such a line in the system prompt of
+  the AI panel, which may last past the first question (two jars that differ only in that line), and a run with the
+  marks of CAMEL-26960, which counts the invented options shown without a mark. The daemon needs a benchmark that
+  drives `camel` through a shell. Make the daemon the default only after a release as opt-in, and when that
+  benchmark shows the gain.
 . Do not build the native front. A daemon with a native client is in the same range (21-37 ms measured, against
   10-40 ms estimated), and the native front costs the most: the base classes of the commands change, GraalVM metadata
   must follow every command and option, aesh needs a change, and each release needs a binary per platform, all before
@@ -348,12 +386,14 @@ measure.
 == Related tickets
 
 - CAMEL-26942: this design.
+- CAMEL-26961: the opt-in resident daemon of this design, in its stages.
 - CAMEL-26935: make the Camel CLI faster for AI agents, the parent of the sub-tasks below.
 - CAMEL-26936: `camel run --background` learns at once that Camel has started.
 - CAMEL-26937: faster startup of the short commands (no JLine terminal or log4j when not needed, C1).
 - CAMEL-26938: shorter action polls.
 - CAMEL-26940: a JDK 25 AOT cache instead of a CDS archive per command.
 - CAMEL-26941: `camel status`, the state of an integration in one call.
+- CAMEL-26960: mark the mistakes in the code of AI answers, such as options that do not exist.
 - CAMEL-26913: CLI startup and config (CDS archives shared between installs).
 - CAMEL-25388: the Camel CLI reliable for AI agents and scripts.
 - CAMEL-23810: the port of the CLI to aesh.
