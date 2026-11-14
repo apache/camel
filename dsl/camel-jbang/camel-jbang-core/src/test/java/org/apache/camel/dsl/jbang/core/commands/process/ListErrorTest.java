@@ -79,6 +79,9 @@ class ListErrorTest extends ProcessCommandTestSupport {
         assertThat(errors).hasSize(1);
         JsonObject error = errors.getMap(0);
         assertThat(error.getString("routeId")).isEqualTo("myRoute");
+        // which integration, as in the table (CAMEL-26929)
+        assertThat(error.getLong("pid")).isEqualTo(TEST_PID);
+        assertThat(error.getString("name")).isEqualTo("myApp");
     }
 
     @Test

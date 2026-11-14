@@ -54,7 +54,8 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
             .number("pid", r -> r.pid)
             .text("name", r -> r.name)
             .text("group", r -> r.group)
-            .numeric("age", r -> r.uptime);
+            // the uptime of a route group is how long it runs: the oldest first, as the other listings (CAMEL-26929)
+            .numeric("age", r -> -r.uptime);
 
     public static class PidNameAgeGroupCompletionCandidates extends CompletionCandidates {
 

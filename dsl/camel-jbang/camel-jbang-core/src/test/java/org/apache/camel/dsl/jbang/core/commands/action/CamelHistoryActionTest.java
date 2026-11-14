@@ -30,6 +30,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -68,6 +69,10 @@ class CamelHistoryActionTest extends ActionCommandTestSupport {
 
         assertThat(printer.getOutput()).contains("\"traces\"", "ABCDEFGH-0001")
                 .doesNotContain("Message History of last completed");
+        // which integration, as the other listings say (CAMEL-26929)
+        JsonObject entry = Jsoner.deserialize(printer.getOutput(), (JsonArray) null).getMap(0);
+        assertThat(entry.getLong("pid")).isEqualTo(TEST_PID);
+        assertThat(entry.getString("name")).isEqualTo("myApp");
     }
 
     @Test
