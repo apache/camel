@@ -8702,3 +8702,17 @@ writes the dependency to the exported project.
 the split pages, whose content it does not return in the response, so every content field of the reply was empty. It
 now fails with an `IllegalArgumentException` that names the reason and the way out, `outputFormat=html` to get the
 HTML of the whole document.
+
+=== camel-file - a resume offset past the end of the file now fails the exchange
+
+The file resume support positions the body at the offset recorded for the file. It did that with a single unchecked
+`skip(offset)`, and both `InputStream.skip` and `Reader.skip` are specified to skip *up to* the requested amount, so the
+return value is the only thing that says where the stream actually is. It was discarded.
+
+The reachable case is an offset that no longer fits the file, which is what a recorded offset becomes once the file is
+truncated or replaced: the stream ran to the end and the exchange carried an empty or short body as if that were the
+file's content. The offset is now honoured in full, and an `EOFException` is thrown when the file ends first.
+
+If your offsets can go stale, note that the failing exchange leaves the file in place, so the next poll reads the same
+offset from the resume store and fails again. Clear or reset the recorded offset for that file - or delete the resume
+store entry - to let it be consumed from the start again.
