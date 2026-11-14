@@ -255,8 +255,24 @@ By default only loopback origins are allowed (`localhost`, `127.0.0.1` and `[::1
 client served from another origin must now be listed in the new `camel.server.mcp-allowed-origins` option, for example
 `+camel.server.mcp-allowed-origins = https://app.example.com, http://localhost:*+`. The list replaces the loopback
 default. Scheme and host are compared ignoring case and a default port may be left out; `+*+` and other entries that are
-not of the form `scheme://host[:port]` fail the startup. Stdio mode is not affected, and neither are the Spring Boot and
-Quarkus engines.
+not of the form `scheme://host[:port]` fail the startup. Stdio mode is not affected.
+
+Spring Boot applications using `camel-mcp-server-starter` with Spring AI's
+Streamable HTTP transport also validate the `Origin` header on every request
+(`POST`, the SSE `GET`, and `DELETE`). Requests without an `Origin` header are
+accepted. Requests with an `Origin` header are accepted only when the origin
+matches the allowed list; other origins receive HTTP 403. By default, only
+loopback origins are allowed. Configure `camel.mcp-server.allowed-origins` to
+allow browser clients from other origins, for example:
+
+[source,properties]
+----
+camel.mcp-server.allowed-origins = https://app.example.com, http://localhost:*
+----
+
+The configured list replaces the loopback default. An application-provided
+Spring AI transport provider must configure its own Origin validator. This
+Spring Boot transport change does not affect the Quarkus engine.
 
 
 === camel-oauth - the scp claim is included in scope checks
