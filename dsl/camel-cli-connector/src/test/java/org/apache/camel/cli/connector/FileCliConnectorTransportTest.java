@@ -58,6 +58,7 @@ class FileCliConnectorTransportTest {
     private DefaultCamelContext context;
     private FileCliConnectorTransport transport;
     private final EmptySnapshots snapshots = new EmptySnapshots();
+    private final AtomicInteger listings = new AtomicInteger();
 
     @BeforeEach
     void start() {
@@ -66,7 +67,13 @@ class FileCliConnectorTransportTest {
         dir = home.resolve(".camel").toFile();
 
         context = new DefaultCamelContext();
-        transport = new FileCliConnectorTransport();
+        transport = new FileCliConnectorTransport() {
+            @Override
+            protected File[] listActionFiles(File dir, String prefix) {
+                listings.incrementAndGet();
+                return super.listActionFiles(dir, prefix);
+            }
+        };
         transport.configure(context, FileCliConnectorTransportTest::dispatch, snapshots, () -> {
         });
         transport.start();
@@ -107,7 +114,7 @@ class FileCliConnectorTransportTest {
 
     @Test
     void actionsAreAnsweredBetweenTwoStatusUpdates() {
-        // CAMEL-25447: the status every second, as by default, and the actions looked for about every 100 millis
+        // CAMEL-25447: the status every second, as by default, and the actions looked for about every 20 millis
         transport.updateDelay(1000);
         awaitJson(file(PID + "-status.json"));
         int statuses = snapshots.statuses.get();
@@ -153,6 +160,35 @@ class FileCliConnectorTransportTest {
         assertThat(awaitJson(file(PID + "-output-r1.json"))).containsEntry("value", "42");
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> snapshots.statuses.get() > statuses);
+    }
+
+    @Test
+    void directoryIsOnlyListedBetweenTwoStatusUpdatesWhenAFileIsAdded() {
+        // CAMEL-26938: the actions are looked for about 50 times a second, and listing the directory costs far more
+        // than looking at its modification time
+        transport.updateDelay(1000);
+        awaitSharedActionFileRemoved();
+        int before = listings.get();
+
+        // listed with every status, and after the status is moved in place, which changes the directory
+        await().during(1, TimeUnit.SECONDS).atMost(3, TimeUnit.SECONDS).until(() -> listings.get() - before < 15);
+
+        writeAction(action("result"), "r1");
+        assertThat(awaitJson(file(PID + "-output-r1.json"))).containsEntry("value", "42");
+    }
+
+    @Test
+    void halfWrittenActionIsLookedForAtEveryPoll() throws Exception {
+        transport.updateDelay(1000);
+        awaitSharedActionFileRemoved();
+        File action = writeText("{\"action\":\"res", "r1");
+        int before = listings.get();
+
+        // the rest of it is written in place, which leaves the modification time of the directory as it is
+        await().atMost(1, TimeUnit.SECONDS).until(() -> listings.get() - before >= 10);
+        Files.writeString(action.toPath(), action("result").toJson());
+
+        assertThat(awaitJson(file(PID + "-output-r1.json"))).containsEntry("value", "42");
     }
 
     @Test
@@ -356,12 +392,18 @@ class FileCliConnectorTransportTest {
     }
 
     private void writeAction(JsonObject action, String requestId) {
-        String name = requestId != null ? PID + "-action-" + requestId + ".json" : PID + "-action.json";
         if (requestId == null) {
-            // the connector creates an empty shared action file on start, and removes it a little later
-            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(file(name)).doesNotExist());
+            awaitSharedActionFileRemoved();
         }
         writeText(action.toJson(), requestId);
+    }
+
+    /**
+     * The connector creates an empty shared action file on start, and removes it a little later. Until then it lists
+     * the directory at every poll, as a Camel CLI before 4.21 writes its action in that file, in place.
+     */
+    private void awaitSharedActionFileRemoved() {
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(file(PID + "-action.json")).doesNotExist());
     }
 
     /**

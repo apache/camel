@@ -64,18 +64,19 @@ abstract class ActionBaseCommand extends CamelCommand {
         while (watch.taken() < timeout) {
             File f = outputFile.toFile();
             try {
-                // give time for response to be ready
-                Thread.sleep(100);
-
                 if (Files.exists(outputFile) && f.length() > 0) {
                     String text = Files.readString(outputFile);
                     return (JsonObject) Jsoner.deserialize(text);
                 }
+            } catch (Exception e) {
+                // not all written yet
+            }
+            try {
+                // give time for response to be ready
+                Thread.sleep(ActionClient.pollDelay(watch.taken()));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 return null;
-            } catch (Exception e) {
-                // ignore
             }
         }
         return null;
