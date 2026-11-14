@@ -194,7 +194,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             row.location = extractSourceName(o.getString("source"));
             row.routeId = o.getString("routeId");
             row.checksum = o.getString("checksum");
-            if (rows.contains(row) || filter != null && !matchesFilter(filter, row.location, row.routeId)) {
+            if (rows.contains(row) || (filter != null && !matchesFilter(filter, row.location, row.routeId))) {
                 continue;
             }
             row.json = new JsonObject(o);
