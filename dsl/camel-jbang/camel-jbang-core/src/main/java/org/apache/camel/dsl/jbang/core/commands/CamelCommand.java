@@ -347,7 +347,7 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
 
     protected void printConfigurationValues(String header) {
         if (processedCommand != null) {
-            // the global user configuration with the local one laid over it, as the option defaults come from
+            // the global user configuration with the local one laid over it, as the option defaults come from it
             final Properties configProperties = CommandLineHelper.loadUserConfiguration(printer());
             List<String> lines = new ArrayList<>();
             for (ProcessedOption opt : processedCommand.getOptions()) {
