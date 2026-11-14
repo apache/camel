@@ -2751,6 +2751,9 @@ A script that checks the exit code of a command must take these changes into acc
 * A source file of `camel cmd route-diagram`, `camel cmd route-structure` and `camel cmd route-topology` that does not
   exist exits with `66` instead of `1`. The parts of a Java route the parser could not read are printed as a warning on
   stderr (also with `--json`, which lists them in `unread` as before).
+* `camel cmd route-structure --json` has the routes of `--filter`, in the order of `--sort`, with the code of
+  `--brief` or `--description`, as the text output: these options were ignored with `--json`. A filter that matches no
+  route exits with `3` instead of `0` with all the routes.
 * A file or directory that does not exist exits with `66` instead of `1`: a source file or `--source-dir` of
   `camel run`, the route file of `camel explain` and `camel harden` (checked before the LLM is contacted), and the
   `pom.xml` of `camel dependency runtime`.

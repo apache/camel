@@ -17,10 +17,15 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,6 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -163,6 +169,110 @@ class CamelRouteStructureActionTest extends ActionCommandTestSupport {
         // an older Camel says no kinds
         assertEquals("String | LinkedHashMap",
                 CamelRouteStructureAction.bodyTypes(List.of("java.lang.String", "java.util.LinkedHashMap"), null));
+    }
+
+    @Test
+    void testJsonHasOnlyTheRoutesOfTheFilter() throws Exception {
+        // --filter, --sort, --brief and --description were for the text only (CAMEL-26929)
+        JsonArray routes = jsonRoutes(c -> c.filter = "audit");
+
+        assertEquals(1, routes.size(), routes.toJson());
+        assertEquals("audit", ((JsonObject) routes.get(0)).getString("routeId"));
+    }
+
+    @Test
+    void testJsonIsSortedAndHasEachRouteOnce() throws Exception {
+        JsonArray byName = jsonRoutes(c -> c.sort = "name");
+        assertEquals(List.of("zeta", "audit"), routeIds(byName), "by the source file: a.camel.yaml, then b.camel.yaml");
+
+        JsonArray byId = jsonRoutes(c -> c.sort = "id");
+        // the route of the dump twice is in the JSON once, as in the text
+        assertEquals(List.of("audit", "zeta"), routeIds(byId));
+    }
+
+    @Test
+    void testJsonHasTheCodeOfBriefAndDescription() throws Exception {
+        JsonArray brief = jsonRoutes(c -> {
+            c.filter = "audit";
+            c.brief = true;
+        });
+        assertEquals(List.of("from", "to"), codes(brief));
+
+        JsonArray description = jsonRoutes(c -> {
+            c.filter = "audit";
+            c.description = true;
+        });
+        assertEquals(List.of("from", "to[Send to the audit log]"), codes(description));
+
+        JsonArray code = jsonRoutes(c -> c.filter = "audit");
+        assertEquals(List.of("from[timer://audit]", "to[log:audit]"), codes(code));
+    }
+
+    @Test
+    void testJsonOfAFilterThatMatchesNothingIsNotFound() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        command.name = "myApp";
+        command.sort = "name";
+        command.jsonOutput = true;
+        command.filter = "nope";
+
+        CliException e = assertThrows(CliException.class, () -> callWithResponse(command, twoRoutesResponse()));
+
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("No route matching: nope", e.getMessage());
+        assertEquals("", printer.getOutput().trim(), "no JSON of all the routes");
+    }
+
+    private JsonArray jsonRoutes(Consumer<CamelRouteStructureAction> options) throws Exception {
+        printer = new StringPrinter();
+        writeStatusFile(TEST_PID, "myApp");
+        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        command.name = "myApp";
+        command.sort = "name";
+        command.jsonOutput = true;
+        options.accept(command);
+
+        assertEquals(0, callWithResponse(command, twoRoutesResponse()));
+        JsonObject jo = (JsonObject) Jsoner.deserialize(printer.getOutput());
+        return jo.getCollection("routes");
+    }
+
+    private static List<String> routeIds(JsonArray routes) {
+        return routes.stream().map(r -> ((JsonObject) r).getString("routeId")).toList();
+    }
+
+    private static List<String> codes(JsonArray routes) {
+        List<JsonObject> lines = ((JsonObject) routes.get(0)).getCollection("code");
+        return lines.stream().map(l -> l.getString("code")).toList();
+    }
+
+    /** zeta (in a.camel.yaml) and audit (in b.camel.yaml), and zeta once more as a dump may have it. */
+    private static JsonObject twoRoutesResponse() {
+        JsonArray zetaCode = new JsonArray();
+        zetaCode.add(codeLine(1, "from", "from1", 0, "from[timer://zeta]", null, null));
+        JsonObject zeta = new JsonObject();
+        zeta.put("source", "file:a.camel.yaml:1");
+        zeta.put("routeId", "zeta");
+        zeta.put("code", zetaCode);
+
+        JsonArray auditCode = new JsonArray();
+        auditCode.add(codeLine(1, "from", "from2", 0, "from[timer://audit]", null, null));
+        JsonObject to = codeLine(2, "to", "to1", 1, "to[log:audit]", null, null);
+        to.put("description", "Send to the audit log");
+        auditCode.add(to);
+        JsonObject audit = new JsonObject();
+        audit.put("source", "file:b.camel.yaml:1");
+        audit.put("routeId", "audit");
+        audit.put("code", auditCode);
+
+        JsonArray routes = new JsonArray();
+        routes.add(audit);
+        routes.add(zeta);
+        routes.add(new JsonObject(zeta));
+        JsonObject response = new JsonObject();
+        response.put("routes", routes);
+        return response;
     }
 
     // Note: there is no no-match test here. When no pid matches, the command falls back to doCallSource, which
