@@ -380,7 +380,9 @@ reloads the CamelContext now uses a Kubernetes informer: it lists the Secrets (o
 watches them, and lists them again when the API server closes the watch (for example with 410 Gone), so an update made
 while the watch was closed still reloads the context. Before, it only watched them, and such an update was missed. When
 RBAC is enabled, the ServiceAccount now needs the `list` permission on `secrets` (or `configmaps`) in addition to
-`watch`. Without it the informer cannot start: the Kubernetes client logs an ERROR, the task a WARN, and it tries again
+`watch`. The `list` permission does not widen what the ServiceAccount can read: the watch the task used before had no
+resource version, so the API server already sent it every existing Secret (or ConfigMap) of the namespace as an ADDED
+event. Without `list` the informer cannot start: the Kubernetes client logs an ERROR, the task a WARN, and it tries again
 with a delay that doubles up to 30 seconds. Creating or deleting a secret or config map still does not reload the
 context.
 

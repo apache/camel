@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.kubernetes;
 
+import java.time.Duration;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
@@ -29,8 +33,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The updates that {@link KubernetesInformerLoop} calls back for. The informer calls the handler in the order of the
@@ -99,11 +105,11 @@ class KubernetesInformerLoopTest {
     }
 
     /**
-     * The Kubernetes client stops the informer for good after a watch error other than 410 Gone: a new informer is
-     * started, and it reports an update made in between.
+     * After a watch error other than 410 Gone, the informer lists and watches the resources again by itself, and
+     * reports an update made in between.
      */
     @Test
-    void testUpdateMadeWhileTheInformerIsStartedAgainIsReported() throws Exception {
+    void testUpdateMadeBeforeAWatchErrorOtherThanGoneIsReported() throws Exception {
         dispatcher.holdFirstWatch();
         start();
         dispatcher.awaitOpenWatches(1);
@@ -116,6 +122,47 @@ class KubernetesInformerLoopTest {
 
         assertEquals("my-b", updates.poll(20, TimeUnit.SECONDS));
         assertEquals("my-a", updates.poll(20, TimeUnit.SECONDS));
+    }
+
+    /**
+     * A watch error other than 410 Gone while the handler is busy, for example with a reload, and an update is queued
+     * behind it: the informer is not stopped, so the queued update is not dropped, and the busy handler is not
+     * interrupted. A stopped informer would drop the queued update, and a new one would not report it, as the store
+     * already holds its resource version.
+     */
+    @Test
+    void testUpdateQueuedWhileTheHandlerIsBusyIsReportedAfterAWatchError() throws Exception {
+        CountDownLatch inHandler = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        AtomicBoolean interrupted = new AtomicBoolean();
+        start(name -> {
+            if ("my-a".equals(name)) {
+                inHandler.countDown();
+                try {
+                    release.await(20, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    interrupted.set(true);
+                    Thread.currentThread().interrupt();
+                }
+            }
+            updates.add(name);
+        });
+        dispatcher.awaitOpenWatches(1);
+
+        update("my-a");
+        assertTrue(inHandler.await(20, TimeUnit.SECONDS), "my-a was not reported");
+        // received by the informer, and queued behind the busy handler
+        update("my-b");
+        dispatcher.sendInvalidObjectOnLastOpenWatch();
+        // the Kubernetes client closes the watch while the handler is still busy
+        dispatcher.awaitClosedWatches(1);
+        release.countDown();
+        // the informer lists and watches again (on the executor of its handler, so once the handler is done)
+        dispatcher.awaitOpenWatches(2);
+
+        assertEquals("my-a", updates.poll(20, TimeUnit.SECONDS));
+        assertEquals("my-b", updates.poll(20, TimeUnit.SECONDS), "the queued update of my-b was dropped");
+        assertFalse(interrupted.get(), "the busy handler was interrupted");
     }
 
     @Test
@@ -163,14 +210,20 @@ class KubernetesInformerLoopTest {
 
         thread.join(20000);
         assertFalse(thread.isAlive(), "the loop still runs after the service was stopped");
-        assertEquals(0, dispatcher.watchRequests(), "the stopped loop watched the resources");
+        // past the delay of the list, after which a watch would start
+        await().during(Duration.ofSeconds(4)).atMost(Duration.ofSeconds(10))
+                .untilAsserted(() -> assertEquals(0, dispatcher.watchRequests(), "the stopped loop watched the resources"));
     }
 
     private void start() {
+        start(updates::add);
+    }
+
+    private void start(Consumer<String> onUpdate) {
         service.start();
         loop = new KubernetesInformerLoop<>(
-                service, "ConfigMaps", client.configMaps(), name -> name.startsWith("my-"),
-                c -> updates.add(c.getMetadata().getName()));
+                service, "ConfigMaps", ConfigMap.class, client.configMaps(), client.getKubernetesSerialization(),
+                name -> name.startsWith("my-"), c -> onUpdate.accept(c.getMetadata().getName()));
         thread = new Thread(loop::run, "informer-loop");
         thread.start();
     }

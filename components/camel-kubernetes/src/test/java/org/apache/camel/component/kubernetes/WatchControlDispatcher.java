@@ -39,6 +39,7 @@ import io.fabric8.mockwebserver.http.Response;
 import io.fabric8.mockwebserver.http.WebSocket;
 import io.fabric8.mockwebserver.http.WebSocketListener;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -55,10 +56,12 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
     private final Queue<Integer> failures = new ConcurrentLinkedQueue<>();
     private final AtomicInteger watches = new AtomicInteger();
     private final Semaphore openWatches = new Semaphore(0);
+    private final Semaphore closedWatches = new Semaphore(0);
     private final Semaphore listRequests = new Semaphore(0);
     private final CompletableFuture<WebSocket> heldWatch = new CompletableFuture<>();
     private volatile boolean holdFirstWatch;
     private volatile long nextListDelaySeconds;
+    private volatile WebSocket lastOpenWatch;
 
     /**
      * @param resourcesPath the path of the resources, for example /api/v1/namespaces/test/secrets
@@ -120,6 +123,14 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
     }
 
     /**
+     * Waits until the given number of watches of the CRUD dispatcher (not the held one) have been closed in total.
+     */
+    public void awaitClosedWatches(int count) throws InterruptedException {
+        assertTrue(closedWatches.tryAcquire(count, 20, TimeUnit.SECONDS), "watch " + count + " was not closed");
+        closedWatches.release(count);
+    }
+
+    /**
      * Closes the held first watch with 410 Gone, as the API server does when the resource version of a watch is too
      * old.
      */
@@ -131,11 +142,24 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
     }
 
     /**
-     * Sends an event that is not a resource on the held first watch. The Kubernetes client then stops the informer for
-     * good, as it does after a watch error other than 410 Gone.
+     * Sends an event that is not a resource on the held first watch. The Kubernetes client then closes the watch with
+     * an error other than 410 Gone. By default it would then stop the informer for good.
      */
     public void sendInvalidObjectOnHeldWatch() throws Exception {
-        WebSocket webSocket = heldWatch.get(20, TimeUnit.SECONDS);
+        sendInvalidObject(heldWatch.get(20, TimeUnit.SECONDS));
+    }
+
+    /**
+     * Sends an event that is not a resource on the watch that was opened last, after the events it was already sent.
+     * The Kubernetes client then closes the watch with an error other than 410 Gone.
+     */
+    public void sendInvalidObjectOnLastOpenWatch() {
+        WebSocket webSocket = lastOpenWatch;
+        assertNotNull(webSocket, "no watch is open");
+        sendInvalidObject(webSocket);
+    }
+
+    private static void sendInvalidObject(WebSocket webSocket) {
         Status status = new StatusBuilder().withCode(500).withMessage("not a resource").build();
         webSocket.send(SERIALIZATION.asJson(new WatchEvent(status, "MODIFIED")));
     }
@@ -199,6 +223,7 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
             delegate.onOpen(webSocket, response);
+            lastOpenWatch = webSocket;
             openWatches.release();
         }
 
@@ -225,6 +250,7 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
             delegate.onClosing(webSocket, code, reason);
+            closedWatches.release();
         }
 
         @Override
@@ -235,6 +261,8 @@ public class WatchControlDispatcher extends KubernetesCrudDispatcher {
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             delegate.onFailure(webSocket, t, response);
+            // a watch the client drops without a close frame
+            closedWatches.release();
         }
     }
 }

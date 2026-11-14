@@ -99,9 +99,8 @@ public class ConfigmapsReloadTriggerTask extends ServiceSupport implements Camel
 
         kubernetesClient = propertiesFunction.getClient();
         informerLoop = new KubernetesInformerLoop<>(
-                this, "ConfigMaps", kubernetesClient.configMaps().inNamespace(kubernetesClient.getNamespace()),
-                this::matchSecret,
-                this::onUpdate);
+                this, "ConfigMaps", ConfigMap.class, kubernetesClient.configMaps().inNamespace(kubernetesClient.getNamespace()),
+                kubernetesClient.getKubernetesSerialization(), this::matchSecret, this::onUpdate);
     }
 
     @Override

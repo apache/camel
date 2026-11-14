@@ -99,8 +99,8 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
 
         kubernetesClient = propertiesFunction.getClient();
         informerLoop = new KubernetesInformerLoop<>(
-                this, "Secrets", kubernetesClient.secrets().inNamespace(kubernetesClient.getNamespace()), this::matchSecret,
-                this::onUpdate);
+                this, "Secrets", Secret.class, kubernetesClient.secrets().inNamespace(kubernetesClient.getNamespace()),
+                kubernetesClient.getKubernetesSerialization(), this::matchSecret, this::onUpdate);
     }
 
     @Override
