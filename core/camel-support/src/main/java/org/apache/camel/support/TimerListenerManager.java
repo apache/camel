@@ -101,6 +101,12 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
                 // ignore
                 LOG.debug("Error occurred during onTimer for TimerListener: {}. This exception will be ignored.",
                         listener, e);
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is thrown on, and ends the scheduled task
+                throw e;
+            } catch (Error e) {
+                // thrown on, it would end the scheduled task, and no listener would be called again
+                LOG.warn("Error occurred during onTimer for TimerListener: {}. This error will be ignored.", listener, e);
             }
         }
     }
