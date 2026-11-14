@@ -680,11 +680,11 @@ public class RuntimeTools {
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "File name for the heap dump, without a directory and without the .hprof extension. "
                                    + "Defaults to heap-dump-<timestamp>",
-                     required = false) String name,
+                     required = false) String file,
             @ToolArg(description = "Whether to dump only live objects (default true). Live dumps trigger a GC first",
                      required = false) String live) {
         Map<String, String> args = new HashMap<>();
-        putIfNotBlank(args, "name", name);
+        putIfNotBlank(args, "name", file);
         putIfNotBlank(args, "live", live);
         return delegateToRegistry("write_heap_dump", nameOrPid, args);
     }

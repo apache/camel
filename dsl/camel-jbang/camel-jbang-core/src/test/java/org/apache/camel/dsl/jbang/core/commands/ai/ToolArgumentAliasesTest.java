@@ -183,6 +183,43 @@ class ToolArgumentAliasesTest {
     }
 
     @Test
+    void theIntegrationOfARuntimeToolMayBeGivenAsNameOrPid() {
+        List<ToolArgumentAliases.Argument> runtime = List.of(new ToolArgumentAliases.Argument("nameOrPid", false),
+                new ToolArgumentAliases.Argument("filter", false));
+
+        ToolArgumentAliases.Resolved<String> resolved
+                = ToolArgumentAliases.resolve("camel_runtime_routes", runtime, Map.of("name", "orders"));
+        assertThat(resolved.arguments()).containsExactly(Map.entry("nameOrPid", "orders"));
+        assertThat(ToolArgumentAliases.ignoredSelector(resolved)).isNull();
+
+        assertThat(ToolArgumentAliases.resolve("camel_runtime_routes", runtime, Map.of("integration", "orders"))
+                .arguments()).containsExactly(Map.entry("nameOrPid", "orders"));
+
+        // the tools that take name: only those that act on a running integration
+        List<ToolArgumentAliases.Argument> named = List.of(new ToolArgumentAliases.Argument("name", false));
+        assertThat(ToolArgumentAliases.resolve("camel_get_log", named, Map.of("nameOrPid", "orders")).arguments())
+                .containsExactly(Map.entry("name", "orders"));
+        assertThat(ToolArgumentAliases.resolve("camel_catalog_doc", named, Map.of("nameOrPid", "kafka")).ignored())
+                .containsExactly("nameOrPid");
+    }
+
+    @Test
+    void anIgnoredArgumentThatNamesTheIntegrationIsTheSelector() {
+        List<ToolArgumentAliases.Argument> runtime = List.of(new ToolArgumentAliases.Argument("nameOrPid", false));
+
+        assertThat(ToolArgumentAliases.ignoredSelector(
+                ToolArgumentAliases.resolve("camel_runtime_routes", runtime, Map.of("Process", "orders"))))
+                .isEqualTo("Process");
+        assertThat(ToolArgumentAliases.ignoredSelector(
+                ToolArgumentAliases.resolve("camel_runtime_routes", runtime, Map.of("bogus", "x")))).isNull();
+        assertThat(ToolArgumentAliases.ignoredSelector(ToolArgumentAliases.resolve("camel_runtime_routes", runtime,
+                Map.of("nameOrPid", "orders", "app", "orders")))).isNull();
+        // a tool that does not act on an integration has no selector
+        assertThat(ToolArgumentAliases.ignoredSelector(ToolArgumentAliases.resolve("camel_catalog_find",
+                List.of(new ToolArgumentAliases.Argument("term", true)), Map.of("term", "x", "app", "y")))).isNull();
+    }
+
+    @Test
     void theNoteIsTheFirstFieldOfAJsonObjectAnswer() throws Exception {
         String answer = ToolArgumentAliases.withNote("{\"term\":\"mqtt\",\"matches\":[]}", "term is the argument name");
 

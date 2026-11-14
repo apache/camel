@@ -19,7 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.JsonObject;
@@ -50,6 +52,25 @@ public final class ToolArgumentAliases {
             "get_example_file", pairs("name", "example"),
             // a path says more than a file name, so it wins when a call gives both
             "camel_validate_source", pairs("path", "file", "filename", "file", "name", "file", "source", "content"));
+
+    /**
+     * The names a call may give the integration a tool acts on by. The runtime tools of the MCP server take
+     * {@code nameOrPid}; camel_run, camel_get_log, camel_get_errors, camel_control and camel_eval_expression take
+     * {@code name}. A model that carries one over to the other kind of tool must not act on another integration
+     * (CAMEL-26932).
+     */
+    private static final Map<String, String> TO_NAME_OR_PID
+            = pairs("name", "nameOrPid", "pid", "nameOrPid", "integration", "nameOrPid");
+    private static final Map<String, String> TO_NAME = pairs("nameOrPid", "name", "pid", "name", "integration", "name");
+    private static final Set<String> NAME_TOOLS
+            = Set.of("camel_get_log", "camel_get_errors", "camel_control", "camel_eval_expression");
+
+    /**
+     * Arguments that name an integration, in lower case: a call that gives one the tool ignores must not act on the
+     * only integration that runs.
+     */
+    private static final Set<String> SELECTORS = Set.of("name", "nameorpid", "pid", "integration", "integrationname",
+            "process", "processname", "app", "appname", "context", "contextname");
 
     private ToolArgumentAliases() {
     }
@@ -114,6 +135,37 @@ public final class ToolArgumentAliases {
         return ALIASES.getOrDefault(tool, Map.of());
     }
 
+    /**
+     * The aliases of a tool with the given arguments, alias to declared name: those of {@link #aliases(String)}, and
+     * the other names of the argument that picks the integration the tool acts on.
+     */
+    public static Map<String, String> aliases(String tool, List<String> names) {
+        Map<String, String> answer = new LinkedHashMap<>(aliases(tool));
+        if (names.contains("nameOrPid")) {
+            TO_NAME_OR_PID.forEach(answer::putIfAbsent);
+        } else if (NAME_TOOLS.contains(tool) && names.contains("name")) {
+            TO_NAME.forEach(answer::putIfAbsent);
+        }
+        return answer;
+    }
+
+    /**
+     * The argument a call gave to name an integration that the tool ignored, while it did not give the argument the
+     * tool picks its integration by: the tool would act on the only integration that runs, which may be another one.
+     * Null when there is none.
+     */
+    public static String ignoredSelector(Resolved<?> resolved) {
+        String selector = resolved.declared().stream().map(Argument::name)
+                .filter(n -> n.equals("nameOrPid") || n.equals("name") && NAME_TOOLS.contains(resolved.tool()))
+                .findFirst().orElse(null);
+        if (selector == null || resolved.arguments().get(selector) != null) {
+            return null;
+        }
+        return resolved.ignored().stream()
+                .filter(n -> SELECTORS.contains(n.toLowerCase(Locale.ROOT)))
+                .findFirst().orElse(null);
+    }
+
     /** The arguments a registry tool declares, for {@link #resolve(String, List, Map)}. */
     public static List<Argument> arguments(ToolDescriptor tool) {
         return tool.params().stream().map(p -> new Argument(p.name(), p.required())).toList();
@@ -132,7 +184,7 @@ public final class ToolArgumentAliases {
         // alias to declared name, for the aliases taken
         Map<String, String> taken = new LinkedHashMap<>();
         Map<String, String> renamed = new LinkedHashMap<>();
-        for (Map.Entry<String, String> alias : aliases(tool).entrySet()) {
+        for (Map.Entry<String, String> alias : aliases(tool, names).entrySet()) {
             String name = alias.getValue();
             if (names.contains(name) && !names.contains(alias.getKey()) && !renamed.containsKey(name)
                     && arguments.get(name) == null && arguments.get(alias.getKey()) != null) {
