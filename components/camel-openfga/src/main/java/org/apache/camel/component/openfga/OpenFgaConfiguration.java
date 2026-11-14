@@ -119,6 +119,42 @@ public class OpenFgaConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private OpenFgaClient openFgaClient;
 
+    @UriParam(label = "consumer,advanced")
+    private OpenFgaCheckpointRepository checkpointRepository;
+
+    @UriParam(label = "consumer")
+    private String checkpointKey;
+
+    @UriParam(label = "consumer,advanced", defaultValue = "30000", javaType = "java.time.Duration")
+    private long changePollTimeout = 30000;
+
+    public OpenFgaCheckpointRepository getCheckpointRepository() {
+        return checkpointRepository;
+    }
+
+    /** Durable cursor storage, required for a readChanges consumer. The application owns its lifecycle. */
+    public void setCheckpointRepository(OpenFgaCheckpointRepository checkpointRepository) {
+        this.checkpointRepository = checkpointRepository;
+    }
+
+    public String getCheckpointKey() {
+        return checkpointKey;
+    }
+
+    /** Unique durable cursor key for this store, filter and projection. Only one consumer may own the key. */
+    public void setCheckpointKey(String checkpointKey) {
+        this.checkpointKey = checkpointKey;
+    }
+
+    public long getChangePollTimeout() {
+        return changePollTimeout;
+    }
+
+    /** Maximum time to await the readChanges request for one consumer poll, in milliseconds. Must be positive. */
+    public void setChangePollTimeout(long changePollTimeout) {
+        this.changePollTimeout = changePollTimeout;
+    }
+
     /**
      * The base URL of the OpenFGA HTTP API, without a trailing path. The default assumes OpenFGA running as a sidecar
      * on its standard HTTP port.

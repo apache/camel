@@ -24,12 +24,19 @@ public class OpenFgaEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(52);
         props.add("apiAudience");
         props.add("apiToken");
         props.add("apiTokenIssuer");
         props.add("apiUrl");
         props.add("authorizationModelId");
+        props.add("backoffErrorThreshold");
+        props.add("backoffIdleThreshold");
+        props.add("backoffMultiplier");
+        props.add("bridgeErrorHandler");
+        props.add("changePollTimeout");
+        props.add("checkpointKey");
+        props.add("checkpointRepository");
         props.add("clientId");
         props.add("clientSecret");
         props.add("conditionContext");
@@ -37,7 +44,12 @@ public class OpenFgaEndpointUriFactory extends org.apache.camel.support.componen
         props.add("consistency");
         props.add("contextualTuples");
         props.add("continuationToken");
+        props.add("delay");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
         props.add("failOpen");
+        props.add("greedy");
+        props.add("initialDelay");
         props.add("lazyStartProducer");
         props.add("maxParallelRequests");
         props.add("maxRetries");
@@ -45,14 +57,24 @@ public class OpenFgaEndpointUriFactory extends org.apache.camel.support.componen
         props.add("openFgaClient");
         props.add("operation");
         props.add("pageSize");
+        props.add("pollStrategy");
         props.add("readTimeout");
         props.add("relation");
         props.add("relations");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
         props.add("scopes");
+        props.add("sendEmptyMessageWhenIdle");
         props.add("sslContextParameters");
+        props.add("startScheduler");
         props.add("startTime");
         props.add("storeId");
+        props.add("timeUnit");
         props.add("type");
+        props.add("useFixedDelay");
         props.add("user");
         props.add("userFilters");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
@@ -61,7 +83,9 @@ public class OpenFgaEndpointUriFactory extends org.apache.camel.support.componen
         secretProps.add("clientSecret");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptyMap();
+        Map<String, String> prefixes = new HashMap<>(1);
+        prefixes.put("schedulerProperties", "scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override

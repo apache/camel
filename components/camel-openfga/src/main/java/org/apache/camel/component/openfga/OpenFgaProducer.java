@@ -443,6 +443,11 @@ public class OpenFgaProducer extends DefaultProducer {
         ClientReadChangesResponse response = authorizer.await(exchange, "read the change log",
                 () -> authorizer.getClient().readChanges(request, options));
 
+        setContinuationToken(exchange, response.getContinuationToken());
+        exchange.getMessage().setBody(changePage(response));
+    }
+
+    static List<Map<String, Object>> changePage(ClientReadChangesResponse response) {
         List<Map<String, Object>> changes = new ArrayList<>();
         if (response.getChanges() != null) {
             for (TupleChange change : response.getChanges()) {
@@ -465,8 +470,7 @@ public class OpenFgaProducer extends DefaultProducer {
                 changes.add(entry);
             }
         }
-        setContinuationToken(exchange, response.getContinuationToken());
-        exchange.getMessage().setBody(changes);
+        return changes;
     }
 
     /**

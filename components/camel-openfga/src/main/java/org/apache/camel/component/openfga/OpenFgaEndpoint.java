@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -45,9 +45,12 @@ import org.slf4j.LoggerFactory;
  * against.
  */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "openfga", title = "OpenFGA",
-             syntax = "openfga:operation", producerOnly = true, category = { Category.SECURITY },
+             syntax = "openfga:operation", category = { Category.SECURITY },
              headersClass = OpenFgaConstants.class)
-@BodyTypes(producerIn = @BodyType(value = Carrier.ANY, dependsOn = "object",
+@BodyTypes(consumerOut = @BodyType(value = Carrier.LIST,
+                                   javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>",
+                                   description = "readChanges: one ordered page of change Maps, acknowledged after successful page processing"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = "object",
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "batchCheck",
                                                          carriers = {
@@ -95,7 +98,7 @@ import org.slf4j.LoggerFactory;
                                                  + " readChanges: a List of Maps with user, relation, object and timestamp"
                                                  + " (and operation for a change); expand: the UsersetTree, or null when the"
                                                  + " object or relation does not resolve"))
-public class OpenFgaEndpoint extends DefaultEndpoint {
+public class OpenFgaEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenFgaEndpoint.class);
 
@@ -261,7 +264,26 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Consumer not supported");
+        if (operation != OpenFgaOperation.readChanges) {
+            throw new UnsupportedOperationException("Only readChanges supports an OpenFGA consumer");
+        }
+        if (configuration.getCheckpointRepository() == null) {
+            throw new IllegalArgumentException("A durable checkpointRepository is required for a readChanges consumer");
+        }
+        require(configuration.getCheckpointKey(), "checkpointKey", "identifies the durable change-log cursor");
+        if (configuration.getChangePollTimeout() <= 0) {
+            throw new IllegalArgumentException("changePollTimeout must be positive");
+        }
+        if (configuration.getPageSize() != null && configuration.getPageSize() <= 0) {
+            throw new IllegalArgumentException("pageSize must be positive");
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getContinuationToken())) {
+            throw new IllegalArgumentException(
+                    "A readChanges consumer resumes from checkpointRepository, not continuationToken");
+        }
+        OpenFgaConsumer consumer = new OpenFgaConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public OpenFgaOperation getOperation() {

@@ -6,7 +6,7 @@
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 
 *Since Camel {since}*
 
@@ -697,56 +697,74 @@ when the changed tuple has one.
 Both are paged. `pageSize` bounds one request, and the token the page returns arrives on
 `CamelOpenFgaContinuationToken`; feed it back through `continuationToken` to read on.
 
-A `readChanges` poller has to carry that token from one exchange to the *next*, which an exchange property cannot do:
-every timer fire is a new exchange, so a property left on the previous one is gone and each poll would start from the
-beginning again. Use a global variable, which outlives the exchange:
+=== Consuming the change log with durable checkpoints
 
-[tabs]
-====
-Java::
-+
+Only `readChanges` supports consumption. It polls one bounded page per scheduled
+poll and sends a `List<Map<String, Object>>` containing the changes, in server
+order, to the route. Configure `pageSize` to bound the requested page size; empty
+tail pages do not produce exchanges. Standard scheduled polling options, such as
+`delay`, `initialDelay` and polling backoff, control the schedule.
+
+Register an application-provided `OpenFgaCheckpointRepository` as `changeCheckpoints`:
+
 [source,java]
-------------------------------------------------------------
-from("timer:sync?period=30000")
-        .to("openfga:readChanges?storeId={{fga.store}}&type=document"
-            + "&continuationToken=${variable.global:fgaToken}")
-        .setVariable("global:fgaToken", header("CamelOpenFgaContinuationToken"))
-        .split(body()).to("direct:applyChange");
-------------------------------------------------------------
-
-YAML::
-+
-[source,yaml]
 ----
-- route:
-    from:
-      uri: timer:sync
-      parameters:
-        period: 30000
-      steps:
-        - to:
-            uri: openfga:readChanges
-            parameters:
-              storeId: "{{fga.store}}"
-              type: document
-              continuationToken: "${variable.global:fgaToken}"
-        - setVariable:
-            name: "global:fgaToken"
-            expression:
-              header:
-                expression: CamelOpenFgaContinuationToken
-        - split:
-            expression:
-              simple:
-                expression: "${body}"
-            steps:
-              - to:
-                  uri: direct:applyChange
+from("openfga:readChanges?storeId={{fga.store}}&type=document"
+    + "&checkpointRepository=#changeCheckpoints&checkpointKey=documents-projection-v1"
+    + "&pageSize=100&delay=1000&changePollTimeout=30000")
+    .split(body()).shareUnitOfWork().stopOnException()
+        .to("direct:applyChange")
+    .end();
 ----
-====
 
-A global variable lives in the `CamelContext`, so it does not survive a restart. A poller that must resume across one
-should keep the token wherever the deployment already persists state rather than rely on it.
+Both `checkpointRepository` and `checkpointKey` are required. Implement the
+repository with durable storage: `load(key)` returns the last committed cursor
+or null, and `store(key, cursor)` must atomically persist it before returning.
+A failed store must preserve the previous value. Repository methods must impose
+finite I/O deadlines. Camel does not substitute an in-memory repository and does
+not own the repository's lifecycle.
+
+Choose a stable key unique to the server, store, type filter and projection.
+Exactly one active consumer may own a key; the SPI does not provide distributed
+leader election. Use a different key when deliberately rebuilding a projection
+or changing its filter. `continuationToken` is not accepted on a consumer;
+the durable repository is its only cursor source. `startTime` applies only
+before a cursor exists and must remain consistent across restarts.
+
+After the whole page succeeds, the consumer durably stores its next token.
+A route exception or rollback leaves the checkpoint unchanged. A handled route
+exception counts as successful processing, so do not mark an incomplete
+projection as handled. With a splitter, propagate failure to the parent page as
+in the example. Avoid fire-and-forget processing when the checkpoint must cover
+the resulting work.
+
+Delivery is *at least once*. A crash after applying changes but before storing
+the checkpoint, a failed checkpoint write, or shutdown during page processing can
+repeat the complete page on the next poll or restart. Make projection updates
+idempotent. The checkpoint and downstream side effects do not form one atomic
+transaction. Ordering is preserved within each server page and between polls
+of a single consumer; parallel route processing can change application order.
+
+The repository is reloaded on each poll. An empty tail page retains an echoed
+cursor, an advanced empty-page cursor is stored, and a missing token never erases
+the existing bookmark. Read failures, including expired or invalid server cursors,
+are reported through the polling error handler; they never silently restart at
+the beginning. Cursor validity and retained history depend on the OpenFGA server
+and its storage configuration. Plan recovery or a projection rebuild when the
+server can no longer resume a bookmark; checkpoints cannot guarantee indefinite
+replay.
+
+`changePollTimeout` bounds awaiting the page request and cancels it on expiry.
+Stopping the consumer cancels a pending request and prevents acknowledging an
+unfinished page. SDK request timeouts still apply. Route processing and repository
+calls must cooperate with Camel shutdown and their own deadlines; the consumer
+does not forcibly interrupt arbitrary application code. `failOpen` does not
+suppress polling or checkpoint failures.
+
+The `readChanges` producer remains available for manual polling. Its caller owns
+cursor persistence and must save the returned `CamelOpenFgaContinuationToken`
+only after successfully processing the complete page. An exchange property or
+global variable is not a durable checkpoint across restarts.
 
 `startTime` bounds where a first read begins — without it a first `readChanges` on a busy store pages through the whole
 history before reaching anything current.
