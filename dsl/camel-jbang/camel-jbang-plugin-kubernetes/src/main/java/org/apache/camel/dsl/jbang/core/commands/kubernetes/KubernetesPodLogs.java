@@ -166,6 +166,7 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
             readFailed = true;
             return;
         }
+        readFailed = false;
         if (log != null) {
             for (String line : log.split("\\R")) {
                 printer().println(line);
@@ -177,10 +178,10 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
     }
 
     /**
-     * Whether the pod has finished: the phase Succeeded or Failed (CAMEL-26934: it checked for Terminated, which is no
-     * pod phase, so the log of a finished pod was printed again and again).
+     * Whether the pod has finished: the phase {@code Succeeded} or {@code Failed}.
      */
     private boolean isPodTerminated(PodResource podRes) {
+        // not Terminated, which is no pod phase: the log of a finished pod was printed again and again (CAMEL-26934)
         var phase = "Unknown";
         try {
             phase = Optional.ofNullable(podRes).map(pr -> getPodPhase(pr.get())).orElse(phase);
