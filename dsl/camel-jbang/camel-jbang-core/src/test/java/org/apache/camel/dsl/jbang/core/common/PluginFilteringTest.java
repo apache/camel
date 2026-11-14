@@ -230,7 +230,8 @@ class PluginFilteringTest {
     @Test
     void pluginWithAppliesToExportIsLoadedByCliExportContext() throws Exception {
         // A broken entry with appliesTo ["export"]: if CliExportContext includes it, resolution
-        // fails — proving the plugin was included in the export target.
+        // fails — proving the plugin was included in the export target. A contributor that cannot
+        // be loaded is left out with a warning (CAMEL-26931), which names it.
         JsonObject entry = buildBrokenEntry("exporter");
         entry.put("appliesTo", jsonArray("export"));
         writeConfig(entry);
@@ -240,9 +241,9 @@ class PluginFilteringTest {
 
         ExportContext context = CliExportContext.create(main, printer, true);
 
-        assertThatThrownBy(() -> context.getPlugins(null))
-                .isInstanceOf(CliException.class)
-                .hasMessageContaining("camel-jbang-plugin-exporter not found");
+        assertThat(context.getPlugins(null).exporters()).isEmpty();
+        assertThat(printer.getStderr())
+                .contains("Plugin exporter cannot be loaded (camel-jbang-plugin-exporter not found), so camel export");
     }
 
     // ---- Known PluginType appliesTo is used at runtime without config entry ----
@@ -298,14 +299,15 @@ class PluginFilteringTest {
         entry.put("resolved", resolved);
         writeConfig(entry);
 
-        CamelJBangMain main = new CamelJBangMain();
+        StringPrinter printer = new StringPrinter();
+        CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
 
         // The resolved.appliesTo says "export", but the camelVersion is stale so it is ignored.
         // With legacyContributors=true, the plugin passes the filter for "run" (treated as legacy).
-        // Resolution fails — the exception proves the stale appliesTo did not filter it out.
-        assertThatThrownBy(() -> PluginHelper.getActivePlugins(main, null, "run", true))
-                .isInstanceOf(CliException.class)
-                .hasMessageContaining("camel-jbang-plugin-exporter not found");
+        // Resolution fails — the warning proves the stale appliesTo did not filter it out.
+        assertThat(PluginHelper.getActivePlugins(main, null, "run", true)).isEmpty();
+        assertThat(printer.getStderr())
+                .contains("Plugin exporter cannot be loaded (camel-jbang-plugin-exporter not found), so camel run");
     }
 
     // ---- CliExportContext should not resolve unrelated plugins (with explicit appliesTo) ----
