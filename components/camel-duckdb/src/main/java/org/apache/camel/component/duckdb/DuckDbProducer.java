@@ -17,6 +17,8 @@
 package org.apache.camel.component.duckdb;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -24,6 +26,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -36,6 +39,8 @@ import org.slf4j.LoggerFactory;
 public class DuckDbProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DuckDbProducer.class);
+    private static final Pattern URL_SCHEME = Pattern.compile("^[A-Za-z][A-Za-z0-9+.-]*://");
+    private static final String GLOB_CHARS = "*?[{";
 
     private final DuckDbEndpoint endpoint;
 
@@ -127,7 +132,7 @@ public class DuckDbProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(table)) {
             throw new DuckDbException("A table is required for copy operations");
         }
-        String path = resolveFilePath(exchange);
+        String path = resolveCopySource(resolveFilePath(exchange));
         String format = resolveFormat(path);
         String sql = buildCopySql(table, path, format);
         long updated;
@@ -195,6 +200,73 @@ public class DuckDbProducer extends DefaultProducer {
             return str.trim();
         }
         throw new DuckDbException("Copy operation expects a file path in the message body (File, Path, String or bytes)");
+    }
+
+    /**
+     * DuckDB reads the source of a copy as a remote file when it starts with a URL scheme, and expands it to many files
+     * when it holds glob characters. Both need an option, and copyBaseDirectory keeps a local source inside a
+     * directory.
+     *
+     * @return the source to give to DuckDB
+     */
+    private String resolveCopySource(String source) throws IOException {
+        if (URL_SCHEME.matcher(source).find()) {
+            if (!endpoint.isAllowUrlCopySource()) {
+                throw new IllegalArgumentException(
+                        "The copy source is a URL, which is loaded only when allowUrlCopySource=true: " + source);
+            }
+            return source;
+        }
+        int glob = indexOfGlob(source);
+        if (glob >= 0 && !endpoint.isAllowGlobCopySource()) {
+            throw new IllegalArgumentException(
+                    "The copy source contains a glob pattern character (*, ?, [ or {), which is expanded only when"
+                                               + " allowGlobCopySource=true: " + source);
+        }
+        String base = endpoint.getCopyBaseDirectory();
+        if (ObjectHelper.isEmpty(base)) {
+            return source;
+        }
+        Path baseDir = Path.of(base).toRealPath();
+        if (glob < 0) {
+            return resolveWithinBaseDirectory(baseDir, source, source).toString();
+        }
+        // a pattern: check the directory before the first glob character, and keep the pattern itself as is
+        for (String segment : source.split("[/\\\\]")) {
+            if ("..".equals(segment)) {
+                throw new IllegalArgumentException(
+                        "The copy source must not contain .. when copyBaseDirectory is set: " + source);
+            }
+        }
+        int sep = source.lastIndexOf('/', glob);
+        if (File.separatorChar != '/') {
+            sep = Math.max(sep, source.lastIndexOf(File.separatorChar, glob));
+        }
+        String dir = resolveWithinBaseDirectory(baseDir, source.substring(0, sep + 1), source).toString();
+        String pattern = source.substring(sep + 1);
+        return dir.endsWith(File.separator) ? dir + pattern : dir + File.separator + pattern;
+    }
+
+    private static Path resolveWithinBaseDirectory(Path baseDir, String path, String source) throws IOException {
+        Path resolved = baseDir.resolve(path).normalize();
+        if (Files.exists(resolved)) {
+            // follow symbolic links, so a link inside the directory to a file outside it is not loaded
+            resolved = resolved.toRealPath();
+        }
+        if (!resolved.startsWith(baseDir)) {
+            throw new IllegalArgumentException(
+                    "The copy source is outside the directory of the copyBaseDirectory option: " + source);
+        }
+        return resolved;
+    }
+
+    private static int indexOfGlob(String source) {
+        for (int i = 0; i < source.length(); i++) {
+            if (GLOB_CHARS.indexOf(source.charAt(i)) >= 0) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void setRowsWritten(Exchange exchange, long rows) {

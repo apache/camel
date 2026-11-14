@@ -7098,6 +7098,18 @@ database file. A route that relies on the header must set this option on the end
 The `CamelDuckDbOperation`, `CamelDuckDbQuery` and `CamelDuckDbTable` headers still override the operation, the SQL and
 the table of the endpoint, as before.
 
+=== camel-duckdb - copy loads one local file unless allowUrlCopySource or allowGlobCopySource is set
+
+The `copy` operation of the `duckdb` producer gave the path from the message body to DuckDB as it was, so DuckDB read a
+value with a URL scheme (such as `https://` or `s3://`) as a remote file, and expanded a value with glob pattern
+characters (`*`, `?`, `[` or `{`) to all the matching files. Now `copy` loads a single local file by default, and a
+source with a URL scheme or glob pattern characters fails with an `IllegalArgumentException`. This also applies to a
+`File` or `Path` body whose name has one of these characters. A route that loads such sources must set the new
+`allowUrlCopySource=true` or `allowGlobCopySource=true` option (both disabled by default).
+
+The new `copyBaseDirectory` option sets the directory that a local source must be inside, after resolving symbolic
+links.
+
 === camel-schematron - no body fails, and bytes are read in the encoding of the XML declaration
 
 A message without a body now fails with an `InvalidPayloadException` instead of a `NullPointerException`.

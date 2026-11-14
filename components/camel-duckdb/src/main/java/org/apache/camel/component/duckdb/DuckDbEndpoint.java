@@ -108,6 +108,22 @@ public class DuckDbEndpoint extends DefaultEndpoint {
                             + " DataSource of the endpoint. Disabled by default; enable it only when the header source is"
                             + " trusted, since it lets a message choose the database file.")
     private boolean allowDatabasePathFromHeader;
+    @UriParam(defaultValue = "false", label = "producer,security", security = "insecure:dev", insecureValue = "true",
+              description = "Whether the copy operation accepts a source that starts with a URL scheme (such as https://"
+                            + " or s3://), which DuckDB reads as a remote file. Disabled by default, so copy loads a"
+                            + " local file only; enable it only when the source of the message body is trusted.")
+    private boolean allowUrlCopySource;
+    @UriParam(defaultValue = "false", label = "producer,security",
+              description = "Whether the copy operation accepts a source with glob pattern characters (*, ?, [ or {),"
+                            + " which DuckDB expands to all the matching files. Disabled by default, so copy loads a"
+                            + " single file.")
+    private boolean allowGlobCopySource;
+    @UriParam(label = "producer,security",
+              description = "A directory that the local source of the copy operation must be inside, after resolving"
+                            + " symbolic links. A relative source is resolved against this directory. For a glob"
+                            + " pattern, the directory before the first glob character must be inside it. Not set by"
+                            + " default, so copy loads a file from any directory.")
+    private String copyBaseDirectory;
 
     public DuckDbEndpoint() {
     }
@@ -278,6 +294,30 @@ public class DuckDbEndpoint extends DefaultEndpoint {
 
     public void setAllowDatabasePathFromHeader(boolean allowDatabasePathFromHeader) {
         this.allowDatabasePathFromHeader = allowDatabasePathFromHeader;
+    }
+
+    public boolean isAllowUrlCopySource() {
+        return allowUrlCopySource;
+    }
+
+    public void setAllowUrlCopySource(boolean allowUrlCopySource) {
+        this.allowUrlCopySource = allowUrlCopySource;
+    }
+
+    public boolean isAllowGlobCopySource() {
+        return allowGlobCopySource;
+    }
+
+    public void setAllowGlobCopySource(boolean allowGlobCopySource) {
+        this.allowGlobCopySource = allowGlobCopySource;
+    }
+
+    public String getCopyBaseDirectory() {
+        return copyBaseDirectory;
+    }
+
+    public void setCopyBaseDirectory(String copyBaseDirectory) {
+        this.copyBaseDirectory = copyBaseDirectory;
     }
 
     String resolvedJdbcUrl() {
