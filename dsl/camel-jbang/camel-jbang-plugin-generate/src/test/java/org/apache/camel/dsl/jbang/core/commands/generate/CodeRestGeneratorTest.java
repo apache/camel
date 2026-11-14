@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -107,6 +108,23 @@ class CodeRestGeneratorTest {
         CodeRestGenerator.copyDirectory(source.getParent(), target);
 
         assertThat(target.resolve("sub").resolve("A.java")).hasContent("a");
+    }
+
+    @Test
+    void theRoutesOfTheRestDslValidate() throws Exception {
+        // the routes had no steps and a description under from: 19 errors of camel validate yaml, and camel run
+        // failed with "Route ... has no output processors" (CAMEL-26933)
+        Path rest = dir.resolve("rest.yaml");
+        CodeRestGenerator command = new CodeRestGenerator(new CamelJBangMain().withPrinter(printer));
+        CommandLineTestHelper.parse(command, "--input=" + SPEC, "--routes", "--output=" + rest);
+
+        assertThat(command.doCall()).as(printer.getOutput()).isZero();
+
+        YamlValidator validator = new YamlValidator();
+        validator.init();
+        var errors = validator.validate(rest.toFile());
+        assertThat(errors).as(Files.readString(rest)).isEmpty();
+        assertThat(Files.readString(rest)).contains("- route:", "steps:", "log: \"Not implemented yet: direct:");
     }
 
     private int generate(Path packageDir, String... args) throws Exception {
