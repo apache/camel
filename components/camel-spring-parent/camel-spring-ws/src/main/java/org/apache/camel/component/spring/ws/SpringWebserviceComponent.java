@@ -48,7 +48,11 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
 
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "Whether to use the global SSL context parameters of the CamelContext for each endpoint that the"
+                            + " component creates and that has no sslContextParameters. The producer uses them for the HTTPS"
+                            + " requests that it sends, as described for the sslContextParameters option. The consumer does not"
+                            + " use them.")
     private boolean useGlobalSslContextParameters;
 
     @Override
@@ -179,9 +183,6 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
         return this.useGlobalSslContextParameters;
     }
 
-    /**
-     * Enable usage of global SSL context parameters.
-     */
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;

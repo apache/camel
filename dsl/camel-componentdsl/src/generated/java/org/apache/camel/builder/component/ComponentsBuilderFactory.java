@@ -4999,7 +4999,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring WebService (camel-spring-ws)
-     * Access external web services as a client or expose your own web services.
+     * Expose SOAP services, or send requests to SOAP services, using Spring Web
+     * Services.
      * 
      * Category: webservice
      * Since: 2.6
