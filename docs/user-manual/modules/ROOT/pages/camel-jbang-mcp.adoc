@@ -904,7 +904,10 @@ NOTE: Runtime tools require a running Camel application started via `camel run`.
 application through the file-based IPC protocol in `~/.camel/`. All tools accept an optional `nameOrPid`
 parameter; when omitted, the server auto-discovers the running Camel process (this works when exactly one
 process is running). The MCP server itself is never one of them: it is not listed, not selected when no name is
-given, and a call that names its pid is refused.
+given, and a call that names its pid is refused. A call may also give the integration as `name`, `pid` or
+`integration` (and `camel_get_log`, `camel_get_errors`, `camel_control` and `camel_eval_expression`, which take `name`,
+accept `nameOrPid`). A call that names the integration with another argument the tool does not take, such as
+`process` or `app`, is refused rather than run against the one integration that runs.
 
 ==== Process Discovery
 
@@ -996,7 +999,8 @@ given, and a call that names its pid is refused.
 
 | `camel_runtime_heap_dump`
 | Write a heap dump (`.hprof`) from a running integration for deep memory analysis with tools such as Eclipse MAT,
-  VisualVM or jhat. The dump is written to the process working directory; a `name` with a directory is refused.
+  VisualVM or jhat. The dump is written to the process working directory, named by `file`; a `file` with a
+  directory is refused.
 
 | `camel_runtime_memory_leak`
 | Diagnose memory leaks in a running Camel integration using Java Flight Recorder (JFR).
