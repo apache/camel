@@ -19,6 +19,7 @@ package org.apache.camel.github;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
@@ -41,8 +42,13 @@ public final class GitHubResource extends ResourceSupport {
         if (!init) {
             try {
                 URL u = URI.create(getLocation()).toURL();
-                try (InputStream is = u.openStream()) {
+                HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+                conn.setConnectTimeout(10_000);
+                conn.setReadTimeout(20_000);
+                try (InputStream is = conn.getInputStream()) {
                     cache = camelContext.getTypeConverter().tryConvertTo(byte[].class, is);
+                } finally {
+                    conn.disconnect();
                 }
             } catch (Exception e) {
                 // ignore

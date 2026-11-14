@@ -92,6 +92,8 @@ class ProjectRunnerTest {
             Path project = Path.of(build.get(3)).getParent();
             assertThat(project.getParent().getFileName()).hasToString(ProjectRunner.RUN_PLATFORM_DIR);
             assertThat(project.resolve("pom.xml")).exists();
+            // the run has the pid of this process, so a later run can tell whether it is gone
+            assertThat(project.resolve(ProjectRunner.RUN_PID_FILE)).hasContent(Long.toString(ProcessHandle.current().pid()));
             assertThat(Files.readString(project.resolve("pom.xml"))).contains("camel-cli-connector")
                     .doesNotContain("camel-chaos");
 
@@ -114,6 +116,32 @@ class ProjectRunnerTest {
         } finally {
             integration.stop();
         }
+    }
+
+    @Test
+    void removesTheDirectoriesOfRunsWhoseProcessIsGone() throws Exception {
+        Path runDirs = dir.resolve(ProjectRunner.RUN_PLATFORM_DIR);
+        // a process that has ended: its run was killed and could not remove its directory
+        Process ended = new ProcessBuilder(Path.of(System.getProperty("java.home"), "bin", "java").toString(), "-version")
+                .redirectErrorStream(true).redirectOutput(ProcessBuilder.Redirect.DISCARD).start();
+        ended.waitFor();
+        Path gone = runDir(runDirs, "1", Long.toString(ended.pid()));
+        Path running = runDir(runDirs, "2", Long.toString(ProcessHandle.current().pid()));
+        // of an earlier Camel version, which has no pid: it may still be running
+        Path unknown = Files.createDirectories(runDirs.resolve("3"));
+
+        ProjectRunner.removeStaleRunDirs(runDirs);
+
+        assertThat(gone).doesNotExist();
+        assertThat(running.resolve("pom.xml")).exists();
+        assertThat(unknown).exists();
+    }
+
+    private static Path runDir(Path runDirs, String name, String pid) throws Exception {
+        Path runDir = Files.createDirectories(runDirs.resolve(name));
+        Files.writeString(runDir.resolve(ProjectRunner.RUN_PID_FILE), pid);
+        Files.writeString(runDir.resolve("pom.xml"), "<project/>");
+        return runDir;
     }
 
     @Test

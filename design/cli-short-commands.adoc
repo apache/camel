@@ -1,0 +1,359 @@
+---
+title: Camel CLI short commands without a JVM start
+authors:
+  - "@davsclaus"
+reviewers: []
+approvers: []
+creation-date: 2026-11-13
+last-updated: 2026-11-13
+status: proposed
+see-also:
+  - "CAMEL-26942"
+  - "CAMEL-26935"
+  - "CAMEL-26937"
+  - "CAMEL-26938"
+  - "CAMEL-26940"
+  - "CAMEL-25388"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+An AI coding agent drives the Camel CLI with many short commands: `camel get route`, `camel log`, `camel doc`,
+`camel cmd send`. Each one starts a JVM, and for most of them that start is 90-98 % of the time: the work takes
+3-50 ms in a warm JVM, the whole command 0.15-0.45 s.
+
+Two designs remove the JVM start:
+
+- A *resident daemon*: a warm Camel CLI JVM per user, which runs the commands that a small client sends it.
+- A *native front*: a GraalVM native binary of the short commands, which runs the JVM launcher for all the others.
+
+A prototype of the daemon answered `version`, `ps`, `get route` and `doc` in 26-37 ms, where a new JVM takes
+0.15-0.28 s. The native front has no prototype, and is estimated at 10-40 ms. This document compares the two. It
+recommends the daemon, opt-in and in stages, once the startup quick wins (CAMEL-26937) and the AOT cache
+(CAMEL-26940) are in, and not the native front: a daemon with a native client is in the same range (21-37 ms measured,
+against 10-40 ms estimated), for a fraction of the build and release work.
+
+The seconds a daemon saves are small next to the turns of the model. The reason to build it is that a command that
+answers at once can be called after every step. An agent makes fewer mistakes when it validates after every edit, looks
+an option up with `camel doc` instead of guessing it, and checks `camel status` after every reload. Speed alone
+does not make an agent do that, it has to be told (see the motivation), but speed makes it cheap to do. With the Java
+client the daemon answers in 50-65 ms, under the 0.1 s at which a response feels instant, like a native command.
+
+== Motivation
+
+The numbers are from 2026-11-13: macOS on an Apple M4 Pro, JDK 25, the unpacked 4.24.0-SNAPSHOT `camel-launcher` with
+warm CDS archives, medians of 5-9 runs on a machine with other load (load average about 3). Treat them as +/- 30 %.
+Estimates are marked as such.
+
+A typical loop of an agent runs 9 commands (`doc`, `validate yaml`, `run --background`, `get route`, `get health`,
+`get error`, `cmd send`, `log`, `stop`), and took 5.96 s. For `get`, `ps`, `log` and `doc`, the JVM start is 90-98 %
+of a call. It costs CPU too: with the C2 compiler a command uses more CPU time than wall time, on a laptop that may
+run the agent's local model as well. In a fresh sandbox, such as a container or a CI job, there are no CDS archives
+yet: the first loop took 12.3 s and left 177 MB of archives behind.
+
+The other sub-tasks of CAMEL-26935 cut what is not the JVM start:
+
+- `camel run --background` learns at once that Camel has started (CAMEL-26936, #29879): 2.94 s to 2.02 s.
+- An action is answered in 23-26 ms instead of 112 ms (CAMEL-26938, #29878).
+- `camel status` gives the state of an integration in one call instead of several (CAMEL-26941, #29883).
+- No JLine terminal and no log4j when a command does not need them, C1 only for the CLI JVM (CAMEL-26937), and one
+  AOT cache instead of a CDS archive per command (CAMEL-26940): together about 0.15 s for `ps`, `get`, `doc` and `log`,
+  and about 3 s for the loop (estimates built from the measured parts).
+
+What is left after those is the JVM start of each command: about 0.15 s, for 3-50 ms of work.
+
+Those seconds are small next to the time of the agent itself: each command is a turn of the model, which takes several
+seconds, more with a local model. What a slow command costs is how often it is called. A command that answers like a
+native one can be run after every step: `camel validate` after every edit, `camel doc` to look an option up instead of
+guessing it, `camel status` after every reload. An agent that checks more makes fewer mistakes.
+
+The AI panel of the TUI shows that speed alone is not enough. Its tools run in the process (the same code as the MCP
+server, `camel doc` and `camel validate`): 0-24 ms a call, 0.17 % of the time of an answer. In a pilot of 9 beginner
+questions with a local model (qwen3.6:35b, one run, so examples rather than rates), the model still did not look
+things up by itself. It answered a question that the doc of the file component answers without reading that doc, and
+got it wrong; with a hint in the question it read the doc and got it right. It suggested six options that do not
+exist, and validated nothing in 9 answers. A lookup also costs context: the doc of the file component is 17K
+characters, and three docs in one answer forced a compaction of the history.
+
+== Goals
+
+- The short commands an agent runs most answer in under 0.1 s, the usual limit for a response to feel instant, as a
+  native command does: `version`, `ps`, `get`, `log`, `doc`, `catalog`, `validate`, the `cmd` actions and `stop`.
+- Agents that are told to check their work with them do so, and do better for it.
+- They give the same output, JSON and exit codes as a new JVM, so an agent or a script cannot tell the difference.
+- It works on Linux, macOS and Windows, with the JDK the Camel CLI needs anyway.
+- Whenever the fast path cannot serve a command, the command runs in a new JVM as today.
+
+== Non-goals
+
+- Faster `camel run`, `camel export` and plugins: most of their time goes to the integration, Maven or the plugin, not
+  to the JVM start of the CLI. (The daemon could take the parent JVM of `run --background` later, see the
+  recommendation.)
+- Interactive commands: `camel shell`, `camel tui`, `camel nano` and `camel debug` keep their own JVM and terminal.
+- Replacing the MCP server or the TUI, which are resident JVMs already.
+- The `camel` installed with JBang: the client comes with the launcher (`camel.sh`, `camel.bat`).
+
+== Current design
+
+- `camel.sh` (and `camel.bat`) runs `java -jar camel-launcher-<version>.jar` with the arguments, and a CDS archive per
+  command name (`~/.cache/camel-cli/cds/<version>/<command>.jsa`, or under `$XDG_CACHE_HOME`), which the JVM makes on
+  the first call (`-XX:+AutoCreateSharedArchive`).
+- `CamelLauncherMain` builds the aesh command tree (156 commands) and runs one command. `CamelJBangMain.quit()` ends the
+  JVM with `System.exit`.
+- A command on a running integration reads its status file (`~/.camel/<pid>-status.json`), or sends it an action over
+  the file protocol of the CLI connector (`<pid>-action-<id>.json`, answered in `<pid>-output-<id>.json`).
+- Some JVMs stay, and run many commands. `camel ask` and the AI of the TUI run them with `CliRunner`, which gives the
+  exit code, stdout and stderr of a command, and builds a new command tree for each run, so no option value is left
+  from the run before; `camel shell` does the same. One command runs at a time (`CliRunner.LOCK`). The MCP server
+  (`camel mcp`) is resident too, and its tools act on integrations over the same file protocol (`ActionClient`).
+- The WebSocket transport of the CLI connector (`camel.cli.transport=websocket`) dials out to a tool, sends a `hello`
+  frame once Camel has started and snapshots (status, traces, ...) every second, and takes actions over the same
+  connection. An integration has one transport.
+
+== Measurements
+
+=== The daemon prototype
+
+A prototype of 70 lines started `CamelLauncherMain` once (with `quit()` overridden, so it does not exit), and ran
+`CliRunner.run(args)` for each request on a Unix domain socket: one line of tab-separated arguments in, the JSON of
+the `CliResult` (exit code, stdout, stderr, elapsed time) out. With `nc -U` as the client, and an integration running:
+
+[width="100%",cols="2,1,1",options="header"]
+|===
+| Command | New JVM | Daemon
+| `version` | 0.15 s | 26-30 ms
+| `ps --json` | 0.25 s | 28 ms
+| `get route --json` | 0.28 s | 27 ms
+| `doc timer` | 0.26 s | 37 ms
+| `validate yaml` | 0.42 s | 73 ms
+| `cmd send` | 0.46-0.75 s | 137 ms
+|===
+
+`cmd send` spent about 100 ms of its 137 ms waiting for the action polls, which #29878 cuts to about 25 ms. After
+about 100 commands the daemon used 352 MB of memory (RSS, with `-Xmx512m`).
+
+=== The client
+
+The client starts too, and `nc` is not a client to ship: Windows has none, and not every `nc` speaks Unix sockets. A
+second run compared it with a Java client of 20 lines (open the socket, send the arguments, copy the answer to
+stdout), with no integration running:
+
+[width="100%",cols="3,1,1,1",options="header"]
+|===
+| Client | `version` | `ps --json` | `doc timer`
+| None: a new JVM (`camel.sh`) | 0.146 s | 0.140 s | 0.265 s
+| `nc -U` | 21 ms | 22 ms | 31 ms
+| Java client | 56 ms | 59 ms | 65 ms
+| Java client, with an AOT cache, C1 and SerialGC | 51 ms | 50 ms | 59 ms
+|===
+
+A Java client keeps a floor of about 50 ms: the start of a JVM that loads almost no classes (`java -version` takes
+40 ms). With it, the daemon is 2.4-4 times as fast as a new JVM; with a native client (`nc` stands in for one), 6-9
+times. An AOT cache saves little for a client this small.
+
+=== The native front
+
+There is no prototype, as the test machine has no GraalVM: the numbers are estimates from what the short commands
+load.
+
+Compiling the whole CLI is not realistic: `run`, `export`, the plugins, Maven resolution and the TUI load classes at
+run time. A split is: a native binary for `version`, `ps`, `stop`, `get`, `log`, `doc`, `catalog` and `cmd` on a
+running integration, which runs the JVM launcher for everything else. Estimated: 10-40 ms per command, and a binary of
+30-45 MB, or 50-70 MB with the catalog JSON (without the docs).
+
+The libraries are not the problem: aesh has a native-image test in its CI, JLine, the terminal jars and log4j ship
+GraalVM metadata, and the catalog is JSON read without reflection. The blockers are in the CLI and its release:
+
+- No CLI module has GraalVM metadata.
+- The base classes of the short commands reach heavy code: `CamelCommand` reaches log4j, `ActionBaseCommand` reaches
+  `Run` and `KameletMain` (for the route dump of files), and `CamelJBangMain` reaches `PluginHelper` and Maven.
+- aesh builds the command model by reflection (156 commands, 943 option sites). Its annotation processor would avoid
+  that, but it needs a no-arg constructor, and every Camel command takes `CamelJBangMain`: a small change in aesh.
+- Each release needs 4-5 binaries, each built on a runner of its platform with GraalVM or Mandrel, and signed for
+  macOS. The JReleaser distribution (Homebrew, SDKMAN, WinGet, Scoop) changes from one `JAVA_BINARY` to binaries per
+  platform. The GraalVM runtime in the binary (GPLv2 with the Classpath Exception) needs an ASF legal check.
+
+Effort (estimate): 1-2 weeks to a prototype, 6-8 weeks to ship.
+
+=== Prior art
+
+Apache Maven's daemon, mvnd, combines the two. Builds run in a resident JVM, and the client is a native binary built
+with GraalVM for four platforms (Linux x86_64 and aarch64, macOS aarch64, Windows x86_64). On other platforms, or when
+the native client cannot load, `mvnd.sh` runs a Java client instead. When no daemon is idle, another one starts. The
+daemon loads a small JNI library for `chdir` and `setenv`. Gradle has a resident daemon too, with a Java client.
+
+== The options
+
+=== A resident daemon
+
+`camel.sh` and `camel.bat` use the client when the socket of the daemon exists and the command is one the daemon
+serves. The client sends the command line and the state of the request, prints the output it gets back, and exits
+with the exit code. When the daemon cannot be reached, or refuses the command, the client runs it in a new JVM as
+today. Opting in starts the daemon in the background, so the first call is no slower. The daemon is a launcher JVM
+that runs the commands with `CliRunner`.
+
+What `CliRunner` does not cover yet is the state that a JVM has once, and each request has its own of:
+
+- *Working directory.* A JVM cannot change its working directory, so relative paths resolve against the daemon's.
+  The client sends its directory, and the commands resolve their file arguments against it, as well as the
+  `camel-cli.properties` they read from the current directory. (mvnd changes the directory of its process with JNI
+  instead.) The read-only commands take no files.
+- *Environment.* camel-jbang-core reads `System.getenv` in 34 places. The client sends its environment, and the
+  commands read it from the request.
+- *Terminal.* Whether the output is a terminal, its width and its colors: the client sends them. Under `CliRunner`,
+  `printColored` prints through the printer and without colors, as `AnsiConsole.out()` only serves the console of the
+  JVM: for a client on a terminal, the daemon writes the colors itself.
+- *Output and input.* `CliRunner` captures the printer of the CLI, but a few places use the console of the JVM
+  directly: the watch commands clear the screen and `Debug` prints with `AnsiConsole.out()`, `LauncherHelper` and
+  `PipeProvider` print warnings to `System.err`, and `CommandHelper` asks for a confirmation on `System.out` and reads
+  the answer from stdin. They move to the printer, and a command that asks is not served. The output streams to the
+  client as it is printed, for `--follow` and `--watch`, and Ctrl+C in the client cancels the command.
+- *System properties.* Commands set them in 12 places (`InfraRun`, `Hawtio`, the AWT headless flag, the `pid` of the
+  CLI), and in a daemon the next command sees them.
+- *One command at a time.* `CliRunner.LOCK` runs one command at a time, while an agent may run several at once, or
+  leave `camel log --follow` running. When the daemon is busy, the client runs the command in a new JVM.
+- *Child processes.* `run --background`, `restart`, `debug` and `infra run` start a JVM with
+  `LauncherHelper.getCamelCommand()`, which passes on the `-D` and `-X` options of the JVM it runs in. In a daemon
+  those are the daemon's, and so are the directory and the environment the child inherits: it must get the client's.
+  (The prototype ran outside the launcher, so its child fell back to the `camel` on the PATH, which did not get the
+  `-Duser.home` of the daemon.)
+- *Lifecycle.* The daemon starts under a lock, so two clients do not start two, and stops after an idle time.
+  `camel daemon status` and `camel daemon stop` show and stop it, and a socket left by a crash is removed. The client
+  and the daemon compare their Camel version and JDK when they connect, and a mismatch, or a plugin added or removed,
+  restarts the daemon.
+- *Security.* The socket is a file in a directory that only its user can open (mode 0700), under `~/.camel`, so
+  `-Duser.home` isolates it as it isolates the status files. The JDK supports Unix domain sockets on Linux, macOS, and
+  Windows 10 and later. A socket path is limited to 104 bytes on macOS (108 on Linux), so a long home directory needs
+  a shorter fallback: the measurement above hit that limit in a scratch directory.
+- *Memory.* 352 MB for the prototype, with `-Xmx512m`. A smaller heap and the idle stop bound it.
+
+Later, the integrations the daemon starts can connect to it with the WebSocket transport, so it knows when they have
+started without polling a file. As an integration has one transport, the connector would then have to keep writing
+the status files too, so a `camel` without the daemon still sees the integration.
+
+Speed: 50-65 ms with the Java client, 21-37 ms with a native client (measured, see above). Effort (estimate): 2 weeks
+for the protocol, the Java client, the lifecycle and the read-only commands; 1-2 weeks for the state of the request
+and the other short commands; 1-2 weeks for an optional native client.
+
+=== A native front
+
+As in the study above: the binary runs the short commands itself, and the JVM launcher for all others. No process
+stays in the background, and no state is shared between commands. In exchange, the base classes of the commands
+change, GraalVM metadata must follow every command and option in the binary (a gap shows only in the native binary,
+so CI tests the commands natively on each platform), aesh needs a change, and every release ships binaries per
+platform.
+
+Speed: 10-40 ms (estimate). Effort (estimate): 6-8 weeks.
+
+=== Side by side
+
+The quick wins and the AOT cache are not an alternative to either option: they speed up every command, the ones a
+daemon or a native front does not serve too, and the start of the daemon itself.
+
+[width="100%",cols="2,2,2,2,2",options="header"]
+|===
+| | Quick wins and AOT cache | Daemon, Java client | Daemon, native client | Native front
+| A short command | about 0.15 s (estimate) | 50-65 ms | 21-37 ms (`nc` as the client) | 10-40 ms (estimate)
+| Commands it speeds up | all | the ones it serves | the ones it serves | the ones in the binary
+| A process in the background | no | yes | yes | no
+| Binaries per platform | no | no | 4, the Java client elsewhere | 4-5
+| What changes | small, under way | the state of a request, a protocol, the lifecycle | the same, and a client of
+  a few hundred lines | the base classes, GraalVM metadata, aesh, the release
+| Effort (estimate) | under way | 3-4 weeks | 1-2 weeks more | 6-8 weeks
+|===
+
+== Alternatives considered
+
+- *A native image of the whole CLI.* `run`, `export`, the plugins, Maven resolution and the TUI load classes at run
+  time.
+- *Only the quick wins and the AOT cache.* They leave the JVM start, about 0.15 s per command. An AOT cache also
+  belongs to the JDK build that made it, so it is made on each machine, and a fresh sandbox pays for it again.
+- *CRaC* (Coordinated Restore at Checkpoint). It restores a warm JVM from a checkpoint, but it needs a JDK with CRaC
+  support, and its checkpoints are made with CRIU, which is Linux only.
+- *A generic Java daemon, such as Nailgun.* It runs any main class in a resident JVM, but the state of a request is
+  specific to the CLI (the printer, the lock, the directory, the terminal), and it brings its own client and a
+  dependency.
+- *Agents use the MCP server or the TUI.* They are resident, and an agent that uses them pays no JVM start. But an
+  agent runs the CLI through its shell without any setup, while an MCP server has to be configured for each agent.
+
+== Compatibility
+
+- The daemon is opt-in (`camel daemon start`, or a setting): without it, nothing changes.
+- A served command gives the same output, JSON and exit code as in a new JVM. The tests run each served command both
+  ways and compare.
+- `CAMEL_CLI_DAEMON=false` runs a call in a new JVM, to rule the daemon out.
+- A native front would change how the CLI is installed: binaries per platform instead of one Java distribution.
+
+== Risks
+
+- State that a command leaves behind for the next one: a static field, a system property, a catalog of another
+  version. The result is wrong output only with the daemon, the hardest kind of bug to report, and agents that call
+  the CLI more also trust it more. Mitigations: the daemon starts with the read-only commands, the tests compare both
+  ways, and the switch above rules it out.
+- A daemon of an older version after an upgrade, or one without a plugin added since: the version check and the
+  restart.
+- Agent sandboxes that block the socket, or stop the processes a command leaves in the background: the client then
+  runs the command in a new JVM, so the daemon can only make a call faster.
+- The memory of a resident JVM on a small machine: the idle stop and a smaller heap.
+- Another local user connecting: the directory of the socket only lets its user in. The daemon runs with the rights
+  of its user, as the CLI does.
+- Native front: GraalVM metadata that drifts from the code fails only in the binary, at run time.
+
+== Open questions
+
+- The switch: `camel daemon start` only, or also a setting in `~/.camel-cli.properties`? Does the daemon become the
+  default later?
+- Where the socket lives. Proposed: `~/.camel/daemon/cli.sock`, with a fallback for a long path.
+- The idle time before the daemon stops. Proposed: 30 minutes.
+- Should the TUI and `camel mcp`, which stay running anyway, answer on the socket too?
+- Should the daemon start integrations itself (`run --background`), and take their readiness over the WebSocket
+  transport?
+
+== Recommendation
+
+. Finish CAMEL-26937 and CAMEL-26940 first, and measure the loop again with the same scripts. They speed up every
+  command, `run` and the plugins included, with nothing new to run or to ship.
+. Then build the daemon, opt-in, in stages, each its own pull request:
+.. the protocol, the Java client in `camel.sh` and `camel.bat`, the lifecycle, and the read-only commands that take
+   no files (`version`, `ps`, `get`, `log` without `--follow`, `doc`, `catalog`, the `cmd` actions, `stop`). The
+   tests run each of them with and without the daemon and compare the output, as agents that call the CLI more also
+   trust it more;
+.. the directory, environment and terminal of the request, streaming and cancel: `validate`, `--watch` and
+   `--follow`;
+.. child processes (`run --background`, `restart`) with the client's directory, environment and JVM options, and
+   readiness pushed over the WebSocket transport.
+. Keep the Java client. At 50-65 ms it answers under the 0.1 s at which a response feels instant, so the commands
+  already feel native. A native client for the main platforms, with the Java client as the fallback, is optional.
+. Tell the agents. Speed alone does not change how an agent uses the CLI, so what agents read (the Camel CLI pages,
+  the instructions of the MCP server, the system prompt of the AI panel) says that the short commands are cheap to
+  call: look an option up instead of guessing it, asking only for the options needed (the `optionsFilter` of
+  `camel_catalog_doc`) as a whole doc page costs context, and validate every snippet before answering.
+. Measure the agents, not only the commands. The local-model benchmark runs in the AI panel of the TUI, whose tools
+  run in the process, so it measures the instruction, not the daemon: run it with and without the instruction, and
+  compare the pass rate, the calls and the invented options per answer, the compactions and the time of the model.
+  The daemon needs a benchmark that drives `camel` through a shell. Make the daemon the default only after a release
+  as opt-in, and when that benchmark shows the gain.
+. Do not build the native front. A daemon with a native client is in the same range (21-37 ms measured, against
+  10-40 ms estimated), and the native front costs the most: the base classes of the commands change, GraalVM metadata
+  must follow every command and option, aesh needs a change, and each release needs a binary per platform, all before
+  the first command is faster.
+
+The seconds alone would not pay for a process in the background. If the loop is at about 3 s after the first step, the
+daemon with the Java client takes about 1 s more off it (estimate: 8 short commands at about 0.1 s each), next to model
+turns of several seconds each. The gain to look for is in how the agents work, and that is what the benchmarks
+measure.
+
+== Related tickets
+
+- CAMEL-26942: this design.
+- CAMEL-26935: make the Camel CLI faster for AI agents, the parent of the sub-tasks below.
+- CAMEL-26936: `camel run --background` learns at once that Camel has started.
+- CAMEL-26937: faster startup of the short commands (no JLine terminal or log4j when not needed, C1).
+- CAMEL-26938: shorter action polls.
+- CAMEL-26940: a JDK 25 AOT cache instead of a CDS archive per command.
+- CAMEL-26941: `camel status`, the state of an integration in one call.
+- CAMEL-26913: CLI startup and config (CDS archives shared between installs).
+- CAMEL-25388: the Camel CLI reliable for AI agents and scripts.
+- CAMEL-23810: the port of the CLI to aesh.

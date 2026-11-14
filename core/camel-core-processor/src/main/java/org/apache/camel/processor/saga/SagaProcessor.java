@@ -68,7 +68,7 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
      * must fail, instead of starting a new saga or running outside of a saga.
      *
      * @param  exchange              the exchange
-     * @param  coordinator           the coordinator of the saga found for the exchange, or <tt>null</tt> if none
+     * @param  coordinator           the coordinator of the saga found for the exchange, or <code>null</code> if none
      * @throws IllegalStateException if the exchange belongs to a saga that is no longer active
      */
     protected void checkSagaIsActive(Exchange exchange, CamelSagaCoordinator coordinator) {

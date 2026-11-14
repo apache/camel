@@ -32,7 +32,7 @@ import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * An {@link AggregationStrategy} that adapts to a POJO.
- * <p/>
+ * <p>
  * This allows end users to use POJOs for the aggregation logic, instead of having to implement the Camel API
  * {@link AggregationStrategy}.
  */

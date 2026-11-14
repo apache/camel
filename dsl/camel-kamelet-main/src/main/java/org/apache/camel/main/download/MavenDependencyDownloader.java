@@ -28,7 +28,9 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -71,6 +73,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private final Set<DownloadListener> downloadListeners = new LinkedHashSet<>();
     private final Set<ArtifactDownloadListener> artifactDownloadListeners = new LinkedHashSet<>();
     private final Map<String, DownloadRecord> downloadRecords = new HashMap<>();
+    // the artifacts already resolved for the class loader (groupId:artifactId:classifier:extension -> artifact): their
+    // version is managed in the next resolutions, so a library is not loaded again in another version
+    private final Map<String, MavenGav> loaded = new ConcurrentHashMap<>();
     private KnownReposResolver knownReposResolver;
     private VersionResolver versionResolver;
     private boolean download = true;
@@ -273,6 +278,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         doDownloadDependency(groupId, artifactId, version, transitively, false, null);
     }
 
+    @Override
+    public void downloadRequiredDependency(String groupId, String artifactId, String version) {
+        doDownloadDependencyWithParent(null, groupId, artifactId, version, true, false, null, true);
+    }
+
     protected void doDownloadDependency(
             String groupId, String artifactId, String version, boolean transitively,
             boolean hidden, String extraRepos) {
@@ -283,6 +293,17 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             String parentGav,
             String groupId, String artifactId, String version, boolean transitively,
             boolean hidden, String extraRepos) {
+        doDownloadDependencyWithParent(parentGav, groupId, artifactId, version, transitively, hidden, extraRepos, false);
+    }
+
+    /**
+     * @param required whether to throw a {@link DownloadException} when the dependency cannot be downloaded, instead of
+     *                 logging the error
+     */
+    protected void doDownloadDependencyWithParent(
+            String parentGav,
+            String groupId, String artifactId, String version, boolean transitively,
+            boolean hidden, String extraRepos, boolean required) {
 
         if (versionResolver != null && version != null) {
             version = versionResolver.resolve(version);
@@ -339,7 +360,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                             a.getClassifier())
                     : null;
             List<MavenArtifact> artifacts = resolveDependenciesViaAether(parentGav, deps, extraRepositories,
-                    transitively, useApacheSnapshots, available);
+                    transitively, useApacheSnapshots, available, List.copyOf(loaded.values()));
+            for (MavenArtifact a : artifacts) {
+                loaded.putIfAbsent(managementKey(a.getGav()), a.getGav());
+            }
             List<File> files = new ArrayList<>();
             if (verbose) {
                 LOG.info("Dependencies: {} -> [{}]", gav, artifacts);
@@ -384,7 +408,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 }
             }
 
-        }, gav);
+        }, gav, required);
     }
 
     @Override
@@ -639,6 +663,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         mavenDownloader = mavenDownloaderImpl;
     }
 
+    private static String managementKey(MavenGav gav) {
+        return gav.getGroupId() + ":" + gav.getArtifactId() + ":" + Objects.toString(gav.getClassifier(), "") + ":"
+               + Objects.toString(gav.getPackaging(), "");
+    }
+
     /**
      * Whether the class loader the JARs are added to sees the classpath the JVM was started with, so what is on it is
      * not added (nor downloaded) again. A class loader without the application class loader as parent, such as for
@@ -695,9 +724,24 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             String parentGav,
             List<String> depIds, Set<String> extraRepositories,
             boolean transitively, boolean useApacheSnapshots, Predicate<MavenGav> available) {
+        return resolveDependenciesViaAether(parentGav, depIds, extraRepositories, transitively, useApacheSnapshots,
+                available, null);
+    }
+
+    /**
+     * @param available the artifacts that are already available (such as on the classpath), which are left out together
+     *                  with their dependencies, or null to resolve them all
+     * @param managed   the artifacts whose version is used for the transitive dependencies on them (such as the ones
+     *                  already loaded), or null
+     */
+    public List<MavenArtifact> resolveDependenciesViaAether(
+            String parentGav,
+            List<String> depIds, Set<String> extraRepositories,
+            boolean transitively, boolean useApacheSnapshots, Predicate<MavenGav> available,
+            Collection<MavenGav> managed) {
         try {
             return mavenDownloader.resolveArtifacts(parentGav, depIds, extraRepositories, transitively, useApacheSnapshots,
-                    available);
+                    available, managed);
         } catch (MavenResolutionException e) {
             String repos = (e.getRepositories() == null || e.getRepositories().isEmpty())
                     ? "(empty URL list)"

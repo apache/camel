@@ -33,11 +33,11 @@ import static org.apache.camel.support.builder.ExpressionBuilder.routeIdExpressi
 
 /**
  * An {@link ErrorHandler} used as a safe fallback when processing by other error handlers such as the
- * {@link org.apache.camel.model.OnExceptionDefinition}.
- * <p/>
+ * {@code org.apache.camel.model.OnExceptionDefinition}.
+ * <p>
  * This error handler is used as a fail-safe to ensure that error handling does not run in endless recursive looping
- * which potentially can happen if a new exception is thrown while error handling a previous exception which then cause
- * new error handling to process and this then keep on failing with new exceptions in an endless loop.
+ * which potentially can happen if a new exception is thrown while error handling a previous exception which then causes
+ * new error handling to process and this then keeps on failing with new exceptions in an endless loop.
  */
 public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements ErrorHandler {
 

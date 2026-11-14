@@ -51,6 +51,7 @@ import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.OptionalValueParser;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeTypeConverter;
@@ -1342,7 +1343,9 @@ public class Run extends CamelCommand implements CommandLifecycle {
             printer().println(
                     "Running " + kind + ": " + name + " in background with PID: " + p.pid()
                               + (backgroundWait > 0 ? " (waiting to startup)" : ""));
-            printer().println("Log: " + logPath);
+            if (backgroundWait <= 0) {
+                printer().println("Log: " + logPath);
+            }
         }
         try {
             if (backgroundWait <= 0) {
@@ -1357,7 +1360,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
                 }
                 if (state < 5) {
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(ProcessFinder.STATUS_POLL_INTERVAL);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         break;
@@ -1377,9 +1380,14 @@ public class Run extends CamelCommand implements CommandLifecycle {
                 // still starting: it is left running, and the log tells why it takes long
                 String waited = backgroundWait < 1000 ? backgroundWait + "ms" : TimeUtils.printDuration(backgroundWait);
                 throw CliException.timeout(kind + ": " + name + " (PID: " + p.pid() + ") is still starting after "
-                                           + waited + "; the log is in " + logPath);
+                                           + waited + "; the log is in "
+                                           + BackgroundLog.logOf(p.pid(), logPath));
             }
             printer().println(kind + ": " + name + " (state: " + extractState(state) + ")");
+            if (!internal) {
+                // started: its log file has all of its logging, and the output only the warnings and errors
+                printer().println("Log: " + BackgroundLog.logOf(p.pid(), logPath));
+            }
             return 0;
         } finally {
             if (internal) {

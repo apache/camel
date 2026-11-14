@@ -115,6 +115,43 @@ public final class ExportHelper {
     }
 
     /**
+     * The line of a property in a properties file that is written in ISO-8859-1, escaped so the file is read back with
+     * the same key and value (see {@link java.util.Properties#load(java.io.InputStream)}): a backslash, a tab, a new
+     * line, and the other control characters, a leading space of the value, and a space, =, :, # and ! in the key. A
+     * character beyond ISO-8859-1 is written as a Unicode escape. The other characters of the value are written as they
+     * are, so the line stays readable: jdbc:mysql://localhost and not jdbc\:mysql\://localhost (CAMEL-26912).
+     */
+    public static String propertyLine(String key, String value) {
+        StringBuilder sb = new StringBuilder();
+        escapeProperty(sb, key, true);
+        sb.append('=');
+        escapeProperty(sb, value, false);
+        return sb.toString();
+    }
+
+    private static void escapeProperty(StringBuilder sb, String text, boolean key) {
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            switch (c) {
+                case '\\' -> sb.append("\\\\");
+                case '\t' -> sb.append("\\t");
+                case '\n' -> sb.append("\\n");
+                case '\r' -> sb.append("\\r");
+                case '\f' -> sb.append("\\f");
+                case ' ' -> sb.append(key || i == 0 ? "\\ " : " ");
+                case '=', ':', '#', '!' -> sb.append(key ? "\\" + c : String.valueOf(c));
+                default -> {
+                    if (c < 0x20 || c > 0xff) {
+                        sb.append(String.format("\\u%04x", (int) c));
+                    } else {
+                        sb.append(c);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Whether the directory has files or directories that are not hidden. A directory that does not exist has none.
      */
     public static boolean hasVisibleFiles(Path dir) {

@@ -23,6 +23,7 @@ on:
       - main
     paths:
       - 'dsl/camel-jbang/camel-launcher/**'
+      - 'dsl/camel-jbang/camel-jbang-run/src/main/resources/camel-wrapper/camelw.cmd'
       - 'tooling/camel-exe/**'
       - '.github/workflows/package-native-validation.yml'
   pull_request:
@@ -30,6 +31,7 @@ on:
       - main
     paths:
       - 'dsl/camel-jbang/camel-launcher/**'
+      - 'dsl/camel-jbang/camel-jbang-run/src/main/resources/camel-wrapper/camelw.cmd'
       - 'tooling/camel-exe/**'
       - '.github/workflows/package-native-validation.yml'
   workflow_dispatch:
@@ -222,7 +224,7 @@ jobs:
         # surefire fork timeout, so slow-but-passing runs were killed. Give this job's fork more room.
         run: |
           cd dsl/camel-jbang/camel-launcher
-          ../../../mvnw -B -P apache-snapshots -ntp test -pl . -Dtest=WebsiteInstallTest,CamelBatDiscoveryTest,FakeJavaTest -Dcamel.surefire.forkTimeout=2700
+          ../../../mvnw -B -P apache-snapshots -ntp test -pl . -Dtest=WebsiteInstallTest,CamelBatDiscoveryTest,CamelwCmdTest,FakeJavaTest -Dcamel.surefire.forkTimeout=2700
 
       # Per-test timings for the PowerShell suite, which runs close to camel-launcher's surefire fork timeout.
       # A fork killed on that timeout writes no XML report; the per-process timings the fixture prints to the

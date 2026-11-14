@@ -69,7 +69,7 @@ public class StringAggregationStrategy implements AggregationStrategy {
 
     /**
      * Set an expression to extract the element to be aggregated from the incoming {@link Exchange}.
-     * <p/>
+     * <p>
      * By default, it picks the full IN message body of the incoming exchange.
      *
      * @param  expression The picking expression.

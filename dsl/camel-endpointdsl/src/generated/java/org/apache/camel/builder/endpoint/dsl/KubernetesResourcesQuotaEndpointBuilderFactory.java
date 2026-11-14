@@ -304,7 +304,6 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: security
          * 
          * @param trustCerts the value to set
@@ -320,7 +319,6 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: security
          * 
          * @param trustCerts the value to set

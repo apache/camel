@@ -25,7 +25,7 @@ import org.apache.camel.Traceable;
 /**
  * A {@link org.apache.camel.Processor} which evaluates an {@link Expression} and stores the result as a property on the
  * {@link Exchange} with the key {@link Exchange#EVALUATE_EXPRESSION_RESULT}.
- * <p/>
+ * <p>
  * This processor will in case of evaluation exceptions, set the caused exception on the {@link Exchange}.
  */
 public class EvaluateExpressionProcessor extends BaseProcessorSupport implements Traceable {

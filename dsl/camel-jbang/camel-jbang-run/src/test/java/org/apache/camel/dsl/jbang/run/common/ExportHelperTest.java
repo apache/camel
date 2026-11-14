@@ -22,7 +22,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.Assertions;
@@ -248,5 +251,35 @@ public class ExportHelperTest {
 
         Assertions.assertEquals(1, gavs.size());
         Assertions.assertEquals("42.7.9", gavs.get(0).getVersion());
+    }
+
+    @Test
+    public void testPropertyLineIsReadBackAsWritten() throws Exception {
+        Map<String, String> properties = new LinkedHashMap<>();
+        properties.put("path", "C:\\temp\\new");
+        properties.put("regex", "^\\d+$");
+        properties.put("my.key with space", "1");
+        properties.put("odd=key:with#and!", "x");
+        properties.put("leading", "  two spaces");
+        properties.put("lines", "one\ntwo\tthree\rfour\ffive");
+        properties.put("control", "a\u0001b");
+        properties.put("latin", "æøå");
+        properties.put("euro", "5 €");
+        properties.put("url", "jdbc:mysql://localhost:3306/db?a=b#c!");
+
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> e : properties.entrySet()) {
+            sb.append(ExportHelper.propertyLine(e.getKey(), e.getValue())).append('\n');
+        }
+        // a properties file is read in ISO-8859-1
+        Properties loaded = new Properties();
+        loaded.load(new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.ISO_8859_1)));
+
+        Assertions.assertEquals(properties.size(), loaded.size(), sb.toString());
+        properties.forEach((k, v) -> Assertions.assertEquals(v, loaded.getProperty(k), k));
+        // readable: a value keeps its colons, and the euro sign is not in ISO-8859-1
+        Assertions.assertEquals("url=jdbc:mysql://localhost:3306/db?a=b#c!",
+                ExportHelper.propertyLine("url", properties.get("url")));
+        Assertions.assertEquals("euro=5 \\u20ac", ExportHelper.propertyLine("euro", "5 €"));
     }
 }

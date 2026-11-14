@@ -373,6 +373,9 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         if (shouldCreate(only, "harden")) {
             commandLine.addSubcommand("harden", new CommandTree(new Harden(this)));
         }
+        if (shouldCreate(only, "status")) {
+            commandLine.addSubcommand("status", new CommandTree(new IntegrationStatus(this)));
+        }
         if (shouldCreate(only, "get")) {
             commandLine.addSubcommand("get", new CommandTree(new CamelStatus(this))
                     .addSubcommand("bean", new CommandTree(new CamelBeanDump(this)))

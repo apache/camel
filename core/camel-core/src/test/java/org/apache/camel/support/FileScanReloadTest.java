@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -147,6 +148,36 @@ public class FileScanReloadTest extends ContextTestSupport {
         assertThat(scanNames()).isEmpty();
         Files.writeString(state.resolve("camel-jbang-run.properties"), "camel.jbang.dev=true\ncamel.jbang.x=1");
         assertThat(scanNames()).isEmpty();
+    }
+
+    @Test
+    public void testAReloadAskedForReloadsTheChangedFilesAtOnce() throws Exception {
+        // CAMEL-26939: camel cmd reload --wait, right after an edit, does not wait for the next scan
+        List<String> reloaded = new CopyOnWriteArrayList<>();
+        strategy.setResourceReload((name, resource) -> reloaded.add(new File(name).getName()));
+        Files.writeString(dir.resolve("shop.yaml"), "one");
+        Files.writeString(dir.resolve("shop.properties"), "a=1");
+
+        assertThat(strategy.reloadChanged()).extracting(f -> new File(f).getName())
+                .containsExactlyInAnyOrder("shop.yaml", "shop.properties");
+        // the properties first, as when the watcher reloads them
+        assertThat(reloaded).containsExactly("shop.properties", "shop.yaml");
+
+        // nothing changed since
+        assertThat(strategy.reloadChanged()).isEmpty();
+        assertThat(reloaded).hasSize(2);
+    }
+
+    @Test
+    public void testAReloadAskedForWaitsForAFileStillBeingWritten() throws Exception {
+        List<String> reloaded = new CopyOnWriteArrayList<>();
+        strategy.setResourceReload((name, resource) -> reloaded.add(new File(name).getName()));
+        strategy.setStableTimeout(300);
+        Files.writeString(dir.resolve("shop.yaml"), "one");
+
+        // just written, so the reload waits until it has settled rather than say that nothing changed
+        assertThat(strategy.reloadChanged()).extracting(f -> new File(f).getName()).containsExactly("shop.yaml");
+        assertThat(reloaded).containsExactly("shop.yaml");
     }
 
     @Test

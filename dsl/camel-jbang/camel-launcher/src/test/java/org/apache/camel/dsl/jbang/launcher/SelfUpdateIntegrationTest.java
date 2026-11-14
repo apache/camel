@@ -34,6 +34,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.InstallScriptFetcher;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.ManifestFetcher;
@@ -132,6 +133,47 @@ class SelfUpdateIntegrationTest {
             return new CommandTree(cmd).execute(args).getResultValue();
         } catch (Exception e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    @Test
+    void installerTimeoutReturnsExit124(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, "1.0.0");
+            WebsiteInstallTest.publishLatest(fixture, NEWER_VERSION);
+            WebsiteInstallTest.publishVersion(fixture, NEWER_VERSION);
+
+            // A fake InstallScriptFetcher that returns a never-finishing `sleep 300` shell script
+            Path sleepScript = Files.createTempFile(temp, "fake-install", ".sh");
+            Files.writeString(sleepScript, "#!/bin/sh\nsleep 300\n");
+            sleepScript.toFile().setExecutable(true);
+            InstallScriptFetcher hangingFetcher = new InstallScriptFetcher("unused") {
+                @Override
+                public Path fetch(Path stagingDir) {
+                    return sleepScript;
+                }
+            };
+
+            HttpClient httpClient = trustingHttpClient(fixture);
+            ManifestFetcher fetcher = new ManifestFetcher(
+                    fixture.baseUrl() + "/camel-cli/releases", fixture.mavenUrl(), fixture.snapshotUrl(), httpClient);
+            Map<String, String> installerEnv = fixture.environment(home);
+            SelfUpdateCommand cmd
+                    = new SelfUpdateCommand(new CamelJBangMain().withPrinter(printer), fetcher, hangingFetcher, installerEnv);
+            // Shorten the 5-minute process wait to 2 seconds so the test completes quickly
+            cmd.processWaitTimeoutSeconds = 2;
+
+            int exit;
+            try {
+                exit = new CommandTree(cmd).execute().getResultValue();
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+
+            assertThat(exit).isEqualTo(CliExitCode.TIMEOUT);
+            assertThat(printer.getOutput()).contains("timed out");
         }
     }
 

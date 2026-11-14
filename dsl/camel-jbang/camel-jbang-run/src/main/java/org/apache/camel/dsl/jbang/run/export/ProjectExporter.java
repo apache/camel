@@ -188,6 +188,9 @@ public class ProjectExporter {
         // directory, and an export without files reuses the run data that the last run or export left there
         try (WorkDirLock lock = WorkDirLock.acquire(copy.workDir, printer())) {
             return exporter.export();
+        } catch (ExportException e) {
+            printer().printErr(e.getMessage());
+            return 1;
         }
     }
 

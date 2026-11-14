@@ -25,11 +25,14 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -60,6 +63,8 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.DependencyCollectionContext;
+import org.eclipse.aether.collection.DependencyManagement;
+import org.eclipse.aether.collection.DependencyManager;
 import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
@@ -590,6 +595,17 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             List<String> dependencyGAVs, Set<String> extraRepositories,
             boolean transitively, boolean useApacheSnapshots, Predicate<MavenGav> available)
             throws MavenResolutionException {
+        return resolveArtifacts(rootGav, dependencyGAVs, extraRepositories, transitively, useApacheSnapshots, available,
+                null);
+    }
+
+    @Override
+    public List<MavenArtifact> resolveArtifacts(
+            String rootGav,
+            List<String> dependencyGAVs, Set<String> extraRepositories,
+            boolean transitively, boolean useApacheSnapshots, Predicate<MavenGav> available,
+            Collection<MavenGav> managed)
+            throws MavenResolutionException {
 
         // When preferLocal is enabled, what is already in the local repository is used as is: SNAPSHOT
         // metadata is not checked again remotely, while anything missing is still downloaded
@@ -601,8 +617,72 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                     session.getDependencySelector(), new AvailableDependencySelector(available)));
             session = availableSession;
         }
+        if (managed != null && !managed.isEmpty() && transitively) {
+            // the versions of the managed artifacts, whatever their classifier
+            Map<String, String> versions = new HashMap<>();
+            for (MavenGav gav : managed) {
+                versions.putIfAbsent(gav.getGroupId() + ":" + gav.getArtifactId(), gav.getVersion());
+            }
+            DefaultRepositorySystemSession managedSession = new DefaultRepositorySystemSession(session);
+            managedSession.setDependencyManager(
+                    new ManagedVersionDependencyManager(session.getDependencyManager(), versions, 0));
+            session = managedSession;
+        }
         return doResolveArtifacts(rootGav, dependencyGAVs, extraRepositories,
                 transitively, useApacheSnapshots, session);
+    }
+
+    /**
+     * Gives the transitive dependencies on the managed artifacts their version, whatever their classifier (such as a
+     * native JAR of another platform), as the dependencyManagement of a Maven project would. The dependencies asked for
+     * directly keep their version.
+     */
+    static final class ManagedVersionDependencyManager implements DependencyManager {
+
+        private final DependencyManager delegate;
+        private final Map<String, String> versions;
+        private final int depth;
+
+        ManagedVersionDependencyManager(DependencyManager delegate, Map<String, String> versions, int depth) {
+            this.delegate = delegate;
+            this.versions = versions;
+            this.depth = depth;
+        }
+
+        @Override
+        public DependencyManagement manageDependency(Dependency dependency) {
+            DependencyManagement management = delegate != null ? delegate.manageDependency(dependency) : null;
+            // depth 1 are the dependencies asked for
+            if (depth >= 2) {
+                Artifact a = dependency.getArtifact();
+                String version = versions.get(a.getGroupId() + ":" + a.getArtifactId());
+                if (version != null && !version.equals(a.getVersion())) {
+                    if (management == null) {
+                        management = new DependencyManagement();
+                    }
+                    management.setVersion(version);
+                }
+            }
+            return management;
+        }
+
+        @Override
+        public DependencyManager deriveChildManager(DependencyCollectionContext context) {
+            DependencyManager child = delegate != null ? delegate.deriveChildManager(context) : null;
+            return new ManagedVersionDependencyManager(child, versions, depth + 1);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            // the collector caches by dependency manager
+            return o instanceof ManagedVersionDependencyManager other && depth == other.depth
+                    && versions == other.versions && Objects.equals(delegate, other.delegate);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(delegate, depth, System.identityHashCode(versions));
+        }
     }
 
     /**
@@ -1093,11 +1173,13 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         return compat;
     }
 
-    private static MavenArtifact toMavenArtifact(ArtifactResult ar) {
+    static MavenArtifact toMavenArtifact(ArtifactResult ar) {
         Artifact artifact = ar.getArtifact();
+        // the base version: a SNAPSHOT from a remote repository has a timestamped version (such as
+        // 4.24.0-20261112.143700-31), which does not match the same SNAPSHOT already on the classpath
         MavenGav gav = MavenGav.fromCoordinates(
                 artifact.getGroupId(), artifact.getArtifactId(),
-                artifact.getVersion(), artifact.getExtension(), artifact.getClassifier());
+                artifact.getBaseVersion(), artifact.getExtension(), artifact.getClassifier());
         return new MavenArtifact(gav, artifact.getFile());
     }
 

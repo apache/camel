@@ -24,7 +24,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.AfterEach;
@@ -56,6 +58,7 @@ class FileCliConnectorTransportTest {
     private DefaultCamelContext context;
     private FileCliConnectorTransport transport;
     private final EmptySnapshots snapshots = new EmptySnapshots();
+    private final AtomicInteger listings = new AtomicInteger();
 
     @BeforeEach
     void start() {
@@ -64,7 +67,13 @@ class FileCliConnectorTransportTest {
         dir = home.resolve(".camel").toFile();
 
         context = new DefaultCamelContext();
-        transport = new FileCliConnectorTransport();
+        transport = new FileCliConnectorTransport() {
+            @Override
+            protected File[] listActionFiles(File dir, String prefix) {
+                listings.incrementAndGet();
+                return super.listActionFiles(dir, prefix);
+            }
+        };
         transport.configure(context, FileCliConnectorTransportTest::dispatch, snapshots, () -> {
         });
         transport.start();
@@ -105,7 +114,7 @@ class FileCliConnectorTransportTest {
 
     @Test
     void actionsAreAnsweredBetweenTwoStatusUpdates() {
-        // CAMEL-25447: the status every second, as by default, and the actions looked for about every 100 millis
+        // CAMEL-25447: the status every second, as by default, and the actions looked for about every 20 millis
         transport.updateDelay(1000);
         awaitJson(file(PID + "-status.json"));
         int statuses = snapshots.statuses.get();
@@ -119,8 +128,67 @@ class FileCliConnectorTransportTest {
         long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         // an action per status update took at least 4 seconds
         assertThat(elapsed).isLessThan(2500);
-        // and the status is not collected more often
-        assertThat(snapshots.statuses.get() - statuses).isLessThanOrEqualTo((int) (elapsed / 1000) + 2);
+        // and the status is not collected for every action: every second, and after actions at most every 200 millis
+        assertThat(snapshots.statuses.get() - statuses).isLessThanOrEqualTo((int) (elapsed / 1000 + elapsed / 200) + 2);
+    }
+
+    @Test
+    void statusIsWrittenAsSoonAsCamelHasStarted() {
+        // CAMEL-26936: camel run --background waits for Camel to have started, and not also for the next status
+        snapshots.phaseOf = context;
+        transport.updateDelay(60_000);
+        File status = file(PID + "-status.json");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> phase(status) != null);
+        assertThat(phase(status)).isLessThan(5);
+
+        // Camel would start a connector of its own, which writes the same status file
+        context.getCamelContextExtension().getContextPlugin(CliConnectorFactory.class).setEnabled(false);
+        context.start();
+
+        await().atMost(5, TimeUnit.SECONDS).until(() -> Integer.valueOf(5).equals(phase(status)));
+    }
+
+    @Test
+    void statusIsWrittenAfterAnAction() {
+        // CAMEL-26936: a camel get right after a camel cmd shows what the action did
+        snapshots.phaseOf = context;
+        transport.updateDelay(60_000);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> phase(file(PID + "-status.json")) != null);
+        int statuses = snapshots.statuses.get();
+
+        writeAction(action("result"), "r1");
+        assertThat(awaitJson(file(PID + "-output-r1.json"))).containsEntry("value", "42");
+
+        await().atMost(5, TimeUnit.SECONDS).until(() -> snapshots.statuses.get() > statuses);
+    }
+
+    @Test
+    void directoryIsOnlyListedBetweenTwoStatusUpdatesWhenAFileIsAdded() {
+        // CAMEL-26938: the actions are looked for about 50 times a second, and listing the directory costs far more
+        // than looking at its modification time
+        transport.updateDelay(1000);
+        awaitSharedActionFileRemoved();
+        int before = listings.get();
+
+        // listed with every status, and after the status is moved in place, which changes the directory
+        await().during(1, TimeUnit.SECONDS).atMost(3, TimeUnit.SECONDS).until(() -> listings.get() - before < 15);
+
+        writeAction(action("result"), "r1");
+        assertThat(awaitJson(file(PID + "-output-r1.json"))).containsEntry("value", "42");
+    }
+
+    @Test
+    void halfWrittenActionIsLookedForAtEveryPoll() throws Exception {
+        transport.updateDelay(1000);
+        awaitSharedActionFileRemoved();
+        File action = writeText("{\"action\":\"res", "r1");
+        int before = listings.get();
+
+        // the rest of it is written in place, which leaves the modification time of the directory as it is
+        await().atMost(1, TimeUnit.SECONDS).until(() -> listings.get() - before >= 10);
+        Files.writeString(action.toPath(), action("result").toJson());
+
+        assertThat(awaitJson(file(PID + "-output-r1.json"))).containsEntry("value", "42");
     }
 
     @Test
@@ -324,12 +392,18 @@ class FileCliConnectorTransportTest {
     }
 
     private void writeAction(JsonObject action, String requestId) {
-        String name = requestId != null ? PID + "-action-" + requestId + ".json" : PID + "-action.json";
         if (requestId == null) {
-            // the connector creates an empty shared action file on start, and removes it a little later
-            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(file(name)).doesNotExist());
+            awaitSharedActionFileRemoved();
         }
         writeText(action.toJson(), requestId);
+    }
+
+    /**
+     * The connector creates an empty shared action file on start, and removes it a little later. Until then it lists
+     * the directory at every poll, as a Camel CLI before 4.21 writes its action in that file, in place.
+     */
+    private void awaitSharedActionFileRemoved() {
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(file(PID + "-action.json")).doesNotExist());
     }
 
     /**
@@ -353,6 +427,14 @@ class FileCliConnectorTransportTest {
         return await().atMost(10, TimeUnit.SECONDS).until(() -> readJson(file), jo -> jo != null);
     }
 
+    /**
+     * The phase of Camel in the status file, or null when the status has none.
+     */
+    private static Integer phase(File status) {
+        JsonObject json = readJson(status);
+        return json != null ? json.getInteger("phase") : null;
+    }
+
     private static JsonObject readJson(File file) {
         try {
             String text = Files.readString(file.toPath());
@@ -366,6 +448,8 @@ class FileCliConnectorTransportTest {
     private static final class EmptySnapshots implements CliSnapshotProducer {
         // thrown once by the next status
         volatile Error error;
+        // when set, the status has the phase of this Camel
+        volatile CamelContext phaseOf;
         final AtomicInteger statuses = new AtomicInteger();
 
         @Override
@@ -376,7 +460,12 @@ class FileCliConnectorTransportTest {
                 error = null;
                 throw e;
             }
-            return new JsonObject();
+            JsonObject status = new JsonObject();
+            CamelContext camel = phaseOf;
+            if (camel != null) {
+                status.put("phase", camel.getCamelContextExtension().getStatusPhase());
+            }
+            return status;
         }
 
         @Override
