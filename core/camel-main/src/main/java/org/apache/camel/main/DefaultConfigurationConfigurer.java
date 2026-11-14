@@ -432,7 +432,7 @@ public final class DefaultConfigurationConfigurer {
     /**
      * Performs additional configuration to lookup beans of Camel types to configure additional configurations on the
      * Camel context.
-     * <p/>
+     * <p>
      * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean.
      */
     public static void afterConfigure(final CamelContext camelContext) throws Exception {

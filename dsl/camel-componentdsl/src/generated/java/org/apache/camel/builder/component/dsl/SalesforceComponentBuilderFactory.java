@@ -308,13 +308,11 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Include details in Salesforce1 Analytics report, defaults to false.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param includeDetails the value to set
@@ -484,14 +482,12 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Notify for create operation, defaults to false (API version &amp;gt;=
          * 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationCreate the value to set
@@ -502,14 +498,12 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Notify for delete operation, defaults to false (API version &amp;gt;=
          * 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationDelete the value to set
@@ -537,14 +531,12 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Notify for un-delete operation, defaults to false (API version
          * &amp;gt;= 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUndelete the value to set
@@ -555,14 +547,12 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Notify for update operation, defaults to false (API version &amp;gt;=
          * 29.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUpdate the value to set

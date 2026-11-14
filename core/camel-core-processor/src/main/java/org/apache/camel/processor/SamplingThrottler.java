@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * downstream endpoint. It differs from a normal throttler in that it will not queue exchanges above the threshold for a
  * given period. Instead these exchanges will be stopped, precluding them from being processed at all by downstream
  * consumers.
- * <p/>
+ * <p>
  * This kind of throttling can be useful for taking a sample from an exchange stream, rough consolidation of noisy and
  * bursty exchange traffic or where queuing of throttled exchanges is undesirable.
  */

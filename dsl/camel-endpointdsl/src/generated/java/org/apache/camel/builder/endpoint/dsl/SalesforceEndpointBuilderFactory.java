@@ -314,7 +314,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param includeDetails the value to set
@@ -330,7 +329,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param includeDetails the value to set
@@ -600,7 +598,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationCreate the value to set
@@ -617,7 +614,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationCreate the value to set
@@ -633,7 +629,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationDelete the value to set
@@ -650,7 +645,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationDelete the value to set
@@ -698,7 +692,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUndelete the value to set
@@ -715,7 +708,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUndelete the value to set
@@ -731,7 +723,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUpdate the value to set
@@ -748,7 +739,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUpdate the value to set
@@ -1920,7 +1910,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param includeDetails the value to set
@@ -1936,7 +1925,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param includeDetails the value to set
@@ -2206,7 +2194,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationCreate the value to set
@@ -2223,7 +2210,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationCreate the value to set
@@ -2239,7 +2225,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationDelete the value to set
@@ -2256,7 +2241,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationDelete the value to set
@@ -2304,7 +2288,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUndelete the value to set
@@ -2321,7 +2304,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUndelete the value to set
@@ -2337,7 +2319,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUpdate the value to set
@@ -2354,7 +2335,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUpdate the value to set
@@ -3368,7 +3348,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param includeDetails the value to set
@@ -3384,7 +3363,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param includeDetails the value to set
@@ -3654,7 +3632,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationCreate the value to set
@@ -3671,7 +3648,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationCreate the value to set
@@ -3687,7 +3663,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationDelete the value to set
@@ -3704,7 +3679,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationDelete the value to set
@@ -3752,7 +3726,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUndelete the value to set
@@ -3769,7 +3742,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUndelete the value to set
@@ -3785,7 +3757,6 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUpdate the value to set
@@ -3802,7 +3773,6 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: common
          * 
          * @param notifyForOperationUpdate the value to set

@@ -20,10 +20,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.AbstractConfiguration;
+import org.apache.logging.log4j.core.config.ConfigurationSource;
+import org.apache.logging.log4j.core.config.properties.PropertiesConfigurationFactory;
+import org.apache.logging.log4j.core.filter.AbstractFilterable;
+import org.apache.logging.log4j.core.filter.ThresholdFilter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,6 +81,44 @@ class BackgroundLogTest {
 
         BackgroundLog.remove(process.pid());
         assertThat(named).doesNotExist();
+    }
+
+    @Test
+    void processInTheBackgroundPrintsOnlyTheWarningsOfItsLogging() throws Exception {
+        ProcessBuilder pb = new ProcessBuilder("java", "-version");
+
+        Path log = BackgroundLog.redirect(pb);
+        Files.deleteIfExists(log);
+
+        // its logging goes to its log file, so the output gets the warnings and errors only, not all of it again
+        assertThat(pb.environment()).containsEntry(BackgroundLog.CONSOLE_LOG_LEVEL, "WARN");
+    }
+
+    @Test
+    void consoleOfTheCliPrintsAllOfTheLoggingByDefault() throws Exception {
+        for (String name : List.of("log4j2-color.properties", "log4j2-no-color.properties")) {
+            ConfigurationSource source = ConfigurationSource.fromResource(name, getClass().getClassLoader());
+            AbstractConfiguration config = (AbstractConfiguration) new PropertiesConfigurationFactory()
+                    .getConfiguration(new LoggerContext("test"), source);
+            config.initialize();
+
+            // the level comes from the environment of the process, which camel run sets for one in the background only
+            AbstractFilterable console = config.getAppender("out");
+            assertThat(console.getFilter()).as(name).isInstanceOfSatisfying(ThresholdFilter.class,
+                    filter -> assertThat(filter.getLevel()).isEqualTo(Level.ALL));
+        }
+    }
+
+    @Test
+    void logOfAnIntegrationThatHasStarted() throws Exception {
+        Path output = BackgroundLog.of(42);
+        Files.createDirectories(output.getParent());
+        Files.writeString(output, "");
+
+        // its output, until it has a log file, which has all of its logging
+        assertThat(BackgroundLog.logOf(42, output)).isEqualTo(output);
+        Path log = Files.writeString(CommandLineHelper.getCamelDir().resolve("42.log"), "");
+        assertThat(BackgroundLog.logOf(42, output)).isEqualTo(log);
     }
 
     @Test

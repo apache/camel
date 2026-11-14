@@ -72,7 +72,7 @@ public class InterceptSendToEndpointCallback implements EndpointStrategy {
      *
      * @param  uri     the uri
      * @param  pattern the pattern, which can be an endpoint uri as well
-     * @return         <tt>true</tt> if matched and we should intercept, <tt>false</tt> if not matched, and not
+     * @return         <code>true</code> if matched and we should intercept, <code>false</code> if not matched, and not
      *                 intercept.
      */
     protected boolean matchPattern(String uri, String pattern) {

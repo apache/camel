@@ -323,6 +323,31 @@ class CamelBatDiscoveryTest {
     }
 
     @Test
+    void runsTheFindstrOfWindowsNotOneInTheCurrentDirectory(@TempDir Path base) throws Exception {
+        // cmd looks for a bare command name in the current directory before PATH: a findstr.bat in the directory
+        // where camel runs (a cloned project) must not run. camel.bat runs findstr for the launcher JAR, the release
+        // file of the JDK and the banner of -version.
+        Path project = Files.createDirectories(base.resolve("project"));
+        Files.writeString(project.resolve("findstr.bat"),
+                "@echo off\r\necho planted> \"%~dp0planted.txt\"\r\nexit /b 0\r\n");
+        Path h = home(base);
+        Path probed = FakeJava.writeFakeJava(base.resolve("probed"), "java", JAVA21, 0, "PROBED");
+        Path released = FakeJava.writeFakeJava(base.resolve("jdk").resolve("bin"), "java", GARBAGE, 0, "RELEASE");
+        Files.writeString(base.resolve("jdk").resolve("release"), "JAVA_VERSION=\"21.0.3\"\r\n");
+
+        for (Path java : List.of(probed, released)) {
+            Map<String, String> env = isolatedEnvironment();
+            env.put("JAVACMD", java.toString());
+
+            FakeJava.Result r = FakeJava.runIn(project, h.resolve("camel.bat"), env, null, "version");
+
+            assertEquals(0, r.exitCode(), r.stderr());
+            assertTrue(r.stdout().contains("RAN=" + (java == probed ? "PROBED" : "RELEASE")), r.stdout());
+            assertFalse(Files.exists(project.resolve("planted.txt")), "the findstr.bat of the current directory ran");
+        }
+    }
+
+    @Test
     void rejectsAnOldJavaFromTheReleaseFileOfTheJdk(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path old = FakeJava.writeFakeJava(base.resolve("jdk").resolve("bin"), "java", JAVA21, 0, "OLD");

@@ -203,10 +203,49 @@ class CatalogServiceTest {
         // extension registry and pass it to doLoadCatalog; previously it passed null and produced an NPE or a
         // silently wrong catalog. Use a released version that is not the built-in one so sameAsDefault() is false
         // and the new code path is taken.
-        // Note: getCatalogVersion() returns the CLI's own Camel version (from camel-catalog on the classpath),
-        // not the requested "4.10.0". Check the runtime provider instead to verify the Quarkus path was taken.
         CatalogService service = createService(null);
         CamelCatalog catalog = service.loadCatalog("quarkus", "4.10.0", null);
         assertThat(catalog.getRuntimeProvider().getProviderName()).isEqualTo("quarkus");
+    }
+
+    @Test
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                              disabledReason = "Runs only local — requires Maven Central access")
+    void mixedRuntimeRequestsKeepTheirCoreSchemasAndProviderCoordinates() throws Exception {
+        CatalogService service = createService(null);
+        String targetSplit = service.loadCatalog("main", "4.8.0", null).modelJSonSchema("split");
+        ConfigurationValidateTools tools = new ConfigurationValidateTools();
+        tools.catalogService = service;
+        String[][] requests = {
+                { "spring-boot", "4.8.0", null, "camel-http-starter", "4.8.0" },
+                { "quarkus", null, "io.quarkus.platform:quarkus-camel-bom:3.15.1", "camel-quarkus-http", "3.15.0" },
+                { "main", "4.8.0", null, "camel-http", "4.8.0" },
+                {
+                        "spring-boot", "4.8.0", "org.apache.camel.springboot:camel-spring-boot-bom:4.8.0",
+                        "camel-http-starter", "4.8.0" }
+        };
+        for (int pass = 0; pass < 2; pass++) {
+            for (String[] request : requests) {
+                String scenario = "runtime=" + request[0] + ", camelVersion=" + request[1]
+                                  + ", platformBom=" + request[2] + ", pass=" + pass;
+                CamelCatalog catalog = service.loadCatalog(request[0], request[1], request[2]);
+                assertThat(catalog.getCatalogVersion()).as("%s: core version", scenario).isEqualTo("4.8.0");
+                assertThat(catalog.modelJSonSchema("split")).as("%s: split schema", scenario).isEqualTo(targetSplit)
+                        .doesNotContain("errorThreshold");
+                assertThat(catalog.modelJSonSchema("switch")).as("%s: missing switch schema", scenario).isNull();
+                assertThat(catalog.componentModel("http").getArtifactId()).as("%s: provider artifact", scenario)
+                        .isEqualTo(request[3]);
+                assertThat(catalog.componentModel("http").getVersion()).as("%s: provider version", scenario)
+                        .isEqualTo(request[4]);
+                var result = tools.camel_configuration_validate("camel.component.http.max-total-connections=20",
+                        request[0], request[1], request[2]);
+                assertThat(result.camelVersion()).as("%s: validation version", scenario).isEqualTo("4.8.0");
+                assertThat(result.summary().valid()).as("%s: valid configurations", scenario).isEqualTo(1);
+            }
+            CamelCatalog current = service.loadCatalog("main", BUILTIN_VERSION, null);
+            assertThat(current.getCatalogVersion()).isEqualTo(BUILTIN_VERSION);
+            assertThat(current.modelJSonSchema("split")).contains("errorThreshold");
+            assertThat(current.modelJSonSchema("switch")).isNotNull();
+        }
     }
 }

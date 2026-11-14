@@ -154,14 +154,12 @@ public interface AiToolComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * MCP hint that the tool may perform destructive or irreversible
          * updates. Advisory for MCP clients; not enforced by Camel.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param destructiveHint the value to set
@@ -172,14 +170,12 @@ public interface AiToolComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * MCP hint that repeating the tool call with the same arguments has no
          * additional effect. Advisory for MCP clients; not enforced by Camel.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param idempotentHint the value to set
@@ -190,7 +186,6 @@ public interface AiToolComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * MCP hint that the tool interacts with external systems outside the
          * application's control. Advisory for MCP clients; not enforced by
@@ -198,7 +193,6 @@ public interface AiToolComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param openWorldHint the value to set
@@ -270,14 +264,12 @@ public interface AiToolComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * MCP hint that the tool only reads data and does not modify state.
          * Advisory for MCP clients; not enforced by Camel.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param readOnlyHint the value to set

@@ -26,6 +26,12 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
@@ -33,6 +39,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.FileUtil;
@@ -73,6 +80,8 @@ public class SelfUpdateCommand extends CamelCommand {
     private final ManifestFetcher fetcherOverride;
     private final InstallScriptFetcher scriptFetcherOverride;
     private final Map<String, String> installerEnvironmentOverride;
+    // Visible for testing: set to a short duration to avoid a 5-minute wait in tests
+    public long processWaitTimeoutSeconds = 5 * 60;
 
     public SelfUpdateCommand(CamelJBangMain main) {
         this(main, null, null, null);
@@ -371,10 +380,41 @@ public class SelfUpdateCommand extends CamelCommand {
             // pin-state file for this run. Set last so it can never be dropped by the override block above.
             pb.environment().put("CAMEL_INSTALL_SELF_UPDATE", "true");
             Process process = pb.start();
-            String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            int exit = process.waitFor();
-            printer().print(output);
-            return exit;
+            // Drain stdout in a separate thread to prevent the subprocess from blocking on a full pipe buffer in
+            // the gap before waitFor() returns. Then wait with a timeout to prevent an indefinitely stalled
+            // installer from hanging the CLI.
+            ExecutorService drainer = Executors.newSingleThreadExecutor(r -> {
+                Thread t = new Thread(r, "camel-self-update-drainer");
+                t.setDaemon(true);
+                return t;
+            });
+            Future<String> outputFuture = drainer
+                    .submit(() -> new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
+            try {
+                boolean finished = process.waitFor(processWaitTimeoutSeconds, TimeUnit.SECONDS);
+                if (!finished) {
+                    // Kill grandchildren first (curl/wget etc.) before the shell, so they release the pipe
+                    process.descendants().forEach(ProcessHandle::destroyForcibly);
+                    process.destroyForcibly();
+                    printer().printErr("installer timed out after " + processWaitTimeoutSeconds + " seconds");
+                    return CliExitCode.TIMEOUT;
+                }
+                int exit = process.exitValue();
+                // outputFuture.get() can time out when a grandchild (curl/wget) keeps the pipe open after the
+                // shell exits, or fail with an I/O error in the drainer thread. Either case is best-effort:
+                // the install already finished (process.exitValue() was called above), so treat the drain
+                // failure as non-fatal and print what we have.
+                try {
+                    String output = outputFuture.get(10, TimeUnit.SECONDS);
+                    printer().print(output);
+                } catch (TimeoutException | ExecutionException e) {
+                    // stdout drain timed out or failed — the installer already returned exit, so continue
+                    printer().print("installer finished, but its output could not be read: " + e.getMessage());
+                }
+                return exit;
+            } finally {
+                drainer.shutdownNow();
+            }
         } catch (SelfUpdateException e) {
             printer().printErr(e.getMessage());
             return 1;

@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A <a href="http://camel.apache.org/throttler.html">Throttler</a> will set a limit on the maximum number of message
  * exchanges which can be sent to a processor within a specific time period.
- * <p/>
+ * <p>
  * This pattern can be extremely useful if you have some external system which meters access; such as only allowing 100
  * requests per second; or if huge load can cause a particular system to malfunction or to reduce its throughput you
  * might want to introduce some throttling.
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * The throttling mechanism is a DelayQueue with maxRequestsPerPeriod permits on it. Each permit is set to be delayed by
  * timePeriodMillis (except when the throttler is initialized or the throttle rate increased, then there is no delay for
  * those permits). Callers trying to acquire a permit from the DelayQueue will block if necessary. The end result is a
- * rolling window of time. Where from the callers point of view in the last timePeriodMillis no more than
+ * rolling window of time. Where from the caller's point of view in the last timePeriodMillis no more than
  * maxRequestsPerPeriod have been allowed to be acquired.
  */
 public class TotalRequestsThrottler extends AbstractThrottler {

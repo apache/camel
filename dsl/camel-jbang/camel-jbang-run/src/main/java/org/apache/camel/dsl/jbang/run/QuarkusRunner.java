@@ -68,7 +68,7 @@ final class QuarkusRunner {
         AtomicReference<String> appNameRef = new AtomicReference<>();
 
         // create temp run dir
-        Path runDirPath = Paths.get(ProjectRunner.RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
+        Path runDirPath = ProjectRunner.createRunDir();
         // the process (and those it started) stops with this JVM, then the files of the run are removed
         ChildProcess.Cleanup cleanup = once(() -> {
             RunPipeline.removeDir(runDirPath);

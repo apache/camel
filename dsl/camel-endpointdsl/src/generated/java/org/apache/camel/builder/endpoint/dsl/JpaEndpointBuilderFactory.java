@@ -1665,7 +1665,6 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param useExecuteUpdate the value to set
@@ -1683,7 +1682,6 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param useExecuteUpdate the value to set

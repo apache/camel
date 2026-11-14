@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * A {@link LoadBalancer} implementations which sends to all destinations (rather like JMS Topics).
- * <p/>
+ * A {@link LoadBalancer} implementation which sends to all destinations (rather like JMS Topics).
+ * <p>
  * The {@link org.apache.camel.processor.MulticastProcessor} is more powerful as it offers option to run in parallel and
  * decide whether or not to stop on failure etc.
  */

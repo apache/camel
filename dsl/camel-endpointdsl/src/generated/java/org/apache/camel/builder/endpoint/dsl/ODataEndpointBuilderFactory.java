@@ -49,7 +49,6 @@ public interface ODataEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param count the value to set
@@ -65,7 +64,6 @@ public interface ODataEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param count the value to set

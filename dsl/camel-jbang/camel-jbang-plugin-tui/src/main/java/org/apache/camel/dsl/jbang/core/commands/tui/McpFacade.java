@@ -42,7 +42,6 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.widgets.tabs.TabsState;
 import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools;
-import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
@@ -1117,29 +1116,11 @@ class McpFacade {
     }
 
     /**
-     * The integration summary of an integration's project (CAMEL-25143), as the readme tool answers it when there is no
-     * README: the view without the tool comments, and whether it still matches the routes. Null when the project has
-     * none.
+     * The source directory of an integration's project (of the selected integration when no name is given), or null.
      */
-    JsonObject getIntegrationSummary(String name) {
+    Path getSourceDirectory(String name) {
         IntegrationInfo target = findIntegration(name);
-        Path dir = target != null ? FilesBrowser.resolveSourceDirectory(target) : null;
-        if (dir == null || !Files.isRegularFile(dir.resolve(IntegrationSummary.FILE_NAME))) {
-            return null;
-        }
-        IntegrationSummaryDoc.Doc doc = IntegrationSummaryDoc.load(dir);
-        if (doc == null) {
-            return null;
-        }
-        JsonObject result = new JsonObject();
-        result.put("file", IntegrationSummary.FILE_NAME);
-        result.put("content", doc.markdown());
-        result.put("note", "The sections and route texts marked " + IntegrationSummary.AI_MARK
-                           + " were written by an AI: say so when you repeat them; the rest is derived from the sources");
-        if (doc.title().contains("out of date")) {
-            result.put("upToDate", false);
-        }
-        return result;
+        return target != null ? FilesBrowser.resolveSourceDirectory(target) : null;
     }
 
     /** The pid of the integration, or else the infra service, with the given name (alias) or pid. */

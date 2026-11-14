@@ -36,7 +36,7 @@ public interface ExceptionPolicyStrategy {
      * @param  exceptionPolicies the configured exception policies to resolve from
      * @param  exchange          the exchange
      * @param  exception         the exception that was thrown
-     * @return                   the resolved exception type to handle this exception, <tt>null</tt> if none found.
+     * @return                   the resolved exception type to handle this exception, <code>null</code> if none found.
      */
     ExceptionPolicyKey getExceptionPolicy(Set<ExceptionPolicyKey> exceptionPolicies, Exchange exchange, Throwable exception);
 

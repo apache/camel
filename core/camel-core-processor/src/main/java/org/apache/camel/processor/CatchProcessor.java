@@ -245,7 +245,7 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
      *
      * @param  exchange  the current exchange
      * @param  exception the thrown exception
-     * @return           Throwable that this processor catches. <tt>null</tt> if nothing matches.
+     * @return           Throwable that this processor catches. <code>null</code> if nothing matches.
      */
     protected Throwable catches(Exchange exchange, Throwable exception) {
         // use the exception iterator to walk the caused by hierarchy
@@ -301,15 +301,15 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
 
     /**
      * Strategy method for matching the exception type with the current exchange.
-     * <p/>
+     * <p>
      * This default implementation will match as:
      * <ul>
      * <li>Always true if no when predicate on the exception type
-     * <li>Otherwise the when predicate is matches against the current exchange
+     * <li>Otherwise the when predicate is matched against the current exchange
      * </ul>
      *
      * @param  exchange the current {@link org.apache.camel.Exchange}
-     * @return          <tt>true</tt> if matched, <tt>false</tt> otherwise.
+     * @return          <code>true</code> if matched, <code>false</code> otherwise.
      */
     protected boolean matchesWhen(Exchange exchange) {
         if (onWhen == null) {
