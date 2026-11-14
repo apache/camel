@@ -1260,9 +1260,14 @@ class MavenDownloaderImplTest {
             downloader.build();
 
             Map<String, Object> config = downloader.getRepositorySystemSession().getConfigProperties();
-            assertEquals(60000, config.get("aether.connector.requestTimeout"));
-            assertEquals("bf", config.get("aether.dependencyCollector.impl"));
-            assertEquals(10, config.get("aether.dependencyCollector.bf.threads"));
+            assertCamelDefault("60000", config, "aether.connector.requestTimeout");
+            assertCamelDefault("bf", config, "aether.dependencyCollector.impl");
+            assertCamelDefault("10", config, "aether.dependencyCollector.bf.threads");
         }
+    }
+
+    // a system property wins over the default of Camel (the CI build sets aether.connector.requestTimeout=300000)
+    private static void assertCamelDefault(String expected, Map<String, Object> config, String key) {
+        assertEquals(System.getProperty(key, expected), String.valueOf(config.get(key)), key);
     }
 }
