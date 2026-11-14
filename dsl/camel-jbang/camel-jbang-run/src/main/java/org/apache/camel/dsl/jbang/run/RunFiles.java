@@ -148,6 +148,11 @@ public final class RunFiles {
             return false;
         }
 
+        // the path as given, for an exclude with a folder such as routes/** (CAMEL-26930)
+        String given = name.replace('\\', '/');
+        while (given.startsWith("./")) {
+            given = given.substring(2);
+        }
         // flatten file
         name = FileUtil.stripPath(name);
 
@@ -184,7 +189,7 @@ public final class RunFiles {
         }
 
         // is the file excluded?
-        if (isExcluded(name, excludes)) {
+        if (isExcluded(name, excludes) || isExcluded(given, excludes)) {
             return true;
         }
 

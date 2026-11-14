@@ -267,7 +267,7 @@ final class CamelMainRunner {
         boolean recursive;
         if (request.sourceDir != null) {
             reloadDir = request.sourceDir;
-            pattern = RunPipeline.sourceDirReloadPattern(request.dataDir);
+            pattern = RunPipeline.sourceDirReloadPattern(request.dataDir) + RunPipeline.reloadExcludes(request.excludes);
             recursive = true;
         } else {
             // the folder that has all the files, not the one of the first file in another folder (CAMEL-26930)
