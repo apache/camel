@@ -27,14 +27,18 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The AI panel's readme tool gives the project's integration summary when there is no README, so a question about what
- * the integration does starts from it instead of reading every file (CAMEL-25143).
+ * The AI panel's readme tool when there is no README: the facts derived from the route sources, so a question about
+ * what the integration does starts from them instead of reading every file (CAMEL-25143), and the project's summary,
+ * partly written by an AI, only when asked for and saying so, as a model takes back what an AI wrote there as facts
+ * (CAMEL-26946).
  */
 class ReadmeToolSummaryTest {
 
@@ -52,27 +56,89 @@ class ReadmeToolSummaryTest {
         return new TuiToolRegistry(facade);
     }
 
-    @Test
-    void summaryWhenThereIsNoReadme() throws Exception {
+    private void route(String uri) throws Exception {
         Files.writeString(project.resolve("orders.camel.yaml"), """
                 - route:
                     id: orders
                     from:
-                      uri: timer:tick
+                      uri: %s
                       steps:
                         - to: log:orders
-                """, StandardCharsets.UTF_8);
-        TuiToolRegistry registry = registry();
-        assertTrue(registry.execute("tui_get_readme", new HashMap<>(Map.of("name", "shop"))).startsWith("No README found"),
-                "no summary yet: nothing to give");
+                """.formatted(uri), StandardCharsets.UTF_8);
+    }
 
+    private void summary(String overview) throws Exception {
         ProjectOverview.Overview o = ProjectOverview.analyze(project, new DefaultCamelCatalog());
-        IntegrationSummary.write(o, new IntegrationSummary.AiContent("Ticks orders.", List.of(), Map.of()),
-                o.fingerprint(), "m");
-        String answer = registry.execute("tui_get_readme", new HashMap<>(Map.of("name", "shop")));
-        assertTrue(answer.contains(IntegrationSummary.FILE_NAME), answer);
-        assertTrue(answer.contains("Ticks orders."), answer);
-        assertTrue(answer.contains("were written by an AI"), answer);
-        assertTrue(!answer.contains("ai:begin"), "tool comments left out: " + answer);
+        IntegrationSummary.write(o, new IntegrationSummary.AiContent(overview, List.of(), Map.of()), o.fingerprint(), "m");
+    }
+
+    private String readme(boolean aiSummary) throws Exception {
+        Map<String, Object> args = new HashMap<>(Map.of("name", "shop"));
+        if (aiSummary) {
+            args.put("aiSummary", true);
+        }
+        return registry().execute("tui_get_readme", args);
+    }
+
+    private JsonObject readmeJson(boolean aiSummary) throws Exception {
+        return (JsonObject) Jsoner.deserialize(readme(aiSummary));
+    }
+
+    @Test
+    void factsFromTheSourcesWhenThereIsNoReadme() throws Exception {
+        route("timer:tick");
+
+        JsonObject answer = readmeJson(false);
+        assertThat(answer.getBoolean("aiWritten")).as(answer.toJson()).isFalse();
+        assertThat(answer.getString("content")).contains("Derived from the route sources", "timer:tick");
+    }
+
+    @Test
+    void theAiSummaryOnlyWhenAskedForAndSayingSo() throws Exception {
+        route("timer:tick");
+        summary("Ticks orders.");
+
+        JsonObject facts = readmeJson(false);
+        assertThat(facts.getBoolean("aiWritten")).as(facts.toJson()).isFalse();
+        assertThat(facts.getString("content")).as("what the AI wrote is left out")
+                .contains("timer:tick").doesNotContain("Ticks orders.");
+
+        JsonObject ai = readmeJson(true);
+        assertThat(ai.getBoolean("aiWritten")).as(ai.toJson()).isTrue();
+        assertThat(ai.getString("file")).isEqualTo(IntegrationSummary.FILE_NAME);
+        assertThat(ai.getString("model")).isEqualTo("m");
+        assertThat(ai.getString("note")).contains("were written by an AI");
+        assertThat(ai.getString("content")).as("tool comments left out")
+                .contains("Ticks orders.").doesNotContain("ai:begin");
+        assertThat(ai).doesNotContainKey("upToDate");
+    }
+
+    @Test
+    void theFactsFollowTheSourcesAfterTheSummaryWasWritten() throws Exception {
+        route("timer:tick");
+        summary("Ticks orders.");
+        route("timer:clock");
+
+        JsonObject facts = readmeJson(false);
+        assertThat(facts.getString("content")).contains("timer:clock").doesNotContain("timer:tick");
+
+        JsonObject ai = readmeJson(true);
+        assertThat(ai.getBoolean("upToDate")).as("the AI wrote its part for the routes before").isFalse();
+    }
+
+    @Test
+    void askingForTheAiSummaryWhenThereIsNone() throws Exception {
+        route("timer:tick");
+
+        JsonObject answer = readmeJson(true);
+        assertThat(answer.getBoolean("aiWritten")).as(answer.toJson()).isFalse();
+        assertThat(answer.getString("note")).contains("There is no " + IntegrationSummary.FILE_NAME);
+        assertThat(answer.getString("content")).contains("timer:tick");
+    }
+
+    @Test
+    void noReadmeAndNoRoutes() throws Exception {
+        assertThat(readme(false)).startsWith("No README found");
+        assertThat(readme(true)).startsWith("No README found");
     }
 }

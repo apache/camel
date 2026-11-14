@@ -59,6 +59,10 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
     // the component, or the "curator" bean of the registry, which others share), so the listener is removed from it
     // when this stops
     private volatile CuratorFramework listenedCurator;
+    // the client that call() created, and the group factory that doStart created: only these are closed when this stops
+    // (a client or a group factory of the registry, or set by the user, may be shared, and is kept)
+    private volatile CuratorFramework createdCurator;
+    private volatile ManagedGroupFactory createdManagedGroupFactory;
     @Metadata(defaultValue = "10000")
     private int maximumConnectionTimeout = 10 * 1000;
     @Metadata(defaultValue = "localhost:2181")
@@ -194,6 +198,7 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
         if (managedGroupFactory == null) {
             setManagedGroupFactory(getManagedGroupFactoryStrategy().createGroupFactory(curator, getClass().getClassLoader(),
                     getCamelContext(), this));
+            createdManagedGroupFactory = managedGroupFactory;
         }
     }
 
@@ -215,7 +220,7 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
         }
         String password = getZooKeeperPassword();
         if (password == null) {
-            System.getProperty(ZOOKEEPER_PASSWORD);
+            password = System.getProperty(ZOOKEEPER_PASSWORD);
         }
         LOG.info("Creating new CuratorFramework with connection: {}", connectString);
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
@@ -228,6 +233,7 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
         }
 
         curator = builder.build();
+        createdCurator = curator;
         LOG.debug("Starting CuratorFramework {}", curator);
         curator.start();
         return curator;
@@ -236,11 +242,27 @@ public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
     @Override
     protected void doStop() throws Exception {
         try {
-            if (managedGroupFactory != null) {
-                managedGroupFactory.close();
-                managedGroupFactory = null;
+            // close only the group factory this created (the one of DefaultGroupFactoryStrategy also closes the client
+            // that call() created): a factory of the registry may be shared by other consumers and route policies
+            ManagedGroupFactory created = createdManagedGroupFactory;
+            createdManagedGroupFactory = null;
+            if (created != null) {
+                if (created == managedGroupFactory) {
+                    managedGroupFactory = null;
+                }
+                created.close();
             }
         } finally {
+            // the client call() created is closed (again, if its group factory did): a start after this stop creates a
+            // new one
+            CuratorFramework client = createdCurator;
+            createdCurator = null;
+            if (client != null) {
+                if (client == curator) {
+                    curator = null;
+                }
+                client.close();
+            }
             // the client may be shared (the curator of the component, or the "curator" bean of the registry): a listener
             // left on it would keep this (and the consumer or route policy that created it) for as long as the client
             // lives, one more at each start

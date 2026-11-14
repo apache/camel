@@ -30,17 +30,17 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link AggregationStrategy} used by the {@link ClaimCheckProcessor} EIP.
- * <p/>
+ * <p>
  * This strategy supports the following include rules syntax:
  * <ul>
- * <li>body</li> - to aggregate the message body
- * <li>headers</li> - to aggregate all the message headers
- * <li>header:pattern</li> - to aggregate all the message headers that matches the pattern. The pattern syntax is
- * documented by: {@link PatternHelper#matchPattern(String, String)}.
+ * <li>body - to aggregate the message body</li>
+ * <li>headers - to aggregate all the message headers</li>
+ * <li>header:pattern - to aggregate all the message headers that match the pattern. The pattern syntax is documented
+ * by: {@link PatternHelper#matchPattern(String, String)}.</li>
  * </ul>
  * You can specify multiple rules separated by comma. For example to include the message body and all headers starting
- * with foo <tt>body,header:foo*</tt>. If the include rule is specified as empty or as wildcard then everything is
- * merged. If you have configured both include and exclude then exclude take precedence over include.
+ * with foo <code>body,header:foo*</code>. If the include rule is specified as empty or as wildcard then everything is
+ * merged. If you have configured both include and exclude then exclude takes precedence over include.
  */
 public class ClaimCheckAggregationStrategy implements AggregationStrategy {
 

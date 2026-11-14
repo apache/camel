@@ -16,25 +16,41 @@
  */
 package org.apache.camel.dsl.jbang.run.export;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
 import org.apache.camel.dsl.jbang.run.common.MavenResolver;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.dsl.jbang.run.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.XmlHelper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junitpioneer.jupiter.SetSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,6 +60,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * the silent run of camel-jbang-core does.
  */
 class ProjectExporterTest {
+
+    // the home of the CLI, where an export locks its work directory
+    @TempDir
+    Path home;
+    private Path previousHome;
 
     @TempDir
     Path dir;
@@ -61,6 +82,17 @@ class ProjectExporterTest {
                 """.formatted(request.files.get(0)));
         return 0;
     };
+
+    @BeforeEach
+    void useHome() {
+        previousHome = CamelHome.getHomeDir();
+        CamelHome.useHomeDir(home.toString());
+    }
+
+    @AfterEach
+    void restoreHome() {
+        CamelHome.useHomeDir(previousHome.toString());
+    }
 
     @Test
     void exportsCamelMainProject() throws Exception {
@@ -84,6 +116,80 @@ class ProjectExporterTest {
         assertThat(exportDir.resolve("src/main/resources/camel/hello.camel.yaml")).hasSameTextualContentAs(route);
         // the run settings and the project are built in the work directory of the request
         assertThat(request.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE)).exists();
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "4.10.0")
+    void springBootExportUsesResolvedCoreVersionUnlessExplicit(String camelVersion) throws Exception {
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(writeRoute("hello"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.camelSpringBootVersion = "4.8.0";
+        request.camelVersion = camelVersion;
+        DependencyResolver withCoreDependency = r -> {
+            resolver.resolve(r);
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.writeString(settings, Files.readString(settings) + "dependency=camel:util\n");
+            return 0;
+        };
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(withCoreDependency))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        var factory = XmlHelper.createDocumentBuilderFactory();
+        factory.setNamespaceAware(false);
+        var pom = factory.newDocumentBuilder().parse(exportDir.resolve("pom.xml").toFile());
+        var xpath = XPathFactory.newInstance().newXPath();
+        assertThat(xpath.evaluate("/project/dependencies/dependency[artifactId='camel-util']/version", pom))
+                .isEqualTo(camelVersion == null ? "4.8.0" : camelVersion);
+        assertThat(xpath.evaluate(
+                "/project/dependencyManagement/dependencies/dependency[artifactId='camel-spring-boot-bom']/version", pom))
+                .isEqualTo("4.8.0");
+    }
+
+    @Test
+    void keepsTheEscapesAndTheEncodingOfTheApplicationProperties() throws Exception {
+        Path route = writeRoute("shop");
+        // as an editor saves it, in UTF-8
+        String source = """
+                path=C:\\\\temp\\\\new
+                regex=^\\\\d+$
+                my.key\\ with\\ space=1
+                greeting=Hej æøå
+                euro=5 \\u20ac
+                """;
+        Files.writeString(dir.resolve("application.properties"), source, StandardCharsets.UTF_8);
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.baseDir = dir;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+        assertThat(exit).as(printer.getOutput()).isZero();
+
+        // the exported project reads the same properties as camel run reads from the application.properties
+        Path exported = exportDir.resolve("src/main/resources/application.properties");
+        Properties expected = load(dir.resolve("application.properties"));
+        Properties actual = load(exported);
+        assertThat(expected.getProperty("path")).isEqualTo("C:\\temp\\new");
+        for (String key : List.of("path", "regex", "my.key with space", "greeting", "euro")) {
+            assertThat(actual.getProperty(key)).as(key).isEqualTo(expected.getProperty(key));
+        }
+        // and the UTF-8 text is written as it was, for a runtime that reads it in UTF-8 (Quarkus)
+        assertThat(Files.readAllLines(exported, StandardCharsets.UTF_8)).contains("greeting=Hej æøå");
+    }
+
+    private static Properties load(Path file) throws Exception {
+        Properties answer = new Properties();
+        try (InputStream is = Files.newInputStream(file)) {
+            answer.load(is);
+        }
+        return answer;
     }
 
     @Test
@@ -158,11 +264,36 @@ class ProjectExporterTest {
     void exportsInParallelWithWorkDirsOfTheirOwn() throws Exception {
         List<String> before = listWorkDir();
 
+        exportInParallel(false);
+
+        // nothing is written to the .camel-jbang directory of the current directory
+        assertThat(listWorkDir()).isEqualTo(before);
+    }
+
+    @Test
+    void exportsInParallelWithTheDefaultWorkDir() throws Exception {
+        List<String> before = listWorkDir();
+
+        try {
+            // as camel export does: the .camel-jbang directory, which every export in the directory shares, so they
+            // run one at a time
+            exportInParallel(true);
+        } finally {
+            if (before.isEmpty()) {
+                PathUtils.deleteDirectory(CamelHome.getWorkDir());
+            }
+        }
+    }
+
+    private void exportInParallel(boolean defaultWorkDir) throws Exception {
         int count = 4;
         List<Callable<Integer>> tasks = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             Path route = writeRoute("hello" + i);
             ExportRequest request = request(route, dir.resolve("export" + i));
+            if (defaultWorkDir) {
+                request.workDir = new ExportRequest().workDir;
+            }
             tasks.add(() -> new ProjectExporter(
                     new ExportContext().withPrinter(new StringPrinter()).withDependencyResolver(resolver))
                     .export(request));
@@ -184,8 +315,130 @@ class ProjectExporterTest {
             assertThat(exportDir.resolve("src/main/resources/camel")).isDirectoryContaining("glob:**/" + route)
                     .isDirectoryNotContaining(p -> !p.getFileName().toString().equals(route));
         }
-        // nothing is written to the .camel-jbang directory of the current directory
-        assertThat(listWorkDir()).isEqualTo(before);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = RuntimeType.class, names = { "main", "springBoot", "quarkus" })
+    void localJarsAreInTheLibDirectoryAsThePomRefersToThem(RuntimeType runtime) throws Exception {
+        Path route = writeRoute("hello");
+        // a JAR in a directory that is not built by Maven, and one built by Maven whose file name is not its artifact
+        Path greeter = jar(Files.createDirectories(dir.resolve("libs")).resolve("greeter.jar"), null);
+        Path util = jar(dir.resolve("util.jar"), "com.acme:acme-util:2.1");
+        DependencyResolver withJars = r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=file:%s
+                    camel.jbang.classpathFiles=%s,%s
+                    dependency=camel:timer
+                    dependency=camel:log
+                    """.formatted(route, greeter, util));
+            return 0;
+        };
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.runtime = runtime;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(withJars))
+                .export(request);
+        assertThat(exit).as(printer.getOutput()).isZero();
+
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+        assertThat(pom).contains("<groupId>local</groupId>", "${project.basedir}/lib/greeter-1.0.jar</systemPath>",
+                "<groupId>com.acme</groupId>", "${project.basedir}/lib/acme-util-2.1.jar</systemPath>");
+        // the JARs are where the pom.xml refers to them, and only there
+        assertThat(exportDir.resolve("lib/greeter-1.0.jar")).hasSameBinaryContentAs(greeter);
+        assertThat(exportDir.resolve("lib/acme-util-2.1.jar")).hasSameBinaryContentAs(util);
+        try (Stream<Path> files = Files.walk(exportDir)) {
+            assertThat(files.filter(p -> p.toString().endsWith(".jar") && !p.toString().contains(".mvn")))
+                    .containsExactlyInAnyOrder(exportDir.resolve("lib/greeter-1.0.jar"),
+                            exportDir.resolve("lib/acme-util-2.1.jar"));
+        }
+    }
+
+    /**
+     * A JAR with a class, and the pom.properties of Maven when it has a GAV.
+     */
+    private static Path jar(Path file, String gav) throws Exception {
+        try (JarOutputStream jar = new JarOutputStream(Files.newOutputStream(file))) {
+            jar.putNextEntry(new JarEntry("acme/Greeter.class"));
+            jar.write(new byte[] { (byte) 0xca, (byte) 0xfe });
+            jar.closeEntry();
+            if (gav != null) {
+                String[] ids = gav.split(":");
+                jar.putNextEntry(new JarEntry("META-INF/maven/" + ids[0] + "/" + ids[1] + "/pom.properties"));
+                jar.write("groupId=%s%nartifactId=%s%nversion=%s%n".formatted(ids[0], ids[1], ids[2])
+                        .getBytes(StandardCharsets.UTF_8));
+                jar.closeEntry();
+            }
+        }
+        return file;
+    }
+
+    @Test
+    void doesNotLoadTheKameletCatalogForAnIntegrationWithoutKamelets() throws Exception {
+        Path route = writeRoute("hello");
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        // a catalog that cannot be downloaded: the export would fail to load it
+        request.kameletsVersion = "0.0.0-no-such-version";
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        assertThat(exportDir.resolve("pom.xml")).exists();
+    }
+
+    @Test
+    void failsForTwoFilesWithTheSameNameInDifferentDirectories() throws Exception {
+        Path x = writeRoute(Files.createDirectories(dir.resolve("x")), "route", "x");
+        Path y = writeRoute(Files.createDirectories(dir.resolve("y")), "route", "y");
+        Path exportDir = dir.resolve("export");
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(routes(x, y)))
+                .export(request(x, exportDir));
+
+        // one of the routes would be lost
+        assertThat(exit).isEqualTo(1);
+        assertThat(printer.getOutput()).contains(x.toString(), y.toString(),
+                "src/main/resources/camel/route.camel.yaml", "rename one of them");
+        assertThat(exportDir.resolve("pom.xml")).doesNotExist();
+    }
+
+    @Test
+    void copiesTheSameFileGivenTwiceOnce() throws Exception {
+        Path x = writeRoute(Files.createDirectories(dir.resolve("x")), "route", "x");
+        Path exportDir = dir.resolve("export");
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(routes(x, dir.resolve("x/../x/route.camel.yaml"))))
+                .export(request(x, exportDir));
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        assertThat(exportDir.resolve("src/main/resources/camel/route.camel.yaml")).hasSameTextualContentAs(x);
+    }
+
+    /**
+     * A resolver whose run loads the given route files.
+     */
+    private static DependencyResolver routes(Path... files) {
+        return r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            String pattern = Stream.of(files).map(f -> "file:" + f).collect(Collectors.joining(","));
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=%s
+                    dependency=camel:timer
+                    dependency=camel:log
+                    """.formatted(pattern));
+            return 0;
+        };
     }
 
     @Test
@@ -221,14 +474,77 @@ class ProjectExporterTest {
         return new ExportContext().withPrinter(new StringPrinter()).withDependencyResolver(resolver);
     }
 
+    @Test
+    void replacesTheDirectoryOfAnEarlierExport() throws Exception {
+        Path exportDir = dir.resolve("export");
+        assertThat(export(request(writeRoute("first"), exportDir))).isZero();
+        assertThat(exportDir.resolve(ExportHelper.EXPORT_MARKER)).exists();
+
+        // the export replaces the earlier one, so no stale files of it are left
+        assertThat(export(request(writeRoute("second"), exportDir))).isZero();
+        assertThat(exportDir.resolve("src/main/resources/camel")).isDirectoryContaining("glob:**/second.camel.yaml")
+                .isDirectoryNotContaining("glob:**/first.camel.yaml");
+        assertThat(exportDir.resolve(ExportHelper.EXPORT_MARKER)).exists();
+    }
+
+    @Test
+    void keepsTheFilesOfADirectoryThatNoExportCreated() throws Exception {
+        Path exportDir = Files.createDirectories(dir.resolve("export"));
+        Path todo = Files.writeString(exportDir.resolve("TODO.txt"), "my notes");
+        Path notes = Files.writeString(Files.createDirectories(exportDir.resolve("docs")).resolve("notes.txt"), "more");
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request(writeRoute("hello"), exportDir));
+
+        assertThat(exit).isEqualTo(1);
+        assertThat(printer.getOutput()).contains("Cannot export to " + exportDir.toAbsolutePath(), "--clean-dir");
+        assertThat(todo).hasContent("my notes");
+        assertThat(notes).hasContent("more");
+        assertThat(exportDir.resolve("pom.xml")).doesNotExist();
+        // nothing was resolved: the export stops before it boots the integration
+        assertThat(resolved).isEmpty();
+
+        // unless they are deleted on purpose
+        ExportRequest request = request(writeRoute("hello"), exportDir);
+        request.cleanExportDir = true;
+        request.yes = true;
+        assertThat(export(request)).isZero();
+        assertThat(todo).doesNotExist();
+        assertThat(exportDir.resolve("pom.xml")).exists();
+    }
+
+    @Test
+    void exportsToADirectoryWithOnlyHiddenFiles() throws Exception {
+        // such as a clone of an empty Git repository
+        Path exportDir = Files.createDirectories(dir.resolve("export"));
+        Path git = Files.writeString(Files.createDirectories(exportDir.resolve(".git")).resolve("HEAD"), "ref");
+
+        assertThat(export(request(writeRoute("hello"), exportDir))).isZero();
+        assertThat(exportDir.resolve("pom.xml")).exists();
+        assertThat(git).hasContent("ref");
+    }
+
+    private int export(ExportRequest request) throws Exception {
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+        assertThat(exit).as(printer.getOutput()).isNotNegative();
+        return exit;
+    }
+
     private Path writeRoute(String name) throws Exception {
-        Path route = dir.resolve(name + ".camel.yaml");
+        return writeRoute(dir, name, name);
+    }
+
+    private static Path writeRoute(Path directory, String name, String timer) throws Exception {
+        Path route = directory.resolve(name + ".camel.yaml");
         Files.writeString(route, """
                 - from:
                     uri: timer:%s
                     steps:
                       - to: log:%s
-                """.formatted(name, name));
+                """.formatted(timer, timer));
         return route;
     }
 

@@ -1,0 +1,1 @@
+../../../../../components/camel-cedar/src/main/docs/cedar-component.adoc

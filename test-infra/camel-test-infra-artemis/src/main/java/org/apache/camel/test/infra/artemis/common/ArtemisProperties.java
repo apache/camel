@@ -29,6 +29,12 @@ public final class ArtemisProperties {
     public static final String ARTEMIS_SSL_KEYSTORE_PASSWORD = "artemis.ssl.keystore.password";
     public static final String ARTEMIS_SSL_TRUSTSTORE_PATH = "artemis.ssl.truststore.path";
     public static final String ARTEMIS_SSL_TRUSTSTORE_PASSWORD = "artemis.ssl.truststore.password";
+    /**
+     * The protocols whose ports {@code camel infra run artemis} maps on the host as well, comma separated: {@code mqtt}
+     * (1883), {@code amqp} (5672) or {@code all}. By default only the core acceptor (61616) and the web console (8161)
+     * are, as mosquitto and RabbitMQ use the others.
+     */
+    public static final String ARTEMIS_PORTS = "artemis.ports";
 
     private ArtemisProperties() {
 

@@ -30,7 +30,7 @@ import org.apache.camel.spi.StepIdAware;
 /**
  * A <a href="http://camel.apache.org/delayer.html">Delayer</a> which delays processing the exchange until the correct
  * amount of time has elapsed using an expression to determine the delivery time.
- * <p/>
+ * <p>
  * This implementation will block while waiting.
  */
 public class Delayer extends DelayProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {

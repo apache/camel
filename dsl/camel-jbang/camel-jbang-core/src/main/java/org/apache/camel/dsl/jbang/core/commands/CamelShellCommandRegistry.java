@@ -26,6 +26,7 @@ import java.util.Map;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.impl.internal.ProcessedCommand;
 import org.aesh.command.impl.internal.ProcessedOption;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.jline.reader.Candidate;
@@ -186,6 +187,10 @@ public class CamelShellCommandRegistry implements CommandGroup {
             String[] line = new String[args.length + 1];
             line[0] = name;
             System.arraycopy(args, 0, line, 1, args.length);
+            line = main.expandArgumentFiles(line);
+            if (line == null) {
+                return CliExitCode.USAGE;
+            }
             return main.run(fresh, line);
         }
 

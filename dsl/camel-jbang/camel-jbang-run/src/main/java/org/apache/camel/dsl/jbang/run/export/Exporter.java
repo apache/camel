@@ -106,6 +106,59 @@ abstract class Exporter {
     }
 
     /**
+     * Whether the project can be exported to the export directory: the current directory (or one that contains it),
+     * whose files are kept, a directory that is empty or does not exist, or one that an earlier export created (it has
+     * the {@link ExportHelper#EXPORT_MARKER} file), which the export replaces so no stale files of it are left. The
+     * files of any other directory are not deleted without --clean-dir (CAMEL-26912).
+     */
+    protected boolean canExportTo() {
+        if (request.cleanExportDir || ExportHelper.isCurrentDirOrParent(request.exportDir)) {
+            return true;
+        }
+        Path dir = Path.of(request.exportDir);
+        if (Files.exists(dir.resolve(ExportHelper.EXPORT_MARKER)) || !ExportHelper.hasVisibleFiles(dir)) {
+            return true;
+        }
+        printer().printErr("Cannot export to " + dir.toAbsolutePath().normalize()
+                           + " because it has files that camel export did not create: use --clean-dir to delete them,"
+                           + " or export to another directory");
+        return false;
+    }
+
+    /**
+     * Cleans the export directory before the project is copied to it: with --clean-dir, when the user confirms it, or a
+     * directory that is not the current directory (see {@link #canExportTo()}).
+     *
+     * @return 0, or 1 when the user does not confirm --clean-dir
+     */
+    protected int cleanExportDir() {
+        if (request.cleanExportDir) {
+            String absPath = Path.of(request.exportDir).toAbsolutePath().toString();
+            if (!request.yes && !exportContext.confirm("Are you sure you want to delete " + absPath + "?")) {
+                return 1;
+            }
+            ExportHelper.cleanExportDir(request.exportDir);
+        } else if (!ExportHelper.isCurrentDirOrParent(request.exportDir)) {
+            // no stale data of an earlier export
+            ExportHelper.cleanExportDir(request.exportDir);
+        }
+        return 0;
+    }
+
+    /**
+     * Marks the export directory as created by camel export, so the next export to it may replace it. The current
+     * directory is not marked: an export from another directory must not delete the files of this one.
+     */
+    protected void markExportDir() throws IOException {
+        if (!ExportHelper.isCurrentDirOrParent(request.exportDir)) {
+            Files.writeString(Path.of(request.exportDir).resolve(ExportHelper.EXPORT_MARKER), """
+                    # Created by camel export, which replaces the files of this directory when it exports to it again.
+                    # Delete this file to keep them: camel export then needs --clean-dir to export here.
+                    """);
+        }
+    }
+
+    /**
      * The directory in the work directory where the project is built, before it is copied to the export directory.
      */
     protected Path buildDir() {
@@ -287,13 +340,18 @@ abstract class Exporter {
         List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
 
         // check if we use custom and/or official ASF kamelets
-        List<String> officialKamelets
-                = KameletCatalogHelper.findKameletNames(request.kameletsVersion, request.mavenResolver.repos());
+        List<String> officialKamelets = null;
         boolean kamelets = false;
         boolean asfKamelets = false;
         for (String line : lines) {
             if (line.startsWith("kamelet=")) {
                 kamelets = true;
+                if (officialKamelets == null) {
+                    // the Kamelet catalog is downloaded only for an integration that uses Kamelets: it is about 38 MB
+                    // with its dependencies on a first export (CAMEL-26912)
+                    officialKamelets = KameletCatalogHelper.findKameletNames(request.kameletsVersion,
+                            request.mavenResolver.repos());
+                }
                 String name = StringHelper.after(line, "kamelet=");
                 if (officialKamelets.contains(name)) {
                     asfKamelets = true;
@@ -618,6 +676,8 @@ abstract class Exporter {
         // expression): they stay at the resources root, where the reference resolves, instead of camel-groovy where
         // they would be compiled as scripts and be out of reach of the reference (CAMEL-24853)
         Set<String> resourceReferenced = resourceReferencedFiles(prop.getProperty("camel.main.routesIncludePattern"));
+        // the file of the project that each file of the export is copied to: two files must not end up as one
+        Map<Path, Path> copied = new HashMap<>();
 
         for (String k : SETTINGS_PROP_SOURCE_KEYS) {
             String files;
@@ -641,6 +701,10 @@ abstract class Exporter {
                         continue;
                     }
                     if ("github".equals(scheme)) {
+                        continue;
+                    }
+                    if (CLASSPATH_FILES.equals(k) && f.endsWith(".jar")) {
+                        // a local JAR is a dependency in the lib directory (see copyLocalLibDependencies)
                         continue;
                     }
                     String ext = FileUtil.onlyExt(f, true);
@@ -704,6 +768,7 @@ abstract class Exporter {
                     }
                     if (!java) {
                         if (kamelet) {
+                            claim(copied, out, source);
                             ExportHelper.safeCopy(source, out, true);
                             if (request.symbolicLink) {
                                 deferredSymlinks.put(out, source);
@@ -715,12 +780,16 @@ abstract class Exporter {
                                     .replace(".jkube.yaml", ".yaml")
                                     .replace(".jkube.yml", ".yml");
                             out = srcCamelResourcesDir.getParent().getParent().resolve("jkube").resolve(name);
+                            claim(copied, out, source);
                             Files.createDirectories(out.getParent());
                             ExportHelper.safeCopy(source, out, true);
                             if (request.symbolicLink) {
                                 deferredSymlinks.put(out, source);
                             }
                         } else {
+                            if (!Files.isDirectory(source)) {
+                                claim(copied, out, source);
+                            }
                             Files.createDirectories(out.getParent());
                             ExportHelper.safeCopy(getClass().getClassLoader(), scheme, source, out, true);
                             if (request.symbolicLink) {
@@ -752,6 +821,7 @@ abstract class Exporter {
                                 }
                             }
                         }
+                        claim(copied, out, source);
                         if (request.javaLiveReload) {
                             ExportHelper.safeCopy(source, out, true);
                             if (request.symbolicLink) {
@@ -815,6 +885,24 @@ abstract class Exporter {
         return false;
     }
 
+    /**
+     * Claims the file of the project that a file of the export is copied to: two files with the same name in different
+     * directories (x/route.camel.yaml and y/route.camel.yaml) would be the same file of the project, and one of them
+     * would be lost (CAMEL-26912). The same file given twice is copied once.
+     */
+    private void claim(Map<Path, Path> copied, Path out, Path source) {
+        Path from = source.toAbsolutePath().normalize();
+        Path target = out.toAbsolutePath().normalize();
+        Path previous = copied.putIfAbsent(target, from);
+        if (previous != null && !previous.equals(from)) {
+            Path build = buildDir().toAbsolutePath().normalize();
+            Path name = target.startsWith(build) ? build.relativize(target) : target;
+            throw new ExportException(
+                    "Cannot export " + previous + " and " + from + " as both would be "
+                                      + name.toString().replace('\\', '/') + " in the exported project: rename one of them");
+        }
+    }
+
     protected void adjustJavaSourceFileLine(String line, OutputStream fos) throws Exception {
         // noop
     }
@@ -824,7 +912,8 @@ abstract class Exporter {
             Function<Properties, Object> customize)
             throws Exception {
         Properties settingsProps = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(settingsProps, settings);
+        // the run settings are written in UTF-8 (see RunSettings)
+        RuntimeUtil.loadProperties(settingsProps, settings, StandardCharsets.UTF_8);
 
         Properties profileProps = new CamelCaseOrderedProperties();
         if (Files.exists(profile)) {
@@ -903,10 +992,11 @@ abstract class Exporter {
             }
         }
 
-        // write all the properties
+        // write all the properties, in the encoding of a properties file (ISO-8859-1), as the application.properties of
+        // the export was read: its text is written back as it was, also UTF-8 text, which is read as ISO-8859-1
         Files.createDirectories(targetDir);
         Path appPropsPath = targetDir.resolve("application.properties");
-        Files.writeString(appPropsPath, content.toString(), StandardCharsets.UTF_8);
+        Files.writeString(appPropsPath, content.toString(), StandardCharsets.ISO_8859_1);
     }
 
     protected void prepareApplicationProperties(Properties properties) {
@@ -985,8 +1075,12 @@ abstract class Exporter {
         FileUtil.setPosixFilePermissions(camelCmdPath, "rwxr-xr-x");
     }
 
+    /**
+     * The line of a property in the application.properties of the exported project, escaped as a properties file needs
+     * it (see {@link ExportHelper#propertyLine(String, String)}), or null to leave the property out.
+     */
     protected String applicationPropertyLine(String key, String value) {
-        return key + "=" + value;
+        return ExportHelper.propertyLine(key, value);
     }
 
     /**
@@ -1133,12 +1227,13 @@ abstract class Exporter {
         if (sb.isEmpty()) {
             return;
         }
-        String content = Files.exists(file) ? Files.readString(file) : "";
+        // in the encoding of a properties file, which keeps the bytes of the file as they are
+        String content = Files.exists(file) ? Files.readString(file, StandardCharsets.ISO_8859_1) : "";
         if (!content.isEmpty() && !content.endsWith("\n")) {
             content += "\n";
         }
         content += "# developer console (--console), only for the dev profile\n" + sb;
-        Files.writeString(file, content);
+        Files.writeString(file, content, StandardCharsets.ISO_8859_1);
     }
 
     public static String jibMavenPluginVersion(Path settings, Properties prop) {
@@ -1236,13 +1331,14 @@ abstract class Exporter {
     protected MavenGav parseMavenGav(String dep) {
         MavenGav gav;
         if (dep.startsWith("lib:") && dep.endsWith(".jar")) {
-            // lib:commons-lang3-3.12.0.jar
-            String n = dep.substring(4);
-            n = n.substring(0, n.length() - 4);
+            // lib:commons-lang3-3.12.0.jar, or lib:dir/commons-lang3-3.12.0.jar for a JAR in a directory
+            String path = dep.substring(4);
             // scan inside JAR in META-INF/maven and find pom.properties file
-            gav = parseLocalJar(n);
+            gav = parseLocalJar(path);
             if (gav == null) {
-                // okay JAR was not maven build
+                // okay JAR was not maven build: the name of the file (not its directory) is the artifact and version
+                String n = FileUtil.stripPath(path);
+                n = n.substring(0, n.length() - 4);
                 gav = new MavenGav();
                 String v = "1.0";
                 String a = n;
@@ -1262,9 +1358,13 @@ abstract class Exporter {
         return gav;
     }
 
-    private MavenGav parseLocalJar(String dep) {
-        Path path = request.baseDir.resolve(dep + ".jar");
-        if (!Files.isRegularFile(path) || !Files.exists(path)) {
+    private MavenGav parseLocalJar(String file) {
+        // the path of the JAR is relative to the current directory, as the run has it (see copyLocalLibDependencies)
+        Path path = Paths.get(file);
+        if (!Files.isRegularFile(path)) {
+            path = request.baseDir.resolve(file);
+        }
+        if (!Files.isRegularFile(path)) {
             return null;
         }
 
@@ -1298,7 +1398,10 @@ abstract class Exporter {
                 Files.createDirectories(libDirPath);
                 String n = d.substring(4);
                 Path sourcePath = Paths.get(n);
-                Path targetPath = libDirPath.resolve(n);
+                // the name that the system path of the dependency in the pom.xml has (artifactId-version.jar), which
+                // is not the name of the JAR when that is not artifactId-version.jar, nor when it is in a directory
+                MavenGav gav = parseMavenGav(d);
+                Path targetPath = libDirPath.resolve(gav.getArtifactId() + "-" + gav.getVersion() + ".jar");
                 ExportHelper.safeCopy(sourcePath, targetPath, true);
             }
         }
@@ -1374,9 +1477,13 @@ abstract class Exporter {
         copyApplicationPropertiesFiles(srcResourcesDir.toPath());
     }
 
+    /**
+     * The scheme of a file, such as classpath or github, or null for a file without scheme. A single letter is the
+     * drive of a path on Windows (C:\work\route.camel.yaml), not a scheme (CAMEL-26912).
+     */
     protected static String getScheme(String name) {
         int pos = name.indexOf(":");
-        if (pos != -1) {
+        if (pos > 1) {
             return name.substring(0, pos);
         }
         return null;

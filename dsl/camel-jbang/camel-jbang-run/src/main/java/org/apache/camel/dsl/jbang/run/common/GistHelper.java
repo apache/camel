@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.run.common;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -23,6 +25,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.StringJoiner;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.util.FileUtil;
 import tools.jackson.databind.JsonNode;
@@ -83,11 +88,43 @@ public final class GistHelper {
     static void resolveGistAsRawFiles(
             String url, StringJoiner routes, StringJoiner kamelets, StringJoiner properties, StringJoiner all)
             throws Exception {
+        resolveGistAsRawFiles(url, routes, kamelets, properties, all, Duration.ofSeconds(20));
+    }
+
+    /**
+     * Package-private overload accepting a custom timeout for testing.
+     */
+    static void resolveGistAsRawFiles(
+            String url, StringJoiner routes, StringJoiner kamelets, StringJoiner properties, StringJoiner all,
+            Duration timeout)
+            throws Exception {
 
         // use JDK http client to call github api
         HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
-        HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(url)).timeout(Duration.ofSeconds(20)).build(),
-                HttpResponse.BodyHandlers.ofString());
+        URI uri = new URI(url);
+        HttpRequest.Builder reqBuilder = HttpRequest.newBuilder(uri).timeout(timeout);
+        // Send GITHUB_TOKEN as Authorization header when set, but only to api.github.com (never leak to other hosts)
+        String token = System.getenv("GITHUB_TOKEN");
+        if (token != null && !token.isBlank() && "api.github.com".equals(uri.getHost())) {
+            reqBuilder.header("Authorization", "Bearer " + token);
+        }
+        HttpRequest req = reqBuilder.build();
+        // sendAsync + get(timeout) bounds both headers and body reads; HttpRequest.timeout() only covers headers
+        var future = hc.sendAsync(req, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> res;
+        try {
+            res = future.get(timeout.toSeconds(), TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            throw new IOException(
+                    "GitHub Gist API request timed out after " + timeout.toSeconds() + " seconds for URL: " + url, e);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof IOException ioe) {
+                throw ioe;
+            }
+            throw new IOException("GitHub Gist API request failed for URL: " + url, cause);
+        }
 
         if (res.statusCode() == 200) {
             ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
@@ -115,6 +152,12 @@ public final class GistHelper {
                     all.add(u);
                 }
             }
+        } else if (res.statusCode() == 404) {
+            throw new FileNotFoundException("GitHub Gist API request failed with HTTP 404 for URL: " + url);
+        } else {
+            String hint = GitHubHttpHelper.rateLimitHint(res, token);
+            throw new IOException(
+                    "GitHub Gist API request failed with HTTP " + res.statusCode() + hint + " for URL: " + url);
         }
     }
 

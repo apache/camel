@@ -32,6 +32,9 @@ import org.apache.http.Header;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResult;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -111,6 +114,19 @@ class MavenDownloaderImplTest {
         if (localServer != null) {
             localServer.shutdown(2, TimeUnit.SECONDS);
         }
+    }
+
+    @Test
+    void testRemoteSnapshotHasBaseVersion() {
+        // a SNAPSHOT downloaded from a remote repository is resolved with its timestamped version
+        ArtifactResult result = new ArtifactResult(new ArtifactRequest());
+        result.setArtifact(new DefaultArtifact("org.apache.camel:camel-api:jar:4.24.0-20261112.143700-31")
+                .setFile(new File("camel-api-4.24.0-20261112.143700-31.jar")));
+
+        MavenArtifact artifact = MavenDownloaderImpl.toMavenArtifact(result);
+
+        assertEquals("org.apache.camel:camel-api:4.24.0-SNAPSHOT", artifact.getGav().toString());
+        assertEquals("camel-api-4.24.0-20261112.143700-31.jar", artifact.getFile().getName());
     }
 
     @Test
@@ -1030,6 +1046,61 @@ class MavenDownloaderImplTest {
         }
     }
 
+    @Test
+    void testManagedVersionIsUsedForTransitiveDependencies() throws Exception {
+        // app -> lib 2.0.0, while lib 1.0.0 is already loaded
+        File repo = new File(tempDir, "managed-repo");
+        writeJar(repo, "app", "1.0.0",
+                """
+                          <dependencies>
+                            <dependency><groupId>org.example.fixture</groupId><artifactId>lib</artifactId><version>2.0.0</version></dependency>
+                          </dependencies>
+                        """);
+        writeJar(repo, "app-native", "1.0.0",
+                """
+                          <dependencies>
+                            <dependency><groupId>org.example.fixture</groupId><artifactId>lib</artifactId><version>2.0.0</version><classifier>linux-aarch_64</classifier></dependency>
+                          </dependencies>
+                        """);
+        writeJar(repo, "lib", "1.0.0", "");
+        writeJar(repo, "lib", "2.0.0", "");
+        File native1 = new File(repo, "org/example/fixture/lib/1.0.0/lib-1.0.0-linux-aarch_64.jar");
+        Files.writeString(native1.toPath(), "native");
+        Files.writeString(new File(repo, "org/example/fixture/lib/2.0.0/lib-2.0.0-linux-aarch_64.jar").toPath(), "native");
+        File localRepo = new File(tempDir, "managed-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(repo.toURI().toString());
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 5000);
+            List<MavenGav> managed = List.of(MavenGav.parseGav("org.example.fixture:lib:1.0.0"));
+
+            List<MavenArtifact> artifacts = customDownloader.resolveArtifacts(null,
+                    List.of("org.example.fixture:app:1.0.0"), null, true, false, null, managed);
+
+            assertEquals(List.of("org.example.fixture:app:1.0.0", "org.example.fixture:lib:1.0.0"),
+                    artifacts.stream().map(a -> a.getGav().toString()).toList());
+            // the other version is not downloaded
+            assertFalse(new File(localRepo, "org/example/fixture/lib/2.0.0").exists());
+
+            // also for another classifier than the one loaded (such as a native JAR of another platform)
+            artifacts = customDownloader.resolveArtifacts(null, List.of("org.example.fixture:app-native:1.0.0"), null,
+                    true, false, null, managed);
+            assertEquals(List.of("org.example.fixture:app-native:1.0.0", "org.example.fixture:lib:1.0.0"),
+                    artifacts.stream().map(a -> a.getGav().toString()).toList());
+            assertEquals("linux-aarch_64", artifacts.get(1).getGav().getClassifier());
+
+            // a dependency asked for directly keeps its version
+            artifacts = customDownloader.resolveArtifacts(null, List.of("org.example.fixture:lib:2.0.0"), null, true,
+                    false, null, managed);
+            assertEquals(List.of("org.example.fixture:lib:2.0.0"),
+                    artifacts.stream().map(a -> a.getGav().toString()).toList());
+        }
+    }
+
     private static String dependencies(String... artifactIds) {
         StringBuilder sb = new StringBuilder("  <dependencies>\n");
         for (String artifactId : artifactIds) {
@@ -1037,6 +1108,22 @@ class MavenDownloaderImplTest {
                     .append("</artifactId><version>1.0.0</version></dependency>\n");
         }
         return sb.append("  </dependencies>\n").toString();
+    }
+
+    private static void writeJar(File repo, String artifactId, String version, String body) throws Exception {
+        File dir = new File(repo, "org/example/fixture/" + artifactId + "/" + version);
+        assertTrue(dir.mkdirs() || dir.isDirectory());
+        String pom = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <project xmlns="http://maven.apache.org/POM/4.0.0">
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>org.example.fixture</groupId>
+                  <artifactId>%s</artifactId>
+                  <version>%s</version>
+                %s</project>
+                """.formatted(artifactId, version, body);
+        Files.writeString(new File(dir, artifactId + "-" + version + ".pom").toPath(), pom);
+        Files.writeString(new File(dir, artifactId + "-" + version + ".jar").toPath(), artifactId);
     }
 
     private static void writeJar(File repo, String artifactId, String body) throws Exception {

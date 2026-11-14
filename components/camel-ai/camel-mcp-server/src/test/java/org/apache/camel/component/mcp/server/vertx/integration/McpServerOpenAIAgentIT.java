@@ -31,6 +31,7 @@ import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -48,7 +49,15 @@ class McpServerOpenAIAgentIT extends CamelTestSupport {
     @RegisterExtension
     static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
-    private final int mcpPort = AvailablePortFinder.getNextAvailable();
+    private AvailablePortFinder.Port mcpPortRef;
+
+    @AfterEach
+    void releasePort() {
+        if (mcpPortRef != null) {
+            mcpPortRef.release();
+            mcpPortRef = null;
+        }
+    }
 
     private String apiKey;
     private String baseUrl;
@@ -82,8 +91,9 @@ class McpServerOpenAIAgentIT extends CamelTestSupport {
         camelContext.addComponent("openai", component);
 
         // this application serves its own MCP endpoint on the Vert.x platform HTTP server
+        mcpPortRef = AvailablePortFinder.find();
         VertxPlatformHttpServerConfiguration serverConfiguration = new VertxPlatformHttpServerConfiguration();
-        serverConfiguration.setBindPort(mcpPort);
+        serverConfiguration.setBindPort(mcpPortRef.getPort());
         camelContext.addService(new VertxPlatformHttpServer(serverConfiguration));
 
         McpServerConfiguration mcpConfiguration = new McpServerConfiguration();
@@ -121,7 +131,7 @@ class McpServerOpenAIAgentIT extends CamelTestSupport {
                         .toF("openai:chat-completion"
                              + "?mcpServer.camelTools.transportType=streamableHttp"
                              + "&mcpServer.camelTools.url=http://localhost:%d/mcp",
-                                mcpPort)
+                                mcpPortRef.getPort())
                         .to("mock:response");
             }
         });

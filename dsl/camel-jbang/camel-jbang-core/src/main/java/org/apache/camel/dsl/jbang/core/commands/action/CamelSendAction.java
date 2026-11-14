@@ -306,7 +306,9 @@ public class CamelSendAction extends ActionBaseCommand {
         JsonObject jo = result.reply();
         if (jo == null) {
             // no answer from the integration at all
-            throw new CliException(result.exitCode(), "Send timeout: " + result.error());
+            // an integration that stopped before it answered is not a timeout
+            String error = result.status() == ActionClient.Status.TIMEOUT ? "Send timeout: " + result.error() : result.error();
+            throw new CliException(result.exitCode(), error);
         }
         printStatusLine(jo);
         if (jo.containsKey("sent")) {

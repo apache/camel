@@ -188,7 +188,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String locator;
     @UriParam(javaType = "java.lang.Integer")
     private Integer maxRecords;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean pkChunking;
     @UriParam
     private Integer pkChunkingChunkSize;

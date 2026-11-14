@@ -48,6 +48,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "evaluationMode": getOrCreateConfiguration(target).setEvaluationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "failopen":
         case "failOpen": getOrCreateConfiguration(target).setFailOpen(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckbundles":
+        case "healthCheckBundles": getOrCreateConfiguration(target).setHealthCheckBundles(property(camelContext, boolean.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
@@ -103,6 +105,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "evaluationMode": return java.lang.String.class;
         case "failopen":
         case "failOpen": return boolean.class;
+        case "healthcheckbundles":
+        case "healthCheckBundles": return boolean.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
@@ -154,6 +158,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "evaluationMode": return getOrCreateConfiguration(target).getEvaluationMode();
         case "failopen":
         case "failOpen": return getOrCreateConfiguration(target).isFailOpen();
+        case "healthcheckbundles":
+        case "healthCheckBundles": return getOrCreateConfiguration(target).isHealthCheckBundles();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":

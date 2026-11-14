@@ -27,8 +27,9 @@ import org.apache.camel.util.json.JsonObject;
                    description = "Change a chaos rule of a running integration (camel-chaos, for development only)",
                    generateHelp = true,
                    footer = {
-                           "The new rule replaces the rule with that id, and starts with new counts and a new end time;",
-                           "it is the next version of the id. The report keeps the replaced version.",
+                           "The new rule replaces the rule with that id, and starts with new counts and a",
+                           "new end time; it is the next version of the id. The report keeps the replaced",
+                           "version.",
                            "",
                            "Without a name or pid, it changes the rule of the only integration that runs,",
                            "or of the only one with chaos switched on; when that is not clear, it fails",

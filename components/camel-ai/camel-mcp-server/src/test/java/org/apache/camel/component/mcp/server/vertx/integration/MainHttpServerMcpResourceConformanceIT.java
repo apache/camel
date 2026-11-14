@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.mcp.server.conformance.McpServerResourceConformanceTestSupport;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterEach;
 
 /**
  * Runs the resource conformance kit against the Camel main HTTP server ({@code camel-platform-http-main}) — the actual
@@ -27,19 +28,28 @@ import org.apache.camel.test.AvailablePortFinder;
  */
 class MainHttpServerMcpResourceConformanceIT extends McpServerResourceConformanceTestSupport {
 
-    private final int port = AvailablePortFinder.getNextAvailable();
+    private AvailablePortFinder.Port portRef;
+
+    @AfterEach
+    void releasePort() {
+        if (portRef != null) {
+            portRef.release();
+            portRef = null;
+        }
+    }
 
     @Override
     protected void customizeCamelContext(CamelContext camelContext) throws Exception {
+        portRef = AvailablePortFinder.find();
         MainHttpServer server = new MainHttpServer();
         server.setCamelContext(camelContext);
         server.setHost("0.0.0.0");
-        server.setPort(port);
+        server.setPort(portRef.getPort());
         camelContext.addService(server);
     }
 
     @Override
     protected String mcpServerBaseUrl() {
-        return "http://localhost:" + port;
+        return "http://localhost:" + portRef.getPort();
     }
 }

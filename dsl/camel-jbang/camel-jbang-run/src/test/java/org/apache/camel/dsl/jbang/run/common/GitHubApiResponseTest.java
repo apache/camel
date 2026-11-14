@@ -16,10 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.run.common;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.StringJoiner;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterEach;
@@ -40,15 +45,25 @@ class GitHubApiResponseTest {
     private HttpServer server;
     private String url;
     private volatile String response;
+    private volatile int statusCode = 200;
+    private volatile String rateLimitRemaining = null;
 
     @BeforeEach
     void startServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
         server.createContext("/", exchange -> {
-            byte[] body = response.getBytes(StandardCharsets.UTF_8);
-            exchange.sendResponseHeaders(200, body.length);
-            exchange.getResponseBody().write(body);
-            exchange.close();
+            if (statusCode != 200) {
+                if (rateLimitRemaining != null) {
+                    exchange.getResponseHeaders().set("x-ratelimit-remaining", rateLimitRemaining);
+                }
+                exchange.sendResponseHeaders(statusCode, -1);
+                exchange.close();
+            } else {
+                byte[] body = response.getBytes(StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(200, body.length);
+                exchange.getResponseBody().write(body);
+                exchange.close();
+            }
         });
         server.start();
         url = "http://localhost:" + server.getAddress().getPort() + "/";
@@ -93,5 +108,107 @@ class GitHubApiResponseTest {
         GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, all);
 
         assertThat(all).hasToString(GitHubHelper.asGithubSingleUrl("https://github.com/me/repo/blob/main/route.java"));
+    }
+
+    @Test
+    void nonOkGithubResponseThrows() {
+        statusCode = 404;
+
+        assertThatThrownBy(() -> GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, new StringJoiner(",")))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining("404");
+    }
+
+    @Test
+    void accessDeniedGithubResponseThrowsWithHint() {
+        statusCode = 403;
+
+        assertThatThrownBy(() -> GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, new StringJoiner(",")))
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("403")
+                .hasMessageContaining("access denied");
+    }
+
+    @Test
+    void rateLimitExhaustedGithubResponseThrowsWithHint() {
+        statusCode = 403;
+        rateLimitRemaining = "0";
+
+        assertThatThrownBy(() -> GitHubHelper.resolveGithubAsRawFiles(url, null, null, null, null, new StringJoiner(",")))
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("403")
+                .hasMessageContaining("rate limit exceeded");
+    }
+
+    @Test
+    void nonOkGistResponseThrows() {
+        statusCode = 404;
+
+        assertThatThrownBy(() -> GistHelper.resolveGistAsRawFiles(url, null, null, null, new StringJoiner(",")))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining("404");
+    }
+
+    @Test
+    void stalledBodyGithubResponseTimesOut() throws Exception {
+        CountDownLatch stallLatch = new CountDownLatch(1);
+        HttpServer stallServer = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        stallServer.createContext("/", exchange -> {
+            // send 200 headers with a declared body length, but never write the body
+            exchange.sendResponseHeaders(200, 1024);
+            OutputStream os = exchange.getResponseBody();
+            try {
+                // block until the test releases the latch (or until interrupted)
+                stallLatch.await(30, TimeUnit.SECONDS);
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            } finally {
+                os.close();
+                exchange.close();
+            }
+        });
+        stallServer.start();
+        String stallUrl = "http://localhost:" + stallServer.getAddress().getPort() + "/";
+        try {
+            Duration shortTimeout = Duration.ofSeconds(2);
+            assertThatThrownBy(() -> GitHubHelper.resolveGithubAsRawFiles(
+                    stallUrl, null, null, null, null, new StringJoiner(","), shortTimeout))
+                    .isInstanceOf(IOException.class)
+                    .hasMessageContaining("timed out");
+        } finally {
+            stallLatch.countDown();
+            stallServer.stop(0);
+        }
+    }
+
+    @Test
+    void stalledBodyGistResponseTimesOut() throws Exception {
+        CountDownLatch stallLatch = new CountDownLatch(1);
+        HttpServer stallServer = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        stallServer.createContext("/", exchange -> {
+            // send 200 headers with a declared body length, but never write the body
+            exchange.sendResponseHeaders(200, 1024);
+            OutputStream os = exchange.getResponseBody();
+            try {
+                stallLatch.await(30, TimeUnit.SECONDS);
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            } finally {
+                os.close();
+                exchange.close();
+            }
+        });
+        stallServer.start();
+        String stallUrl = "http://localhost:" + stallServer.getAddress().getPort() + "/";
+        try {
+            Duration shortTimeout = Duration.ofSeconds(2);
+            assertThatThrownBy(() -> GistHelper.resolveGistAsRawFiles(
+                    stallUrl, null, null, null, new StringJoiner(","), shortTimeout))
+                    .isInstanceOf(IOException.class)
+                    .hasMessageContaining("timed out");
+        } finally {
+            stallLatch.countDown();
+            stallServer.stop(0);
+        }
     }
 }

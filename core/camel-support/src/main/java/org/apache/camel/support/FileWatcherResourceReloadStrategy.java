@@ -29,10 +29,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -58,7 +61,13 @@ import org.slf4j.LoggerFactory;
 public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileWatcherResourceReloadStrategy.class);
+    // how many more scans a reload asked for waits for a file still being written
+    private static final int SETTLE_SCANS = 5;
 
+    /** One scan and its reload at a time: the watcher's, or one asked for with {@link #reloadChanged()}. */
+    private final Lock scanLock = new ReentrantLock();
+    /** Whether the last scan left a file still being written for the next scan. */
+    private boolean settling;
     ExecutorService executorService;
     WatchFileChangesTask task;
     /** The modification time and length of every file of the previous scan, by path: what a change is measured from. */
@@ -153,9 +162,53 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
         this.fileFilter = fileFilter;
     }
 
+    /**
+     * Reloads the files changed since the last scan now, see {@link #reloadChanged()}.
+     */
     @Override
     public void onReload(Object source) {
-        // this implementation uses a watcher to automatic reload
+        reloadChanged();
+    }
+
+    /**
+     * Reloads the files changed since the last scan now, rather than at the next scan, as the Camel CLI asks for right
+     * after an edit (<tt>camel cmd reload --wait</tt>). A file still being written, such as the one just edited, is
+     * waited for. The files are reloaded on the calling thread, one scan at a time with the watcher.
+     *
+     * @return the files that changed, also those that are gone; empty when nothing changed
+     * @since  4.24
+     */
+    public List<String> reloadChanged() {
+        if (folder == null) {
+            return List.of();
+        }
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        scanLock.lock();
+        try {
+            // the classloader of Camel, as the watcher has it
+            ClassLoader acl = getCamelContext() != null ? getCamelContext().getApplicationContextClassLoader() : null;
+            if (acl != null) {
+                Thread.currentThread().setContextClassLoader(acl);
+            }
+            Set<File> changed = new LinkedHashSet<>(scan());
+            for (int i = 0; settling && i < SETTLE_SCANS; i++) {
+                try {
+                    Thread.sleep(stableTimeout);
+                } catch (InterruptedException e) {
+                    // the files scanned so far are reloaded, as the next scan does not report them again
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+                changed.addAll(scan());
+            }
+            if (!changed.isEmpty()) {
+                onReloadBatch(new ArrayList<>(changed));
+            }
+            return changed.stream().map(f -> FileUtil.compactPath(f.getPath())).toList();
+        } finally {
+            scanLock.unlock();
+            Thread.currentThread().setContextClassLoader(cl);
+        }
     }
 
     @Override
@@ -213,6 +266,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
      * otherwise be reloaded half-finished.
      */
     protected List<File> scan() {
+        settling = false;
         List<File> changed = new ArrayList<>();
         Set<String> seen = new HashSet<>();
         Path root = new File(folder).toPath();
@@ -264,6 +318,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         // still being written: leave it, and let the next scan report it. A modification time in the
                         // future (a clock askew on a network share, a touch -t) is reported now rather than waited out
                         seen.remove(name);
+                        settling = true;
                         return FileVisitResult.CONTINUE;
                     }
                     known.put(name, new long[] { modified, length });
@@ -365,6 +420,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                     }
 
                     LOG.trace("FileReloadStrategy is scanning for file changes in directory: {}", folder);
+                    scanLock.lock();
                     try {
                         List<File> changed = scan();
                         if (!changed.isEmpty()) {
@@ -376,6 +432,8 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         // an error such as StackOverflowError has no message: name it rather than print null
                         LOG.warn("Error reloading files in directory: {} due to: {}. This exception is ignored.", folder,
                                 e.getMessage() != null ? e.getMessage() : e.getClass().getName(), e);
+                    } finally {
+                        scanLock.unlock();
                     }
                 }
             } finally {

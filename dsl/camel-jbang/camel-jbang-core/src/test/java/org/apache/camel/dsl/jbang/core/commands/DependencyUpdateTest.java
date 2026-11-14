@@ -126,6 +126,8 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         CommandLineTestHelper.parse(exportCommand,
                 "--gav=examples:route:1.0.0",
                 "--dir=" + workingDir,
+                // the directory has the route that camel init created, which the export replaces with the project
+                "--clean-dir", "--yes",
                 "--camel-version=4.13.0",
                 "--runtime=" + rt.runtime(),
                 CamelCommandBaseTestSupport.quarkusExtRegistry(),

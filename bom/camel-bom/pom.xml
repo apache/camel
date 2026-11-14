@@ -553,6 +553,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-cedar</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-chaos</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
@@ -2225,6 +2230,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-semantic</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-semantic-micrometer</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>

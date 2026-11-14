@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
- * <p/>
+ * <p>
  * This implementation supports idempotent repositories implemented as
  * {@link org.apache.camel.spi.IdempotentRepository}.
  *

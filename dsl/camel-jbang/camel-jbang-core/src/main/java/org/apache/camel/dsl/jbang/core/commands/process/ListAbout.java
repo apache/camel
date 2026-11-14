@@ -38,8 +38,10 @@ import org.apache.camel.util.json.JsonObject;
                    description = "Get what an integration does and what has happened: its purpose, what comes in, its routes, what goes out, and the last minutes",
                    generateHelp = true,
                    footer = {
-                           "The purpose is the comment at the top of the main source file, else the descriptions of the routes.",
-                           "The last minutes come from the timeline the integration records (the timeline dev console, on in profile dev).",
+                           "The purpose is the comment at the top of the main source file, else the",
+                           "descriptions of the routes.",
+                           "The last minutes come from the timeline the integration records (the timeline",
+                           "dev console, on in profile dev).",
                            "",
                            "Examples:",
                            "  camel get about",

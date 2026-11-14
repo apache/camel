@@ -184,8 +184,15 @@ public class Webhook implements Serializable {
                ", folderId='" + folderId + '\'' +
                ", spaceId='" + spaceId + '\'' +
                ", health=" + health +
-               ", secret='" + secret + '\'' +
+               ", secret='" + mask(secret) + '\'' +
                '}';
     }
 
+    /**
+     * Masks a credential so that logging a webhook cannot leak it. {@code xxxxxx} is the mask Camel uses when it
+     * sanitizes a URI, and whether the value was set at all is still visible.
+     */
+    private static String mask(Object secret) {
+        return secret != null ? "xxxxxx" : "null";
+    }
 }

@@ -133,6 +133,8 @@ There are no historical-period or baseline controls. Register a bounded number o
 facades per source, never one MBean per event or answer. JMX-disabled deployments retain the console.
 
 CAMEL-25648 adds a shared Micrometer instrumentation/export bridge for Camel Main, Spring Boot and Quarkus.
+The bridge lives in `camel-semantic-micrometer`, which depends on `camel-semantic` and `camel-micrometer`;
+the semantic runtime publishes its events without depending on Micrometer.
 It reuses the runtime registry; Prometheus or another registry backend owns monitoring history and queries.
 Correlation, exchange, breadcrumb and invocation IDs are not metric labels. They remain audit/log/trace
 context; standard tracing exemplars may supply sampled metric-to-trace references where supported. Audit

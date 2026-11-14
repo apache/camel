@@ -18,6 +18,8 @@ package org.apache.camel.cli.connector;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
@@ -47,7 +49,12 @@ import org.slf4j.LoggerFactory;
  * Deleting the <tt>{pid}</tt> lock file shuts down the integration.
  * <p/>
  * The snapshots are written every second (every 100 millis in debug mode), and the action files are looked for about
- * every 100 millis in between, on the same thread, so an action does not wait up to a second for its answer.
+ * every 20 millis in between, on the same thread, so an action does not wait up to a second for its answer. In between,
+ * the directory is only listed when its modification time has changed, which it does when a file is added to it, as
+ * listing it costs far more than looking at that time. With every snapshot it is listed anyway. The status is also
+ * written as soon as Camel changes phase, such as when it has started, and after actions are answered (at most every
+ * 200 millis), so a <tt>camel run --background</tt> is told that Camel has started without waiting for the next status,
+ * and a <tt>camel get</tt> right after a <tt>camel cmd</tt> shows what the action did.
  * <p/>
  * An action with a request id (<tt>{pid}-action-{requestId}.json</tt>) always gets a reply in
  * <tt>{pid}-output-{requestId}.json</tt>: <tt>{"status":"failed","error":"..."}</tt> when it is unknown, throws or
@@ -73,13 +80,24 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private int delay = 1000;
     private long counter;
     private final Map<File, PendingAction> pending = new HashMap<>();
+    // the modification time of the directory when it was last listed, or 0 to list it at the next poll
+    private long listed;
+    // the phase of Camel when the status was last written, when it was written, and whether an action was answered since
+    private int statusPhase = -1;
+    private long statusWritten;
+    private boolean answered;
 
     // an action file this young that cannot be read may still be written: the Camel CLI before 4.24 writes it in place
     private static final long UNREADABLE_GRACE_MS = 2000;
     // how long a stop waits for the poll in flight before it removes the files
     private static final long STOP_POLL_TIMEOUT_MS = 5000;
     // how often the action files are looked for between two snapshots
-    private static final int ACTION_POLL_MS = 100;
+    private static final int ACTION_POLL_MS = 20;
+    // a file added within the same tick of the clock of the file system as the change before it leaves the
+    // modification time of the directory as it was; a tick is at most about 16 millis (Windows)
+    private static final long CLOCK_TICK_MS = 20;
+    // how often at most the status is written for the actions answered between two snapshots, as collecting it costs
+    private static final long ANSWERED_STATUS_MS = 200;
 
     private record PendingAction(File output, boolean replyAlways, CompletableFuture<CliActionOutcome> outcome) {
     }
@@ -189,7 +207,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             return;
         }
 
-        actionTask();
+        actionTask(true);
         statusTask();
         // only run this every 2nd time as gathering this data has more overhead
         // and are only needed when doing tracing/debugging/receive
@@ -199,11 +217,17 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     }
 
     /**
-     * Looks for actions between two snapshots, so an action is answered in about 100 millis instead of up to a second.
+     * Looks for actions between two snapshots, so an action is answered in about 20 millis instead of up to a second.
+     * Writes the status when Camel has changed phase since it was last written, and when an action was answered (at
+     * most every 200 millis).
      */
     protected void actionPollTask() {
         if (polling()) {
-            actionTask();
+            actionTask(false);
+            if (statusPhase != camelContext.getCamelContextExtension().getStatusPhase()
+                    || (answered && TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - statusWritten) >= ANSWERED_STATUS_MS)) {
+                statusTask();
+            }
         }
     }
 
@@ -220,7 +244,13 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         return statusFile.exists();
     }
 
-    protected synchronized void actionTask() {
+    /**
+     * Writes the answers of the actions that are done, and runs the new actions.
+     *
+     * @param list whether to list the directory also when its modification time has not changed since it was last
+     *             listed
+     */
+    protected synchronized void actionTask(boolean list) {
         pending.entrySet().removeIf(entry -> {
             File request = entry.getKey();
             PendingAction action = entry.getValue();
@@ -234,10 +264,19 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             }
             return false;
         });
-        // scan for all action files: {pid}-action.json (legacy) and {pid}-action-{requestId}.json (multi-client)
         File dir = lockFile.getParentFile();
+        // the time before the directory is looked at, see CLOCK_TICK_MS
+        long now = System.currentTimeMillis();
+        long modified = dir.lastModified();
+        if (!list && modified != 0 && modified == listed) {
+            // no file added since the last listing
+            return;
+        }
+        // the time is only remembered once a file added to the directory would change it
+        listed = now - modified >= CLOCK_TICK_MS ? modified : 0;
+        // scan for all action files: {pid}-action.json (legacy) and {pid}-action-{requestId}.json (multi-client)
         String prefix = lockFile.getName() + "-action";
-        File[] actionFiles = dir.listFiles((d, name) -> name.startsWith(prefix) && name.endsWith(".json"));
+        File[] actionFiles = listActionFiles(dir, prefix);
         if (actionFiles == null || actionFiles.length == 0) {
             return;
         }
@@ -254,6 +293,13 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
                 processAction(af, of, requestId != null);
             }
         }
+    }
+
+    /**
+     * Lists the action files whose names start with the given prefix.
+     */
+    protected File[] listActionFiles(File dir, String prefix) {
+        return dir.listFiles((d, name) -> name.startsWith(prefix) && name.endsWith(".json"));
     }
 
     private void processAction(File af, File of, boolean replyAlways) {
@@ -278,7 +324,9 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         }
         if (root == null) {
             if (System.currentTimeMillis() - af.lastModified() < UNREADABLE_GRACE_MS) {
-                // try again at the next poll, the file may still be written
+                // try again at the next poll, the file may still be written: in place, which leaves the modification
+                // time of the directory as it is
+                listed = 0;
                 return;
             }
             if (invalid != null && replyAlways) {
@@ -310,6 +358,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             LOG.warn("Error writing action result: {} due to: {}", request, e.getMessage(), e);
         } finally {
             FileUtil.deleteFile(request);
+            // the status shows what the action did
+            answered = true;
         }
     }
 
@@ -341,10 +391,25 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         // a deleted request means the tool has given up on it
         if (request.exists()) {
             try {
-                IOHelper.writeText(reply.toJson(), output);
+                // written aside and moved in place: the tool reads the answer as soon as it is there (CAMEL-26911)
+                writeAtomically(reply.toJson(), output);
             } catch (Exception e) {
                 LOG.warn("Error writing action result: {} due to: {}", request, e.getMessage(), e);
             }
+        }
+    }
+
+    /**
+     * Writes the text to a file aside and moves it in place, so a reader never finds half of it, as the status file.
+     */
+    private static void writeAtomically(String text, File file) throws IOException {
+        File temporary = new File(file.getPath() + ".tmp");
+        IOHelper.writeText(text, temporary);
+        try {
+            Files.move(temporary.toPath(), file.toPath(), StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING);
+        } catch (AtomicMoveNotSupportedException e) {
+            Files.move(temporary.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
@@ -362,6 +427,9 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     }
 
     protected void statusTask() {
+        statusPhase = camelContext.getCamelContextExtension().getStatusPhase();
+        statusWritten = System.nanoTime();
+        answered = false;
         try {
             // even during termination then collect status as we want to see status changes during stopping
             JsonObject root = snapshots.status();
@@ -410,7 +478,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
                 // store debugs in a special file
                 LOG.trace("Updating debug file: {}", debugFile);
                 String data = json.toJson() + System.lineSeparator();
-                IOHelper.writeText(data, debugFile);
+                writeAtomically(data, debugFile);
             }
         } catch (Exception e) {
             // ignore
@@ -423,7 +491,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
                 // store replays in a special file
                 LOG.trace("Updating message-history file: {}", messageHistoryFile);
                 String data = json.toJson() + System.lineSeparator();
-                IOHelper.writeText(data, messageHistoryFile);
+                writeAtomically(data, messageHistoryFile);
             }
         } catch (Exception e) {
             // ignore
@@ -435,7 +503,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             if (json != null && !json.isEmpty()) {
                 LOG.trace("Updating error file: {}", errorFile);
                 String data = json.toJson() + System.lineSeparator();
-                IOHelper.writeText(data, errorFile);
+                writeAtomically(data, errorFile);
             }
         } catch (Exception e) {
             // ignore
@@ -472,7 +540,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             if (json != null) {
                 LOG.trace("Updating timeline file: {}", timelineFile);
                 String data = json.toJson() + System.lineSeparator();
-                IOHelper.writeText(data, timelineFile);
+                writeAtomically(data, timelineFile);
             }
         } catch (Exception e) {
             // ignore
@@ -518,18 +586,22 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         }
         if (messageHistoryFile != null) {
             FileUtil.deleteFile(messageHistoryFile);
+            FileUtil.deleteFile(new File(messageHistoryFile.getPath() + ".tmp"));
         }
         if (errorFile != null) {
             FileUtil.deleteFile(errorFile);
+            FileUtil.deleteFile(new File(errorFile.getPath() + ".tmp"));
         }
         if (debugFile != null) {
             FileUtil.deleteFile(debugFile);
+            FileUtil.deleteFile(new File(debugFile.getPath() + ".tmp"));
         }
         if (receiveFile != null) {
             FileUtil.deleteFile(receiveFile);
         }
         if (timelineFile != null) {
             FileUtil.deleteFile(timelineFile);
+            FileUtil.deleteFile(new File(timelineFile.getPath() + ".tmp"));
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);

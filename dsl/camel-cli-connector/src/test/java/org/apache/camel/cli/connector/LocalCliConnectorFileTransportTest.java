@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,6 +34,8 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.spi.CliConnectorFactory;
+import org.apache.camel.spi.ResourceReload;
+import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -346,6 +349,55 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
     }
 
     @Test
+    void reloadOfTheChangedFilesAnswersWithThem() throws Exception {
+        // CAMEL-26939: camel cmd reload --wait, right after an edit
+        List<String> reloaded = new CopyOnWriteArrayList<>();
+        Path sources = watchSources((name, resource) -> reloaded.add(new File(name).getName()));
+        startConnector();
+        Files.writeString(sources.resolve("orders.yaml"), "- route: {}");
+
+        writeAction(reloadChanged(), "r1");
+
+        JsonArray files = awaitJson(file(PID + "-output-r1.json")).getCollection("files");
+        assertThat(files).hasSize(1);
+        assertThat(reloaded).containsExactly("orders.yaml");
+
+        // nothing changed since
+        writeAction(reloadChanged(), "r2");
+        JsonArray none = awaitJson(file(PID + "-output-r2.json")).getCollection("files");
+        assertThat(none).isEmpty();
+    }
+
+    @Test
+    void reloadOfTheChangedFilesAnswersWithTheError() throws Exception {
+        Path sources = watchSources((name, resource) -> {
+            throw new IllegalArgumentException("Unknown step: frm");
+        });
+        startConnector();
+        Files.writeString(sources.resolve("orders.yaml"), "- route: {}");
+
+        writeAction(reloadChanged(), "r1");
+
+        JsonObject reply = awaitJson(file(PID + "-output-r1.json"));
+        assertThat(reply.getString("status")).isEqualTo("failed");
+        assertThat(reply.getString("error")).isEqualTo("Unknown step: frm");
+        JsonObject result = reply.getMap("result");
+        JsonArray files = result.getCollection("files");
+        assertThat(files).hasSize(1);
+    }
+
+    @Test
+    void reloadOfTheChangedFilesNeedsDevMode() {
+        startConnector();
+
+        writeAction(reloadChanged(), "r1");
+
+        JsonObject reply = awaitJson(file(PID + "-output-r1.json"));
+        assertThat(reply.getString("status")).isEqualTo("failed");
+        assertThat(reply.getString("error")).contains("does not watch its files");
+    }
+
+    @Test
     void stopDeletesTheFiles() {
         startConnector();
         awaitJson(file(PID + "-status.json"));
@@ -366,6 +418,25 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
         };
         connector.setCamelContext(context);
         connector.start();
+    }
+
+    /**
+     * Watches a folder of sources as dev mode does, without the scan of its own, so only the reload asked for reloads.
+     */
+    private Path watchSources(ResourceReload listener) throws Exception {
+        Path sources = Files.createDirectories(home.resolve("app"));
+        FileWatcherResourceReloadStrategy watcher = new FileWatcherResourceReloadStrategy(sources.toString());
+        watcher.setScheduler(false);
+        watcher.setStableTimeout(0);
+        watcher.setResourceReload(listener);
+        context.addService(watcher);
+        return sources;
+    }
+
+    private static JsonObject reloadChanged() {
+        JsonObject jo = action("reload");
+        jo.put("changed", true);
+        return jo;
     }
 
     private File file(String name) {

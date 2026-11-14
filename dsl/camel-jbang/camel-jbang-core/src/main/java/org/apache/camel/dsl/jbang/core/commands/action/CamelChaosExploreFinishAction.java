@@ -29,8 +29,8 @@ import org.apache.camel.util.json.JsonObject;
                    description = "Finish the chaos exploration of a running integration before its deadline",
                    generateHelp = true,
                    footer = {
-                           "The rules are removed (an open experiment is ended with what came of it so far), and",
-                           "the journal stays in the report (camel get chaos --report) until the next",
+                           "The rules are removed (an open experiment is ended with what came of it so far),",
+                           "and the journal stays in the report (camel get chaos --report) until the next",
                            "exploration starts or the report is reset.",
                            "",
                            "Examples:",

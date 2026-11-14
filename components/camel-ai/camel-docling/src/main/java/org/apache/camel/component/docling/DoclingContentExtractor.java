@@ -61,6 +61,9 @@ final class DoclingContentExtractor {
                     case "text":
                         String text = document.getTextContent();
                         return text != null ? text : "";
+                    case "doctags":
+                        String doctags = document.getDoctagsContent();
+                        return doctags != null ? doctags : "";
                     case "json":
                         // Return the document JSON content
                         var jsonDoc = document.getJsonContent();
@@ -98,6 +101,8 @@ final class DoclingContentExtractor {
             case "text":
             case "txt":
                 return "text";
+            case "doctags":
+                return "doctags";
             default:
                 return "md";
         }
