@@ -181,6 +181,44 @@ public class KafkaIdempotentRepositoryTest {
         assertTrue(repository.add("key1"));
     }
 
+    @Test
+    void testTombstoneIsSkippedAndTheNextRecordsAreApplied() throws Exception {
+        cache.put("key1", "key1");
+
+        // a tombstone (an operator or a tool can write one) in the topic: skipped, not applied as a remove
+        addToCache(new ConsumerRecord<>("test-topic", 0, 0L, "key1", null));
+        addToCache(new ConsumerRecord<>("test-topic", 0, 1L, "key2", "add"));
+
+        assertTrue(cache.containsKey("key1"));
+        assertTrue(cache.containsKey("key2"));
+    }
+
+    @Test
+    void testAddOrRemoveWithoutKeyIsSkipped() throws Exception {
+        cache.put("key1", "key1");
+
+        addToCache(new ConsumerRecord<>("test-topic", 0, 0L, null, "add"));
+        addToCache(new ConsumerRecord<>("test-topic", 0, 1L, null, "remove"));
+        addToCache(new ConsumerRecord<>("test-topic", 0, 2L, "key2", "add"));
+
+        assertEquals(Map.of("key1", "key1", "key2", "key2"), cache);
+    }
+
+    @Test
+    void testClearWithoutKeyIsApplied() throws Exception {
+        cache.put("key1", "key1");
+
+        addToCache(new ConsumerRecord<>("test-topic", 0, 0L, null, "clear"));
+
+        assertTrue(cache.isEmpty());
+    }
+
+    private void addToCache(ConsumerRecord<String, String> consumerRecord) throws Exception {
+        Method addToCache = KafkaIdempotentRepository.class.getDeclaredMethod("addToCache", ConsumerRecord.class);
+        addToCache.setAccessible(true);
+        addToCache.invoke(repository, consumerRecord);
+    }
+
     private static KafkaChangelog<String> changelog(MockProducer<String, String> producer) {
         KafkaChangelog<String> changelog = new KafkaChangelog<>(
                 "KafkaIdempotentRepository", "test-topic", new Properties(), new Properties(), StringDeserializer.class,

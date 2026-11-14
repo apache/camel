@@ -160,7 +160,9 @@ public interface Aws2TranscribeComponentBuilderFactory {
     
         
         /**
-         * To define a proxy protocol when instantiating the Transcribe client.
+         * The protocol to use when instantiating the Transcribe client.
+         * Deprecation note: Not used: nothing reads this option when the
+         * Transcribe client is built.
          * 
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
@@ -171,6 +173,7 @@ public interface Aws2TranscribeComponentBuilderFactory {
          * @param protocol the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default Aws2TranscribeComponentBuilder protocol(software.amazon.awssdk.core.Protocol protocol) {
             doSetProperty("protocol", protocol);
             return this;

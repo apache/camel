@@ -33,6 +33,8 @@ public class SplitterShareUnitOfWorkTest extends ContextTestSupport {
     private final List<UnitOfWork> uows = new ArrayList<>();
     private final List<UnitOfWork> doneUows = new ArrayList<>();
     private final List<String> doneBodies = new ArrayList<>();
+    private final List<Integer> doneLineCounts = new ArrayList<>();
+    private final List<Integer> doneResultCounts = new ArrayList<>();
 
     @Test
     public void testShareUnitOfWork() throws Exception {
@@ -59,6 +61,11 @@ public class SplitterShareUnitOfWorkTest extends ContextTestSupport {
         Assertions.assertEquals("A+B+C", doneBodies.get(0));
         Assertions.assertEquals("A+B+C", doneBodies.get(1));
         Assertions.assertEquals("A+B+C", doneBodies.get(2));
+
+        // should only be invoked after all is complete (3 line and 1 result): asserted here, as an assertion in an on
+        // completion does not fail the test
+        Assertions.assertEquals(List.of(3, 3, 3), doneLineCounts);
+        Assertions.assertEquals(List.of(1, 1, 1), doneResultCounts);
     }
 
     @Override
@@ -76,10 +83,8 @@ public class SplitterShareUnitOfWorkTest extends ContextTestSupport {
                                     doneBodies.add(b);
                                     var u = exchange.getUnitOfWork();
                                     doneUows.add(u);
-
-                                    // should only be invoked after all is complete (3 line and 1 result)
-                                    Assertions.assertEquals(3, getMockEndpoint("mock:line").getReceivedCounter());
-                                    Assertions.assertEquals(1, getMockEndpoint("mock:result").getReceivedCounter());
+                                    doneLineCounts.add(getMockEndpoint("mock:line").getReceivedCounter());
+                                    doneResultCounts.add(getMockEndpoint("mock:result").getReceivedCounter());
                                 }
                             });
                         })

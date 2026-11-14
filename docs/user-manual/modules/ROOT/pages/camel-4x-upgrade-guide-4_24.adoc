@@ -906,6 +906,20 @@ caller), put the EIP in a `doTry` with only a `doFinally` in the called route, o
 called route with `errorHandler(noErrorHandler())`, which turns it off for the other steps of that route too. Neither
 option brings back the redelivery of a whole routing slip or dynamic router.
 
+=== camel-core - an Error of an advice of a route, a route policy or the result processor of a send
+
+An `Error` that is not a `VirtualMachineError` (such as a `NoClassDefFoundError` of a data format), thrown by an advice
+of a route or of a step (such as the binding of the Rest DSL, `variableReceive`, or the debugger, for example an
+assertion in `debugBefore` or `debugAfter` of camel-test), by the result processor of a `ProducerTemplate` send, or by
+the producer of a transacted `ProducerTemplate` send, now fails the exchange (wrapped in a `CamelExecutionException`),
+and the advices that already ran end as for an exception (such as the end of the unit of work). As for an exception of
+an advice, the error handler of that route does not get it. An `Error` of a `RoutePolicy` (`onExchangeBegin`,
+`onExchangeDone`) is logged at WARN and ignored, as an exception already was, so an assertion inside a `RoutePolicy`
+no longer fails the caller. Before, the `Error` was thrown on to the code that ran the route or the send (such as the
+consumer, or the caller of a `ProducerTemplate`), and the exchange could stay inflight (an asynchronous send with a
+result processor could never complete when the endpoint answered on another thread). A `VirtualMachineError` is left
+as before.
+
 === camel-core - an AsyncProcessor that throws in a step without an error handler fails the exchange
 
 A step that has no error handler of its own (the steps of `doTry`, `doCatch`, `doFinally` and `onException`, also when
@@ -920,6 +934,15 @@ exception unless that thread calls the callback first, and a later call is ignor
 exception was dropped and that callback continued the exchange as a success. A second call of the callback is ignored
 and logged at WARN; before, the exchange was continued a second time. There is no option for the old behaviour; fix the
 processor to set the exception on the exchange and call the callback, as an `AsyncProcessor` must.
+
+=== camel-core - an Error of an on completion is logged, and the other on completions run
+
+An `Error` that is not a `VirtualMachineError` (such as an `AssertionError` or a `NoClassDefFoundError`), thrown by an
+on completion (`Synchronization`) of an exchange or by its `onBeforeRoute` / `onAfterRoute` callback, is now logged at
+WARN and ignored, as an exception already was. The other on completions still run (such as the commit or rollback of
+the consumer) and the exchange is no longer left inflight. Before, the `Error` was thrown on to the code that ran the
+on completions (such as the consumer, or the caller of a `ProducerTemplate`). An assertion inside an on completion no
+longer fails the caller: check its outcome in the route or the test instead.
 
 === camel-core - an Error of a contract transformer or validator, or in a transacted step, fails the exchange
 
@@ -1428,6 +1451,13 @@ the configuration. After a plugin is downloaded for the first time, its `applies
 NOTE: The annotation default (`appliesTo = {}`) is not equivalent to `appliesTo: []` in the config file.
 An unset annotation value means no filtering (backward compatible — the plugin is loaded for `run` and `export`),
 whereas an explicit empty list in the config restricts the plugin to its own command only.
+
+=== camel-jbang - camel run exits with 1 when the integration fails to start
+
+When `camel run` cannot start the integration, such as for a route that cannot be created or started, it now exits
+with code `1` (fix the route) instead of `70` (internal error), and prints the error as one `ERROR:` line on stderr.
+The stack trace is in the log of the integration, and is no longer printed a second time on stderr (add `--verbose`
+for it). Scripts that checked for `70` after a failed start should check for `1`.
 
 === camel-jbang - a name of a running integration matches only that integration
 
@@ -8711,3 +8741,14 @@ writes the dependency to the exported project.
 the split pages, whose content it does not return in the response, so every content field of the reply was empty. It
 now fails with an `IllegalArgumentException` that names the reason and the way out, `outputFormat=html` to get the
 HTML of the whole document.
+
+=== camel-aws2-transcribe - the protocol option is deprecated
+
+The `protocol` option never had any effect. Nothing reads it: the Transcribe client is built by the shared
+`AwsClientBuilderUtil`, which takes the region, the endpoint override and the proxy settings, and `getProtocol()` is
+called only by the generated configurer. Its description was also the one belonging to `proxyProtocol`, so it read as
+if it configured the proxy.
+
+It is now deprecated, with a `deprecationNote` that says so, and its description no longer claims to configure a proxy.
+Remove `protocol` from the endpoint URI or the configuration. To send the client's traffic through a proxy, use
+`proxyProtocol` together with `proxyHost` and `proxyPort`, which the shared client builder does apply.
