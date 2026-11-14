@@ -8753,4 +8753,4 @@ created from, and it sets neither of them - `DockerClientProfile` has no field f
 
 Both options and both header constants are now deprecated. Remove `loggingFilter` and `followRedirectFilter` from the
 endpoint URI or the component configuration; setting them changed nothing. To log the exchanges with the Docker daemon,
-use a `log` EIP or raise the log level of the docker-java client instead.
+Raise the log level of the `com.github.dockerjava` loggers to see the daemon traffic.
