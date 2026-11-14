@@ -31,7 +31,9 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiAwait.await;
@@ -1231,6 +1233,56 @@ class AiPanelTest {
                     ? "Use `${header.user} ?: 'Guest'` as the expression: the elvis operator goes between placeholders."
                     : "Use `${header.user ?: Guest}` as the expression to fall back to Guest.";
             return new ChatResponse(text, List.of(), "stop", false, TokenUsage.EMPTY);
+        }
+    }
+
+    // ---- the answers of a tool loop go back as they came (CAMEL-26962) ----
+
+    @Test
+    void theToolLoopSendsTheAnswerBackAsItCame() throws Exception {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        ThinkingLlmClient client = new ThinkingLlmClient();
+        panel.setClientForTesting(client);
+        panel.open();
+        type(panel, "how are the routes");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+
+        // Anthropic wants the thinking blocks of a tool loop back unchanged
+        assertEquals(ThinkingLlmClient.BLOCKS, client.sentBack);
+    }
+
+    /** Thinks before its tool call, as the current Claude models do, and answers after the tool result. */
+    private static final class ThinkingLlmClient extends LlmClient {
+
+        static final JsonArray BLOCKS = Jsoner.deserialize(
+                "[{\"type\":\"thinking\",\"thinking\":\"\",\"signature\":\"sig-1\"},"
+                                                           + "{\"type\":\"tool_use\",\"id\":\"toolu_1\","
+                                                           + "\"name\":\"tui_list_integrations\",\"input\":{}}]",
+                new JsonArray());
+
+        volatile JsonArray sentBack;
+
+        ThinkingLlmClient() {
+            withModel("test-model");
+            withApiType(ApiType.anthropic);
+        }
+
+        @Override
+        public boolean detectEndpoint() {
+            return true;
+        }
+
+        @Override
+        public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+            Message last = messages.get(messages.size() - 1);
+            if (last.toolResults() == null) {
+                ToolCall call = new ToolCall("toolu_1", "tui_list_integrations", new JsonObject());
+                return new ChatResponse(null, List.of(call), "tool_use", false, TokenUsage.EMPTY, BLOCKS);
+            }
+            sentBack = messages.get(messages.size() - 2).contentBlocks();
+            return new ChatResponse("The routes are started.", List.of(), "end_turn", false, TokenUsage.EMPTY);
         }
     }
 

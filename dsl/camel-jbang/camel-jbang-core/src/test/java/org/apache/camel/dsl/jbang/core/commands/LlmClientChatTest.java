@@ -18,18 +18,21 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.LlmClient.ApiType;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient.ChatResponse;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient.Message;
+import org.apache.camel.dsl.jbang.core.commands.LlmClient.TokenUsage;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient.ToolCall;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient.ToolDef;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient.ToolResult;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -273,9 +276,11 @@ class LlmClientChatTest {
         server.reply("/v1/messages", 200, """
                 {"stop_reason":"tool_use","content":[{"type":"text","text":"Let me look"},
                  {"type":"tool_use","id":"toolu_1","name":"get_routes","input":{"name":"orders"}}],
-                 "usage":{"input_tokens":30,"output_tokens":7,"cache_read_input_tokens":20}}""");
+                 "usage":{"input_tokens":30,"output_tokens":7,"cache_read_input_tokens":20,
+                  "cache_creation_input_tokens":5}}""");
 
-        ChatResponse response = client(ApiType.anthropic).withApiKey("sk-ant")
+        // as the commands set them
+        ChatResponse response = client(ApiType.anthropic).withApiKey("sk-ant").withTemperature(0.3).withMaxTokens(4096)
                 .chatWithTools("You help", List.of(Message.user("Hi")), TOOLS);
 
         assertThat(response.text()).isEqualTo("Let me look");
@@ -283,19 +288,113 @@ class LlmClientChatTest {
         ToolCall call = response.toolCalls().get(0);
         assertThat(call.id()).isEqualTo("toolu_1");
         assertThat(call.arguments().getString("name")).isEqualTo("orders");
-        assertThat(response.usage().totalTokens()).isEqualTo(37);
+        // the prompt is what came from the cache, what went into it, and the rest
+        assertThat(response.usage().inputTokens()).isEqualTo(55);
+        assertThat(response.usage().totalTokens()).isEqualTo(62);
         assertThat(response.usage().cachedTokens()).isEqualTo(20);
 
         assertThat(server.lastHeaders().getFirst("x-api-key")).isEqualTo("sk-ant");
-        assertThat(server.lastHeaders().getFirst("anthropic-version")).isEqualTo("2023-06-01");
+        assertThat(server.lastHeaders().getFirst("anthropic-version")).isEqualTo("2026-10-21");
         JsonObject request = server.lastRequest();
-        // the system prompt apart from the messages, and the tools with their input schema
-        assertThat(request.getString("system")).isEqualTo("You help");
-        assertThat(request.getInteger("max_tokens")).isEqualTo(4096);
+        // the current models refuse the sampling parameters
+        assertThat(request).doesNotContainKeys("temperature", "top_p", "top_k");
+        // room for the thinking before the answer
+        assertThat(request.getInteger("max_tokens")).isEqualTo(16000);
+        // the system prompt apart from the messages, with a cache breakpoint after it, and the automatic breakpoint
+        JsonObject system = (JsonObject) ((JsonArray) request.get("system")).get(0);
+        assertThat(system.getString("text")).isEqualTo("You help");
+        JsonObject breakpoint = system.getMap("cache_control");
+        assertThat(breakpoint).containsEntry("type", "ephemeral");
+        JsonObject automatic = request.getMap("cache_control");
+        assertThat(automatic).containsEntry("type", "ephemeral");
+        // the tools with their input schema
         JsonObject tool = (JsonObject) ((JsonArray) request.get("tools")).get(0);
         assertThat(tool.getString("name")).isEqualTo("get_routes");
         JsonObject schema = tool.getMap("input_schema");
         assertThat(schema).containsEntry("type", "object");
+    }
+
+    @Test
+    void anthropicGetsTheThinkingOfAToolLoopBackAsItCame() {
+        String answer = """
+                [{"type":"thinking","thinking":"","signature":"sig-1"},
+                 {"type":"redacted_thinking","data":"secret"},
+                 {"type":"text","text":"Let me look"},
+                 {"type":"tool_use","id":"toolu_1","name":"get_routes","input":{"name":"orders"}}]""";
+        server.reply("/v1/messages", 200,
+                "{\"stop_reason\":\"tool_use\",\"content\":" + answer + "}",
+                "{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"Done\"}]}");
+        LlmClient client = client(ApiType.anthropic);
+        List<Message> messages = new ArrayList<>();
+        messages.add(Message.user("How are the routes?"));
+
+        ChatResponse response = client.chatWithTools("You help", messages, TOOLS);
+        messages.add(Message.assistant(response));
+        messages.add(Message.toolResults(List.of(new ToolResult("toolu_1", "orders: Started"))));
+        client.chatWithTools("You help", messages, TOOLS);
+
+        // the text by the type of the blocks, after the thinking
+        assertThat(response.text()).isEqualTo("Let me look");
+        JsonObject assistant = (JsonObject) ((JsonArray) server.lastRequest().get("messages")).get(1);
+        assertThat(assistant.getString("role")).isEqualTo("assistant");
+        assertThat(assistant.get("content")).isEqualTo(Jsoner.deserialize(answer, new JsonArray()));
+    }
+
+    @Test
+    void anthropicGetsNoThinkingFromBeforeTheQuestion() {
+        JsonArray blocks = Jsoner.deserialize("""
+                [{"type":"thinking","thinking":"","signature":"sig-1"},
+                 {"type":"text","text":"Let me look"},
+                 {"type":"tool_use","id":"toolu_1","name":"get_routes","input":{"name":"orders"}}]""",
+                new JsonArray());
+        ToolCall call = new ToolCall("toolu_1", "get_routes", new JsonObject(Map.of("name", "orders")));
+        ChatResponse toolUse = new ChatResponse("Let me look", List.of(call), "tool_use", false, TokenUsage.EMPTY, blocks);
+        server.reply("/v1/messages", 200, "{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"Done\"}]}");
+
+        // the AI panel compacts the history before the question, and a thinking block refuses an earlier change
+        client(ApiType.anthropic).chatWithTools("You help", List.of(
+                Message.user("How are the routes?"),
+                Message.assistant(toolUse),
+                Message.toolResults(List.of(new ToolResult("toolu_1", "orders: Started"))),
+                Message.assistantWithToolCalls("They are started", List.of()),
+                Message.user("And the orders route?")), TOOLS);
+
+        JsonArray earlier = (JsonArray) ((JsonObject) ((JsonArray) server.lastRequest().get("messages")).get(1))
+                .get("content");
+        assertThat(earlier).hasSize(2);
+        assertThat(((JsonObject) earlier.get(0)).getString("type")).isEqualTo("text");
+        assertThat(((JsonObject) earlier.get(1)).getString("id")).isEqualTo("toolu_1");
+    }
+
+    @Test
+    void anExplanationWithAnthropicIsNotCached() {
+        server.reply("/v1/messages", 200, "{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"Done\"}]}");
+
+        String answer = client(ApiType.anthropic).withTemperature(0.7).generate("You explain", "The route");
+
+        // a single question would only pay for writing the cache
+        assertThat(answer).isEqualTo("Done");
+        JsonObject request = server.lastRequest();
+        assertThat(request.getString("system")).isEqualTo("You explain");
+        assertThat(request).doesNotContainKeys("cache_control", "temperature");
+    }
+
+    @Test
+    void aRefusalOfAnthropicIsSaid() {
+        server.reply("/v1/messages", 200, "{\"stop_reason\":\"refusal\",\"content\":[]}");
+
+        ChatResponse response = client(ApiType.anthropic).chatWithTools("You help", List.of(Message.user("Hi")), TOOLS);
+
+        assertThat(response.text()).isEqualTo("The model declined to answer (stop reason: refusal).");
+        assertThat(response.stopReason()).isEqualTo("refusal");
+    }
+
+    @Test
+    void theDefaultModelOfAnthropic() {
+        LlmClient client = LlmClient.create().withApiType(ApiType.anthropic).withUrl(server.url()).withPrinter(printer);
+
+        assertThat(client.detectEndpoint()).isTrue();
+        assertThat(client.model()).isEqualTo("claude-sonnet-5-5");
     }
 
     @Test

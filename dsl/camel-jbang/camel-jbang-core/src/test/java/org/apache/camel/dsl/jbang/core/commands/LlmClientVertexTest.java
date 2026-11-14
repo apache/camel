@@ -37,6 +37,8 @@ class LlmClientVertexTest {
         assertEquals("claude-sonnet-4-6", LlmClient.resolveVertexModel("claude-sonnet-4-6"));
         assertEquals("claude-opus-4-6", LlmClient.resolveVertexModel("claude-opus-4-6"));
         assertEquals("claude-opus-4-7", LlmClient.resolveVertexModel("claude-opus-4-7"));
+        // the default model
+        assertEquals("claude-sonnet-5-5", LlmClient.resolveVertexModel("claude-sonnet-5-5"));
     }
 
     @Test

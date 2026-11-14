@@ -260,7 +260,8 @@ public class Ask extends CamelCommand {
             totalUsage = totalUsage.add(response.usage());
 
             if (response.toolCalls() != null && !response.toolCalls().isEmpty()) {
-                messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), response.toolCalls()));
+                // as it came: Anthropic wants the thinking blocks of a tool loop back unchanged
+                messages.add(LlmClient.Message.assistant(response));
 
                 List<LlmClient.ToolResult> results = new ArrayList<>();
                 for (LlmClient.ToolCall toolCall : response.toolCalls()) {
