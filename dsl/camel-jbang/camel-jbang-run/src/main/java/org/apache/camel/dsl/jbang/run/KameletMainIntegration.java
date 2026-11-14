@@ -17,9 +17,15 @@
 package org.apache.camel.dsl.jbang.run;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jdk.jfr.Configuration;
 import jdk.jfr.Recording;
@@ -92,8 +98,7 @@ final class KameletMainIntegration implements RunningIntegration {
         }
         if (hasNoRoutes()) {
             // it would run doing nothing: a file without routes, or a mistake in it
-            String failure = request.files.isEmpty()
-                    ? "No routes found" : "No routes found in: " + String.join(", ", request.files);
+            String failure = noRoutesMessage(request);
             printer.printErr(failure);
             try {
                 main.stop();
@@ -147,11 +152,13 @@ final class KameletMainIntegration implements RunningIntegration {
     }
 
     /**
-     * Whether Camel started without routes where routes are expected: not with --empty, --source-dir or in dev mode
-     * (where files can be added or changed later), and not when Camel runs for another command (such as transform).
+     * Whether Camel started without routes where routes are expected: not with --empty or in dev mode (where files can
+     * be added or changed later), and not when Camel runs for another command (such as transform). A source directory,
+     * such as camel run ., is checked too: without dev mode nothing is added to it later, and a folder without routes
+     * reported Running and exited with 0 (CAMEL-26930).
      */
     boolean hasNoRoutes() {
-        if (request.empty || request.sourceDir != null || request.dev || request.ignoreLoadingError
+        if (request.empty || request.dev || request.ignoreLoadingError
                 || request.transformRun || request.transformMessageRun || request.scriptRun) {
             return false;
         }
@@ -175,6 +182,57 @@ final class KameletMainIntegration implements RunningIntegration {
             // cleanup and delete log file
             FileUtil.deleteFile(request.logFile);
         }
+    }
+
+    /**
+     * Why the run has no routes, with the YAML files it did not load: the YAML DSL reads .yaml files, not .yml ones.
+     */
+    static String noRoutesMessage(RunRequest request) {
+        String where = request.sourceDir != null ? request.sourceDir : String.join(", ", request.files);
+        String answer = where.isEmpty() ? "No routes found" : "No routes found in: " + where;
+        List<String> yml = ymlFiles(request);
+        if (!yml.isEmpty()) {
+            answer += " (a YAML DSL file ends with .yaml, such as routes.camel.yaml, so these are not loaded: "
+                      + String.join(", ", yml) + ")";
+        }
+        return answer;
+    }
+
+    private static List<String> ymlFiles(RunRequest request) {
+        List<String> answer = new ArrayList<>();
+        if (request.sourceDir != null) {
+            Path dir = Paths.get(request.sourceDir);
+            try (Stream<Path> files = Files.walk(dir, 3)) {
+                files.filter(f -> isYml(f.getFileName().toString()) && Files.isRegularFile(f))
+                        .filter(f -> !hidden(dir.relativize(f)))
+                        .map(f -> dir.relativize(f).toString().replace('\\', '/'))
+                        .sorted().limit(5).forEach(answer::add);
+            } catch (IOException | UncheckedIOException e) {
+                // only a hint
+            }
+        } else {
+            for (String file : request.files) {
+                if (isYml(FileUtil.stripPath(file))) {
+                    answer.add(file);
+                }
+            }
+        }
+        return answer;
+    }
+
+    private static boolean isYml(String name) {
+        // docker compose and JKube files are not routes
+        return name.endsWith(".yml") && !name.endsWith(".jkube.yml") && !name.equals("docker-compose.yml")
+                && !name.equals("compose.yml");
+    }
+
+    private static boolean hidden(Path relative) {
+        for (Path part : relative) {
+            if (part.toString().startsWith(".") || part.toString().equals("target")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String failureOf(Throwable e) {
