@@ -22,7 +22,9 @@ import org.apache.camel.spi.Metadata;
 public final class LanguageConstants {
 
     @Metadata(description = "The script to execute provided in the header. Takes precedence over\n" +
-                            "script configured on the endpoint.",
+                            "script configured on the endpoint. The script is used for this message only, it is never\n" +
+                            "cached as the script of the endpoint (also with cacheScript=true), and the header is removed\n" +
+                            "after use.",
               javaType = "String or Expression")
     public static final String LANGUAGE_SCRIPT = Exchange.LANGUAGE_SCRIPT;
 
