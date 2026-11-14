@@ -58,19 +58,19 @@ public final class GoogleFirestoreConstants {
     public static final String QUERY_ORDER_DIRECTION = "CamelGoogleFirestoreQueryOrderDirection";
 
     // Response metadata
-    @Metadata(label = "consumer", description = "The document ID from the response.", javaType = "String")
+    @Metadata(description = "The document ID from the response.", javaType = "String")
     public static final String RESPONSE_DOCUMENT_ID = "CamelGoogleFirestoreResponseDocumentId";
 
-    @Metadata(label = "consumer", description = "The document path from the response.", javaType = "String")
+    @Metadata(description = "The document path from the response.", javaType = "String")
     public static final String RESPONSE_DOCUMENT_PATH = "CamelGoogleFirestoreResponseDocumentPath";
 
-    @Metadata(label = "consumer", description = "The document create time.", javaType = "com.google.cloud.Timestamp")
+    @Metadata(description = "The document create time.", javaType = "com.google.cloud.Timestamp")
     public static final String RESPONSE_CREATE_TIME = "CamelGoogleFirestoreResponseCreateTime";
 
-    @Metadata(label = "consumer", description = "The document update time.", javaType = "com.google.cloud.Timestamp")
+    @Metadata(description = "The document update time.", javaType = "com.google.cloud.Timestamp")
     public static final String RESPONSE_UPDATE_TIME = "CamelGoogleFirestoreResponseUpdateTime";
 
-    @Metadata(label = "consumer", description = "The document read time.", javaType = "com.google.cloud.Timestamp")
+    @Metadata(description = "The document read time.", javaType = "com.google.cloud.Timestamp")
     public static final String RESPONSE_READ_TIME = "CamelGoogleFirestoreResponseReadTime";
 
     @Metadata(label = "consumer",
