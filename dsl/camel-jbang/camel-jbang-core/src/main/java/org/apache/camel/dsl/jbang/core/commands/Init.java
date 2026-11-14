@@ -29,10 +29,13 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
+import javax.lang.model.SourceVersion;
+
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.CamelContext;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -144,6 +147,13 @@ public class Init extends CamelCommand {
         }
 
         String name = FileUtil.onlyName(file, false);
+        if ("java".equals(ext) && !SourceVersion.isName(name)) {
+            // the class of the file would not compile (CAMEL-26931: my-route.java, 1bad.java)
+            throw CliException.usage(name + " is not a Java class name: name the file like a class, such as MyRoute.java");
+        }
+        // the kind of a Kamelet from its file name, not the path: src/main/resources/kamelets/my-filter.kamelet.yaml
+        // became a source, as resources contains source (CAMEL-26931)
+        String fileName = FileUtil.stripPath(file);
         InputStream is = null;
         if ("kamelet.yaml".equals(ext)) {
             if (fromKamelet != null) {
@@ -152,9 +162,9 @@ public class Init extends CamelCommand {
                 }
                 // load existing kamelet
                 is = KameletCatalogHelper.loadKameletYamlSchema(fromKamelet, kameletsVersion, repositories);
-            } else if (file.contains("source")) {
+            } else if (fileName.contains("source")) {
                 ext = "kamelet-source.yaml";
-            } else if (file.contains("sink")) {
+            } else if (fileName.contains("sink")) {
                 ext = "kamelet-sink.yaml";
             } else {
                 ext = "kamelet-action.yaml";
@@ -193,9 +203,10 @@ public class Init extends CamelCommand {
             Path dirPath = Paths.get(directory);
             Files.createDirectories(dirPath);
         }
+        // in the directory, also for a file given as ./x.yaml (CAMEL-26931: it was written in the current directory)
         Path targetPath = Paths.get(file);
         if (!targetPath.isAbsolute()) {
-            targetPath = Paths.get(directory, file);
+            targetPath = Paths.get(directory, file).normalize();
         }
         content = content.replace("{{ .Name }}", name);
         content = content.replace("[=Name]", name);
@@ -226,11 +237,7 @@ public class Init extends CamelCommand {
         // in case of using relative paths in the file name
         Path parentPath = targetPath.getParent();
         if (parentPath != null) {
-            if (".".equals(parentPath.getFileName().toString())) {
-                targetPath = Paths.get(file);
-            } else {
-                Files.createDirectories(parentPath);
-            }
+            Files.createDirectories(parentPath);
         }
         if (existsAlready(targetPath)) {
             return CliExitCode.FAILURE;

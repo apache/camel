@@ -25,6 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
@@ -34,6 +36,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InitTest extends CamelCommandBaseTestSupport {
@@ -77,6 +80,44 @@ class InitTest extends CamelCommandBaseTestSupport {
         assertEquals(0, exit);
         Path f = workingDir.resolve("my.camel.yaml");
         assertTrue(Files.exists(f), "Yaml file not created: " + f);
+    }
+
+    @Test
+    void aFileGivenWithTheCurrentFolderGoesInTheDirectory() throws Exception {
+        // ./my.camel.yaml was written in the current directory, whatever --dir said (CAMEL-26931)
+        Init initCommand = new Init(new CamelJBangMain());
+        CommandLineTestHelper.parse(initCommand, "./my-dot.camel.yaml", "--dir=" + workingDir);
+
+        assertEquals(0, initCommand.doCall());
+
+        assertTrue(Files.exists(workingDir.resolve("my-dot.camel.yaml")));
+        assertFalse(Files.exists(Paths.get("my-dot.camel.yaml")), "not in the current directory");
+    }
+
+    @Test
+    void theKindOfAKameletComesFromItsFileNameNotItsFolder() throws Exception {
+        // resources contains source: the Kamelet was a source Kamelet (CAMEL-26931)
+        Init initCommand = new Init(new CamelJBangMain());
+        CommandLineTestHelper.parse(initCommand, "src/main/resources/kamelets/my-filter.kamelet.yaml",
+                "--dir=" + workingDir);
+
+        assertEquals(0, initCommand.doCall());
+
+        String kamelet = Files.readString(workingDir.resolve("src/main/resources/kamelets/my-filter.kamelet.yaml"));
+        assertTrue(kamelet.contains("camel.apache.org/kamelet.type: \"action\""), kamelet);
+    }
+
+    @Test
+    void aJavaFileMustBeNamedLikeAClass() {
+        // camel init my-route.java wrote a class that does not compile, with exit code 0 (CAMEL-26931)
+        Init initCommand = new Init(new CamelJBangMain());
+        CommandLineTestHelper.parse(initCommand, "my-route.java", "--dir=" + workingDir);
+
+        CliException e = assertThrows(CliException.class, initCommand::doCall);
+
+        assertEquals(CliExitCode.USAGE, e.getExitCode());
+        assertEquals("my-route is not a Java class name: name the file like a class, such as MyRoute.java", e.getMessage());
+        assertFalse(Files.exists(workingDir.resolve("my-route.java")));
     }
 
     @Test
