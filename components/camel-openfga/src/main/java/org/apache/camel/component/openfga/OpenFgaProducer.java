@@ -39,13 +39,17 @@ import dev.openfga.sdk.api.client.model.ClientReadResponse;
 import dev.openfga.sdk.api.client.model.ClientRelationshipCondition;
 import dev.openfga.sdk.api.client.model.ClientTupleKey;
 import dev.openfga.sdk.api.client.model.ClientTupleKeyWithoutCondition;
+import dev.openfga.sdk.api.client.model.ClientWriteRequest;
 import dev.openfga.sdk.api.configuration.ClientBatchCheckClientOptions;
+import dev.openfga.sdk.api.configuration.ClientDeleteTuplesOptions;
 import dev.openfga.sdk.api.configuration.ClientExpandOptions;
 import dev.openfga.sdk.api.configuration.ClientListObjectsOptions;
 import dev.openfga.sdk.api.configuration.ClientListRelationsOptions;
 import dev.openfga.sdk.api.configuration.ClientListUsersOptions;
 import dev.openfga.sdk.api.configuration.ClientReadChangesOptions;
 import dev.openfga.sdk.api.configuration.ClientReadOptions;
+import dev.openfga.sdk.api.configuration.ClientWriteOptions;
+import dev.openfga.sdk.api.configuration.ClientWriteTuplesOptions;
 import dev.openfga.sdk.api.model.ConsistencyPreference;
 import dev.openfga.sdk.api.model.FgaObject;
 import dev.openfga.sdk.api.model.RelationshipCondition;
@@ -54,6 +58,8 @@ import dev.openfga.sdk.api.model.TupleKey;
 import dev.openfga.sdk.api.model.User;
 import dev.openfga.sdk.api.model.UserTypeFilter;
 import dev.openfga.sdk.api.model.UsersetTree;
+import dev.openfga.sdk.api.model.WriteRequestDeletes;
+import dev.openfga.sdk.api.model.WriteRequestWrites;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.health.HealthCheckHelper;
@@ -129,6 +135,7 @@ public class OpenFgaProducer extends DefaultProducer {
             case listRelations -> listRelations(exchange, authorizer);
             case listUsers -> listUsers(exchange, authorizer);
             case writeTuples -> writeTuples(exchange, authorizer);
+            case write -> write(exchange, authorizer);
             case readTuples -> readTuples(exchange, authorizer);
             case readChanges -> readChanges(exchange, authorizer);
             case expand -> expand(exchange, authorizer);
@@ -608,8 +615,15 @@ public class OpenFgaProducer extends DefaultProducer {
         }
         // the write options carry no authorizationModelId - unlike every query's options - so the model this writes
         // against is the one pinned on the client, which OpenFgaClientFactory already set from the configuration
-        authorizer.await(exchange, "write " + tuples.size() + " tuple(s)",
-                () -> authorizer.getClient().writeTuples(tuples));
+        if (getEndpoint().getConfiguration().getOnDuplicate() == OpenFgaWriteConflictMode.ignore) {
+            ClientWriteTuplesOptions options
+                    = new ClientWriteTuplesOptions().onDuplicate(WriteRequestWrites.OnDuplicateEnum.IGNORE);
+            authorizer.await(exchange, "write " + tuples.size() + " tuple(s)",
+                    () -> authorizer.getClient().writeTuples(tuples, options));
+        } else {
+            authorizer.await(exchange, "write " + tuples.size() + " tuple(s)",
+                    () -> authorizer.getClient().writeTuples(tuples));
+        }
         exchange.getMessage().setHeader(OpenFgaConstants.WRITTEN_TUPLES, tuples.size());
     }
 
@@ -622,9 +636,80 @@ public class OpenFgaProducer extends DefaultProducer {
             tuples.add(new ClientTupleKeyWithoutCondition()
                     .user(tuple.user).relation(tuple.relation)._object(tuple.object));
         }
-        authorizer.await(exchange, "delete " + tuples.size() + " tuple(s)",
-                () -> authorizer.getClient().deleteTuples(tuples));
+        if (getEndpoint().getConfiguration().getOnMissing() == OpenFgaWriteConflictMode.ignore) {
+            ClientDeleteTuplesOptions options
+                    = new ClientDeleteTuplesOptions().onMissing(WriteRequestDeletes.OnMissingEnum.IGNORE);
+            authorizer.await(exchange, "delete " + tuples.size() + " tuple(s)",
+                    () -> authorizer.getClient().deleteTuples(tuples, options));
+        } else {
+            authorizer.await(exchange, "delete " + tuples.size() + " tuple(s)",
+                    () -> authorizer.getClient().deleteTuples(tuples));
+        }
         exchange.getMessage().setHeader(OpenFgaConstants.DELETED_TUPLES, tuples.size());
+    }
+
+    private void write(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
+        List<Tuple> writes;
+        List<Tuple> deletes;
+        if (authorizer.hasConfiguredTuple()) {
+            // The same configured-tuple precedence as writeTuples: a body never adds extra mutations to it.
+            writes = resolveTuples(exchange, authorizer);
+            deletes = List.of();
+        } else {
+            Object body = exchange.getMessage().getBody();
+            if (!(body instanceof Map<?, ?> map) || !Set.of("writes", "deletes").containsAll(map.keySet())) {
+                throw new IllegalArgumentException("write requires a Map containing writes and/or deletes collections");
+            }
+            writes = mutationTuples(map.get("writes"));
+            deletes = mutationTuples(map.get("deletes"));
+        }
+        int count = writes.size() + deletes.size();
+        if (count < 1 || count > 100) {
+            throw new IllegalArgumentException("write requires between 1 and 100 tuples across writes and deletes");
+        }
+        List<ClientTupleKey> writeKeys = new ArrayList<>(writes.size());
+        for (Tuple tuple : writes) {
+            writeKeys.add(new ClientTupleKey().user(tuple.user).relation(tuple.relation)._object(tuple.object));
+        }
+        List<ClientTupleKeyWithoutCondition> deleteKeys = new ArrayList<>(deletes.size());
+        for (Tuple tuple : deletes) {
+            deleteKeys
+                    .add(new ClientTupleKeyWithoutCondition().user(tuple.user).relation(tuple.relation)._object(tuple.object));
+        }
+        OpenFgaConfiguration configuration = getEndpoint().getConfiguration();
+        ClientWriteOptions options = new ClientWriteOptions().transactions(true)
+                .onDuplicate(configuration.getOnDuplicate() == OpenFgaWriteConflictMode.ignore
+                        ? WriteRequestWrites.OnDuplicateEnum.IGNORE : WriteRequestWrites.OnDuplicateEnum.ERROR)
+                .onMissing(configuration.getOnMissing() == OpenFgaWriteConflictMode.ignore
+                        ? WriteRequestDeletes.OnMissingEnum.IGNORE : WriteRequestDeletes.OnMissingEnum.ERROR);
+        if (ObjectHelper.isNotEmpty(configuration.getAuthorizationModelId())) {
+            options.authorizationModelId(configuration.getAuthorizationModelId());
+        }
+        ClientWriteRequest request = new ClientWriteRequest().writes(writeKeys).deletes(deleteKeys);
+        authorizer.await(exchange, "write " + writes.size() + " and delete " + deletes.size() + " tuple(s)",
+                () -> authorizer.getClient().write(request, options));
+        exchange.getMessage().setHeader(OpenFgaConstants.WRITTEN_TUPLES, writes.size());
+        exchange.getMessage().setHeader(OpenFgaConstants.DELETED_TUPLES, deletes.size());
+    }
+
+    private List<Tuple> mutationTuples(Object value) {
+        if (value == null) {
+            return List.of();
+        }
+        if (!(value instanceof Collection<?> collection)) {
+            throw new IllegalArgumentException("write mutation lists must be collections of user, relation and object Maps");
+        }
+        if (collection.size() > 100) {
+            throw new IllegalArgumentException("write requires between 1 and 100 tuples across writes and deletes");
+        }
+        List<Tuple> tuples = new ArrayList<>(collection.size());
+        for (Object element : collection) {
+            if (!(element instanceof Map<?, ?> map) || !map.keySet().equals(Set.of("user", "relation", "object"))) {
+                throw new IllegalArgumentException("write entries must be Maps with exactly user, relation and object entries");
+            }
+            tuples.add(toTuple(map));
+        }
+        return tuples;
     }
 
     /**

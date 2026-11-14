@@ -86,11 +86,15 @@ public final class OpenFgaConstants {
               javaType = "String")
     public static final String CONTINUATION_TOKEN = HEADER_PREFIX + "ContinuationToken";
 
-    @Metadata(label = "producer", description = "How many relationship tuples the writeTuples operation wrote.",
+    @Metadata(label = "producer",
+              description = "How many relationship tuples a successful writeTuples or write operation submitted."
+                            + " Ignored duplicate writes are included in this count.",
               javaType = "Integer")
     public static final String WRITTEN_TUPLES = HEADER_PREFIX + "WrittenTuples";
 
-    @Metadata(label = "producer", description = "How many relationship tuples the deleteTuples operation deleted.",
+    @Metadata(label = "producer",
+              description = "How many relationship tuples a successful deleteTuples or write operation submitted for deletion."
+                            + " Ignored missing deletes are included in this count.",
               javaType = "Integer")
     public static final String DELETED_TUPLES = HEADER_PREFIX + "DeletedTuples";
 

@@ -412,6 +412,56 @@ class OpenFgaIT extends CamelTestSupport {
     }
 
     @Test
+    void atomicallyChangesAReaderIntoAWriter() {
+        Exchange initial
+                = template.request(openfga("writeTuples", "user=user:atomic-user&relation=reader&object=document:atomic-doc"),
+                        e -> {
+                        });
+        assertThat(initial.getException()).isNull();
+
+        Exchange changed = template.request(openfga("write", ""), e -> e.getMessage().setBody(Map.of(
+                "writes", List.of(Map.of("user", "user:atomic-user", "relation", "writer", "object", "document:atomic-doc")),
+                "deletes",
+                List.of(Map.of("user", "user:atomic-user", "relation", "reader", "object", "document:atomic-doc")))));
+
+        assertThat(changed.getException()).isNull();
+        assertThat(changed.getMessage().getHeader(OpenFgaConstants.WRITTEN_TUPLES)).isEqualTo(1);
+        assertThat(changed.getMessage().getHeader(OpenFgaConstants.DELETED_TUPLES)).isEqualTo(1);
+        assertThat(check("atomic-user", "atomic-doc", "reader").getMessage().getHeader(OpenFgaConstants.ALLOWED))
+                .isEqualTo(false);
+        assertThat(check("atomic-user", "atomic-doc", "writer").getMessage().getHeader(OpenFgaConstants.ALLOWED))
+                .isEqualTo(true);
+    }
+
+    @Test
+    void rollsBackTheWholeCombinedWriteWhenADeletionFails() {
+        Exchange changed = template.request(openfga("write", ""), e -> e.getMessage().setBody(Map.of(
+                "writes",
+                List.of(Map.of("user", "user:atomic-failure", "relation", "reader", "object", "document:atomic-failure")),
+                "deletes", List.of(Map.of("user", "user:atomic-failure", "relation", "reader", "object", "document:absent")))));
+
+        assertThat(changed.getException()).isInstanceOf(OpenFgaEvaluationException.class);
+        assertThat(check("atomic-failure", "atomic-failure", "reader").getMessage().getHeader(OpenFgaConstants.ALLOWED))
+                .isEqualTo(false);
+    }
+
+    @Test
+    void ignoresAnExistingWriteAndAMissingDeleteWhenConfigured() {
+        Exchange repeated = template.request(
+                openfga("writeTuples", "user=user:bob&relation=reader&object=document:roadmap&onDuplicate=ignore"),
+                e -> {
+                });
+        assertThat(repeated.getException()).isNull();
+
+        Exchange absent = template.request(
+                openfga("deleteTuples", "user=user:missing&relation=reader&object=document:absent&onMissing=ignore"),
+                e -> {
+                });
+        assertThat(absent.getException()).isNull();
+        assertThat(check("bob", "roadmap", "reader").getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+    }
+
+    @Test
     void letsAGuardedRouteRunForASubjectThatHoldsTheRelation() throws Exception {
         MockEndpoint allowed = getMockEndpoint("mock:allowed");
         allowed.expectedMessageCount(1);

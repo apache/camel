@@ -13408,9 +13408,9 @@ public class StaticEndpointBuilders {
      * it is deliberately not overridable by a message header, so that an
      * inbound message cannot turn a check into a tuple write, nor a check for
      * one relation into a check for a weaker one.
-     * There are 10 enums and the value can be one of: check, batchCheck,
+     * There are 11 enums and the value can be one of: check, batchCheck,
      * listObjects, listRelations, listUsers, readTuples, readChanges, expand,
-     * writeTuples, deleteTuples
+     * writeTuples, deleteTuples, write
      * 
      * @param path operation
      * @return the dsl builder
@@ -13434,9 +13434,9 @@ public class StaticEndpointBuilders {
      * it is deliberately not overridable by a message header, so that an
      * inbound message cannot turn a check into a tuple write, nor a check for
      * one relation into a check for a weaker one.
-     * There are 10 enums and the value can be one of: check, batchCheck,
+     * There are 11 enums and the value can be one of: check, batchCheck,
      * listObjects, listRelations, listUsers, readTuples, readChanges, expand,
-     * writeTuples, deleteTuples
+     * writeTuples, deleteTuples, write
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

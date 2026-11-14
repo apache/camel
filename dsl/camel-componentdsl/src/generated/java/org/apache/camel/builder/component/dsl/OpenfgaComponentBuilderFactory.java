@@ -256,6 +256,47 @@ public interface OpenfgaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * How writeTuples and write handle an existing relationship: error (the
+         * default) fails the operation, while ignore leaves that relationship
+         * unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or
+         * later.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaWriteConflictMode&lt;/code&gt; type.
+         * 
+         * Default: error
+         * Group: producer
+         * 
+         * @param onDuplicate the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder onDuplicate(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onDuplicate) {
+            doSetProperty("onDuplicate", onDuplicate);
+            return this;
+        }
+    
+        
+        /**
+         * How deleteTuples and write handle an absent relationship: error (the
+         * default) fails the operation, while ignore skips that deletion and
+         * continues. The ignore mode requires OpenFGA 1.10.0 or later.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaWriteConflictMode&lt;/code&gt; type.
+         * 
+         * Default: error
+         * Group: producer
+         * 
+         * @param onMissing the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder onMissing(org.apache.camel.component.openfga.OpenFgaWriteConflictMode onMissing) {
+            doSetProperty("onMissing", onMissing);
+            return this;
+        }
+    
         /**
          * How many entries a readTuples or readChanges page returns. Left
          * unset, OpenFGA's own default applies. A page is one request: this
@@ -768,6 +809,8 @@ public interface OpenfgaComponentBuilderFactory {
             case "continuationToken": getOrCreateConfiguration((OpenFgaComponent) component).setContinuationToken((java.lang.String) value); return true;
             case "lazyStartProducer": ((OpenFgaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "object": getOrCreateConfiguration((OpenFgaComponent) component).setObject((java.lang.String) value); return true;
+            case "onDuplicate": getOrCreateConfiguration((OpenFgaComponent) component).setOnDuplicate((org.apache.camel.component.openfga.OpenFgaWriteConflictMode) value); return true;
+            case "onMissing": getOrCreateConfiguration((OpenFgaComponent) component).setOnMissing((org.apache.camel.component.openfga.OpenFgaWriteConflictMode) value); return true;
             case "pageSize": getOrCreateConfiguration((OpenFgaComponent) component).setPageSize((java.lang.Integer) value); return true;
             case "relation": getOrCreateConfiguration((OpenFgaComponent) component).setRelation((java.lang.String) value); return true;
             case "relations": getOrCreateConfiguration((OpenFgaComponent) component).setRelations((java.lang.String) value); return true;

@@ -76,5 +76,10 @@ public enum OpenFgaOperation {
     /**
      * Revoke access by deleting relationship tuples.
      */
-    deleteTuples
+    deleteTuples,
+
+    /**
+     * Write and delete relationship tuples together in a single atomic request, up to 100 tuples in total.
+     */
+    write
 }

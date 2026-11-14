@@ -53,7 +53,7 @@ openfga:operation[?options]
 ------------------------------------------------------------
 
 Where `operation` is one of `check`, `batchCheck`, `listObjects`, `listRelations`, `listUsers`, `readTuples`,
-`readChanges`, `expand`, `writeTuples` or `deleteTuples`.
+`readChanges`, `expand`, `writeTuples`, `deleteTuples` or `write`.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -353,6 +353,38 @@ producer fails and names the part that is missing.
 
 A typed wildcard — `user:*`, OpenFGA's "everyone" — is accepted here, because writing that tuple is how a resource
 is shared publicly and is a deliberate act by the route. It is *refused* as the subject of a check; see below.
+
+=== Mutation conflicts and atomic updates
+
+By default, `onDuplicate=error` makes an existing relationship fail a write, and `onMissing=error` makes an absent
+relationship fail a delete. On OpenFGA 1.10.0 or later, select `onDuplicate=ignore` or `onMissing=ignore` explicitly
+for reconciliation routes that should leave an already-satisfied operation unchanged. These options apply to
+`writeTuples` and `deleteTuples`, respectively, and both apply to `write`.
+
+Use `write` to grant and revoke relationships in one atomic request. With no configured `user`/`relation`/`object`,
+the body is a Map containing `writes` and/or `deletes` collections. Each entry is an ordinary Map containing exactly
+`user`, `relation` and `object`; other body shapes or entry fields are rejected. For example:
+
+[source,java]
+------------------------------------------------------------
+Map<String, Object> changes = Map.of(
+    "writes", List.of(Map.of("user", "user:anne", "relation", "writer", "object", "document:budget")),
+    "deletes", List.of(Map.of("user", "user:anne", "relation", "reader", "object", "document:budget")));
+template.requestBody("openfga:write?storeId={{fga.store}}&authorizationModelId={{fga.model}}", changes);
+------------------------------------------------------------
+
+At least one tuple is required, and the sum of writes and deletes cannot exceed 100. Larger transactions are rejected
+before calling OpenFGA; the component never splits this atomic update into independently committed requests. A failed
+transaction remains a failure even when `failOpen=true`. An endpoint-configured model revision is applied to the
+transaction. A server configured with a lower tuple limit can reject a request within the component's limit.
+
+The configured-tuple precedence also applies to `write`: when any of `user`/`relation`/`object` is configured, that
+triple supplies one write, the body is ignored, and no deletes are taken from it. A missing configured part fails
+rather than falling back to the body.
+
+Successful mutations preserve the input body. `CamelOpenFgaWrittenTuples` and `CamelOpenFgaDeletedTuples` report the
+number of submitted operations, including any skipped by the selected ignore mode; they do not report the number of
+rows changed in storage. The combined `write` operation sets both counters, including zero for an omitted side.
 
 == Security
 
