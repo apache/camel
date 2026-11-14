@@ -424,7 +424,9 @@ public interface LanguageEndpointBuilderFactory {
 
         /**
          * The script to execute provided in the header. Takes precedence over
-         * script configured on the endpoint.
+         * script configured on the endpoint. The script is used for this
+         * message only, it is never cached as the script of the endpoint (also
+         * with cacheScript=true), and the header is removed after use.
          * 
          * The option is a: {@code String or Expression} type.
          * 
