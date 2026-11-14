@@ -122,7 +122,7 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
 
     /**
      * Strategy to get the resources by the given classloader.
-     * <p/>
+     * <p>
      * Notice that in WebSphere platforms there is a {@link WebSpherePackageScanClassResolver} to take care of
      * WebSphere's oddity of resource loading.
      *

@@ -41,14 +41,14 @@ import org.apache.camel.util.TimeSource;
  * {@code SendProcessor}, the {@link org.apache.camel.spi.ProducerCache} (used by {@code toD}, {@code enrich},
  * {@code wireTap}, {@code routingSlip} and the {@link org.apache.camel.ProducerTemplate}), the recipient list and the
  * deferred producers.
- * <p/>
+ * <p>
  * It fires the {@link CamelEvent.ExchangeSendingEvent} before the send and the {@link CamelEvent.ExchangeSentEvent},
  * with the time taken, after it ({@link #notifySending(Exchange, Endpoint)} and
  * {@link #notifySent(Exchange, Endpoint, StopWatch)}), and calls the producer with the {@link SendHook} of the
  * {@link CamelContext}, if one is installed, around it
  * ({@link #process(Exchange, Endpoint, AsyncProcessor, AsyncCallback)}).
  * {@link #send(Exchange, Endpoint, AsyncProcessor, AsyncCallback)} does both.
- * <p/>
+ * <p>
  * The events and the hook are apart because some places fire the events once per send and call the producer inside an
  * error handler that can call it again: the recipient list and the routing slip. The hook runs where the producer is
  * called, so it runs inside that error handler, for every attempt.
@@ -93,7 +93,7 @@ public final class SendHelper {
     /**
      * Sends the exchange to the producer: fires the {@link CamelEvent.ExchangeSendingEvent}, calls the producer with
      * the {@link SendHook} around it, and fires the {@link CamelEvent.ExchangeSentEvent} before the callback is called.
-     * <p/>
+     * <p>
      * An exception the producer throws, instead of calling the callback, is thrown to the caller, without the sent
      * event, as when the producer is called directly.
      *
@@ -120,7 +120,7 @@ public final class SendHelper {
     /**
      * Calls the producer with the {@link SendHook} of the {@link CamelContext} around it. Without a hook this is
      * {@code producer.process(exchange, callback)}.
-     * <p/>
+     * <p>
      * With a hook, see {@link SendHook} for what the hook can do. An exception the producer throws, instead of calling
      * the callback, is set on the exchange, the hook's {@link SendHook#afterSend(Exchange, Endpoint)} is called, and
      * the exception is thrown to the caller, as without a hook.
@@ -171,10 +171,10 @@ public final class SendHelper {
      * One send with a hook. The hook is called before the producer, the producer is called right away, after a delay
      * (that this thread waits for), or not at all, and then the hook is called after it and the callback is called,
      * each exactly once.
-     * <p/>
+     * <p>
      * With several hooks (a {@link CompositeSendHook}) the hooks are asked one by one, see {@link CompositeSendHook}:
      * the send keeps how many were asked, so only those are called after it, in the reverse order.
-     * <p/>
+     * <p>
      * When a hook returns {@link SendHook#SEND_TWICE}, the message is copied before the first send, and when the first
      * send succeeded the copy is sent again: by this thread when the first send completed synchronously, else by the
      * thread that completed it, so the exchange is on one thread at a time. The hooks are called after the second send.
