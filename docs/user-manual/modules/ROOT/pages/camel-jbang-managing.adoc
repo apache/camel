@@ -33,8 +33,9 @@ Shutting down Camel integration (PID: 62506)
 `camel stop` waits until the integration has stopped, up to `--timeout` (60 seconds by default). When it has not
 stopped in time, it exits with code `124`, and `--kill` stops it at once. Use `--no-wait` to return without waiting.
 
-NOTE: The name is matched as a prefix — `camel stop d` stops all integrations starting with _d_.
-To stop exactly one when names overlap (e.g., `dude` and `dude2`), use the PID or append `!`: `camel stop dude!`.
+NOTE: The name is matched as a prefix — `camel stop d` stops all integrations starting with _d_ — unless an
+integration has exactly that name: with `dude` and `dude2` running, `camel stop dude` stops only `dude`, and
+`camel stop dude*` stops both. Append `!` to match only that name (`camel stop dude!`), or give the PID.
 A PID must be a running Camel integration, and a name or PID that matches nothing exits with code `3`
 (see xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]).
 

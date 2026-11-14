@@ -1459,6 +1459,15 @@ with code `1` (fix the route) instead of `70` (internal error), and prints the e
 The stack trace is in the log of the integration, and is no longer printed a second time on stderr (add `--verbose`
 for it). Scripts that checked for `70` after a failed start should check for `1`.
 
+=== camel-jbang - a name of a running integration matches only that integration
+
+A name given to `camel stop`, `camel get`, `camel cmd`, `camel trace` and the other commands for running integrations
+is still a prefix, but when an integration has exactly that name, the name now matches only that integration. With
+`orders` and `orders-v2` running, `camel stop orders` stops only `orders` (before, it stopped both), and
+`camel cmd send orders` sends to `orders` (before, it failed because the name matched two integrations). The same
+applies to the CamelContext name, and to the `nameOrPid` argument of the runtime tools of the MCP server. To act on
+all integrations whose names start with `orders`, use `orders*`.
+
 === camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
 
 A circuit breaker in the steps of a `doTry` no longer ends that `doTry` for the steps after it. Before, when the
