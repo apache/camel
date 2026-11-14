@@ -1583,6 +1583,13 @@ Inserting a `List` of `Map` now fails with a `ClickHouseException` that says why
 class is registered on the `Client` for the table. Before, both failed with a `NullPointerException` from the ClickHouse
 client.
 
+=== camel-jbang - a local camel-cli.properties no longer hides the global one
+
+When the current directory has a `camel-cli.properties`, the Camel CLI used it instead of the global
+`~/.camel-cli.properties`, so a project file with one key dropped all the global settings, such as `repos`,
+`camel-version` or `runtime`. The local file is now laid over the global one: its keys win, and the other global keys
+still apply.
+
 === camel-clickup - an event of another kind than taskTimeTrackedUpdated reaches the route
 
 A webhook event of another kind than `taskTimeTrackedUpdated`, such as `taskCreated`, now reaches the route as a

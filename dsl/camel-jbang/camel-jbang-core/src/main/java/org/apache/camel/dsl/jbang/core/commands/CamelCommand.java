@@ -347,8 +347,8 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
 
     protected void printConfigurationValues(String header) {
         if (processedCommand != null) {
-            final Properties configProperties = new Properties();
-            CommandLineHelper.loadProperties(configProperties::putAll);
+            // the global user configuration with the local one laid over it, as the option defaults come from
+            final Properties configProperties = CommandLineHelper.loadUserConfiguration(printer());
             List<String> lines = new ArrayList<>();
             for (ProcessedOption opt : processedCommand.getOptions()) {
                 Object holder = holderOf(opt);

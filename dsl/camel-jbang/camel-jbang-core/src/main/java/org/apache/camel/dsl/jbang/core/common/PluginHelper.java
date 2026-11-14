@@ -325,9 +325,8 @@ public final class PluginHelper {
         }
 
         if (repos == null) {
-            // fallback to load user configuration
-            Properties configProperties = new Properties();
-            CommandLineHelper.loadProperties(configProperties::putAll);
+            // fallback to load user configuration (the global file with the local one laid over it)
+            Properties configProperties = CommandLineHelper.loadUserConfiguration(new Printer.SystemOutPrinter());
             repos = configProperties.getProperty("repos");
             if (repos == null) {
                 repos = configProperties.getProperty("repo");
