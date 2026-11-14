@@ -154,8 +154,8 @@ public class SendDevConsole extends AbstractDevConsole {
         } catch (Exception e) {
             cause = e;
         }
-        if (endpoint != null && target == null) {
-            cause = new NoSuchEndpointException(endpoint);
+        if (target == null) {
+            cause = noTarget(endpoint);
         }
         if (out != null && out.getException() != null) {
             cause = out.getException();
@@ -219,8 +219,8 @@ public class SendDevConsole extends AbstractDevConsole {
         } catch (Exception e) {
             cause = e;
         }
-        if (cause == null && endpoint != null && target == null) {
-            cause = new NoSuchEndpointException(endpoint);
+        if (cause == null && target == null) {
+            cause = noTarget(endpoint);
         }
         if (out != null && out.getException() != null) {
             cause = out.getException();
@@ -282,6 +282,17 @@ public class SendDevConsole extends AbstractDevConsole {
             }
         }
         return out;
+    }
+
+    /**
+     * Why nothing was sent: no endpoint matches, or, without an endpoint, there is no route to send to (before, that
+     * was reported as sent).
+     */
+    private static Exception noTarget(String endpoint) {
+        if (endpoint != null) {
+            return new NoSuchEndpointException(endpoint);
+        }
+        return new IllegalArgumentException("No endpoint to send to: give the endpoint, as there are no routes");
     }
 
     private Endpoint findTarget(String endpoint) {

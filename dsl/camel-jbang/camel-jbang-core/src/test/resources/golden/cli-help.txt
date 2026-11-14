@@ -1710,8 +1710,10 @@ Options:
                             (Use commas to separate multiple repositories)
       --fresh               Make sure we use fresh (i.e. non-cached) resources
                             Default: false
-  <name>                    To use an existing running Camel integration for
-                            sending the message (name or pid)
+  <name>                    The running Camel integration to send to (name or
+                            pid). Without it, the integration that runs, unless
+                            --endpoint is a system outside the integrations,
+                            such as kafka:topic, which the CLI sends to itself
 
 With --repeat the message is sent that many times, with --interval between two
 (a range such as 100..500 draws each pause at random), and a summary is printed

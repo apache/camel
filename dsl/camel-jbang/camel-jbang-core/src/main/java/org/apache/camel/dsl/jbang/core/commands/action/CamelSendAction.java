@@ -27,7 +27,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,6 +53,7 @@ import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.run.ConfiguredRun;
@@ -78,7 +81,9 @@ import org.jline.jansi.Ansi;
                            "  camel cmd send --endpoint=kafka:refunds --body=file:test/chaos/refunds-fails/" })
 public class CamelSendAction extends ActionBaseCommand {
 
-    @Argument(description = "To use an existing running Camel integration for sending the message (name or pid)")
+    @Argument(description = "The running Camel integration to send to (name or pid). Without it, the integration that"
+                            + " runs, unless --endpoint is a system outside the integrations, such as kafka:topic,"
+                            + " which the CLI sends to itself")
     String name;
 
     @Option(name = "properties",
@@ -210,9 +215,50 @@ public class CamelSendAction extends ActionBaseCommand {
             return doCallInfra(infra);
         } else if (name != null) {
             return doCall(name);
+        } else if (endpoint == null || isInsideAnIntegration(endpoint)) {
+            // the Camel of this command has no routes: camel cmd send --body=... is for the integration that runs
+            return doCall(String.valueOf(theRunningIntegration().pid()));
         } else {
+            // a system outside the integrations, such as kafka:topic, from the Camel of this command
             return doCallLocal();
         }
+    }
+
+    /**
+     * The schemes of the endpoints that only an integration has: a send from the Camel of this command reaches nobody.
+     */
+    private static final Set<String> INTERNAL_SCHEMES
+            = Set.of("direct", "seda", "stub", "disruptor", "disruptor-vm", "mock", "dataset", "vm");
+
+    /** Whether the endpoint is a route id, a pattern or an endpoint in the memory of an integration. */
+    static boolean isInsideAnIntegration(String endpoint) {
+        int colon = endpoint.indexOf(':');
+        return colon < 0 || endpoint.endsWith("*")
+                || INTERNAL_SCHEMES.contains(endpoint.substring(0, colon).toLowerCase(Locale.ROOT));
+    }
+
+    /**
+     * The one integration that runs, for a send without a name.
+     *
+     * @throws CliException (exit code 3) when none runs, or several
+     */
+    private CamelProcess theRunningIntegration() {
+        List<CamelProcess> running = ProcessFinder.find(null);
+        if (running.size() == 1) {
+            return running.get(0);
+        }
+        if (running.isEmpty()) {
+            throw CliException.notFound(endpoint == null
+                    ? "No running Camel integration to send to: start one with camel run, or give --endpoint to send"
+                      + " to a system such as kafka:topic"
+                    : "No running Camel integration to send to: " + endpoint + " is in an integration, so start it"
+                      + " with camel run first");
+        }
+        String names = running.stream()
+                .map(p -> p.name() != null && !p.name().isEmpty() ? p.name() + " (pid " + p.pid() + ")" : "pid " + p.pid())
+                .collect(Collectors.joining(", "));
+        throw CliException.notFound(running.size() + " Camel integrations are running: " + names
+                                    + ". Give the name or pid of the one to send to.");
     }
 
     /**
