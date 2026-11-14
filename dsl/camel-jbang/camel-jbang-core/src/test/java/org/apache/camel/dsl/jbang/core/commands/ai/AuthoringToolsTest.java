@@ -149,6 +149,63 @@ class AuthoringToolsTest {
                 Map.of("directory", dir.toString(), "file", "missing.yaml")));
     }
 
+    @Test
+    void aLargeFileIsReadInParts(@TempDir Path dir) throws IOException {
+        // a 3.6 MB file was an answer of 4.5 MB, about a million tokens (CAMEL-26932)
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= 5000; i++) {
+            sb.append("line ").append(i).append('\n');
+        }
+        Files.writeString(dir.resolve("big.log"), sb.toString());
+
+        JsonObject first = call("camel_get_files", new ToolContext(), Map.of("directory", dir.toString(), "file", "big.log"));
+        assertTrue(first.getString("content").startsWith("line 1\nline 2\n"));
+        assertTrue(first.getString("content").endsWith("line 2000\n"));
+        assertEquals(5000, first.getInteger("lines"));
+        assertEquals(1, first.getInteger("from"));
+        assertEquals(2000, first.getInteger("to"));
+        assertEquals("The content is lines 1 to 2000 of 5000; call camel_get_files with offset=2001 for the next lines",
+                first.getString("message"));
+
+        JsonObject part = call("camel_get_files", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "big.log", "offset", 4999, "limit", 10));
+        assertEquals("line 4999\nline 5000\n", part.getString("content"));
+        assertEquals("The content is lines 4999 to 5000 of 5000", part.getString("message"));
+
+        JsonObject past = call("camel_get_files", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "big.log", "offset", 6000));
+        assertEquals("", past.getString("content"));
+        assertEquals("The file has 5000 lines, so there are none from line 6000", past.getString("message"));
+
+        assertThrows(ToolExecutionException.class, () -> ToolRegistry.execute("camel_get_files", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "big.log", "offset", "ten")));
+    }
+
+    @Test
+    void aSmallFileIsReadAsItIs(@TempDir Path dir) throws IOException {
+        // line endings and no newline at the end, as they are in the file
+        Files.writeString(dir.resolve("crlf.properties"), "a=1\r\nb=2");
+
+        JsonObject file = call("camel_get_files", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "crlf.properties"));
+
+        assertEquals("a=1\r\nb=2", file.getString("content"));
+        assertNull(file.get("message"));
+        assertNull(file.get("lines"));
+    }
+
+    @Test
+    void aLineLongerThanAnAnswerIsCut(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("one.json"), "x".repeat(AuthoringTools.READ_CHARS + 10) + "\nsecond\n");
+
+        JsonObject file = call("camel_get_files", new ToolContext(), Map.of("directory", dir.toString(), "file", "one.json"));
+
+        assertEquals(AuthoringTools.READ_CHARS + 1, file.getString("content").length());
+        assertEquals("The content is lines 1 to 1 of 2 (line 1 is cut after " + AuthoringTools.READ_CHARS
+                     + " characters); call camel_get_files with offset=2 for the next lines",
+                file.getString("message"));
+    }
+
     /** A file consumer moves the files it read into .camel, which the listing skips: the folder looked empty. */
     @Test
     void filesAFileConsumerMovedIntoDotCamelAreCounted(@TempDir Path dir) throws IOException {

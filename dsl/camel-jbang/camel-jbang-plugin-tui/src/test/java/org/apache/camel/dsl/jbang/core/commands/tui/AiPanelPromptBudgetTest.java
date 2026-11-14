@@ -76,7 +76,9 @@ class AiPanelPromptBudgetTest {
     // raised from 10600 for tui_diagram_zoom, measured ~10731 (~168 for the tool): a model asked to zoom or fold the
     // diagram does it as the keys do; full mode only, its schema cut to the bone
     // raised from 10750 with the core budget for camel_eval_expression (CAMEL-26400), measured ~10844
-    static final int FULL_BUDGET_TOKENS = 10_900;
+    // raised from 10900 for the offset and limit arguments of camel_get_files (CAMEL-26932), measured ~10922: a large
+    // file comes in parts, as a 3.6 MB file was an answer of about a million tokens
+    static final int FULL_BUDGET_TOKENS = 10_950;
     /** Measured ~5.5k tokens for 28 tools: the core set (~4.7k) plus every tool group (CAMEL-24834). */
     // the SQL group adds tui_execute_sql and tui_update_row (~385 tokens), each group one guidance line in the prompt
     // (~130 for all three); an integration rarely has all of them, and the groups only load for the integration that
@@ -86,7 +88,8 @@ class AiPanelPromptBudgetTest {
     // it is building
     // raised from 5750 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~5820
     // raised from 5900 with the core budget for camel_eval_expression (CAMEL-26400), measured ~6011
-    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 6_050;
+    // raised from 6050 for the offset and limit arguments of camel_get_files (CAMEL-26932), measured ~6069
+    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 6_100;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 
@@ -192,8 +195,9 @@ class AiPanelPromptBudgetTest {
             System.out.println("AI panel semantic prefix: " + prefix);
             // core raised from 6100 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~6170; full
             // raised from 11000 for tui_diagram_zoom, measured ~11068; both raised by 150 with the core budget for
-            // camel_eval_expression (CAMEL-26400), measured ~6361 and ~11182
-            assertTrue(prefix.totalTokens() <= (AiPanel.TOOL_MODE_CORE.equals(mode) ? 6400 : 11250));
+            // camel_eval_expression (CAMEL-26400), measured ~6361 and ~11182; both raised by 50 for the offset and
+            // limit arguments of camel_get_files (CAMEL-26932), measured ~6419 and ~11259
+            assertTrue(prefix.totalTokens() <= (AiPanel.TOOL_MODE_CORE.equals(mode) ? 6450 : 11300));
         }
     }
 

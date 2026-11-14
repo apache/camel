@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
@@ -242,12 +243,15 @@ public final class AuthoringTools {
                                                 + "from; with file (a path relative to the directory, as listed) its content.")
                 .param("directory", "string", DIRECTORY_DESC, false)
                 .param("file", "string", FILE_PATH_DESC + " to read; omitted lists the files", false)
+                .param("offset", "integer", "First line (from 1)", false)
+                .param("limit", "integer", "Lines to read (default " + READ_LINES + ")", false)
                 .core(true)
                 .executor((ctx, args) -> {
                     String file = args.get("file");
                     if (file != null && !file.isBlank()) {
                         FileTarget target = fileTarget(ctx, args.get("directory"), file, FileAccess.READ);
-                        return readFile(target.directory(), target.file()).toJson();
+                        return readFile(target.directory(), target.file(), lineArg(args, "offset"), lineArg(args, "limit"))
+                                .toJson();
                     }
                     Path dir = ctx.resolveDirectory(args.get("directory"));
                     JsonObject result = listFiles(dir);
@@ -2314,8 +2318,41 @@ public final class AuthoringTools {
         return result;
     }
 
+    /** The lines camel_get_files reads of a file by default. */
+    static final int READ_LINES = 2000;
+
+    /**
+     * The most characters of a file in one answer of camel_get_files: a 3.6 MB file was an answer of 4.5 MB, about a
+     * million tokens (CAMEL-26932).
+     */
+    static final int READ_CHARS = 256 * 1024;
+
+    private static int lineArg(Map<String, String> args, String name) {
+        String value = args.get(name);
+        if (value == null || value.isBlank()) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            throw new ToolExecutionException(name + " must be a number of lines: " + value);
+        }
+    }
+
     /** One file of a project directory with its content, as {@code camel_get_files} reads it. */
     public static JsonObject readFile(Path dir, String file) {
+        return readFile(dir, file, 0, 0);
+    }
+
+    /**
+     * One file of a project directory with its content, as {@code camel_get_files} reads it: the whole file when it is
+     * small, else the lines from the offset (from 1), at most the limit ({@value #READ_LINES} by default) and
+     * {@value #READ_CHARS} characters, with what was left out and the offset to read on from.
+     *
+     * @param offset the first line, from 1; 0 for the first
+     * @param limit  how many lines; 0 for {@value #READ_LINES}
+     */
+    public static JsonObject readFile(Path dir, String file, int offset, int limit) {
         Path path = resolveFile(dir, file);
         if (!Files.isRegularFile(path)) {
             String elsewhere = elsewhere(dir, path, "; ");
@@ -2331,7 +2368,57 @@ public final class AuthoringTools {
         result.put("directory", dir.toString());
         result.put("size", formatSize(size(path)));
         result.put("type", fileType(file));
-        result.put("content", read(path));
+        int from = Math.max(1, offset);
+        int max = limit > 0 ? limit : READ_LINES;
+        StringBuilder window = new StringBuilder();
+        int lines = 0;
+        int to = from - 1;
+        boolean cutLine = false;
+        boolean full = false;
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines++;
+                if (lines < from || full) {
+                    continue;
+                }
+                if (lines - from >= max || window.length() + line.length() + 1 > READ_CHARS) {
+                    if (window.isEmpty()) {
+                        // one line longer than an answer may be
+                        window.append(line, 0, Math.min(line.length(), READ_CHARS)).append('\n');
+                        to = lines;
+                        cutLine = line.length() > READ_CHARS;
+                    }
+                    full = true;
+                    continue;
+                }
+                window.append(line).append('\n');
+                to = lines;
+            }
+        } catch (IOException e) {
+            throw new ToolExecutionException("Cannot read " + path + ": " + e.getMessage());
+        }
+        if (from == 1 && to == lines && !cutLine) {
+            // all of it, as it is in the file (its line endings, and the end without a newline)
+            result.put("content", read(path));
+            return result;
+        }
+        result.put("content", window.toString());
+        result.put("lines", lines);
+        if (to < from) {
+            result.put("message", "The file has " + lines + " lines, so there are none from line " + from);
+            return result;
+        }
+        result.put("from", from);
+        result.put("to", to);
+        StringBuilder message = new StringBuilder("The content is lines " + from + " to " + to + " of " + lines);
+        if (cutLine) {
+            message.append(" (line ").append(to).append(" is cut after ").append(READ_CHARS).append(" characters)");
+        }
+        if (to < lines) {
+            message.append("; call camel_get_files with offset=").append(to + 1).append(" for the next lines");
+        }
+        result.put("message", message.toString());
         return result;
     }
 
