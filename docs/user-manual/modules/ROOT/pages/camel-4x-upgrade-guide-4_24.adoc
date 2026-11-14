@@ -1466,6 +1466,15 @@ with code `1` (fix the route) instead of `70` (internal error), and prints the e
 The stack trace is in the log of the integration, and is no longer printed a second time on stderr (add `--verbose`
 for it). Scripts that checked for `70` after a failed start should check for `1`.
 
+=== camel-jbang - a Camel version that does not exist exits with 3
+
+A `--camel-version` that was never released, in `camel catalog`, `camel doc` and `camel validate`, now says
+`Camel version X not found in <repositories>` and exits with code `3` (not found) instead of `1` with "Cannot
+resolve dependencies". A Maven repository that cannot be reached still exits with `1`. `camel version set` checks
+that the version exists before it stores it: a version that does not exist exits with `3` and is not stored, and when
+the repositories cannot be reached the version is stored with a warning. `camel version set` without a version,
+`--runtime`, `--repo` or `--reset` is now a usage error (exit code `2`) instead of doing nothing.
+
 === camel-jbang - a name of a running integration matches only that integration
 
 A name given to `camel stop`, `camel get`, `camel cmd`, `camel trace` and the other commands for running integrations

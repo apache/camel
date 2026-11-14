@@ -456,6 +456,9 @@ camel version set 3.18.2
 camel version set --reset
 ----
 
+`camel version set` checks in the Maven repositories that the version exists, and refuses one that does not
+(exit code 3). `--reset` removes the `camel-version`, `kamelets-version`, `repos` and `runtime` settings.
+
 IMPORTANT: You cannot combine `camel version set` with `--camel-version`.
 
 For SNAPSHOT versions:
