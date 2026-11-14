@@ -626,10 +626,11 @@ public class Debug extends Run {
     }
 
     /**
-     * The arguments without the options of camel debug, which camel run does not have: each by its exact name, with its
-     * value (--breakpoint=tick, or --breakpoint tick). Before, every argument that started with the name of a field was
-     * removed, such as --source-dir=... for the field source, and the value of --breakpoint tick was left behind as a
-     * file (CAMEL-26930).
+     * The arguments for camel run: without the options that only camel debug has. Each goes by its exact name, with its
+     * value (--breakpoint=tick, or --breakpoint tick).
+     * <p>
+     * CAMEL-26930: any argument that started with the name of a field went, such as --source-dir=... for the field
+     * source. The value of --breakpoint tick stayed, and camel run took it for a file.
      */
     static List<String> withoutDebugOnlyOptions(List<String> args) {
         // only the options of Debug (not of its super classes), and whether they take a value
