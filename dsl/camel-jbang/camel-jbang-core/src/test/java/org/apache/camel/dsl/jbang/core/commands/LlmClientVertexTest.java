@@ -27,7 +27,6 @@ class LlmClientVertexTest {
 
     @Test
     void mapsPreFourSixModels() {
-        assertEquals("claude-sonnet-4-5@20250929", LlmClient.resolveVertexModel("claude-sonnet-4-5"));
         assertEquals("claude-haiku-4-5@20251001", LlmClient.resolveVertexModel("claude-haiku-4-5"));
         assertEquals("claude-opus-4-5@20251101", LlmClient.resolveVertexModel("claude-opus-4-5"));
     }
@@ -44,7 +43,7 @@ class LlmClientVertexTest {
     @Test
     void passesThroughAlreadyVersionedModels() {
         assertEquals("claude-haiku-4-5@20251001", LlmClient.resolveVertexModel("claude-haiku-4-5@20251001"));
-        assertEquals("claude-sonnet-4-5@20250929", LlmClient.resolveVertexModel("claude-sonnet-4-5@20250929"));
+        assertEquals("claude-opus-4-5@20251101", LlmClient.resolveVertexModel("claude-opus-4-5@20251101"));
     }
 
     @Test

@@ -94,7 +94,6 @@ public class LlmClient {
 
     // Pre-4.6 Claude models require a @date suffix on Vertex AI
     private static final Map<String, String> VERTEX_MODEL_MAP = Map.of(
-            "claude-sonnet-4-5", "claude-sonnet-4-5@20250929",
             "claude-opus-4-5", "claude-opus-4-5@20251101",
             "claude-haiku-4-5", "claude-haiku-4-5@20251001");
 
