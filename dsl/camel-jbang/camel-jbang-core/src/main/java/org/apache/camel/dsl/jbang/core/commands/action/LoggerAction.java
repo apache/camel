@@ -30,6 +30,7 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
@@ -57,6 +58,9 @@ public class LoggerAction extends ActionBaseCommand {
             completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
+    // the levels of the logging, as the completion offers them, and OFF
+    private static final List<String> LEVELS = List.of("ERROR", "WARN", "INFO", "DEBUG", "TRACE", "OFF");
+
     @Option(name = "logging-level", description = "To change logging level (${COMPLETION-CANDIDATES})",
             completer = LoggingLevelCompletionCandidates.class)
     String loggingLevel;
@@ -81,6 +85,10 @@ public class LoggerAction extends ActionBaseCommand {
         }
         if (name == null) {
             name = "*";
+        }
+        // an unknown level was set as ERROR, with exit code 0 (CAMEL-26929)
+        if (LEVELS.stream().noneMatch(l -> l.equalsIgnoreCase(loggingLevel))) {
+            throw CliException.usage("Unknown logging level: " + loggingLevel + " (" + String.join(", ", LEVELS) + ")");
         }
         return callChangeLoggingLevel();
     }
