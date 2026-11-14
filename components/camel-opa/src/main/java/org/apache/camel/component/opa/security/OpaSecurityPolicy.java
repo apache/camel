@@ -137,6 +137,11 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
                             + " denies every exchange it guards while the server is unreachable, so a route that cannot"
                             + " reach it is not ready.")
     private boolean healthCheckEnabled = true;
+    @Metadata(label = "advanced", defaultValue = "false",
+              description = "Whether the server readiness check also requires activation of OPA's configured bundles."
+                            + " Sends /health?bundles=true. Does not enable health checks, change policy evaluation"
+                            + " or guarantee a particular policy revision. Not used in wasm mode or with an injected client.")
+    private boolean healthCheckBundles;
     @Metadata(label = "advanced", defaultValue = "10000",
               description = "How long to wait, in milliseconds, for the connection to the OPA server to be established.")
     private long connectionTimeout = 10000;
@@ -234,6 +239,9 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      * injected {@code opaClient} address, authenticate to or replace a server there is none of in {@code wasm} mode.
      */
     private void warnIgnoredServerOptions() {
+        if (healthCheckBundles) {
+            LOG.warn("healthCheckBundles is ignored when evaluationMode=wasm: there is no server to probe");
+        }
         if (opaClient != null) {
             LOG.warn("opaClient is ignored when evaluationMode=wasm: the policy is evaluated in-process");
         }
@@ -262,7 +270,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
         if (registry == null) {
             return;
         }
-        healthCheck = new OpaSecurityPolicyHealthCheck(serverUrl, bearerToken, policyPath, sslContext);
+        healthCheck = new OpaSecurityPolicyHealthCheck(serverUrl, bearerToken, policyPath, sslContext, healthCheckBundles);
         registry.register(healthCheck);
     }
 
@@ -555,6 +563,18 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      */
     public void setHealthCheckEnabled(boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;
+    }
+
+    public boolean isHealthCheckBundles() {
+        return healthCheckBundles;
+    }
+
+    /**
+     * Whether the server readiness check also requires activation of OPA's configured bundles. Does not enable health
+     * checks or change policy evaluation. Not used in wasm mode or with an injected client.
+     */
+    public void setHealthCheckBundles(boolean healthCheckBundles) {
+        this.healthCheckBundles = healthCheckBundles;
     }
 
     public OPAClient getOpaClient() {

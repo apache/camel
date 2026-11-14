@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Sanitizer</name>
-    <description>Check during development and tests that the processors of the routes keep the contract of AsyncProcessor, and report where they break it</description>
+    <description>Check during development and tests that the processors of the routes keep the contract of AsyncProcessor and that the commits of the consumers run exactly once, and report where they break it</description>
 
     <properties>
         <firstVersion>4.24.0</firstVersion>

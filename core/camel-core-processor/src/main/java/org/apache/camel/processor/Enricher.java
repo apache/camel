@@ -46,7 +46,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * A content enricher that enriches input data by first obtaining additional data from a <i>resource</i> represented by
  * an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of input data
  * and additional data is delegated to an {@link AggregationStrategy} object.
- * <p/>
+ * <p>
  * Uses a {@link org.apache.camel.Producer} to obtain the additional data as opposed to {@link PollEnricher} that uses a
  * {@link org.apache.camel.PollingConsumer}.
  *
@@ -254,8 +254,12 @@ public class Enricher extends BaseProcessorSupport
                             copyResultsWithoutCorrelationId(exchange, aggregatedExchange);
                         }
                         used = true;
-                    } catch (Exception e) {
-                        // if the aggregationStrategy threw an exception, set it on the original exchange
+                    } catch (VirtualMachineError e) {
+                        // left as before: the application must not handle a JVM-level failure with Camel's error handling
+                        throw e;
+                    } catch (Throwable e) {
+                        // if the aggregationStrategy threw an exception (also an Error, which would escape this callback),
+                        // set it on the original exchange
                         exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
                         if (resourceExchange.getException() == null) {
                             resourceExchange.setException(e);

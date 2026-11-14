@@ -183,6 +183,8 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
      * Removes the headers of an earlier call, so a header that this call does not set does not keep a stale value: an
      * EMBEDDINGS header from an earlier batch would make a later embedding store ADD store the old batch.
      */
+    // FINISH_REASON is deprecated, but a stale value from an earlier call is still removed
+    @SuppressWarnings("deprecation")
     private static void removeResultHeaders(Message message) {
         message.removeHeader(LangChain4jEmbeddingsHeaders.REQUEST_MODEL);
         message.removeHeader(LangChain4jEmbeddingsHeaders.FINISH_REASON);

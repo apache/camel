@@ -184,7 +184,6 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param logMask the value to set
@@ -201,7 +200,6 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param logMask the value to set

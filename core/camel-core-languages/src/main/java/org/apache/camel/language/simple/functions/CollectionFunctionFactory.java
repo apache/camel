@@ -29,6 +29,7 @@ import static org.apache.camel.language.simple.SimpleFunctionHelper.expressionOr
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.joinArguments;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArguments;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArgumentsKeepQuotes;
 
 /**
  * Built-in Simple collection functions: {@code ${setHeader}}, {@code ${setVariable}}, {@code ${range}},
@@ -117,16 +118,16 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 throw new SimpleParserException(
                         "Valid syntax: ${range(min,max)} or ${range(max)} was: " + function, index);
             }
-            if (values.contains(",")) {
-                String[] tokens = values.split(",", 3);
-                if (tokens.length > 2) {
-                    throw new SimpleParserException(
-                            "Valid syntax: ${range(min,max)} or ${range(max)} was: " + function, index);
-                }
-                return CollectionExpressionBuilder.rangeExpression(tokens[0].trim(), tokens[1].trim());
-            } else {
-                return CollectionExpressionBuilder.rangeExpression("0", values.trim());
+            // a comma inside a nested function is part of the argument; a min left out is 0
+            String[] tokens = splitArgumentsKeepQuotes(values);
+            if (tokens.length > 2 || tokens[tokens.length - 1] == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${range(min,max)} or ${range(max)} was: " + function, index);
             }
+            if (tokens.length == 2) {
+                return CollectionExpressionBuilder.rangeExpression(tokens[0] != null ? tokens[0] : "0", tokens[1]);
+            }
+            return CollectionExpressionBuilder.rangeExpression("0", tokens[0]);
         }
 
         remainder = ifStartsWithReturnRemainder("distinct(", function);

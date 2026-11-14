@@ -31,6 +31,8 @@ public class AiResourceConfigurationConfigurer extends org.apache.camel.support.
         case "resourceUri": target.setResourceUri(property(camelContext, java.lang.String.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "title": target.setTitle(property(camelContext, java.lang.String.class, value)); return true;
+        case "uritemplate":
+        case "uriTemplate": target.setUriTemplate(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -45,6 +47,8 @@ public class AiResourceConfigurationConfigurer extends org.apache.camel.support.
         case "resourceUri": return java.lang.String.class;
         case "tags": return java.lang.String.class;
         case "title": return java.lang.String.class;
+        case "uritemplate":
+        case "uriTemplate": return java.lang.String.class;
         default: return null;
         }
     }
@@ -60,6 +64,8 @@ public class AiResourceConfigurationConfigurer extends org.apache.camel.support.
         case "resourceUri": return target.getResourceUri();
         case "tags": return target.getTags();
         case "title": return target.getTitle();
+        case "uritemplate":
+        case "uriTemplate": return target.getUriTemplate();
         default: return null;
         }
     }

@@ -1279,11 +1279,13 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         return compat;
     }
 
-    private static MavenArtifact toMavenArtifact(ArtifactResult ar) {
+    static MavenArtifact toMavenArtifact(ArtifactResult ar) {
         Artifact artifact = ar.getArtifact();
+        // the base version: a SNAPSHOT from a remote repository has a timestamped version (such as
+        // 4.24.0-20261112.143700-31), which does not match the same SNAPSHOT already on the classpath
         MavenGav gav = MavenGav.fromCoordinates(
                 artifact.getGroupId(), artifact.getArtifactId(),
-                artifact.getVersion(), artifact.getExtension(), artifact.getClassifier());
+                artifact.getBaseVersion(), artifact.getExtension(), artifact.getClassifier());
         return new MavenArtifact(gav, artifact.getFile());
     }
 

@@ -56,11 +56,14 @@ class McpServerMainAuthenticationTest {
             {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05",
             "capabilities":{},"clientInfo":{"name":"test","version":"1"}}}""";
 
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
+    private static AvailablePortFinder.Port portRef;
+    private static int PORT;
     private static Main main;
 
     @BeforeAll
     static void startMain() {
+        portRef = AvailablePortFinder.find();
+        PORT = portRef.getPort();
         main = new Main();
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
@@ -105,6 +108,9 @@ class McpServerMainAuthenticationTest {
     static void stopMain() {
         if (main != null) {
             main.stop();
+        }
+        if (portRef != null) {
+            portRef.release();
         }
     }
 

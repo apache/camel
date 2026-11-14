@@ -16,8 +16,8 @@ https://modelcontextprotocol.io[Model Context Protocol] (MCP) server, served
 over MCP streamable HTTP or stdio (stdin/stdout JSON-RPC). No route is needed for the
 server itself: add the dependency, configure which tags to expose, and every matching
 `ai-tool` route becomes an MCP tool and every matching `ai-resource` route an MCP
-resource, discoverable by any MCP client (another Camel application, an IDE, a coding
-agent).
+resource or resource template, depending on whether it uses `resourceUri` or `uriTemplate`,
+discoverable by any MCP client (another Camel application, an IDE, a coding agent).
 
 NOTE: This component serves the routes of your own integration. To give your AI assistant
 Camel knowledge while you write routes (catalog, validation, inspecting running integrations),
@@ -63,11 +63,12 @@ conformance test kit.
 
 Resource support is opt-in on the SPI: `resourceAdded` and `resourceRemoved`
 default to no-ops and an engine declares `supportsResources()` when it serves
-them. An engine that serves tools only keeps working unchanged, and the bridge
-logs a WARN when `ai-resource` routes match the tags but the engine cannot
-serve them. The conformance kit follows the same split: resource assertions
-live in a separate `McpServerResourceConformanceTestSupport` class that an
-engine extends once it supports resources.
+fixed resources. Resource-template support is independently opt-in through
+`resourceTemplateAdded`, `resourceTemplateRemoved` and
+`supportsResourceTemplates()`. Engines that do not implement either capability
+remain source-compatible because the SPI methods have defaults; the bridge logs
+a WARN when a matching route cannot be served by the selected engine.
+Resource and template behaviour is covered by the MCP resource conformance tests.
 
 An engine refuses a tool, resource or prompt it cannot serve, for example a name its
 runtime already serves, by throwing `McpServerRefusedException` from
@@ -145,6 +146,24 @@ see xref:ROOT:ai-resource-component.adoc[ai-resource] for the details.
 Unlike `tools/call`, `resources/read` has no in-band error flag, so a failed
 read is returned as a JSON-RPC error with the same sanitized message the
 client would get from a failing tool.
+
+Resource templates are declared with `uriTemplate` instead of `resourceUri`; each variable
+occupies one complete path segment. For example:
+
+[source,java]
+----
+from("ai-resource:customer?uriTemplate=crm://customers/{id}&tags=crm")
+    .process(exchange -> {
+        String id = exchange.getMessage().getHeader(
+            "CamelAiResourceTemplateVariable.id", String.class);
+        String uri = exchange.getMessage().getHeader("CamelAiResourceUri", String.class);
+        // Validate this untrusted client input before using it.
+    });
+----
+
+The bridge exposes these as MCP resource templates and resolves a concrete URI on
+`resources/read`. Captured values remain raw (percent-encoding is retained), are not
+property-resolved or evaluated, and must be validated by the route before use.
 
 === Prompts
 
@@ -276,7 +295,7 @@ JBang (see the xref:main.adoc[camel-main] options) or on
   | `false` | bridge
 | `camel.server.mcp-transport` | MCP transport: `http` (streamable HTTP on the
   embedded server, default) or `stdio` (JSON-RPC on process stdin/stdout for
-  local agent subprocesses). Stdio exposes tools and prompts. | `http` | engine
+  local agent subprocesses). Stdio exposes tools, resources (including templates) and prompts. | `http` | engine
 | `camel.server.mcp-tags` | Comma-separated list of tag patterns selecting the
   ai-tool, ai-resource and ai-prompt routes to expose. Patterns support exact match,
   wildcard prefix (`foo*`), and `*` to match all tags. Only routes registered

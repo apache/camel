@@ -123,7 +123,6 @@ public interface AiToolEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param destructiveHint the value to set
@@ -140,7 +139,6 @@ public interface AiToolEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param destructiveHint the value to set
@@ -156,7 +154,6 @@ public interface AiToolEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param idempotentHint the value to set
@@ -173,7 +170,6 @@ public interface AiToolEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param idempotentHint the value to set
@@ -190,7 +186,6 @@ public interface AiToolEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param openWorldHint the value to set
@@ -208,7 +203,6 @@ public interface AiToolEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param openWorldHint the value to set
@@ -333,7 +327,6 @@ public interface AiToolEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param readOnlyHint the value to set
@@ -350,7 +343,6 @@ public interface AiToolEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: consumer
          * 
          * @param readOnlyHint the value to set

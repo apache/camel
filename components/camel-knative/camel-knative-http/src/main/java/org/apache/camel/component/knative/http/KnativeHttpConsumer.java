@@ -154,8 +154,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
                 route.handler(routingContext -> {
                     if (routingContext.request().headers().contains(HttpHeaders.AUTHORIZATION)) {
                         String auth = routingContext.request().getHeader(HttpHeaders.AUTHORIZATION);
-                        String token = oidcServiceOptions.retrieveOidcToken();
-                        if (("Bearer " + token).equals(auth)) {
+                        if (oidcServiceOptions.isAuthorized(auth)) {
                             routingContext.next();
                         } else {
                             routingContext.fail(401, new RuntimeCamelException("OIDC request verification failed - forbidden"));

@@ -172,7 +172,10 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
-         * Output format for document conversion.
+         * Output format of the SUBMIT_ASYNC_CONVERSION operation; the other
+         * operations always use their own format. The html_split_page value is
+         * rejected, as docling-serve does not return the split pages; use html
+         * instead.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -257,13 +260,11 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Abort processing on error.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param abortOnError the value to set
@@ -363,13 +364,11 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Enable code enrichment in document processing.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doCodeEnrichment the value to set
@@ -395,13 +394,11 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Enable formula enrichment in document processing.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doFormulaEnrichment the value to set
@@ -412,7 +409,6 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Enable OCR processing in docling-serve API mode. When not set, the
          * server uses its own defaults. Set enableOCR to false to explicitly
@@ -420,7 +416,6 @@ public interface DoclingComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doOcr the value to set
@@ -431,13 +426,11 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Enable picture classification in document processing.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureClassification the value to set
@@ -448,13 +441,11 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Enable picture description generation in document processing.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doPictureDescription the value to set
@@ -465,13 +456,11 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Enable table structure recognition.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param doTableStructure the value to set
@@ -482,13 +471,11 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Force OCR processing even for digital documents.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param forceOcr the value to set
@@ -529,13 +516,11 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Include images in the conversion output.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param includeImages the value to set
@@ -623,13 +608,11 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Enable table cell matching post-processing.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: advanced
          * 
          * @param tableCellMatching the value to set

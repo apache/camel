@@ -184,7 +184,14 @@ public class ProjectExporter {
             printer().printErr("Unknown runtime: " + request.runtime);
             return 1;
         }
-        return exporter.export();
+        // one export at a time in a work directory: the .camel-jbang directory is shared by the exports of the current
+        // directory, and an export without files reuses the run data that the last run or export left there
+        try (WorkDirLock lock = WorkDirLock.acquire(copy.workDir, printer())) {
+            return exporter.export();
+        } catch (ExportException e) {
+            printer().printErr(e.getMessage());
+            return 1;
+        }
     }
 
     /**

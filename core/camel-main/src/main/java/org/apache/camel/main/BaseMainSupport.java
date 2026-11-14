@@ -231,7 +231,7 @@ public abstract class BaseMainSupport extends BaseService {
     /**
      * Set the default location for application properties if no locations have been set. If the value is set to "false"
      * or empty, the default location is not taken into account.
-     * <p/>
+     * <p>
      * Default value is "classpath:application.properties;optional=true".
      */
     public void setDefaultPropertyPlaceholderLocation(String defaultPropertyPlaceholderLocation) {
@@ -2867,11 +2867,11 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     /**
-     * Creates a bean declared as <tt>#class:</tt> whose class has no public no-arg constructor but a builder (such as a
-     * LangChain4j model or a Lombok class), by setting the properties of the bean (dot style) on the builder before the
-     * bean is built, as such a bean cannot be configured after it is created.
+     * Creates a bean declared as <code>#class:</code> whose class has no public no-arg constructor but a builder (such
+     * as a LangChain4j model or a Lombok class), by setting the properties of the bean (dot style) on the builder
+     * before the bean is built, as such a bean cannot be configured after it is created.
      *
-     * @return the created bean, or <tt>null</tt> if the bean is not created via an inferred builder
+     * @return the created bean, or <code>null</code> if the bean is not created via an inferred builder
      */
     private static Object createBeanViaInferredBuilder(
             CamelContext camelContext, String name, Object value, OrderedLocationProperties properties,

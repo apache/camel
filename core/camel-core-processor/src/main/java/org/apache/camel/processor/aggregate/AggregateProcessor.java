@@ -88,7 +88,7 @@ import org.slf4j.LoggerFactory;
  * messages is processed (up to a maximum amount or until some timeout is reached) and messages for the same correlation
  * key are combined using some kind of {@link AggregationStrategy} (by default the latest message is used) to compress
  * many message exchanges into a smaller number of exchanges.
- * <p/>
+ * <p>
  * A good example of this is stock market data; you may be receiving 30,000 messages/second, and you may want to
  * throttle it right down so that multiple messages for the same stock are combined (or just the latest message is used
  * and older prices to be discarded). Another idea is to combine line item messages together into a single invoice
@@ -558,18 +558,18 @@ public class AggregateProcessor extends BaseProcessorSupport
 
     /**
      * Aggregates the exchange with the given correlation key
-     * <p/>
+     * <p>
      * This method <b>must</b> be run synchronized as we cannot aggregate the same correlation key in parallel.
-     * <p/>
+     * <p>
      * The completed {@link Exchange}(s) are added to the given list as soon as they are completed (and removed from the
-     * repository), also if this method fails afterwards. They should be send downstream using the
+     * repository), also if this method fails afterwards. They should be sent downstream using the
      * {@link #onSubmitCompletion(String, org.apache.camel.Exchange)} method which sends out the aggregated and
      * completed {@link Exchange}.
      *
      * @param  key                                     the correlation key
      * @param  newExchange                             the exchange
      * @param  spooled                                 the references that the exchange holds to spooled stream caches,
-     *                                                 which are taken when they are handed over, or <tt>null</tt>
+     *                                                 which are taken when they are handed over, or <code>null</code>
      * @param  list                                    the list to add the aggregated exchange(s) which are complete to
      * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
      */
@@ -802,12 +802,12 @@ public class AggregateProcessor extends BaseProcessorSupport
     }
 
     /**
-     * Tests whether the given exchanges is pre-complete or not
+     * Tests whether the given exchange is pre-complete or not
      *
      * @param  key         the correlation key
      * @param  oldExchange the existing exchange
      * @param  newExchange the incoming exchange
-     * @return             <tt>null</tt> if not pre-completed, otherwise a String with the type that triggered the
+     * @return             <code>null</code> if not pre-completed, otherwise a String with the type that triggered the
      *                     pre-completion
      */
     protected String isPreCompleted(String key, Exchange oldExchange, Exchange newExchange) {
@@ -819,7 +819,8 @@ public class AggregateProcessor extends BaseProcessorSupport
      *
      * @param  key      the correlation key
      * @param  exchange the incoming exchange
-     * @return          <tt>null</tt> if not completed, otherwise a String with the type that triggered the completion
+     * @return          <code>null</code> if not completed, otherwise a String with the type that triggered the
+     *                  completion
      */
     protected String isCompleted(String key, Exchange exchange) {
         // batch consumer completion must always run first
@@ -872,7 +873,7 @@ public class AggregateProcessor extends BaseProcessorSupport
     /**
      * Whether the group records if it has a completion timeout, and the timeout checker only completes a group that has
      * one.
-     * <p/>
+     * <p>
      * With optimistic locking the timeout entry of a completed group is not removed (see
      * {@link #onCompletion(String, Exchange, Exchange, boolean, boolean)}), so it can be left over when a new group for
      * the same correlation key starts. A new group normally replaces the entry with its own timeout, but with a
@@ -1105,22 +1106,28 @@ public class AggregateProcessor extends BaseProcessorSupport
     /**
      * Sends the aggregated exchanges (more than one when the batch consumer completes all its groups). None of them is
      * in the repository any more, so when one of them fails to be submitted (the thread pool rejects it, or the
-     * aggregation strategy throws an exception on completion), the others are still sent (or failed too), and then the
-     * first failure is thrown.
+     * aggregation strategy throws an exception or an Error on completion), the others are still sent (or failed too),
+     * and then the first failure is thrown.
      */
     private void submitCompletions(String key, List<Exchange> aggregated) {
-        RuntimeException failure = null;
+        Throwable failure = null;
         for (Exchange agg : aggregated) {
             try {
                 onSubmitCompletion(key, agg);
-            } catch (RuntimeException e) {
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled here
+                throw e;
+            } catch (RuntimeException | Error e) {
+                // also an Error of the aggregation strategy, as for an exception
                 if (failure == null) {
                     failure = e;
                 }
             }
         }
-        if (failure != null) {
-            throw failure;
+        if (failure instanceof Error err) {
+            throw err;
+        } else if (failure != null) {
+            throw (RuntimeException) failure;
         }
     }
 
@@ -1242,7 +1249,7 @@ public class AggregateProcessor extends BaseProcessorSupport
 
     /**
      * Restores the timeout map with timeout values from the aggregation repository.
-     * <p/>
+     * <p>
      * This is needed in case the aggregator has been stopped and started again (for example a server restart). Then the
      * existing exchanges from the {@link AggregationRepository} must have their timeout conditions restored.
      */
@@ -1669,7 +1676,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             try {
                 doOnEviction(key, exchangeId);
                 forgetRetry(key);
-            } catch (Exception e) {
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled here
+                throw e;
+            } catch (Throwable e) {
+                // also an Error of the aggregation strategy (its timeout or onCompletion), as for an exception
                 // the entry is no longer in the timeout map, and the timeout map ignores errors of its listeners, so
                 // without a new entry a group the repository could not read or remove would never time out (an entry
                 // that a new message for the key has put in the meantime is kept)
@@ -1788,7 +1799,11 @@ public class AggregateProcessor extends BaseProcessorSupport
                         lock.unlock();
                     }
                 }
-            } catch (Exception e) {
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled, and ends the interval task
+                throw e;
+            } catch (Throwable e) {
+                // also an Error (such as of the aggregation strategy), which would otherwise end the interval task
                 LOG.warn("Error during completion interval task. This exception is ignored.", e);
             }
 
@@ -1912,7 +1927,10 @@ public class AggregateProcessor extends BaseProcessorSupport
                                     // not exhaust so resubmit the recovered exchange
                                     try {
                                         onSubmitCompletion(key, exchange);
-                                    } catch (RuntimeException e) {
+                                    } catch (VirtualMachineError e) {
+                                        // left as before: a JVM-level failure is not handled, and ends the recover task
+                                        throw e;
+                                    } catch (RuntimeException | Error e) {
                                         // it has been failed and passed to the exception handler, and is recovered
                                         // again on a later run, so go on with the other exchanges
                                         LOG.debug("Error resubmitting recovered exchange with id: {}", exchangeId, e);
@@ -1924,8 +1942,11 @@ public class AggregateProcessor extends BaseProcessorSupport
                         recoverLock.unlock();
                     }
                 }
-            } catch (Exception e) {
-                // must catch and log exception otherwise the executor will not schedule next recover task
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled, and ends the recover task
+                throw e;
+            } catch (Throwable e) {
+                // must catch and log exception (also an Error) otherwise the executor will not schedule next recover task
                 LOG.warn("Error during recover task. This exception is ignored.", e);
             } finally {
                 recoveryInProgress.set(false);

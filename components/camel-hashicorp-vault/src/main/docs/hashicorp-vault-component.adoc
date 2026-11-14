@@ -76,19 +76,19 @@ The `authentication` option chooses how the component logs in to HashiCorp Vault
 JWT login of Vault has a default role.
 
 | `cert`
-| `keyStore`: the TLS client certificate, see <<TLS>>. `role` is the name of the certificate role in Vault; without
+| `keyStore`: the TLS client certificate, see <<_tls,TLS>>. `role` is the name of the certificate role in Vault; without
 it, Vault tries every certificate role that trusts the certificate. The login needs the `https` scheme.
 
 | `aws-iam`
-| `role`: the Vault role of the application, which logs in with its AWS credentials, see <<Cloud logins>>. Without
+| `role`: the Vault role of the application, which logs in with its AWS credentials, see <<_cloud_logins,Cloud logins>>. Without
 `role`, Vault takes the role named as the IAM principal of the application.
 
 | `azure-msi`
-| `role`: the Vault role of the application, which logs in with its Azure managed identity, see <<Cloud logins>>.
+| `role`: the Vault role of the application, which logs in with its Azure managed identity, see <<_cloud_logins,Cloud logins>>.
 
 | `gcp-gce`
 | `role`: the Vault role of the application, which logs in with the service account of its Google Compute Engine
-instance, see <<Cloud logins>>.
+instance, see <<_cloud_logins,Cloud logins>>.
 |===
 
 When the login method is not mounted at its default path in Vault (`approle`, `kubernetes`, `jwt`, `cert`, `aws` for
@@ -464,7 +464,7 @@ camel.vault.hashicorp.namespace = namespace
 This will make the Properties function works even in the HashiCorp Cloud deployment option.
 
 The properties function logs in with a token by default. To log in another way, set the options of
-<<Logging in to HashiCorp Vault>> with the `camel.vault.hashicorp` prefix. For example, an application in a Kubernetes
+<<_logging_in_to_hashicorp_vault,Logging in to HashiCorp Vault>> with the `camel.vault.hashicorp` prefix. For example, an application in a Kubernetes
 pod logs in with the service account of the pod:
 
 [source,properties]
@@ -479,9 +479,8 @@ camel.vault.hashicorp.role = my-application
 The properties function also reads these options from the environment variables `CAMEL_HASHICORP_VAULT_AUTHENTICATION`,
 `CAMEL_HASHICORP_VAULT_ROLE_ID`, `CAMEL_HASHICORP_VAULT_SECRET_ID`, `CAMEL_HASHICORP_VAULT_ROLE`,
 `CAMEL_HASHICORP_VAULT_JWT`, `CAMEL_HASHICORP_VAULT_JWT_FILE` and `CAMEL_HASHICORP_VAULT_AUTH_MOUNT_PATH`, and the
-settings of <<TLS>> from `CAMEL_HASHICORP_VAULT_TRUST_STORE`, `CAMEL_HASHICORP_VAULT_TRUST_STORE_PASSWORD`,
-`CAMEL_HASHICORP_VAULT_KEY_STORE` and `CAMEL_HASHICORP_VAULT_KEY_STORE_PASSWORD`, and the settings of the <<Cloud
-logins>> from `CAMEL_HASHICORP_VAULT_AWS_IAM_SERVER_ID`, `CAMEL_HASHICORP_VAULT_AWS_REGION`,
+settings of <<_tls,TLS>> from `CAMEL_HASHICORP_VAULT_TRUST_STORE`, `CAMEL_HASHICORP_VAULT_TRUST_STORE_PASSWORD`,
+`CAMEL_HASHICORP_VAULT_KEY_STORE` and `CAMEL_HASHICORP_VAULT_KEY_STORE_PASSWORD`, and the settings of the <<_cloud_logins,Cloud logins>> from `CAMEL_HASHICORP_VAULT_AWS_IAM_SERVER_ID`, `CAMEL_HASHICORP_VAULT_AWS_REGION`,
 `CAMEL_HASHICORP_VAULT_AWS_STS_ENDPOINT`, `CAMEL_HASHICORP_VAULT_AZURE_RESOURCE` and
 `CAMEL_HASHICORP_VAULT_AZURE_CLIENT_ID`. When any of the `CAMEL_HASHICORP_VAULT_*` environment variables is set, the
 properties function takes all its settings from the environment variables, and none from the `camel.vault.hashicorp`

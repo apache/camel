@@ -91,6 +91,24 @@ final class IntegrationSummaryDoc {
     }
 
     /**
+     * The facts of a project derived from its route sources as they are now, with nothing an AI wrote: what the readme
+     * tool of the AI panel gives when there is no README (CAMEL-26946). Null when there is no project or it has no
+     * routes.
+     */
+    static String facts(Path dir) {
+        if (dir == null) {
+            return null;
+        }
+        ProjectOverview.Overview overview = ProjectOverview.analyze(dir, ProjectOverviewAssist.catalog());
+        if (overview.flows().isEmpty()) {
+            return null;
+        }
+        return forViewing(IntegrationSummary.render(overview, null, null, null, null)
+                .replace("> Derived from the route sources. No AI-assisted sections yet.",
+                        "> Derived from the route sources."));
+    }
+
+    /**
      * The markdown for the viewer: without the comments that fence the AI sections and carry the header (they are for
      * tools), and with the routes table as a list, since the viewer gives table columns equal widths and would cut off
      * the notes.

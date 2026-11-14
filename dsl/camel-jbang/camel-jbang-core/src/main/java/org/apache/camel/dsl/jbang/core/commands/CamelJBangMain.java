@@ -25,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.aesh.command.Command;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.CommandResult;
+import org.aesh.command.impl.parser.ArgfileExpander;
 import org.aesh.command.invocation.CommandInvocation;
 import org.aesh.command.option.Option;
 import org.aesh.command.parser.CommandLineParserException;
@@ -74,6 +75,7 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
@@ -124,6 +126,12 @@ public class CamelJBangMain implements Command<CommandInvocation> {
             // ignore
         }
 
+        args = expandArgumentFiles(args);
+        if (args == null) {
+            quit(CliExitCode.USAGE);
+            return;
+        }
+
         // the CLI creates only the command that the command line names, as creating all of them (and loading their
         // classes) costs more than most commands take to run
         String only = onlyCommand(args);
@@ -167,6 +175,28 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         }
         postExecute(commandLine, args, exitCode);
         quit(exitCode);
+    }
+
+    /**
+     * Replaces an argument {@code @file} with the arguments in that file, as picocli did: one or more per line, quotes
+     * group words, a line that starts with {@code #} is a comment, and {@code @@} is a literal {@code @}. This is done
+     * before anything reads the command line, so the command it names is created, and a command that runs the CLI again
+     * (such as {@code camel run --background}) has the arguments themselves.
+     *
+     * @param  args the command line
+     * @return      the command line with the arguments of the files, or {@code null} when a file cannot be read (the
+     *              error is printed)
+     */
+    String[] expandArgumentFiles(String... args) {
+        try {
+            return ArgfileExpander.expand(args);
+        } catch (CommandLineParserException e) {
+            out.printErr(e.getMessage());
+            if (JsonOutput.isRequested(args)) {
+                JsonOutput.printError(out, CliExitCode.USAGE, e.getMessage());
+            }
+            return null;
+        }
     }
 
     /**
@@ -342,6 +372,9 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         }
         if (shouldCreate(only, "harden")) {
             commandLine.addSubcommand("harden", new CommandTree(new Harden(this)));
+        }
+        if (shouldCreate(only, "status")) {
+            commandLine.addSubcommand("status", new CommandTree(new IntegrationStatus(this)));
         }
         if (shouldCreate(only, "get")) {
             commandLine.addSubcommand("get", new CommandTree(new CamelStatus(this))

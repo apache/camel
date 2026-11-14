@@ -19,10 +19,12 @@ package org.apache.camel.dsl.jbang.run.common;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -141,7 +143,7 @@ public final class RuntimeUtil {
             }
             content = content + System.lineSeparator() + sj;
 
-            name = CamelHome.CAMEL_JBANG_WORK_DIR + "/log4j2.properties";
+            name = CamelHome.getWorkDir().resolve("log4j2.properties").toString();
             Files.writeString(Paths.get(name), content);
             // the categories are part of what the command asks for
             location = Path.of(name).toAbsolutePath().toUri() + "#" + content.hashCode();
@@ -281,6 +283,18 @@ public final class RuntimeUtil {
         if (Files.exists(path)) {
             try (final var inputStream = Files.newInputStream(path)) {
                 properties.load(inputStream);
+            }
+        }
+    }
+
+    /**
+     * Loads the properties of a file in the given encoding, such as a file that is written in UTF-8 rather than in the
+     * encoding of a properties file (ISO-8859-1).
+     */
+    public static void loadProperties(Properties properties, Path path, Charset charset) throws IOException {
+        if (Files.exists(path)) {
+            try (Reader reader = Files.newBufferedReader(path, charset)) {
+                properties.load(reader);
             }
         }
     }

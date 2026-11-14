@@ -25,11 +25,11 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * An {@link AggregationStrategy} which are used when the option <tt>shareUnitOfWork</tt> is enabled on EIPs such as
+ * An {@link AggregationStrategy} which is used when the option <code>shareUnitOfWork</code> is enabled on EIPs such as
  * multicast, splitter or recipientList.
- * <p/>
+ * <p>
  * This strategy wraps the actual in use strategy to provide the logic needed for making shareUnitOfWork work.
- * <p/>
+ * <p>
  * This strategy is <b>not</b> intended for end users to use.
  */
 public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {

@@ -33,18 +33,16 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link CamelInternalProcessorAdvice} which applies {@link Transformer} and {@link Validator} according to the data
  * type Contract.
- * <p/>
+ * <p>
  * The default camel {@link Message} implements {@link DataTypeAware} which holds a {@link DataType} to indicate current
- * message type. If the input type declared by {@link org.apache.camel.model.InputTypeDefinition} is different from
- * current IN message type, camel internal processor look for a Transformer which transforms from the current message
+ * message type. If the input type declared by {@code org.apache.camel.model.InputTypeDefinition} is different from
+ * current IN message type, camel internal processor looks for a Transformer which transforms from the current message
  * type to the expected message type before routing. After routing, if the output type declared by
- * {@link org.apache.camel.model.OutputTypeDefinition} is different from current OUT message (or IN message if no OUT),
- * camel look for a Transformer and apply.
+ * {@code org.apache.camel.model.OutputTypeDefinition} is different from current OUT message (or IN message if no OUT),
+ * camel looks for a Transformer and applies it.
  *
  * @see Transformer
  * @see Validator
- * @see org.apache.camel.model.InputTypeDefinition
- * @see org.apache.camel.model.OutputTypeDefinition
  */
 public class ContractAdvice implements CamelInternalProcessorAdvice<Object> {
     private static final Logger LOG = LoggerFactory.getLogger(ContractAdvice.class);

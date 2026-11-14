@@ -67,7 +67,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * A content enricher that enriches input data by first obtaining additional data from a <i>resource</i> represented by
  * an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of input data
  * and additional data is delegated to an {@link AggregationStrategy} object.
- * <p/>
+ * <p>
  * Uses a {@link org.apache.camel.PollingConsumer} to obtain the additional data as opposed to {@link Enricher} that
  * uses a {@link org.apache.camel.Producer}.
  *
@@ -206,7 +206,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
 
     /**
      * Sets the timeout to use when polling.
-     * <p/>
+     * <p>
      * Use 0 to use receiveNoWait, Use -1 to use receive with no timeout (which will block until data is available).
      *
      * @param timeout timeout in millis.
@@ -470,7 +470,11 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             // set property with the uri of the endpoint enriched so we can use that for tracing etc
             exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
 
-        } catch (Exception e) {
+        } catch (VirtualMachineError e) {
+            // left as before: the application must not handle a JVM-level failure with Camel's error handling
+            throw e;
+        } catch (Throwable e) {
+            // also an Error of the aggregation strategy (such as a NoClassDefFoundError), as for an exception
             exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
             // the resource was not aggregated, so release it as failed now (such as rolling back a polled file),
             // and not together with the exchange, which may still complete successfully (such as by redelivery)
@@ -489,7 +493,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
         }
     }
 
-    private static void doneResourceAsFailed(Exchange resourceExchange, Exception cause) {
+    private static void doneResourceAsFailed(Exchange resourceExchange, Throwable cause) {
         if (resourceExchange != null) {
             if (cause != null && resourceExchange.getException() == null) {
                 resourceExchange.setException(cause);
@@ -552,7 +556,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
 
     /**
      * Strategy to pre check polling.
-     * <p/>
+     * <p>
      * Is currently used to prevent doing poll enrich from a file based endpoint when the current route also started
      * from a file based endpoint as that is not currently supported.
      *

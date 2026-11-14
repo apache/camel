@@ -37,9 +37,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRouteController;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.apache.camel.impl.engine.DefaultRouteController;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
@@ -441,6 +443,179 @@ public class ClusteredEdgeCasesTest {
             failures.set(0);
             await().during(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS).untilAsserted(
                     () -> assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("a")));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testLeadershipTakenWhileTheCamelContextIsSuspended() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        context.addService(cs);
+        ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace("my-ns");
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("seda:foo").routeId("foo").routePolicy(policy).to("mock:foo");
+            }
+        });
+        context.start();
+        try {
+            context.suspend();
+            // the node becomes the leader while the CamelContext is suspended (from JMX, for example)
+            cs.getView().setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).until(policy::isLeader);
+
+            context.resume();
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo")));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testLeadershipTakenWhileTheCamelContextIsSuspendedAndASlowResume() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        context.addService(cs);
+        ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace("my-ns");
+        policy.setRetryDelay(Duration.ofMillis(100));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("seda:foo").routeId("foo").routePolicy(policy).to("mock:foo");
+            }
+        });
+        context.start();
+        // an event notifier after the one of the policy holds the resume, so the CamelContext is still starting when
+        // the policy thread applies the leadership after the resumed event
+        CountDownLatch neverReleased = new CountDownLatch(1);
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) throws Exception {
+                neverReleased.await(500, TimeUnit.MILLISECONDS);
+            }
+
+            @Override
+            public boolean isEnabled(CamelEvent event) {
+                return event instanceof CamelEvent.CamelContextResumedEvent;
+            }
+        });
+        try {
+            context.suspend();
+            cs.getView().setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).until(policy::isLeader);
+
+            context.resume();
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo")));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRouteAddedAfterStartAndASlowResume() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        context.addService(cs);
+        ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace("my-ns");
+        policy.setRetryDelay(Duration.ofMillis(100));
+        context.start();
+        // the policy is attached after the CamelContext started, so it never gets the started event
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("seda:foo").routeId("foo").routePolicy(policy).to("mock:foo");
+            }
+        });
+        CountDownLatch neverReleased = new CountDownLatch(1);
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) throws Exception {
+                neverReleased.await(500, TimeUnit.MILLISECONDS);
+            }
+
+            @Override
+            public boolean isEnabled(CamelEvent event) {
+                return event instanceof CamelEvent.CamelContextResumedEvent;
+            }
+        });
+        try {
+            context.suspend();
+            cs.getView().setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).until(policy::isLeader);
+
+            context.resume();
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo")));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testLeadershipLostWhileTheCamelContextIsSuspendedWithASuspendableConsumer() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        context.addService(cs);
+        ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace("my-ns");
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("seda:foo").routeId("foo").routePolicy(policy).to("mock:foo");
+            }
+        });
+        context.start();
+        try {
+            cs.getView().setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo")));
+
+            context.suspend();
+            cs.getView().setLeader(false);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !policy.isLeader());
+
+            context.resume();
+            await().during(1, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo")));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testLeadershipLostWhileTheCamelContextIsSuspended() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        context.addService(cs);
+        // a consumer that does not support suspension (the failing component with no failure): the suspend of the
+        // CamelContext stops its route, and the resume starts it again
+        context.addComponent("failing", new FailingStartComponent(new AtomicInteger()));
+        ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace("my-ns");
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("failing:foo").routeId("foo").routePolicy(policy).to("mock:foo");
+            }
+        });
+        context.start();
+        try {
+            cs.getView().setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo")));
+
+            context.suspend();
+            // the node loses the leadership while the CamelContext is suspended
+            cs.getView().setLeader(false);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !policy.isLeader());
+
+            // the resume starts the routes it stopped: this node must not keep running the route
+            context.resume();
+            await().during(1, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo")));
         } finally {
             context.stop();
         }

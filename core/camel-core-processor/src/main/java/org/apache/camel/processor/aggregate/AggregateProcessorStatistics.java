@@ -84,7 +84,7 @@ public interface AggregateProcessorStatistics {
     /**
      * Sets whether statistics is enabled.
      *
-     * @param statisticsEnabled <tt>true</tt> to enable
+     * @param statisticsEnabled <code>true</code> to enable
      */
     void setStatisticsEnabled(boolean statisticsEnabled);
 

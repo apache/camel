@@ -36,14 +36,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@UsesWorkingDirectory
 class DependencyListTest extends CamelCommandBaseTestSupport {
 
     private File workingDir;
 
     @BeforeEach
+    @Override
     public void setup() throws Exception {
         super.setup();
+        useTestWorkDir();
         workingDir = Files.createTempDirectory("camel-export").toFile();
     }
 

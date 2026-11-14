@@ -58,7 +58,7 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
      *
      * @param  exchange  the exchange
      * @param  exception the exception that was thrown
-     * @return           the best exception type to handle this exception, <tt>null</tt> if none found.
+     * @return           the best exception type to handle this exception, <code>null</code> if none found.
      */
     protected ExceptionPolicy getExceptionPolicy(Exchange exchange, Throwable exception) {
         if (exceptionPolicy == null) {

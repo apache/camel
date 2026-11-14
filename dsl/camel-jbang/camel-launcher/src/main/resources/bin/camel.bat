@@ -23,6 +23,10 @@
 @REM Set local scope for the variables with windows NT shell
 if "%OS%"=="Windows_NT" setlocal
 
+@REM Tools of Windows by their full path: cmd looks for a bare name in the current directory before PATH, so a
+@REM findstr.bat in the directory where camel runs would run instead.
+set "_FINDSTR=%SystemRoot%\System32\findstr.exe"
+
 @REM Find the project base dir
 set DIRNAME=%~dp0
 if "%DIRNAME%" == "" set DIRNAME=.
@@ -53,7 +57,7 @@ if "%JAVA_OPTS%" == "" set JAVA_OPTS=-Xmx512m
 @REM other JARs in lib\).
 set "LAUNCHER_JAR="
 for %%i in ("%BASEDIR%\..\lib\camel-launcher-*.jar") do (
-  echo %%~nxi| findstr /i /e /l /c:"-sources.jar" /c:"-javadoc.jar" > nul
+  echo %%~nxi| %_FINDSTR% /i /e /l /c:"-sources.jar" /c:"-javadoc.jar" > nul
   if errorlevel 1 if not defined LAUNCHER_JAR set "LAUNCHER_JAR=%%~fi"
 )
 
@@ -132,7 +136,7 @@ if not exist "%_CAND%" exit /b 1
 @REM The release file of the JDK (bin\..\release) has the version, which saves starting a JVM for -version.
 set "_RAW="
 for %%d in ("%_CAND%") do set "_RELEASE=%%~dpd..\release"
-if exist "%_RELEASE%" for /f "tokens=2 delims==" %%v in ('findstr /b /l /c:"JAVA_VERSION=" "%_RELEASE%"') do if not defined _RAW set "_RAW=%%v"
+if exist "%_RELEASE%" for /f "tokens=2 delims==" %%v in ('%_FINDSTR% /b /l /c:"JAVA_VERSION=" "%_RELEASE%"') do if not defined _RAW set "_RAW=%%v"
 set "_RELEASE="
 if defined _RAW goto tryJavaParseVersion
 for %%e in ("%_CAND%") do set "_CAND_EXT=%%~xe"
@@ -165,7 +169,7 @@ exit /b 1
 
 :tryJavaParseProbe
 set "_RAW="
-for /f "tokens=3" %%v in ('findstr /b /l /i /c:"java version " /c:"openjdk version " "%_PROBE%"') do if not defined _RAW set "_RAW=%%v"
+for /f "tokens=3" %%v in ('%_FINDSTR% /b /l /i /c:"java version " /c:"openjdk version " "%_PROBE%"') do if not defined _RAW set "_RAW=%%v"
 del /q "%_PROBE%" >NUL 2>&1
 set "_PROBE="
 if not defined _RAW exit /b 1

@@ -39,6 +39,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mcp.server.McpToolCallContext;
 import org.apache.camel.main.Main;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.AvailablePortFinder.Port;
 import org.apache.camel.test.infra.keycloak.services.KeycloakService;
 import org.apache.camel.test.infra.keycloak.services.KeycloakServiceFactory;
 import org.awaitility.Awaitility;
@@ -75,8 +76,9 @@ class McpServerMainOAuthKeycloakIT {
     @RegisterExtension
     static KeycloakService keycloakService = KeycloakServiceFactory.createSingletonService();
 
+    private static AvailablePortFinder.Port portRef;
     private static final HttpClient HTTP = HttpClient.newHttpClient();
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
+    private static int PORT;
     private static final int MCP_TIMEOUT_SECONDS = 15;
     private static final String REALM = "mcp-oauth-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String CLIENT_ID = "mcp-client";
@@ -105,6 +107,8 @@ class McpServerMainOAuthKeycloakIT {
 
     @BeforeAll
     static void startKeycloakAndMcpServer() throws Exception {
+        portRef = AvailablePortFinder.find();
+        PORT = portRef.getPort();
         awaitKeycloakReady();
         adminClient = keycloakService.getKeycloakAdminClient();
         createRealm();
@@ -156,6 +160,9 @@ class McpServerMainOAuthKeycloakIT {
     static void stopMcpAndRemoveRealm() {
         if (main != null) {
             main.stop();
+        }
+        if (portRef != null) {
+            portRef.release();
         }
         if (adminClient != null) {
             try {
@@ -307,73 +314,79 @@ class McpServerMainOAuthKeycloakIT {
     @Test
     void tokenWithUnexpectedIssuerIsRejected() throws Exception {
         String token = accessToken(CLIENT_ID, clientSecret, "mcp:read mcp:write");
-        int wrongIssuerPort = AvailablePortFinder.getNextAvailable();
-        Main wrongIssuer = newMain(wrongIssuerPort);
-        wrongIssuer.addInitialProperty("camel.server.mcp-oauth-profile", "wrong-issuer");
-        wrongIssuer.addInitialProperty("camel.server.mcp-required-scopes", "mcp:read,mcp:write");
-        wrongIssuer.addInitialProperty("camel.oauth.wrong-issuer.jwks-endpoint",
-                issuer + "/protocol/openid-connect/certs");
-        wrongIssuer.addInitialProperty("camel.oauth.wrong-issuer.expected-issuer", issuer + "/not-the-issuer");
-        wrongIssuer.addInitialProperty("camel.oauth.wrong-issuer.expected-audience", CLIENT_ID);
-        wrongIssuer.addInitialProperty("camel.oauth.wrong-issuer.allow-insecure-http", "true");
+        try (Port wrongIssuerPortHolder = AvailablePortFinder.find()) {
+            int wrongIssuerPort = wrongIssuerPortHolder.getPort();
+            Main wrongIssuer = newMain(wrongIssuerPort);
+            wrongIssuer.addInitialProperty("camel.server.mcp-oauth-profile", "wrong-issuer");
+            wrongIssuer.addInitialProperty("camel.server.mcp-required-scopes", "mcp:read,mcp:write");
+            wrongIssuer.addInitialProperty("camel.oauth.wrong-issuer.jwks-endpoint",
+                    issuer + "/protocol/openid-connect/certs");
+            wrongIssuer.addInitialProperty("camel.oauth.wrong-issuer.expected-issuer", issuer + "/not-the-issuer");
+            wrongIssuer.addInitialProperty("camel.oauth.wrong-issuer.expected-audience", CLIENT_ID);
+            wrongIssuer.addInitialProperty("camel.oauth.wrong-issuer.allow-insecure-http", "true");
 
-        try {
-            wrongIssuer.start();
-            HttpResponse<String> response = post(wrongIssuerPort, token);
-            assertThat(response.statusCode()).isEqualTo(401);
-            assertThat(response.headers().firstValue("WWW-Authenticate"))
-                    .hasValueSatisfying(value -> assertThat(value).contains("error=\"invalid_token\""));
-        } finally {
-            wrongIssuer.stop();
+            try {
+                wrongIssuer.start();
+                HttpResponse<String> response = post(wrongIssuerPort, token);
+                assertThat(response.statusCode()).isEqualTo(401);
+                assertThat(response.headers().firstValue("WWW-Authenticate"))
+                        .hasValueSatisfying(value -> assertThat(value).contains("error=\"invalid_token\""));
+            } finally {
+                wrongIssuer.stop();
+            }
         }
     }
 
     @Test
     void tokenWithDisallowedAlgorithmIsRejected() throws Exception {
         String token = accessToken(CLIENT_ID, clientSecret, "mcp:read mcp:write");
-        int wrongAlgorithmPort = AvailablePortFinder.getNextAvailable();
-        Main wrongAlgorithm = newMain(wrongAlgorithmPort);
-        wrongAlgorithm.addInitialProperty("camel.server.mcp-oauth-profile", "wrong-algorithm");
-        wrongAlgorithm.addInitialProperty("camel.server.mcp-required-scopes", "mcp:read,mcp:write");
-        wrongAlgorithm.addInitialProperty("camel.oauth.wrong-algorithm.jwks-endpoint",
-                issuer + "/protocol/openid-connect/certs");
-        wrongAlgorithm.addInitialProperty("camel.oauth.wrong-algorithm.expected-issuer", issuer);
-        wrongAlgorithm.addInitialProperty("camel.oauth.wrong-algorithm.expected-audience", CLIENT_ID);
-        wrongAlgorithm.addInitialProperty("camel.oauth.wrong-algorithm.allowed-jws-algorithms", "HS256");
-        wrongAlgorithm.addInitialProperty("camel.oauth.wrong-algorithm.allow-insecure-http", "true");
+        try (Port wrongAlgorithmPortHolder = AvailablePortFinder.find()) {
+            int wrongAlgorithmPort = wrongAlgorithmPortHolder.getPort();
+            Main wrongAlgorithm = newMain(wrongAlgorithmPort);
+            wrongAlgorithm.addInitialProperty("camel.server.mcp-oauth-profile", "wrong-algorithm");
+            wrongAlgorithm.addInitialProperty("camel.server.mcp-required-scopes", "mcp:read,mcp:write");
+            wrongAlgorithm.addInitialProperty("camel.oauth.wrong-algorithm.jwks-endpoint",
+                    issuer + "/protocol/openid-connect/certs");
+            wrongAlgorithm.addInitialProperty("camel.oauth.wrong-algorithm.expected-issuer", issuer);
+            wrongAlgorithm.addInitialProperty("camel.oauth.wrong-algorithm.expected-audience", CLIENT_ID);
+            wrongAlgorithm.addInitialProperty("camel.oauth.wrong-algorithm.allowed-jws-algorithms", "HS256");
+            wrongAlgorithm.addInitialProperty("camel.oauth.wrong-algorithm.allow-insecure-http", "true");
 
-        try {
-            wrongAlgorithm.start();
-            HttpResponse<String> response = post(wrongAlgorithmPort, token);
+            try {
+                wrongAlgorithm.start();
+                HttpResponse<String> response = post(wrongAlgorithmPort, token);
 
-            assertThat(response.statusCode()).isEqualTo(401);
-            assertThat(response.headers().firstValue("WWW-Authenticate"))
-                    .hasValueSatisfying(value -> assertThat(value).contains("error=\"invalid_token\""));
-        } finally {
-            wrongAlgorithm.stop();
+                assertThat(response.statusCode()).isEqualTo(401);
+                assertThat(response.headers().firstValue("WWW-Authenticate"))
+                        .hasValueSatisfying(value -> assertThat(value).contains("error=\"invalid_token\""));
+            } finally {
+                wrongAlgorithm.stop();
+            }
         }
     }
 
     @Test
     void protectedResourceMetadataIsNotPublishedWithoutOAuthProfile() throws Exception {
-        int unprotectedPort = AvailablePortFinder.getNextAvailable();
-        Main unprotected = new Main();
-        unprotected.addInitialProperty("camel.server.enabled", "true");
-        unprotected.addInitialProperty("camel.server.port", String.valueOf(unprotectedPort));
-        unprotected.addInitialProperty("camel.server.mcp-enabled", "true");
-        unprotected.addInitialProperty("camel.server.mcp-tags", "oauth");
+        try (Port unprotectedPortHolder = AvailablePortFinder.find()) {
+            int unprotectedPort = unprotectedPortHolder.getPort();
+            Main unprotected = new Main();
+            unprotected.addInitialProperty("camel.server.enabled", "true");
+            unprotected.addInitialProperty("camel.server.port", String.valueOf(unprotectedPort));
+            unprotected.addInitialProperty("camel.server.mcp-enabled", "true");
+            unprotected.addInitialProperty("camel.server.mcp-tags", "oauth");
 
-        try {
-            unprotected.start();
-            HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + unprotectedPort
-                                                                    + "/.well-known/oauth-protected-resource/mcp"))
-                    .timeout(Duration.ofSeconds(MCP_TIMEOUT_SECONDS))
-                    .GET().build();
-            HttpResponse<String> response = HTTP.send(request, HttpResponse.BodyHandlers.ofString());
+            try {
+                unprotected.start();
+                HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + unprotectedPort
+                                                                        + "/.well-known/oauth-protected-resource/mcp"))
+                        .timeout(Duration.ofSeconds(MCP_TIMEOUT_SECONDS))
+                        .GET().build();
+                HttpResponse<String> response = HTTP.send(request, HttpResponse.BodyHandlers.ofString());
 
-            assertThat(response.statusCode()).isEqualTo(404);
-        } finally {
-            unprotected.stop();
+                assertThat(response.statusCode()).isEqualTo(404);
+            } finally {
+                unprotected.stop();
+            }
         }
     }
 
@@ -400,90 +413,99 @@ class McpServerMainOAuthKeycloakIT {
 
     @Test
     void incompleteOAuthProfileFailsDuringStartup() {
-        Main invalid = newMain(AvailablePortFinder.getNextAvailable());
-        invalid.addInitialProperty("camel.server.mcp-oauth-profile", "incomplete");
-        invalid.addInitialProperty("camel.server.mcp-resource-uri", MCP_RESOURCE_URI);
-        invalid.addInitialProperty("camel.oauth.incomplete.expected-audience", CLIENT_ID);
+        try (Port invalidPortHolder = AvailablePortFinder.find()) {
+            Main invalid = newMain(invalidPortHolder.getPort());
+            invalid.addInitialProperty("camel.server.mcp-oauth-profile", "incomplete");
+            invalid.addInitialProperty("camel.server.mcp-resource-uri", MCP_RESOURCE_URI);
+            invalid.addInitialProperty("camel.oauth.incomplete.expected-audience", CLIENT_ID);
 
-        try {
-            assertThatThrownBy(invalid::start)
-                    .hasStackTraceContaining("No jwks-endpoint, introspection-endpoint, or base-uri");
-        } finally {
-            invalid.stop();
+            try {
+                assertThatThrownBy(invalid::start)
+                        .hasStackTraceContaining("No jwks-endpoint, introspection-endpoint, or base-uri");
+            } finally {
+                invalid.stop();
+            }
         }
     }
 
     @Test
     void unreachableIssuerDiscoveryFailsDuringStartup() {
-        Main invalid = newMain(AvailablePortFinder.getNextAvailable());
-        invalid.addInitialProperty("camel.server.mcp-oauth-profile", "unreachable");
-        invalid.addInitialProperty("camel.server.mcp-resource-uri", MCP_RESOURCE_URI);
-        invalid.addInitialProperty("camel.oauth.unreachable.base-uri", "http://127.0.0.1:1/realms/unreachable");
-        invalid.addInitialProperty("camel.oauth.unreachable.expected-audience", CLIENT_ID);
-        invalid.addInitialProperty("camel.oauth.unreachable.allow-insecure-http", "true");
+        try (Port invalidPortHolder = AvailablePortFinder.find()) {
+            Main invalid = newMain(invalidPortHolder.getPort());
+            invalid.addInitialProperty("camel.server.mcp-oauth-profile", "unreachable");
+            invalid.addInitialProperty("camel.server.mcp-resource-uri", MCP_RESOURCE_URI);
+            invalid.addInitialProperty("camel.oauth.unreachable.base-uri", "http://127.0.0.1:1/realms/unreachable");
+            invalid.addInitialProperty("camel.oauth.unreachable.expected-audience", CLIENT_ID);
+            invalid.addInitialProperty("camel.oauth.unreachable.allow-insecure-http", "true");
 
-        try {
-            assertThatThrownBy(invalid::start)
-                    .hasStackTraceContaining("Failed to discover OIDC endpoints");
-        } finally {
-            invalid.stop();
+            try {
+                assertThatThrownBy(invalid::start)
+                        .hasStackTraceContaining("Failed to discover OIDC endpoints");
+            } finally {
+                invalid.stop();
+            }
         }
     }
 
     @Test
     void keycloakIntrospectionAcceptsActiveTokenAndRejectsInactiveToken() throws Exception {
-        int introspectionPort = AvailablePortFinder.getNextAvailable();
-        Main introspection = newMain(introspectionPort);
-        introspection.addInitialProperty("camel.server.mcp-oauth-profile", "keycloak-introspection");
-        introspection.addInitialProperty("camel.server.mcp-required-scopes", "mcp:read,mcp:write");
-        introspection.addInitialProperty("camel.oauth.keycloak-introspection.introspection-endpoint",
-                issuer + "/protocol/openid-connect/token/introspect");
-        introspection.addInitialProperty("camel.oauth.keycloak-introspection.introspection-client-id", CLIENT_ID);
-        introspection.addInitialProperty("camel.oauth.keycloak-introspection.introspection-client-secret", clientSecret);
-        introspection.addInitialProperty("camel.oauth.keycloak-introspection.expected-issuer", issuer);
-        introspection.addInitialProperty("camel.oauth.keycloak-introspection.expected-audience", CLIENT_ID);
-        introspection.addInitialProperty("camel.oauth.keycloak-introspection.allow-insecure-http", "true");
+        try (Port introspectionPortHolder = AvailablePortFinder.find()) {
+            int introspectionPort = introspectionPortHolder.getPort();
+            Main introspection = newMain(introspectionPort);
+            introspection.addInitialProperty("camel.server.mcp-oauth-profile", "keycloak-introspection");
+            introspection.addInitialProperty("camel.server.mcp-required-scopes", "mcp:read,mcp:write");
+            introspection.addInitialProperty("camel.oauth.keycloak-introspection.introspection-endpoint",
+                    issuer + "/protocol/openid-connect/token/introspect");
+            introspection.addInitialProperty("camel.oauth.keycloak-introspection.introspection-client-id", CLIENT_ID);
+            introspection.addInitialProperty("camel.oauth.keycloak-introspection.introspection-client-secret", clientSecret);
+            introspection.addInitialProperty("camel.oauth.keycloak-introspection.expected-issuer", issuer);
+            introspection.addInitialProperty("camel.oauth.keycloak-introspection.expected-audience", CLIENT_ID);
+            introspection.addInitialProperty("camel.oauth.keycloak-introspection.allow-insecure-http", "true");
 
-        try {
-            introspection.start();
+            try {
+                introspection.start();
 
-            String activeToken = accessToken(CLIENT_ID, clientSecret, "mcp:read mcp:write");
-            HttpResponse<String> activeResponse = post(introspectionPort, activeToken);
-            assertThat(activeResponse.statusCode()).isEqualTo(200);
+                String activeToken = accessToken(CLIENT_ID, clientSecret, "mcp:read mcp:write");
+                HttpResponse<String> activeResponse = post(introspectionPort, activeToken);
+                assertThat(activeResponse.statusCode()).isEqualTo(200);
 
-            HttpResponse<String> inactiveResponse = post(introspectionPort, "not-a-valid-keycloak-token");
-            assertThat(inactiveResponse.statusCode()).isEqualTo(401);
-            assertThat(inactiveResponse.headers().firstValue("WWW-Authenticate"))
-                    .hasValueSatisfying(value -> assertThat(value).contains("error=\"invalid_token\""));
-        } finally {
-            introspection.stop();
+                HttpResponse<String> inactiveResponse = post(introspectionPort, "not-a-valid-keycloak-token");
+                assertThat(inactiveResponse.statusCode()).isEqualTo(401);
+                assertThat(inactiveResponse.headers().firstValue("WWW-Authenticate"))
+                        .hasValueSatisfying(value -> assertThat(value).contains("error=\"invalid_token\""));
+            } finally {
+                introspection.stop();
+            }
         }
     }
 
     @Test
     void unreachableIntrospectionEndpointReturns503WithoutLeakingTokenOrConfiguration() throws Exception {
-        int unavailablePort = AvailablePortFinder.getNextAvailable();
-        String introspectionEndpoint = "http://127.0.0.1:" + unavailablePort + "/introspect";
-        String token = "opaque-test-token";
-        int offlineServerPort = AvailablePortFinder.getNextAvailable();
-        Main offline = newMain(offlineServerPort);
-        offline.addInitialProperty("camel.server.mcp-oauth-profile", "offline");
-        offline.addInitialProperty("camel.server.mcp-resource-uri", MCP_RESOURCE_URI);
-        offline.addInitialProperty("camel.oauth.offline.introspection-endpoint", introspectionEndpoint);
-        offline.addInitialProperty("camel.oauth.offline.introspection-client-id", "offline-client");
-        offline.addInitialProperty("camel.oauth.offline.introspection-client-secret", "offline-secret");
-        offline.addInitialProperty("camel.oauth.offline.expected-issuer", "https://issuer.example.test");
-        offline.addInitialProperty("camel.oauth.offline.expected-audience", "mcp-server");
-        offline.addInitialProperty("camel.oauth.offline.allow-insecure-http", "true");
+        try (Port unavailablePortHolder = AvailablePortFinder.find();
+             Port offlineServerPortHolder = AvailablePortFinder.find()) {
+            int unavailablePort = unavailablePortHolder.getPort();
+            String introspectionEndpoint = "http://127.0.0.1:" + unavailablePort + "/introspect";
+            String token = "opaque-test-token";
+            int offlineServerPort = offlineServerPortHolder.getPort();
+            Main offline = newMain(offlineServerPort);
+            offline.addInitialProperty("camel.server.mcp-oauth-profile", "offline");
+            offline.addInitialProperty("camel.server.mcp-resource-uri", MCP_RESOURCE_URI);
+            offline.addInitialProperty("camel.oauth.offline.introspection-endpoint", introspectionEndpoint);
+            offline.addInitialProperty("camel.oauth.offline.introspection-client-id", "offline-client");
+            offline.addInitialProperty("camel.oauth.offline.introspection-client-secret", "offline-secret");
+            offline.addInitialProperty("camel.oauth.offline.expected-issuer", "https://issuer.example.test");
+            offline.addInitialProperty("camel.oauth.offline.expected-audience", "mcp-server");
+            offline.addInitialProperty("camel.oauth.offline.allow-insecure-http", "true");
 
-        try {
-            offline.start();
-            HttpResponse<String> response = post(offlineServerPort, token);
-            assertThat(response.statusCode()).isEqualTo(503);
-            assertThat(response.body()).isEqualTo("Service Unavailable")
-                    .doesNotContain(token, "offline-secret", introspectionEndpoint);
-        } finally {
-            offline.stop();
+            try {
+                offline.start();
+                HttpResponse<String> response = post(offlineServerPort, token);
+                assertThat(response.statusCode()).isEqualTo(503);
+                assertThat(response.body()).isEqualTo("Service Unavailable")
+                        .doesNotContain(token, "offline-secret", introspectionEndpoint);
+            } finally {
+                offline.stop();
+            }
         }
     }
 

@@ -1507,8 +1507,9 @@ camel semantic monitoring my-app --source=departmentMetrics
 The Semantic *Monitoring* sibling, `tui_get_monitoring`, `semantic-monitoring` console and CLI read this same
 current-value cache. The TUI offers expert/definition grouping, filters and an inspector for counts, durations,
 distributions, meaning, observation times and collection health. It has no historical-period, reference or
-comparison controls. Pausing affects the display only. A shared Micrometer exporter for Camel Main,
-Spring Boot and Quarkus is tracked separately by CAMEL-25648; it is not implemented by this local viewer.
+comparison controls. Pausing affects the display only. The optional Micrometer integration exports
+measurements independently of this viewer. Runtime-specific automatic registration and scrape endpoint
+integration are separate from the shared listener.
 
 When JMX is enabled, the context registers one read-only aggregate facade and one per registered metric
 source under `type=semantic`, with logical names `all` and `Source(<registry-name>)`.
@@ -1516,3 +1517,11 @@ The object-name pattern is `<domain>:context="<management-name>",type=semantic,n
 Each exposes only a JSON `Snapshot` attribute backed by the same cache.
 There are no per-event MBeans, inference/backend reads, reset, reference-update or detector controls in JMX.
 Facades are removed at context shutdown. Monitoring also works with JMX disabled and without a connected TUI.
+
+=== Optional Micrometer instrumentation
+
+Add xref:others:semantic-micrometer.adoc[Semantic Micrometer] (`camel-semantic-micrometer`) to export
+assessment counts, durations, typed result distributions and supported expert measurements to the
+application's Micrometer registry. The integration brings `camel-semantic` and `camel-micrometer`
+transitively and documents registration, metric names, cardinality limits, lifecycle and PromQL queries.
+`camel-semantic` itself has no Micrometer dependency.

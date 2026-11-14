@@ -21,6 +21,8 @@ ${run-dir}/target/runner.jar
 
 
 # project files
+.camel-export
+.camel-run-pid
 .mvn/wrapper/maven-wrapper.jar
 .mvn/wrapper/maven-wrapper.properties
 AGENTS.md

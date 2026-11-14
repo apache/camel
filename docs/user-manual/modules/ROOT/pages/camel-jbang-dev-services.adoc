@@ -85,6 +85,24 @@ container image, and the settings of every other service. The property names are
 `camel infra restart` takes the options again, the way it takes `--port`, so a restart keeps the
 model it was started with.
 
+Artemis maps the core acceptor (61616) and the web console (8161) on the host. MQTT (1883) and AMQP
+(5672) are the ports of mosquitto and RabbitMQ, so Artemis maps them only when you ask:
+
+[source,bash]
+----
+camel infra run artemis --property artemis.ports=mqtt,amqp
+----
+
+`all` maps both. When a port a service maps is taken, it does not start, and says which port and
+which service has it:
+
+[source,bash]
+----
+$ camel infra run artemis --property artemis.ports=mqtt
+Starting service artemis (PID: 45390)
+ERROR: Cannot start artemis: port 1883 is in use by mosquitto (PID 45211), stop it first with: camel infra stop mosquitto
+----
+
 == Stopping a service
 
 [source,bash]
@@ -114,9 +132,13 @@ camel infra restart kafka --background
 [source,bash]
 ----
 $ camel infra ps
-  PID   ALIAS      IMPLEMENTATION  UI  DESCRIPTION                                        SERVICE_DATA
- 45211  arangodb                       ArangoDB is a multi-model database for high-pe...  {"getServiceAddress":"http:/...
+  PID   ALIAS      IMPLEMENTATION  UI  DESCRIPTION                                   CONTAINER       SERVICE_DATA
+ 45211  arangodb                       ArangoDB is a multi-model database for hig…  camel-arangodb  {"containerId":"3f2a9c1b7d4e",…
 ----
+
+The CONTAINER column is the Docker container the service runs in, so you can use it with `docker exec`,
+`docker logs` or `docker inspect`. A service that runs embedded, in the process itself, has none. The
+container name and its short id are in the connection details too (`containerName` and `containerId`).
 
 There is one row per running instance, so starting the same service twice lists both processes, each
 with its own PID and connection details:
@@ -124,9 +146,9 @@ with its own PID and connection details:
 [source,bash]
 ----
 $ camel infra ps
-  PID   ALIAS  IMPLEMENTATION  UI  DESCRIPTION                                   SERVICE_DATA
- 45244  ftp                        FTP is a standard communication protocol ...  {"port":21,"host":"localhost"...
- 45262  ftp                        FTP is a standard communication protocol ...  {"port":2121,"host":"localhos...
+  PID   ALIAS  IMPLEMENTATION  UI  DESCRIPTION                                   CONTAINER  SERVICE_DATA
+ 45244  ftp                        FTP is a standard communication protocol …             {"port":21,"host":"localhost"…
+ 45262  ftp                        FTP is a standard communication protocol …             {"port":2121,"host":"localhos…
 ----
 
 Pass a service name to list only its instances, and `--json` to get the full connection details of each

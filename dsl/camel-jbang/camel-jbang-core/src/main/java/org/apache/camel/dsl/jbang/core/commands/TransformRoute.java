@@ -121,7 +121,7 @@ public class TransformRoute extends CamelCommand {
         String dump = output;
         // if no output then we want to print to console, so we need to write to a hidden file, and dump that file afterwards
         if (output == null || "clipboard".equals(output)) {
-            dump = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/transform-output." + format;
+            dump = CommandLineHelper.getWorkDir().resolve("transform-output." + format).toString();
         }
         Files.deleteIfExists(Path.of(dump));
         final String target = dump;

@@ -52,8 +52,9 @@ public class DoclingConfiguration implements Cloneable {
     private String ocrLanguage = "en";
 
     @UriParam
-    @Metadata(description = "Output format for document conversion", defaultValue = "markdown",
-              enums = "md,json,html,html_split_page,text,doctags")
+    @Metadata(description = "Output format of the SUBMIT_ASYNC_CONVERSION operation; the other operations always use their own format. The html_split_page value is rejected, as docling-serve does not return the split pages; use html instead",
+              defaultValue = "markdown",
+              enums = "markdown,md,json,html,html_split_page,text,doctags")
     private String outputFormat = "markdown";
 
     @UriParam(label = "advanced")

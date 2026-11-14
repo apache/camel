@@ -78,6 +78,8 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     private boolean async;
     @UriParam(defaultValue = "INFO")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
+    @UriParam(label = "security")
+    private String allowedLanguages;
 
     private transient CamelLogger logger;
 
@@ -184,5 +186,19 @@ public class ControlBusEndpoint extends DefaultEndpoint {
      */
     public void setLoggingLevel(LoggingLevel loggingLevel) {
         this.loggingLevel = loggingLevel;
+    }
+
+    public String getAllowedLanguages() {
+        return allowedLanguages;
+    }
+
+    /**
+     * The names of the languages the language command may use, separated by comma, such as simple. The language command
+     * evaluates the message body as an expression, so it is off until the language is in this list: a
+     * controlbus:language endpoint whose language is not listed fails when it is created. The route actions are not
+     * affected. When not set, the list of the component is used.
+     */
+    public void setAllowedLanguages(String allowedLanguages) {
+        this.allowedLanguages = allowedLanguages;
     }
 }
