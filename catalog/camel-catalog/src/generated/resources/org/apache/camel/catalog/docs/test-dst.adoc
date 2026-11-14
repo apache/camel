@@ -136,12 +136,14 @@ does it when the run is created) and puts the previous provider back when the ru
 the synchronous redelivery (`RedeliveryPolicy`, `RedeliveryErrorHandler`), `ForegroundTask`, `BackgroundTask.schedule`,
 the budgets of both tasks, the wait loop of `DefaultShutdownStrategy`, the synchronous delayer, `MulticastProcessor`,
 `OptimisticLockRetryPolicy`, `DefaultStartupConditionStrategy`, `StopWatch`, `MonotonicClock`, `BackOffTimerTask`,
-`DefaultTimeoutMap`, the clocks of the throttlers and the counters of `ThrottlingExceptionRoutePolicy`. A sleep there is
-a virtual wait on the loop thread, traced with its call site. A test of camel-core (`TimeSourceDirectClockCallsTest`)
-fails when one of these classes reads the system clock or sleeps directly: `System.nanoTime()`,
-`System.currentTimeMillis()`, `Thread.sleep`, a `sleep` of a `TimeUnit` constant, `Instant.now()` and the `now()` of the
-other `java.time` types, `new Date()`, `Calendar.getInstance()`, `new GregorianCalendar()` and the system `Clock`s. It
-also fails when a class of a core module uses `TimeSource` and is not in its list.
+`DefaultTimeoutMap`, the elapsed time of `MessageHistory`, the clocks of the throttlers and the counters of
+`ThrottlingExceptionRoutePolicy`. A sleep there is a virtual wait on the loop thread, traced with its call site.
+
+A test of camel-core (`TimeSourceDirectClockCallsTest`) fails when one of these classes reads the system clock or sleeps
+directly: `System.nanoTime()`, `System.currentTimeMillis()`, `Thread.sleep`, a `sleep` of a `TimeUnit` constant,
+`Instant.now()` and the `now()` of the other `java.time` types, `new Date()`, `Calendar.getInstance()`,
+`new GregorianCalendar()` and the system `Clock`s. It also fails when a class of a core module uses `TimeSource` and is
+not in its list.
 Two waits of these classes are not virtual (see below):
 the permit queue of `TotalRequestsThrottler` and the `Semaphore` of `ConcurrentRequestsThrottler`. The sleep of the
 route `delayer` option is not virtual either (see below). The half-open check of `ThrottlingExceptionRoutePolicy` runs

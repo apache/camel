@@ -66,6 +66,8 @@ class TimeSourceDirectClockCallsTest {
      * (and to the list of core classes in test-dst.adoc of camel-test-dst).
      */
     static final List<String> CLASSES = List.of(
+            // camel-api
+            "camel-api/src/main/java/org/apache/camel/MessageHistory.java",
             // camel-util
             "camel-util/src/main/java/org/apache/camel/util/TimeSource.java",
             "camel-util/src/main/java/org/apache/camel/util/StopWatch.java",
