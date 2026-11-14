@@ -1444,9 +1444,9 @@ To have those steps use the error handler of the route, move them out of the `do
 
 `camel cmd send` without an integration name started a Camel of its own, without routes, and sent from there. That is
 still so for an endpoint of a system outside the integrations (such as `kafka:topic`). Without `--endpoint`, the
-message went nowhere and was reported as sent, and an endpoint that only an integration has (`direct:`, `seda:`,
-`stub:`, a route id) waited for the timeout. Now both go to the integration that runs; with none running, or several,
-the command exits with `3` and says what to give. A send without an endpoint to an integration without routes is now
+message went nowhere and was reported as sent. An endpoint that only an integration has (`direct:`, `seda:`, `stub:`,
+a route id) waited for the timeout. Now both go to the integration that runs. With none running, or several, the
+command exits with `3` and says what to give. A send without an endpoint to an integration without routes is now
 an error, rather than reported as sent.
 
 === camel-aws2-kinesis - each endpoint uses its own client
