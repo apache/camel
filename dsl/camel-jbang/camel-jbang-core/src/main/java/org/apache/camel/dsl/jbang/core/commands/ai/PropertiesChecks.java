@@ -180,6 +180,10 @@ final class PropertiesChecks {
             "wolfdefender", "threads", "resource", "customizer", "jbang", "tui", "cli", "mcp", "catalog", "launcher",
             "infra", "run", "export");
 
+    /** Where the log level is set, for a camel.* key that tries to set it. */
+    private static final String LOG_LEVEL
+            = "the log level is set with logging.level.root=INFO, or logging.level.<package>=DEBUG for one package";
+
     /** The camel.* groups of other runtimes: the Camel Spring Boot starters and Camel K. */
     private static final Set<String> OTHER_RUNTIME_GROUPS = Set.of("springboot", "servlet", "cloud", "openapi",
             "springdoc", "observation", "micrometer", "clustered", "mcpserver", "k");
@@ -192,9 +196,9 @@ final class PropertiesChecks {
      * Said only when the key that was meant is near: the option in a group of a near name (camel.trace.enabled), a dash
      * for the dot of a group (camel.metrics-enabled: camel.metrics.enabled), an option of camel.main (camel.profile:
      * camel.main.profile), an option of a component without component. (camel.kafka.brokers), or a group of a near
-     * name. A key that is near none of them is left alone: camel. is also a prefix of keys of the user's own, such as
-     * camel.kafka.topic.logs used as {{camel.kafka.topic.logs}} in a route. Null as well when the group is one Camel
-     * reads.
+     * name; and a log level (camel.logging.level), which is set with logging.level.root. A key that is near none of
+     * them is left alone: camel. is also a prefix of keys of the user's own, such as camel.kafka.topic.logs used as
+     * {{camel.kafka.topic.logs}} in a route. Null as well when the group is one Camel reads.
      */
     static String unknownGroupHint(String line, CamelCatalog catalog) {
         String key = line.contains("=") ? line.substring(0, line.indexOf('=')).trim() : line.trim();
@@ -219,6 +223,10 @@ final class PropertiesChecks {
         if (unknown.isEmpty() || groups.containsKey(unknown) || OTHER_GROUPS.contains(unknown)
                 || OTHER_RUNTIME_GROUPS.contains(unknown)) {
             return null;
+        }
+        if (unknown.matches("log(ging)?(level)?") && (after.isEmpty() || normalized(after).contains("level"))) {
+            // camel.logging.level=INFO: the log level is a logging.level.* key, near no Camel key
+            return group + "    Unknown option (camel." + group + " is not a group of Camel options; " + LOG_LEVEL + ")";
         }
         String meant = null;
         String dotted = "camel." + group.replaceFirst("-", ".") + after;
@@ -288,8 +296,7 @@ final class PropertiesChecks {
         }
         if (main && camel.toLowerCase(Locale.ROOT).matches("log(ging)?level|log(ging)?")) {
             // camel.main.loggingLevel=INFO: the log level is a logging.level.* key, not a camel.* option
-            return "(the log level is set with logging.level.root=INFO, or logging.level.<package>=DEBUG for one"
-                   + " package)";
+            return "(" + LOG_LEVEL + ")";
         }
         try {
             List<String> known = new ArrayList<>();

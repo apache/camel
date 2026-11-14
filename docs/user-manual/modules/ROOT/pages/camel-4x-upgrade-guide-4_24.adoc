@@ -2129,7 +2129,8 @@ So `camel validate` can report an endpoint it did not report before.
 
 `camel validate properties`, `camel validate source` and the AI file tools now report a `camel.*` key of a group
 Camel does not have when a Camel key is near it, such as `camel.tracing.enabled` (for `camel.trace.enabled`),
-`camel.profile` (for `camel.main.profile`) and `camel.kafka.brokers` (for `camel.component.kafka.brokers`). Camel
+`camel.profile` (for `camel.main.profile`) and `camel.kafka.brokers` (for `camel.component.kafka.brokers`), and
+`camel.logging.level` (for `logging.level.root`). Camel
 ignores such a key without a warning, so the line had no effect. A file with one, which passed before, now fails the
 check.
 

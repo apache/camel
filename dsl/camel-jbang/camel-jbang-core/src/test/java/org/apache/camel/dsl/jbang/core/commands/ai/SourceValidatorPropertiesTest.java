@@ -230,6 +230,21 @@ public class SourceValidatorPropertiesTest {
     }
 
     @Test
+    void aLogLevelOfACamelLoggingKeyPointsToLoggingLevel() {
+        // CAMEL-26960: near no Camel key, so the near-key hints of a group Camel does not have say nothing
+        List<String> msgs = SourceValidator.validateProperties("""
+                camel.logging.level=INFO
+                camel.log-level=DEBUG
+                camel.logging.pattern=%d %m%n
+                """, catalog, null);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).isEqualTo("Line 1: logging    Unknown option (camel.logging is not a group of Camel"
+                                          + " options; the log level is set with logging.level.root=INFO, or"
+                                          + " logging.level.<package>=DEBUG for one package)");
+        assertThat(msgs.get(1)).startsWith("Line 2: log-level    Unknown option").contains("logging.level.root=INFO");
+    }
+
+    @Test
     void theKeysCamelReadsBesidesItsGroupsAndTheKeysOfTheUserAreLeftAlone() {
         assertThat(SourceValidator.validateProperties("""
                 camel.beans.orderIds=#class:org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository
