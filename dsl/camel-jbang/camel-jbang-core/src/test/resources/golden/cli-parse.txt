@@ -2860,7 +2860,7 @@
   catalogContext=false
   files=["v"]
   format="text"
-  model="llama3.2"
+  model=null
   showPrompt=false
   stream=true
   systemPrompt=null
@@ -4263,7 +4263,7 @@
   catalogContext=false
   files=["v"]
   format="text"
-  model="llama3.2"
+  model=null
   showPrompt=false
   stream=true
   systemPrompt=null
@@ -4540,7 +4540,7 @@
   applyDescriptions=false
   directory=null
   format="markdown"
-  model="llama3.2"
+  model=null
   save=false
   showPrompt=false
   temperature=0.3
