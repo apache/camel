@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
@@ -83,6 +84,7 @@ public class TestPluginExporter implements PluginExporter {
         // add default Citrus dependencies as defined in Citrus JBang
         deps.add(asCitrusDependency("citrus-base"));
         deps.add(asCitrusDependency("citrus-junit-jupiter"));
+        deps.add(asCitrusDependency("citrus-http"));
         deps.add(asCitrusDependency("citrus-yaml"));
         deps.add(asCitrusDependency("citrus-xml"));
         deps.add(asCitrusDependency("citrus-groovy"));
@@ -146,14 +148,8 @@ public class TestPluginExporter implements PluginExporter {
         try (Stream<Path> paths = Files.list(testDir)) {
             // Add all supported test sources
             Set<Path> testSources = paths
-                    .filter(path -> !path.getFileName().toString().startsWith("."))
-                    .filter(path -> {
-                        String ext = FileUtils.getFileExtension(path.getFileName().toString());
-                        return CitrusSettings.getTestFileNamePattern(ext)
-                                .stream()
-                                .map(Pattern::compile)
-                                .anyMatch(pattern -> pattern.matcher(path.getFileName().toString()).matches());
-                    }).collect(Collectors.toSet());
+                    .filter(this::isTestSource)
+                    .collect(Collectors.toSet());
 
             for (Path testSource : testSources) {
                 String ext = FileUtils.getFileExtension(testSource.getFileName().toString());
@@ -205,14 +201,8 @@ public class TestPluginExporter implements PluginExporter {
         Set<String> deps = new HashSet<>();
         DelegatingCodeAnalyzer analyzer = new DelegatingCodeAnalyzer();
         try (Stream<Path> paths = Files.list(testDir)) {
-            paths.filter(p -> !p.getFileName().toString().startsWith("."))
-                    .filter(p -> {
-                        String ext = FileUtils.getFileExtension(p.getFileName().toString());
-                        return CitrusSettings.getTestFileNamePattern(ext)
-                                .stream()
-                                .map(Pattern::compile)
-                                .anyMatch(pattern -> pattern.matcher(p.getFileName().toString()).matches());
-                    })
+            paths.filter(this::isTestSource)
+                    .filter(this::isAnalyzerSupported)
                     .forEach(path -> {
                         try {
                             CodeAnalyzer.ScanResult result = analyzer.scan(path);
@@ -222,8 +212,8 @@ public class TestPluginExporter implements PluginExporter {
                             for (String dependency : result.dependencies()) {
                                 deps.add(asScannedDependency(dependency));
                             }
-                        } catch (Exception e) {
-                            // ignore scan errors for unsupported file types or missing catalog
+                        } catch (IOException e) {
+                            // ignore scan errors for missing catalog
                         }
                     });
         } catch (IOException e) {
@@ -238,6 +228,9 @@ public class TestPluginExporter implements PluginExporter {
         if (parts[0].equals("org.citrusframework")) {
             return asCitrusDependency(parts[1]);
         } else if (parts[0].startsWith("org.apache.camel")) {
+            if (parts.length > 2 && parts[1].startsWith("camel-test-infra-")) {
+                return asDependency(parts[0], parts[1], parts[2]);
+            }
             return asDependency(parts[0], parts[1]);
         } else {
             return asDependency(dependency);
@@ -285,6 +278,25 @@ public class TestPluginExporter implements PluginExporter {
         }
 
         return javaClassName;
+    }
+
+    private static final List<String> ANALYZER_SUPPORTED_EXTENSIONS = List.of("yaml", "yml", "xml", "groovy");
+
+    private boolean isTestSource(Path path) {
+        String fileName = path.getFileName().toString();
+        if (fileName.startsWith(".")) {
+            return false;
+        }
+        String ext = FileUtils.getFileExtension(fileName);
+        return CitrusSettings.getTestFileNamePattern(ext)
+                .stream()
+                .map(Pattern::compile)
+                .anyMatch(pattern -> pattern.matcher(fileName).matches());
+    }
+
+    private boolean isAnalyzerSupported(Path path) {
+        String ext = FileUtils.getFileExtension(path.getFileName().toString());
+        return ANALYZER_SUPPORTED_EXTENSIONS.contains(ext);
     }
 
     private String extractArtifactId(String dependency) {

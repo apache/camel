@@ -143,6 +143,8 @@ class TestPluginTest {
                     "Should always include citrus-base as default dependency");
             Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-junit-jupiter:${citrus.version}"),
                     "Should always include citrus-junit-jupiter as default dependency");
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-http:${citrus.version}"),
+                    "Should always include citrus-http as default dependency");
             Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-yaml:${citrus.version}"),
                     "Should always include citrus-yaml as default dependency");
             Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-xml:${citrus.version}"),
@@ -175,9 +177,9 @@ class TestPluginTest {
             Assertions.assertFalse(deps.contains("mvn@test:org.citrusframework:citrus-junit5:${citrus.version}"),
                     "Should not include legacy citrus-junit5 dependency");
             for (String dep : deps) {
+                Assertions.assertFalse(dep.contains("\\"),
+                        "Dependency should not contain backslash escapes: " + dep);
                 if (dep.contains("org.citrusframework")) {
-                    Assertions.assertFalse(dep.contains("\\"),
-                            "Dependency should not contain backslash escapes: " + dep);
                     Assertions.assertTrue(dep.contains("${citrus.version}"),
                             "Dependency should contain valid Maven property reference: " + dep);
                 }
@@ -285,6 +287,120 @@ class TestPluginTest {
         } finally {
             Files.deleteIfExists(sqlTest);
             Files.deleteIfExists(kafkaTest);
+            Files.deleteIfExists(testDir);
+        }
+    }
+
+    @Test
+    public void shouldDetectCamelInfraServiceDependencies() throws IOException {
+        Path testDir = Path.of(".").resolve("test");
+        Files.createDirectories(testDir);
+        Path yamlFile = testDir.resolve("infra-test.citrus.it.yaml");
+        try {
+            Files.writeString(yamlFile, """
+                    name: infra-test
+                    actions:
+                      - camel:
+                          infra:
+                            run:
+                              service: kafka
+                      - echo:
+                          message: "Hello"
+                    """);
+
+            TestPluginExporter exporter = new TestPluginExporter();
+            Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
+
+            Assertions.assertTrue(
+                    deps.stream().anyMatch(d -> d.startsWith("mvn@test:org.apache.camel:camel-test-infra-kafka:")),
+                    "Should auto-detect camel-test-infra-kafka from camel infra service action");
+        } finally {
+            Files.deleteIfExists(yamlFile);
+            Files.deleteIfExists(testDir);
+        }
+    }
+
+    @Test
+    public void shouldDetectCamelEndpointDependencies() throws IOException {
+        Path testDir = Path.of(".").resolve("test");
+        Files.createDirectories(testDir);
+        Path yamlFile = testDir.resolve("camel-endpoint-test.citrus.it.yaml");
+        try {
+            Files.writeString(yamlFile, """
+                    name: camel-endpoint-test
+                    actions:
+                      - send:
+                          endpoint: "camel:kafka:myTopic"
+                    """);
+
+            TestPluginExporter exporter = new TestPluginExporter();
+            Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
+
+            Assertions.assertTrue(
+                    deps.stream().anyMatch(d -> d.startsWith("mvn@test:org.apache.camel:camel-kafka")),
+                    "Should auto-detect camel-kafka from camel endpoint URI");
+        } finally {
+            Files.deleteIfExists(yamlFile);
+            Files.deleteIfExists(testDir);
+        }
+    }
+
+    @Test
+    public void shouldDetectCitrusHttpFromHttpAction() throws IOException {
+        Path testDir = Path.of(".").resolve("test");
+        Files.createDirectories(testDir);
+        Path yamlFile = testDir.resolve("http-test.citrus.it.yaml");
+        try {
+            Files.writeString(yamlFile, """
+                    name: http-test
+                    actions:
+                      - http:
+                          client: "http://localhost:8080"
+                          sendRequest:
+                            POST:
+                              path: "/orders"
+                    """);
+
+            TestPluginExporter exporter = new TestPluginExporter();
+            Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
+
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-http:${citrus.version}"),
+                    "Should include citrus-http when http action is used");
+        } finally {
+            Files.deleteIfExists(yamlFile);
+            Files.deleteIfExists(testDir);
+        }
+    }
+
+    @Test
+    public void shouldKeepVersionForCamelTestInfraArtifacts() throws IOException {
+        Path testDir = Path.of(".").resolve("test");
+        Files.createDirectories(testDir);
+        Path yamlFile = testDir.resolve("infra-version-test.citrus.it.yaml");
+        try {
+            Files.writeString(yamlFile, """
+                    name: infra-version-test
+                    actions:
+                      - camel:
+                          infra:
+                            run:
+                              service: kafka
+                    """);
+
+            TestPluginExporter exporter = new TestPluginExporter();
+            Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
+
+            String infraDep = deps.stream()
+                    .filter(d -> d.contains("camel-test-infra-kafka"))
+                    .findFirst()
+                    .orElse(null);
+            Assertions.assertNotNull(infraDep, "Should contain camel-test-infra-kafka dependency");
+
+            String[] parts = infraDep.split(":");
+            Assertions.assertEquals(4, parts.length,
+                    "camel-test-infra dependency should include version (4 colon-separated parts): " + infraDep);
+        } finally {
+            Files.deleteIfExists(yamlFile);
             Files.deleteIfExists(testDir);
         }
     }
