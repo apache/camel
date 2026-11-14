@@ -112,6 +112,19 @@ class AuthoringToolsTest {
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("directory is required");
     }
 
+    @Test
+    void aReplaceOfOnlyWhitespaceIsKept(@TempDir Path dir) throws Exception {
+        // a blank replace was left out of the call, and the text was deleted instead (CAMEL-26932)
+        Files.writeString(dir.resolve("application.properties"), "greeting=hello TODO world\n", StandardCharsets.UTF_8);
+
+        JsonObject edited = tools.camel_edit_file(null, dir.toString(), "application.properties", "TODO", " ", null,
+                null);
+
+        assertThat(edited.getString("status")).as(edited.toJson()).isEqualTo("edited");
+        assertThat(Files.readString(dir.resolve("application.properties"), StandardCharsets.UTF_8))
+                .isEqualTo("greeting=hello   world\n");
+    }
+
     /** CAMEL-25501: several places of one file in one call, written once. */
     @Test
     void severalEditsOfOneFileAreWrittenOnce(@TempDir Path dir) throws Exception {
