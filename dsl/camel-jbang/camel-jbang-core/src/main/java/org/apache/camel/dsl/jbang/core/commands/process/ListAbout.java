@@ -92,7 +92,8 @@ public class ListAbout extends ProcessWatchCommand {
             text.append(AboutReport.text(title, about));
         });
         if (jsonOutput) {
-            printer().println(all.size() == 1 ? ((JsonObject) all.get(0)).toJson() : all.toJson());
+            // a list, also for one integration, as the other listings (CAMEL-26929)
+            printer().println(all.toJson());
         } else if (!text.isEmpty()) {
             printer().print(text.toString());
         }

@@ -52,6 +52,9 @@ class CamelTraceActionTest extends ActionCommandTestSupport {
 
         JsonArray rows = Jsoner.deserialize(printer.getStdout(), (JsonArray) null);
         JsonObject row = rows.getMap(0);
+        // a number, as in the other listings: it was text (CAMEL-26929)
+        assertThat(row.get("pid")).isInstanceOf(Number.class);
+        assertThat(row.getLong("pid")).isEqualTo(TEST_PID);
         assertThat(row.getString("name")).isEqualTo("orders");
         assertThat(row.getString("status")).isEqualTo("Started");
         assertThat(row.getLong("total")).isEqualTo(7L);

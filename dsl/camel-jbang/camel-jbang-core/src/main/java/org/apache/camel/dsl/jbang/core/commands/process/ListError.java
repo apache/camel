@@ -238,7 +238,14 @@ public class ListError extends ProcessWatchCommand {
 
             if (jsonOutput) {
                 // dump the raw JSON from the error entries
-                printer().println(Jsoner.serialize(display.stream().map(r -> r.rawJson).collect(Collectors.toList())));
+                printer().println(Jsoner.serialize(display.stream().map(r -> {
+                    // which integration the error is of, as in the table (CAMEL-26929)
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", JsonValues.pid(r.pid));
+                    jo.put("name", r.name);
+                    jo.putAll(r.rawJson);
+                    return jo;
+                }).collect(Collectors.toList())));
             } else {
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, display, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),

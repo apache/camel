@@ -30,6 +30,7 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.process.JsonValues;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
@@ -122,7 +123,7 @@ public class LoggerAction extends ActionBaseCommand {
         if (jsonOutput) {
             JsonOutput.printList(printer(), rows.stream().map(r -> {
                 JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
+                jo.put("pid", JsonValues.pid(r.pid));
                 jo.put("name", r.name);
                 jo.put("age", r.ago);
                 jo.put("logger", r.logger);
