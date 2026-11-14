@@ -40,7 +40,7 @@ against 10-40 ms estimated), for a fraction of the build and release work.
 The seconds a daemon saves are small next to the turns of the model. The reason to build it is that a command that
 answers at once can be called after every step. An agent makes fewer mistakes when it validates after every edit, looks
 an option up with `camel doc` instead of guessing it, and checks `camel status` after every reload. Speed alone
-does not make an agent do that, and telling it to is not enough: in a benchmark with a local model, an instruction to
+does not make an agent do that, and telling it to is not enough. In a benchmark with a local model, an instruction to
 check made the model read more, but it checked none of the code it wrote (see the motivation). The checks have to run
 whether the model asks for them or not, for example in a hook of the agent that validates every edited file, and a
 check that runs on every edit is where a fast command pays the most. With the Java client the daemon answers in
@@ -82,9 +82,9 @@ got it wrong; with a hint in the question it read the doc and got it right. It s
 exist, and validated nothing in 9 answers. A lookup also costs context: the doc of the file component is 17K
 characters, and three docs in one answer forced a compaction of the history.
 
-Two full runs on the night of 2026-11-13 then asked the same model 53 questions about 5 example apps, 3 times each,
-the second with an instruction at the start of each conversation: look options up with `camel_catalog_doc`, and check
-every snippet with `camel_validate_source` before you answer. Per run of 159 answers, without and with the
+Two full runs on the night of 2026-11-13 then asked the same model 53 questions about 5 example apps, 3 times each.
+The second run added an instruction at the start of each conversation: look options up with `camel_catalog_doc`, and
+check every snippet with `camel_validate_source` before you answer. Per run of 159 answers, without and with the
 instruction:
 
 - The first question of each conversation, the one with the instruction, was always "what does this app do". The
