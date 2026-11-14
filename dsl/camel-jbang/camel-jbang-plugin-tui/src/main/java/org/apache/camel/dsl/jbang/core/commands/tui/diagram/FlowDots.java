@@ -160,16 +160,24 @@ final class FlowDots {
         if (t <= 0) {
             return from;
         }
-        try {
-            Color.Rgb a = from.toRgb();
-            Color.Rgb b = to.toRgb();
-            return Color.rgb(
-                    a.r() + (int) Math.round((b.r() - a.r()) * t),
-                    a.g() + (int) Math.round((b.g() - a.g()) * t),
-                    a.b() + (int) Math.round((b.b() - a.b()) * t));
-        } catch (RuntimeException e) {
-            // a colour without RGB (the default of the terminal)
+        if (terminalDefault(from) || terminalDefault(to)) {
+            // the default of the terminal has no RGB of its own (toRgb gives white), so it is not mixed
             return t < 0.5 ? from : to;
         }
+        Color.Rgb a = from.toRgb();
+        Color.Rgb b = to.toRgb();
+        return Color.rgb(
+                a.r() + (int) Math.round((b.r() - a.r()) * t),
+                a.g() + (int) Math.round((b.g() - a.g()) * t),
+                a.b() + (int) Math.round((b.b() - a.b()) * t));
+    }
+
+    /** Whether the colour is the default of the terminal, also when a theme names it. */
+    static boolean terminalDefault(Color color) {
+        Color c = color;
+        while (c instanceof Color.Named named) {
+            c = named.defaultValue();
+        }
+        return c instanceof Color.Reset;
     }
 }

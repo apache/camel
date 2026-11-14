@@ -303,4 +303,20 @@ class FlowDotsTest {
     private static int count(String s, char c) {
         return (int) s.chars().filter(ch -> ch == c).count();
     }
+
+    @Test
+    void mixBlendsAnsiAndIndexedColoursThroughTheirRgb() {
+        // black (0,0,0) to white (255,255,255) half way; the ANSI and indexed colours have an RGB too
+        Color mid = FlowDots.mix(Color.rgb(0, 0, 0), Color.rgb(255, 255, 255), 0.5);
+        assertThat(mid).isEqualTo(Color.rgb(128, 128, 128));
+        assertThat(FlowDots.mix(Color.RED, Color.indexed(16), 0.5)).isInstanceOf(Color.Rgb.class);
+    }
+
+    @Test
+    void mixDoesNotBlendTheDefaultOfTheTerminal() {
+        // Color.RESET gives white as its RGB: mixing with it would light up every dot on a dark terminal
+        assertThat(FlowDots.mix(Color.RESET, Color.RED, 0.35)).isEqualTo(Color.RESET);
+        assertThat(FlowDots.mix(Color.RESET, Color.RED, 0.7)).isEqualTo(Color.RED);
+        assertThat(FlowDots.mix(Color.RED, new Color.Named("fg", Color.RESET), 0.35)).isEqualTo(Color.RED);
+    }
 }

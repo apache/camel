@@ -209,8 +209,8 @@ and on (kept for the next start).
   together they are. They are red when most of the messages fail there.
   In compact the head of an arrow lights up as a dot comes in. In bare
   and overview the lines light up instead, as a dot would look like the
-  mark of a step there, and in the overview, which has hardly any lines
-  between its steps, the light passes over the steps themselves.
+  mark of a step there. The overview has hardly any lines between its
+  steps, so there the light passes over the steps themselves.
 - **In the topology** the dots go along the edges into the routes that
   get messages, at the pace of the route they go into. An edge from a
   route that gets no messages has none, even when the route it goes
