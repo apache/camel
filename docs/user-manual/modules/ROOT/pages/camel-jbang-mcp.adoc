@@ -417,7 +417,9 @@ passed as the file name, is answered with the argument the source goes in.
   files up front (`routeFiles`, `configFiles`) and, when an integration is selected, which file and line each of its
   routes was loaded from, mapped from the runtime's location (a jar entry of an exported project, a classpath or
   file resource) onto the source under `src/main`. With `file`, a path relative to the directory as the list names
-  it, the content of that file. The `.camel` folders are not listed, but counted (`consumedFiles`): a file consumer
+  it, the content of that file: all of a small file as it is, else at most 2000 lines and 256 KB, from the line
+  `offset` (from 1) and up to `limit` lines, with the answer saying which lines it has and the `offset` to read
+  on from. The `.camel` folders are not listed, but counted (`consumedFiles`): a file consumer
   moves each file it reads into `.camel` (unless `noop=true`), so a data folder whose files were all read is not
   reported as empty.
 

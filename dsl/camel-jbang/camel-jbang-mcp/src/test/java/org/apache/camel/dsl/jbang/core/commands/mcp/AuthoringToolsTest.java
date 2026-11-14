@@ -103,12 +103,13 @@ class AuthoringToolsTest {
         assertThat(invalid.getString("status")).isEqualTo("invalid");
         assertThat(Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8)).isEqualTo(route);
 
-        JsonObject listed = tools.camel_get_files(null, dir.toString(), null);
+        JsonObject listed = tools.camel_get_files(null, dir.toString(), null, null, null);
         assertThat(listed.getInteger("totalFiles")).isEqualTo(1);
-        assertThat(tools.camel_get_files(null, dir.toString(), "demo.camel.yaml").getString("content")).isEqualTo(route);
+        assertThat(tools.camel_get_files(null, dir.toString(), "demo.camel.yaml", null, null).getString("content"))
+                .isEqualTo(route);
         assertThat(tools.camel_validate_source(null, null, dir.toString(), "demo.camel.yaml", null, null).getBoolean("valid"))
                 .isTrue();
-        assertThatThrownBy(() -> tools.camel_get_files(null, null, null))
+        assertThatThrownBy(() -> tools.camel_get_files(null, null, null, null, null))
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("directory is required");
     }
 

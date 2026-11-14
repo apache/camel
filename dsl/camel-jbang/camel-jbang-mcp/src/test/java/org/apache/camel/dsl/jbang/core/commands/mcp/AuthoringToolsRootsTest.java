@@ -78,7 +78,7 @@ class AuthoringToolsRootsTest {
     void aRelativeFileIsReadAndWrittenInTheClientsRoot() throws Exception {
         FakeRoots roots = FakeRoots.answering(List.of(new Root("project", workspace.toUri().toString())));
 
-        JsonObject read = tools.camel_get_files(roots, null, "camel/main-route.yaml");
+        JsonObject read = tools.camel_get_files(roots, null, "camel/main-route.yaml", null, null);
         assertThat(read.getString("content")).isEqualTo(ROUTE);
         JsonObject validated = tools.camel_validate_source(null, roots, null, "camel/main-route.yaml", null, null);
         assertThat(validated.getBoolean("valid")).as(validated.toJson()).isTrue();
@@ -99,9 +99,9 @@ class AuthoringToolsRootsTest {
         Path outside = workspace.resolve("other.yaml");
         Files.writeString(outside, ROUTE, StandardCharsets.UTF_8);
 
-        assertThatThrownBy(() -> tools.camel_get_files(roots, null, outside.toString()))
+        assertThatThrownBy(() -> tools.camel_get_files(roots, null, outside.toString(), null, null))
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("is not inside the directory");
-        assertThatThrownBy(() -> tools.camel_get_files(roots, null, "../other.yaml"))
+        assertThatThrownBy(() -> tools.camel_get_files(roots, null, "../other.yaml", null, null))
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("file must stay inside the directory");
     }
 
@@ -109,9 +109,9 @@ class AuthoringToolsRootsTest {
     void theRootsAreAskedForOnlyWhenTheCallNamesNoDirectory() {
         FakeRoots roots = FakeRoots.answering(List.of(new Root("project", workspace.toUri().toString())));
 
-        tools.camel_get_files(roots, workspace.toString(), "camel/main-route.yaml");
+        tools.camel_get_files(roots, workspace.toString(), "camel/main-route.yaml", null, null);
         assertThat(roots.asked).hasValue(0);
-        tools.camel_get_files(roots, null, workspace.resolve("camel/main-route.yaml").toString());
+        tools.camel_get_files(roots, null, workspace.resolve("camel/main-route.yaml").toString(), null, null);
         assertThat(roots.asked).as("an absolute file inside the root").hasValue(1);
     }
 
@@ -121,7 +121,7 @@ class AuthoringToolsRootsTest {
             throw new AssertionError("a client that did not declare roots is not asked for them");
         });
 
-        assertThatThrownBy(() -> tools.camel_get_files(roots, null, "camel/main-route.yaml"))
+        assertThatThrownBy(() -> tools.camel_get_files(roots, null, "camel/main-route.yaml", null, null))
                 .isInstanceOf(ToolCallException.class).hasMessageStartingWith("directory is required");
         assertThat(roots.asked).hasValue(0);
     }
@@ -139,7 +139,7 @@ class AuthoringToolsRootsTest {
         FakeRoots silent = new FakeRoots(true, () -> Uni.createFrom().nothing());
 
         long start = System.nanoTime();
-        assertThatThrownBy(() -> tools.camel_get_files(silent, null, "camel/main-route.yaml"))
+        assertThatThrownBy(() -> tools.camel_get_files(silent, null, "camel/main-route.yaml", null, null))
                 .isInstanceOf(ToolCallException.class).hasMessageStartingWith("directory is required");
         assertThat(System.nanoTime() - start).isLessThan(AuthoringTools.ROOTS_WAIT.plusSeconds(10).toNanos());
     }

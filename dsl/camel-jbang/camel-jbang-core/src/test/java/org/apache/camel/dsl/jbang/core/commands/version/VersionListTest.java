@@ -31,6 +31,16 @@ import org.junit.jupiter.api.Test;
 class VersionListTest extends CamelCommandBaseTestSupport {
 
     @Test
+    void aVersionListCreatedWithoutItsCommandLineHasItsOptionGroups() {
+        // the MCP server creates the command itself: camel_version_list failed with a NullPointerException
+        VersionList versionList = new VersionList(new CamelJBangMain().withPrinter(printer));
+
+        Assertions.assertThat(versionList.mavenResolver).isNotNull();
+        Assertions.assertThat(versionList.mavenResolver.download()).isTrue();
+        Assertions.assertThat(versionList.quarkusExtensionRegistry).isNotNull();
+    }
+
+    @Test
     void springbootVersionIsAvailable() throws Exception {
         VersionList versionList = new VersionList(new CamelJBangMain().withPrinter(printer));
         versionList.sort = "version";
