@@ -135,6 +135,8 @@ public class RouteWatcherReloadDataDirTest extends ContextTestSupport {
         Files.writeString(dir.resolve(".git/index"), "index");
         Files.createDirectories(dir.resolve(".camel"));
         Files.writeString(dir.resolve(".camel/order-1.json"), "{}");
+        Files.createDirectories(dir.resolve(".camel-jbang"));
+        Files.writeString(dir.resolve(".camel-jbang/app.lock"), "lock");
         assertThat(scanNames()).isEmpty();
 
         // the route is still watched
