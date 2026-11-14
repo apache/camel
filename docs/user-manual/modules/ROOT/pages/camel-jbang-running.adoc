@@ -150,6 +150,11 @@ NOTE: Use the `=` sign directly after `--property` (no space).
 
 If both are used, the properties are merged into a single `application.properties` file.
 
+The options of `camel run` can also be set in `application.properties`, such as `camel.main.tracing=true` for
+`--trace` or `camel.jbang.console=true` for `--console`. An option given on the command line wins over the file,
+which is the default for the options that are not given: with `camel.main.tracing=false` in the file,
+`camel run --trace` traces.
+
 [#_using_profiles]
 == Using profiles
 

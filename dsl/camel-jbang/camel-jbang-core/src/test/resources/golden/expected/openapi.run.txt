@@ -43,3 +43,4 @@ camel.main.name=greeting
 camel.main.routesIncludePattern=file:${dir}/generated-openapi.yaml,file:src/test/resources/golden/openapi/greeting.camel.yaml
 
 # override properties
+camel.jbang.openApi=src/test/resources/golden/openapi/api.yaml

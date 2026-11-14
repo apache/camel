@@ -1052,6 +1052,8 @@ public class Run extends CamelCommand implements CommandLifecycle {
      */
     RunRequest toRunRequest(Path baseDir) {
         RunRequest request = new RunRequest();
+        // the options given on the command line win over the application properties
+        request.givenOptions = givenOptions();
         request.workDir = workDir;
         request.baseDir = baseDir;
         request.files = files;
@@ -1143,14 +1145,18 @@ public class Run extends CamelCommand implements CommandLifecycle {
      */
     void applyProfileProperties(RunRequest request, Properties answer) {
         if (answer != null) {
-            // logging level/color may be configured in the properties file
-            loggingOptions.loggingLevel = answer.getProperty("loggingLevel", loggingOptions.loggingLevel);
-            loggingOptions.loggingColor
-                    = "true"
-                            .equals(answer.getProperty("loggingColor", loggingOptions.loggingColor ? "true" : "false"));
-            loggingOptions.loggingJson
-                    = "true"
-                            .equals(answer.getProperty("loggingJson", loggingOptions.loggingJson ? "true" : "false"));
+            // logging level/color may be configured in the properties file, unless given on the command line
+            if (!request.given("logging-level")) {
+                loggingOptions.loggingLevel = answer.getProperty("loggingLevel", loggingOptions.loggingLevel);
+            }
+            if (!request.given("logging-color")) {
+                loggingOptions.loggingColor = "true"
+                        .equals(answer.getProperty("loggingColor", loggingOptions.loggingColor ? "true" : "false"));
+            }
+            if (!request.given("logging-json")) {
+                loggingOptions.loggingJson = "true"
+                        .equals(answer.getProperty("loggingJson", loggingOptions.loggingJson ? "true" : "false"));
+            }
         }
         if (answer != null) {
             mavenResolver = MavenResolverMixin.of(answer, mavenResolver);
@@ -1162,12 +1168,17 @@ public class Run extends CamelCommand implements CommandLifecycle {
             // a JVM this command started runs the integration itself: the properties must not make it start
             // another JVM, in the background or with a debugger, and that one another, without end
             if (!spawned) {
-                background = "true".equals(answer.getProperty(BACKGROUND, background ? "true" : "false"));
+                // and an option given on the command line wins over the file
+                if (!request.given("background")) {
+                    background = "true".equals(answer.getProperty(BACKGROUND, background ? "true" : "false"));
+                }
                 String wait = answer.getProperty(BACKGROUND_WAIT);
-                if (wait != null) {
+                if (wait != null && !request.given("background-wait")) {
                     backgroundWait = BackgroundWait.parse(wait);
                 }
-                jvmDebugPort = parseJvmDebugPort(answer.getProperty(JVM_DEBUG, Integer.toString(jvmDebugPort)));
+                if (!request.given("jvm-debug")) {
+                    jvmDebugPort = parseJvmDebugPort(answer.getProperty(JVM_DEBUG, Integer.toString(jvmDebugPort)));
+                }
             }
         }
         // what this command reads itself to run in another JVM (with another Camel version)

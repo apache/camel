@@ -43,3 +43,4 @@ camel.main.name=source-dir
 camel.main.routesIncludePattern=file:src/test/resources/golden/sourcedir/routes/**?optional=true
 
 # override properties
+camel.jbang.sourceDir=src/test/resources/golden/sourcedir/routes

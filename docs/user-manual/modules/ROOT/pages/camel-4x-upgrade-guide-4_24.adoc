@@ -1579,6 +1579,17 @@ The producer no longer reads the `CamelOaimphIgnoreSSLWarnings` header, and the 
 constant is removed. Use the `ignoreSSLWarnings` option of the endpoint instead; when only some repositories need it,
 send to them through an endpoint URI that sets the option.
 
+=== camel-jbang - camel run options win over application.properties
+
+An option given to `camel run` on the command line now wins over the same setting in `application.properties`. Before,
+the file won for most options: with `camel.main.tracing=false` in the file, `--trace` printed nothing, and with
+`camel.jbang.console=false`, `--console` had no effect. This applies to `--trace`, `--backlog-trace`, `--console`,
+`--health`, `--metrics`, `--mcp`, `--openapi-ui`, `--stub`, `--modeline`, `--ignore-loading-error`, `--lazy-bean`,
+`--prompt`, `--gav`, `--open-api`, `--verbose`, `--jfr`, `--source-dir`, `--data-dir`, `--exclude`,
+`--camel-version`, `--kamelets-version`, `--java-version`, `--background`, `--background-wait`, `--jvm-debug`, the
+Maven settings options and the logging options. An
+option that is not given still takes its value from the file.
+
 === camel-clickhouse - a query in a binary format returns a byte[] body
 
 A `query` with a binary `format` (such as `RowBinary`, `Native`, `Parquet`, `Arrow` or `Avro`) now returns the result
