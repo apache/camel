@@ -80,6 +80,18 @@ a|* checkpointing by checkpointBatchSize and checkpointBatchTimeout
 * an asynchronous downstream step
 |CAMEL-25683, CAMEL-25738, CAMEL-25781
 
+|camel-kafka
+|`KafkaWorld` (`KafkaConsumerDstTest`)
+|FakeKafka: a topic with one or two partitions and a consumer group (classic protocol, eager rebalance), behind the Consumer interface of KafkaClientFactory
+a|* commits by Kafka's auto-commit, by manual synchronous or asynchronous commits in the route, and per batch with batching=true
+* breakOnFirstError
+* pollOnError ERROR_HANDLER, DISCARD, RETRY and RECONNECT
+* a poll that fails while a batch is incomplete
+* route restart, also while the consumer polls
+* route suspend and resume, with a second request while the consumer handles the first
+* partitions revoked and assigned again by a rebalance while records are processed
+|CAMEL-25313, CAMEL-25756
+
 |camel-kafka-share
 |`KafkaShareWorld` (`KafkaShareConsumerDstTest`)
 |FakeShareGroup: a share group (KIP-932) of one topic with one partition, behind ShareConsumer
