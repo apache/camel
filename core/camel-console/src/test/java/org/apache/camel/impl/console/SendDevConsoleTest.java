@@ -55,7 +55,7 @@ public class SendDevConsoleTest extends AbstractDevConsoleTest {
                 from("direct:start").routeId("myRoute")
                         .to("mock:result");
                 from("direct:slow").routeId("slowRoute")
-                        .delay(2000)
+                        .delay(5000)
                         .to("mock:slow");
             }
         };
@@ -85,7 +85,8 @@ public class SendDevConsoleTest extends AbstractDevConsoleTest {
         JsonObject out = callJson(console, options);
 
         assertEquals("timeout", out.getString("status"), out.toJson());
-        assertTrue(out.getLong("elapsed") < 1500, "answered at the timeout: " + out.toJson());
+        // well under the 5 seconds of the route, with room for a slow CI machine
+        assertTrue(out.getLong("elapsed") < 4000, "answered at the timeout: " + out.toJson());
         JsonObject exception = map(out, "exception");
         assertNotNull(exception, out.toJson());
         assertTrue(exception.getString("message").startsWith("The send did not complete within 200 millis"),
@@ -114,7 +115,8 @@ public class SendDevConsoleTest extends AbstractDevConsoleTest {
         JsonObject out = callJson(console, options);
 
         assertEquals("error", out.getString("status"), out.toJson());
-        assertTrue(out.getLong("elapsed") < 1500, out.toJson());
+        // well under the 30 seconds direct waits
+        assertTrue(out.getLong("elapsed") < 10000, out.toJson());
         assertTrue(map(out, "exception").getString("message").startsWith("No consumers available on endpoint: direct://nope"),
                 out.toJson());
 

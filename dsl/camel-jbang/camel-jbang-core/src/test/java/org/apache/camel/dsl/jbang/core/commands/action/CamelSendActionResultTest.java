@@ -76,6 +76,11 @@ class CamelSendActionResultTest extends ActionCommandTestSupport {
                 .isInstanceOfSatisfying(CliException.class,
                         e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.USAGE))
                 .hasMessage("--timeout must be more than 0, was: 0");
+        assertThatThrownBy(() -> callWithResponse(command("orders", "--endpoint=direct:start", "--timeout=-1"),
+                answer("success")))
+                .isInstanceOfSatisfying(CliException.class,
+                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.USAGE))
+                .hasMessage("--timeout must be more than 0, was: -1");
     }
 
     @Test
