@@ -82,6 +82,12 @@ public class DefaultMessageHistory implements MessageHistory {
     }
 
     @Override
+    public long getElapsedSinceCreated() {
+        // the monotonic clock, as the node processing time is measured
+        return clock.elapsed();
+    }
+
+    @Override
     public Message getMessage() {
         return message;
     }
