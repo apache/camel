@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -140,13 +141,35 @@ public final class IOHelper {
         return toString(reader, INITIAL_OFFSET);
     }
 
+    /**
+     * Skips exactly {@code offset} characters of the reader.
+     * <p/>
+     * {@link Reader#skip(long)} is allowed to skip fewer characters than asked for, so a single call leaves the reader
+     * at an unknown position; this keeps calling it until the whole offset has been skipped.
+     *
+     * @param  reader      the reader to advance
+     * @param  offset      the number of characters to skip; zero or negative does nothing
+     * @throws IOException if the reader fails, or ends before {@code offset} characters were skipped
+     */
+    public static void skipFully(Reader reader, long offset) throws IOException {
+        long remaining = offset;
+        while (remaining > 0) {
+            long skipped = reader.skip(remaining);
+            if (skipped <= 0) {
+                throw new EOFException(
+                        "Cannot skip " + offset + " characters: the reader ended after " + (offset - remaining));
+            }
+            remaining -= skipped;
+        }
+    }
+
     public static String toString(BufferedReader reader, long offset) throws IOException {
         StringBuilder sb = new StringBuilder(1024);
 
-        reader.skip(offset);
-
         char[] buf = new char[1024];
         try {
+            // inside the try, so the reader is closed when a stale offset runs past the end of the content
+            skipFully(reader, offset);
             int len;
             // read until we reach then end which is the -1 marker
             while ((len = reader.read(buf)) != -1) {
