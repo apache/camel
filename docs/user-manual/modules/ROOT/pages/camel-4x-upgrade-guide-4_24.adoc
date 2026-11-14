@@ -1429,6 +1429,13 @@ NOTE: The annotation default (`appliesTo = {}`) is not equivalent to `appliesTo:
 An unset annotation value means no filtering (backward compatible — the plugin is loaded for `run` and `export`),
 whereas an explicit empty list in the config restricts the plugin to its own command only.
 
+=== camel-jbang - camel run exits with 1 when the integration fails to start
+
+When `camel run` cannot start the integration, such as for a route that cannot be created or started, it now exits
+with code `1` (fix the route) instead of `70` (internal error), and prints the error as one `ERROR:` line on stderr.
+The stack trace is in the log of the integration, and is no longer printed a second time on stderr (add `--verbose`
+for it). Scripts that checked for `70` after a failed start should check for `1`.
+
 === camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
 
 A circuit breaker in the steps of a `doTry` no longer ends that `doTry` for the steps after it. Before, when the
