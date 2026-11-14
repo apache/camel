@@ -131,6 +131,12 @@ class DiagramTab extends AbstractDiagramTab {
                 architecture.refresh();
                 return true;
             }
+            if (ke.isCharIgnoreCase('w')) {
+                // the messages moving between the groups: one setting with the topology's and the route's
+                diagram.zoom.flow().setEnabled(!diagram.zoom.flow().isEnabled());
+                ctx.backgroundExecutor.execute(diagram.zoom::persist);
+                return true;
+            }
             return architecture.handleKeyEvent(ke);
         }
         if (diagram.isShowDiagram() && ke.isChar('s')) {
@@ -352,6 +358,12 @@ class DiagramTab extends AbstractDiagramTab {
     // ---- zoom levels (CAMEL-25147) ----
 
     /** The level shown: the capability groups, the topology of all routes, or one route's diagram. */
+    @Override
+    boolean isFlowFrameDue() {
+        // the architecture draws the messages moving between its groups with a flow of its own
+        return architecture.isActive() ? architecture.isFlowFrameDue() : super.isFlowFrameDue();
+    }
+
     Level level() {
         if (architecture.isActive()) {
             return Level.ARCHITECTURE;
@@ -537,6 +549,7 @@ class DiagramTab extends AbstractDiagramTab {
                     new SubViewBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"),
                     new SubViewBar.Toggle("x", "errors", diagram.isShowErrorPaths() ? "on" : "off"),
                     new SubViewBar.Toggle("e", "external", architecture.isShowExternal() ? "edges" : "off"),
+                    new SubViewBar.Toggle("w", "flow", diagram.zoom.flow().isEnabled() ? "on" : "off"),
                     new SubViewBar.Toggle("+/-", "", architecture.zoomLabel()));
             case TOPOLOGY -> {
                 List<SubViewBar.Toggle> toggles = new ArrayList<>();
@@ -601,6 +614,7 @@ class DiagramTab extends AbstractDiagramTab {
         }
 
         if (architecture.isActive()) {
+            architecture.setFlowOn(diagram.zoom.flow().isEnabled());
             architecture.render(frame, area, info.name, List.of());
             return;
         }

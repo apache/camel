@@ -201,7 +201,8 @@ route says how many of its steps were reached with more than one type
 
 With the metrics on, a route diagram and the topology show where the
 messages go while the integration runs, so the busy part stands out at a
-glance. `w` turns it off and on (kept for the next start).
+glance; the architecture shows it between its groups. `w` turns it off
+and on (kept for the next start).
 
 - **Dots on the arrows** move along an arrow while messages reach the
   step below it: the more messages a second, the faster and closer
@@ -214,6 +215,12 @@ glance. `w` turns it off and on (kept for the next start).
   get messages, at the pace of the route they go into. An edge from a
   route that gets no messages has none, even when the route it goes
   into gets them from another one.
+- **In the architecture** the dots go along a link at the pace of the
+  messages into the routes of the group it goes to, from the routes of
+  the group it comes from; with `x` on, red dots go into the Error
+  handling box at the pace the routes of a group fail. It needs the
+  integration running: a source route counts when it is matched to a
+  running route.
 - **Stuck** (a route diagram): a step where exchanges wait and none has finished for a
   few seconds has a spinner in its top border, with how many wait and
   how long ago the step last finished one (`⠹ 3 inflight · 12s`), or

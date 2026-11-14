@@ -72,6 +72,7 @@ public class TopologyDiagramWidget implements Widget {
     private Map<TopologyLayoutNode, List<String>> errorLabels;
     private RouteDensity density = RouteDensity.DETAILED;
     private FlowAnimation flow;
+    private FlowFeed flowFeed;
     private final List<FlowDots.Path> flowArrows = new ArrayList<>();
 
     public record NodeBox(String routeId, int startRow, int endRow, int startCol, int endCol, int layer) {
@@ -277,7 +278,16 @@ public class TopologyDiagramWidget implements Widget {
      * messages, faster and closer together the more messages a second the route gets.
      */
     public TopologyDiagramWidget withFlow(FlowAnimation flow) {
-        this.flow = flow != null && flow.isEnabled() && showMetrics ? flow : null;
+        return withFlow(flow, null);
+    }
+
+    /**
+     * The messages moving along the edges, at the counts of the boxes (the routes, with the metrics on), or of the feed
+     * when the boxes are not the running routes (the architecture).
+     */
+    public TopologyDiagramWidget withFlow(FlowAnimation flow, FlowFeed feed) {
+        this.flowFeed = feed;
+        this.flow = flow != null && flow.isEnabled() && (showMetrics || feed != null) ? flow : null;
         return this;
     }
 
@@ -680,6 +690,10 @@ public class TopologyDiagramWidget implements Widget {
 
     /** The counts of the routes to the flow, and of the external systems that have counts. */
     private void updateFlow() {
+        if (flowFeed != null) {
+            flow.update(flowFeed.readings());
+            return;
+        }
         Map<String, FlowAnimation.Reading> readings = new HashMap<>();
         for (TopologyLayoutNode node : layout.nodes) {
             String key = flowKey(node);
@@ -704,6 +718,14 @@ public class TopologyDiagramWidget implements Widget {
     private String flowKey(TopologyLayoutEdge edge) {
         if (flow == null || edge.to == null || edge.from == null) {
             return null;
+        }
+        if (flowFeed != null) {
+            FlowFeed.Edge e = flowFeed.edges().get(FlowFeed.edgeId(edge.from.routeId, edge.to.routeId));
+            if (e == null || !e.senders().isEmpty() && e.senders().stream().map(flow::get)
+                    .noneMatch(t -> t != null && t.rate() > 0)) {
+                return null;
+            }
+            return e.key();
         }
         String from = flowKey(edge.from);
         String to = flowKey(edge.to);

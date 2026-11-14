@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import dev.tamboui.buffer.Buffer;
@@ -100,6 +101,43 @@ class TopologyFlowTest {
             clock.addAndGet(1000);
         }
         assertThat(flow.isAnimating()).isFalse();
+    }
+
+    @Test
+    void aFeedMovesTheEdgesOfBoxesThatAreNotRoutes() {
+        // the architecture: boxes of groups, no metrics of their own, the counts from a feed
+        TopologyLayoutResult layout = layout(0, 0, 0);
+        FlowAnimation idleFlow = new FlowAnimation(clock::get);
+        int moving = 0;
+        int idle = 0;
+        for (int reload = 0; reload < 3; reload++) {
+            Object source = new Object();
+            for (int frame = 0; frame < 12; frame++) {
+                moving += count(screen(feedBuffer(flow, layout, feed(source, reload * 40L, reload * 40L))), '●');
+                idle += count(screen(feedBuffer(idleFlow, layout, feed(source, reload * 40L, 0))), '●');
+                clock.addAndGet(FlowAnimation.FRAME_MS);
+            }
+            clock.addAndGet(1000 - 12 * FlowAnimation.FRAME_MS);
+        }
+        assertThat(moving).isPositive();
+        assertThat(idle).as("its sender sends nothing").isZero();
+    }
+
+    /** The link a > b moves at the messages into b, sent by the route of a. */
+    private static FlowFeed feed(Object source, long intoB, long sentByA) {
+        return new FlowFeed(
+                Map.of("link/b", new FlowAnimation.Reading(source, intoB, 0, 0),
+                        "route/a", new FlowAnimation.Reading(source, sentByA, 0, 0)),
+                Map.of(FlowFeed.edgeId("a", "b"), new FlowFeed.Edge("link/b", List.of("route/a"))));
+    }
+
+    private Buffer feedBuffer(FlowAnimation flow, TopologyLayoutResult layout, FlowFeed feed) {
+        TopologyDiagramWidget widget = new TopologyDiagramWidget(layout, engine.getNodeWidth(), -1, 0, 0, false, false)
+                .withFlow(flow, feed);
+        Rect area = new Rect(0, 0, 120, 40);
+        Buffer buffer = Buffer.empty(area);
+        widget.render(area, buffer);
+        return buffer;
     }
 
     /** Route a calls b; a reload lays it out anew, with new nodes. */

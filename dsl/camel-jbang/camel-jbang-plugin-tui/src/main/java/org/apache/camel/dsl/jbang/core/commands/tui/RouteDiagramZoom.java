@@ -41,6 +41,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.apache.camel.diagram.RouteErrorFrame;
 import org.apache.camel.diagram.TopologyErrorFrame;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.FlowAnimation;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.FlowFeed;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget;
 
@@ -82,6 +83,7 @@ final class RouteDiagramZoom {
     private volatile boolean panels = true;
     // the messages moving through the route on screen: drawn and moved on the UI thread only
     private final FlowAnimation flow = new FlowAnimation();
+    private volatile FlowFeed flowFeed;
     // the routes the History tab laid out whole, to lay them out again when the zoom changes
     private volatile Whole whole;
 
@@ -196,10 +198,19 @@ final class RouteDiagramZoom {
     }
 
     /**
-     * The messages moving through the route diagram, with the metrics on: dots on the arrows, the busy steps warmer.
+     * The messages moving through the route diagram and the topology, with the metrics on: dots on the arrows.
      */
     FlowAnimation flow() {
         return flow;
+    }
+
+    /** The counts the dots of a topology whose boxes are not the running routes (the architecture) move at, or null. */
+    FlowFeed flowFeed() {
+        return flowFeed;
+    }
+
+    void setFlowFeed(FlowFeed flowFeed) {
+        this.flowFeed = flowFeed;
     }
 
     boolean isFit() {
