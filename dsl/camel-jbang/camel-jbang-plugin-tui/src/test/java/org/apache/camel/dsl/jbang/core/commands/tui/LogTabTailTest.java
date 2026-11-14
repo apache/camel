@@ -19,10 +19,13 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -64,6 +67,63 @@ class LogTabTailTest {
         List<String> all = new ArrayList<>(older);
         all.addAll(lines);
         assertThat(all).isEqualTo(written);
+    }
+
+    @Test
+    void followingALogThatGrewALotWhileTheTabWasHiddenShowsItsNewestLinesAtOnce() throws Exception {
+        Path log = dir.resolve("1234.log");
+        List<String> written = new ArrayList<>();
+        append(log, written, 100);
+        LogTab tab = newTab();
+        tab.refreshFromFile("1234", log);
+
+        // another tab was shown: the log was not read while it grew
+        append(log, written, 4 * LogTab.MAX_READ_BYTES / 100);
+        tab.refreshFromFile("1234", log);
+
+        List<LogEntry> entries = tab.entriesForTesting();
+        assertThat(entries.get(entries.size() - 1).raw).as("the newest line, not one read since long ago")
+                .isEqualTo(written.get(written.size() - 1));
+
+        // the lines it skipped are still there for Home
+        List<String> older = new ArrayList<>();
+        tab.readOlderLogLines(log, true, older);
+        List<String> all = new ArrayList<>(older);
+        entries.forEach(e -> all.add(e.raw));
+        assertThat(all).isEqualTo(written);
+    }
+
+    @Test
+    void pausedTheLogIsReadOnFromWhereItWas() throws Exception {
+        Path log = dir.resolve("1234.log");
+        List<String> written = new ArrayList<>();
+        append(log, written, 100);
+        LogTab tab = newTab();
+        tab.refreshFromFile("1234", log);
+        tab.handleKeyEvent(KeyEvent.ofChar(' ', KeyModifiers.NONE));
+
+        append(log, written, 4 * LogTab.MAX_READ_BYTES / 100);
+        tab.refreshFromFile("1234", log);
+
+        List<LogEntry> entries = tab.entriesForTesting();
+        assertThat(entries.get(0).raw).as("the lines on screen stay").isEqualTo(written.get(0));
+        assertThat(entries.size()).as("read on a part at a time").isLessThan(written.size());
+    }
+
+    private static LogTab newTab() {
+        return new LogTab(new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of())));
+    }
+
+    /** Appends about {@code count} lines of a hundred bytes each. */
+    private static void append(Path log, List<String> written, int count) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            String line = "2026-11-14 20:08:17.646  WARN 718778 --- [timer://orders] TimerConsumer : Error processing "
+                          + written.size();
+            written.add(line);
+            sb.append(line).append('\n');
+        }
+        Files.writeString(log, sb, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
 
     @Test

@@ -82,6 +82,8 @@ class LogTab extends AbstractTab {
     private volatile boolean loadAllRequested;
     /** How much of the end of a log the tab reads when it opens it. */
     static final int INITIAL_TAIL_BYTES = 32 * 1024;
+    /** The most of a log read at a refresh, so a refresh does not block on a log that grew a lot. */
+    static final int MAX_READ_BYTES = 64 * 1024;
 
     private long logFilePos = -1;
     private long logFileStartPos = -1;
@@ -642,6 +644,11 @@ class LogTab extends AbstractTab {
         frame.renderStatefulWidget(list, popup, logLevelListState);
     }
 
+    /** The entries the tab shows (tests). */
+    List<LogEntry> entriesForTesting() {
+        return filteredLogEntries;
+    }
+
     /** The entries of the tab, as read from the log file (tests). */
     void setEntriesForTesting(List<LogEntry> entries) {
         mutableFilteredEntries.clear();
@@ -680,6 +687,10 @@ class LogTab extends AbstractTab {
     }
 
     void refreshFromFile(String pid, String fileName) {
+        refreshFromFile(pid, CommandLineHelper.getCamelDir().resolve(fileName));
+    }
+
+    void refreshFromFile(String pid, Path logFile) {
         if (!pid.equals(logFilePid)) {
             mutableFilteredEntries.clear();
             logFilePos = -1;
@@ -688,13 +699,25 @@ class LogTab extends AbstractTab {
             logLoading = true;
         }
         boolean changed = false;
+        if (followMode && pid.equals(logFilePid) && logFilePos >= 0 && unread(logFile) > MAX_READ_BYTES) {
+            // far behind, as after a while on another tab (the log is read while it is on screen): it starts again at
+            // the end of the log, as when the tab opens, rather than play the lines it missed while it says it follows;
+            // Home reads them
+            mutableFilteredEntries.clear();
+            logFilePos = -1;
+            logFileStartPos = -1;
+            logTotalLinesRead = 0;
+            evictedSeen = 0;
+            logLineBuffer.setLength(0);
+            changed = true;
+        }
         int olderRead = 0;
         boolean loadAll = loadAllRequested;
         if (logFileStartPos > 0
                 && (loadAll || (!followMode && scroll == 0))) {
             loadAllRequested = false;
             List<String> olderLines = new ArrayList<>();
-            readOlderLogLines(fileName, loadAll, olderLines);
+            readOlderLogLines(logFile, loadAll, olderLines);
             if (!olderLines.isEmpty()) {
                 changed = true;
                 List<LogEntry> olderEntries = new ArrayList<>();
@@ -707,7 +730,7 @@ class LogTab extends AbstractTab {
             }
         }
         List<String> newRawLines = new ArrayList<>();
-        readNewLogLinesFromFile(pid, fileName, newRawLines);
+        readNewLogLines(pid, logFile, newRawLines);
         changed |= !newRawLines.isEmpty();
         if (changed) {
             logTotalLinesRead += newRawLines.size();
@@ -727,6 +750,15 @@ class LogTab extends AbstractTab {
             }
         }
         logLoading = false;
+    }
+
+    /** How much of the log is written beyond what the tab read. */
+    private long unread(Path logFile) {
+        try {
+            return Files.size(logFile) - logFilePos;
+        } catch (IOException e) {
+            return 0;
+        }
     }
 
     void readNewLogLines(String pid, List<String> newLines) {
@@ -758,7 +790,7 @@ class LogTab extends AbstractTab {
             }
             raf.seek(logFilePos);
             // Cap per-tick read to 64KB to avoid blocking the refresh cycle
-            byte[] buf = new byte[(int) Math.min(length - logFilePos, 64 * 1024)];
+            byte[] buf = new byte[(int) Math.min(length - logFilePos, MAX_READ_BYTES)];
             raf.readFully(buf);
             int from = 0;
             if (skipPartialLine) {
@@ -800,10 +832,6 @@ class LogTab extends AbstractTab {
             }
         }
         return -1;
-    }
-
-    void readOlderLogLines(String fileName, boolean loadAll, List<String> olderLines) {
-        readOlderLogLines(CommandLineHelper.getCamelDir().resolve(fileName), loadAll, olderLines);
     }
 
     void readOlderLogLines(Path logFile, boolean loadAll, List<String> olderLines) {
