@@ -34,6 +34,7 @@ import org.springframework.vault.support.VaultResponse;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -169,6 +170,26 @@ class HashicorpVaultClientTest {
         assertEquals(Map.of("jwt", "service-account-jwt", "role", "camel"),
                 vault.requests("auth/kubernetes/login").get(0).json());
         assertEquals("kubernetes-token", vault.requests("secret/data/api").get(0).token());
+    }
+
+    @Test
+    void aClientWithoutCamelContextRenewsItsTokenOnADaemonThreadAndRevokesItOnClose() {
+        vault.on("auth/approle/login", request -> FakeVault.login("approle-token", RENEWED_SOON));
+        vault.on("auth/token/renew-self", request -> FakeVault.login("approle-token", RENEWED_LATER));
+        client = HashicorpVaultClient.create(approle());
+
+        assertEquals("pw", readPassword());
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !vault.requests("auth/token/renew-self").isEmpty());
+
+        List<Thread> renewal = Thread.getAllStackTraces().keySet().stream()
+                .filter(thread -> "Camel HashicorpVaultTokenRenewal".equals(thread.getName()))
+                .toList();
+        assertFalse(renewal.isEmpty());
+        assertTrue(renewal.stream().allMatch(Thread::isDaemon), "the renewal does not keep the JVM running");
+
+        client.close();
+        client = null;
+        assertEquals("approle-token", vault.requests("auth/token/revoke-self").get(0).token());
     }
 
     @Test

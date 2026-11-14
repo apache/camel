@@ -152,6 +152,25 @@ class HashicorpVaultClientSettingsTest {
     }
 
     @Test
+    void takesTheSettingsOfTheConfigurationAlone() {
+        HashicorpVaultConfiguration configuration = configuration();
+        configuration.setTrustStore("/etc/vault/ca.pem");
+        configuration.setAwsRegion("eu-west-1");
+
+        HashicorpVaultClientSettings settings = HashicorpVaultClientSettings.fromConfiguration(configuration);
+
+        assertEquals("config-host", settings.getHost());
+        assertEquals("8200", settings.getPort());
+        assertEquals("https", settings.getScheme());
+        assertEquals("approle", settings.getAuthentication());
+        assertEquals("config-role-id", settings.getRoleId());
+        assertEquals("config-secret-id", settings.getSecretId());
+        assertEquals("/etc/vault/ca.pem", settings.getTrustStore());
+        assertEquals("eu-west-1", settings.getAwsRegion());
+        assertEquals("https://management.azure.com/", settings.getAzureResource());
+    }
+
+    @Test
     void takesTheConfigurationWhenNoEnvironmentVariableIsSet() {
         Map<String, String> environment = Map.of(CLOUD_ENV, "true");
 
