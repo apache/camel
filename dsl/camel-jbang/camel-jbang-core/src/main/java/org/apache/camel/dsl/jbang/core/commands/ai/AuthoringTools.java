@@ -465,19 +465,6 @@ public final class AuthoringTools {
                     return DependencyLookup.lookup(ctx, required(args, "className"), args.get("runtime"),
                             bool(args, "mavenCentral", false));
                 }));
-        registry.accept(tool("camel_error_diagnose",
-                "Diagnoses a Camel error from a stack trace or error message: the known exceptions in it with common "
-                                                     + "causes and suggested fixes, the components and EIPs it mentions with "
-                                                     + "documentation links, and the route id.")
-                .param("error", "string", "The stack trace or error message", true)
-                .param("camelVersion", "string", VERSION_DESC, false)
-                .core(true)
-                .deterministic(true)
-                .executor((ctx, args) -> {
-                    applyVersion(ctx, args);
-                    return ErrorDiagnoser.diagnose(required(args, "error"), ctx.catalog()).toJson();
-                }));
-
         registry.accept(tool("camel_project_overview",
                 "Overview of a project's integrations from its route sources, no running integration needed: "
                                                        + "routes, entry points, links between routes, external systems, "

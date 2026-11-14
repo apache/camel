@@ -232,16 +232,10 @@ The assistant discovers components, looks up documentation, builds a YAML route,
 * _"Analyze this route for security concerns"_ — uses `camel_route_harden_context` to detect hardcoded credentials, plain-text protocols, known CVE advisories, etc.
 * _"Is my Camel 4.10.1 project affected by known CVEs?"_ — uses `camel_security_advisories` to match the published Apache Camel security advisories against a Camel version or component
 
-=== Error diagnosis
+=== Errors
 
-Paste a stack trace:
-
-----
-org.apache.camel.FailedToCreateRouteException: Failed to create route route1 at: >>> To[kafka:myTopic] <<<
-Caused by: org.apache.camel.NoSuchEndpointException: No endpoint could be found for: kafka:myTopic
-----
-
-The assistant uses `camel_error_diagnose` to identify the exception chain, extract components, and suggest fixes (e.g., missing `camel-kafka` dependency).
+* _"Why does my integration fail?"_ — uses `camel_get_errors` for the failed exchanges of the running integration,
+  with their stack traces, and `camel_get_log` for its log
 
 === Dependencies and versions
 
@@ -518,9 +512,6 @@ passed as the file name, is answered with the argument the source goes in.
   takes the newest version, and marks the answer as a guess. Returns `camel.jbang.dependencies`, `--dep`, and
   the `pom.xml` dependency for Camel Main, Spring Boot and Quarkus, or one runtime with `runtime`. Uses the
   JVM proxy settings for the search.
-| `camel_error_diagnose`
-| See <<_error_diagnosis,Error Diagnosis>>; the same shared tool.
-
 | `camel_project_overview`
 | A high-level overview of a project's integrations read from its route sources (YAML, XML, and Java by
   pattern), without a running integration: the routes, the entry points (schedules, HTTP, consumers of external
@@ -542,7 +533,7 @@ passed as the file name, is answered with the argument the source goes in.
 
 ==== Repeated calls
 
-The catalog lookups `camel_catalog_doc`, `camel_catalog_find`, `camel_catalog_sample` and `camel_error_diagnose`
+The catalog lookups `camel_catalog_doc`, `camel_catalog_find` and `camel_catalog_sample`
 are deterministic: the same arguments always give the same answer. Both servers mark them in the tool listing
 with `"_meta": {"camel.apache.org/deterministic": true}`, so a client can notice repeats itself.
 
@@ -709,19 +700,6 @@ so check the web page for the very latest. When the catalog carries no advisory 
 unavailable rather than returning an empty list, so a missing data set is never mistaken for "no known CVEs".
 The advisories are also browseable as MCP resources: `camel://security/advisories` (full list) and
 `camel://security/advisory/\{cve}` (detail for one CVE).
-
-=== Error Diagnosis
-
-[cols="1,3",options="header"]
-|===
-| Tool | Description
-
-| `camel_error_diagnose`
-| Diagnoses Camel errors from stack traces or error messages. Identifies the exception type against 17 known
-  Camel exceptions (such as `NoSuchEndpointException`, `ResolveEndpointFailedException`,
-  `FailedToCreateRouteException`, `PropertyBindingException`, and others), extracts the components and EIPs
-  involved, and returns common causes, suggested fixes, and links to relevant Camel documentation.
-|===
 
 === Dependency Check
 

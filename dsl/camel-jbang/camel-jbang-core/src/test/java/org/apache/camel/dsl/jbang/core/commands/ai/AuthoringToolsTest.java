@@ -80,7 +80,7 @@ class AuthoringToolsTest {
         assertEquals(List.of("camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample", "camel_validate_source",
                 "camel_get_files",
                 "camel_write_file", "camel_edit_file", "camel_run", "camel_control", "camel_get_log", "camel_get_errors",
-                "camel_eval_expression", "camel_dependency_for_class", "camel_error_diagnose", "camel_project_overview",
+                "camel_eval_expression", "camel_dependency_for_class", "camel_project_overview",
                 "camel_save_project_summary"), names);
         for (ToolDescriptor td : shared) {
             assertTrue(td.name().startsWith("camel_"), td.name());
@@ -93,7 +93,7 @@ class AuthoringToolsTest {
         }
         for (String reading : List.of("camel_catalog_doc", "camel_catalog_sample", "camel_get_files", "camel_get_log",
                 "camel_get_errors",
-                "camel_eval_expression", "camel_dependency_for_class", "camel_error_diagnose", "camel_validate_source",
+                "camel_eval_expression", "camel_dependency_for_class", "camel_validate_source",
                 "camel_project_overview")) {
             assertTrue(ToolRegistry.findTool(reading).isReadOnly(), reading);
         }
@@ -579,23 +579,6 @@ class AuthoringToolsTest {
         assertEquals("component", first.getString("kind"));
         assertTrue(first.getString("name").contains("mqtt"), first.toJson());
         assertNotNull(first.get("syntax"));
-    }
-
-    @Test
-    void errorDiagnoseNamesTheExceptionAndTheComponent() {
-        String error = "org.apache.camel.ResolveEndpointFailedException: Failed to resolve endpoint:"
-                       + " timer://tick?periodd=1000 due to: There are 1 parameters that couldn't be set on the endpoint";
-        JsonObject result = call("camel_error_diagnose", new ToolContext(), Map.of("error", error));
-        JsonObject summary = result.getMap("summary");
-        assertTrue(summary.getBoolean("diagnosed"));
-        JsonObject ex = (JsonObject) result.getCollection("identifiedExceptions").iterator().next();
-        assertEquals("ResolveEndpointFailedException", ex.getString("exception"));
-        assertFalse(ex.getCollection("suggestedFixes").isEmpty());
-        assertTrue(result.getCollection("identifiedComponents").stream()
-                .anyMatch(c -> "timer".equals(((JsonObject) c).getString("name"))), result.toJson());
-        JsonObject none = call("camel_error_diagnose", new ToolContext(), Map.of("error", "nothing camel here"))
-                .getMap("summary");
-        assertFalse(none.getBoolean("diagnosed"));
     }
 
     @Test

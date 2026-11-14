@@ -3366,7 +3366,7 @@ in the dependencies of a plugin no longer counts, and Spring Boot starters and C
 component they provide. Its version status compares the project with the latest Camel release, added as
 `latestVersion`, instead of the catalog version of the server.
 
-=== camel-jbang-mcp - the security audit is part of camel_dependency_check, and three niche tools are removed
+=== camel-jbang-mcp - the security audit is part of camel_dependency_check, and four tools are removed
 
 The `camel_dependency_security_audit` MCP tool is removed. `camel_dependency_check` takes the same arguments and
 returns the audit in its new `security` section: the published CVE advisories of each declared artifact at the
@@ -3378,6 +3378,11 @@ known, so a project with a known CVE is no longer reported `healthy`.
 
 These MCP tools are removed, with no replacement tool:
 
+* `camel_error_diagnose`, from both MCP servers (`camel mcp` and `camel tui --mcp`), as it was one of the authoring
+  tools they share: it matched an error against a fixed list of exceptions. `camel_get_errors` returns the failed
+  exchanges of an integration with their stack traces, and `camel_get_log` its log. The exception reference data
+  stays available as the `camel://error/exception-catalog` and `camel://error/exception/\{name}` resources of
+  `camel mcp`.
 * `camel_ai_pipeline_scaffold`: the route it returned referred to beans it did not define. Build such a route with
   `camel_catalog_doc` and the documentation of the AI components.
 * `camel_route_cost_estimate`: its prices were written into the code and did not follow the provider prices.
