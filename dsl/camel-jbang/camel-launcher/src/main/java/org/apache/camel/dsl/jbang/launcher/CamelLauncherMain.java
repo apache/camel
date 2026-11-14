@@ -16,7 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.launcher;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -28,6 +32,7 @@ import org.apache.camel.dsl.jbang.core.commands.tui.TuiPlugin;
 import org.apache.camel.dsl.jbang.core.commands.validate.ValidatePlugin;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
+import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.SelfUpdatePlugin;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.UpdateChecker;
 
@@ -62,6 +67,25 @@ public class CamelLauncherMain extends CamelJBangMain {
     @Override
     protected boolean isPluginCommand(String command) {
         return PLUGINS.stream().anyMatch(p -> p.commands().contains(command)) || super.isPluginCommand(command);
+    }
+
+    @Override
+    public Collection<Plugin> getEmbeddedPlugins(String target) {
+        // such as the test plugin for camel export: the launcher does not register its plugins in the plugin
+        // configuration, so the export did not have the Citrus tests (CAMEL-26933)
+        List<Plugin> answer = new ArrayList<>();
+        for (EmbeddedPlugin embedded : PLUGINS) {
+            boolean contributes = embedded.commands().stream()
+                    .map(PluginType::findByName)
+                    .flatMap(Optional::stream)
+                    .anyMatch(type -> Arrays.asList(type.getAppliesTo()).contains(target));
+            if (contributes) {
+                Plugin plugin = embedded.factory().get();
+                plugin.setClassLoader(getClass().getClassLoader());
+                answer.add(plugin);
+            }
+        }
+        return answer;
     }
 
     @Override

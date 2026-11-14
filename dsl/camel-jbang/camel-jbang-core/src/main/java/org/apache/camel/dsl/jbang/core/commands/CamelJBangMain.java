@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -578,6 +579,18 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     /**
      * Called after default commands has been added
      */
+    /**
+     * The plugins that this CLI has built in (the Camel launcher embeds some), and that contribute to the given
+     * command, such as the test plugin, whose exporter adds the Citrus tests to camel export. The plugins of the plugin
+     * configuration are not among them.
+     *
+     * @param  target the command, such as run or export
+     * @return        the plugins, none by default
+     */
+    public Collection<Plugin> getEmbeddedPlugins(String target) {
+        return List.of();
+    }
+
     public void postAddCommands(CommandTree commandLine, String[] args) {
         // noop
     }
