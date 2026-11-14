@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Properties;
 
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -264,6 +265,35 @@ class RunTest extends CamelCommandBaseTestSupport {
         assertThat(request.applicationProperties).containsExactly("foo=bar");
         assertThat(request.jfrEnabled()).isTrue();
         assertThat(request.dev).isTrue();
+    }
+
+    @Test
+    void theRequestKnowsTheOptionsGivenOnTheCommandLine() {
+        Run command = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(command, "--trace", "--console", "--logging-level=DEBUG", "--camel-version=4.23.0",
+                "route.yaml");
+
+        RunRequest request = command.toRunRequest(Path.of("."));
+
+        assertThat(request.givenOptions).contains("trace", "console", "logging-level", "camel-version")
+                .doesNotContain("health", "metrics", "stub");
+        assertThat(request.given("trace")).isTrue();
+        assertThat(request.given("health")).isFalse();
+    }
+
+    @Test
+    void theLoggingOptionsGivenOnTheCommandLineWinOverTheApplicationProperties() {
+        Run command = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(command, "--logging-level=DEBUG", "route.yaml");
+        Properties properties = new Properties();
+        properties.setProperty("loggingLevel", "WARN");
+        properties.setProperty("loggingJson", "true");
+
+        command.applyProfileProperties(command.toRunRequest(null), properties);
+
+        assertThat(command.loggingOptions.loggingLevel).isEqualTo("DEBUG");
+        // not given: the file
+        assertThat(command.loggingOptions.loggingJson).isTrue();
     }
 
     @Test

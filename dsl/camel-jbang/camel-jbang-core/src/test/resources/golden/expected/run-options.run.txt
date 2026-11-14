@@ -54,5 +54,8 @@ camel.main.tracing=true
 camel.trace.enabled=true
 
 # override properties
+camel.jbang.jfr=jfr
 camel.main.durationMaxMessages=5
 camel.main.durationMaxSeconds=60
+camel.main.tracing=true
+camel.trace.enabled=true

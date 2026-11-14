@@ -1042,6 +1042,8 @@ public class Run extends CamelCommand implements CommandLifecycle {
      */
     RunRequest toRunRequest(Path baseDir) {
         RunRequest request = new RunRequest();
+        // the options given on the command line win over the application properties
+        request.givenOptions = givenOptions();
         request.workDir = workDir;
         request.baseDir = baseDir;
         request.files = files;
@@ -1131,16 +1133,20 @@ public class Run extends CamelCommand implements CommandLifecycle {
      * another JVM (in the background, with a debugger, camel debug, and the repositories of the Camel they run). The
      * run configured the request with the others ({@link RunProfileProperties#applyTo(RunRequest, Properties)}).
      */
-    private void applyProfileProperties(RunRequest request, Properties answer) {
+    void applyProfileProperties(RunRequest request, Properties answer) {
         if (answer != null) {
-            // logging level/color may be configured in the properties file
-            loggingOptions.loggingLevel = answer.getProperty("loggingLevel", loggingOptions.loggingLevel);
-            loggingOptions.loggingColor
-                    = "true"
-                            .equals(answer.getProperty("loggingColor", loggingOptions.loggingColor ? "true" : "false"));
-            loggingOptions.loggingJson
-                    = "true"
-                            .equals(answer.getProperty("loggingJson", loggingOptions.loggingJson ? "true" : "false"));
+            // logging level/color may be configured in the properties file, unless given on the command line
+            if (!request.given("logging-level")) {
+                loggingOptions.loggingLevel = answer.getProperty("loggingLevel", loggingOptions.loggingLevel);
+            }
+            if (!request.given("logging-color")) {
+                loggingOptions.loggingColor = "true"
+                        .equals(answer.getProperty("loggingColor", loggingOptions.loggingColor ? "true" : "false"));
+            }
+            if (!request.given("logging-json")) {
+                loggingOptions.loggingJson = "true"
+                        .equals(answer.getProperty("loggingJson", loggingOptions.loggingJson ? "true" : "false"));
+            }
         }
         if (answer != null) {
             mavenResolver = MavenResolverMixin.of(answer, mavenResolver);

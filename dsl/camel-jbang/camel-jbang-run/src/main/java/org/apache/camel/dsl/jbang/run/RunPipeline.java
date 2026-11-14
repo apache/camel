@@ -425,7 +425,7 @@ public class RunPipeline {
                 stub = sj.toString();
             }
             request.stub = stub;
-            writeSetting(main, profileProperties, STUB, stub);
+            writeOption(main, profileProperties, "stub", STUB, stub);
             main.setStubPattern(stub);
         }
 
@@ -435,48 +435,48 @@ public class RunPipeline {
             writeSetting(main, profileProperties, "camel.main.shutdownTimeout", "5");
         }
         if (request.sourceDir != null) {
-            writeSetting(main, profileProperties, SOURCE_DIR, request.sourceDir);
+            writeOption(main, profileProperties, "source-dir", SOURCE_DIR, request.sourceDir);
         }
         if (request.dataDir != null) {
-            writeSetting(main, profileProperties, DATA_DIR, request.dataDir);
+            writeOption(main, profileProperties, "data-dir", DATA_DIR, request.dataDir);
         }
         if (request.trace) {
-            writeSetting(main, profileProperties, "camel.main.tracing", "true");
+            writeOption(main, profileProperties, "trace", "camel.main.tracing", "true");
         }
         if (request.backlogTrace) {
-            writeSetting(main, profileProperties, "camel.trace.enabled", "true");
+            writeOption(main, profileProperties, "backlog-trace", "camel.trace.enabled", "true");
         }
         if (request.modeline) {
-            writeSetting(main, profileProperties, "camel.main.modeline", "true");
+            writeOption(main, profileProperties, "modeline", "camel.main.modeline", "true");
             // configure eager
             main.configure().withModeline(true);
         }
         if (request.ignoreLoadingError) {
-            writeSetting(main, profileProperties, IGNORE_LOADING_ERROR, "true");
+            writeOption(main, profileProperties, "ignore-loading-error", IGNORE_LOADING_ERROR, "true");
         }
         if (request.lazyBean) {
-            writeSetting(main, profileProperties, LAZY_BEAN, "true");
+            writeOption(main, profileProperties, "lazy-bean", LAZY_BEAN, "true");
         }
         if (request.prompt) {
-            writeSetting(main, profileProperties, PROMPT, "true");
+            writeOption(main, profileProperties, "prompt", PROMPT, "true");
         }
         writeSetting(main, profileProperties, COMPILE_WORK_DIR, request.workDir.resolve("compile").toString());
 
         if (request.gav != null) {
-            writeSetting(main, profileProperties, GAV, request.gav);
+            writeOption(main, profileProperties, "gav", GAV, request.gav);
         }
-        writeSetting(main, profileProperties, OPEN_API, request.openapi);
+        writeOption(main, profileProperties, "open-api", OPEN_API, request.openapi);
         if (request.mavenResolver != null) {
             request.mavenResolver.putTo((k, v) -> {
                 writeSetting(main, profileProperties, k, v);
             });
         }
-        writeSetting(main, profileProperties, HEALTH, request.health ? "true" : "false");
-        writeSetting(main, profileProperties, METRICS, request.metrics ? "true" : "false");
-        writeSetting(main, profileProperties, CONSOLE, request.console ? "true" : "false");
-        writeSetting(main, profileProperties, MCP, request.mcp ? "true" : "false");
-        writeSetting(main, profileProperties, OPENAPI_UI, request.openapiUi ? "true" : "false");
-        writeSetting(main, profileProperties, VERBOSE, request.verbose ? "true" : "false");
+        writeOption(main, profileProperties, "health", HEALTH, request.health ? "true" : "false");
+        writeOption(main, profileProperties, "metrics", METRICS, request.metrics ? "true" : "false");
+        writeOption(main, profileProperties, "console", CONSOLE, request.console ? "true" : "false");
+        writeOption(main, profileProperties, "mcp", MCP, request.mcp ? "true" : "false");
+        writeOption(main, profileProperties, "openapi-ui", OPENAPI_UI, request.openapiUi ? "true" : "false");
+        writeOption(main, profileProperties, "verbose", VERBOSE, request.verbose ? "true" : "false");
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, CAMEL_VERSION, new DefaultCamelCatalog().getCatalogVersion());
         writeSetting(main, profileProperties, SPRING_BOOT_VERSION, request.springBootVersion);
@@ -566,7 +566,7 @@ public class RunPipeline {
             writeSetting(main, profileProperties, "camel.management.port",
                     () -> String.valueOf(request.managementPort));
         }
-        writeSetting(main, profileProperties, JFR, request.jfrEnabled() ? "jfr" : null);
+        writeOption(main, profileProperties, "jfr", JFR, request.jfrEnabled() ? "jfr" : null);
         writeSetting(main, profileProperties, JFR_PROFILE,
                 request.jfrProfile != null ? request.jfrProfile : null);
         if (request.jfrEnabled()) {
@@ -574,7 +574,7 @@ public class RunPipeline {
             writeSetting(main, profileProperties, "camel.main.startupRecorderRuntimeEnabled", "true");
         }
 
-        writeSetting(main, profileProperties, KAMELETS_VERSION, request.kameletsVersion);
+        writeOption(main, profileProperties, "kamelets-version", KAMELETS_VERSION, request.kameletsVersion);
 
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
@@ -961,8 +961,24 @@ public class RunPipeline {
         settings.write(main, existing, key, value);
     }
 
+    /**
+     * Writes the setting of a camel run option: the option given on the command line wins over the profile properties,
+     * which are the default when it is not given (CAMEL-26930: before, the file won, so with camel.main.tracing=false
+     * in it --trace printed nothing).
+     */
+    void writeOption(KameletMain main, Properties existing, String option, String key, String value) {
+        if (request.given(option) && value != null) {
+            // KameletMain reads the camel.jbang settings from the initial properties, and camel-main loads the
+            // application properties on top of them: so both, as the file would win over the initial property alone
+            main.addInitialProperty(key, value);
+            settings.write(main, existing, key, () -> value);
+        } else {
+            settings.write(main, existing, key, value);
+        }
+    }
+
     private boolean isMcpEnabled(Properties profileProperties) {
-        String val = profileProperties != null
+        String val = profileProperties != null && !request.given("mcp")
                 ? profileProperties.getProperty(MCP, request.mcp ? "true" : "false")
                 : (request.mcp ? "true" : "false");
         return "true".equals(val);

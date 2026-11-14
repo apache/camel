@@ -45,6 +45,17 @@ public class RunRequest extends ExportRequest {
     public boolean empty;
 
     /**
+     * The options given on the command line (their names without {@code --}, such as {@code trace}): they win over the
+     * same setting in the application properties, which are the default for the options not given (CAMEL-26930).
+     */
+    public Set<String> givenOptions = new HashSet<>();
+
+    /** Whether the option (its name without {@code --}) was given on the command line. */
+    public boolean given(String option) {
+        return givenOptions.contains(option);
+    }
+
+    /**
      * The properties files to use (comma separated); the pipeline adds the ones among the files.
      */
     public String propertiesFiles;

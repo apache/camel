@@ -18,9 +18,11 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import org.aesh.command.Command;
 import org.aesh.command.CommandResult;
@@ -166,6 +168,22 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
         ProcessedOption option = findOption(name);
         Object holder = option != null ? holderOf(option) : null;
         return holder != null ? option.getFieldValue(holder) : null;
+    }
+
+    /**
+     * The names of the options given on the command line (without {@code --}), such as {@code trace}; empty when the
+     * command was not parsed by aesh.
+     */
+    protected Set<String> givenOptions() {
+        Set<String> answer = new HashSet<>();
+        if (processedCommand != null) {
+            for (ProcessedOption option : processedCommand.getOptions()) {
+                if (!option.getValues().isEmpty()) {
+                    answer.add(option.name());
+                }
+            }
+        }
+        return answer;
     }
 
     /**
