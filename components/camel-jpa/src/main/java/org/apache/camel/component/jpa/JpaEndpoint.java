@@ -133,7 +133,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean flushOnSend = true;
     @UriParam(label = "producer")
     private boolean usePersist;
-    @UriParam(label = "producer,advanced")
+    @UriParam(label = "advanced")
     private boolean usePassedInEntityManager;
     @UriParam(label = "producer")
     private boolean remove;
