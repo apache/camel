@@ -243,8 +243,8 @@ public final class AuthoringTools {
                                                 + "from; with file (a path relative to the directory, as listed) its content.")
                 .param("directory", "string", DIRECTORY_DESC, false)
                 .param("file", "string", FILE_PATH_DESC + " to read; omitted lists the files", false)
-                .param("offset", "string", "The first line to read, from 1 (default 1)", false)
-                .param("limit", "string", "How many lines to read (default " + READ_LINES + ")", false)
+                .param("offset", "integer", "First line (from 1)", false)
+                .param("limit", "integer", "Lines to read (default " + READ_LINES + ")", false)
                 .core(true)
                 .executor((ctx, args) -> {
                     String file = args.get("file");
