@@ -613,6 +613,22 @@ class DependencyCheckToolsTest {
                 .filteredOn(a -> a.artifactId().equals("camel-http"))
                 .singleElement()
                 .satisfies(a -> assertThat(a.reachable()).isFalse());
+        assertThat(result.recommendations()).filteredOn(r -> r.category().equals("Security"))
+                .anySatisfy(r -> assertThat(r.detail()).isEqualTo(
+                        "None of them is used by the routes; they are lower priority but should still be evaluated."));
+    }
+
+    @Test
+    void securitySaysWhenTheAdvisoryDataIsUnavailable() {
+        tools.advisoryService = AdvisoryServiceTest.unavailableService();
+        DependencyCheckTools.DependencyCheckResult result
+                = tools.camel_dependency_check(POM_WITH_HTTP, null, null, null, null, null);
+
+        // the rest of the check still answers
+        assertThat(result.projectInfo().camelVersion()).isEqualTo("4.10.0");
+        assertThat(result.security().clean()).isFalse();
+        assertThat(result.security().vulnerableArtifacts()).isNull();
+        assertThat(result.security().warnings()).anySatisfy(w -> assertThat(w).contains("not available"));
     }
 
     @Test

@@ -370,6 +370,22 @@ public class DependencyCheckTools {
         return usedComponents.contains(artifactId.replace("camel-", ""));
     }
 
+    /** Which of the vulnerable artifacts to patch first: those the routes use. */
+    private static String securityDetail(SecurityAudit security, int count, boolean routesGiven) {
+        if (!routesGiven) {
+            return "Pass the routes to tell which of them the routes use (reachable).";
+        }
+        int reachable = security.reachableVulnerableArtifacts();
+        if (reachable == 0) {
+            return "None of them is used by the routes; they are lower priority but should still be evaluated.";
+        }
+        String detail = reachable + " of them are used by the routes (reachable): patch those first.";
+        if (reachable < count) {
+            detail += " The others are lower priority but should still be evaluated.";
+        }
+        return detail;
+    }
+
     /**
      * Build actionable recommendations based on the findings.
      */
@@ -413,10 +429,7 @@ public class DependencyCheckTools {
                                               + " artifact(s) are listed whether or not they affect it.",
                         null, null));
             } else {
-                String detail = routesGiven
-                        ? security.reachableVulnerableArtifacts()
-                          + " of them are used by the routes (reachable): patch those first."
-                        : "Pass the routes to tell which of them the routes use (reachable).";
+                String detail = securityDetail(security, count, routesGiven);
                 recommendations.add(new Recommendation(
                         security.criticalAndHighCves() > 0 ? "high" : "medium", "Security",
                         "Upgrade Camel to a release that fixes the " + security.totalCves() + " CVE(s) of " + count

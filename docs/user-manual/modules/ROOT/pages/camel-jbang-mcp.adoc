@@ -6,7 +6,7 @@ runtime introspection tools for live Camel applications, all through the
 https://modelcontextprotocol.io/[Model Context Protocol (MCP)].
 
 With the MCP server running, your AI assistant can look up component documentation, validate
-endpoints and routes, diagnose errors from stack traces, check
+endpoints and routes, read the errors and logs of running integrations, check
 dependencies and their known CVEs, plan migrations, review routes for security concerns, and interact
 with running Camel applications — without you having to copy-paste anything.
 
