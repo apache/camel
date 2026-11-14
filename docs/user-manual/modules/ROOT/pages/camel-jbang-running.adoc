@@ -112,6 +112,10 @@ The `test` folder of the source directory holds the Citrus tests of the project 
 run with `camel test run`) and their data, which are not routes either: dev mode does not watch it, so editing a test
 does not reload the routes. Keep the routes out of `test`.
 
+Neither does dev mode watch the files that a run and the tools write in the source directory: log files (`*.log`, such
+as the output of `camel dev > run.log`), the build output in `target`, `.git`, and the `.camel-jbang` and `.camel`
+folders of the Camel CLI and the file consumer.
+
 === Live reload of resource files
 
 In dev mode, Camel disables `contentCache` on resource-based components (such as `xslt`)

@@ -1153,11 +1153,19 @@ public class RunPipeline {
      * the Citrus tests of the project (run with camel test run) and their data, none of them routes (CAMEL-26494), and
      * the data folders (--data-dir), whose files the routes read and write: a change there is not a change of the
      * sources, and reloading the routes for it restarts them, so they write again and reload again (CAMEL-25670).
+     * Neither are the files that a run or the tools write in the project: logs (camel dev &gt; run.log reloaded all the
+     * routes every 2 seconds, CAMEL-26930), the build output, git, and the folders of the Camel CLI and the file
+     * consumer (.camel-jbang, .camel).
      */
     public static String sourceDirReloadPattern(String dataDir) {
         StringJoiner sj = new StringJoiner(",");
         sj.add("*");
         sj.add("!test/**");
+        sj.add("!*.log");
+        sj.add("!target/**");
+        sj.add("!.git/**");
+        sj.add("!.camel/**");
+        sj.add("!.camel-jbang/**");
         if (dataDir != null) {
             for (String dir : dataDir.split(",")) {
                 dir = dir.trim().replace('\\', '/');

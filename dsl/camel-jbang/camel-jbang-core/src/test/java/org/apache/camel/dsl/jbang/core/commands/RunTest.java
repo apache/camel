@@ -325,10 +325,11 @@ class RunTest extends CamelCommandBaseTestSupport {
     void sourceDirReloadPatternLeavesTheDataDirsOut() {
         // CAMEL-25670: the routes read and write the files of a data folder, which must not reload them
         // CAMEL-26494: nor must the test folder, with the Citrus tests of the project, which are not routes
-        assertThat(RunPipeline.sourceDirReloadPattern(null)).isEqualTo("*,!test/**");
-        assertThat(RunPipeline.sourceDirReloadPattern("inbox")).isEqualTo("*,!test/**,!inbox/**");
+        String ignored = "!*.log,!target/**,!.git/**,!.camel/**,!.camel-jbang/**";
+        assertThat(RunPipeline.sourceDirReloadPattern(null)).isEqualTo("*,!test/**," + ignored);
+        assertThat(RunPipeline.sourceDirReloadPattern("inbox")).isEqualTo("*,!test/**," + ignored + ",!inbox/**");
         assertThat(RunPipeline.sourceDirReloadPattern(" inbox , ./archive/ ,data\\in,"))
-                .isEqualTo("*,!test/**,!inbox/**,!archive/**,!data/in/**");
+                .isEqualTo("*,!test/**," + ignored + ",!inbox/**,!archive/**,!data/in/**");
     }
 
     @Test
