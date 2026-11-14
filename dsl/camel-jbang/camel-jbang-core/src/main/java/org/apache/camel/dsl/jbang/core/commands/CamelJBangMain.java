@@ -620,15 +620,9 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     }
 
     void printAvailablePlugins() {
-        // check if the plugin banner is disabled via global config
-        boolean[] enabled = { true };
-        CommandLineHelper.loadProperties(properties -> {
-            String v = properties.getProperty("camel.jbang.plugin.banner");
-            if ("false".equalsIgnoreCase(v)) {
-                enabled[0] = false;
-            }
-        });
-        if (!enabled[0]) {
+        // check if the plugin banner is disabled via the user configuration
+        String banner = CommandLineHelper.loadUserConfiguration(getOut()).getProperty("camel.jbang.plugin.banner");
+        if ("false".equalsIgnoreCase(banner)) {
             return;
         }
 
