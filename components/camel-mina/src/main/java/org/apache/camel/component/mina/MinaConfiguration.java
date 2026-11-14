@@ -79,7 +79,7 @@ public class MinaConfiguration implements Cloneable {
     private boolean disconnect;
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean disconnectOnNoReply = true;
-    @UriParam(label = "consumer,advanced", defaultValue = "WARN")
+    @UriParam(label = "advanced", defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
@@ -370,8 +370,8 @@ public class MinaConfiguration implements Cloneable {
     }
 
     /**
-     * If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply
-     * to send back.
+     * If sync is enabled this option dictates the logging level to use when logging that there is no reply to send
+     * back.
      */
     public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
         this.noReplyLogLevel = noReplyLogLevel;
