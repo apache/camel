@@ -81,6 +81,57 @@ class CamelReceiveActionTest extends ActionCommandTestSupport {
         assertThat(callWithResponse(command("myApp", "--action=stop"), new JsonObject())).isZero();
 
         assertThat(readActionFile(TEST_PID).getString("enabled")).isEqualTo("false");
+        // it said "Starting to receive" (CAMEL-26929)
+        assertThat(printer.getOutput()).contains("Stopping to receive messages from existing Camel: myApp")
+                .doesNotContain("Starting");
+    }
+
+    @Test
+    void anEndpointThatMatchesNothingIsNotFound() throws Exception {
+        // the integration started to receive from no endpoint, and the command exited 0 (CAMEL-26929)
+        writeStatusFile(TEST_PID, "myApp");
+
+        assertThat(callWithResponse(command("myApp", "--action=start", "--endpoint=nope*"), new JsonObject()))
+                .isEqualTo(CliExitCode.NOT_FOUND);
+
+        assertThat(printer.getStderr()).contains("No endpoint matching: nope*");
+        assertThat(printer.getOutput()).doesNotContain("Received Message");
+    }
+
+    @Test
+    void theJsonOfStartHasNoTextOnStdout() throws Exception {
+        // the JSON stream started with "Starting to receive ..." (CAMEL-26929)
+        writeStatusFile(TEST_PID, "myApp");
+        writeReceived(batch(message(1, "Hello Camel")));
+        JsonObject reply = new JsonObject();
+        reply.put("url", "seda://orders");
+
+        assertThat(callWithResponse(command("myApp", "--endpoint=seda:orders", "--output=json"), reply)).isZero();
+
+        assertThat(printer.getStdout()).doesNotContain("Starting to receive");
+        assertThat(printer.getStderr()).contains("Starting to receive messages from existing Camel: myApp");
+        for (String line : printer.getStdout().split("\\R")) {
+            if (!line.isBlank()) {
+                assertThat(Jsoner.deserialize(line)).as(line).isInstanceOf(JsonObject.class);
+            }
+        }
+    }
+
+    @Test
+    void statusAsJson() throws Exception {
+        // --output=json printed the table (CAMEL-26929)
+        writeStatusFile(TEST_PID, receiveStatus("seda:orders", "jms:payments?password=secret"));
+
+        assertThat(callWithSingleProcess(command("myApp", "--output=json", "--mask"))).isZero();
+
+        JsonArray rows = (JsonArray) Jsoner.deserialize(printer.getStdout());
+        assertThat(rows).hasSize(2);
+        JsonObject row = (JsonObject) rows.get(0);
+        assertThat(row.getLong("pid")).isEqualTo(TEST_PID);
+        assertThat(row.getString("name")).isEqualTo("myApp");
+        assertThat(row.getBoolean("enabled")).isTrue();
+        assertThat(rows.stream().map(r -> ((JsonObject) r).getString("endpoint")).toList())
+                .contains("seda:orders").noneMatch(u -> u.contains("secret"));
     }
 
     @Test
@@ -101,7 +152,10 @@ class CamelReceiveActionTest extends ActionCommandTestSupport {
         writeStatusFile(TEST_PID, "myApp");
         writeReceived(batch(message(1, "Hello Camel")));
 
-        assertThat(callWithResponse(command("myApp", "--endpoint=seda:orders"), new JsonObject())).isZero();
+        // the integration says which endpoint it receives from
+        JsonObject reply = new JsonObject();
+        reply.put("url", "seda://orders");
+        assertThat(callWithResponse(command("myApp", "--endpoint=seda:orders"), reply)).isZero();
 
         assertThat(readActionFile(TEST_PID).getString("endpoint")).isEqualTo("seda:orders");
         assertThat(printer.getOutput()).contains("Received Message: (1)", "Hello Camel");
