@@ -156,8 +156,8 @@ public class ThriftConfiguration {
     }
 
     /**
-     * Socket timeout in milliseconds. On a consumer it is the timeout of the server socket waiting for a client, and on
-     * a producer the timeout of the client socket connecting to the server.
+     * Socket timeout in milliseconds. Used by both sides: on a consumer it sets the timeout of the server socket
+     * waiting for a client, and on a producer the connect timeout of the client socket.
      */
     public int getClientTimeout() {
         return clientTimeout;
