@@ -2371,79 +2371,36 @@ class AiPanel {
     }
 
     private String buildAiSetupGuide() {
+        // short: the documentation online is the one place with the full setup and the models that work well
         return """
                 ## AI Assistant — Getting Started
 
                 No LLM provider was detected. Choose one of the options below, then press **F8** to reopen this panel.
 
-                > **Tool calling is required.** This panel inspects your Camel process by
-                > invoking built-in tools. Models smaller than ~14B do not reliably call
-                > tools and will answer from training knowledge instead — use at least 14B.
-                > Prefer a mixture-of-experts model such as qwen3.6:35b-a3b: it processes
-                > the tool-heavy prompt many times faster than a dense 27B/32B model.
+                ### Option A: a local model with Ollama (no API key)
 
-                ---
-
-                ### Option A: Local — Ollama (no API key needed)
-
-                Run models entirely on your machine — no data leaves your host.
+                Install Ollama natively (`brew install ollama` on macOS, `curl -fsSL https://ollama.com/install.sh | sh`
+                on Linux), then pull a model:
 
                 ```
-                # macOS
-                brew install ollama
-
-                # Linux
-                curl -fsSL https://ollama.com/install.sh | sh
-
-                # then on both:
-                ollama serve                 # start the daemon (skip if auto-started)
                 ollama pull qwen3.6:35b-mlx  # on a Mac with Apple Silicon (Ollama 0.40 or later)
                 ollama pull qwen3.6:35b-a3b  # on other machines
                 ```
 
-                Ollama is auto-detected at `localhost:11434` — no configuration needed.
+                It needs 32 GB of memory or more: smaller models do not call the tools reliably.
 
-                **Models that work well** (tool-calling capable, ≥14B):
+                ### Option B: a coding agent you already use
 
-                | Model | RAM | Notes |
-                |---|---|---|
-                | qwen3.6:35b-a3b | ~23 GB | Recommended: only 3B active per token, fastest prompt processing |
-                | qwen3.6:35b-mlx | ~24 GB | The same model as an MLX build: recommended on Apple Silicon |
-                | qwen2.5:14b | ~9 GB | Minimum for 16 GB machines |
-                | qwen3.6:27b | ~18 GB | Strong dense model, several times slower prompt processing |
-                | qwen2.5:32b | ~20 GB | Good quality, slow prompt processing |
-                | hermes3:70b  | ~43 GB | Excellent tool calling, needs 64 GB+ |
-                | llama3.3:70b | ~43 GB | Best open model, needs 64 GB+ |
+                Press **Ctrl+P** and pick an `acp:` provider: Claude Code, Codex, opencode, IBM Bob, Qwen Code or
+                DeepSeek Harness. The agent keeps its own login and model.
 
-                **Tip:** Install Ollama natively — `camel infra run ollama` uses Docker and
-                loses GPU acceleration (Metal on macOS, CUDA on Linux), making inference
-                much slower. Native install is always preferred for development use.
+                ### Option C: an API key
 
-                ---
+                Set `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY` or the key of another provider before you
+                start the TUI, or press **Ctrl+P** to pick a provider now.
 
-                ### Option B: Cloud provider (API key required)
-
-                Set one environment variable before starting the TUI:
-
-                | Variable | Provider |
-                |---|---|
-                | `ANTHROPIC_API_KEY` | Claude |
-                | `OPENAI_API_KEY` | OpenAI (GPT-4o etc.) |
-                | `GEMINI_API_KEY` | Gemini |
-                | `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` | Azure OpenAI |
-                | `WATSONX_APIKEY` | IBM watsonx.ai |
-
-                For any **OpenAI-compatible** server (LM Studio, vLLM, llama.cpp, GPT4All, …):
-
-                ```
-                export LLM_API_KEY=any-value
-                export LLM_BASE_URL=http://localhost:1234
-                ```
-
-                `OPENAI_BASE_URL` is also supported as an alternative to `LLM_BASE_URL`.
-
-                Or press **Ctrl+P** to select and configure a provider now.
-                """;
+                The full guide, with every provider and the models that work well:
+                """ + "<" + DocViewerPopup.AI_PROVIDERS_DOCS_URL + ">\n";
     }
 
     /**

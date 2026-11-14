@@ -43,6 +43,12 @@ class LlmClientGeminiTest {
     }
 
     @Test
+    void theDefaultModelIsTheAliasOfTheLatestFlash() {
+        // gemini-2.0-flash, the default before, is shut down
+        assertThat(LlmClient.normalizeGeminiModelId(null)).isEqualTo("gemini-flash-latest");
+    }
+
+    @Test
     void normalizeGeminiModelIdStripsModelsPrefix() {
         assertThat(LlmClient.normalizeGeminiModelId("models/gemini-2.0-flash")).isEqualTo("gemini-2.0-flash");
         assertThat(LlmClient.normalizeGeminiModelId("gemini-2.0-flash")).isEqualTo("gemini-2.0-flash");

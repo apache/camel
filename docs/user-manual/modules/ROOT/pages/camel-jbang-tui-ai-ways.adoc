@@ -22,7 +22,7 @@ image::jbang/camel-tui-ai-ways.svg[Four ways to use AI with the Camel TUI: the b
 
 | *2. Coding agent in the panel*
 | The AI panel (*F8*) in the TUI
-| An agent the TUI starts over ACP (Claude Code, Codex, opencode, Qwen, ...), with its own model and login
+| An agent the TUI starts over ACP (Claude Code, Codex, opencode, IBM Bob, Qwen, ...), with its own model and login
 | The TUI's MCP server, started for the agent on a random localhost port
 | `camel tui`, then *F8*, *Ctrl+P* and an `acp:` provider
 
@@ -64,7 +64,7 @@ image::jbang/camel-tui-fix-with-ai.gif[A local model fixes a failing route from 
 == 2. A coding agent in the panel (ACP)
 
 The same panel can hand the conversation to a coding agent instead of a model. Press *Ctrl+P* in the panel and pick
-an `acp:` provider (`acp:claude`, `acp:codex`, `acp:opencode`, ...). The TUI starts the agent as a subprocess and talks
+an `acp:` provider (`acp:claude`, `acp:codex`, `acp:opencode`, `acp:bob`, ...). The TUI starts the agent as a subprocess and talks
 to it over the https://agentclientprotocol.com[Agent Client Protocol] (ACP). The agent brings its own model, login,
 settings and skills; the TUI shows its answers, tool calls and permission questions in the panel.
 
@@ -139,6 +139,6 @@ panel lists those calls as *integration* next to the panel's own (*TUI ask*).
 == Which one should I pick?
 
 * New to the TUI, or want to try a local model: *1*.
-* Already pay for a coding agent such as Claude Code or Codex and want it in the TUI: *2*.
+* Already pay for a coding agent such as Claude Code, Codex or IBM Bob and want it in the TUI: *2*.
 * Already work in an agent and want it to see and drive your running integrations: *3*.
 * No TUI, just Camel knowledge for your agent: *4*.

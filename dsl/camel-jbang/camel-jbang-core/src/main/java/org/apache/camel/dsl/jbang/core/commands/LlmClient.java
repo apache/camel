@@ -88,7 +88,9 @@ public class LlmClient {
     /** Last-resort Azure deployment segment when URL normalization runs before model detection completes. */
     private static final String DEFAULT_AZURE_DEPLOYMENT_FALLBACK = "gpt-4o";
     private static final String DEFAULT_GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta";
-    private static final String DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
+    // the alias Google moves to each new Flash model, with two weeks' notice, so the default does not go out of
+    // service as gemini-2.0-flash did
+    private static final String DEFAULT_GEMINI_MODEL = "gemini-flash-latest";
     private static final int CONNECT_TIMEOUT_SECONDS = 10;
     private static final int HEALTH_CHECK_TIMEOUT_SECONDS = 5;
 
