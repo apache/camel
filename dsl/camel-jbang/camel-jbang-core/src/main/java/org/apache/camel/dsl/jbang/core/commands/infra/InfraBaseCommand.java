@@ -47,6 +47,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.model.InfraBaseDTO;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
@@ -158,7 +159,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
                     // not a file we recognise, so neither report nor prune it
                     continue;
                 }
-                if (!aliveCheck.test(pidNumber)) {
+                // a pid file older than the process with its pid is left over from a service that is gone, and the
+                // pid is now of another process, which infra stop --kill would kill (CAMEL-26931)
+                if (!aliveCheck.test(pidNumber) || isReusedPid(pidNumber, pidFile)) {
                     pruneStaleFiles(camelDir, sn, pid);
                     continue;
                 }
@@ -173,6 +176,14 @@ public abstract class InfraBaseCommand extends CamelCommand {
         answer.sort(Comparator.comparing(RunningService::alias).thenComparingLong(RunningService::pidNumber));
 
         return answer;
+    }
+
+    /**
+     * Whether the pid file was last written before the process with the pid started, as {@link ProcessHelper#isStale}
+     * finds for the files of an integration (CAMEL-26911).
+     */
+    private static boolean isReusedPid(long pid, Path pidFile) {
+        return ProcessHandle.of(pid).map(ph -> ProcessHelper.isStale(ph, pidFile)).orElse(false);
     }
 
     /**

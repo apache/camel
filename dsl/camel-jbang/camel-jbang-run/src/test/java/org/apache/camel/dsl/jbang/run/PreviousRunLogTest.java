@@ -73,7 +73,10 @@ class PreviousRunLogTest {
         KameletMain main = mock(KameletMain.class);
         doThrow(new FailedToStartRouteException("route1", "boom")).when(main).start();
 
-        assertThatThrownBy(() -> run(main, keptRequest())).isInstanceOf(FailedToStartRouteException.class);
+        // a mistake in the routes, which the CLI tells apart from its own errors
+        assertThatThrownBy(() -> run(main, keptRequest())).isInstanceOf(IntegrationStartException.class)
+                .hasMessage("Failed to start route: route1 because: boom")
+                .hasCauseInstanceOf(FailedToStartRouteException.class);
 
         // Camel did not get as far as a CamelContext: the name of the run
         PreviousRun.Info info = only(PreviousRun.find("orders"));

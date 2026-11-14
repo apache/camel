@@ -124,8 +124,9 @@ public class VersionList extends CamelCommand {
     @Option(name = "sort", description = "Sort by (version, date, or days)", defaultValue = "version")
     public String sort;
 
+    // set also when the command is created without its command line, as the MCP server does
     @Mixin
-    public MavenResolverMixin mavenResolver;
+    public MavenResolverMixin mavenResolver = new MavenResolverMixin();
 
     @Option(name = "vendor", description = "Vendor of Apache Camel distribution to use when filtering versions")
     public String vendor;
@@ -156,7 +157,7 @@ public class VersionList extends CamelCommand {
     public boolean jsonOutput;
 
     @Mixin
-    QuarkusExtensionRegistryMixin quarkusExtensionRegistry;
+    QuarkusExtensionRegistryMixin quarkusExtensionRegistry = new QuarkusExtensionRegistryMixin();
 
     public VersionList(CamelJBangMain main) {
         super(main);

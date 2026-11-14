@@ -188,11 +188,12 @@ if not defined _RAW exit /b 1
 :tryJavaParseVersion
 set "_RAW=%_RAW:"=%"
 set "_MAJOR="
-for /f "tokens=1,2 delims=." %%a in ("%_RAW%") do (
+@REM The major is before the first dot, dash or plus: 21.0.5, 26-ea and 21+35 are 21, 26 and 21 (as camel.sh reads them).
+for /f "tokens=1,2 delims=.-+" %%a in ("%_RAW%") do (
   if "%%a"=="1" (set "_MAJOR=%%b") else (set "_MAJOR=%%a")
 )
 if not defined _MAJOR exit /b 1
-@REM Reject non-numeric majors (e.g. early-access "17-ea") so the numeric compare below is safe.
+@REM Reject a major that is still not a number, so the numeric compare below is safe.
 for /f "delims=0123456789" %%z in ("%_MAJOR%") do exit /b 1
 if %_MAJOR% LSS %CAMEL_MIN_JAVA% exit /b 1
 set "CAMEL_JAVACMD=%_CAND%"

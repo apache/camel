@@ -706,6 +706,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         pb.command(args.toArray(String[]::new));
 
+        useKubeConfig(pb);
         Path log = mavenOutput(pb);
         try {
             Process p = pb.start();
@@ -782,6 +783,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         pb.command(args.toArray(String[]::new));
 
+        useKubeConfig(pb);
         Path log = mavenOutput(pb);
         try {
             Process p = pb.start();
@@ -803,6 +805,16 @@ public class KubernetesRun extends KubernetesBaseCommand {
      *
      * @return the log file, or <tt>null</tt> with --verbose
      */
+    /**
+     * The Kubernetes client of the JKube plugin reads KUBECONFIG: the cluster of --kube-config, when it is given
+     * (CAMEL-26934: the build deployed to the current context).
+     */
+    void useKubeConfig(ProcessBuilder pb) {
+        if (kubeConfig != null) {
+            pb.environment().put("KUBECONFIG", Path.of(kubeConfig).toAbsolutePath().toString());
+        }
+    }
+
     private Path mavenOutput(ProcessBuilder pb) throws IOException {
         if (!quiet && verbose) {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
@@ -850,7 +862,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
             if (verbose) {
                 printer().print("Automatic Kubernetes cluster detection... ");
             }
-            this.clusterType = KubernetesHelper.discoverClusterType().name();
+            this.clusterType = KubernetesHelper.discoverClusterType(client()).name();
             if (verbose) {
                 printer().println(this.clusterType);
             }

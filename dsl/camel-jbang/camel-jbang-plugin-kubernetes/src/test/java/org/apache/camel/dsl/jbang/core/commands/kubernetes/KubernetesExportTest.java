@@ -226,6 +226,29 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void theOptionsOfTheWorkloadApplyToACronjob(RuntimeType rt) throws Exception {
+        // --env, --config and --annotation were not in cronjob.yml (CAMEL-26934)
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--image-group=camel-test", "--runtime=" + rt.runtime(), "--env=MY_VAR=hello",
+                "--config=configmap:my-cm", "--annotation=team=ops");
+        command.traits = new String[] { "cronjob.enabled=true", "cronjob.schedule=\"0 22 * * 1-5\"" };
+        Assertions.assertEquals(0, command.doCall());
+
+        CronJob cronjob = getResource(rt, CronJob.class)
+                .orElseThrow(() -> new RuntimeCamelException("Cannot find cronjob for: %s".formatted(rt.runtime())));
+        var pod = cronjob.getSpec().getJobTemplate().getSpec().getTemplate().getSpec();
+        var container = pod.getContainers().get(0);
+        Assertions.assertTrue(container.getEnv().stream()
+                .anyMatch(e -> "MY_VAR".equals(e.getName()) && "hello".equals(e.getValue())), container.getEnv().toString());
+        Assertions.assertTrue(pod.getVolumes().stream()
+                .anyMatch(v -> v.getConfigMap() != null && "my-cm".equals(v.getConfigMap().getName())),
+                pod.getVolumes().toString());
+        Assertions.assertFalse(container.getVolumeMounts().isEmpty());
+        Assertions.assertEquals("ops", cronjob.getMetadata().getAnnotations().get("team"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldGenerateCronjobKubernetesManifest(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
                 "--image-registry=quay.io", "--image-group=camel-test", "--runtime=" + rt.runtime(),

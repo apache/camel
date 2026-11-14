@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.launcher;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -85,6 +86,27 @@ class LauncherArchiveLayoutIT {
                 assertThat(classPath).as("the class path of the launcher JAR in " + zip.getFileName())
                         .isEqualTo(lib);
             }
+        }
+    }
+
+    @Test
+    void theScriptsHaveTheLineEndingsOfTheirSystem() throws IOException {
+        // cmd.exe can miss goto and call :label targets in a batch file with LF line endings (CAMEL-26933)
+        for (Path zip : binZips()) {
+            try (ZipFile archive = new ZipFile(zip.toFile())) {
+                String bat = script(archive, "camel.bat");
+                assertThat(bat).as("bin/camel.bat of " + zip.getFileName()).contains("\r\n");
+                assertThat(bat.replace("\r\n", "")).as("a line of bin/camel.bat without CR in " + zip.getFileName())
+                        .doesNotContain("\n");
+                assertThat(script(archive, "camel.sh")).as("bin/camel.sh of " + zip.getFileName()).doesNotContain("\r");
+            }
+        }
+    }
+
+    private static String script(ZipFile archive, String name) throws IOException {
+        ZipEntry entry = archive.stream().filter(e -> e.getName().endsWith("/bin/" + name)).findFirst().orElseThrow();
+        try (InputStream in = archive.getInputStream(entry)) {
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
         }
     }
 

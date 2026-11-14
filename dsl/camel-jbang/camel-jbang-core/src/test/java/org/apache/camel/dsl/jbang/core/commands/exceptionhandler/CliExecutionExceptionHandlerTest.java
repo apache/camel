@@ -20,8 +20,11 @@ import java.io.IOException;
 import java.net.http.HttpTimeoutException;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.run.IntegrationStartException;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,6 +57,23 @@ class CliExecutionExceptionHandlerTest {
         IOException wrapped = new IOException("request failed", new HttpTimeoutException("read timed out"));
         assertThat(handler.getExitCode(wrapped))
                 .isEqualTo(CliExitCode.TIMEOUT);
+    }
+
+    @Test
+    void anIntegrationThatFailsToStartIsExit1WithOneLine() {
+        // a mistake in the route: exit 70 told an AI agent "a bug in Camel, do not retry" (CAMEL-26930)
+        StringPrinter printer = new StringPrinter();
+        CliExecutionExceptionHandler handler = new CliExecutionExceptionHandler(new CamelJBangMain().withPrinter(printer));
+        IntegrationStartException failure = new IntegrationStartException(
+                new FailedToCreateRouteException(
+                        "nosteps", "file:broken.yaml", "From[timer:tick]",
+                        new IllegalArgumentException("Route nosteps has no output processors")));
+
+        assertThat(handler.handle(failure, null)).isEqualTo(CliExitCode.FAILURE);
+        // the log of the integration has the stack trace already
+        assertThat(printer.getStderr().strip()).startsWith("ERROR: Failed to create route").contains("nosteps")
+                .contains("Route nosteps has no output processors")
+                .doesNotContain("\tat ");
     }
 
     @Test

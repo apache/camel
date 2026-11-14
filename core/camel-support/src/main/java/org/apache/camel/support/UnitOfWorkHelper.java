@@ -52,7 +52,11 @@ public final class UnitOfWorkHelper {
         // unit of work is done
         try {
             uow.done(exchange);
-        } catch (Exception e) {
+        } catch (VirtualMachineError e) {
+            // left as before (thrown on)
+            throw e;
+        } catch (Throwable e) {
+            // also an Error, as for an exception
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
                     exchange.getExchangeId(), e);
         }
@@ -108,8 +112,12 @@ public final class UnitOfWorkHelper {
                 LOG.trace("Invoking synchronization.onComplete: {} with {}", synchronization, exchange);
                 synchronization.onComplete(exchange);
             }
-        } catch (Exception e) {
-            // must catch exceptions to ensure all synchronizations have a chance to run
+        } catch (VirtualMachineError e) {
+            // left as before (thrown on)
+            throw e;
+        } catch (Throwable e) {
+            // must catch exceptions (and an Error, which would skip the next synchronizations, such as the commit of a
+            // consumer, and the end of the unit of work) to ensure all synchronizations have a chance to run
             LOG.warn("Exception occurred during onCompletion. This exception will be ignored.", e);
         }
     }
@@ -155,8 +163,11 @@ public final class UnitOfWorkHelper {
                 try {
                     log.trace("Invoking synchronization.onBeforeRoute: {} with {}", synchronization, exchange);
                     routeSynchronization.onBeforeRoute(route, exchange);
-                } catch (Exception e) {
-                    // must catch exceptions to ensure all synchronizations have a chance to run
+                } catch (VirtualMachineError e) {
+                    // left as before (thrown on)
+                    throw e;
+                } catch (Throwable e) {
+                    // must catch exceptions (and an Error) to ensure all synchronizations have a chance to run
                     log.warn("Exception occurred during onBeforeRoute. This exception will be ignored.", e);
                 }
             }
@@ -188,8 +199,11 @@ public final class UnitOfWorkHelper {
                 try {
                     log.trace("Invoking synchronization.onAfterRoute: {} with {}", synchronization, exchange);
                     routeSynchronization.onAfterRoute(route, exchange);
-                } catch (Exception e) {
-                    // must catch exceptions to ensure all synchronizations have a chance to run
+                } catch (VirtualMachineError e) {
+                    // left as before (thrown on)
+                    throw e;
+                } catch (Throwable e) {
+                    // must catch exceptions (and an Error) to ensure all synchronizations have a chance to run
                     log.warn("Exception occurred during onAfterRoute. This exception will be ignored.", e);
                 }
             }
