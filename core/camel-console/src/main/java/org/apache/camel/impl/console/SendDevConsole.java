@@ -298,6 +298,10 @@ public class SendDevConsole extends AbstractDevConsole {
                     throw new SendTimeoutException(exchange, timeout);
                 } catch (ExecutionException e) {
                     throw e.getCause() instanceof Exception ex ? ex : e;
+                } catch (InterruptedException e) {
+                    // keep the interrupt for the caller, such as a console call that is stopped
+                    Thread.currentThread().interrupt();
+                    throw new CamelExchangeException("The send was interrupted", exchange, e);
                 }
             }
         }

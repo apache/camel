@@ -94,6 +94,27 @@ public class SendDevConsoleTest extends AbstractDevConsoleTest {
     }
 
     @Test
+    public void testAnInterruptedSendKeepsTheInterrupt() {
+        DevConsole console = startedSendConsole();
+
+        Map<String, Object> options = createOptions("direct:slow", "Hello");
+        options.put(SendDevConsole.POLL_TIMEOUT, "20000");
+        Thread.currentThread().interrupt();
+        JsonObject out;
+        boolean interrupted;
+        try {
+            out = callJson(console, options);
+        } finally {
+            // clears the flag for the tests after this one
+            interrupted = Thread.interrupted();
+        }
+
+        assertTrue(interrupted, "the interrupt is kept for the caller");
+        assertEquals("error", out.getString("status"), out.toJson());
+        assertTrue(map(out, "exception").getString("message").startsWith("The send was interrupted"), out.toJson());
+    }
+
+    @Test
     public void testSendCompletesWithinTheTimeout() {
         DevConsole console = startedSendConsole();
 
