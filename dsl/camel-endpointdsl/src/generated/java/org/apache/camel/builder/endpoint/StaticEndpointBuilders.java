@@ -17238,7 +17238,7 @@ public class StaticEndpointBuilders {
      * ID of the edge node
      * 
      * Path parameter: deviceId
-     * ID of this edge node device
+     * ID of this edge node device. Applies to the device endpoint only.
      * 
      * @param path groupId/edgeNode
      * @return the dsl builder
@@ -17263,7 +17263,7 @@ public class StaticEndpointBuilders {
      * ID of the edge node
      * 
      * Path parameter: deviceId
-     * ID of this edge node device
+     * ID of this edge node device. Applies to the device endpoint only.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
