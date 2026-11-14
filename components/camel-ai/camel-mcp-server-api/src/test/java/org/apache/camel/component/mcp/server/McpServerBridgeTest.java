@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.mcp.server;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,6 +33,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class McpServerBridgeTest extends CamelTestSupport {
 
     private final RecordingMcpServerEngine engine = new RecordingMcpServerEngine();
+    private final AtomicReference<Object> capturedPrincipal = new AtomicReference<>();
+    private final AtomicReference<String> capturedPrincipalName = new AtomicReference<>();
+    private final AtomicReference<List<String>> capturedPrincipalRoles = new AtomicReference<>();
     private McpServerBridge bridge;
 
     @Override
@@ -82,6 +87,20 @@ class McpServerBridgeTest extends CamelTestSupport {
                 from("ai-tool:other_tool?tags=untrusted&description=Other tag")
                         .setBody(constant("other"));
 
+                from("ai-tool:whoami?tags=crm&description=Expose the MCP caller identity")
+                        .routeId("whoami-route")
+                        .process(exchange -> {
+                            capturedPrincipal.set(exchange.getProperty(
+                                    McpToolCallContext.SECURITY_PRINCIPAL_PROPERTY));
+                            capturedPrincipalName.set(exchange.getProperty(
+                                    McpToolCallContext.SECURITY_PRINCIPAL_NAME_PROPERTY, String.class));
+                            Object roles = exchange.getProperty(
+                                    McpToolCallContext.SECURITY_PRINCIPAL_ROLES_PROPERTY);
+                            capturedPrincipalRoles.set(roles instanceof Collection<?> collection
+                                    ? collection.stream().map(String.class::cast).toList() : null);
+                            exchange.getMessage().setBody("identity-captured");
+                        });
+
                 from("ai-tool:getWeather?tags=crm&description=Get weather"
                      + "&outputSchema={\"type\":\"object\",\"properties\":{\"temperature\":{\"type\":\"number\"},\"unit\":{\"type\":\"string\"}},\"required\":[\"temperature\",\"unit\"]}")
                         .routeId("weather-route")
@@ -122,6 +141,25 @@ class McpServerBridgeTest extends CamelTestSupport {
 
         assertThat(result.isError()).isFalse();
         assertThat(result.text()).isEqualTo("customer-42");
+    }
+
+    @Test
+    void testToolCallContextIsPropagatedToExchange() {
+        capturedPrincipal.set(null);
+        capturedPrincipalName.set(null);
+        capturedPrincipalRoles.set(null);
+
+        Object callerPrincipal = new Object();
+        McpToolCallContext callContext = new McpToolCallContext(
+                callerPrincipal, "alice", List.of("admin", "operator"));
+
+        McpToolCallResult result = engine.tools().get("whoami").handler().call(Map.of(), callContext);
+
+        assertThat(result.isError()).isFalse();
+        assertThat(result.text()).isEqualTo("identity-captured");
+        assertThat(capturedPrincipal.get()).isSameAs(callerPrincipal);
+        assertThat(capturedPrincipalName.get()).isEqualTo("alice");
+        assertThat(capturedPrincipalRoles.get()).containsExactly("admin", "operator");
     }
 
     @Test
