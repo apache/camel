@@ -103,6 +103,23 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void aCommentedOutOptionIsNotAnOption() {
+        // CAMEL-26960: was the unknown option '# idempotentRepository'
+        String yaml = """
+                - from:
+                    uri: file
+                    parameters:
+                      directoryName: orders
+                      noop: true
+                      # or
+                      # idempotentRepository: "#redisRepo"
+                    steps:
+                      - log: "${body}"
+                """;
+        assertThat(SourceValidator.validateYamlEndpoints(yaml, catalog)).isEmpty();
+    }
+
+    @Test
     void expandedFormInvalidBoolean() {
         String yaml = """
                 - from:

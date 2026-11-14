@@ -59,6 +59,18 @@ With a question, the answer is the only output on stdout, so a script can use it
 `--show-tools` and the token usage of `--show-stats` are printed on stderr. `camel ask` exits with `1` when the LLM
 cannot answer, such as when it is not reachable or the call fails.
 
+The code in an answer is checked against the Camel catalog, as it is what you copy. An invalid simple expression gets
+the model one turn to fix it. What does not exist in the code blocks is printed on stderr under the answer, one
+`Check:` line each: a key or an option the YAML DSL does not have, an option the component of an endpoint does not
+have, and a `camel.*` key that is not a Camel option. For example:
+
+[source,text]
+----
+Check: code block 1, line 4: `deleteAfterRead` is not an option of the `file` component (did you mean `delete`?)
+----
+
+In a chat, the model is told of them with your next question, so its next answer does not repeat them.
+
 === What asks first
 
 Most tools only read, and run without asking. A call that changes the project,

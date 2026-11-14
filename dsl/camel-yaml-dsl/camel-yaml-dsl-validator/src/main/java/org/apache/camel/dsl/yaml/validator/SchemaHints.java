@@ -135,6 +135,12 @@ final class SchemaHints {
 
     private static final Predicate<Match> ANY = m -> true;
 
+    /** Whether the node of the error, an item of beans, has its name: key. */
+    private static boolean hasName(Match m) {
+        JsonNode instance = m.error().getInstanceNode();
+        return instance != null && instance.has("name");
+    }
+
     /** {sku} when the node is the map YAML reads an unquoted {sku} as (one key, no value); null otherwise. */
     static String unquotedBraces(Match m) {
         JsonNode instance = m.error().getInstanceNode();
@@ -870,8 +876,14 @@ final class SchemaHints {
             unknownProperty(".*/beans/\\d+", m -> Set.of("id", "ref", "class").contains(m.unknown()),
                     m -> "a bean is - name: myBean followed by type: \"#class:com.example.MyBean\" (name instead of "
                          + m.unknown() + (m.unknown().equals("class") ? ", type instead of class" : "") + ")"),
-            // - myBean: {type: ...} instead of - name: myBean / type: ...
-            unknownProperty(".*/beans/\\d+", ANY,
+            // - name: repo / type: ... / parameters: {...}: the options of a bean are its properties (CAMEL-26960)
+            unknownProperty(".*/beans/\\d+",
+                    m -> hasName(m) && Set.of("parameters", "params", "options", "args").contains(m.unknown()),
+                    m -> "what a bean is set up with goes under properties: (its setters, properties: {fileStore: x})"
+                         + " or constructors: (the arguments of its constructor, constructors: {0: x})"),
+            // - myBean: {type: ...} instead of - name: myBean / type: ...; not for an item that has its name, where the
+            // key is one a bean does not have
+            unknownProperty(".*/beans/\\d+", m -> !hasName(m),
                     m -> "a bean item is written as - name: " + m.unknown()
                          + " followed by type: \"#class:com.example.MyBean\" (the name is a property, not the key)"),
             // errorHandler: under from: belongs to the route; told only that it is a top-level entry, models moved a
