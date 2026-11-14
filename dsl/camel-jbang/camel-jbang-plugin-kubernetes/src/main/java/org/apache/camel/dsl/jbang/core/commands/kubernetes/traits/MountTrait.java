@@ -102,6 +102,34 @@ public class MountTrait extends BaseTrait {
                 .endSpec()
                 .endTemplate()
                 .endSpec());
+        if (volumes.isEmpty()) {
+            return;
+        }
+        // and the other workloads: a CronJob and a Knative Service had no volumes (CAMEL-26934)
+        context.doWithCronJobs(j -> j.editOrNewSpec()
+                .editOrNewJobTemplate()
+                .editOrNewSpec()
+                .editOrNewTemplate()
+                .editOrNewSpec()
+                .addAllToVolumes(volumes)
+                .editFirstContainer()
+                .addAllToVolumeMounts(volumeMounts)
+                .endContainer()
+                .endSpec()
+                .endTemplate()
+                .endSpec()
+                .endJobTemplate()
+                .endSpec());
+        context.doWithKnativeServices(k -> k.editOrNewSpec()
+                .editOrNewTemplate()
+                .editOrNewSpec()
+                .addAllToVolumes(volumes)
+                .editFirstContainer()
+                .addAllToVolumeMounts(volumeMounts)
+                .endContainer()
+                .endSpec()
+                .endTemplate()
+                .endSpec());
     }
 
     private void configureVolumesAndMounts(Mount mountTrait, List<Volume> volumes, List<VolumeMount> volumeMounts) {
