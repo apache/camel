@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,11 +28,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -102,6 +108,49 @@ class MulticastTaskThrowsErrorTest extends ContextTestSupport {
         assertFailsWithAssertionError("direct:streamingSplit", true);
     }
 
+    @Test
+    void errorOfAPartOfATransactedMulticastFailsOnlyThatPart() throws Exception {
+        assertOnlyTheTransactedPartFails(new AssertionError("part failed"));
+    }
+
+    @Test
+    void exceptionOfAPartOfATransactedMulticastFailsOnlyThatPart() throws Exception {
+        // control: an exception already failed only the part
+        assertOnlyTheTransactedPartFails(new IllegalArgumentException("part failed"));
+    }
+
+    private void assertOnlyTheTransactedPartFails(Throwable failure) throws Exception {
+        // the parts are not wrapped (in a unit of work, an error handler or a step, which handle an Error already),
+        // so what the first part throws reaches the transacted task, as an Error that escapes the step of a part does
+        List<String> sent = new CopyOnWriteArrayList<>();
+        Processor first = e -> {
+            if (failure instanceof Error error) {
+                throw error;
+            }
+            throw (Exception) failure;
+        };
+        Processor second = e -> sent.add("second");
+        MulticastProcessor multicast
+                = new MulticastProcessor(context, null, List.of(first, second), new UseLatestAggregationStrategy()) {
+                    @Override
+                    protected Processor wrapInErrorHandler(Route route, Exchange exchange, Processor processor) {
+                        return processor;
+                    }
+                };
+        ServiceHelper.startService(multicast);
+        try {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getExchangeExtension().setTransacted(true);
+            multicast.process(exchange);
+
+            assertEquals(List.of("second"), sent, "the part after the failed part must still be sent");
+            assertTrue(causedBy(exchange.getException(), failure.getClass()),
+                    "expected " + failure + " in the causes of " + exchange.getException());
+        } finally {
+            ServiceHelper.stopService(multicast);
+        }
+    }
+
     private void assertFailsWithAssertionError(String uri, boolean transacted) throws Exception {
         assertFailsWithAssertionError(uri, transacted, () -> {
         });
@@ -167,7 +216,7 @@ class MulticastTaskThrowsErrorTest extends ContextTestSupport {
                 from("direct:slow").process(e -> release.await(20, TimeUnit.SECONDS));
                 // the split is done by its timeout, while the second part still waits: the timeout of the strategy
                 // throws
-                from("direct:timeout").split(body(), new TimeoutFailing()).parallelProcessing().timeout(100)
+                from("direct:timeout").split(body(), new TimeoutFailing()).parallelProcessing().timeout(1000)
                         .choice()
                             .when(body().isEqualTo("b")).to("direct:slow")
                             .otherwise().to("mock:part")

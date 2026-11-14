@@ -211,8 +211,8 @@ resource is released as failed
 |A `VirtualMachineError`, such as `OutOfMemoryError`, `StackOverflowError` or `InternalError`
 |Camel's error handling does not get it (the JVM may no longer be in a consistent state, so the application should not
 handle it). It is not set on the exchange, but thrown on after the processor's
-callback was called (an `Error` of an `AggregationStrategy` or of the iterator of a split is thrown on from the task
-of the EIP, and the callback is not called unless the EIP is `synchronous=true` or the exchange is transacted, in both
+callback was called (a `VirtualMachineError` of an `AggregationStrategy` or of the iterator of a split is thrown on
+from the task of the EIP, and the callback is not called unless the EIP is `synchronous=true` or the exchange is transacted, in both
 cases without `parallelProcessing`; with `parallelProcessing`, or from the `timeout` of the strategy, it is lost on a
 thread of the pool).
 Depending on the error handler, the `Error` reaches the caller (and the exchange may stay

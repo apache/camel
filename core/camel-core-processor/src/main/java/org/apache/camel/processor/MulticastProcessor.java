@@ -878,6 +878,12 @@ public class MulticastProcessor extends BaseProcessorSupport
                 sync.process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
+            } catch (VirtualMachineError e) {
+                // left as before (thrown on)
+                throw e;
+            } catch (Throwable e) {
+                // also an Error, as for an exception: only this part fails (thrown on, it would fail the whole exchange)
+                exchange.setException(e);
             } finally {
                 afterSend(pair, watch, original);
             }
@@ -1300,7 +1306,11 @@ public class MulticastProcessor extends BaseProcessorSupport
         if (onPrepare != null) {
             try {
                 onPrepare.process(exchange);
-            } catch (Exception e) {
+            } catch (VirtualMachineError e) {
+                // left as before (thrown on)
+                throw e;
+            } catch (Throwable e) {
+                // also an Error, as for an exception: only this part fails (thrown on, it would fail the whole exchange)
                 exchange.setException(e);
             }
         }

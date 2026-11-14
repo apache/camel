@@ -1013,6 +1013,10 @@ of the iterator of a streaming `split` (unless the EIP was `synchronous=true` or
 without `parallelProcessing`) reached the caller without the error handler, and the exchange stayed inflight until the
 CamelContext stopped; with `parallelProcessing` (or when the timeout was called) it was lost on a thread of the pool,
 and the caller got no answer. For the producer of an API component, the `Error` was lost on its thread.
+An `Error` of the `onPrepare` processor of a `split`, `multicast` or `recipientList` fails only the part it prepares, as
+an exception does, and the other parts are still sent. Before, no part was sent (for a streaming `split`, no part
+after it). The same applies to an `Error` that a part of a transacted `split`, `multicast` or `recipientList` (without
+`parallelProcessing`) throws to the EIP: before, the parts after it were not sent.
 
 There is no option for the old behaviour. See also
 xref:error-handler.adoc#_an_error_thrown_by_a_processor[An Error thrown by a processor].
