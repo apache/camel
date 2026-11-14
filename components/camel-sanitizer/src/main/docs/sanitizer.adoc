@@ -280,6 +280,12 @@ parallel split, which share one lock of the table (and of the records of R2). It
 pending warning, and the calls still pending then.
 |===
 
+The stack of each first callback is what the sanitizer costs most: it is taken for every call of a step, in case a
+second callback comes. In a benchmark on one machine, a route of 6 steps took about 15 times as long per message with
+the default `stackDepth` of `32` as with `0`, and about half as long with `8` as with `32` (with `0` it was still
+slower than without the sanitizer). A lower `stackDepth` makes a test suite faster and changes the timing of the races
+less; the report then shows fewer frames.
+
 == In a test
 
 Add the dependency in test scope:
