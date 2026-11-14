@@ -125,6 +125,8 @@ public class Ask extends CamelCommand {
     String lastAnswer;
     // the model that answered, and its API, such as qwen3.6 (ollama)
     String usedModel;
+    // the mistakes left in the last answer of a chat, which the model is told with the next question (CAMEL-26960)
+    private String pendingNote;
 
     private long targetPid;
     private AskTools askTools;
@@ -245,7 +247,9 @@ public class Ask extends CamelCommand {
             LlmClient client, String systemPrompt,
             List<LlmClient.ToolDef> tools, List<LlmClient.Message> messages,
             String userQuestion) {
-        messages.add(LlmClient.Message.user(userQuestion));
+        String note = pendingNote;
+        pendingNote = null;
+        messages.add(LlmClient.Message.user(note == null ? userQuestion : "[" + note + "]\n" + userQuestion));
 
         long startTime = System.currentTimeMillis();
         LlmClient.TokenUsage totalUsage = LlmClient.TokenUsage.EMPTY;
@@ -290,6 +294,12 @@ public class Ask extends CamelCommand {
                             "(the answer has an invalid simple expression: asking for a corrected answer)");
                     continue;
                 }
+                // the code of the answer is checked too: what does not exist, and a simple expression left invalid,
+                // is printed under the answer, and in a chat the model is told with the next question (CAMEL-26960)
+                List<AnswerChecks.Mark> marks = AnswerChecks.checkCode(response.text());
+                marks.forEach(m -> printer().printDiagnostic("Check: " + m.describe()));
+                problems.forEach(p -> printer().printDiagnostic("Check: invalid simple expression " + p.message()));
+                pendingNote = AnswerChecks.historyNote(marks, problems);
                 messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), List.of()));
                 lastAnswer = response.text();
                 printStats(totalUsage, startTime);

@@ -1434,14 +1434,20 @@ class AiPanel {
         if (text != null && !text.isBlank()) {
             long elapsed = MonotonicClock.millis() - thinkingStartTime;
             String note = problems.isEmpty() ? null : answerNote(problems);
+            // the code of the answer is checked too: what does not exist is marked under its block, and the model is
+            // told of it, and of a simple expression left invalid, with the next question (CAMEL-26960)
+            List<AnswerChecks.Mark> marks = AnswerChecks.checkCode(text);
+            String told = AnswerChecks.historyNote(marks, problems);
+            pendingNote = told == null ? pendingNote : pendingNote == null ? told : pendingNote + "\n" + told;
+            String shown = AnswerChecks.withMarks(text, marks);
             ConversationEntry entry = new ConversationEntry(
-                    AiRole.ASSISTANT, text, elapsed, turnAiMs, turnToolMs, turnToolCalls,
+                    AiRole.ASSISTANT, shown, elapsed, turnAiMs, turnToolMs, turnToolCalls,
                     totalUsage.totalTokens(), turnRequests, wrapUp, contextFillPercent(), corrections, note);
             conversation.add(entry);
             usage.addTurn(turnAiMs, turnToolMs, turnToolCalls);
             String label = wrapUp ? "Response after reaching the tool call limit (" : "Response (";
             log(LogLevel.RESPONSE, label + entry.byline() + describeCacheSignal(totalUsage) + ")",
-                    note == null ? text : text + "\n\n" + note);
+                    note == null ? shown : shown + "\n\n" + note);
         } else {
             String err = "Empty response from LLM.";
             conversation.add(new ConversationEntry(AiRole.ERROR, err));
