@@ -1,0 +1,54 @@
+////
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#
+////
+
+= SPIFFE lifecycle integration tests
+
+The `SpiffeRotationIT` test needs a Linux Docker or Podman engine sharing the host kernel and PID namespace with the test JVM.
+Docker Desktop on macOS or Windows does not meet these requirements.
+The fixture retains the rootless UID translation and Workload API registration readiness checks used by the other SPIFFE integration tests.
+
+After building the required test-infra modules, run:
+
+[source,shell]
+----
+mvn -f components/camel-spiffe/pom.xml verify -DskipITs=false -Dit.test=SpiffeRotationIT
+----
+
+The test uses dedicated containers instead of the singleton service, so interrupting its agent cannot affect other tests.
+It requests 20-second workload SVIDs and a 120-second CA lifetime.
+SPIRE schedules CA rotation every ten seconds and guarantees an SVID lifetime of at most one sixth of the CA lifetime.
+The custom fixture persists the agent node key to allow the same agent process to restart with its existing attestation.
+The default shared fixture retains its one-hour SVID, 24-hour CA and in-memory key manager.
+
+The test performs fresh mutual TLS handshakes through the same client and server `SSLContext` objects.
+Every probe uses a new listening port and invalidates both TLS sessions to avoid session resumption masking certificate changes.
+It checks changed leaf serials, continued use of cached valid credentials during a short agent interruption,
+watcher recovery, and adoption of a newly published signing authority.
+The trust-bundle assertion requires a successful handshake whose peer leaf verifies against an added authority
+and against none of the original authorities; leaf rotation alone does not satisfy it.
+Delegating wrappers around real SDK sources verify that Camel stops both sources, then the test checks distinct
+SSLContexts and subsequent rotation after CamelContext restart.
+These wrappers preserve the real SDK callback state and perform no synthetic Workload API updates.
+
+Allow several minutes for this test.
+Leaf rotation, recovery and rotation after restart each have a 90-second Awaitility deadline;
+the trust-authority transition has a 180-second deadline.
+Each handshake has bounded socket and server-task timeouts.
+The test does not claim that an established TLS session revalidates after rotation,
+or exercise a prolonged outage beyond cached credential expiry or CA removal.

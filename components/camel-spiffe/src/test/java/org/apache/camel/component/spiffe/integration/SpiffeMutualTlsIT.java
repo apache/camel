@@ -20,6 +20,7 @@ import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.security.cert.X509Certificate;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -106,7 +107,8 @@ class SpiffeMutualTlsIT extends CamelTestSupport {
      * present their SVID. Returns normally when the handshake and a one-byte exchange complete, and throws when either
      * side rejects the peer.
      */
-    private void handshake(SSLContext serverContext, SSLContext clientContext) throws Exception {
+    static X509Certificate handshake(SSLContext serverContext, SSLContext clientContext) throws Exception {
+        X509Certificate peerCertificate;
         ExecutorService executor = Executors.newSingleThreadExecutor();
         try (SSLServerSocket serverSocket = (SSLServerSocket) serverContext.getServerSocketFactory()
                 .createServerSocket(0, 1, InetAddress.getLoopbackAddress())) {
@@ -120,6 +122,7 @@ class SpiffeMutualTlsIT extends CamelTestSupport {
                     accepted.setSoTimeout(15000);
                     accepted.startHandshake();
                     accepted.getInputStream().read();
+                    accepted.getSession().invalidate();
                 }
                 return null;
             });
@@ -129,6 +132,9 @@ class SpiffeMutualTlsIT extends CamelTestSupport {
                     .createSocket(InetAddress.getLoopbackAddress(), port)) {
                 clientSocket.setSoTimeout(15000);
                 clientSocket.startHandshake();
+                peerCertificate = (X509Certificate) clientSocket.getSession().getPeerCertificates()[0];
+                // A new port and invalidated sessions force a full handshake on every rotation probe.
+                clientSocket.getSession().invalidate();
                 clientSocket.getOutputStream().write(42);
                 clientSocket.getOutputStream().flush();
             }
@@ -142,6 +148,7 @@ class SpiffeMutualTlsIT extends CamelTestSupport {
                 }
                 throw e;
             }
+            return peerCertificate;
         } finally {
             executor.shutdownNow();
         }
