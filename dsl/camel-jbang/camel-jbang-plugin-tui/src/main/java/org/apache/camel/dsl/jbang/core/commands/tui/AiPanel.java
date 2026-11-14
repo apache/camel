@@ -2396,8 +2396,9 @@ class AiPanel {
                 curl -fsSL https://ollama.com/install.sh | sh
 
                 # then on both:
-                ollama serve             # start the daemon (skip if auto-started)
-                ollama pull qwen3.6:35b-a3b  # recommended
+                ollama serve                 # start the daemon (skip if auto-started)
+                ollama pull qwen3.6:35b-mlx  # on a Mac with Apple Silicon (Ollama 0.40 or later)
+                ollama pull qwen3.6:35b-a3b  # on other machines
                 ```
 
                 Ollama is auto-detected at `localhost:11434` — no configuration needed.
@@ -2407,6 +2408,7 @@ class AiPanel {
                 | Model | RAM | Notes |
                 |---|---|---|
                 | qwen3.6:35b-a3b | ~23 GB | Recommended: only 3B active per token, fastest prompt processing |
+                | qwen3.6:35b-mlx | ~24 GB | The same model as an MLX build: recommended on Apple Silicon |
                 | qwen2.5:14b | ~9 GB | Minimum for 16 GB machines |
                 | qwen3.6:27b | ~18 GB | Strong dense model, several times slower prompt processing |
                 | qwen2.5:32b | ~20 GB | Good quality, slow prompt processing |

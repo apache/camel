@@ -400,7 +400,8 @@ class DocViewerPopup {
             status = "**Detected:** Ollama at " + OllamaDoctorSupport.formatDisplayHost(ollama.baseUrl())
                      + " with " + OllamaDoctorSupport.modelCountLabel(ollama.models());
         } else if (ollama.running()) {
-            status = "**Detected:** Ollama is running but has no models. Run `ollama pull qwen3.6:35b-a3b`.";
+            status = "**Detected:** Ollama is running but has no models. Run `ollama pull qwen3.6:35b-a3b` "
+                     + "(on a Mac with Apple Silicon: `qwen3.6:35b-mlx`).";
         } else {
             status = "**Status:** No AI provider detected. Set an API key, start Ollama, or pick a coding agent "
                      + "with Ctrl+P in the panel (section 5), then press F8.";
@@ -433,7 +434,8 @@ class DocViewerPopup {
                                  + "Install Ollama natively for GPU acceleration, pull a model, then press F8:\n\n"
                                  + "    brew install ollama                          # macOS\n"
                                  + "    curl -fsSL https://ollama.com/install.sh | sh  # Linux\n"
-                                 + "    ollama pull qwen3.6:35b-a3b\n\n"
+                                 + "    ollama pull qwen3.6:35b-mlx                    # a Mac with Apple Silicon\n"
+                                 + "    ollama pull qwen3.6:35b-a3b                    # other machines\n\n"
                                  + "The AI panel relies on tool calling. Models smaller than ~14B do not call tools\n"
                                  + "reliably and answer from training data instead. Use at least 14B. Prefer a\n"
                                  + "mixture-of-experts model such as `qwen3.6:35b-a3b`: with only 3B parameters active\n"
@@ -442,6 +444,7 @@ class DocViewerPopup {
                                  + "| Model | RAM | Notes |\n"
                                  + "|-------|-----|-------|\n"
                                  + "| `qwen3.6:35b-a3b` | ~23 GB | Recommended: fastest prompt processing, needs 32 GB+ |\n"
+                                 + "| `qwen3.6:35b-mlx` | ~24 GB | The same model as an MLX build: recommended on Apple Silicon |\n"
                                  + "| `qwen2.5:14b` | ~9 GB | Minimum for 16 GB machines |\n"
                                  + "| `qwen3.6:27b` | ~18 GB | Strong dense model, several times slower prompt processing |\n"
                                  + "| `qwen2.5:32b` | ~20 GB | Good quality, slow prompt processing |\n"
@@ -449,9 +452,9 @@ class DocViewerPopup {
                                  + "| `llama3.3:70b` | ~43 GB | Best open model, needs 64 GB+ |\n\n"
                                  + "`camel infra run ollama` runs Ollama in Docker without GPU acceleration, which is\n"
                                  + "much slower. Prefer the native install for development.\n\n"
-                                 + "On Apple Silicon, use the default (GGUF) tags rather than the `-mlx` tags: the Ollama\n"
-                                 + "MLX engine cannot yet reuse the cached prompt for Qwen 3.x models, so every question\n"
-                                 + "re-processes the whole prompt.\n\n"
+                                 + "On a Mac with Apple Silicon and Ollama 0.40 or later, use the MLX build `qwen3.6:35b-mlx`:\n"
+                                 + "the same model, which reuses the cached prompt between questions and processes the prompt\n"
+                                 + "faster than the default (GGUF) tag. With an older Ollama keep the default tag.\n\n"
                                  + "## 3. OpenAI-compatible local servers\n\n"
                                  + "LM Studio, vLLM, llama.cpp, GPT4All and similar servers work through `LLM_BASE_URL`:\n\n"
                                  + "    export LLM_API_KEY=any-value\n"

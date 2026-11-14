@@ -27,7 +27,7 @@ camel overview [options]
 | `--model` | Model to use | llama3.2 | String
 | `--save` | Save the overview as camel-summary.md in the project directory, keeping its AI-assisted sections |  | boolean
 | `--show-prompt` | Show the prompt sent to the LLM |  | boolean
-| `--temperature` | Temperature for response generation (0.0-2.0) | 0.3 | double
+| `--temperature` | Temperature for response generation (0.0-2.0); not sent to Anthropic, which does not accept it | 0.3 | double
 | `--timeout` | Timeout in seconds for LLM response | 300 | int
 | `--url` | LLM API endpoint URL. Auto-detected from 'camel infra' for Ollama if not specified. Also reads AZURE_OPENAI_ENDPOINT or WATSONX_URL env vars |  | String
 | `-h,--help` | Display this help and exit |  | boolean

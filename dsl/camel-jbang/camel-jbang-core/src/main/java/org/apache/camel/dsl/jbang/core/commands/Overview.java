@@ -104,7 +104,9 @@ public class Overview extends CamelCommand {
     @Option(name = "timeout", description = "Timeout in seconds for LLM response", defaultValue = "300")
     int timeout = 300;
 
-    @Option(name = "temperature", description = "Temperature for response generation (0.0-2.0)", defaultValue = "0.3")
+    @Option(name = "temperature",
+            description = "Temperature for response generation (0.0-2.0); not sent to Anthropic, which does not accept it",
+            defaultValue = "0.3")
     double temperature = 0.3;
 
     @Option(name = "show-prompt", hasValue = false, description = "Show the prompt sent to the LLM")

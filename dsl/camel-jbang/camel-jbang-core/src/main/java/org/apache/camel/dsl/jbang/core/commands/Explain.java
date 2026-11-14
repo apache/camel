@@ -121,7 +121,9 @@ public class Explain extends CamelCommand {
     @Option(name = "show-prompt", hasValue = false, description = "Show the prompt sent to the LLM")
     boolean showPrompt;
 
-    @Option(name = "temperature", description = "Temperature for response generation (0.0-2.0)", defaultValue = "0.7")
+    @Option(name = "temperature",
+            description = "Temperature for response generation (0.0-2.0); not sent to Anthropic, which does not accept it",
+            defaultValue = "0.7")
     double temperature = 0.7;
 
     @Option(name = "system-prompt", description = "Custom system prompt")
