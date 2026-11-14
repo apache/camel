@@ -293,6 +293,10 @@ public class ReceiveDevConsole extends AbstractDevConsole {
         json.put("endpointUri", exchange.getFromEndpoint().toString());
         json.put("remoteEndpoint", exchange.getFromEndpoint().isRemote());
         lastTimestamp = exchange.getMessage().getMessageTimestamp();
+        if (lastTimestamp == 0) {
+            // most components set no message timestamp, and camel cmd receive --since filters by it (CAMEL-26929)
+            lastTimestamp = exchange.getClock().getCreated();
+        }
         json.put("timestamp", lastTimestamp);
 
         ConsoleHelper.offerLast(queue, json);

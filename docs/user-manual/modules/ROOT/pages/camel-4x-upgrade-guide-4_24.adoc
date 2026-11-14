@@ -2757,6 +2757,10 @@ A script that checks the exit code of a command must take these changes into acc
 * A name that does not exist exits with `3` instead of `1`: the Kamelet of `camel init --from-kamelet`, the service of
   `camel infra run`, the key of `camel config get`, the name given to `camel doc`, and the plugin of
   `camel plugin delete`.
+* `camel cmd receive --action=start --endpoint=<pattern>` exits with `3`, "No endpoint matching", when the pattern
+  matches no endpoint of the integration, instead of `0`. With `--output=json`, the line "Starting to receive messages
+  ..." is printed on stderr, so stdout has only the JSON, and `--action=status --output=json` prints JSON instead of the
+  table.
 * `camel cmd memory-leak` and `camel restart` exit with `3` when no running integration, or more than one, matches the
   name. `camel cmd memory-leak` exits with `124` when the integration does not reply in time.
 * `camel init` without a file, or with `--from-kamelet` and a file that is not a `.kamelet.yaml` file,

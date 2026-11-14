@@ -58,6 +58,7 @@ import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
@@ -286,8 +287,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
                     Files.writeString(f, "");
                 }
             } else {
-                printer().println("Starting to receive messages from existing Camel: " + process.name() + " (pid: "
-                                  + process.pid() + ")");
+                info(("stop".equals(action) ? "Stopping" : "Starting") + " to receive messages from existing Camel: "
+                     + process.name() + " (pid: " + process.pid() + ")");
                 int code = showStatus(ActionClient.execute(process, "receive", this::receiveOptions, timeout + 10000));
                 if (exit == 0) {
                     exit = code;
@@ -350,8 +351,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
         };
         // keep thread running as we need it to show the status before terminating
         t.start();
-        printer().println(
-                "Starting to receive messages by connecting to external system using local process (pid: " + pid + ")");
+        info("Starting to receive messages by connecting to external system using local process (pid: " + pid + ")");
 
         Integer exit = run.call();
         latch.await();
@@ -411,7 +411,24 @@ public class CamelReceiveAction extends ActionBaseCommand {
             }
             return CliExitCode.FAILURE;
         }
+        if ("start".equals(action) && endpoint != null && !"*".equals(endpoint) && jo != null
+                && jo.getString("url") == null) {
+            // the integration says which endpoint it receives from: it started to receive from none (CAMEL-26929)
+            printer().printErr("No endpoint matching: " + endpoint);
+            return CliExitCode.NOT_FOUND;
+        }
         return CliExitCode.OK;
+    }
+
+    /**
+     * A line that says what the command does: not on stdout when the output is JSON, which then has only the JSON.
+     */
+    private void info(String line) {
+        if ("json".equalsIgnoreCase(output)) {
+            printer().printDiagnostic(line);
+        } else {
+            printer().println(line);
+        }
     }
 
     protected Integer doStatusCall() {
@@ -467,7 +484,10 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
         rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        if ("json".equalsIgnoreCase(output)) {
+            // --output=json printed the table (CAMEL-26929)
+            JsonOutput.printList(printer(), rows.stream().map(CamelReceiveAction::statusAsJson).toList());
+        } else if (!rows.isEmpty()) {
             int tw = terminalWidth();
             int fixedWidth = 10 + 30 + 10 + 10 + 8 + 10; // PID + NAME + AGE + STATUS + TOTAL + SINCE (approx)
             int borderOverhead = TerminalWidthHelper.noBorderOverhead(7);
@@ -491,6 +511,25 @@ public class CamelReceiveAction extends ActionBaseCommand {
         }
 
         return 0;
+    }
+
+    private static JsonObject statusAsJson(StatusRow r) {
+        JsonObject jo = new JsonObject();
+        jo.put("pid", Long.parseLong(r.pid));
+        jo.put("name", r.name);
+        jo.put("uptime", r.uptime);
+        jo.put("enabled", r.enabled);
+        jo.put("total", r.counter);
+        if (r.firstTimestamp > 0) {
+            jo.put("firstTimestamp", r.firstTimestamp);
+        }
+        if (r.lastTimestamp > 0) {
+            jo.put("lastTimestamp", r.lastTimestamp);
+        }
+        if (r.uri != null) {
+            jo.put("endpoint", r.uri);
+        }
+        return jo;
     }
 
     private String getStatus(StatusRow r) {
