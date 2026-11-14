@@ -35,6 +35,7 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.SharedInternalProcessor;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpointUtilizationStatistics;
 import org.apache.camel.support.PluginHelper;
@@ -174,8 +175,10 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                     watch = SendHelper.notifySending(exchange, endpoint);
                 }
 
-                // invoke the synchronous method (with the send hook around the producer if any)
-                sharedInternalProcessor.process(exchange, SendHelper.withSendHook(camelContext, producer), resultProcessor);
+                // invoke the synchronous method (with the send hook around the producer if any); the producer is
+                // called through a SyncSend, which completes the send once also when the producer throws
+                sharedInternalProcessor.process(exchange,
+                        new SyncSend(endpoint, SendHelper.withSendHook(camelContext, producer)), resultProcessor);
 
             } catch (Exception e) {
                 // ensure exceptions is caught and set on the exchange
@@ -349,21 +352,75 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
 
         // send the exchange using the processor; an exception thrown by the producer is handled by doInAsyncProducer,
-        // which knows whether the producer called the callback before it threw
-        EventNotifierCallback notifier = null;
-        if (eventNotifierEnabled && camelContext.getCamelContextExtension().isEventNotificationApplicable()) {
-            notifier = new EventNotifierCallback(callback, exchange, endpoint);
-            callback = notifier;
+        // which knows whether the producer called the callback before it threw. doInAsyncProducer also emits the
+        // sending and sent events of the send
+        return sharedInternalProcessor.process(exchange, callback, producer, resultProcessor);
+    }
+
+    /**
+     * The producer of a synchronous {@link #send}: calls the producer, and calls the callback once, also when the
+     * producer throws after it called the callback (the exception is then logged, and not set on the exchange, as in
+     * {@link #doInAsyncProducer}) or before it (the exception is then set on the exchange, as when the producer sets
+     * it). One object per send. An {@link Error} is thrown on as before.
+     */
+    private static final class SyncSend extends AtomicBoolean implements AsyncProcessor, AsyncCallback {
+        private final Endpoint endpoint;
+        private final AsyncProcessor producer;
+        private AsyncCallback callback;
+        private volatile boolean doneSync;
+
+        private SyncSend(Endpoint endpoint, AsyncProcessor producer) {
+            this.endpoint = endpoint;
+            this.producer = producer;
         }
-        try {
-            // invoke the asynchronous method
-            return sharedInternalProcessor.process(exchange, callback, producer, resultProcessor);
-        } catch (Throwable e) {
-            if (notifier != null) {
-                // pair the sending event with a sent event, unless the callback did already
-                notifier.notifySentOnce();
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            this.callback = callback;
+            try {
+                return producer.process(exchange, this);
+            } catch (RuntimeException e) {
+                if (!compareAndSet(false, true)) {
+                    // the producer called the callback and then threw: the send is already completed
+                    LOG.warn("The producer of {} threw an exception after it completed the exchange. This exception is"
+                             + " ignored.",
+                            endpoint, e);
+                    return doneSync;
+                }
+                exchange.setException(e);
+                callback.done(true);
+                return true;
             }
-            throw e;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            if (compareAndSet(false, true)) {
+                this.doneSync = doneSync;
+                callback.done(doneSync);
+            } else {
+                LOG.warn("The producer of {} completed the exchange after the send was completed (more than once, or after"
+                         + " it threw). This is ignored.",
+                        endpoint);
+            }
+        }
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            // a transacted exchange is sent synchronously
+            PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext()).process(this, exchange);
+        }
+
+        @Override
+        public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+            AsyncCallbackToCompletableFutureAdapter<Exchange> future = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+            process(exchange, future);
+            return future.getFuture();
+        }
+
+        @Override
+        public String toString() {
+            return producer.toString();
         }
     }
 

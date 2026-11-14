@@ -32,6 +32,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.SendHook;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EventNotifierSupport;
@@ -193,6 +194,92 @@ public class DefaultProducerCacheProducerThrowsTest extends ContextTestSupport {
     }
 
     @Test
+    public void testSyncSendCallbackThenThrowKeepsTheResult() {
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, 0);
+        cache.start();
+        try {
+            Exchange exchange = newExchange("after");
+
+            Exchange out = cache.send(endpoint(), exchange, null);
+
+            assertNull(out.getException(), "The producer completed the exchange before it threw");
+            assertEquals("Done", out.getMessage().getBody());
+        } finally {
+            cache.stop();
+        }
+    }
+
+    @Test
+    public void testSyncSendThrowBeforeCallbackFails() {
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, 0);
+        cache.start();
+        try {
+            Endpoint endpoint = endpoint();
+            for (int i = 0; i < 2; i++) {
+                Exchange out = cache.send(endpoint, newExchange("before"), null);
+                assertInstanceOf(IllegalStateException.class, out.getException());
+            }
+            // the producer is back in the pool after each send
+            assertEquals(1, created.get());
+        } finally {
+            cache.stop();
+        }
+    }
+
+    @Test
+    public void testAsyncSendEmitsOneSendingAndOneSentEvent() throws Exception {
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, 0);
+        cache.setEventNotifierEnabled(true);
+        cache.start();
+        try {
+            Exchange exchange = newExchange("ok");
+            cache.asyncSendExchange(endpoint(), null, null, null, exchange, null).get(5, TimeUnit.SECONDS);
+
+            assertNull(exchange.getException());
+            assertEquals(1, sending.get(), "one sending event per send");
+            assertEquals(1, sent.get(), "one sent event per send");
+        } finally {
+            cache.stop();
+        }
+    }
+
+    @Test
+    public void testToDCallbackThenThrowWithSendHookRoutesOnce() throws Exception {
+        AtomicInteger afterSend = new AtomicInteger();
+        SendHook hook = new SendHook() {
+            @Override
+            public long beforeSend(Exchange exchange, Endpoint endpoint) {
+                return PROCEED;
+            }
+
+            @Override
+            public void afterSend(Exchange exchange, Endpoint endpoint) {
+                if (endpoint.getEndpointUri().startsWith("throwing:")) {
+                    afterSend.incrementAndGet();
+                }
+            }
+        };
+        context.getCamelContextExtension().addSendHook(hook);
+        try {
+            MockEndpoint mock = getMockEndpoint("mock:result");
+            mock.expectedBodiesReceived("Done");
+
+            Exchange out = template.send("direct:start", e -> {
+                e.getMessage().setHeader("mode", "after");
+                e.getMessage().setHeader("target", "producer");
+            });
+
+            // the hook does not set the exception the producer threw after it completed, and runs after the send once
+            mock.assertIsSatisfied();
+            assertEquals(1, mock.getReceivedCounter());
+            assertNull(out.getException());
+            assertEquals(1, afterSend.get());
+        } finally {
+            context.getCamelContextExtension().removeSendHook(hook);
+        }
+    }
+
+    @Test
     public void testToDCallbackThenThrowRoutesOnce() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Done");
@@ -248,6 +335,11 @@ public class DefaultProducerCacheProducerThrowsTest extends ContextTestSupport {
                 @Override
                 public boolean process(Exchange exchange, AsyncCallback callback) {
                     Object mode = exchange.getMessage().getHeader("mode");
+                    if ("ok".equals(mode)) {
+                        exchange.getMessage().setBody("Done");
+                        callback.done(true);
+                        return true;
+                    }
                     if ("error".equals(mode)) {
                         // such as a class of the producer that is missing
                         throw new NoClassDefFoundError("Simulated missing class");

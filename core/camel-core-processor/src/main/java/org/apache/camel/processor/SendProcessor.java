@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
@@ -228,25 +229,11 @@ public class SendProcessor extends BaseProcessorSupport
 
         // optimize to only create a new callback if really needed, otherwise we can use the provided callback as-is
         AsyncCallback ac = callback;
+        SentCallback sent = null;
         boolean newCallback = watch != null || existingPattern != target.getPattern() || variableReceive != null;
         if (newCallback) {
-            ac = doneSync -> {
-                try {
-                    // result should be stored in variable instead of message body/headers
-                    if (ExchangeHelper.shouldSetVariableResult(target, variableReceive)) {
-                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(target, variableReceive,
-                                target.getMessage());
-                        target.getMessage().setBody(originalBody);
-                        target.getMessage().setHeaders(originalHeaders);
-                    }
-                    // restore previous MEP
-                    target.setPattern(existingPattern);
-                    // emit event that the exchange was sent to the endpoint
-                    SendHelper.notifySent(target, destination, watch);
-                } finally {
-                    callback.done(doneSync);
-                }
-            };
+            sent = new SentCallback(target, existingPattern, originalBody, originalHeaders, watch, callback);
+            ac = sent;
         }
         try {
             // replace message body with variable
@@ -264,11 +251,85 @@ public class SendProcessor extends BaseProcessorSupport
             }
             return sync;
         } catch (Exception throwable) {
+            if (sent != null && !sent.compareAndSet(false, true)) {
+                // the producer called the callback and then threw: the exchange is already continued (maybe on
+                // another thread), so it is not completed a second time and the exception is not set on it
+                LOG.warn("The producer of {} threw an exception after it completed the exchange. This exception is ignored.",
+                        destination, throwable);
+                return sent.doneSync;
+            }
             exchange.setException(throwable);
-            callback.done(true);
+            if (sent != null) {
+                // the producer threw before it called the callback: complete the send as if it had called it
+                sent.complete(true);
+            } else {
+                // the callback of the caller was given to the producer as is (no object per send on this path), so
+                // whether the producer called it before it threw is only known by the caller
+                callback.done(true);
+            }
         }
 
         return true;
+    }
+
+    /**
+     * The callback of a send in {@link #sendUsingProducer}, when the send needs one: stores the result in the variable,
+     * restores the exchange pattern, emits the sent event and calls the callback of the caller, once (also when the
+     * producer calls its callback and then throws; a further call of the callback by the producer is only passed on).
+     * One object per send, as the lambda it replaces.
+     */
+    private final class SentCallback extends AtomicBoolean implements AsyncCallback {
+        private final Exchange target;
+        private final ExchangePattern existingPattern;
+        private final Object originalBody;
+        private final Map<String, Object> originalHeaders;
+        private final StopWatch watch;
+        private final AsyncCallback callback;
+        private volatile boolean doneSync;
+
+        private SentCallback(Exchange target, ExchangePattern existingPattern, Object originalBody,
+                             Map<String, Object> originalHeaders, StopWatch watch, AsyncCallback callback) {
+            this.target = target;
+            this.existingPattern = existingPattern;
+            this.originalBody = originalBody;
+            this.originalHeaders = originalHeaders;
+            this.watch = watch;
+            this.callback = callback;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            if (compareAndSet(false, true)) {
+                complete(doneSync);
+            } else {
+                // the producer calls the callback more than once, or after it threw: the send is not completed again,
+                // and the call is passed on to the callback of the caller as on main, so the step around this one
+                // (which ignores it) and the dev-mode checks of the route still see it
+                LOG.warn("The producer of {} completed the exchange after the send was completed (more than once, or after"
+                         + " it threw).",
+                        destination);
+                callback.done(doneSync);
+            }
+        }
+
+        private void complete(boolean doneSync) {
+            this.doneSync = doneSync;
+            try {
+                // result should be stored in variable instead of message body/headers
+                if (ExchangeHelper.shouldSetVariableResult(target, variableReceive)) {
+                    ExchangeHelper.setVariableFromMessageBodyAndHeaders(target, variableReceive,
+                            target.getMessage());
+                    target.getMessage().setBody(originalBody);
+                    target.getMessage().setHeaders(originalHeaders);
+                }
+                // restore previous MEP
+                target.setPattern(existingPattern);
+                // emit event that the exchange was sent to the endpoint
+                SendHelper.notifySent(target, destination, watch);
+            } finally {
+                callback.done(doneSync);
+            }
+        }
     }
 
     public String getVariableSend() {
