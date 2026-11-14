@@ -80,6 +80,16 @@ a|* checkpointing by checkpointBatchSize and checkpointBatchTimeout
 * an asynchronous downstream step
 |CAMEL-25683, CAMEL-25738, CAMEL-25781
 
+|camel-google-pubsub
+|`PubsubWorld` (`PubsubConsumerDstTest`)
+|FakePubsub: a subscription (Pull, Acknowledge, ModifyAckDeadline, ack deadlines, dead letter policy) behind the SubscriberStub of synchronousPull
+a|* synchronousPull with ackMode AUTO, and ackMode NONE with grouped messages acked or nacked together
+* ack deadlines that expire while a message is processed
+* the max delivery attempts of a subscription with a dead letter policy
+* route stop and start while the consumer pulls
+* a stop and start of the same consumer in one step, as a throttling route policy does
+|CAMEL-25712, CAMEL-25790, CAMEL-26647
+
 |camel-kafka-share
 |`KafkaShareWorld` (`KafkaShareConsumerDstTest`)
 |FakeShareGroup: a share group (KIP-932) of one topic with one partition, behind ShareConsumer
