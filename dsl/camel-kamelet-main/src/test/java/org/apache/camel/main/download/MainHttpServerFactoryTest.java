@@ -16,6 +16,9 @@
  */
 package org.apache.camel.main.download;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 
 import org.apache.camel.component.platform.http.main.MainHttpServer;
@@ -106,6 +109,37 @@ public class MainHttpServerFactoryTest {
         MainHttpServer server = context.hasService(MainHttpServer.class);
         assertNotNull(server);
         assertEquals("127.0.0.1", server.getHost());
+    }
+
+    @Test
+    void theRunSettingsOfAnotherRunDoNotChangeThePort() throws Exception {
+        // another run in the same folder writes its port to .camel-jbang/camel-jbang-run.properties (CAMEL-26930)
+        Path settings = Path.of(".camel-jbang", "camel-jbang-run.properties");
+        Path backup = Files.exists(settings) ? Files.createTempFile("run-settings", ".properties") : null;
+        if (backup != null) {
+            Files.copy(settings, backup, StandardCopyOption.REPLACE_EXISTING);
+        }
+        boolean created = Files.notExists(settings.getParent());
+        Files.createDirectories(settings.getParent());
+        Files.writeString(settings, "camel.server.port=7777\n");
+        try {
+            Properties prop = new Properties();
+            prop.put("camel.server.port", "9090");
+            context.getPropertiesComponent().setInitialProperties(prop);
+
+            MainHttpServerFactory.setupHttpServer(context, false);
+
+            assertEquals(9090, context.hasService(MainHttpServer.class).getPort());
+        } finally {
+            if (backup != null) {
+                Files.move(backup, settings, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                Files.deleteIfExists(settings);
+                if (created) {
+                    Files.deleteIfExists(settings.getParent());
+                }
+            }
+        }
     }
 
     @Test

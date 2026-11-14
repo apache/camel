@@ -26,7 +26,6 @@ import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.MainConstants;
 import org.apache.camel.main.MainHelper;
 import org.apache.camel.main.util.CamelJBangSettingsHelper;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,13 +48,10 @@ public class MainHttpServerFactory {
             HttpServerConfigurationProperties config = new HttpServerConfigurationProperties(null);
             // apply the camel.server.* settings (port, host, path ...) as camel-main does when the server is enabled
             configureHttpServer(camelContext, config);
-            String port = CamelJBangSettingsHelper.readSettings("camel.server.port");
-            if (port != null) {
-                config.setPort(CamelContextHelper.parseInt(camelContext, port));
-            } else {
-                CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.server.port",
-                        String.valueOf(config.getPort()));
-            }
+            // the port is from the configuration of this run (camel run --port is in its initial properties); the run
+            // settings file of the current directory is shared, so another run in the same folder could change the port
+            // of this one (CAMEL-26930). The port is written there for camel export, when the run did not write it
+            CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.server.port", String.valueOf(config.getPort()));
             if (!silent) {
                 try {
                     // enable http server if not silent
