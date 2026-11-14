@@ -2752,8 +2752,9 @@ A script that checks the exit code of a command must take these changes into acc
   exist exits with `66` instead of `1`. The parts of a Java route the parser could not read are printed as a warning on
   stderr (also with `--json`, which lists them in `unread` as before).
 * A file or directory that does not exist exits with `66` instead of `1`: a source file or `--source-dir` of
-  `camel run`, the route file of `camel explain` and `camel harden` (checked before the LLM is contacted), and the
-  `pom.xml` of `camel dependency runtime`.
+  `camel run`, the route file of `camel explain` and `camel harden` (checked before the LLM is contacted), the
+  `pom.xml` of `camel dependency runtime`, a file of `camel export`, `camel kubernetes run` and `camel dependency list`, `copy` and `sbom`
+  (whose "Path does not exist" is now on stderr), and a file of `camel transform route`, which now names it.
 * A name that does not exist exits with `3` instead of `1`: the Kamelet of `camel init --from-kamelet`, the service of
   `camel infra run`, the key of `camel config get`, the name given to `camel doc`, and the plugin of
   `camel plugin delete`.

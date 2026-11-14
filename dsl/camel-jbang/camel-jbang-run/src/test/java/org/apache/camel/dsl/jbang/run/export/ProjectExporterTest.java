@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.camel.dsl.jbang.run.RunPipeline;
 import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
 import org.apache.camel.dsl.jbang.run.common.MavenResolver;
@@ -465,8 +466,10 @@ class ProjectExporterTest {
         int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
                 .export(request);
 
-        assertThat(exit).isEqualTo(1);
-        assertThat(printer.getOutput()).contains("Path does not exist");
+        // as camel run: exit 66 and the message on stderr; it was 1 on stdout (CAMEL-26931)
+        assertThat(exit).isEqualTo(RunPipeline.FILE_NOT_FOUND);
+        assertThat(printer.getStderr()).contains("Path does not exist");
+        assertThat(printer.getStdout()).isEmpty();
         assertThat(resolved).isEmpty();
     }
 

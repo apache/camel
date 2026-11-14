@@ -38,6 +38,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
 import org.apache.camel.main.KameletMain;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 
@@ -113,6 +114,13 @@ public class TransformRoute extends CamelCommand {
 
         if (!"xml".equals(format) && !"yaml".equals(format) && !"java".equals(format)) {
             throw CliException.usage("--format must be xml, yaml or java, was: " + format);
+        }
+        for (String file : files) {
+            // the file it cannot find by its name: it exited 1 without saying which file, except for --format=java
+            // (CAMEL-26931)
+            if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:") && !Files.exists(Path.of(file))) {
+                throw CliException.fileNotFound("File does not exist: " + file);
+            }
         }
         if ("java".equals(format)) {
             return transformToJava();
