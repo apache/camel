@@ -32,8 +32,9 @@ final class HealthHistory {
     static final byte READY = 1;
     static final byte LIVE = 2;
     /**
-     * The most seconds between two reads that say the same that are taken to have said it too. The TUI reads about once
-     * a second while a diagram is on screen, a little over a second apart, so now and then a second has no read of its
+     * The most seconds without a read of their own between two reads that say the same: these seconds get the state of
+     * the two reads, instead of UNKNOWN. With 2, reads up to 3 seconds apart leave no gap. The TUI reads about once a
+     * second while a diagram is on screen, a little over a second apart, so now and then a second has no read of its
      * own: a gap in the strip that was never a change.
      */
     static final int BRIDGED_SECONDS = 2;

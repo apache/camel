@@ -42,6 +42,25 @@ class HealthHistoryTest {
     }
 
     @Test
+    void twoSecondsSkippedBetweenTwoReadsThatSayTheSameIsNoGap() {
+        // the most that is bridged: seconds 101 and 102 have no read of their own
+        read(100, true);
+        read(103, true);
+
+        assertThat(history.strip("1", 103, 4)).containsExactly(UP, UP, UP, UP);
+    }
+
+    @Test
+    void threeSecondsSkippedBetweenTwoReadsThatSayTheSameIsAGap() {
+        // one more than is bridged: seconds 101 to 103 have no read of their own
+        read(100, true);
+        read(104, true);
+
+        assertThat(history.strip("1", 104, 5)).containsExactly(UP, HealthHistory.UNKNOWN, HealthHistory.UNKNOWN,
+                HealthHistory.UNKNOWN, UP);
+    }
+
+    @Test
     void aLongerTimeWithoutReadsIsNotKnown() {
         read(100, true);
         read(110, true);
