@@ -64,7 +64,14 @@ class VersionSetTest extends BaseConfigTestSupport {
         command.version = "4.10.0";
         command.repo = "https://repo.example.org/maven";
         command.runtime = RuntimeType.springBoot;
+        String[] asked = new String[1];
+        command.versionCheck = (version, repos) -> {
+            asked[0] = repos;
+            return true;
+        };
         command.doCall();
+        // the version is checked in the repository that is given
+        assertEquals("https://repo.example.org/maven", asked[0]);
 
         CommandLineHelper.loadProperties(properties -> {
             assertEquals("4.10.0", properties.get("camel-version"));
