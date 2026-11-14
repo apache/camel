@@ -607,6 +607,7 @@ public class Debug extends Run {
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
+        markSpawned(pb);
 
         if (background) {
             return runBackgroundProcess(pb, "Camel Debug");
