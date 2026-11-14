@@ -124,6 +124,10 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     private static final String UPDATE_CHECK_SESSION_STATE = "aether.updateCheckManager.sessionState";
     private static final DependencyFilter ACCEPT_ALL = (node, parents) -> true;
     private static final int DEFAULT_REQUEST_TIMEOUT = 60000;
+    // see org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector and BfDependencyCollector
+    private static final String COLLECTOR_IMPL = "aether.dependencyCollector.impl";
+    private static final String COLLECTOR_BF_THREADS = "aether.dependencyCollector.bf.threads";
+    private static final int COLLECTOR_THREADS = 10;
 
     // Configuration
     private boolean mavenCentralEnabled = true;
@@ -373,7 +377,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // Get RepositorySystem and RepositorySystemSession from MIMA
         repositorySystem = mimaContext.repositorySystem();
-        repositorySystemSession = withTimeoutsAndReachability(withTrackingKeyCompat(mimaContext.repositorySystemSession()));
+        repositorySystemSession = withCamelDefaults(withTrackingKeyCompat(mimaContext.repositorySystemSession()));
 
         // Configure repositories (same as embedded mode)
         List<RemoteRepository> originalRepositories = new ArrayList<>();
@@ -865,13 +869,21 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     }
 
     /**
-     * Sets the request timeout of Camel (unless configured, such as with the aether.connector.requestTimeout system
-     * property), and stops using a repository that cannot be connected to.
+     * Sets the defaults of Camel (unless configured, such as with the aether.connector.requestTimeout system property):
+     * the request timeout, and the breadth-first dependency collector, which downloads the POMs in parallel (it
+     * resolves the same dependencies as the depth-first default of Maven Resolver). And stops using a repository that
+     * cannot be connected to.
      */
-    private RepositorySystemSession withTimeoutsAndReachability(RepositorySystemSession session) {
+    private RepositorySystemSession withCamelDefaults(RepositorySystemSession session) {
         DefaultRepositorySystemSession answer = new DefaultRepositorySystemSession(session);
         if (session.getConfigProperties().get(ConfigurationProperties.REQUEST_TIMEOUT) == null) {
             answer.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, requestTimeout);
+        }
+        if (session.getConfigProperties().get(COLLECTOR_IMPL) == null) {
+            answer.setConfigProperty(COLLECTOR_IMPL, "bf");
+        }
+        if (session.getConfigProperties().get(COLLECTOR_BF_THREADS) == null) {
+            answer.setConfigProperty(COLLECTOR_BF_THREADS, COLLECTOR_THREADS);
         }
         answer.setTransferListener(ChainedTransferListener.newInstance(session.getTransferListener(),
                 new UnreachableRepositoryListener(unreachableRepositories)));
@@ -946,6 +958,10 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
      */
     Set<String> getUnreachableRepositories() {
         return unreachableRepositories;
+    }
+
+    RepositorySystemSession getRepositorySystemSession() {
+        return repositorySystemSession;
     }
 
     @Override

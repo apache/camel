@@ -2674,6 +2674,14 @@ stops sending no longer hangs the download for that long. Set the `aether.connec
 (in millis) for a longer timeout. A repository that cannot be connected to is now logged with a WARN and not used
 for the rest of the run.
 
+=== camel-jbang - dependencies are resolved with the breadth-first collector of Maven Resolver
+
+The Camel CLI (and other tools that download with `camel-tooling-maven`) now resolves dependencies with the
+breadth-first collector of Maven Resolver (`aether.dependencyCollector.impl=bf`), which downloads the POMs in parallel,
+instead of the depth-first one Maven uses by default. It resolves the same dependencies; a cold `camel run` with five
+components downloads them about a third faster. Set the `aether.dependencyCollector.impl=df` system property to go back.
+The dependencies given with `--dep` or `camel.jbang.dependencies` are now resolved together, as one dependency graph.
+
 === camel-pqc - KeyLifecycleManager behaviour aligned across the implementations
 
 Four differences between the `KeyLifecycleManager` implementations are resolved. All four are corrections, but each

@@ -304,7 +304,44 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             String parentGav,
             String groupId, String artifactId, String version, boolean transitively,
             boolean hidden, String extraRepos, boolean required) {
+        MavenGav gav = prepare(groupId, artifactId, version, hidden);
+        if (gav != null) {
+            doDownload(parentGav, List.of(gav), transitively, extraRepos, required);
+        }
+    }
 
+    @Override
+    public void downloadDependencies(List<MavenGav> gavs, boolean required) {
+        List<MavenGav> todo = new ArrayList<>();
+        for (MavenGav gav : gavs) {
+            MavenGav prepared = prepare(gav.getGroupId(), gav.getArtifactId(), gav.getVersion(), false);
+            if (prepared != null) {
+                todo.add(prepared);
+            }
+        }
+        if (todo.size() > 1) {
+            try {
+                // together: one dependency graph, and the JARs are downloaded in parallel
+                doDownload(null, todo, true, null, true);
+                return;
+            } catch (DownloadException e) {
+                // one at a time, so only the one that cannot be downloaded fails (or is logged)
+                LOG.debug("Cannot download the dependencies together, downloading them one at a time: {}",
+                        e.getMessage());
+            }
+        }
+        for (MavenGav gav : todo) {
+            doDownload(null, List.of(gav), true, null, required);
+        }
+    }
+
+    /**
+     * Prepares a dependency to download: resolves its version and triggers the listeners.
+     *
+     * @return the dependency to download, or null when there is nothing to download (it is on the classpath, or has no
+     *         version)
+     */
+    private MavenGav prepare(String groupId, String artifactId, String version, boolean hidden) {
         if (versionResolver != null && version != null) {
             version = versionResolver.resolve(version);
         }
@@ -327,22 +364,24 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             }
             if (bootClasspath.contains(target)) {
                 // already on classpath
-                return;
+                return null;
             }
         }
 
         // we need version to be able to download from maven
         if (ObjectHelper.isEmpty(version)) {
-            return;
+            return null;
         }
+        return MavenGav.fromCoordinates(groupId, artifactId, version, null, null);
+    }
 
-        String gav = groupId + ":" + artifactId + ":" + version;
-        String targetVersion = version;
+    private void doDownload(
+            String parentGav, List<MavenGav> gavs, boolean transitively, String extraRepos, boolean required) {
+        List<String> deps = gavs.stream().map(MavenGav::toString).toList();
         threadPool.download(LOG, () -> {
-            List<String> deps = List.of(gav);
-
             // include Apache snapshot to make it easy to use upcoming releases
-            boolean useApacheSnapshots = "org.apache.camel".equals(groupId) && targetVersion.contains("SNAPSHOT");
+            boolean useApacheSnapshots = gavs.stream()
+                    .anyMatch(g -> "org.apache.camel".equals(g.getGroupId()) && g.getVersion().contains("SNAPSHOT"));
 
             // include extra repositories (if any) - these will be used in addition
             // to the ones detected from ~/.m2/settings.xml and configured in
@@ -350,8 +389,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             Set<String> extraRepositories = new LinkedHashSet<>(resolveExtraRepositories(extraRepos));
             if (knownReposResolver != null) {
                 // and from known extra repositories (if any)
-                String known = knownReposResolver.getRepo(artifactId);
-                extraRepositories.addAll(resolveExtraRepositories(known));
+                for (MavenGav g : gavs) {
+                    String known = knownReposResolver.getRepo(g.getArtifactId());
+                    extraRepositories.addAll(resolveExtraRepositories(known));
+                }
             }
 
             // what is already on the classpath is left out (with its dependencies), so it is not downloaded
@@ -366,9 +407,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             }
             List<File> files = new ArrayList<>();
             if (verbose) {
-                LOG.info("Dependencies: {} -> [{}]", gav, artifacts);
+                LOG.info("Dependencies: {} -> [{}]", String.join(", ", deps), artifacts);
             } else {
-                LOG.debug("Dependencies: {} -> [{}]", gav, artifacts);
+                LOG.debug("Dependencies: {} -> [{}]", String.join(", ", deps), artifacts);
             }
 
             for (MavenArtifact a : artifacts) {
@@ -396,8 +437,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 }
             }
             if (!artifacts.isEmpty()) {
-                for (DownloadListener listener : downloadListeners) {
-                    listener.onDownloadedDependency(groupId, artifactId, targetVersion);
+                for (MavenGav g : gavs) {
+                    for (DownloadListener listener : downloadListeners) {
+                        listener.onDownloadedDependency(g.getGroupId(), g.getArtifactId(), g.getVersion());
+                    }
                 }
             }
             if (!extraRepositories.isEmpty()) {
@@ -408,7 +451,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 }
             }
 
-        }, gav, required);
+        }, deps, required);
     }
 
     @Override
