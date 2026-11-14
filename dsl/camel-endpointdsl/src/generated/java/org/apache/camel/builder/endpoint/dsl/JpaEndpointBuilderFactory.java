@@ -1279,6 +1279,42 @@ public interface JpaEndpointBuilderFactory {
             doSetProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
+        /**
+         * If set to true, then Camel will use the EntityManager from the header
+         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
+         * on the component/endpoint. This allows end users to control which
+         * entity manager will be in use.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param usePassedInEntityManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJpaEndpointConsumerBuilder usePassedInEntityManager(boolean usePassedInEntityManager) {
+            doSetProperty("usePassedInEntityManager", usePassedInEntityManager);
+            return this;
+        }
+        /**
+         * If set to true, then Camel will use the EntityManager from the header
+         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
+         * on the component/endpoint. This allows end users to control which
+         * entity manager will be in use.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param usePassedInEntityManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJpaEndpointConsumerBuilder usePassedInEntityManager(String usePassedInEntityManager) {
+            doSetProperty("usePassedInEntityManager", usePassedInEntityManager);
+            return this;
+        }
     }
 
     /**
@@ -1784,42 +1820,6 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If set to true, then Camel will use the EntityManager from the header
-         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
-         * on the component/endpoint. This allows end users to control which
-         * entity manager will be in use.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param usePassedInEntityManager the value to set
-         * @return the dsl builder
-         */
-        default AdvancedJpaEndpointProducerBuilder usePassedInEntityManager(boolean usePassedInEntityManager) {
-            doSetProperty("usePassedInEntityManager", usePassedInEntityManager);
-            return this;
-        }
-        /**
-         * If set to true, then Camel will use the EntityManager from the header
-         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
-         * on the component/endpoint. This allows end users to control which
-         * entity manager will be in use.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param usePassedInEntityManager the value to set
-         * @return the dsl builder
-         */
-        default AdvancedJpaEndpointProducerBuilder usePassedInEntityManager(String usePassedInEntityManager) {
-            doSetProperty("usePassedInEntityManager", usePassedInEntityManager);
-            return this;
-        }
-        /**
          * Additional properties for the entity manager to use. This is a
          * multi-value option with prefix: emf.
          * 
@@ -1890,6 +1890,42 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointProducerBuilder sharedEntityManager(String sharedEntityManager) {
             doSetProperty("sharedEntityManager", sharedEntityManager);
+            return this;
+        }
+        /**
+         * If set to true, then Camel will use the EntityManager from the header
+         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
+         * on the component/endpoint. This allows end users to control which
+         * entity manager will be in use.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param usePassedInEntityManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJpaEndpointProducerBuilder usePassedInEntityManager(boolean usePassedInEntityManager) {
+            doSetProperty("usePassedInEntityManager", usePassedInEntityManager);
+            return this;
+        }
+        /**
+         * If set to true, then Camel will use the EntityManager from the header
+         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
+         * on the component/endpoint. This allows end users to control which
+         * entity manager will be in use.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param usePassedInEntityManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJpaEndpointProducerBuilder usePassedInEntityManager(String usePassedInEntityManager) {
+            doSetProperty("usePassedInEntityManager", usePassedInEntityManager);
             return this;
         }
     }
@@ -2184,6 +2220,42 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointBuilder sharedEntityManager(String sharedEntityManager) {
             doSetProperty("sharedEntityManager", sharedEntityManager);
+            return this;
+        }
+        /**
+         * If set to true, then Camel will use the EntityManager from the header
+         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
+         * on the component/endpoint. This allows end users to control which
+         * entity manager will be in use.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param usePassedInEntityManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJpaEndpointBuilder usePassedInEntityManager(boolean usePassedInEntityManager) {
+            doSetProperty("usePassedInEntityManager", usePassedInEntityManager);
+            return this;
+        }
+        /**
+         * If set to true, then Camel will use the EntityManager from the header
+         * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
+         * on the component/endpoint. This allows end users to control which
+         * entity manager will be in use.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param usePassedInEntityManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJpaEndpointBuilder usePassedInEntityManager(String usePassedInEntityManager) {
+            doSetProperty("usePassedInEntityManager", usePassedInEntityManager);
             return this;
         }
     }
