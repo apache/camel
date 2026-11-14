@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -28,6 +29,7 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.FileUtil;
@@ -42,6 +44,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,15 +57,19 @@ class ExportTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
     private File workingDir;
+    private Path originalHome;
 
     @BeforeEach
     public void setup() throws IOException {
         LOG.info("Preparing ExportTest");
         workingDir = Files.createTempDirectory("camel-export").toFile();
+        originalHome = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(workingDir.toString());
     }
 
     @AfterEach
     public void end() throws IOException {
+        CommandLineHelper.useHomeDir(originalHome.toString());
         // force removing, since deleteOnExit is not removing.
         org.apache.camel.util.FileUtil.removeDir(workingDir);
         // clean up export work dir to prevent ENOENT race with docs gulp scanning ../dsl/**
@@ -173,6 +181,29 @@ class ExportTest {
         Assertions.assertTrue(containsDependency(model.getDependencies(), "jupiter", "rocks", "2.0"),
                 "Generated pom doesn't contain jupiter:rocks:2.0 dependency");
         command.printConfigurationValues("export command");
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "4.10.0")
+    @SetSystemProperty(key = CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, value = "4.8.0")
+    void springBootExportUsesResolvedCoreVersionUnlessExplicit(String camelVersion) throws Exception {
+        Export command = createCommand(RuntimeType.springBoot, new String[] { "classpath:route.yaml" },
+                "--camel-spring-boot-version=4.8.0", "--dep=camel:util", "--dir=" + workingDir, "--quiet");
+        command.camelVersion = camelVersion;
+
+        assertThat(command.doCall()).isZero();
+
+        Model model = readMavenModel();
+        assertThat(model.getDependencies()).anySatisfy(dependency -> {
+            assertThat(dependency.getGroupId()).isEqualTo("org.apache.camel");
+            assertThat(dependency.getArtifactId()).isEqualTo("camel-util");
+            assertThat(dependency.getVersion()).isEqualTo(camelVersion == null ? "4.8.0" : camelVersion);
+        });
+        assertThat(model.getDependencyManagement().getDependencies()).anySatisfy(dependency -> {
+            assertThat(dependency.getArtifactId()).isEqualTo("camel-spring-boot-bom");
+            assertThat(dependency.getVersion()).isEqualTo("4.8.0");
+        });
     }
 
     private Export createCommand(RuntimeType rt, String[] files, String... args) {
