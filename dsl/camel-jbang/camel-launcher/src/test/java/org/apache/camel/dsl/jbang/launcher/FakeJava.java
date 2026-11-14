@@ -116,6 +116,14 @@ final class FakeJava {
     }
 
     static Result runWithInput(Path script, Map<String, String> env, String input, String... args) throws Exception {
+        return runIn(null, script, env, input, args);
+    }
+
+    /**
+     * Runs the script with the given working directory (null for the one of this JVM).
+     */
+    static Result runIn(Path workDir, Path script, Map<String, String> env, String input, String... args)
+            throws Exception {
         List<String> cmd = new ArrayList<>();
         if (WINDOWS) {
             cmd.add("cmd.exe");
@@ -138,6 +146,9 @@ final class FakeJava {
             pb.environment().put("PATHEXT", ".COM;.EXE;.BAT;.CMD");
         }
         pb.environment().putAll(env);
+        if (workDir != null) {
+            pb.directory(workDir.toFile());
+        }
         Process p = pb.start();
         ExecutorService collectors = Executors.newFixedThreadPool(2);
         Throwable failure = null;

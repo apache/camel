@@ -58,7 +58,15 @@ if "%DISTRIBUTION_URL%"=="" (
 
 @REM Find Java
 if not "%JAVA_HOME%"=="" goto javaHomeSet
-set "JAVACMD=java"
+@REM java.exe from PATH only: cmd looks for a bare "java" in the current directory before PATH
+set "JAVACMD="
+for %%i in (java.exe) do set "JAVACMD=%%~$PATH:i"
+if "%JAVACMD%"=="" (
+    echo Error: JAVA_HOME is not set and no java.exe was found on PATH. >&2
+    echo Please set the JAVA_HOME variable in your environment to match the >&2
+    echo location of your Java installation. >&2
+    exit /b 1
+)
 goto javaFound
 
 :javaHomeSet
@@ -81,18 +89,21 @@ if exist "%CAMEL_LAUNCHER_JAR%" goto runCamel
 if not exist "%CAMEL_CACHE_DIR%" mkdir "%CAMEL_CACHE_DIR%"
 echo Downloading Camel Launcher %CAMEL_VERSION%...
 
+@REM PowerShell and curl by their full path: cmd looks for a bare name in the current directory before PATH, so a
+@REM powershell.bat or curl.bat in the project would run instead.
 @REM Try PowerShell download
-powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%DISTRIBUTION_URL%' -OutFile '%CAMEL_LAUNCHER_JAR%' }" >nul 2>&1
-if %ERRORLEVEL% neq 0 (
-    @REM Try curl as fallback
-    curl -fsSL -o "%CAMEL_LAUNCHER_JAR%" "%DISTRIBUTION_URL%" >nul 2>&1
-    if %ERRORLEVEL% neq 0 (
-        echo Error: Failed to download Camel Launcher from %DISTRIBUTION_URL% >&2
-        del /f "%CAMEL_LAUNCHER_JAR%" >nul 2>&1
-        exit /b 1
-    )
-)
+"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%DISTRIBUTION_URL%' -OutFile '%CAMEL_LAUNCHER_JAR%' }" >nul 2>&1
+if not errorlevel 1 goto downloaded
 
+@REM Try curl as fallback (part of Windows since Windows 10 version 1803)
+"%SystemRoot%\System32\curl.exe" -fsSL -o "%CAMEL_LAUNCHER_JAR%" "%DISTRIBUTION_URL%" >nul 2>&1
+if not errorlevel 1 goto downloaded
+
+echo Error: Failed to download Camel Launcher from %DISTRIBUTION_URL% >&2
+del /f "%CAMEL_LAUNCHER_JAR%" >nul 2>&1
+exit /b 1
+
+:downloaded
 echo Camel Launcher %CAMEL_VERSION% downloaded successfully.
 
 :runCamel
