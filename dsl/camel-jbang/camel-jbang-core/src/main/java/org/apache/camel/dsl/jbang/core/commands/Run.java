@@ -695,6 +695,10 @@ public class Run extends CamelCommand implements CommandLifecycle {
         }
         ProcessBuilder pb = new ProcessBuilder(cmds);
         pb.directory(dir.toFile());
+        if (background) {
+            // the JVM that runs the example in the background deletes its folder when it ends
+            pb.environment().put(ExampleHelper.EXAMPLE_DIR_ENV, dir.toString());
+        }
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         Process p = pb.start();
         this.spawnPid = p.pid();
@@ -1621,6 +1625,10 @@ public class Run extends CamelCommand implements CommandLifecycle {
      * Runs Camel in this JVM, which the run configured, and waits for it to end.
      */
     protected int runKameletMain(ConfiguredRun run) throws Exception {
+        if (spawned) {
+            // the JVM that runs an example started in the background: its folder goes when it ends
+            ExampleHelper.deleteExampleDirOnExit(System.getenv(ExampleHelper.EXAMPLE_DIR_ENV));
+        }
         return withChaosVerdict(run.start().waitFor());
     }
 
