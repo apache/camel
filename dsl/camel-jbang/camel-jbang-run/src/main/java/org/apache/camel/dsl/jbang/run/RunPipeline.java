@@ -96,6 +96,8 @@ public class RunPipeline {
 
     private static final String OPENAPI_GENERATED_FILE = "generated-openapi.yaml";
 
+    private static final String SANITIZER_PENDING_TIMEOUT = "camel.sanitizer.pendingTimeout";
+
     /**
      * The folders of a project layout, whose name says nothing about the app (CAMEL-25830).
      */
@@ -907,6 +909,11 @@ public class RunPipeline {
                 main.addOverrideProperty("camel.chaos.reportFile", request.chaosReport);
             }
         }
+        if (request.sanitizer) {
+            // camel-sanitizer switches itself on with profile dev (the default of camel run), never with profile prod
+            request.dependencies.add("camel:sanitizer");
+            applySanitizerRuntimeOptions(main, profileProperties);
+        }
         if (request.openapiUi) {
             request.dependencies.add("camel:platform-http-main");
             request.dependencies.add("camel:openapi-java");
@@ -1012,6 +1019,36 @@ public class RunPipeline {
         if (request.managementPort == -1) {
             request.managementPort = request.port;
         }
+    }
+
+    /**
+     * With the debugger on (camel debug runs with camel.debug.enabled=true), an exchange held at a breakpoint keeps the
+     * calls of the steps around it pending, which the still pending warning of camel-sanitizer would report after its
+     * pendingTimeout (60 seconds by default). So the warning is off while debugging, unless
+     * camel.sanitizer.pendingTimeout is set: on the command line or in the application properties here, and as an
+     * initial property, which any other setting of it overrides.
+     */
+    void applySanitizerRuntimeOptions(BaseMainSupport main, Properties profileProperties) {
+        if (isTrue(argumentOrProfileProperty(profileProperties, "camel.debug.enabled"))
+                && argumentOrProfileProperty(profileProperties, SANITIZER_PENDING_TIMEOUT) == null) {
+            main.addInitialProperty(SANITIZER_PENDING_TIMEOUT, "0");
+        }
+    }
+
+    private String argumentOrProfileProperty(Properties profileProperties, String key) {
+        if (request.applicationProperties != null) {
+            for (String p : request.applicationProperties) {
+                String k = StringHelper.before(p, "=");
+                if (k != null && key.equals(k.trim())) {
+                    return StringHelper.after(p, "=");
+                }
+            }
+        }
+        return profileProperties != null ? profileProperties.getProperty(key) : null;
+    }
+
+    private static boolean isTrue(String value) {
+        return value != null && "true".equalsIgnoreCase(value.trim());
     }
 
     void applyOpenApiUiRuntimeOptions(BaseMainSupport main) {

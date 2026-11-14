@@ -2081,7 +2081,7 @@ Usage: camel debug [-h] [--remote-attach] [--breakpoint=<breakpoint>]
                     [--jvm-args=<jvm-args>] [--name=<name>]
                     [--exclude=<exclude>] [--reload] [--properties=<properties>]
                     [--prop=<prop>] [--stub=<stub>] [--chaos]
-                    [--chaos-report=<file>]
+                    [--chaos-report=<file>] [--sanitizer]
                     [--local-kamelet-dir=<local-kamelet-dir>] [--modeline]
                     [--open-api=<open-api>] [--code=<code>] [--verbose]
                     [--ignore-loading-error] [--lazy-bean] [--prompt]
@@ -2360,6 +2360,13 @@ Options:
       --chaos-report=<file>
                             Write the chaos report as JSON to this file when the
                             run ends (with --chaos)
+      --sanitizer           Add camel-sanitizer, which reports where the
+                            processors of the routes break the contract of
+                            AsyncProcessor, and with
+                            camel.sanitizer.checks=callback,commit also where
+                            the commits of the consumers do not run exactly once
+                            (camel get sanitizer); on with profile dev, never
+                            with prod. Not with Quarkus yet
       --local-kamelet-dir=<local-kamelet-dir>
                             Local directory (or github link) for loading
                             Kamelets (takes precedence). Multiple directories
@@ -3097,9 +3104,9 @@ Usage: camel dev [-h] [--runtime=<runtime>] [--source-dir=<source-dir>]
                   [--jvm-args=<jvm-args>] [--name=<name>] [--exclude=<exclude>]
                   [--reload] [--properties=<properties>] [--prop=<prop>]
                   [--stub=<stub>] [--chaos] [--chaos-report=<file>]
-                  [--local-kamelet-dir=<local-kamelet-dir>] [--modeline]
-                  [--open-api=<open-api>] [--code=<code>] [--verbose]
-                  [--ignore-loading-error] [--lazy-bean] [--prompt]
+                  [--sanitizer] [--local-kamelet-dir=<local-kamelet-dir>]
+                  [--modeline] [--open-api=<open-api>] [--code=<code>]
+                  [--verbose] [--ignore-loading-error] [--lazy-bean] [--prompt]
                   [--skip-plugins] [--example] [<<files>>]
 
 Options:
@@ -3337,6 +3344,13 @@ Options:
       --chaos-report=<file>
                             Write the chaos report as JSON to this file when the
                             run ends (with --chaos)
+      --sanitizer           Add camel-sanitizer, which reports where the
+                            processors of the routes break the contract of
+                            AsyncProcessor, and with
+                            camel.sanitizer.checks=callback,commit also where
+                            the commits of the consumers do not run exactly once
+                            (camel get sanitizer); on with profile dev, never
+                            with prod. Not with Quarkus yet
       --local-kamelet-dir=<local-kamelet-dir>
                             Local directory (or github link) for loading
                             Kamelets (takes precedence). Multiple directories
@@ -3827,6 +3841,8 @@ get commands:
     rest              Get REST services of Camel integrations
     route             Get status of Camel routes
     route-controller  List status of route controller
+    sanitizer         Get the violations the exchange sanitizer reported in
+                      running integrations (camel-sanitizer)
     service           Get services of Camel integrations
     source            Display Camel route source code
     sql-trace         Get SQL query trace data
@@ -4640,6 +4656,39 @@ Examples:
   camel get route-controller
   camel get route-controller --json
 
+== camel get sanitizer --help
+Get the violations the exchange sanitizer reported in running integrations
+(camel-sanitizer)
+Usage: camel get sanitizer [-h] [--report] [--sort=<sort>] [--watch] [--json]
+                            [--duration=<duration>] [<name>]
+
+Options:
+  -h, --help                Display this help and exit
+      --report              Show the report: the counts per rule and per kind,
+                            the commits followed, each violation with its
+                            threads and stacks, and the still pending warnings
+      --sort=<sort>         Sort by pid, name or age
+                            Default: pid
+      --watch               Execute periodically and showing output fullscreen
+      --json                Output in JSON Format
+      --duration=<duration>
+                            How long to keep watching or following, in millis or
+                            as a duration such as 30s (default: until Enter is
+                            pressed)
+  <name>                    Name or pid of running Camel integration
+
+Lists the violations of the integrations that have camel-sanitizer switched
+on: the rule, the kind, the route, the step, the processor and the exchange
+(for rule R2 the processor is the class of the commit of the consumer).
+With --report it shows the report of each integration instead: the counts per
+rule and per kind, the commits followed, each violation with its threads and
+stacks, and the calls reported still pending (warnings).
+
+Examples:
+  camel get sanitizer
+  camel get sanitizer myApp --report
+  camel get sanitizer --json
+
 == camel get service --help
 Get services of Camel integrations
 Usage: camel get service [-h] [--sort=<sort>] [--metadata] [--short-uri]
@@ -5385,9 +5434,9 @@ Usage: camel run [-h] [--runtime=<runtime>] [--source-dir=<source-dir>]
                   [--jvm-args=<jvm-args>] [--name=<name>] [--exclude=<exclude>]
                   [--reload] [--properties=<properties>] [--prop=<prop>]
                   [--stub=<stub>] [--chaos] [--chaos-report=<file>]
-                  [--local-kamelet-dir=<local-kamelet-dir>] [--modeline]
-                  [--open-api=<open-api>] [--code=<code>] [--verbose]
-                  [--ignore-loading-error] [--lazy-bean] [--prompt]
+                  [--sanitizer] [--local-kamelet-dir=<local-kamelet-dir>]
+                  [--modeline] [--open-api=<open-api>] [--code=<code>]
+                  [--verbose] [--ignore-loading-error] [--lazy-bean] [--prompt]
                   [--skip-plugins] [--example] [<<files>>]
 
 Options:
@@ -5625,6 +5674,13 @@ Options:
       --chaos-report=<file>
                             Write the chaos report as JSON to this file when the
                             run ends (with --chaos)
+      --sanitizer           Add camel-sanitizer, which reports where the
+                            processors of the routes break the contract of
+                            AsyncProcessor, and with
+                            camel.sanitizer.checks=callback,commit also where
+                            the commits of the consumers do not run exactly once
+                            (camel get sanitizer); on with profile dev, never
+                            with prod. Not with Quarkus yet
       --local-kamelet-dir=<local-kamelet-dir>
                             Local directory (or github link) for loading
                             Kamelets (takes precedence). Multiple directories
@@ -6876,9 +6932,9 @@ stderr:
                     [--jvm-args=<jvm-args>] [--name=<name>] [--exclude=<exclude>]
                     [--reload] [--properties=<properties>] [--prop=<prop>]
                     [--stub=<stub>] [--chaos] [--chaos-report=<file>]
-                    [--local-kamelet-dir=<local-kamelet-dir>] [--modeline]
-                    [--open-api=<open-api>] [--code=<code>] [--verbose]
-                    [--ignore-loading-error] [--lazy-bean] [--prompt]
+                    [--sanitizer] [--local-kamelet-dir=<local-kamelet-dir>]
+                    [--modeline] [--open-api=<open-api>] [--code=<code>]
+                    [--verbose] [--ignore-loading-error] [--lazy-bean] [--prompt]
                     [--skip-plugins] [--example] [<<files>>]
   Try 'camel run --help' for more information.
 

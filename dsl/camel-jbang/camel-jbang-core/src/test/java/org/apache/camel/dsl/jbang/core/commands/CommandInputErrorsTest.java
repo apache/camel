@@ -285,6 +285,18 @@ class CommandInputErrorsTest {
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
     }
 
+    @Test
+    void runQuarkusWithTheSanitizer() throws Exception {
+        // not yet with Camel Quarkus: --sanitizer must not be silently ignored
+        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
+
+        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--runtime=quarkus", "--sanitizer"))
+                .isInstanceOf(CliException.class)
+                .hasMessage(
+                        "Run Camel Quarkus with --sanitizer is not supported yet (use --runtime=jbang, main or spring-boot)")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+    }
+
     private static int call(CamelCommand command, String... args) throws Exception {
         CommandLineTestHelper.parse(command, args);
         return command.doCall();

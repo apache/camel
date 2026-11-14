@@ -404,6 +404,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
                     .addSubcommand("rest", new CommandTree(new ListRest(this)))
                     .addSubcommand("route", new CommandTree(new CamelRouteStatus(this)))
                     .addSubcommand("route-controller", new CommandTree(new RouteControllerAction(this)))
+                    .addSubcommand("sanitizer", new CommandTree(new ListSanitizer(this)))
                     .addSubcommand("service", new CommandTree(new ListService(this)))
                     .addSubcommand("source", new CommandTree(new CamelSourceAction(this)))
                     .addSubcommand("sql-trace", new CommandTree(new ListSqlTrace(this)))

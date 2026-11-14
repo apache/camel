@@ -7471,6 +7471,132 @@
 				}
 			}
 		},
+		"\/q\/dev\/sanitizer": {
+			"get": {
+				"summary": "Sanitizer",
+				"description": "The violations of the exchange sanitizer, with their stacks, the counts per rule, and the calls still pending",
+				"operationId": "sanitizer",
+				"parameters": [
+					{
+						"name": "report",
+						"in": "query",
+						"description": "Whether to include the full report of each violation and the still pending warnings; without it only the fields and the counts, as the table of camel get sanitizer shows them",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Sanitizer output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"enabled": {
+											"type": "boolean",
+											"description": "Whether the sanitizer is switched on: with profile dev, camel.sanitizer.enabled=true or @CamelSanitizer, never with profile prod"
+										},
+										"reason": {
+											"type": "string",
+											"description": "Why the sanitizer is off (only when it is off)"
+										},
+										"calls": {
+											"type": "integer",
+											"description": "The calls of the processors of steps checked (only when it is on)"
+										},
+										"commits": {
+											"type": "integer",
+											"description": "The commits of consumers followed for rule R2 (only when R2 is checked)"
+										},
+										"total": {
+											"type": "integer",
+											"description": "The violations reported, also those past the first 1000 that are counted but not listed (only when it is on)"
+										},
+										"rules": {
+											"type": "object",
+											"additionalProperties": {
+												"type": "integer"
+											},
+											"description": "The violations reported per rule, R1 and R2 (only when it is on)"
+										},
+										"kinds": {
+											"type": "object",
+											"additionalProperties": {
+												"type": "integer"
+											},
+											"description": "The violations reported per kind, every kind (only when it is on)"
+										},
+										"violations": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"rule": {
+														"type": "string",
+														"description": "The rule the violation breaks: R1 (the callback of a step) or R2 (the commit of a consumer)"
+													},
+													"kind": {
+														"type": "string",
+														"description": "The kind of violation, such as COMPLETED_TWICE or COMMIT_NEVER_RUN"
+													},
+													"title": {
+														"type": "string",
+														"description": "The kind of violation in plain words, such as: callback called twice"
+													},
+													"exchangeId": {
+														"type": "string",
+														"description": "The id of the exchange"
+													},
+													"routeId": {
+														"type": "string",
+														"description": "The id of the route of the step (for R2 without a step, the route of the consumer)"
+													},
+													"stepId": {
+														"type": "string",
+														"description": "The id of the step, such as process1 or to2 (for R2, the step that ran on the thread where it was found, only when there was one)"
+													},
+													"processor": {
+														"type": "string",
+														"description": "The class name of the processor of the step, such as the processor or the bean of a user (only when it was found); for R2 the class of the commit"
+													},
+													"report": {
+														"type": "string",
+														"description": "The full report of the violation, as logged: where it happened, the threads and their stacks, the class and message of what was thrown, and the usual fix (only with the report option)"
+													}
+												}
+											},
+											"description": "The violations, the first 1000 in the order they were reported (only when it is on)"
+										},
+										"pendingCalls": {
+											"type": "integer",
+											"description": "The calls of steps pending now, whose callback has not come yet (only when the still pending warning of R1 is on)"
+										},
+										"stillPending": {
+											"type": "integer",
+											"description": "The calls reported still pending: warnings, not violations (only when the still pending warning of R1 is on)"
+										},
+										"stillPendingWarnings": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											},
+											"description": "The still pending warnings, the first 1000 as logged (only when the still pending warning of R1 is on, and with the report option)"
+										}
+									},
+									"required": [
+										"enabled"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"\/q\/dev\/semantic-audit": {
 			"get": {
 				"summary": "Semantic Audit",

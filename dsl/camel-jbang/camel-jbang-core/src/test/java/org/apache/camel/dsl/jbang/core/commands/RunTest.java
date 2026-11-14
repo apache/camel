@@ -391,6 +391,23 @@ class RunTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void sanitizerWithProfileProdSaysThatTheSanitizerStaysOff() {
+        Run command = new Run(new CamelJBangMain().withPrinter(printer));
+        CommandLineTestHelper.parse(command, "--sanitizer", "--profile=prod", "route.yaml");
+        command.warnSanitizerOffWithProfileProd();
+        assertThat(printer.getStderr()).contains("WARN: camel-sanitizer stays off with profile prod");
+
+        // not with profile dev, nor without --sanitizer
+        for (String[] args : new String[][] { { "--sanitizer", "route.yaml" }, { "--profile=prod", "route.yaml" } }) {
+            StringPrinter quiet = new StringPrinter();
+            command = new Run(new CamelJBangMain().withPrinter(quiet));
+            CommandLineTestHelper.parse(command, args);
+            command.warnSanitizerOffWithProfileProd();
+            assertThat(quiet.getOutput()).isEmpty();
+        }
+    }
+
+    @Test
     void theLogOfACommandLineRunIsKeptWithTheExitCodeOfTheCli() {
         // CAMEL-25784: camel run on the command line keeps its log as the previous log of the integration
         Run command = new Run(new CamelJBangMain());

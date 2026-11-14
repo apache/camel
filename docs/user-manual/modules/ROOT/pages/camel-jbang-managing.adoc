@@ -1089,6 +1089,29 @@ Without an expectation (`expect=`) there is no verdict, and the run ends with ex
 xref:next@components:others:chaos.adoc#_scenarios[Scenarios] and
 xref:next@components:others:chaos.adoc#_chaos_in_a_pipeline[Chaos in a pipeline] in the camel-chaos documentation.
 
+== Exchange sanitizer
+
+With xref:next@components:others:sanitizer.adoc[camel-sanitizer] (`camel run --sanitizer`), a running integration
+reports where the processors of its routes break the contract of `AsyncProcessor`, such as a callback called twice or a
+processor that throws instead of calling its callback (rule R1), and warns about a step whose callback has not come
+(still pending). With `camel.sanitizer.checks=callback,commit` it also reports where the commit of a consumer runs
+twice, never, or with the outcome of another exchange (rule R2, which is on by default only in tests, as it costs more
+per message):
+
+[source,bash]
+----
+camel run * --sanitizer
+camel run * --sanitizer --prop camel.sanitizer.checks=callback,commit
+camel get sanitizer
+camel get sanitizer myapp --report
+----
+
+`camel get sanitizer` lists the violations with their rule, kind, route, step, processor and exchange; `--report` shows
+the counts per rule and per kind, the commits followed (with R2), each violation with its threads and stacks, and the
+still pending warnings. The sanitizer is on with profile `dev`, the default of `camel run`, and never with profile
+`prod`. The report holds ids, names, threads, stacks and the class and message of an exception, never bodies or headers
+(an exception message can still carry message data).
+
 == Using Jolokia and Hawtio
 
 https://hawt.io/[Hawtio] provides a web console for inspecting Camel integrations via JMX,
