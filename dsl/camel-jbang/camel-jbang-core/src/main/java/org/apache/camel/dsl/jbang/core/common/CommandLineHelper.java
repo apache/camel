@@ -136,36 +136,49 @@ public final class CommandLineHelper {
     }
 
     public static void augmentWithUserConfiguration(CommandTree commandLine, Printer printer) {
-        Path file = getUserConfigurationFile();
-        if (Files.isRegularFile(file) && Files.exists(file)) {
-            Properties properties = new Properties();
-            try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
-                properties.load(reader);
-            } catch (Exception e) {
-                // best-effort: a malformed config file (e.g. malformed unicode escape) must never break the CLI;
-                // warn the user so they know to fix it, but let the command continue without defaults.
-                // Warn once per path: loadProperties may also warn for the same file, so we deduplicate here.
-                String key = file.toAbsolutePath().toString();
-                if (WARNED_PATHS.add(key)) {
-                    printer.printErr(
-                            "Warning: could not parse '" + file.toAbsolutePath() + "' (" + e.getMessage()
-                                     + "). Edit the file by hand, escaping '\\' as '\\\\' or using '/'.");
-                }
-                return;
-            }
-
+        Properties properties = loadUserConfiguration(printer);
+        if (!properties.isEmpty()) {
             commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(properties));
         }
     }
 
-    private static Path getUserConfigurationFile() {
-        Path file;
-        if (Files.exists(Paths.get(LOCAL_USER_CONFIG))) {
-            file = Paths.get(LOCAL_USER_CONFIG);
-        } else {
-            file = getUserPropertyFile(false);
+    /**
+     * The user configuration as the commands use it: the global file in the user home ({@value #USER_CONFIG}), with the
+     * local file of the current directory ({@value #LOCAL_USER_CONFIG}) laid over it, so a key of the local file wins.
+     * Before, a local file hid the whole global one, such as its repos or camel-version (CAMEL-26931). A file that
+     * cannot be parsed is left out, with a warning (once per file).
+     *
+     * @param  printer where a file that cannot be parsed is reported (once per file)
+     * @return         the configuration, empty when neither file exists
+     */
+    public static Properties loadUserConfiguration(Printer printer) {
+        Properties answer = new OrderedProperties();
+        readInto(getUserPropertyFile(false), answer, printer);
+        readInto(Paths.get(LOCAL_USER_CONFIG), answer, printer);
+        return answer;
+    }
+
+    private static void readInto(Path file, Properties answer, Printer printer) {
+        if (!Files.isRegularFile(file)) {
+            return;
         }
-        return file;
+        // in the order of the file, as the configuration keeps it
+        Properties properties = new OrderedProperties();
+        try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+            properties.load(reader);
+        } catch (Exception e) {
+            // best-effort: a malformed config file (e.g. malformed unicode escape) must never break the CLI;
+            // warn the user so they know to fix it, but let the command continue without its defaults.
+            // Warn once per path: loadProperties may also warn for the same file, so we deduplicate here.
+            String key = file.toAbsolutePath().toString();
+            if (WARNED_PATHS.add(key)) {
+                printer.printErr(
+                        "Warning: could not parse '" + file.toAbsolutePath() + "' (" + e.getMessage()
+                                 + "). Edit the file by hand, escaping '\\' as '\\\\' or using '/'.");
+            }
+            return;
+        }
+        answer.putAll(properties);
     }
 
     public static void createPropertyFile(boolean local) throws IOException {

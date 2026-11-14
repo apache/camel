@@ -25,13 +25,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -591,7 +594,7 @@ public class Debug extends Run {
         cmds = BackgroundWait.withoutBackgroundOptions(cmds);
 
         // remove args from debug that are not supported by run
-        removeDebugOnlyOptions(cmds);
+        cmds = withoutDebugOnlyOptions(cmds);
 
         // enable light-weight debugger (not camel-debug JAR that is for IDEA/VSCode tooling with remote JMX)
         cmds.add("--prop=camel.debug.enabled=true");
@@ -622,13 +625,38 @@ public class Debug extends Run {
         return 0;
     }
 
-    private void removeDebugOnlyOptions(List<String> cmds) {
-        // only check Debug.class (not super classes)
-        RunHelper.doWithFields(Debug.class, fc -> cmds.removeIf(c -> {
-            String n1 = "--" + fc.getName();
-            String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
-            return c.startsWith(n1) || c.startsWith(n2);
-        }));
+    /**
+     * The arguments for camel run: without the options that only camel debug has. Each goes by its exact name, with its
+     * value (--breakpoint=tick, or --breakpoint tick).
+     * <p>
+     * CAMEL-26930: any argument that started with the name of a field went, such as --source-dir=... for the field
+     * source. The value of --breakpoint tick stayed, and camel run took it for a file.
+     */
+    static List<String> withoutDebugOnlyOptions(List<String> args) {
+        // only the options of Debug (not of its super classes), and whether they take a value
+        Map<String, Boolean> options = new HashMap<>();
+        for (Field field : Debug.class.getDeclaredFields()) {
+            Option option = field.getAnnotation(Option.class);
+            if (option != null) {
+                options.put("--" + option.name(), option.hasValue());
+                for (String alias : option.aliases()) {
+                    options.put("--" + alias, option.hasValue());
+                }
+            }
+        }
+        List<String> answer = new ArrayList<>(args.size());
+        for (int i = 0; i < args.size(); i++) {
+            String arg = args.get(i);
+            int eq = arg.indexOf('=');
+            Boolean hasValue = options.get(eq > 0 ? arg.substring(0, eq) : arg);
+            if (hasValue == null) {
+                answer.add(arg);
+            } else if (eq < 0 && hasValue && i + 1 < args.size() && !args.get(i + 1).startsWith("-")) {
+                // its value
+                i++;
+            }
+        }
+        return answer;
     }
 
     protected int doWatch() {

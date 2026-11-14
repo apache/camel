@@ -27,8 +27,8 @@ is on.
 == Getting it
 
 Add the `camel-sanitizer` dependency, in test scope for tests (see <<_in_a_test,In a test>>), or with
-`camel run --dep camel:sanitizer` for a run in development (profile `dev`, the default of `camel run`, switches it
-on).
+`camel run --sanitizer` (or `--dep camel:sanitizer`) for a run in development (profile `dev`, the default of
+`camel run`, switches it on; see <<_in_development,In development>>).
 
 == The rules it checks
 
@@ -252,7 +252,48 @@ From Java, `Sanitizer.get(camelContext)` gives the violations.
 Spring Boot and Quarkus: the plugin uses only the `CamelContext` API, and reads `camel.sanitizer.*` from the
 properties component, so `camel.sanitizer.enabled=true` in the application properties is meant to switch it on there
 too (this version is tested with plain contexts, `CamelTestSupport` and `@CamelMainTest`); the tooling metadata of the
-options is in camel-main only.
+options is in camel-main only. `camel run --sanitizer` with `--runtime=spring-boot` adds plain `camel-sanitizer` (there
+is no starter) and switches it on with `-Dcamel.sanitizer.enabled=true` unless the profile is `prod`; with
+`--runtime=quarkus` it is refused for now: there is no Camel Quarkus extension to add to an existing Quarkus project,
+and the sanitizer is not tested with Camel Quarkus yet.
+
+== In development
+
+`camel run --sanitizer` adds the dependency; with profile `dev`, the default of `camel run`, the sanitizer is on and
+checks R1. R2 is on by default only in a test, as it costs more per message (see the `checks` option);
+`camel.sanitizer.checks=callback,commit` turns it on in the run too. Violations are logged at WARN when they happen,
+and the report is also in the `sanitizer` developer console and in the Camel CLI:
+
+[source,bash]
+----
+camel run * --sanitizer
+camel run * --sanitizer --prop camel.sanitizer.checks=callback,commit
+camel get sanitizer
+camel get sanitizer myapp --report
+----
+
+`camel get sanitizer` lists the violations of the running integrations with their rule (R1 or R2), kind, route, step,
+processor and exchange (for R2 the processor column is the class of the commit, and the step is the one that ran where
+it was found, if any); `--report` shows the counts per rule and per kind, the commits followed (with R2; without it,
+the report says that R2 is not checked), each violation with its threads and stacks, and the still pending warnings
+(`--json` for both). An integration with still pending warnings and no violation is named on stderr.
+
+With the debugger on (`camel debug --sanitizer`, or `camel.debug.enabled=true`), `camel run` sets
+`camel.sanitizer.pendingTimeout=0` unless it is set: an exchange held at a breakpoint keeps the calls of the steps
+around it pending (such as a `to` of a `direct` route, a split or an enrich), which would be reported after a minute as
+callbacks still pending. The other checks stay on.
+
+The `sanitizer` developer console only reads. Its option `report` (default `true`) says whether the JSON has the full
+report of each violation and the still pending warnings; `camel get sanitizer` asks without them for its table. In JSON
+it has `enabled` (and the `reason` when it is off), `calls` (the calls of steps checked), `commits` (the commits
+followed, with R2), `total` (the violations reported, also those past the first 1000 that are counted but not listed),
+`rules` and `kinds` (the counts per rule and per kind), `violations` (each with its rule, kind, route, step, processor,
+exchange id and, with `report`, its full report), and, with the still pending warning on, `pendingCalls` (the calls
+pending now), `stillPending` (the warnings so far) and, with `report`, `stillPendingWarnings` (the first 1000, as
+logged). As text it is the report that is logged when the context stops, followed by the still pending warnings. Like every developer console, it is served over HTTP only when the developer
+consoles are switched on (with Camel Main, `camel.management.devConsoleEnabled=true`, an `insecure:dev` option); the
+Camel CLI asks the integration for it through the CLI connector. An exception message in a report can carry message
+data, so keep the console to development.
 
 == Options
 

@@ -139,6 +139,10 @@ https://code.visualstudio.com/docs/java/java-debugging#_attach[VS Code], or
 https://www.vogella.com/tutorials/EclipseDebugging/article.html#remote-debugging[Eclipse].
 Port configuration is described in the https://www.jbang.dev/documentation/guide/latest/debugging.html[JBang Debugging] guide.
 
+The integration runs in a new JVM that waits until a debugger attaches, and `--jvm-args` gives that JVM more options.
+With the Camel launcher (the Camel CLI installed without JBang), it is a JVM of the launcher, listening on
+`localhost`. With JBang, `jbang --debug` starts it. `--open-telemetry-agent` needs the Camel CLI installed via JBang.
+
 === JBang-level debugging
 
 Use JBang's `--debug` flag to debug any CLI command (not just `run`):
