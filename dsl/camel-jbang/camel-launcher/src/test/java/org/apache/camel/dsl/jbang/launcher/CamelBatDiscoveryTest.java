@@ -66,7 +66,9 @@ class CamelBatDiscoveryTest {
         Path system32 = Path.of(systemRoot, "System32");
         assertTrue(Files.isDirectory(system32), "Windows test fixture requires SystemRoot\\System32: " + system32);
         Map<String, String> env = new HashMap<>();
-        env.put("PATH", system32.toString());
+        // Include System32 and PowerShell so camel.bat's CDS install-directory hash works.
+        Path powerShell = Path.of(systemRoot, "System32", "WindowsPowerShell", "v1.0");
+        env.put("PATH", system32 + ";" + powerShell);
         return env;
     }
 
@@ -107,7 +109,8 @@ class CamelBatDiscoveryTest {
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
 
-        Path archives = localAppData.resolve("camel-cli").resolve("cds").resolve("9.9.9");
+        String hash = FakeJava.batCdsHash(FakeJava.batBasedirString(h));
+        Path archives = localAppData.resolve("camel-cli").resolve("cds").resolve("9.9.9").resolve(hash);
         assertEquals(0, r.exitCode(), r.stderr());
         assertTrue(r.stdout().contains("-XX:+AutoCreateSharedArchive \"-XX:SharedArchiveFile="
                                        + archives.resolve("version.jsa") + "\" \"-Xlog:cds*=off\" -jar "),
@@ -126,8 +129,9 @@ class CamelBatDiscoveryTest {
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "--help");
 
+        String hash = FakeJava.batCdsHash(FakeJava.batBasedirString(h));
         assertTrue(r.stdout().contains(
-                "-XX:SharedArchiveFile=" + localAppData.resolve("camel-cli\\cds\\9.9.9\\camel.jsa") + "\""),
+                "-XX:SharedArchiveFile=" + localAppData.resolve("camel-cli\\cds\\9.9.9\\" + hash + "\\camel.jsa") + "\""),
                 r.stdout());
     }
 
@@ -137,7 +141,8 @@ class CamelBatDiscoveryTest {
         Path h = home(base);
         Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
         Path localAppData = Files.createDirectories(base.resolve("lad"));
-        Path archive = Files.createDirectories(localAppData.resolve("camel-cli\\cds\\9.9.9")).resolve("version.jsa");
+        String hash = FakeJava.batCdsHash(FakeJava.batBasedirString(h));
+        Path archive = Files.createDirectories(localAppData.resolve("camel-cli\\cds\\9.9.9\\" + hash)).resolve("version.jsa");
         Files.createFile(archive);
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", java.toString());

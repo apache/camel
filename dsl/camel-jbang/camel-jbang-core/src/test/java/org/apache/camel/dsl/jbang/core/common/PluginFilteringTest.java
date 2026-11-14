@@ -514,4 +514,33 @@ class PluginFilteringTest {
             return CommandResult.SUCCESS;
         }
     }
+
+    // --- CAMEL-26913: --version and -V must not trigger plugin discovery ---
+
+    @Test
+    void versionFlagDoesNotDiscoverPlugins() {
+        CamelJBangMain main = new CamelJBangMain().withPrinter(new StringPrinter());
+        CommandTree commandLine = new CommandTree(main);
+        commandLine.addSubcommand("version", new CommandTree(new NoOpCommand()));
+        commandLine.addSubcommand("get", new CommandTree(new NoOpCommand()));
+        assertThat(PluginHelper.shouldDiscoverPlugins(commandLine, "--version")).isFalse();
+        assertThat(PluginHelper.shouldDiscoverPlugins(commandLine, "-V")).isFalse();
+    }
+
+    @Test
+    void helpFlagStillDiscoverPlugins() {
+        CamelJBangMain main = new CamelJBangMain().withPrinter(new StringPrinter());
+        CommandTree commandLine = new CommandTree(main);
+        commandLine.addSubcommand("version", new CommandTree(new NoOpCommand()));
+        // --help needs all plugins for the full listing
+        assertThat(PluginHelper.shouldDiscoverPlugins(commandLine, "--help")).isTrue();
+        assertThat(PluginHelper.shouldDiscoverPlugins(commandLine, "-h")).isTrue();
+    }
+
+    @Test
+    void noArgDiscoverPlugins() {
+        CamelJBangMain main = new CamelJBangMain().withPrinter(new StringPrinter());
+        CommandTree commandLine = new CommandTree(main);
+        assertThat(PluginHelper.shouldDiscoverPlugins(commandLine)).isTrue();
+    }
 }
