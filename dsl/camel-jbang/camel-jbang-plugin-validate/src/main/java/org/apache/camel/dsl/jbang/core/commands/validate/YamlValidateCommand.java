@@ -83,6 +83,10 @@ public class YamlValidateCommand extends CamelCommand {
         Map<String, List<Error>> reports = new LinkedHashMap<>();
         for (String n : files) {
             if (matchFile(n)) {
+                if (!new File(n).isFile()) {
+                    // as validate source and validate properties: before, a validation error with exit code 1
+                    throw CliException.fileNotFound("File not found: " + n);
+                }
                 var report = new ArrayList<>(validator.validate(new File(n)));
                 if (camelCatalog != null && report.isEmpty()) {
                     // the schema is fine: check what the schema cannot, endpoint URIs and simple expressions

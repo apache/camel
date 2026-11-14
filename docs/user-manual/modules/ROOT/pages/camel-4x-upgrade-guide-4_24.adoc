@@ -1433,6 +1433,13 @@ built for Camel 4.24:
 * A test sets the options of a command with `CommandLineTestHelper.parse(command, args...)` (in the test jar of
   `camel-jbang-core`) instead of `CommandLine.populateCommand`.
 
+=== camel-jbang - camel validate exits with 66 for a missing file or nothing to validate
+
+`camel validate yaml` of a file that does not exist now exits with code `66` (file not found), as `validate source` and
+`validate properties` do; before, it reported a validation error with code `1`. `camel validate source` and
+`camel validate normalize` given no file they can handle (such as `notes.txt`) now exit with code `66`; before, they
+reported success with code `0`.
+
 === camel-jbang - plugins declare which commands they contribute to
 
 A CLI plugin can now declare which built-in commands it participates in beyond its own command, using the
