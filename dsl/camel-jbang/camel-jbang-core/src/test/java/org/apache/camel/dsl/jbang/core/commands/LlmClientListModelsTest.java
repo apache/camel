@@ -28,6 +28,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -168,7 +169,7 @@ class LlmClientListModelsTest {
 
         assertTrue(client.detectEndpoint());
         assertEquals(LlmClient.ApiType.openai, client.apiType());
-        assertEquals("gpt-4o-mini", client.model(), "OpenAI detection must leave a usable default model, not null");
+        assertEquals("gpt-6-luna", client.model(), "OpenAI detection must leave a usable default model, not null");
     }
 
     @Test
@@ -211,7 +212,8 @@ class LlmClientListModelsTest {
 
         assertTrue(client.detectEndpoint());
         assertEquals(LlmClient.ApiType.ollama, client.apiType());
-        assertEquals("llama3.2", client.model(), "Ollama detection must leave a usable default model, not null");
+        assertEquals("qwen3.6:35b-a3b", client.model(),
+                "Ollama detection must leave a usable model, not null: the one recommended, which Ollama says to pull");
     }
 
     @Test
@@ -224,12 +226,23 @@ class LlmClientListModelsTest {
     }
 
     @Test
-    void prefersInstalledLlama32OllamaModelWhenNoneConfigured() throws IOException {
-        String baseUrl = startOllamaServer("{\"models\":[{\"name\":\"qwen3\"},{\"name\":\"llama3.2:latest\"}]}");
+    void neverPrefersLlama32WhenNoneConfigured() throws IOException {
+        String baseUrl = startOllamaServer("{\"models\":[{\"name\":\"llama3.2:latest\"},{\"name\":\"qwen3\"}]}");
         LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.ollama).withUrl(baseUrl);
 
         assertTrue(client.detectEndpoint());
-        assertEquals("llama3.2:latest", client.model(), "must prefer an installed llama3.2 over the first entry");
+        assertEquals("qwen3", client.model(), "llama3.2 is too small for Camel; a model that calls tools well wins");
+    }
+
+    @Test
+    void prefersTheModelsMeasuredOnCamelTasks() {
+        assertEquals("qwen3.6:35b-mlx", LlmClient.bestOllamaModel(
+                List.of("embeddinggemma:300m", "llama3.2:latest", "qwen3.8:27b-mlx", "qwen3.6:35b-mlx")));
+        assertEquals("qwen3.8:27b-mlx", LlmClient.bestOllamaModel(List.of("granite4:3b", "qwen3.8:27b-mlx")));
+        // none of a preferred family: the first one that is not an embedding model
+        assertEquals("saluki:27b", LlmClient.bestOllamaModel(List.of("embeddinggemma:300m", "saluki:27b")));
+        assertNull(LlmClient.bestOllamaModel(List.of("granite-embedding:30m")));
+        assertNull(LlmClient.bestOllamaModel(List.of()));
     }
 
     /**

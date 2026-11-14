@@ -204,16 +204,35 @@ class LlmClientChatTest {
     }
 
     @Test
-    void aHostedServerGetsNoFieldsForThinking() {
-        JsonObject request = new JsonObject();
+    void openAiItselfGetsReasoningEffortOnly() {
+        JsonObject openAi = new JsonObject();
+        JsonObject azure = new JsonObject();
+        JsonObject watsonx = new JsonObject();
 
-        LlmClient.create().withApiType(ApiType.openai).withUrl("https://api.openai.com/v1").turnThinkingOff(request);
+        LlmClient.create().withApiType(ApiType.openai).withUrl("https://api.openai.com/v1").turnThinkingOff(openAi);
         LlmClient.create().withApiType(ApiType.openai).withUrl("https://myresource.openai.azure.com")
-                .turnThinkingOff(request);
+                .turnThinkingOff(azure);
         LlmClient.create().withApiType(ApiType.watsonx).withUrl("https://us-south.ml.cloud.ibm.com")
-                .turnThinkingOff(request);
+                .turnThinkingOff(watsonx);
 
-        assertThat(request).isEmpty();
+        // the reasoning models of OpenAI call tools on Chat Completions only with reasoning_effort none; the field of
+        // the local chat templates is for local servers
+        assertThat(openAi).containsEntry("reasoning_effort", "none").doesNotContainKey("chat_template_kwargs");
+        assertThat(azure).containsEntry("reasoning_effort", "none").doesNotContainKey("chat_template_kwargs");
+        assertThat(watsonx).isEmpty();
+    }
+
+    @Test
+    void onlyAModelOnThisMachineGetsTheTemperature() {
+        // the tests of the AI tools ran with it locally; a hosted model gets its own default sampling
+        assertThat(LlmClient.create().withApiType(ApiType.openai).withUrl("https://api.openai.com/v1").sendsTemperature())
+                .isFalse();
+        assertThat(LlmClient.create().withApiType(ApiType.gemini).withUrl("https://generativelanguage.googleapis.com")
+                .sendsTemperature()).isFalse();
+        assertThat(LlmClient.create().withApiType(ApiType.openai).withUrl("http://localhost:1234").sendsTemperature())
+                .isTrue();
+        assertThat(LlmClient.create().withApiType(ApiType.ollama).withUrl("http://ollama.lan:11434").sendsTemperature())
+                .isTrue();
     }
 
     @Test

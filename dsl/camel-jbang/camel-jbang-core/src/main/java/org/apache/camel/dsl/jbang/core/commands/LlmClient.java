@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -61,8 +62,27 @@ public class LlmClient {
      * 16,000 is about the most for a request that does not stream.
      */
     private static final int ANTHROPIC_MIN_MAX_TOKENS = 16_000;
-    private static final String DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
-    private static final String DEFAULT_OLLAMA_MODEL = "llama3.2";
+    // OpenAI's fast, low-cost model, the replacement it names for gpt-4o-mini (shut down on Jan 14 2027). Its Chat
+    // Completions call tools only with reasoning_effort none, see turnThinkingOff.
+    private static final String DEFAULT_OPENAI_MODEL = "gpt-6-luna";
+    /**
+     * The model name the CLI commands once passed for "no model chosen", and still read that way: Ollama replaces it
+     * with the installed model best at tool calling, and the other providers use their own default. The model is too
+     * small for Camel, so it is never chosen on purpose.
+     */
+    private static final String PLACEHOLDER_MODEL = "llama3.2";
+    /**
+     * The model asked of Ollama when no installed model can be used: the one recommended for Camel, so that the error
+     * of Ollama names the model to pull.
+     */
+    private static final String FALLBACK_OLLAMA_MODEL = "qwen3.6:35b-a3b";
+    /**
+     * The installed Ollama model used when none is chosen, by family in this order: the ones measured on Camel tasks
+     * first, then others that call tools well.
+     */
+    private static final List<String> PREFERRED_OLLAMA_MODELS = List.of(
+            "qwen3.6", "qwen3.8", "qwen3.5", "qwen3", "nemotron-3-nano", "mistral-nemo", "qwen2.5", "granite4.1",
+            "llama3.1", "llama3.3", "mistral");
     /**
      * Keep the model (and its prompt cache) loaded between turns of a conversation. Ollama's default of five minutes is
      * shorter than a slow local answer plus the time the user spends reading it, after which the next request pays for
@@ -291,9 +311,11 @@ public class LlmClient {
      * far slower than hosted ones, so callers use this to trim what they send per request.
      */
     public boolean isLocalEndpoint() {
-        if (apiType == ApiType.ollama) {
-            return true;
-        }
+        return apiType == ApiType.ollama || isLocalUrl(url);
+    }
+
+    /** Whether the host of the URL is a loopback address, as the server of a model on this machine has. */
+    public static boolean isLocalUrl(String url) {
         if (url == null) {
             return false;
         }
@@ -304,6 +326,15 @@ public class LlmClient {
         } catch (IllegalArgumentException e) {
             return false;
         }
+    }
+
+    /**
+     * Whether a request carries the temperature: only for a model on this machine, where the tests of the AI tools ran
+     * with it. A hosted model gets its own default sampling: the reasoning models of OpenAI refuse any other value, and
+     * Anthropic refuses the field.
+     */
+    boolean sendsTemperature() {
+        return isLocalEndpoint();
     }
 
     // -- Builder --
@@ -426,19 +457,19 @@ public class LlmClient {
                 if (openAiAuthMode == OpenAiAuthMode.api_key
                         || (url != null && isAzureOpenAiEndpoint(url))) {
                     resolveAzureOpenAiModel();
-                } else if (model == null || model.isBlank() || DEFAULT_OLLAMA_MODEL.equals(model)) {
+                } else if (model == null || model.isBlank() || PLACEHOLDER_MODEL.equals(model)) {
                     model = isOpenAiCompatibleServer() ? resolveOpenAiCompatibleModel() : DEFAULT_OPENAI_MODEL;
                 }
             }
             case gemini -> {
-                if (model == null || model.isBlank() || DEFAULT_OLLAMA_MODEL.equals(model)) {
+                if (model == null || model.isBlank() || PLACEHOLDER_MODEL.equals(model)) {
                     model = DEFAULT_GEMINI_MODEL;
                 }
             }
             case ollama -> {
                 if (model == null || model.isBlank()) {
                     model = resolveDefaultOllamaModel();
-                } else if (DEFAULT_OLLAMA_MODEL.equals(model) && !explicitModel) {
+                } else if (PLACEHOLDER_MODEL.equals(model) && !explicitModel) {
                     resolveOllamaModel();
                 }
             }
@@ -704,7 +735,9 @@ public class LlmClient {
         JsonObject request = new JsonObject();
         request.put("model", model);
         request.put("messages", messages);
-        request.put("temperature", temperature);
+        if (sendsTemperature()) {
+            request.put("temperature", temperature);
+        }
         turnThinkingOff(request);
 
         String resolvedKey = resolveApiKey();
@@ -755,11 +788,15 @@ public class LlmClient {
             request.put("contents", contents);
         }
         JsonObject generationConfig = new JsonObject();
-        generationConfig.put("temperature", temperature);
+        if (sendsTemperature()) {
+            generationConfig.put("temperature", temperature);
+        }
         if (maxTokens > 0) {
             generationConfig.put("maxOutputTokens", maxTokens);
         }
-        request.put("generationConfig", generationConfig);
+        if (!generationConfig.isEmpty()) {
+            request.put("generationConfig", generationConfig);
+        }
         JsonArray declarations = buildGeminiFunctionDeclarations(tools);
         if (declarations != null) {
             JsonObject toolsObj = new JsonObject();
@@ -1048,7 +1085,9 @@ public class LlmClient {
         JsonObject request = new JsonObject();
         request.put("model", model);
         request.put("messages", jsonMessages);
-        request.put("temperature", temperature);
+        if (sendsTemperature()) {
+            request.put("temperature", temperature);
+        }
         if (jsonTools != null) {
             request.put("tools", jsonTools);
         }
@@ -1061,27 +1100,30 @@ public class LlmClient {
         return parseOpenAiChatResponse(response);
     }
 
-    // ---- Thinking off with a local OpenAI-compatible server ----
+    // ---- Thinking off with an OpenAI-compatible server ----
 
     // the fields for thinking a server refused, left out from then on
     private volatile boolean reasoningEffortRefused;
     private volatile boolean templateKwargsRefused;
 
     /**
-     * Turns thinking off in a request to an OpenAI-compatible server on this machine, as {@code "think": false} does on
-     * Ollama's own API. Local servers (Ollama's /v1, llama.cpp server, vLLM, LM Studio) render the model's own chat
-     * template, and the Qwen 3.x templates think by default, which makes every answer many times slower. Ollama reads
-     * {@code reasoning_effort}, llama.cpp reads {@code chat_template_kwargs}, and vLLM reads both. Hosted endpoints get
-     * neither field, as they may refuse fields they do not know.
+     * Turns thinking off in a request to an OpenAI-compatible server, as {@code "think": false} does on Ollama's own
+     * API. Local servers (Ollama's /v1, llama.cpp server, vLLM, LM Studio) render the model's own chat template, and
+     * the Qwen 3.x templates think by default, which makes every answer many times slower. Ollama reads
+     * {@code reasoning_effort}, llama.cpp reads {@code chat_template_kwargs}, and vLLM reads both. OpenAI itself and
+     * Azure get {@code reasoning_effort} only: the reasoning models of OpenAI call tools on Chat Completions only with
+     * {@code none}. A model that does not know the field refuses it, and gets the request again without it (see
+     * {@link #sendWithFewerThinkingFields}).
      */
     void turnThinkingOff(JsonObject request) {
-        if (apiType == ApiType.openai && isLocalEndpoint()) {
-            if (!reasoningEffortRefused) {
-                request.put("reasoning_effort", "none");
-            }
-            if (!templateKwargsRefused) {
-                request.put("chat_template_kwargs", new JsonObject(Map.of("enable_thinking", false)));
-            }
+        if (apiType != ApiType.openai) {
+            return;
+        }
+        if (!reasoningEffortRefused) {
+            request.put("reasoning_effort", "none");
+        }
+        if (isLocalEndpoint() && !templateKwargsRefused) {
+            request.put("chat_template_kwargs", new JsonObject(Map.of("enable_thinking", false)));
         }
     }
 
@@ -2354,7 +2396,7 @@ public class LlmClient {
             apiType = ApiType.anthropic;
             apiKey = key;
             url = DEFAULT_ANTHROPIC_URL;
-            if (model == null || "llama3.2".equals(model)) {
+            if (model == null || PLACEHOLDER_MODEL.equals(model)) {
                 model = DEFAULT_ANTHROPIC_MODEL;
             }
             return true;
@@ -2369,7 +2411,7 @@ public class LlmClient {
             apiType = ApiType.anthropic;
             vertexRegion = region;
             vertexProjectId = project;
-            if (model == null || "llama3.2".equals(model)) {
+            if (model == null || PLACEHOLDER_MODEL.equals(model)) {
                 model = DEFAULT_ANTHROPIC_MODEL;
             }
             return true;
@@ -2450,7 +2492,7 @@ public class LlmClient {
     }
 
     private boolean isGenericPlaceholderModel(String configuredModel) {
-        return DEFAULT_OLLAMA_MODEL.equals(configuredModel) || DEFAULT_OPENAI_MODEL.equals(configuredModel);
+        return PLACEHOLDER_MODEL.equals(configuredModel) || DEFAULT_OPENAI_MODEL.equals(configuredModel);
     }
 
     /**
@@ -2514,20 +2556,36 @@ public class LlmClient {
     }
 
     /**
-     * Picks a default Ollama model when none was configured (for example after a provider switch). Rather than assume a
-     * hardcoded model that may not be installed, this queries the installed models and prefers {@code llama3.2} when
-     * present, otherwise the first installed model. Falls back to the {@code llama3.2} placeholder only when the list
-     * cannot be retrieved, so the model is never left null.
+     * Picks the Ollama model when none was configured (for example after a provider switch): the installed model best
+     * at tool calling (see {@link #bestOllamaModel}). When the installed models cannot be listed or none can be used,
+     * the model recommended for Camel is asked for, so the model is never left null and the error of Ollama says what
+     * to pull.
      */
     private String resolveDefaultOllamaModel() {
-        List<String> available = listOllamaModels();
-        if (available.isEmpty()) {
-            return DEFAULT_OLLAMA_MODEL;
+        String best = bestOllamaModel(listOllamaModels());
+        return best != null ? best : FALLBACK_OLLAMA_MODEL;
+    }
+
+    /**
+     * The installed model to use when none was chosen: the first of {@link #PREFERRED_OLLAMA_MODELS} by family, else
+     * the first installed model that is not an embedding model; null when there is none. Never the placeholder llama3.2
+     * while a model of a preferred family is installed: it is too small to call the tools of Camel reliably.
+     */
+    static String bestOllamaModel(List<String> installed) {
+        if (installed == null || installed.isEmpty()) {
+            return null;
         }
-        return available.stream()
-                .filter(name -> name.equals(DEFAULT_OLLAMA_MODEL) || name.startsWith(DEFAULT_OLLAMA_MODEL + ":"))
+        for (String family : PREFERRED_OLLAMA_MODELS) {
+            for (String name : installed) {
+                if (name.equals(family) || name.startsWith(family + ":")) {
+                    return name;
+                }
+            }
+        }
+        return installed.stream()
+                .filter(name -> !name.toLowerCase(Locale.ROOT).contains("embed"))
                 .findFirst()
-                .orElse(available.get(0));
+                .orElse(null);
     }
 
     /**
@@ -2558,45 +2616,10 @@ public class LlmClient {
     }
 
     private void resolveOllamaModel() {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url + "/api/tags"))
-                    .timeout(Duration.ofSeconds(HEALTH_CHECK_TIMEOUT_SECONDS))
-                    .GET()
-                    .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) {
-                return;
-            }
-            JsonObject json = (JsonObject) Jsoner.deserialize(response.body());
-            JsonArray models = (JsonArray) json.get("models");
-            if (models == null || models.isEmpty()) {
-                return;
-            }
-
-            List<String> available = new ArrayList<>();
-            for (Object obj : models) {
-                JsonObject m = (JsonObject) obj;
-                String name = m.getString("name");
-                if (name != null) {
-                    available.add(name);
-                }
-            }
-
-            List<String> preferred
-                    = List.of("qwen3.6", "qwen3.5", "qwen3", "nemotron-3-nano", "mistral-nemo",
-                            "qwen2.5", "granite4.1", "llama3.1", "llama3.3", "mistral");
-            for (String pref : preferred) {
-                for (String avail : available) {
-                    if (avail.equals(pref) || avail.startsWith(pref + ":")) {
-                        model = avail;
-                        printer.println("Auto-selected model: " + model + " (better tool-calling support)");
-                        return;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // best-effort, keep default
+        String best = bestOllamaModel(listOllamaModels());
+        if (best != null) {
+            model = best;
+            printer.println("Auto-selected model: " + model + " (better tool-calling support)");
         }
     }
 

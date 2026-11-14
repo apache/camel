@@ -23,11 +23,11 @@ camel explain [options]
 | `--api-type` | API type: 'ollama', 'openai' (OpenAI-compatible), 'anthropic' (Anthropic/Vertex AI), or 'watsonx' (IBM watsonx.ai) |  | ApiType
 | `--catalog-context` | Include Camel Catalog descriptions in the prompt |  | boolean
 | `--format` | Output format (text, markdown) | text | String
-| `--model` | Model to use | llama3.2 | String
+| `--model` | Model to use. Default: the provider's default; with Ollama the installed model best at tool calling, such as qwen3.6 |  | String
 | `--show-prompt` | Show the prompt sent to the LLM |  | boolean
 | `--stream` | Stream the response as it's generated (shows progress) | true | boolean
 | `--system-prompt` | Custom system prompt |  | String
-| `--temperature` | Temperature for response generation (0.0-2.0); not sent to Anthropic, which does not accept it | 0.7 | double
+| `--temperature` | Temperature for response generation (0.0-2.0), for a model on this machine: a hosted model uses its own default | 0.7 | double
 | `--timeout` | Timeout in seconds for LLM response | 120 | int
 | `--url` | LLM API endpoint URL. Auto-detected from 'camel infra' for Ollama if not specified. Also reads AZURE_OPENAI_ENDPOINT or WATSONX_URL env vars |  | String
 | `--verbose,-v` | Include detailed technical information |  | boolean

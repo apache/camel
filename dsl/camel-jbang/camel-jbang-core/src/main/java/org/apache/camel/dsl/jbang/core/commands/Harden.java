@@ -63,7 +63,7 @@ import org.apache.camel.util.json.Jsoner;
                            "Examples:",
                            "  camel harden hello.java",
                            "  camel harden hello.yaml --format=markdown",
-                           "  camel harden hello.java --model=gpt-4" })
+                           "  camel harden hello.java --model=qwen3.6:35b-a3b" })
 public class Harden extends CamelCommand {
 
     public static class FormatCompletionCandidates extends CompletionCandidates {
@@ -78,7 +78,6 @@ public class Harden extends CamelCommand {
     }
 
     private static final String DEFAULT_OLLAMA_URL = "http://localhost:11434";
-    private static final String DEFAULT_MODEL = "llama3.2";
     private static final int CONNECT_TIMEOUT_SECONDS = 10;
     private static final int HEALTH_CHECK_TIMEOUT_SECONDS = 5;
 
@@ -148,8 +147,10 @@ public class Harden extends CamelCommand {
     @Option(name = "api-key", description = "API key for authentication. Also reads OPENAI_API_KEY or LLM_API_KEY env vars")
     String apiKey;
 
-    @Option(name = "model", description = "Model to use", defaultValue = DEFAULT_MODEL)
-    String model = DEFAULT_MODEL;
+    @Option(name = "model",
+            description = "Model to use. Default: with Ollama the installed model best at tool calling, such as qwen3.6;"
+                          + " with an OpenAI-compatible server the first model it lists")
+    String model;
 
     @Option(name = "verbose", shortName = 'v', hasValue = false,
             description = "Include detailed security recommendations with code examples")
@@ -168,7 +169,9 @@ public class Harden extends CamelCommand {
     @Option(name = "show-prompt", hasValue = false, description = "Show the prompt sent to the LLM")
     boolean showPrompt;
 
-    @Option(name = "temperature", description = "Temperature for response generation (0.0-2.0)", defaultValue = "0.7")
+    @Option(name = "temperature",
+            description = "Temperature for response generation (0.0-2.0), for a model on this machine: a hosted model uses its own default",
+            defaultValue = "0.7")
     double temperature = 0.7;
 
     @Option(name = "system-prompt", description = "Custom system prompt")
@@ -218,6 +221,9 @@ public class Harden extends CamelCommand {
         }
 
         String resolvedApiKey = resolveApiKey();
+        if (model == null || model.isBlank()) {
+            model = defaultModel(endpoint, resolvedApiKey);
+        }
         printConfiguration(endpoint, resolvedApiKey);
 
         for (String file : files) {
@@ -227,6 +233,18 @@ public class Harden extends CamelCommand {
             }
         }
         return 0;
+    }
+
+    /**
+     * The model when none is given, chosen as the other AI commands choose it: with Ollama the installed model best at
+     * tool calling, with an OpenAI-compatible server the first model it lists, and with OpenAI its default.
+     */
+    private String defaultModel(String endpoint, String resolvedApiKey) {
+        LlmClient client = LlmClient.create()
+                .withApiType(apiType == ApiType.ollama ? LlmClient.ApiType.ollama : LlmClient.ApiType.openai)
+                .withUrl(endpoint)
+                .withApiKey(resolvedApiKey);
+        return client.detectEndpoint() ? client.model() : null;
     }
 
     private void printConfiguration(String endpoint, String resolvedApiKey) {
@@ -573,7 +591,10 @@ public class Harden extends CamelCommand {
         JsonObject request = new JsonObject();
         request.put("model", model);
         request.put("messages", messages);
-        request.put("temperature", temperature);
+        // a hosted model gets its own default sampling, as with the other AI commands
+        if (LlmClient.isLocalUrl(endpoint)) {
+            request.put("temperature", temperature);
+        }
 
         String apiUrl = normalizeOpenAiUrl(endpoint);
 

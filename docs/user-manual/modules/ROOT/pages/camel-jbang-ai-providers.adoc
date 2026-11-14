@@ -26,7 +26,7 @@ Override the detection with explicit options:
 [source,bash]
 ----
 camel ask "check health" --api-type=anthropic --api-key=sk-...
-camel ask "check health" --api-type=openai --model=gpt-4
+camel ask "check health" --api-type=openai --model=gpt-6-luna
 camel ask "check health" --api-type=gemini --model=gemini-3.8-flash
 camel ask "check health" --api-type=ollama --model=qwen3.6:35b-a3b
 ----

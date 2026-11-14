@@ -30,6 +30,7 @@ import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
+import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.json.JsonObject;
@@ -54,7 +55,6 @@ import org.jline.terminal.TerminalBuilder;
                            "  camel ask                                   (interactive chat)" })
 public class Ask extends CamelCommand {
 
-    private static final String DEFAULT_MODEL = "llama3.2";
     private static final String NO_PROCESS
             = "No running Camel process connected. Start one with: camel run <file>";
 
@@ -117,7 +117,7 @@ public class Ask extends CamelCommand {
     }
 
     /** Below this size (billions of parameters) a model's answers about a running integration are often wrong. */
-    static final double SMALL_MODEL_BILLIONS = 8;
+    static final double SMALL_MODEL_BILLIONS = OllamaDoctorSupport.MIN_MODEL_BILLIONS;
 
     // the tools the model does not get, such as starting a chaos exploration that camel cmd chaos-explore started
     Set<String> hiddenTools = Set.of();
@@ -151,11 +151,9 @@ public class Ask extends CamelCommand {
                 .withMaxTokens(4096)
                 .withVerbose(verbose)
                 .withPrinter(printer());
+        // without a model, each provider uses its default; Ollama the installed model best at tool calling
         if (model != null && !model.isBlank()) {
             client.withExplicitModel(model);
-        } else {
-            // the placeholder that Ollama replaces with the installed model best at tool calling
-            client.withModel(DEFAULT_MODEL);
         }
 
         if (!client.detectEndpoint()) {
@@ -379,8 +377,8 @@ public class Ask extends CamelCommand {
     }
 
     /**
-     * A note about a small model, or null: in a test, the llama3.2 (3B) that the CLI names as its default got three of
-     * four questions about a running integration wrong (CAMEL-25676).
+     * A note about a small model, or null: in a test, llama3.2 (3B), then the default of the CLI, got three of four
+     * questions about a running integration wrong (CAMEL-25676).
      */
     static String smallModelNote(String name, double billions) {
         if (billions <= 0 || billions >= SMALL_MODEL_BILLIONS) {

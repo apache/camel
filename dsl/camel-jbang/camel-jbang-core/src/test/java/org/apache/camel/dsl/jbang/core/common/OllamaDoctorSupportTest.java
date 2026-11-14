@@ -129,6 +129,17 @@ class OllamaDoctorSupportTest {
     }
 
     @Test
+    void theLineIsAt24B() {
+        // a 14B model is too small for the tools of Camel; the 27B models measured on them are large enough
+        assertThat(OllamaDoctorSupport.isSmallModel("qwen2.5:14b")).isTrue();
+        assertThat(OllamaDoctorSupport.isSmallModel("gpt-oss:20b")).isTrue();
+        assertThat(OllamaDoctorSupport.isSmallModel("devstral:24b")).isFalse();
+        assertThat(OllamaDoctorSupport.isSmallModel("qwen3.8:27b-mlx")).isFalse();
+        assertThat(OllamaDoctorSupport.allModelsSmall(List.of("qwen2.5:14b", "qwen3.6:35b-a3b"))).isFalse();
+        assertThat(OllamaDoctorSupport.allModelsSmall(List.of("qwen2.5:14b", "mistral-nemo:12b"))).isTrue();
+    }
+
+    @Test
     void isSmallModelReturnsFalseForNonNumericTag() {
         assertThat(OllamaDoctorSupport.isSmallModel("llama3.2:latest")).isFalse();
         assertThat(OllamaDoctorSupport.isSmallModel("phi4-mini:latest")).isFalse();
