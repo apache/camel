@@ -145,7 +145,7 @@ Your application may require a Java agent in order to get the traces generated b
 
 == MDC logging
 
-You can leverage the `traceHeadersInclusion` to include the generated `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` into the Camel Exchange and together with `camel-mdc` you can make those headers available in the MDC context (via `camel.mdc.customHeaders=CAMEL_TRACE_ID,CAMEL_SPAN_ID` configuration). This is the idiomatic way in Camel.
+You can leverage the `traceHeadersInclusion` to include the generated `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` into the Camel Exchange and together with `camel-mdc` you can make those headers available in the MDC context (via `camel.mdc.customExchangeHeaders=CAMEL_TRACE_ID,CAMEL_SPAN_ID` configuration). This is the idiomatic way in Camel.
 
 As an alternative, you can add Mapped Diagnostic Context tracing information (ie, `trace_id` and `span_id`) adding the specific https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md[Opentelemetry Logger MDC auto instrumentation]. This would be available if you configure the Opentelemetry. The logging configuration depends on the logging framework you're using.
 
