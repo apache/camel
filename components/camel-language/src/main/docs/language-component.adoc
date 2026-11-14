@@ -168,6 +168,9 @@ Object out = producer.requestBodyAndHeader("language:xpath", "<foo>Hello World</
 assertEquals("Hello World", out);
 ----
 
+A script from the header is used for that message only: it is never cached as the script of the endpoint, also with
+`cacheScript=true`, and the header is removed after use, so a later language endpoint runs its own script.
+
 == Loading scripts from resources
 
 You can specify a resource uri for a script to load in either the
