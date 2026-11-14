@@ -19,9 +19,12 @@ package org.apache.camel.tooling.maven;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -84,9 +88,12 @@ import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.MetadataRequest;
 import org.eclipse.aether.resolution.MetadataResult;
+import org.eclipse.aether.transfer.AbstractTransferListener;
 import org.eclipse.aether.transfer.MetadataNotFoundException;
 import org.eclipse.aether.transfer.RepositoryOfflineException;
+import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
+import org.eclipse.aether.util.listener.ChainedTransferListener;
 import org.eclipse.aether.util.repository.SimpleArtifactDescriptorPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,6 +123,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     // see org.eclipse.aether.internal.impl.DefaultUpdateCheckManager
     private static final String UPDATE_CHECK_SESSION_STATE = "aether.updateCheckManager.sessionState";
     private static final DependencyFilter ACCEPT_ALL = (node, parents) -> true;
+    private static final int DEFAULT_REQUEST_TIMEOUT = 60000;
 
     // Configuration
     private boolean mavenCentralEnabled = true;
@@ -127,6 +135,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     private boolean fresh;
     private boolean offline;
     private boolean preferLocal = true;
+    // the resolver's default is 30 minutes, so a repository that stops sending would hang the download for that long
+    private int requestTimeout = DEFAULT_REQUEST_TIMEOUT;
     private RemoteArtifactDownloadListener remoteArtifactDownloadListener;
     private RepositoryResolver repositoryResolver;
 
@@ -151,6 +161,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     private RepositoryPolicy defaultPolicy;
     private boolean apacheSnapshotsIncluded;
     private AtomicInteger customRepositoryCounter = new AtomicInteger(1);
+    // the repositories that could not be connected to (by URL): they are not used for the rest of the run
+    private Set<String> unreachableRepositories = ConcurrentHashMap.newKeySet();
 
     /**
      * Default constructor for standalone mode. MIMA will be used to create RepositorySystem and
@@ -361,7 +373,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // Get RepositorySystem and RepositorySystemSession from MIMA
         repositorySystem = mimaContext.repositorySystem();
-        repositorySystemSession = withTrackingKeyCompat(mimaContext.repositorySystemSession());
+        repositorySystemSession = withTimeoutsAndReachability(withTrackingKeyCompat(mimaContext.repositorySystemSession()));
 
         // Configure repositories (same as embedded mode)
         List<RemoteRepository> originalRepositories = new ArrayList<>();
@@ -817,7 +829,12 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         } catch (DependencyResolutionException | ArtifactResolutionException e) {
             MavenResolutionException mre = new MavenResolutionException(e.getMessage(), e);
-            repositories.forEach(r -> mre.getRepositories().add(r.getUrl()));
+            Set<String> unreachable = new LinkedHashSet<>(unreachableRepositories);
+            for (RemoteRepository r : repositories) {
+                boolean reachable = !unreachable.remove(repositoryUrl(r.getUrl()));
+                mre.getRepositories().add(reachable ? r.getUrl() : r.getUrl() + " (not reachable)");
+            }
+            unreachable.forEach(url -> mre.getRepositories().add(url + " (not reachable)"));
             throw mre;
         }
     }
@@ -840,7 +857,95 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                     session, extraRepos);
             repositories.addAll(resolvedExtraRepos);
         }
+        if (!unreachableRepositories.isEmpty()) {
+            // asking them again would only wait for the connect timeout again
+            repositories.removeIf(r -> unreachableRepositories.contains(repositoryUrl(r.getUrl())));
+        }
         return repositories;
+    }
+
+    /**
+     * Sets the request timeout of Camel (unless configured, such as with the aether.connector.requestTimeout system
+     * property), and stops using a repository that cannot be connected to.
+     */
+    private RepositorySystemSession withTimeoutsAndReachability(RepositorySystemSession session) {
+        DefaultRepositorySystemSession answer = new DefaultRepositorySystemSession(session);
+        if (session.getConfigProperties().get(ConfigurationProperties.REQUEST_TIMEOUT) == null) {
+            answer.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, requestTimeout);
+        }
+        answer.setTransferListener(ChainedTransferListener.newInstance(session.getTransferListener(),
+                new UnreachableRepositoryListener(unreachableRepositories)));
+        return answer;
+    }
+
+    /**
+     * Notes the repositories that cannot be connected to: a host that does not resolve, refuses the connection, or does
+     * not answer within the connect timeout. A repository that is slow to send an artifact is still used.
+     */
+    static final class UnreachableRepositoryListener extends AbstractTransferListener {
+
+        private final Set<String> unreachable;
+
+        UnreachableRepositoryListener(Set<String> unreachable) {
+            this.unreachable = unreachable;
+        }
+
+        @Override
+        public void transferFailed(TransferEvent event) {
+            Throwable cause = connectFailure(event.getException());
+            if (cause != null && event.getResource() != null && event.getResource().getRepositoryUrl() != null) {
+                String url = repositoryUrl(event.getResource().getRepositoryUrl());
+                if (unreachable.add(url)) {
+                    LOG.warn("Cannot connect to Maven repository: {} due to: {}. The repository is not used anymore.",
+                            url, cause.getMessage() != null ? cause.getMessage() : cause.getClass().getName());
+                }
+            }
+        }
+
+        static Throwable connectFailure(Throwable e) {
+            // guard against a cause that points back to an exception in the chain
+            int depth = 0;
+            for (Throwable t = e; t != null && depth < 20; t = t.getCause(), depth++) {
+                if (t instanceof ConnectException || t instanceof UnknownHostException) {
+                    return t;
+                }
+                // the connect timeout of the JDK socket
+                if (t instanceof SocketTimeoutException && "Connect timed out".equalsIgnoreCase(t.getMessage())) {
+                    return t;
+                }
+                // the connect timeout of an HTTP client, by name to need none of them on the classpath:
+                // org.apache.http.conn.ConnectTimeoutException (HttpClient 4, the transport of Maven Resolver 1.x),
+                // org.apache.hc.client5.http.ConnectTimeoutException (HttpClient 5), whose message is not
+                // "Connect timed out", and java.net.http.HttpConnectTimeoutException (the JDK HTTP client)
+                if (t.getClass().getSimpleName().endsWith("ConnectTimeoutException")) {
+                    return t;
+                }
+            }
+            return null;
+        }
+    }
+
+    private static String repositoryUrl(String url) {
+        return url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+    }
+
+    /**
+     * The request timeout in millis: how long to wait for data from a Maven repository before failing (default 60
+     * seconds). The aether.connector.requestTimeout system property overrides it.
+     */
+    public void setRequestTimeout(int requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public int getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    /**
+     * The repositories that could not be connected to (by URL), which are not used anymore.
+     */
+    Set<String> getUnreachableRepositories() {
+        return unreachableRepositories;
     }
 
     @Override
@@ -1127,6 +1232,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         copy.fresh = fresh;
         copy.apacheSnapshotsIncluded = apacheSnapshotsIncluded;
         copy.customRepositoryCounter = customRepositoryCounter;
+        copy.unreachableRepositories = unreachableRepositories;
         copy.repositoryResolver = repositoryResolver;
         copy.offline = offline;
 

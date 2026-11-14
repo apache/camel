@@ -2666,6 +2666,14 @@ All commands find running integrations the same way:
 * The `--timeout` of `camel cmd send`, `camel cmd receive`, `camel eval expression`, `camel transform message` and the
   `camel semantic` commands also takes a duration such as `30s` (a number is still millis).
 
+=== camel-jbang - a Maven repository that does not answer fails the download after 60 seconds
+
+The Camel CLI (`camel run`, `camel export`, the CLI plugins, and other tools that download with `camel-tooling-maven`) now
+waits 60 seconds for data from a Maven repository, instead of the 30 minutes of Maven Resolver, so a repository that
+stops sending no longer hangs the download for that long. Set the `aether.connector.requestTimeout` system property
+(in millis) for a longer timeout. A repository that cannot be connected to is now logged with a WARN and not used
+for the rest of the run.
+
 === camel-pqc - KeyLifecycleManager behaviour aligned across the implementations
 
 Four differences between the `KeyLifecycleManager` implementations are resolved. All four are corrections, but each

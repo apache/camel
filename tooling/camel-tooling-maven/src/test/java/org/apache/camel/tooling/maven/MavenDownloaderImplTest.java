@@ -17,6 +17,13 @@
 package org.apache.camel.tooling.maven;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import java.net.http.HttpConnectTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
@@ -24,11 +31,13 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.http.Header;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
@@ -47,6 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -1145,5 +1155,100 @@ class MavenDownloaderImplTest {
                 %s</project>
                 """.formatted(artifactId, body);
         Files.writeString(new File(dir, artifactId + "-1.0.0.pom").toPath(), pom);
+    }
+
+    @Test
+    void testUnreachableRepositoryIsNotUsedAnymore() throws Exception {
+        File repo = createDescriptorFixtureRepository();
+        File localRepo = new File(tempDir, "unreachable-local-repo");
+        // nothing listens on this port, so the connection is refused
+        String dead = "http://localhost:" + AvailablePortFinder.getNextAvailable(20000, 30000) + "/maven";
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(dead + "," + repo.toURI());
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 5000);
+
+            // an artifact no repository has: both are asked
+            assertThrows(MavenResolutionException.class,
+                    () -> customDownloader.resolveArtifacts(List.of("org.example.fixture:missing:1.0.0"), null, false,
+                            false));
+            assertEquals(Set.of(dead), downloader.getUnreachableRepositories());
+
+            // the other repository is still used
+            List<MavenArtifact> artifacts = customDownloader.resolveArtifacts(
+                    List.of("org.example.fixture:fixture-bom:pom:1.0.0"), null, false, false);
+            assertEquals(1, artifacts.size());
+
+            // the repository is not asked again, and the failure says so
+            MavenResolutionException e = assertThrows(MavenResolutionException.class,
+                    () -> customDownloader.resolveArtifacts(List.of("org.example.fixture:missing2:1.0.0"), null, false,
+                            false));
+            assertTrue(e.getRepositories().contains(dead + " (not reachable)"), e.getRepositories().toString());
+            assertFalse(e.getRepositories().contains(dead), e.getRepositories().toString());
+        }
+    }
+
+    @Test
+    void testRepositoryThatDoesNotAnswerFailsOnTheRequestTimeout() throws Exception {
+        File localRepo = new File(tempDir, "stalled-local-repo");
+        // accepts the connection, and never answers
+        try (ServerSocket server = new ServerSocket(0);
+             MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            List<Socket> accepted = new CopyOnWriteArrayList<>();
+            Thread acceptor = new Thread(() -> {
+                try {
+                    while (!server.isClosed()) {
+                        accepted.add(server.accept());
+                    }
+                } catch (Exception e) {
+                    // closed
+                }
+            });
+            acceptor.setDaemon(true);
+            acceptor.start();
+            String stalled = "http://localhost:" + server.getLocalPort() + "/maven";
+
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(stalled);
+            downloader.build();
+            assertEquals(60000, downloader.getRequestTimeout());
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 1000);
+
+            long start = System.nanoTime();
+            assertThrows(MavenResolutionException.class,
+                    () -> customDownloader.resolveArtifacts(List.of("org.example.fixture:stalled:1.0.0"), null, false,
+                            false));
+            assertTrue(TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - start) < 30);
+            // a slow repository is still used
+            assertTrue(downloader.getUnreachableRepositories().isEmpty());
+            for (Socket socket : accepted) {
+                socket.close();
+            }
+        }
+    }
+
+    @Test
+    void testConnectFailures() {
+        assertNotNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(
+                new RuntimeException(new ConnectException("Connection refused"))));
+        assertNotNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(new UnknownHostException("nope")));
+        assertNotNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(
+                new SocketTimeoutException("Connect timed out")));
+        // Apache HttpClient 4 (the HTTP transport of Maven Resolver) has its own exception for a connect timeout
+        assertNotNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(
+                new RuntimeException(new ConnectTimeoutException("Connect to localhost:1234 timed out"))));
+        assertNotNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(
+                new HttpConnectTimeoutException("HTTP connect timed out")));
+        // a read timeout is a slow repository, not an unreachable one
+        assertNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(
+                new SocketTimeoutException("Read timed out")));
+        assertNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(new IOException("Not found")));
+        assertNull(MavenDownloaderImpl.UnreachableRepositoryListener.connectFailure(null));
     }
 }
