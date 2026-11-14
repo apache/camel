@@ -52,6 +52,7 @@ class CamelBatDiscoveryTest {
     private static final String JAVA25 = "openjdk version \"25\" 2025-09-16";
     private static final String JAVA17 = "openjdk version \"17.0.2\" 2022-01-18";
     private static final String JAVA17_EA = "openjdk version \"17-ea\"";
+    private static final String JAVA26_EA = "openjdk version \"26-ea\" 2026-03-17";
     private static final String JAVA11 = "openjdk version \"11.0.20\" 2023-07-18";
     private static final String JAVA8 = "java version \"1.8.0_202\"";
     private static final String GARBAGE = "totally not a java banner";
@@ -394,6 +395,22 @@ class CamelBatDiscoveryTest {
         FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
 
         assertEquals(1, r.exitCode());
+    }
+
+    @Test
+    void acceptsAnEarlyAccessJdkOfARecentVersion(@TempDir Path base) throws Exception {
+        // 26-ea is Java 26, as camel.sh reads it (CAMEL-26933)
+        Path h = home(base);
+        Path earlyAccess = FakeJava.writeFakeJava(base.resolve("early-access"), "java", JAVA26_EA, 0, "EARLY");
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA21, 0, "FALLBACK");
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", earlyAccess.toString());
+        env.put("CAMEL_FALLBACK_JAVA", fallback.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=EARLY"), r.stdout());
     }
 
     @Test
