@@ -134,6 +134,7 @@ public abstract class JBangTestSupport {
 
     protected enum TestResources {
         ROUTE2("route2.yaml", "/jbang/it/route2.yaml"),
+        ROUTE2_ONCE("route2-once.yaml", "/jbang/it/route2-once.yaml"),
         TEST_PROFILE_PROP("application-test.properties", "/jbang/it/application-test.properties"),
         HELLO_NAME("helloName.xml", "/jbang/it/helloName.xml"),
         JOKE("joke.yaml", "/jbang/it/joke.yaml"),
@@ -150,8 +151,9 @@ public abstract class JBangTestSupport {
         STUB_ROUTE("StubRoute.java", "/jbang/it/StubRoute.java"),
         HISTORY_ROUTE("HistoryRoute.java", "/jbang/it/HistoryRoute.java"),
         USER_SOURCE_KAMELET("user-source.kamelet.yaml", "/jbang/it/user-source.kamelet.yaml"),
-        USER_SOURCE_CONSUMER("user-source-consumer.camel.yaml", "/jbang/it/user-source-consumer.camel.yaml"),
-        GROUP_ROUTE("GroupRoute.java", "/jbang/it/GroupRoute.java");
+        GROUP_ROUTE("GroupRoute.java", "/jbang/it/GroupRoute.java"),
+        ERROR_ROUTE("error-route.yaml", "/jbang/it/error-route.yaml"),
+        USER_SOURCE_CONSUMER("user-source-consumer.camel.yaml", "/jbang/it/user-source-consumer.camel.yaml");
 
         private String name;
         private String resPath;

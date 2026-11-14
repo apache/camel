@@ -97,7 +97,7 @@ public class ListProducer extends ProcessWatchCommand {
                     row.uri = o.getString("uri");
                     row.id = o.getString("routeId");
                     row.state = o.getString("state");
-                    row.className = o.getString("class");
+                    row.className = o.getStringOrDefault("clazz", o.getString("class"));
                     row.singleton = o.getBoolean("singleton");
                     row.remote = o.getBoolean("remote");
                     row.uptime = extractSince(ph);
