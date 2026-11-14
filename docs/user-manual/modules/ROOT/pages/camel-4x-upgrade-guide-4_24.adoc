@@ -8654,6 +8654,15 @@ The `withFixedPort()` container of `camel-test-infra-artemis` maps the same port
 A service that does not start because a port it maps on the host is taken now fails with one line that names the port,
 and the infra service that has it, instead of the stack trace of the container runtime.
 
+=== camel-jbang - camel run loads one version of each library
+
+`camel run` downloads the JARs of each component when it is first used. It now keeps one version of each library: when
+a component used later depends on another version of a library that is already loaded, it gets the loaded version, as
+with the `dependencyManagement` of a Maven project.
+
+Before, the other version was added as well. The classpath could then hold, for example, three versions of Netty, and a
+class came from whichever JAR was first. Use `--verbose` to see the JARs added for each dependency.
+
 === camel-vertx - the component fails to start when the clustered Vert.x is not created
 
 When the component builds its own clustered Vert.x (the component `host` or `port` option is set and no `vertxOptions` is
