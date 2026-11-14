@@ -259,7 +259,9 @@ for the next start.
   one.
 * *In the architecture* the dots go along a link between two groups at the pace of the messages into the routes of the
   group it goes to, from the routes of the group it comes from. With *x* on, red dots go into the Error handling box at
-  the pace the routes of a group fail, handled or not, so where the failures go shows at a glance. The architecture is
+  the pace the routes of a group fail, handled or not, so where the failures go shows at a glance. With *e* on, the dots
+  come in from an external system at the pace of the route that consumes from it, and go out to one at the pace of the
+  messages the integration counts for that endpoint (else of the route that sends to it). The architecture is
   read from the source files, so this needs the integration running: a source route counts when it is matched to a
   running route, by its id or, without one, by the endpoint it consumes from.
 * *A stuck step* of a route diagram, where exchanges wait and none has finished for a few seconds, has a spinner in its top border, with how
@@ -274,7 +276,7 @@ image::jbang/camel-tui-diagram-live-flow.gif[The orders route with the live flow
 
 image::jbang/camel-tui-diagram-topology-flow.gif[The topology with the live flow: dots from orders to vip and ship, and on to audit; none from the manual route, which sends no messages]
 
-image::jbang/camel-tui-diagram-architecture-flow.gif[The architecture with the live flow: dots from intake to fulfilment and on to reporting, and red dots from fulfilment into the error handling]
+image::jbang/camel-tui-diagram-architecture-flow.gif[The architecture with the live flow and its external systems: dots in from the file inbox through intake to fulfilment and on to reporting, out to the file archive, and red dots from fulfilment into the error handling]
 
 === Body Types
 

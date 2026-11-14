@@ -87,7 +87,7 @@ class ArchitectureFlowTest {
     void aLinkMovesAtTheMessagesIntoTheGroupItGoesTo() {
         FlowFeed feed = ArchitectureFlow.feed(overview, caps,
                 List.of(route("order", 100, 0, 0), route("invoice", 90, 4, 0), route("dlq", 10, 0, 0)),
-                UnaryOperator.identity());
+                List.of(), UnaryOperator.identity());
 
         String link = FlowFeed.edgeId(caps.groupOf().get("order"), caps.groupOf().get("invoice"));
         assertThat(feed.edges()).containsKey(link);
@@ -102,7 +102,7 @@ class ArchitectureFlowTest {
     void theFailuresOfAGroupGoToTheErrorHandlingInRed() {
         FlowFeed feed = ArchitectureFlow.feed(overview, caps,
                 List.of(route("order", 100, 3, 7), route("invoice", 90, 0, 0), route("dlq", 10, 0, 0)),
-                UnaryOperator.identity());
+                List.of(), UnaryOperator.identity());
 
         String shop = caps.groupOf().get("order");
         FlowFeed.Edge edge = feed.edges().get(FlowFeed.edgeId(shop, ProjectCapabilities.ERRORS));
@@ -117,7 +117,7 @@ class ArchitectureFlowTest {
         // a route without an id in the source runs with the id Camel made up
         FlowFeed feed = ArchitectureFlow.feed(overview, caps,
                 List.of(route("order", 100, 0, 0), route("route2", 90, 0, 0)),
-                key -> "invoice".equals(key) ? "route2" : key);
+                List.of(), key -> "invoice".equals(key) ? "route2" : key);
 
         assertThat(feed.readings()).containsKey("route/invoice");
         assertThat(feed.readings().get("route/invoice").total()).isEqualTo(90);
@@ -125,9 +125,54 @@ class ArchitectureFlowTest {
 
     @Test
     void noRunningRoutesNoFlow() {
-        assertThat(ArchitectureFlow.feed(overview, caps, List.of(), UnaryOperator.identity())).isNull();
-        assertThat(ArchitectureFlow.feed(overview, caps, List.of(route("other", 5, 0, 0)), UnaryOperator.identity()))
+        assertThat(ArchitectureFlow.feed(overview, caps, List.of(), List.of(), UnaryOperator.identity())).isNull();
+        assertThat(ArchitectureFlow.feed(overview, caps, List.of(route("other", 5, 0, 0)), List.of(),
+                UnaryOperator.identity()))
                 .as("another project's routes").isNull();
+    }
+
+    @Test
+    void aSystemMovesAtTheMessagesOfTheRouteItFeedsOrOfTheEndpointSentTo() {
+        // as the running integration writes its endpoints
+        FlowFeed feed = ArchitectureFlow.feed(overview, caps,
+                List.of(route("order", 100, 0, 0), route("invoice", 90, 0, 0), route("dlq", 10, 0, 0)),
+                // a polling consumer counts no hits: the route has the messages it got
+                List.of(endpoint("platform-http:///orders", "in", "order", 0),
+                        endpoint("kafka://invoices?brokers=x", "out", "invoice", 42)),
+                UnaryOperator.identity());
+
+        String in = FlowFeed.edgeId(ArchitectureView.systemId("Platform HTTP", true), caps.groupOf().get("order"));
+        String out = FlowFeed.edgeId(caps.groupOf().get("invoice"), ArchitectureView.systemId("Kafka", false));
+        assertThat(feed.edges()).containsKeys(in, out);
+        assertThat(feed.readings().get(feed.edges().get(in).key()).total()).as("the messages of order").isEqualTo(100);
+        assertThat(feed.readings().get(feed.edges().get(out).key()).total()).as("the hits of kafka:invoices")
+                .isEqualTo(42);
+    }
+
+    @Test
+    void withoutTheCountsOfItsEndpointASystemMovesAtItsRoute() {
+        FlowFeed feed = ArchitectureFlow.feed(overview, caps,
+                List.of(route("order", 100, 0, 0), route("invoice", 90, 0, 0), route("dlq", 10, 0, 0)),
+                List.of(), UnaryOperator.identity());
+
+        String out = FlowFeed.edgeId(caps.groupOf().get("invoice"), ArchitectureView.systemId("Kafka", false));
+        assertThat(feed.readings().get(feed.edges().get(out).key()).total()).isEqualTo(90);
+    }
+
+    @Test
+    void anEndpointUriIsKnownWithOrWithoutItsSlashesAndOptions() {
+        assertThat(ArchitectureFlow.endpointKey("file:inbox?delete=true&delay=200"))
+                .isEqualTo(ArchitectureFlow.endpointKey("file://inbox?delay=200&delete=true"));
+        assertThat(ArchitectureFlow.endpointKey("Kafka:orders")).isEqualTo("kafka:orders");
+    }
+
+    private static EndpointInfo endpoint(String uri, String direction, String routeId, long hits) {
+        EndpointInfo e = new EndpointInfo();
+        e.uri = uri;
+        e.direction = direction;
+        e.routeId = routeId;
+        e.hits = hits;
+        return e;
     }
 
     private static RouteInfo route(String id, long total, long failed, long handled) {

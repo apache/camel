@@ -602,7 +602,9 @@ final class ArchitectureView {
         IntegrationInfo info = ctx != null ? ctx.findSelectedIntegration() : null;
         Path d = dir;
         return info == null || d == null
-                ? null : ArchitectureFlow.feed(overview, capabilities, info.routes, key -> RouteKeys.runningId(d, key));
+                ? null
+                : ArchitectureFlow.feed(overview, capabilities, info.routes, info.endpoints,
+                        key -> RouteKeys.runningId(d, key));
     }
 
     void render(Frame frame, Rect area, String integrationName) {

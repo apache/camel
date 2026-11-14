@@ -218,9 +218,11 @@ and on (kept for the next start).
 - **In the architecture** the dots go along a link at the pace of the
   messages into the routes of the group it goes to, from the routes of
   the group it comes from; with `x` on, red dots go into the Error
-  handling box at the pace the routes of a group fail. It needs the
-  integration running: a source route counts when it is matched to a
-  running route.
+  handling box at the pace the routes of a group fail; with `e` on, the
+  dots come in from an external system at the pace of the route that
+  consumes from it, and go out to one at the pace of the messages sent
+  to it. It needs the integration running: a source route counts when
+  it is matched to a running route.
 - **Stuck** (a route diagram): a step where exchanges wait and none has finished for a
   few seconds has a spinner in its top border, with how many wait and
   how long ago the step last finished one (`⠹ 3 inflight · 12s`), or
