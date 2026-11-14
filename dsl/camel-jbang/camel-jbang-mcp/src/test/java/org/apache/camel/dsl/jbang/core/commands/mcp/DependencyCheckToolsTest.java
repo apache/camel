@@ -34,6 +34,7 @@ class DependencyCheckToolsTest {
         catalogService.catalogRepos = Optional.empty();
         tools.catalogService = catalogService;
         tools.dependencyData = new DependencyData();
+        tools.advisoryService = new AdvisoryService();
     }
 
     // A pom.xml with Camel BOM and some components
@@ -516,5 +517,168 @@ class DependencyCheckToolsTest {
         // Core analysis should still work after sanitization
         assertThat(result.projectInfo().camelVersion()).isEqualTo("4.10.0");
         assertThat(result.projectInfo().runtimeType()).isEqualTo("main");
+    }
+
+    // ---- Security: the published CVE advisories of the declared dependencies ----
+
+    private static final String POM_WITH_HTTP = """
+            <project>
+                <properties>
+                    <camel.version>4.10.0</camel.version>
+                </properties>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-core</artifactId>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-http</artifactId>
+                    </dependency>
+                </dependencies>
+            </project>
+            """;
+
+    private static final String POM_CURRENT_VERSION = """
+            <project>
+                <properties>
+                    <camel.version>4.22.0</camel.version>
+                </properties>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-core</artifactId>
+                    </dependency>
+                </dependencies>
+            </project>
+            """;
+
+    @Test
+    void securityListsTheCvesOfAnOlderVersion() {
+        DependencyCheckTools.DependencyCheckResult result
+                = tools.camel_dependency_check(POM_WITH_HTTP, null, null, null, null, null);
+
+        DependencyCheckTools.SecurityAudit security = result.security();
+        assertThat(security.camelVersion()).isEqualTo("4.10.0");
+        assertThat(security.camelVersionDetected()).isTrue();
+        assertThat(security.totalCves()).isPositive();
+        assertThat(security.clean()).isFalse();
+        assertThat(security.vulnerableArtifacts()).extracting(DependencyCheckTools.ArtifactAudit::artifactId)
+                .contains("camel-http");
+        assertThat(result.summary().vulnerableArtifactCount()).isEqualTo(security.vulnerableArtifacts().size());
+        assertThat(result.summary().healthy()).isFalse();
+        assertThat(result.recommendations()).filteredOn(r -> r.category().equals("Security"))
+                .anySatisfy(r -> {
+                    assertThat(r.action()).startsWith("Upgrade Camel to a release that fixes")
+                            .doesNotContain("SNAPSHOT");
+                    assertThat(r.detail()).contains("Pass the routes");
+                });
+    }
+
+    @Test
+    void securityIsCleanForARecentVersion() {
+        DependencyCheckTools.DependencyCheckResult result
+                = tools.camel_dependency_check(POM_CURRENT_VERSION, null, null, null, null, null);
+
+        assertThat(result.security().camelVersion()).isEqualTo("4.22.0");
+        assertThat(result.security().vulnerableArtifacts()).isNull();
+        assertThat(result.security().clean()).isTrue();
+        assertThat(result.summary().vulnerableArtifactCount()).isZero();
+        assertThat(result.recommendations()).noneMatch(r -> r.category().equals("Security"));
+    }
+
+    @Test
+    void securityMarksTheVulnerableComponentTheRoutesUseAsReachable() {
+        String routes = "from: \"http:example.com\"\nsteps:\n  - to: \"log:out\"";
+        DependencyCheckTools.DependencyCheckResult result
+                = tools.camel_dependency_check(POM_WITH_HTTP, routes, null, null, null, null);
+
+        assertThat(result.security().reachableVulnerableArtifacts()).isPositive();
+        assertThat(result.security().vulnerableArtifacts())
+                .filteredOn(a -> a.artifactId().equals("camel-http"))
+                .singleElement()
+                .satisfies(a -> assertThat(a.reachable()).isTrue());
+        assertThat(result.recommendations()).filteredOn(r -> r.category().equals("Security"))
+                .anySatisfy(r -> assertThat(r.detail()).contains("used by the routes (reachable)"));
+    }
+
+    @Test
+    void securityDoesNotMarkAComponentTheRoutesDoNotUse() {
+        String routes = "from: \"timer:tick\"\nsteps:\n  - to: \"log:out\"";
+        DependencyCheckTools.DependencyCheckResult result
+                = tools.camel_dependency_check(POM_WITH_HTTP, routes, null, null, null, null);
+
+        assertThat(result.security().reachableVulnerableArtifacts()).isZero();
+        assertThat(result.security().vulnerableArtifacts())
+                .filteredOn(a -> a.artifactId().equals("camel-http"))
+                .singleElement()
+                .satisfies(a -> assertThat(a.reachable()).isFalse());
+    }
+
+    @Test
+    void securitySaysWhenTheCamelVersionIsNotDetected() {
+        // a Spring Boot project whose Camel version comes from the parent: the starter is checked as camel-http
+        String parentManaged = """
+                <project>
+                    <parent>
+                        <groupId>com.example</groupId>
+                        <artifactId>company-parent</artifactId>
+                        <version>1.0</version>
+                    </parent>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel.springboot</groupId>
+                            <artifactId>camel-http-starter</artifactId>
+                        </dependency>
+                    </dependencies>
+                </project>
+                """;
+
+        DependencyCheckTools.DependencyCheckResult unknown
+                = tools.camel_dependency_check(parentManaged, null, null, null, null, null);
+        DependencyCheckTools.SecurityAudit security = unknown.security();
+        assertThat(security.camelVersion()).isNull();
+        assertThat(security.camelVersionDetected()).isFalse();
+        assertThat(security.clean()).isFalse();
+        assertThat(security.warnings()).singleElement().asString().contains("camelVersion");
+        assertThat(security.vulnerableArtifacts()).singleElement().satisfies(a -> {
+            assertThat(a.artifactId()).isEqualTo("camel-http-starter");
+            assertThat(a.reachable()).as("no routes, reachability unknown").isNull();
+        });
+        // listed whatever the version, so not counted as an issue of the project
+        assertThat(unknown.summary().vulnerableArtifactCount()).isZero();
+        assertThat(unknown.recommendations()).filteredOn(r -> r.category().equals("Security"))
+                .anySatisfy(r -> assertThat(r.action()).startsWith("Call again with camelVersion"));
+
+        // the version of this server's catalog, so that no other catalog is downloaded
+        String version = tools.catalogService.getDefaultCatalog().getCatalogVersion().replace("-SNAPSHOT", "");
+        DependencyCheckTools.DependencyCheckResult given
+                = tools.camel_dependency_check(parentManaged, null, null, version, null, null);
+        assertThat(given.security().camelVersion()).isEqualTo(version);
+        assertThat(given.security().camelVersionDetected()).isFalse();
+        assertThat(given.security().warnings()).singleElement().asString().contains(version);
+    }
+
+    @Test
+    void securityIsNotCleanWhenAdvisoriesWithoutComponentsMayApply() {
+        // CVE-2024-22371 names no component and affects 4.1.0 before 4.4.0
+        DependencyCheckTools.DependencyCheckResult result = tools.camel_dependency_check(
+                POM_CURRENT_VERSION.replace("4.22.0", "4.2.0"), null, null, null, null, null);
+
+        assertThat(result.security().uncheckedAdvisories())
+                .extracting(DependencyCheckTools.VulnerabilityFinding::cve)
+                .contains("CVE-2024-22371");
+        assertThat(result.security().clean()).isFalse();
+        assertThat(result.recommendations()).filteredOn(r -> r.category().equals("Security"))
+                .anySatisfy(r -> assertThat(r.action()).startsWith("Review security.uncheckedAdvisories"));
+    }
+
+    @Test
+    void securityHandlesEmptyRoutes() {
+        DependencyCheckTools.DependencyCheckResult result
+                = tools.camel_dependency_check(POM_WITH_HTTP, "", null, null, null, null);
+
+        assertThat(result.security()).isNotNull();
+        assertThat(result.security().vulnerableArtifacts()).allSatisfy(a -> assertThat(a.reachable()).isNull());
     }
 }

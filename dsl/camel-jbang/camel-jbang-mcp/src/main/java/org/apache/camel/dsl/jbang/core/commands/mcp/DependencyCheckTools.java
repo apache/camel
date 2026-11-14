@@ -18,7 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -33,12 +35,15 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.DependencyLookup;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 
 /**
  * MCP Tool for checking Camel project dependency hygiene.
  * <p>
  * Analyzes a project's pom.xml (and optionally route definitions) to detect outdated Camel dependencies, missing
- * dependencies for components used in routes, and version conflicts between the Camel BOM and explicit overrides.
+ * dependencies for components used in routes, version conflicts between the Camel BOM and explicit overrides, and the
+ * published Camel CVE advisories that affect the declared dependencies. {@link AdvisoryTools} lists the advisories by
+ * version and component without a project.
  */
 @McpSecured
 @ApplicationScoped
@@ -50,6 +55,9 @@ public class DependencyCheckTools {
     @Inject
     DependencyData dependencyData;
 
+    @Inject
+    AdvisoryService advisoryService;
+
     /**
      * Tool to check Camel dependency hygiene for a project.
      */
@@ -59,7 +67,10 @@ public class DependencyCheckTools {
                         + "detects an outdated Camel version compared to the latest Camel release, "
                         + "missing Maven dependencies for components used in routes (Spring Boot starters and "
                         + "Camel Quarkus extensions count as the component they provide), "
-                        + "and version conflicts between the Camel BOM and explicit dependency overrides. "
+                        + "version conflicts between the Camel BOM and explicit dependency overrides, "
+                        + "and the published Camel CVE advisories that affect the declared dependencies at the "
+                        + "project's Camel version (security: severity, fixed version and, when routes are given, "
+                        + "whether the routes use the vulnerable component). "
                         + "Returns actionable recommendations with corrected dependency snippets. "
                         + "POM content is automatically sanitized to mask sensitive data (passwords, tokens, API keys) "
                         + "unless sanitizePom is set to false.")
@@ -67,11 +78,14 @@ public class DependencyCheckTools {
             @ToolArg(description = "The pom.xml file content. "
                                    + "IMPORTANT: Avoid including sensitive data such as passwords, tokens, or API keys. "
                                    + "Sensitive content is automatically detected and masked.") String pomContent,
-            @ToolArg(description = "Route definitions (YAML, XML, or Java DSL) to check for missing component dependencies. "
+            @ToolArg(description = "Route definitions (YAML, XML, or Java DSL) to check for missing component dependencies "
+                                   + "and to tell which vulnerable components they use. "
                                    + "Multiple routes can be provided concatenated.",
                      required = false) String routes,
             @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION
+                                   + " Also the version checked for CVEs when the pom.xml does not set it (parent-managed).",
+                     required = false) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom,
             @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials",
                      required = false) Boolean sanitizePom) {
@@ -97,27 +111,35 @@ public class DependencyCheckTools {
             // 1. Check for outdated Camel version
             VersionStatus versionStatus = checkVersionStatus(pom, catalog, catalogService.getDefaultCatalog());
 
+            // the components of the routes' endpoints, not every name in the text (CAMEL-25586)
+            boolean routesGiven = routes != null && !routes.isBlank();
+            List<String> usedComponents = routesGiven ? RouteComponents.of(routes, null, catalog) : List.of();
+
             // 2. Check for missing dependencies from routes
-            List<MissingDependency> missingDeps = List.of();
-            if (routes != null && !routes.isBlank()) {
-                missingDeps = checkMissingDependencies(routes, pom, catalog);
-            }
+            List<MissingDependency> missingDeps = checkMissingDependencies(usedComponents, pom, catalog);
 
             // 3. Check for version conflicts (explicit overrides when BOM is present)
             List<VersionConflict> conflicts = checkVersionConflicts(processed.content(), pom);
 
-            // 4. Build recommendations
-            List<Recommendation> recommendations = buildRecommendations(versionStatus, missingDeps, conflicts, pom);
+            // 4. Check the declared dependencies against the published CVE advisories
+            SecurityAudit security = auditSecurity(pom, camelVersion, routesGiven, usedComponents, catalog);
 
-            // Summary
+            // 5. Build recommendations
+            List<Recommendation> recommendations
+                    = buildRecommendations(versionStatus, missingDeps, conflicts, security, routesGiven, pom);
+
+            // Summary: a vulnerable artifact is an issue only at a known version, as without one every advisory of a
+            // declared component is listed whether or not it affects the project
             boolean outdated = versionStatus.outdated() != null && versionStatus.outdated();
-            int issueCount = (outdated ? 1 : 0) + missingDeps.size() + conflicts.size();
+            int vulnerableCount = security.vulnerableArtifacts() != null && security.camelVersion() != null
+                    ? security.vulnerableArtifacts().size() : 0;
+            int issueCount = (outdated ? 1 : 0) + missingDeps.size() + conflicts.size() + vulnerableCount;
             DependencySummary summary = new DependencySummary(
-                    outdated, missingDeps.size(), conflicts.size(), issueCount, issueCount == 0);
+                    outdated, missingDeps.size(), conflicts.size(), vulnerableCount, issueCount, issueCount == 0);
 
             return new DependencyCheckResult(
                     sanitizationWarnings, projectInfo, versionStatus, missingDeps,
-                    conflicts, recommendations, summary);
+                    conflicts, security, recommendations, summary);
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
@@ -166,7 +188,7 @@ public class DependencyCheckTools {
      * Check for components used in routes that are missing from the project's dependencies.
      */
     private List<MissingDependency> checkMissingDependencies(
-            String routes, MigrationData.PomAnalysis pom, CamelCatalog catalog) {
+            List<String> usedComponents, MigrationData.PomAnalysis pom, CamelCatalog catalog) {
         List<MissingDependency> missing = new ArrayList<>();
         String runtime = pom.runtimeType();
 
@@ -177,8 +199,7 @@ public class DependencyCheckTools {
             declared.add(DependencyLookup.camelArtifactId(dep));
         }
 
-        // the components of the routes' endpoints, not every name in the text (CAMEL-25586)
-        for (String comp : RouteComponents.of(routes, null, catalog)) {
+        for (String comp : usedComponents) {
             ComponentModel model = catalog.componentModel(comp);
             if (model == null) {
                 continue;
@@ -242,11 +263,120 @@ public class DependencyCheckTools {
     }
 
     /**
+     * Check the declared dependencies, and the components the routes use, against the published Camel CVE advisories at
+     * the project's Camel version: the one of the pom.xml, else the camelVersion argument, else none, and then every
+     * advisory of a declared component is listed. The advisories ship with the catalog, so no network is used.
+     */
+    private SecurityAudit auditSecurity(
+            MigrationData.PomAnalysis pom, String camelVersion, boolean routesGiven, List<String> usedComponents,
+            CamelCatalog catalog) {
+        List<String> warnings = new ArrayList<>();
+        boolean versionDetected = pom.camelVersion() != null;
+        String version = pom.camelVersion();
+        if (!versionDetected) {
+            if (camelVersion != null && !camelVersion.isBlank() && Character.isDigit(camelVersion.trim().charAt(0))) {
+                version = camelVersion.trim();
+                warnings.add("Could not detect the Camel version from pom.xml (it is likely managed by a parent "
+                             + "POM or a platform BOM): checked the CVEs of Camel " + version
+                             + " from the camelVersion argument.");
+            } else {
+                warnings.add("Could not detect the Camel version from pom.xml (it is likely managed by a parent "
+                             + "POM or a platform BOM) and no camelVersion was given: every advisory naming a "
+                             + "declared component is listed, whether or not it affects the project's version. "
+                             + "Call again with camelVersion to check that version.");
+            }
+        }
+
+        List<SecurityAdvisoryModel> advisories;
+        try {
+            advisories = advisoryService.advisories();
+        } catch (AdvisoryService.AdvisoriesUnavailableException e) {
+            warnings.add(e.getMessage());
+            return new SecurityAudit(version, versionDetected, warnings, null, null, 0, 0, 0, false);
+        }
+
+        Map<String, ArtifactAudit> byArtifact = new LinkedHashMap<>();
+        Set<String> audited = new HashSet<>();
+        for (String dep : pom.dependencies()) {
+            // camel-kafka-starter and camel-quarkus-kafka are camel-kafka for the advisories
+            String camelArtifact = DependencyLookup.camelArtifactId(dep);
+            audited.add(camelArtifact);
+            List<AdvisoryService.AdvisoryView> matched = AdvisoryService.query(advisories, version, camelArtifact, null);
+            if (!matched.isEmpty()) {
+                Boolean reachable = routesGiven ? isReachable(camelArtifact, usedComponents, catalog) : null;
+                byArtifact.put(dep, new ArtifactAudit(dep, reachable, findings(matched)));
+            }
+        }
+
+        // the components the routes use without a declared dependency (available transitively)
+        for (String comp : usedComponents) {
+            ComponentModel model = catalog.componentModel(comp);
+            if (model == null || model.getArtifactId() == null || !audited.add(model.getArtifactId())) {
+                continue;
+            }
+            String artifactId = model.getArtifactId();
+            List<AdvisoryService.AdvisoryView> matched = AdvisoryService.query(advisories, version, artifactId, null);
+            if (!matched.isEmpty()) {
+                byArtifact.put(artifactId, new ArtifactAudit(artifactId, true, findings(matched)));
+            }
+        }
+
+        // advisories that name no component can never match a dependency: list those that may affect the version
+        List<VulnerabilityFinding> unchecked = new ArrayList<>();
+        for (SecurityAdvisoryModel advisory : advisories) {
+            if (advisory.getComponents() == null || advisory.getComponents().isEmpty()) {
+                AdvisoryService.AdvisoryView view = AdvisoryService.AdvisoryView.of(advisory, version);
+                if (!Boolean.FALSE.equals(view.affectsGivenVersion())) {
+                    unchecked.add(finding(view));
+                }
+            }
+        }
+
+        List<ArtifactAudit> vulnerable = new ArrayList<>(byArtifact.values());
+        int totalCves = vulnerable.stream().mapToInt(a -> a.findings().size()).sum();
+        int criticalAndHigh = (int) vulnerable.stream()
+                .flatMap(a -> a.findings().stream())
+                .filter(f -> "critical".equalsIgnoreCase(f.severity()) || "high".equalsIgnoreCase(f.severity()))
+                .count();
+        int reachable = (int) vulnerable.stream().filter(a -> Boolean.TRUE.equals(a.reachable())).count();
+
+        return new SecurityAudit(
+                version, versionDetected, warnings.isEmpty() ? null : warnings,
+                vulnerable.isEmpty() ? null : vulnerable, unchecked.isEmpty() ? null : unchecked,
+                totalCves, criticalAndHigh, reachable,
+                totalCves == 0 && unchecked.isEmpty() && version != null);
+    }
+
+    private static List<VulnerabilityFinding> findings(List<AdvisoryService.AdvisoryView> matched) {
+        List<VulnerabilityFinding> findings = new ArrayList<>();
+        for (AdvisoryService.AdvisoryView adv : matched) {
+            findings.add(finding(adv));
+        }
+        return findings;
+    }
+
+    private static VulnerabilityFinding finding(AdvisoryService.AdvisoryView adv) {
+        return new VulnerabilityFinding(adv.cve(), adv.summary(), adv.severity(), adv.affected(), adv.fixed(), adv.url());
+    }
+
+    /** Whether the routes use the component of the (catalog) artifact; only called when routes were given. */
+    private static boolean isReachable(String artifactId, List<String> usedComponents, CamelCatalog catalog) {
+        for (String comp : usedComponents) {
+            ComponentModel model = catalog.componentModel(comp);
+            if (model != null && artifactId.equals(model.getArtifactId())) {
+                return true;
+            }
+        }
+        return usedComponents.contains(artifactId.replace("camel-", ""));
+    }
+
+    /**
      * Build actionable recommendations based on the findings.
      */
     private List<Recommendation> buildRecommendations(
             VersionStatus versionStatus, List<MissingDependency> missingDeps,
-            List<VersionConflict> conflicts, MigrationData.PomAnalysis pom) {
+            List<VersionConflict> conflicts, SecurityAudit security, boolean routesGiven,
+            MigrationData.PomAnalysis pom) {
 
         List<Recommendation> recommendations = new ArrayList<>();
 
@@ -271,6 +401,36 @@ public class DependencyCheckTools {
             recommendations.add(new Recommendation(
                     "medium", "Version Conflict",
                     conflict.recommendation(), null, null));
+        }
+
+        // Security recommendations
+        if (security.vulnerableArtifacts() != null) {
+            int count = security.vulnerableArtifacts().size();
+            if (security.camelVersion() == null) {
+                recommendations.add(new Recommendation(
+                        "medium", "Security",
+                        "Call again with camelVersion: without the project's Camel version, the advisories of " + count
+                                              + " artifact(s) are listed whether or not they affect it.",
+                        null, null));
+            } else {
+                String detail = routesGiven
+                        ? security.reachableVulnerableArtifacts()
+                          + " of them are used by the routes (reachable): patch those first."
+                        : "Pass the routes to tell which of them the routes use (reachable).";
+                recommendations.add(new Recommendation(
+                        security.criticalAndHighCves() > 0 ? "high" : "medium", "Security",
+                        "Upgrade Camel to a release that fixes the " + security.totalCves() + " CVE(s) of " + count
+                                                                                            + " artifact(s): each finding gives its fixed version. "
+                                                                                            + "Use the camel_migration_recipes tool to get automated upgrade commands.",
+                        detail, null));
+            }
+        }
+        if (security.uncheckedAdvisories() != null) {
+            recommendations.add(new Recommendation(
+                    "low", "Security",
+                    "Review security.uncheckedAdvisories against the project: " + security.uncheckedAdvisories().size()
+                                       + " advisory(ies) name no component, so they could not be matched to the dependencies.",
+                    null, null));
         }
 
         // BOM recommendation if not using one
@@ -378,7 +538,37 @@ public class DependencyCheckTools {
     public record DependencyCheckResult(
             List<String> sanitizationWarnings, ProjectInfo projectInfo, VersionStatus versionStatus,
             List<MissingDependency> missingDependencies, List<VersionConflict> versionConflicts,
-            List<Recommendation> recommendations, DependencySummary summary) {
+            SecurityAudit security, List<Recommendation> recommendations, DependencySummary summary) {
+    }
+
+    /**
+     * The published Camel CVE advisories that affect the declared dependencies.
+     *
+     * @param camelVersion                 the checked Camel version: the project's, else the camelVersion argument,
+     *                                     else null
+     * @param camelVersionDetected         whether the version was read from the pom.xml
+     * @param warnings                     what limits the check, such as a version that could not be detected
+     * @param vulnerableArtifacts          the artifacts with advisories, null when none
+     * @param uncheckedAdvisories          advisories that may affect the version but name no component to match, null
+     *                                     when none
+     * @param reachableVulnerableArtifacts the vulnerable artifacts the routes use
+     * @param clean                        no matched CVE, no unchecked advisory, and a known version
+     */
+    public record SecurityAudit(
+            String camelVersion, boolean camelVersionDetected, List<String> warnings,
+            List<ArtifactAudit> vulnerableArtifacts, List<VulnerabilityFinding> uncheckedAdvisories,
+            int totalCves, int criticalAndHighCves, int reachableVulnerableArtifacts, boolean clean) {
+    }
+
+    /**
+     * @param reachable whether the routes use the artifact's component; null when no routes were given
+     */
+    public record ArtifactAudit(String artifactId, Boolean reachable, List<VulnerabilityFinding> findings) {
+    }
+
+    public record VulnerabilityFinding(
+            String cve, String title, String severity, String affectedVersions, String fixedVersion,
+            String advisoryUrl) {
     }
 
     public record ProjectInfo(String camelVersion, String runtimeType, String javaVersion, int dependencyCount) {
@@ -403,8 +593,11 @@ public class DependencyCheckTools {
     public record Recommendation(String priority, String category, String action, String detail, String snippet) {
     }
 
+    /**
+     * @param vulnerableArtifactCount the artifacts with CVEs at a known Camel version
+     */
     public record DependencySummary(
             boolean outdated, int missingDependencyCount, int versionConflictCount,
-            int totalIssueCount, boolean healthy) {
+            int vulnerableArtifactCount, int totalIssueCount, boolean healthy) {
     }
 }
