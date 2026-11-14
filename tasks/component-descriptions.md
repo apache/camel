@@ -40,8 +40,7 @@ these folders, in this order. Do not pass `-Dquickly` here, because it skips the
 3. `dsl/camel-endpointdsl`
 4. `dsl/camel-componentdsl`, if a component option or the component description changed
 
-Commit all generated files: the component JSON and its copy in the catalog, the Endpoint DSL and Component DSL classes
-and, if the component description changed, the doc page and its copy in the catalog.
+Commit all generated files in the same commit: the component JSON and its copy in the catalog, the Endpoint DSL and Component DSL classes. If the component description changed, also commit the doc page and its copy in the catalog.
 
 ## Components
 
