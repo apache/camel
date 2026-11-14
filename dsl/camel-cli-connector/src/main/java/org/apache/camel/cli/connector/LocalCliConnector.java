@@ -307,7 +307,7 @@ public class LocalCliConnector extends ServiceSupport
         return send(output, () -> repeatedSendResult(root), () -> {
             if (sendExecutor == null) {
                 sendExecutor = new ThreadPoolBuilder(camelContext).poolSize(2).maxPoolSize(2).maxQueueSize(0)
-                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build("cli-send", "CliRepeatedSend");
+                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build("cli-repeated-send", "CliRepeatedSend");
             }
             return sendExecutor;
         }, "Busy: two repeated sends are already running");
@@ -323,7 +323,7 @@ public class LocalCliConnector extends ServiceSupport
         return send(output, () -> sendResult(root), () -> {
             if (singleSendExecutor == null) {
                 singleSendExecutor = new ThreadPoolBuilder(camelContext).poolSize(1).maxPoolSize(1).maxQueueSize(100)
-                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build("cli-send", "CliSend");
+                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build("cli-single-send", "CliSend");
             }
             return singleSendExecutor;
         }, "Busy: 100 sends are already waiting");
