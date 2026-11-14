@@ -178,6 +178,8 @@ public class CamelSendAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // no ANSI codes of colors in a file or a pipe, unless --logging-color is given
+        loggingColor = colorOutput(loggingColor);
         if (headers != null) {
             for (String h : headers) {
                 if (!h.contains("=")) {

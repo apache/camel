@@ -246,6 +246,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // no ANSI codes of colors in a file or a pipe, unless --logging-color is given
+        loggingColor = colorOutput(loggingColor);
         boolean autoDump = false;
         if (endpoint != null) {
             // if using --endpoint then action should be start and auto-dump

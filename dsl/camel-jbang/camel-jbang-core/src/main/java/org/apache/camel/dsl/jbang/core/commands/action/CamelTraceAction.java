@@ -218,6 +218,8 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // no ANSI codes of colors in a file or a pipe, unless --logging-color is given
+        loggingColor = colorOutput(loggingColor);
         if ("dump".equals(action)) {
             return doDumpCall();
         } else if ("status".equals(action)) {
