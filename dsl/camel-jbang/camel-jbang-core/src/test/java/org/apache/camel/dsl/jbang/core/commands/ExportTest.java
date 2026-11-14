@@ -46,6 +46,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -241,6 +243,30 @@ class ExportTest {
         Assertions.assertTrue(containsDependency(model.getDependencies(), "jupiter", "rocks", "2.0"),
                 "Generated pom doesn't contain jupiter:rocks:2.0 dependency");
         command.printConfigurationValues("export command");
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "4.10.0")
+    @SetSystemProperty(key = CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, value = "4.8.0")
+    void springBootExportUsesResolvedCoreVersionUnlessExplicit(String camelVersion) throws Exception {
+        Export command = createCommand(RuntimeType.springBoot, new String[] { "classpath:route.yaml" },
+                "--camel-spring-boot-version=4.8.0", "--dep=camel:util", "--dir=" + workingDir, "--quiet");
+        // The general helper pins a released core version; exercise an omitted version as well as an explicit one.
+        command.camelVersion = camelVersion;
+
+        assertThat(command.doCall()).isZero();
+
+        Model model = readMavenModel();
+        assertThat(model.getDependencies()).anySatisfy(dependency -> {
+            assertThat(dependency.getGroupId()).isEqualTo("org.apache.camel");
+            assertThat(dependency.getArtifactId()).isEqualTo("camel-util");
+            assertThat(dependency.getVersion()).isEqualTo(camelVersion == null ? "4.8.0" : camelVersion);
+        });
+        assertThat(model.getDependencyManagement().getDependencies()).anySatisfy(dependency -> {
+            assertThat(dependency.getArtifactId()).isEqualTo("camel-spring-boot-bom");
+            assertThat(dependency.getVersion()).isEqualTo("4.8.0");
+        });
     }
 
     private Export createCommand(RuntimeType rt, String[] files, String... args) {
