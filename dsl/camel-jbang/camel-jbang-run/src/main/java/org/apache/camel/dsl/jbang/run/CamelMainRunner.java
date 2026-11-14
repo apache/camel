@@ -265,7 +265,7 @@ final class CamelMainRunner {
         String pattern;
         if (request.sourceDir != null) {
             reloadDir = request.sourceDir;
-            pattern = RunPipeline.sourceDirReloadPattern(request.dataDir);
+            pattern = RunPipeline.sourceDirReloadPattern(request.dataDir) + RunPipeline.reloadExcludes(request.excludes);
         } else {
             // use the directory of the first file that is in another folder than the current dir
             reloadDir = ".";
