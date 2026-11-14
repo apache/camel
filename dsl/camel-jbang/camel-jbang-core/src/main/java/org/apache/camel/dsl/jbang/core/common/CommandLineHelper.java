@@ -147,6 +147,9 @@ public final class CommandLineHelper {
      * local file of the current directory ({@value #LOCAL_USER_CONFIG}) laid over it, so a key of the local file wins.
      * Before, a local file hid the whole global one, such as its repos or camel-version (CAMEL-26931). A file that
      * cannot be parsed is left out, with a warning (once per file).
+     *
+     * @param  printer where a file that cannot be parsed is reported (once per file)
+     * @return         the configuration, empty when neither file exists
      */
     public static Properties loadUserConfiguration(Printer printer) {
         Properties answer = new OrderedProperties();
@@ -159,7 +162,8 @@ public final class CommandLineHelper {
         if (!Files.isRegularFile(file)) {
             return;
         }
-        Properties properties = new Properties();
+        // in the order of the file, as the configuration keeps it
+        Properties properties = new OrderedProperties();
         try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
             properties.load(reader);
         } catch (Exception e) {
