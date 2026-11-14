@@ -31,6 +31,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 
@@ -75,6 +76,10 @@ public class SourceValidateCommand extends CamelCommand {
             File parent = f.getAbsoluteFile().getParentFile();
             reports.put(n, SourceValidator.validate(f.getName(), content, catalog, null,
                     parent != null ? parent.toPath() : null, schemaValidator));
+        }
+        if (reports.isEmpty()) {
+            // before, "Validation success (files:0)" with exit code 0
+            throw CliException.fileNotFound("No files to validate (YAML, XML, Java and properties files)");
         }
         int count = reports.values().stream().mapToInt(List::size).sum();
         if (jsonOutput) {

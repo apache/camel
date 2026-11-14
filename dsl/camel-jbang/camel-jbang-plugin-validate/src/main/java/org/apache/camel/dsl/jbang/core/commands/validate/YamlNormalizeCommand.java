@@ -41,6 +41,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
 import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.KameletMain;
@@ -91,7 +92,8 @@ public class YamlNormalizeCommand extends CamelCommand {
             }
         }
         if (matched.isEmpty()) {
-            return 0;
+            // before, exit code 0 with no output
+            throw CliException.fileNotFound("No YAML files to normalize");
         }
         // a Kamelet loads as a route template: its template is normalized and put back into the Kamelet file
         Map<String, String> kamelets = new LinkedHashMap<>();
