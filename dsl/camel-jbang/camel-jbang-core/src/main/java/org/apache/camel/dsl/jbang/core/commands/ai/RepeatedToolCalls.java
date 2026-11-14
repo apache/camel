@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.Map;
@@ -59,6 +60,9 @@ public final class RepeatedToolCalls {
 
     private final Map<String, Integer> counts = new HashMap<>();
 
+    /** The calls whose answer was an error given as data, such as a name the catalog has not got, with that answer. */
+    private final Map<String, JsonObject> misses = new HashMap<>();
+
     /**
      * Returns the short note to answer with instead of running the tool, or null when the tool should run and answer in
      * full: a tool that is not deterministic, or one of the first {@value #FULL_ANSWERS} identical calls. When this
@@ -71,6 +75,7 @@ public final class RepeatedToolCalls {
         }
         if (counts.size() >= MAX_TRACKED) {
             counts.clear();
+            misses.clear();
         }
         // Peek at the current count without incrementing. The increment happens only after a successful answer
         // (recordSuccessfulAnswer), so a call that throws an exception does not consume the retry budget.
@@ -86,6 +91,24 @@ public final class RepeatedToolCalls {
         note.put("repeated", true);
         note.put("tool", tool.name());
         note.put("timesAsked", times);
+        JsonObject miss = misses.get(key(tool.name(), args, tool.deterministicWhen()));
+        if (miss != null) {
+            // the hint of the tool is for an answer that was found, such as writing the file with the options it
+            // gave; a miss gives no options, so the note says what the answer was and what to ask instead (CAMEL-26932)
+            Object suggestions = miss.get("suggestions");
+            note.put("note", "The answer was: " + miss.getString("error") + ". "
+                             + (suggestions instanceof Collection<?> c && !c.isEmpty()
+                                     ? "Use one of the suggestions instead: " + String.join(", ", c.stream()
+                                             .map(String::valueOf).toList())
+                                       + "."
+                                     : "Ask with other arguments instead.")
+                             + " You asked this " + times + " times now with the same arguments, and the answer is the"
+                             + " same each time.");
+            if (suggestions != null) {
+                note.put("suggestions", suggestions);
+            }
+            return note;
+        }
         // the next step first, then the fact; the count is timesAsked, this call included (CAMEL-26875)
         note.put("note", (tool.repeatHint() != null ? tool.repeatHint() : NEXT_STEP) + " You asked this " + times
                          + " times now with the same arguments, and the answer is the same each time: it is in your"
@@ -98,18 +121,37 @@ public final class RepeatedToolCalls {
      * {@value #FULL_ANSWERS} budget; calls that throw an exception do not.
      */
     public synchronized void recordSuccessfulAnswer(ToolDescriptor tool, Map<String, ?> args) {
+        recordSuccessfulAnswer(tool, args, null);
+    }
+
+    /**
+     * As {@link #recordSuccessfulAnswer(ToolDescriptor, Map)}, with the answer: an answer with an {@code error}, such
+     * as a name the catalog has not got, is a miss, and the note for repeating it says so instead of the hint of the
+     * tool. A miss still counts, so the model is still stopped from asking the same again and again (CAMEL-26875).
+     *
+     * @param answer the answer of the tool, or null when it is not JSON
+     */
+    public synchronized void recordSuccessfulAnswer(ToolDescriptor tool, Map<String, ?> args, JsonObject answer) {
         if (tool == null || !tool.isDeterministic(args)) {
             return;
         }
         if (counts.size() >= MAX_TRACKED) {
             counts.clear();
+            misses.clear();
         }
-        counts.merge(key(tool.name(), args, tool.deterministicWhen()), 1, Integer::sum);
+        String key = key(tool.name(), args, tool.deterministicWhen());
+        counts.merge(key, 1, Integer::sum);
+        if (answer != null && answer.get("error") instanceof String) {
+            misses.put(key, answer);
+        } else {
+            misses.remove(key);
+        }
     }
 
     /** Forgets the calls so far: a new session starts. */
     public synchronized void reset() {
         counts.clear();
+        misses.clear();
     }
 
     /**
