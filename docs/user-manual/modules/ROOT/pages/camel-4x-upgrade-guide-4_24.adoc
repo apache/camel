@@ -8746,7 +8746,7 @@ Remove `protocol` from the endpoint URI or the configuration. To send the client
 
 === camel-docker - the loggingFilter and followRedirectFilter options are deprecated
 
-Neither option has ever had an effect. `DockerClientFactory` builds the whole `DockerClientProfile` that the client is
+Neither option has had any effect since Camel 2.18. `DockerClientFactory` builds the whole `DockerClientProfile` that the client is
 created from, and it sets neither of them - `DockerClientProfile` has no field for either - so `isLoggingFilter()` and
 `isFollowRedirectFilter()` are called only by the generated configurers. The two matching headers,
 `CamelDockerLoggingFilter` and `CamelDockerFollowRedirectFilter`, are read nowhere either.
