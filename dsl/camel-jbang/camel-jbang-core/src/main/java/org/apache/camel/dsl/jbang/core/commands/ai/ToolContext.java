@@ -385,9 +385,9 @@ public class ToolContext {
     }
 
     /**
-     * The lines of source code as they are in the file. The dev consoles escape each line of a {@code code} list, as
-     * JSON text in JSON, and the CLI commands undo it when they print the lines; the AI tools gave the lines as they
-     * came, so the agent saw {@code \"} that is not in the file (CAMEL-26932).
+     * Unescapes the lines of source code, so they are as they are in the file. The dev consoles escape each line of a
+     * {@code code} list as JSON text in JSON. The CLI commands undo this when they print the lines, but the AI tools
+     * gave the lines as they came, so the agent saw {@code \"} that is not in the file (CAMEL-26932).
      *
      * @return whether a line was changed
      */
