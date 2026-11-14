@@ -91,6 +91,16 @@ a|* checkpointing by checkpointBatchSize and checkpointBatchTimeout
 * an asynchronous downstream step
 |CAMEL-25683, CAMEL-25738, CAMEL-25781
 
+|camel-azure-servicebus
+|`ServiceBusWorld` (`ServiceBusConsumerDstTest`)
+|FakeServiceBus: a queue in peek-lock mode (lock duration, delivery count, dead-letter queue) behind the processor and receiver clients of ServiceBusClientFactory
+a|* the lock renewer of the consumer (PEEK_LOCK, maxAutoLockRenewDuration) with an asynchronous route
+* processing that takes longer than the lock duration
+* complete, abandon and dead-letter, also after the lock was lost
+* maxConcurrentCalls of one to three (with the asynchronous route it bounds the processMessage calls)
+* route stop and start while messages are processed
+|CAMEL-25701
+
 |camel-google-pubsub
 |`PubsubWorld` (`PubsubConsumerDstTest`)
 |FakePubsub: a subscription (Pull, Acknowledge, ModifyAckDeadline, ack deadlines, dead letter policy) behind the SubscriberStub of synchronousPull
