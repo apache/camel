@@ -158,10 +158,14 @@ class SanitizerRecordTest {
         call.callback();
         String text = sanitizer.getViolations().get(0).getText();
         String file = "(" + SanitizerRecordTest.class.getSimpleName() + ".java:";
-        assertTrue(text.contains("at " + SanitizerRecordTest.class.getName() + ".firstCallback" + file), text);
-        assertTrue(text.contains("at " + SanitizerRecordTest.class.getName()
-                                 + ".aReportShowsTheFramesOfBothCallbacksWithTheirFileAndLine" + file),
-                text);
+        // each stack is checked on its own: the first one also holds the frame of this method
+        int second = text.indexOf("second call of the callback");
+        assertTrue(second > 0, text);
+        String name = SanitizerRecordTest.class.getName();
+        assertTrue(text.substring(0, second).contains("at " + name + ".firstCallback" + file), text);
+        assertTrue(text.substring(second)
+                .contains("at " + name + ".aReportShowsTheFramesOfBothCallbacksWithTheirFileAndLine" + file), text);
+        assertFalse(text.substring(second).contains(".firstCallback("), text);
     }
 
     private static void firstCallback(SanitizerStepListener.StepCall call) {
