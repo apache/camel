@@ -30,7 +30,7 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
     private ExecutorType executorType;
     @UriParam(label = "producer")
     private String inputHeader;
-    @UriParam(label = "producer")
+    @UriParam(label = "common")
     private String outputHeader;
 
     protected BaseMyBatisEndpoint() {
