@@ -579,6 +579,10 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     /**
      * Called after default commands has been added
      */
+    public void postAddCommands(CommandTree commandLine, String[] args) {
+        // noop
+    }
+
     /**
      * The plugins that this CLI has built in (the Camel launcher embeds some), and that contribute to the given
      * command, such as the test plugin, whose exporter adds the Citrus tests to camel export. The plugins of the plugin
@@ -589,10 +593,6 @@ public class CamelJBangMain implements Command<CommandInvocation> {
      */
     public Collection<Plugin> getEmbeddedPlugins(String target) {
         return List.of();
-    }
-
-    public void postAddCommands(CommandTree commandLine, String[] args) {
-        // noop
     }
 
     /**
