@@ -21,10 +21,10 @@ public final class JacksonXMLConstants {
     public static final String ENABLE_TYPE_CONVERTER = "CamelJacksonXmlEnableTypeConverter";
 
     /**
-     * @deprecated Duplicate of ENABLE_TYPE_CONVERTER, which holds the same value and is the name the other Jackson
-     *             components use
+     * @deprecated Use {@link #ENABLE_TYPE_CONVERTER} instead: a duplicate holding the same value, while that is the
+     *             name the other Jackson components use.
      */
-    @Deprecated
+    @Deprecated(since = "4.24.0")
     public static final String ENABLE_XML_TYPE_CONVERTER = "CamelJacksonXmlEnableTypeConverter";
 
     public static final String UNMARSHAL_TYPE = "CamelJacksonXmlUnmarshalType";
