@@ -73,9 +73,19 @@
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>camel.sh</include>
+            </includes>
+            <fileMode>0755</fileMode>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+        <!-- cmd.exe can miss goto and call :label targets in a batch file with LF line endings -->
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
                 <include>camel.bat</include>
             </includes>
             <fileMode>0755</fileMode>
+            <lineEnding>dos</lineEnding>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/examples</directory>

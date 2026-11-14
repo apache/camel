@@ -25,6 +25,7 @@ import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
+import org.apache.camel.dsl.jbang.run.IntegrationStartException;
 import org.apache.camel.dsl.jbang.run.RunPipeline;
 import org.apache.camel.dsl.jbang.run.RunRequest;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
@@ -297,6 +298,51 @@ class RunTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void theBackgroundAndDebugPropertiesStartAnotherJvm() {
+        Run command = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(command, "route.yaml");
+        command.spawned = false;
+
+        command.applyProfileProperties(command.toRunRequest(null), backgroundAndDebugProperties());
+
+        assertThat(command.background).isTrue();
+        assertThat(command.backgroundWait).isEqualTo(5000);
+        assertThat(command.jvmDebugPort).isEqualTo(4004);
+    }
+
+    @Test
+    void aJvmThatARunStartedDoesNotStartAnotherFromTheProperties() {
+        // the JVM in the background reads the same application.properties: before, it went to the background
+        // again, and its own child too, without end (CAMEL-26930)
+        Run command = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(command, "route.yaml");
+        command.spawned = true;
+
+        command.applyProfileProperties(command.toRunRequest(null), backgroundAndDebugProperties());
+
+        assertThat(command.background).isFalse();
+        assertThat(command.backgroundWait).isEqualTo(BackgroundWait.DEFAULT);
+        assertThat(command.jvmDebugPort).isZero();
+    }
+
+    @Test
+    void theJvmsARunStartsAreMarked() {
+        ProcessBuilder pb = new ProcessBuilder("camel", "run", "route.yaml");
+
+        Run.markSpawned(pb);
+
+        assertThat(pb.environment()).containsEntry(Run.SPAWNED_RUN, "true");
+    }
+
+    private static Properties backgroundAndDebugProperties() {
+        Properties properties = new Properties();
+        properties.setProperty("camel.jbang.background", "true");
+        properties.setProperty("camel.jbang.backgroundWait", "5000");
+        properties.setProperty("camel.jbang.jvmDebug", "true");
+        return properties;
+    }
+
+    @Test
     public void shouldParseDataDirOption() throws Exception {
         Run command = new Run(new CamelJBangMain());
         CommandLineTestHelper.parse(command, "--source-dir=shop", "--data-dir=inbox,archive");
@@ -380,8 +426,9 @@ class RunTest extends CamelCommandBaseTestSupport {
         CommandLineTestHelper.parse(command, "route.yaml");
         assertThat(command.toRunRequest(Path.of(".")).keepPreviousLog).isTrue();
         // with the exit code camel run exits with for the exception
-        assertThat(command.runContext().failureExitCode(new FailedToStartRouteException("route1", "boom")))
-                .isEqualTo(CliExitCode.INTERNAL);
+        assertThat(command.runContext().failureExitCode(
+                new IntegrationStartException(new FailedToStartRouteException("route1", "boom"))))
+                .isEqualTo(CliExitCode.FAILURE);
 
         // not a Camel that another command runs in its JVM (such as camel cmd send --local)
         assertThat(new Run(new CamelJBangMain()).toRunRequest(Path.of(".")).keepPreviousLog).isFalse();

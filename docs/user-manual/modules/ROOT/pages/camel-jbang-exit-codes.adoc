@@ -19,7 +19,8 @@ The exit codes and streams on this page apply from Camel 4.24 onwards.
 | `1`
 | Failed
 | The command ran, but the outcome is negative: validation found errors, a check failed,
-  or the integration rejected the action.
+  the integration rejected the action, or `camel run` could not start the integration (such as a route that cannot
+  be created): the log of the integration has the stack trace.
 
 | `2`
 | Usage error

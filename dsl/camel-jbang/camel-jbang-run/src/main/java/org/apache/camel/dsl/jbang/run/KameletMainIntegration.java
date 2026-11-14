@@ -77,13 +77,14 @@ final class KameletMainIntegration implements RunningIntegration {
         try {
             main.start();
         } catch (Exception e) {
-            // such as a route that failed to start: noted as why the run ended
-            ended(context.failureExitCode(e), failureOf(e));
+            // such as a route that failed to start: a mistake to fix in the routes, noted as why the run ended
+            IntegrationStartException failure = new IntegrationStartException(e);
+            ended(context.failureExitCode(failure), failureOf(e));
             if (request.ignoreLoadingError) {
                 printer.printErr(e);
                 return new EndedIntegration(0);
             }
-            throw e;
+            throw failure;
         } catch (Error e) {
             // such as a NoClassDefFoundError of a missing dependency
             ended(context.failureExitCode(e), failureOf(e));

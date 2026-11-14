@@ -235,6 +235,16 @@ public class Run extends CamelCommand implements CommandLifecycle {
             argument = "true|false|port")
     int jvmDebugPort;
 
+    /**
+     * The environment variable that marks a JVM a camel run started to run its integration: in the background, with a
+     * debugger, by camel debug, or with another Camel version. The application properties are read again in that JVM,
+     * and camel.jbang.background=true or camel.jbang.jvmDebug would start yet another JVM, and so on without end.
+     */
+    static final String SPAWNED_RUN = "CAMEL_CLI_SPAWNED_RUN";
+
+    // whether this JVM was started by a camel run to run the integration
+    boolean spawned = "true".equals(System.getenv(SPAWNED_RUN));
+
     @Option(name = "jvm-args", description = "Additional JVM arguments (e.g. -Xmx256m -Xms128m)")
     String jvmArgs;
 
@@ -1155,12 +1165,16 @@ public class Run extends CamelCommand implements CommandLifecycle {
                 quarkusPlatform = new QuarkusPlatformMixin();
             }
             quarkusPlatform = QuarkusPlatformMixin.of(answer, quarkusPlatform);
-            background = "true".equals(answer.getProperty(BACKGROUND, background ? "true" : "false"));
-            String wait = answer.getProperty(BACKGROUND_WAIT);
-            if (wait != null) {
-                backgroundWait = BackgroundWait.parse(wait);
+            // a JVM this command started runs the integration itself: the properties must not make it start
+            // another JVM, in the background or with a debugger, and that one another, without end
+            if (!spawned) {
+                background = "true".equals(answer.getProperty(BACKGROUND, background ? "true" : "false"));
+                String wait = answer.getProperty(BACKGROUND_WAIT);
+                if (wait != null) {
+                    backgroundWait = BackgroundWait.parse(wait);
+                }
+                jvmDebugPort = parseJvmDebugPort(answer.getProperty(JVM_DEBUG, Integer.toString(jvmDebugPort)));
             }
-            jvmDebugPort = parseJvmDebugPort(answer.getProperty(JVM_DEBUG, Integer.toString(jvmDebugPort)));
         }
         // what this command reads itself to run in another JVM (with another Camel version)
         camelVersion = request.camelVersion;
@@ -1194,6 +1208,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);
+        markSpawned(pb);
 
         if (verbose) {
             printer().println(String.join(" ", jbangArgs));
@@ -1311,6 +1326,14 @@ public class Run extends CamelCommand implements CommandLifecycle {
         return jbangArgs;
     }
 
+    /**
+     * Marks the JVM this command starts to run the integration (in the background, with a debugger, camel debug, or
+     * with another Camel version), so it does not start one again (see {@link #SPAWNED_RUN}).
+     */
+    static void markSpawned(ProcessBuilder pb) {
+        pb.environment().put(SPAWNED_RUN, "true");
+    }
+
     protected int runBackground(KameletMain main) throws Exception {
         List<String> cmds;
         if (originalArgs() != null) {
@@ -1337,6 +1360,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
     }
 
     protected int runBackgroundProcess(ProcessBuilder pb, String kind) throws Exception {
+        markSpawned(pb);
         // the output goes to ~/.camel/<pid>-run.log, as nobody reads the output of a process in the background
         BackgroundLog.Started started = BackgroundLog.start(pb);
         Process p = started.process();
@@ -1475,6 +1499,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);
+        markSpawned(pb);
         if (background) {
             return runBackgroundProcess(pb, "Camel Main");
         } else {
