@@ -28,6 +28,13 @@ public final class OllamaDoctorSupport {
 
     private static final String DEFAULT_OLLAMA_DISPLAY = "localhost:11434";
 
+    /**
+     * The smallest model, in billions of parameters, that the AI panel and camel ask count as large enough. Smaller
+     * models do not call the tools of Camel reliably. The smallest model measured on Camel tasks has 27B; Ollama
+     * reports such models as 26.9B, so the line is lower.
+     */
+    public static final int MIN_MODEL_BILLIONS = 24;
+
     private OllamaDoctorSupport() {
     }
 
@@ -101,8 +108,8 @@ public final class OllamaDoctorSupport {
     }
 
     /**
-     * Returns true when the model tag suggests fewer than 14B parameters. Tool-calling in the TUI F8 panel requires at
-     * least 14B.
+     * Returns true when the model tag suggests fewer than {@link #MIN_MODEL_BILLIONS} parameters, too few for the tool
+     * calling of the AI panel.
      */
     public static boolean isSmallModel(String name) {
         int colon = name.lastIndexOf(':');
@@ -111,7 +118,7 @@ public final class OllamaDoctorSupport {
             int b = tag.indexOf('b');
             try {
                 int params = Integer.parseInt(tag.substring(0, b));
-                return params < 14;
+                return params < MIN_MODEL_BILLIONS;
             } catch (NumberFormatException e) {
                 return false;
             }
@@ -120,7 +127,7 @@ public final class OllamaDoctorSupport {
     }
 
     /**
-     * Returns true when the model tag confirms >= 14B parameters.
+     * Returns true when the model tag confirms at least {@link #MIN_MODEL_BILLIONS} parameters.
      */
     static boolean isLargeModel(String name) {
         int colon = name.lastIndexOf(':');
@@ -128,7 +135,7 @@ public final class OllamaDoctorSupport {
         if (tag.matches("\\d+b.*")) {
             int b = tag.indexOf('b');
             try {
-                return Integer.parseInt(tag.substring(0, b)) >= 14;
+                return Integer.parseInt(tag.substring(0, b)) >= MIN_MODEL_BILLIONS;
             } catch (NumberFormatException e) {
                 return false;
             }
@@ -137,9 +144,9 @@ public final class OllamaDoctorSupport {
     }
 
     /**
-     * Returns true when no model in the list is known to be >= 14B. Models without an explicit numeric size tag (e.g.
-     * {@code llama3.2:latest}) are treated as unknown and counted as "not large", so callers should warn when this
-     * returns true.
+     * Returns true when no model in the list is known to have at least {@link #MIN_MODEL_BILLIONS} parameters. Models
+     * without an explicit numeric size tag (e.g. {@code llama3.2:latest}) are treated as unknown and counted as "not
+     * large", so callers should warn when this returns true.
      */
     public static boolean allModelsSmall(List<String> models) {
         return models != null && !models.isEmpty() && models.stream().noneMatch(OllamaDoctorSupport::isLargeModel);

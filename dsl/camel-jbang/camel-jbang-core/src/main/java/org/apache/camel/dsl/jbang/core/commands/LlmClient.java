@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -52,11 +53,36 @@ public class LlmClient {
     private static final String DEFAULT_OLLAMA_URL = "http://localhost:11434";
     private static final String OLLAMA_ROOT_RESPONSE = "Ollama is running";
     private static final String DEFAULT_ANTHROPIC_URL = "https://api.anthropic.com";
-    private static final String ANTHROPIC_VERSION = "2023-06-01";
-    private static final String VERTEX_ANTHROPIC_VERSION = "vertex-2023-10-16";
-    private static final String DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6";
-    private static final String DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
-    private static final String DEFAULT_OLLAMA_MODEL = "llama3.2";
+    // the anthropic-version header, and on Vertex AI the anthropic_version of the body
+    private static final String ANTHROPIC_VERSION = "2026-10-21";
+    private static final String DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-5-5";
+    /**
+     * The smallest {@code max_tokens} of a request to Anthropic. The current Claude models think before they answer,
+     * and the thinking counts toward {@code max_tokens}, so the 4096 the commands ask for would cut long answers off.
+     * 16,000 is about the most for a request that does not stream.
+     */
+    private static final int ANTHROPIC_MIN_MAX_TOKENS = 16_000;
+    // OpenAI's fast, low-cost model, the replacement it names for gpt-4o-mini (shut down on Jan 14 2027). Its Chat
+    // Completions call tools only with reasoning_effort none, see turnThinkingOff.
+    private static final String DEFAULT_OPENAI_MODEL = "gpt-6-luna";
+    /**
+     * The model name the CLI commands once passed for "no model chosen", and still read that way: Ollama replaces it
+     * with the installed model best at tool calling, and the other providers use their own default. The model is too
+     * small for Camel, so it is never chosen on purpose.
+     */
+    private static final String PLACEHOLDER_MODEL = "llama3.2";
+    /**
+     * The model asked of Ollama when no installed model can be used: the one recommended for Camel, so that the error
+     * of Ollama names the model to pull.
+     */
+    private static final String FALLBACK_OLLAMA_MODEL = "qwen3.6:35b-a3b";
+    /**
+     * The installed Ollama model used when none is chosen, by family in this order: the ones measured on Camel tasks
+     * first, then others that call tools well.
+     */
+    private static final List<String> PREFERRED_OLLAMA_MODELS = List.of(
+            "qwen3.6", "qwen3.8", "qwen3.5", "qwen3", "nemotron-3-nano", "mistral-nemo", "qwen2.5", "granite4.1",
+            "llama3.1", "llama3.3", "mistral");
     /**
      * Keep the model (and its prompt cache) loaded between turns of a conversation. Ollama's default of five minutes is
      * shorter than a slow local answer plus the time the user spends reading it, after which the next request pays for
@@ -82,13 +108,14 @@ public class LlmClient {
     /** Last-resort Azure deployment segment when URL normalization runs before model detection completes. */
     private static final String DEFAULT_AZURE_DEPLOYMENT_FALLBACK = "gpt-4o";
     private static final String DEFAULT_GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta";
-    private static final String DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
+    // the alias Google moves to each new Flash model, with two weeks' notice, so the default does not go out of
+    // service as gemini-2.0-flash did
+    private static final String DEFAULT_GEMINI_MODEL = "gemini-flash-latest";
     private static final int CONNECT_TIMEOUT_SECONDS = 10;
     private static final int HEALTH_CHECK_TIMEOUT_SECONDS = 5;
 
     // Pre-4.6 Claude models require a @date suffix on Vertex AI
     private static final Map<String, String> VERTEX_MODEL_MAP = Map.of(
-            "claude-sonnet-4-5", "claude-sonnet-4-5@20250929",
             "claude-opus-4-5", "claude-opus-4-5@20251101",
             "claude-haiku-4-5", "claude-haiku-4-5@20251001");
 
@@ -120,7 +147,17 @@ public class LlmClient {
     public record ToolResult(String toolCallId, String content) {
     }
 
-    public record Message(String role, String content, List<ToolCall> toolCalls, List<ToolResult> toolResults) {
+    /**
+     * A message of the conversation. {@code contentBlocks} is an answer of Anthropic as it came, thinking blocks
+     * included, which the API wants back unchanged in a tool loop (see {@link #assistant(ChatResponse)}); null for the
+     * other messages.
+     */
+    public record Message(String role, String content, List<ToolCall> toolCalls, List<ToolResult> toolResults,
+            JsonArray contentBlocks) {
+
+        public Message(String role, String content, List<ToolCall> toolCalls, List<ToolResult> toolResults) {
+            this(role, content, toolCalls, toolResults, null);
+        }
 
         public static Message user(String text) {
             return new Message("user", text, null, null);
@@ -128,6 +165,14 @@ public class LlmClient {
 
         public static Message assistantWithToolCalls(String text, List<ToolCall> calls) {
             return new Message("assistant", text, calls, null);
+        }
+
+        /**
+         * The answer of the model for the history: its text and tool calls, and with Anthropic its content blocks as
+         * they came.
+         */
+        public static Message assistant(ChatResponse response) {
+            return new Message("assistant", response.text(), response.toolCalls(), null, response.contentBlocks());
         }
 
         public static Message toolResults(List<ToolResult> results) {
@@ -175,8 +220,17 @@ public class LlmClient {
         }
     }
 
+    /**
+     * The answer of a chat request. {@code contentBlocks} is the content of an Anthropic answer as it came, thinking
+     * blocks included; null for the other providers.
+     */
     public record ChatResponse(String text, List<ToolCall> toolCalls, String stopReason, boolean streamed,
-            TokenUsage usage) {
+            TokenUsage usage, JsonArray contentBlocks) {
+
+        public ChatResponse(String text, List<ToolCall> toolCalls, String stopReason, boolean streamed,
+                            TokenUsage usage) {
+            this(text, toolCalls, stopReason, streamed, usage, null);
+        }
     }
 
     public static String formatTokens(int tokens) {
@@ -257,9 +311,11 @@ public class LlmClient {
      * far slower than hosted ones, so callers use this to trim what they send per request.
      */
     public boolean isLocalEndpoint() {
-        if (apiType == ApiType.ollama) {
-            return true;
-        }
+        return apiType == ApiType.ollama || isLocalUrl(url);
+    }
+
+    /** Whether the host of the URL is a loopback address, as the server of a model on this machine has. */
+    public static boolean isLocalUrl(String url) {
         if (url == null) {
             return false;
         }
@@ -270,6 +326,15 @@ public class LlmClient {
         } catch (IllegalArgumentException e) {
             return false;
         }
+    }
+
+    /**
+     * Whether a request carries the temperature: only for a model on this machine, where the tests of the AI tools ran
+     * with it. A hosted model gets its own default sampling: the reasoning models of OpenAI refuse any other value, and
+     * Anthropic refuses the field.
+     */
+    boolean sendsTemperature() {
+        return isLocalEndpoint();
     }
 
     // -- Builder --
@@ -392,19 +457,19 @@ public class LlmClient {
                 if (openAiAuthMode == OpenAiAuthMode.api_key
                         || (url != null && isAzureOpenAiEndpoint(url))) {
                     resolveAzureOpenAiModel();
-                } else if (model == null || model.isBlank() || DEFAULT_OLLAMA_MODEL.equals(model)) {
+                } else if (model == null || model.isBlank() || PLACEHOLDER_MODEL.equals(model)) {
                     model = isOpenAiCompatibleServer() ? resolveOpenAiCompatibleModel() : DEFAULT_OPENAI_MODEL;
                 }
             }
             case gemini -> {
-                if (model == null || model.isBlank() || DEFAULT_OLLAMA_MODEL.equals(model)) {
+                if (model == null || model.isBlank() || PLACEHOLDER_MODEL.equals(model)) {
                     model = DEFAULT_GEMINI_MODEL;
                 }
             }
             case ollama -> {
                 if (model == null || model.isBlank()) {
                     model = resolveDefaultOllamaModel();
-                } else if (DEFAULT_OLLAMA_MODEL.equals(model) && !explicitModel) {
+                } else if (PLACEHOLDER_MODEL.equals(model) && !explicitModel) {
                     resolveOllamaModel();
                 }
             }
@@ -670,7 +735,9 @@ public class LlmClient {
         JsonObject request = new JsonObject();
         request.put("model", model);
         request.put("messages", messages);
-        request.put("temperature", temperature);
+        if (sendsTemperature()) {
+            request.put("temperature", temperature);
+        }
         turnThinkingOff(request);
 
         String resolvedKey = resolveApiKey();
@@ -721,11 +788,15 @@ public class LlmClient {
             request.put("contents", contents);
         }
         JsonObject generationConfig = new JsonObject();
-        generationConfig.put("temperature", temperature);
+        if (sendsTemperature()) {
+            generationConfig.put("temperature", temperature);
+        }
         if (maxTokens > 0) {
             generationConfig.put("maxOutputTokens", maxTokens);
         }
-        request.put("generationConfig", generationConfig);
+        if (!generationConfig.isEmpty()) {
+            request.put("generationConfig", generationConfig);
+        }
         JsonArray declarations = buildGeminiFunctionDeclarations(tools);
         if (declarations != null) {
             JsonObject toolsObj = new JsonObject();
@@ -1014,7 +1085,9 @@ public class LlmClient {
         JsonObject request = new JsonObject();
         request.put("model", model);
         request.put("messages", jsonMessages);
-        request.put("temperature", temperature);
+        if (sendsTemperature()) {
+            request.put("temperature", temperature);
+        }
         if (jsonTools != null) {
             request.put("tools", jsonTools);
         }
@@ -1027,27 +1100,30 @@ public class LlmClient {
         return parseOpenAiChatResponse(response);
     }
 
-    // ---- Thinking off with a local OpenAI-compatible server ----
+    // ---- Thinking off with an OpenAI-compatible server ----
 
     // the fields for thinking a server refused, left out from then on
     private volatile boolean reasoningEffortRefused;
     private volatile boolean templateKwargsRefused;
 
     /**
-     * Turns thinking off in a request to an OpenAI-compatible server on this machine, as {@code "think": false} does on
-     * Ollama's own API. Local servers (Ollama's /v1, llama.cpp server, vLLM, LM Studio) render the model's own chat
-     * template, and the Qwen 3.x templates think by default, which makes every answer many times slower. Ollama reads
-     * {@code reasoning_effort}, llama.cpp reads {@code chat_template_kwargs}, and vLLM reads both. Hosted endpoints get
-     * neither field, as they may refuse fields they do not know.
+     * Turns thinking off in a request to an OpenAI-compatible server, as {@code "think": false} does on Ollama's own
+     * API. Local servers (Ollama's /v1, llama.cpp server, vLLM, LM Studio) render the model's own chat template, and
+     * the Qwen 3.x templates think by default, which makes every answer many times slower. Ollama reads
+     * {@code reasoning_effort}, llama.cpp reads {@code chat_template_kwargs}, and vLLM reads both. OpenAI itself and
+     * Azure get {@code reasoning_effort} only: the reasoning models of OpenAI call tools on Chat Completions only with
+     * {@code none}. A model that does not know the field refuses it, and gets the request again without it (see
+     * {@link #sendWithFewerThinkingFields}).
      */
     void turnThinkingOff(JsonObject request) {
-        if (apiType == ApiType.openai && isLocalEndpoint()) {
-            if (!reasoningEffortRefused) {
-                request.put("reasoning_effort", "none");
-            }
-            if (!templateKwargsRefused) {
-                request.put("chat_template_kwargs", new JsonObject(Map.of("enable_thinking", false)));
-            }
+        if (apiType != ApiType.openai) {
+            return;
+        }
+        if (!reasoningEffortRefused) {
+            request.put("reasoning_effort", "none");
+        }
+        if (isLocalEndpoint() && !templateKwargsRefused) {
+            request.put("chat_template_kwargs", new JsonObject(Map.of("enable_thinking", false)));
         }
     }
 
@@ -1591,8 +1667,17 @@ public class LlmClient {
     private ChatResponse chatAnthropicFormat(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
         JsonArray jsonMessages = new JsonArray();
 
-        for (Message msg : messages) {
-            if (msg.toolCalls() != null && !msg.toolCalls().isEmpty()) {
+        int question = lastQuestion(messages);
+        for (int i = 0; i < messages.size(); i++) {
+            Message msg = messages.get(i);
+            JsonArray blocks = msg.contentBlocks() != null ? anthropicBlocks(msg.contentBlocks(), i > question) : null;
+            if (blocks != null) {
+                // an answer of the model as it came
+                JsonObject assistantMsg = new JsonObject();
+                assistantMsg.put("role", "assistant");
+                assistantMsg.put("content", blocks);
+                jsonMessages.add(assistantMsg);
+            } else if (msg.toolCalls() != null && !msg.toolCalls().isEmpty()) {
                 // assistant message with tool_use blocks
                 JsonObject assistantMsg = new JsonObject();
                 assistantMsg.put("role", "assistant");
@@ -1662,25 +1747,85 @@ public class LlmClient {
 
     // ---- Anthropic helpers ----
 
+    /**
+     * The index of the last message the user wrote: the question, or a request after an answer such as a correction.
+     * Tool results are not one.
+     */
+    private static int lastQuestion(List<Message> messages) {
+        for (int i = messages.size() - 1; i >= 0; i--) {
+            Message m = messages.get(i);
+            if ("user".equals(m.role()) && (m.toolResults() == null || m.toolResults().isEmpty())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * The content blocks of an earlier answer for the next request, or null when none are left. The answers since the
+     * last question go back as they came: in a tool loop the API wants the thinking blocks back unchanged. The answers
+     * before it go back without their thinking blocks. The callers change that part of the history (the AI panel
+     * compacts old tool results and drops old turns, a retry removes a turn), and the current models refuse a thinking
+     * block when the history before it changed. Thinking blocks may be left out from the start of the history, so the
+     * later ones stay valid.
+     */
+    private static JsonArray anthropicBlocks(JsonArray blocks, boolean sinceLastQuestion) {
+        JsonArray kept = new JsonArray();
+        for (Object block : blocks) {
+            if (sinceLastQuestion || !isThinkingBlock(block)) {
+                kept.add(block);
+            }
+        }
+        return kept.isEmpty() ? null : kept;
+    }
+
+    private static boolean isThinkingBlock(Object block) {
+        return block instanceof JsonObject b
+                && ("thinking".equals(b.getString("type")) || "redacted_thinking".equals(b.getString("type")));
+    }
+
     private JsonObject buildAnthropicRequest(String systemPrompt, JsonArray messages, JsonArray tools) {
         JsonObject request = new JsonObject();
         if (isVertexAi()) {
             // Vertex AI: model is in the URL, version goes in body
-            request.put("anthropic_version", VERTEX_ANTHROPIC_VERSION);
+            request.put("anthropic_version", ANTHROPIC_VERSION);
         } else {
             // Direct Anthropic API: model goes in body
             request.put("model", model);
         }
-        request.put("max_tokens", maxTokens > 0 ? maxTokens : 4096);
+        request.put("max_tokens", Math.max(maxTokens, ANTHROPIC_MIN_MAX_TOKENS));
+        // no temperature: the current models refuse any value but the default, and API version 2026-10-21 refuses the
+        // field on every model
+        boolean toolLoop = tools != null && !tools.isEmpty();
         if (systemPrompt != null) {
-            request.put("system", systemPrompt);
+            request.put("system", toolLoop ? cachedText(systemPrompt) : systemPrompt);
         }
         request.put("messages", messages);
-        request.put("temperature", temperature);
-        if (tools != null && !tools.isEmpty()) {
+        if (toolLoop) {
             request.put("tools", tools);
+            // each step of a tool loop sends the tools, the system prompt and the history again. The breakpoint after
+            // the system prompt keeps those two in the cache when the history before the question changes (the AI
+            // panel compacts it); the automatic one moves to the end of each request for the history. A single
+            // question, as an explanation is, would only pay for writing the cache.
+            request.put("cache_control", ephemeral());
         }
         return request;
+    }
+
+    private static JsonObject ephemeral() {
+        JsonObject cacheControl = new JsonObject();
+        cacheControl.put("type", "ephemeral");
+        return cacheControl;
+    }
+
+    private static JsonArray cachedText(String text) {
+        JsonObject block = new JsonObject();
+        block.put("type", "text");
+        block.put("text", text);
+        block.put("cache_control", ephemeral());
+        JsonArray blocks = new JsonArray();
+        blocks.add(block);
+        return blocks;
     }
 
     private String resolveAnthropicUrl() {
@@ -1887,9 +2032,10 @@ public class LlmClient {
         TokenUsage usage = extractAnthropicUsage(response);
         JsonArray contentBlocks = (JsonArray) response.get("content");
         if (contentBlocks == null) {
-            return new ChatResponse(null, List.of(), stopReason, false, usage);
+            contentBlocks = new JsonArray();
         }
 
+        // by the type of each block: an answer can begin with thinking blocks, which have no text for the user
         StringBuilder text = new StringBuilder();
         List<ToolCall> toolCalls = new ArrayList<>();
         for (Object obj : contentBlocks) {
@@ -1905,7 +2051,11 @@ public class LlmClient {
             }
         }
         String textContent = text.length() > 0 ? text.toString() : null;
-        return new ChatResponse(textContent, toolCalls, stopReason, false, usage);
+        if (textContent == null && toolCalls.isEmpty() && "refusal".equals(stopReason)) {
+            // the safety classifiers of the current models can decline, with no content
+            textContent = "The model declined to answer (stop reason: refusal).";
+        }
+        return new ChatResponse(textContent, toolCalls, stopReason, false, usage, contentBlocks);
     }
 
     // ---- Token usage extraction ----
@@ -1931,9 +2081,12 @@ public class LlmClient {
         if (usage == null) {
             return TokenUsage.EMPTY;
         }
-        int input = getIntValue(usage, "input_tokens");
+        // input_tokens is only the part of the prompt that was neither read from the cache nor written to it; the
+        // prompt is the sum, as the other providers count it
+        int cached = getIntValue(usage, "cache_read_input_tokens");
+        int input = getIntValue(usage, "input_tokens") + getIntValue(usage, "cache_creation_input_tokens") + cached;
         int output = getIntValue(usage, "output_tokens");
-        return new TokenUsage(input, output, input + output, getIntValue(usage, "cache_read_input_tokens"), 0, 0);
+        return new TokenUsage(input, output, input + output, cached, 0, 0);
     }
 
     private static int getIntValue(JsonObject obj, String key) {
@@ -2243,7 +2396,7 @@ public class LlmClient {
             apiType = ApiType.anthropic;
             apiKey = key;
             url = DEFAULT_ANTHROPIC_URL;
-            if (model == null || "llama3.2".equals(model)) {
+            if (model == null || PLACEHOLDER_MODEL.equals(model)) {
                 model = DEFAULT_ANTHROPIC_MODEL;
             }
             return true;
@@ -2258,7 +2411,7 @@ public class LlmClient {
             apiType = ApiType.anthropic;
             vertexRegion = region;
             vertexProjectId = project;
-            if (model == null || "llama3.2".equals(model)) {
+            if (model == null || PLACEHOLDER_MODEL.equals(model)) {
                 model = DEFAULT_ANTHROPIC_MODEL;
             }
             return true;
@@ -2339,7 +2492,7 @@ public class LlmClient {
     }
 
     private boolean isGenericPlaceholderModel(String configuredModel) {
-        return DEFAULT_OLLAMA_MODEL.equals(configuredModel) || DEFAULT_OPENAI_MODEL.equals(configuredModel);
+        return PLACEHOLDER_MODEL.equals(configuredModel) || DEFAULT_OPENAI_MODEL.equals(configuredModel);
     }
 
     /**
@@ -2403,20 +2556,36 @@ public class LlmClient {
     }
 
     /**
-     * Picks a default Ollama model when none was configured (for example after a provider switch). Rather than assume a
-     * hardcoded model that may not be installed, this queries the installed models and prefers {@code llama3.2} when
-     * present, otherwise the first installed model. Falls back to the {@code llama3.2} placeholder only when the list
-     * cannot be retrieved, so the model is never left null.
+     * Picks the Ollama model when none was configured (for example after a provider switch): the installed model best
+     * at tool calling (see {@link #bestOllamaModel}). When the installed models cannot be listed or none can be used,
+     * the model recommended for Camel is asked for, so the model is never left null and the error of Ollama says what
+     * to pull.
      */
     private String resolveDefaultOllamaModel() {
-        List<String> available = listOllamaModels();
-        if (available.isEmpty()) {
-            return DEFAULT_OLLAMA_MODEL;
+        String best = bestOllamaModel(listOllamaModels());
+        return best != null ? best : FALLBACK_OLLAMA_MODEL;
+    }
+
+    /**
+     * The installed model to use when none was chosen: the first of {@link #PREFERRED_OLLAMA_MODELS} by family, else
+     * the first installed model that is not an embedding model; null when there is none. Never the placeholder llama3.2
+     * while a model of a preferred family is installed: it is too small to call the tools of Camel reliably.
+     */
+    static String bestOllamaModel(List<String> installed) {
+        if (installed == null || installed.isEmpty()) {
+            return null;
         }
-        return available.stream()
-                .filter(name -> name.equals(DEFAULT_OLLAMA_MODEL) || name.startsWith(DEFAULT_OLLAMA_MODEL + ":"))
+        for (String family : PREFERRED_OLLAMA_MODELS) {
+            for (String name : installed) {
+                if (name.equals(family) || name.startsWith(family + ":")) {
+                    return name;
+                }
+            }
+        }
+        return installed.stream()
+                .filter(name -> !name.toLowerCase(Locale.ROOT).contains("embed"))
                 .findFirst()
-                .orElse(available.get(0));
+                .orElse(null);
     }
 
     /**
@@ -2447,45 +2616,10 @@ public class LlmClient {
     }
 
     private void resolveOllamaModel() {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url + "/api/tags"))
-                    .timeout(Duration.ofSeconds(HEALTH_CHECK_TIMEOUT_SECONDS))
-                    .GET()
-                    .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) {
-                return;
-            }
-            JsonObject json = (JsonObject) Jsoner.deserialize(response.body());
-            JsonArray models = (JsonArray) json.get("models");
-            if (models == null || models.isEmpty()) {
-                return;
-            }
-
-            List<String> available = new ArrayList<>();
-            for (Object obj : models) {
-                JsonObject m = (JsonObject) obj;
-                String name = m.getString("name");
-                if (name != null) {
-                    available.add(name);
-                }
-            }
-
-            List<String> preferred
-                    = List.of("qwen3.6", "qwen3.5", "qwen3", "nemotron-3-nano", "mistral-nemo",
-                            "qwen2.5", "granite4.1", "llama3.1", "llama3.3", "mistral");
-            for (String pref : preferred) {
-                for (String avail : available) {
-                    if (avail.equals(pref) || avail.startsWith(pref + ":")) {
-                        model = avail;
-                        printer.println("Auto-selected model: " + model + " (better tool-calling support)");
-                        return;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // best-effort, keep default
+        String best = bestOllamaModel(listOllamaModels());
+        if (best != null) {
+            model = best;
+            printer.println("Auto-selected model: " + model + " (better tool-calling support)");
         }
     }
 

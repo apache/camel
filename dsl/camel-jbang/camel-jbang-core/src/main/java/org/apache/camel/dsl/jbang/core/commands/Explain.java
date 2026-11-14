@@ -62,8 +62,6 @@ public class Explain extends CamelCommand {
         }
     }
 
-    private static final String DEFAULT_MODEL = "llama3.2";
-
     private static final List<String> COMMON_COMPONENTS = Arrays.asList(
             "kafka", "http", "https", "file", "timer", "direct", "seda",
             "log", "mock", "rest", "rest-api", "sql", "jms", "activemq",
@@ -102,8 +100,10 @@ public class Explain extends CamelCommand {
             description = "API key for authentication. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or LLM_API_KEY env vars")
     String apiKey;
 
-    @Option(name = "model", description = "Model to use", defaultValue = DEFAULT_MODEL)
-    String model = DEFAULT_MODEL;
+    @Option(name = "model",
+            description = "Model to use. Default: the provider's default; with Ollama the installed model best at"
+                          + " tool calling, such as qwen3.6")
+    String model;
 
     @Option(name = "verbose", shortName = 'v', hasValue = false, description = "Include detailed technical information")
     boolean verbose;
@@ -121,7 +121,9 @@ public class Explain extends CamelCommand {
     @Option(name = "show-prompt", hasValue = false, description = "Show the prompt sent to the LLM")
     boolean showPrompt;
 
-    @Option(name = "temperature", description = "Temperature for response generation (0.0-2.0)", defaultValue = "0.7")
+    @Option(name = "temperature",
+            description = "Temperature for response generation (0.0-2.0), for a model on this machine: a hosted model uses its own default",
+            defaultValue = "0.7")
     double temperature = 0.7;
 
     @Option(name = "system-prompt", description = "Custom system prompt")
@@ -152,7 +154,7 @@ public class Explain extends CamelCommand {
                 .withUrl(url)
                 .withApiType(apiType)
                 .withApiKey(apiKey)
-                .withModel(model)
+                .withExplicitModel(model)
                 .withTimeout(timeout)
                 .withTemperature(temperature)
                 .withStream(stream)

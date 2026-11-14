@@ -229,5 +229,7 @@ also shows whether the provider reused its cached prompt. For Ollama it prints t
 (`prefill`) and generation (`gen`) time reported by the server -- a prefill of a fraction of a second
 on a 10k-token prompt means the cache was hit, while a prefill of several seconds means the whole
 prompt was processed again. For OpenAI, Anthropic and Gemini it prints the number of `cached` input
-tokens the provider reported. Use it to check that follow-up questions are cheap before blaming the
-model for being slow.
+tokens the provider reported. With Anthropic the panel turns prompt caching on: within five minutes
+of the previous request, the tools and the system prompt come from the cache, and so does the history
+on each further step of a question. Use it to check that follow-up questions are cheap before blaming
+the model for being slow.
