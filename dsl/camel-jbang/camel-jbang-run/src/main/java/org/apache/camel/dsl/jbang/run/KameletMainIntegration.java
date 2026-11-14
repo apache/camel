@@ -46,6 +46,12 @@ final class KameletMainIntegration implements RunningIntegration {
     private static final Logger LOG = LoggerFactory.getLogger(KameletMainIntegration.class);
 
     /**
+     * How deep the hint about .yml files looks into the source folder: the folder and two levels of subfolders, such as
+     * routes/orders/order.yml. It only names a few files the run did not load, so it does not walk a large tree.
+     */
+    private static final int YML_HINT_DEPTH = 3;
+
+    /**
      * The exit code of a run that failed, such as one without routes: CliExitCode.FAILURE of camel-jbang-core.
      */
     static final int FAILURE = 1;
@@ -202,7 +208,7 @@ final class KameletMainIntegration implements RunningIntegration {
         List<String> answer = new ArrayList<>();
         if (request.sourceDir != null) {
             Path dir = Paths.get(request.sourceDir);
-            try (Stream<Path> files = Files.walk(dir, 3)) {
+            try (Stream<Path> files = Files.walk(dir, YML_HINT_DEPTH)) {
                 files.filter(f -> isYml(f.getFileName().toString()) && Files.isRegularFile(f))
                         .filter(f -> !hidden(dir.relativize(f)))
                         .map(f -> dir.relativize(f).toString().replace('\\', '/'))
