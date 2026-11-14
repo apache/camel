@@ -94,10 +94,10 @@ class McpServerBridgeTest extends CamelTestSupport {
                                     McpToolCallContext.SECURITY_PRINCIPAL_PROPERTY));
                             capturedPrincipalName.set(exchange.getProperty(
                                     McpToolCallContext.SECURITY_PRINCIPAL_NAME_PROPERTY, String.class));
-                            Object roles = exchange.getProperty(
-                                    McpToolCallContext.SECURITY_PRINCIPAL_ROLES_PROPERTY);
-                            capturedPrincipalRoles.set(roles instanceof Collection<?> collection
-                                    ? collection.stream().map(String.class::cast).toList() : null);
+                            Collection<?> roles = exchange.getProperty(
+                                    McpToolCallContext.SECURITY_PRINCIPAL_ROLES_PROPERTY, Collection.class);
+                            capturedPrincipalRoles.set(roles == null
+                                    ? null : roles.stream().map(String.class::cast).toList());
                             exchange.getMessage().setBody("identity-captured");
                         });
 
@@ -145,10 +145,6 @@ class McpServerBridgeTest extends CamelTestSupport {
 
     @Test
     void testToolCallContextIsPropagatedToExchange() {
-        capturedPrincipal.set(null);
-        capturedPrincipalName.set(null);
-        capturedPrincipalRoles.set(null);
-
         Object callerPrincipal = new Object();
         McpToolCallContext callContext = new McpToolCallContext(
                 callerPrincipal, "alice", List.of("admin", "operator"));
@@ -160,6 +156,44 @@ class McpServerBridgeTest extends CamelTestSupport {
         assertThat(capturedPrincipal.get()).isSameAs(callerPrincipal);
         assertThat(capturedPrincipalName.get()).isEqualTo("alice");
         assertThat(capturedPrincipalRoles.get()).containsExactly("admin", "operator");
+    }
+
+    @Test
+    void testNoCallContextStampsNoIdentity() {
+        McpToolCallResult result = engine.tools().get("whoami").handler().call(Map.of());
+
+        assertThat(result.isError()).isFalse();
+        assertThat(result.text()).isEqualTo("identity-captured");
+        assertThat(capturedPrincipal.get()).isNull();
+        assertThat(capturedPrincipalName.get()).isNull();
+        assertThat(capturedPrincipalRoles.get()).isNull();
+    }
+
+    @Test
+    void testEmptyCallContextStampsNoIdentity() {
+        McpToolCallResult result = engine.tools().get("whoami").handler()
+                .call(Map.of(), McpToolCallContext.EMPTY);
+
+        assertThat(result.isError()).isFalse();
+        assertThat(result.text()).isEqualTo("identity-captured");
+        assertThat(capturedPrincipal.get()).isNull();
+        assertThat(capturedPrincipalName.get()).isNull();
+        assertThat(capturedPrincipalRoles.get()).isNull();
+    }
+
+    @Test
+    void testBlankPrincipalNameAndEmptyRolesAreNotStamped() {
+        Object callerPrincipal = new Object();
+        McpToolCallContext callContext = new McpToolCallContext(
+                callerPrincipal, " ", List.of());
+
+        McpToolCallResult result = engine.tools().get("whoami").handler().call(Map.of(), callContext);
+
+        assertThat(result.isError()).isFalse();
+        assertThat(result.text()).isEqualTo("identity-captured");
+        assertThat(capturedPrincipal.get()).isSameAs(callerPrincipal);
+        assertThat(capturedPrincipalName.get()).isNull();
+        assertThat(capturedPrincipalRoles.get()).isNull();
     }
 
     @Test
