@@ -26,13 +26,13 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * An adapter that implements {@link IdempotentRepository} by delegating to a {@link KeyValueRepository}.
- * <p/>
+ * <p>
  * This adapter uses {@link Boolean#TRUE} as the marker value stored in the underlying key-value repository. The key
  * itself is the message identifier used for duplicate detection.
- * <p/>
+ * <p>
  * This allows any {@link KeyValueRepository} implementation (e.g. backed by Redis, Infinispan, JDBC, etc.) to be used
  * as an idempotent repository without implementing the {@link IdempotentRepository} interface directly.
- * <p/>
+ * <p>
  * When created with the no-arg constructor, a {@link MemoryKeyValueRepository} is used by default.
  *
  * @since 4.23
@@ -54,7 +54,7 @@ public class KeyValueIdempotentRepository extends ServiceSupport implements Idem
     /**
      * Creates an idempotent repository adapter that defaults to an in-memory {@link MemoryKeyValueRepository}. The
      * repository is created lazily when the service starts.
-     * <p/>
+     * <p>
      * To use a custom {@link KeyValueRepository}, call {@link #setRepository(KeyValueRepository)} before starting, or
      * use the {@link #KeyValueIdempotentRepository(KeyValueRepository)} constructor.
      */

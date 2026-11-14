@@ -344,7 +344,7 @@ public final class PluginHelper {
     /**
      * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
      *
-     * @return the factory, can be <tt>null</tt> if no custom factory has been set
+     * @return the factory, can be <code>null</code> if no custom factory has been set
      */
     public static ProcessorFactory getProcessorFactory(CamelContext camelContext) {
         return getProcessorFactory(camelContext.getCamelContextExtension());
@@ -353,7 +353,7 @@ public final class PluginHelper {
     /**
      * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
      *
-     * @return the factory, can be <tt>null</tt> if no custom factory has been set
+     * @return the factory, can be <code>null</code> if no custom factory has been set
      */
     public static ProcessorFactory getProcessorFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ProcessorFactory.class);

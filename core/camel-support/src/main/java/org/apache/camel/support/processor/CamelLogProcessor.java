@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link Processor} which just logs to a {@link CamelLogger} object which can be used as an exception handler instead
  * of using a dead letter queue.
- * <p/>
- * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits which has a <tt>Logger</tt>
- * class.
+ * <p>
+ * The name <code>CamelLogger</code> has been chosen to avoid any name clash with log kits which have a
+ * <code>Logger</code> class.
  */
 public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware, StepIdAware {
 
@@ -259,7 +259,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
     }
 
     /**
-     * {@link ExchangeFormatter} that calls <tt>toString</tt> on the {@link Exchange}.
+     * {@link ExchangeFormatter} that calls <code>toString</code> on the {@link Exchange}.
      */
     static class ToStringExchangeFormatter implements ExchangeFormatter {
         @Override

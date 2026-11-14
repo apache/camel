@@ -34,7 +34,7 @@ import org.apache.camel.util.IOHelper;
 
 /**
  * Helper for components that need to know the length of a (possibly big) message body, for example to upload it.
- * <p/>
+ * <p>
  * The length is determined without reading the body. When the length cannot be determined that way, the body can be
  * copied with {@link #cacheStream(Exchange, InputStream)}, which uses stream caching and therefore spools big payloads
  * to disk when spooling is enabled, instead of loading them into memory.
@@ -48,7 +48,8 @@ public final class PayloadHelper {
      * Gets the length of the message body, without reading the body.
      *
      * @param  message the message
-     * @return         the length in bytes, or <tt>-1</tt> if the length cannot be determined without reading the body
+     * @return         the length in bytes, or <code>-1</code> if the length cannot be determined without reading the
+     *                 body
      */
     public static long getBodyLength(Message message) {
         Object body = message.getBody();
@@ -65,12 +66,13 @@ public final class PayloadHelper {
 
     /**
      * Gets the length of the given value, without reading it.
-     * <p/>
+     * <p>
      * The length is known for files, byte arrays, stream caches of bytes, and input streams backed by a byte array or a
      * file.
      *
      * @param  value the value, such as a message body or an input stream
-     * @return       the length in bytes, or <tt>-1</tt> if the length cannot be determined without reading the value
+     * @return       the length in bytes, or <code>-1</code> if the length cannot be determined without reading the
+     *               value
      */
     public static long getLength(Object value) {
         try {
@@ -98,7 +100,7 @@ public final class PayloadHelper {
 
     /**
      * Copies the given input stream so its length is known.
-     * <p/>
+     * <p>
      * The stream is copied using stream caching (when enabled), so a big payload is spooled to disk if spooling is
      * enabled, instead of being loaded into memory. The copy is released when the exchange is complete.
      *

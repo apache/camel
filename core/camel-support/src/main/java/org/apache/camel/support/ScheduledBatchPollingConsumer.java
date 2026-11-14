@@ -91,7 +91,7 @@ public abstract class ScheduledBatchPollingConsumer extends ScheduledPollConsume
 
     /**
      * Gets the maximum number of messages as a limit to poll at each polling.
-     * <p/>
+     * <p>
      * Is default unlimited, but use 0 or negative number to disable it as unlimited.
      *
      * @return max messages to poll

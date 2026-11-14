@@ -65,11 +65,11 @@ public final class MessageHelper {
 
     /**
      * Extracts the given body and returns it as a String, that can be used for logging etc.
-     * <p/>
+     * <p>
      * Will handle stream based bodies wrapped in StreamCache.
      *
      * @param  message the message with the body
-     * @return         the body as String, can return <tt>null</null> if no body
+     * @return         the body as String, can return <code>null</code> if no body
      */
     public static String extractBodyAsString(Message message) {
         if (message == null) {
@@ -104,11 +104,11 @@ public final class MessageHelper {
 
     /**
      * Gets the given body class type name as a String.
-     * <p/>
-     * Will skip java.lang. for the build in Java types.
+     * <p>
+     * Will skip java.lang. for the built-in Java types.
      *
      * @param  message the message with the body
-     * @return         the body type name as String, can return <tt>null</null> if no body
+     * @return         the body type name as String, can return <code>null</code> if no body
      */
     public static String getBodyTypeName(Message message) {
         if (message == null) {
@@ -142,14 +142,14 @@ public final class MessageHelper {
     }
 
     /**
-     * Returns the MIME content type on the message or <tt>null</tt> if none defined
+     * Returns the MIME content type on the message or <code>null</code> if none defined
      */
     public static String getContentType(Message message) {
         return message.getHeader(Exchange.CONTENT_TYPE, String.class);
     }
 
     /**
-     * Returns the MIME content encoding on the message or <tt>null</tt> if none defined
+     * Returns the MIME content encoding on the message or <code>null</code> if none defined
      */
     public static String getContentEncoding(Message message) {
         return message.getHeader(Exchange.CONTENT_ENCODING, String.class);
@@ -157,8 +157,8 @@ public final class MessageHelper {
 
     /**
      * Extracts the body for logging purpose.
-     * <p/>
-     * Will clip the body if its too big for logging. Will prepend the message with <tt>Message: </tt>
+     * <p>
+     * Will clip the body if it's too big for logging. Will prepend the message with <code>Message: </code>
      *
      * @param  message the message
      * @return         the logging message
@@ -171,8 +171,8 @@ public final class MessageHelper {
 
     /**
      * Extracts the value for logging purpose.
-     * <p/>
-     * Will clip the value if its too big for logging.
+     * <p>
+     * Will clip the value if it's too big for logging.
      *
      * @param  value   the value
      * @param  message the message
@@ -210,8 +210,8 @@ public final class MessageHelper {
 
     /**
      * Extracts the body for logging purpose.
-     * <p/>
-     * Will clip the body if its too big for logging.
+     * <p>
+     * Will clip the body if it's too big for logging.
      *
      * @param  message the message
      * @param  prepend a message to prepend
@@ -226,13 +226,13 @@ public final class MessageHelper {
 
     /**
      * Extracts the body for logging purpose.
-     * <p/>
-     * Will clip the body if its too big for logging.
+     * <p>
+     * Will clip the body if it's too big for logging.
      *
      * @param  message      the message
      * @param  prepend      a message to prepend
-     * @param  allowStreams whether or not streams is allowed
-     * @param  allowFiles   whether or not files is allowed (currently not in use)
+     * @param  allowStreams whether or not streams are allowed
+     * @param  allowFiles   whether or not files are allowed (currently not in use)
      * @return              the logging message
      * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
      * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
@@ -253,14 +253,14 @@ public final class MessageHelper {
 
     /**
      * Extracts the body for logging purpose.
-     * <p/>
-     * Will clip the body if its too big for logging.
+     * <p>
+     * Will clip the body if it's too big for logging.
      *
      * @param  message      the message
      * @param  prepend      a message to prepend (optional)
-     * @param  allowStreams whether or not streams is allowed
-     * @param  allowFiles   whether or not files is allowed (currently not in use)
-     * @param  maxChars     limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging message
+     * @param  allowStreams whether or not streams are allowed
+     * @param  allowFiles   whether or not files are allowed (currently not in use)
+     * @param  maxChars     limit to maximum number of chars. Use 0 for no limit, and -1 for turning logging message
      *                      body off.
      * @return              the logging message
      * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
@@ -277,15 +277,15 @@ public final class MessageHelper {
 
     /**
      * Extracts the body for logging purpose.
-     * <p/>
-     * Will clip the body if its too big for logging.
+     * <p>
+     * Will clip the body if it's too big for logging.
      *
      * @param  message            the message
      * @param  prepend            a message to prepend (optional)
-     * @param  allowCachedStreams whether or not cached streams is allowed
-     * @param  allowStreams       whether or not streams is allowed
-     * @param  allowFiles         whether or not files is allowed (currently not in use)
-     * @param  maxChars           limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging
+     * @param  allowCachedStreams whether or not cached streams are allowed
+     * @param  allowStreams       whether or not streams are allowed
+     * @param  allowFiles         whether or not files are allowed (currently not in use)
+     * @param  maxChars           limit to maximum number of chars. Use 0 for no limit, and -1 for turning logging
      *                            message body off.
      * @return                    the logging message
      * @see                       org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
@@ -304,14 +304,14 @@ public final class MessageHelper {
 
     /**
      * Extracts the value for logging purpose.
-     * <p/>
-     * Will clip the value if its too big for logging.
+     * <p>
+     * Will clip the value if it's too big for logging.
      *
      * @param  obj          the value
      * @param  message      the message
-     * @param  allowStreams whether or not streams is allowed
-     * @param  allowFiles   whether or not files is allowed (currently not in use)
-     * @param  maxChars     limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging message
+     * @param  allowStreams whether or not streams are allowed
+     * @param  allowFiles   whether or not files are allowed (currently not in use)
+     * @param  maxChars     limit to maximum number of chars. Use 0 for no limit, and -1 for turning logging message
      *                      body off.
      * @return              the logging message
      * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
@@ -324,15 +324,15 @@ public final class MessageHelper {
 
     /**
      * Extracts the value for logging purpose.
-     * <p/>
-     * Will clip the value if its too big for logging.
+     * <p>
+     * Will clip the value if it's too big for logging.
      *
      * @param  obj                the value
      * @param  message            the message
-     * @param  allowCachedStreams whether or not cached streams is allowed
-     * @param  allowStreams       whether or not streams is allowed
-     * @param  allowFiles         whether or not files is allowed (currently not in use)
-     * @param  maxChars           limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging
+     * @param  allowCachedStreams whether or not cached streams are allowed
+     * @param  allowStreams       whether or not streams are allowed
+     * @param  allowFiles         whether or not files are allowed (currently not in use)
+     * @param  maxChars           limit to maximum number of chars. Use 0 for no limit, and -1 for turning logging
      *                            message body off.
      * @return                    the logging message
      * @see                       org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS

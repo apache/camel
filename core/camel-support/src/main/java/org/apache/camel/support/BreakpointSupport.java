@@ -24,7 +24,7 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 
 /**
  * A support class for {@link Breakpoint} implementations to use as base class.
- * <p/>
+ * <p>
  * Will be in active state.
  */
 public abstract class BreakpointSupport implements Breakpoint {

@@ -103,7 +103,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the header value with the given name
-     * <p/>
+     * <p>
      * Will fallback and look in properties if not found in headers.
      *
      * @param  headerName the name of the header the expression will return
@@ -115,7 +115,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the header value with the given name
-     * <p/>
+     * <p>
      * Will fallback and look in properties if not found in headers.
      *
      * @param  headerName the name of the header the expression will return
@@ -128,7 +128,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the header value with the given name
-     * <p/>
+     * <p>
      * Will fallback and look in properties if not found in headers.
      *
      * @param  headerName the name of the header the expression will return
@@ -140,7 +140,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the header value with the given name
-     * <p/>
+     * <p>
      * Will fallback and look in properties if not found in headers.
      *
      * @param  headerName the name of the header the expression will return
@@ -178,7 +178,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the header value with the given name converted to the given type
-     * <p/>
+     * <p>
      * Will fallback and look in properties if not found in headers.
      *
      * @param  headerName the name of the header the expression will return
@@ -210,7 +210,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the header value with the given name converted to the given type
-     * <p/>
+     * <p>
      * Will fallback and look in properties if not found in headers.
      *
      * @param  headerName the name of the header the expression will return
@@ -223,7 +223,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the header value with the given name converted to the given type
-     * <p/>
+     * <p>
      * Will fallback and look in properties if not found in headers.
      *
      * @param  headerName the name of the header the expression will return
@@ -534,8 +534,8 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for an exception set on the exchange
-     * <p/>
-     * Is used to get the caused exception that typically have been wrapped in some sort of Camel wrapper exception
+     * <p>
+     * Is used to get the caused exception that typically has been wrapped in some sort of Camel wrapper exception
      *
      * @param  type the exception type
      * @see         Exchange#getException(Class)
@@ -1524,8 +1524,8 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the exchanges inbound message body converted to the given type.
-     * <p/>
+     * Returns the expression for the exchange's inbound message body converted to the given type.
+     * <p>
      * Does <b>not</b> allow null bodies.
      */
     public static <T> Expression mandatoryBodyExpression(final Class<T> type) {
@@ -1785,14 +1785,14 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns an expression for one value of the <tt>in</tt> operator, which is compared for equality with the value of
-     * the left expression.
-     * <p/>
+     * Returns an expression for one value of the <code>in</code> operator, which is compared for equality with the
+     * value of the left expression.
+     * <p>
      * When the left value is a number, a number is returned as is, and a String with a decimal number is returned as a
-     * {@link BigDecimal}, so the values are compared by their numeric values (such as <tt>2</tt> and <tt>2.5</tt>,
-     * which are not equal). Converting them to the type of the left value first could drop the decimals or wrap a long
-     * that does not fit in an int. Otherwise the value is converted to the type of the left value, as by
-     * {@link #convertToExpression(Expression, Expression)}.
+     * {@link BigDecimal}, so the values are compared by their numeric values (such as <code>2</code> and
+     * <code>2.5</code>, which are not equal). Converting them to the type of the left value first could drop the
+     * decimals or wrap a long that does not fit in an int. Otherwise the value is converted to the type of the left
+     * value, as by {@link #convertToExpression(Expression, Expression)}.
      *
      * @param  value the expression for the value in the list of the in operator
      * @param  left  the left expression
@@ -2090,7 +2090,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns a sort expression which will sort the expression with the given comparator.
-     * <p/>
+     * <p>
      * The expression is evaluated as a {@link List} object to allow sorting.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })

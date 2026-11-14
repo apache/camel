@@ -55,10 +55,9 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
 
     /**
      * Loads the resource if the given expression is referring to an external resource by using the syntax
-     * <tt>resource:scheme:uri<tt>.
-     * If the expression is not referring to a resource, then its returned as is.
-     * <p/>
-     * For example <tt>resource:classpath:mygroovy.groovy</tt> to refer to a groovy script on the classpath.
+     * <code>resource:scheme:uri</code>. If the expression is not referring to a resource, then it is returned as is.
+     * <p>
+     * For example <code>resource:classpath:mygroovy.groovy</code> to refer to a groovy script on the classpath.
      *
      * @param  expression                       the expression
      * @return                                  the expression
@@ -100,7 +99,7 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
      * Does the expression include a simple function.
      *
      * @param  expression the expression
-     * @return            <tt>true</tt> if one or more simple function is included in the expression
+     * @return            <code>true</code> if one or more simple functions are included in the expression
      */
     public static boolean hasSimpleFunction(String expression) {
         if (expression != null) {

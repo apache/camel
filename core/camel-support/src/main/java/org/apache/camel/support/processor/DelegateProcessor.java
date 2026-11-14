@@ -28,9 +28,9 @@ import org.apache.camel.support.service.ServiceSupport;
 /**
  * A Delegate pattern which delegates processing to a nested {@link Processor} which can be useful for implementation
  * inheritance when writing an {@link org.apache.camel.spi.Policy}
- * <p/>
+ * <p>
  * <b>Important:</b> This implementation does <b>not</b> support the asynchronous routing engine. If you are
- * implementing a EIP pattern please use the {@link DelegateAsyncProcessor} instead.
+ * implementing an EIP pattern please use the {@link DelegateAsyncProcessor} instead.
  *
  * @see DelegateAsyncProcessor
  */

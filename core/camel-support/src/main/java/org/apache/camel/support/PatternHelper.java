@@ -34,9 +34,9 @@ public final class PatternHelper {
 
     /**
      * Matches the name with the given pattern (case insensitive).
-     * <p/>
+     * <p>
      * Only a single pattern is supported, use {@link #matchPatterns(String, String[])} to match multiple patterns.
-     * <p/>
+     * <p>
      * The match rules are applied in this order:
      * <ul>
      * <li>exact match, returns true</li>
@@ -47,7 +47,7 @@ public final class PatternHelper {
      *
      * @param  name    the name
      * @param  pattern a pattern to match
-     * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @return         <code>true</code> if match, <code>false</code> otherwise.
      * @see            #matchPatterns(String, String[])
      */
     public static boolean matchPattern(String name, String pattern) {
@@ -104,7 +104,7 @@ public final class PatternHelper {
      *
      * @param  name     the name
      * @param  patterns pattern(s) to match
-     * @return          <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @return          <code>true</code> if match, <code>false</code> otherwise.
      * @see             #matchPattern(String, String)
      */
     public static boolean matchPatterns(String name, String[] patterns) {
@@ -118,7 +118,7 @@ public final class PatternHelper {
 
     /**
      * Matches the name with the given pattern (case insensitive) using simple matching only (no regular expressions).
-     * <p/>
+     * <p>
      * The match rules are applied in this order:
      * <ul>
      * <li>exact match (case insensitive), returns true</li>
@@ -128,7 +128,7 @@ public final class PatternHelper {
      *
      * @param  name    the name
      * @param  pattern a pattern to match
-     * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @return         <code>true</code> if match, <code>false</code> otherwise.
      * @see            #matchSimplePatterns(String, String[])
      */
     public static boolean matchSimplePattern(String name, String pattern) {
@@ -152,7 +152,7 @@ public final class PatternHelper {
      *
      * @param  name     the name
      * @param  patterns pattern(s) to match
-     * @return          <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @return          <code>true</code> if match, <code>false</code> otherwise.
      * @see             #matchSimplePattern(String, String)
      */
     public static boolean matchSimplePatterns(String name, String[] patterns) {
@@ -166,7 +166,7 @@ public final class PatternHelper {
 
     /**
      * Matches the name with the given pattern (case insensitive).
-     * <p/>
+     * <p>
      * The match rules are applied in this order:
      * <ul>
      * <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
@@ -175,7 +175,7 @@ public final class PatternHelper {
      *
      * @param  name    the name
      * @param  pattern a pattern to match
-     * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @return         <code>true</code> if match, <code>false</code> otherwise.
      */
     private static boolean matchWildcard(String name, String pattern) {
         // we have wildcard support in that hence you can match with: file* to match any file endpoints
@@ -188,7 +188,7 @@ public final class PatternHelper {
 
     /**
      * Matches the name with the given pattern (case insensitive).
-     * <p/>
+     * <p>
      * The match rules are applied in this order:
      * <ul>
      * <li>regular expression match, returns true</li>
@@ -197,7 +197,7 @@ public final class PatternHelper {
      *
      * @param  name    the name
      * @param  pattern a pattern to match
-     * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @return         <code>true</code> if match, <code>false</code> otherwise.
      */
     public static boolean matchRegex(String name, String pattern) {
         // match by regular expression

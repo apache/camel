@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A default implementation of {@link ExceptionHandler} which uses a {@link CamelLogger} to log the exception.
- * <p/>
+ * <p>
  * This implementation will by default log the exception with stack trace at WARN level.
- * <p/>
+ * <p>
  * This implementation honors the {@link org.apache.camel.spi.ShutdownStrategy#isSuppressLoggingOnTimeout()} option to
  * avoid logging if the logging should be suppressed.
  */

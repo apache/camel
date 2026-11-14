@@ -57,12 +57,12 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
 /**
  * A convenient support class for binding String valued properties to an instance which uses a set of conventions:
  * <ul>
- * <li>property placeholders - Keys and values using Camels property placeholder will be resolved</li>
+ * <li>property placeholders - Keys and values using Camel's property placeholder will be resolved</li>
  * <li>nested - Properties can be nested using the dot syntax (OGNL and builder pattern using with as prefix), eg
  * foo.bar=123</li>
- * <li>map</li> - Properties can lookup in Map's using map syntax, eg foo[bar] where foo is the name of the property
- * that is a Map instance, and bar is the name of the key.</li>
- * <li>list</li> - Properties can refer or add to in List's using list syntax, eg foo[0] where foo is the name of the
+ * <li>map - Properties can look up in Map's using map syntax, eg foo[bar] where foo is the name of the property that is
+ * a Map instance, and bar is the name of the key.</li>
+ * <li>list - Properties can refer or add to in List's using list syntax, eg foo[0] where foo is the name of the
  * property that is a List instance, and 0 is the index. To refer to the last element, then use last as key. An index
  * beyond the end of the list pads the list with null elements up to the index.</li>
  * <li>reference by property placeholder id - Values can refer to a property placeholder key with #property:myKey</li>
@@ -78,14 +78,14 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  * #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the instance via
  * constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello World', 5, true).
  * If the factory method is on another bean or class, then you must specify this as shown:
- * #class:com.foo.MyClassType#com.foo.MyFactory:myFactoryMethod. Where com.foo.MyFactory either refers to an class name,
+ * #class:com.foo.MyClassType#com.foo.MyFactory:myFactoryMethod. Where com.foo.MyFactory either refers to a class name,
  * or can refer to an existing bean by id, such as: #class:com.foo.MyClassType#myFactoryBean:myFactoryMethod. A class
  * that has no public no-arg constructor but is created through a builder, such as #class:com.foo.MyImmutableType with a
  * public static builder() (or newBuilder()) method whose builder has a public build() method, is created by calling the
  * builder, and any properties to set are set on the builder before build() is invoked (see
- * {@link #newBuilderInstance(Class)}).</li>.
- * <li>valueAs(type):value</li> - To declare that the value should be converted to the given type, such as
- * #valueAs(int):123 which indicates that the value 123 should be converted to an integer.
+ * {@link #newBuilderInstance(Class)}).</li>
+ * <li>valueAs(type):value - To declare that the value should be converted to the given type, such as #valueAs(int):123
+ * which indicates that the value 123 should be converted to an integer.</li>
  * <li>ignore case - Whether to ignore case for property keys</li>
  * </ul>
  *
@@ -109,8 +109,8 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  * username={{?clientUserName}}
  * </pre>
  * <p>
- * Where the username property will only be set if the property placeholder <tt>clientUserName</tt> exists, otherwise
- * the username is not affected.
+ * Where the username property will only be set if the property placeholder <code>clientUserName</code> exists,
+ * otherwise the username is not affected.
  * </p>
  */
 public final class PropertyBindingSupport {
@@ -124,7 +124,7 @@ public final class PropertyBindingSupport {
 
     /**
      * Binds the properties to the target object, and removes the property that was bound from properties.
-     * <p/>
+     * <p>
      * This method uses the default settings, and if you need to configure any setting then use the fluent builder
      * {@link #build()} where each option can be customized, such as whether parameter should be removed, or whether
      * options are mandatory etc.
@@ -146,7 +146,7 @@ public final class PropertyBindingSupport {
 
     /**
      * Binds the properties to the target object, and removes the property that was bound from properties.
-     * <p/>
+     * <p>
      * This method uses the default settings, and if you need to configure any setting then use the fluent builder
      * {@link #build()} where each option can be customized, such as whether parameter should be removed, or whether
      * options are mandatory etc.
@@ -1237,7 +1237,7 @@ public final class PropertyBindingSupport {
      * Is the given parameter a reference parameter (starting with a # char)
      *
      * @param  obj the parameter
-     * @return     <tt>true</tt> if its a reference parameter
+     * @return     <code>true</code> if it's a reference parameter
      */
     private static boolean isReferenceParameter(Object obj) {
         if (obj == null) {
@@ -1277,17 +1277,17 @@ public final class PropertyBindingSupport {
 
     /**
      * Whether the given type must be created through its builder, because it has no public no-arg constructor but has a
-     * public static no-arg <tt>builder()</tt> or <tt>newBuilder()</tt> method, as classes built by Lombok, Immutables,
-     * LangChain4j, the AWS SDK, protobuf and many others have. Camel then creates a bean of the type via the builder
-     * instead of failing on the missing constructor, so such a class can be declared like any other bean, in YAML and
-     * XML as <tt>type</tt> and in properties as <tt>#class:</tt>, without naming the builder class.
-     * <p/>
+     * public static no-arg <code>builder()</code> or <code>newBuilder()</code> method, as classes built by Lombok,
+     * Immutables, LangChain4j, the AWS SDK, protobuf and many others have. Camel then creates a bean of the type via
+     * the builder instead of failing on the missing constructor, so such a class can be declared like any other bean,
+     * in YAML and XML as <code>type</code> and in properties as <code>#class:</code>, without naming the builder class.
+     * <p>
      * A class that has a public no-arg constructor is never regarded as builder-only, so that a class which offers both
      * keeps being created with its constructor as before.
      *
      * @param  type the class of the bean to create
-     * @return      <tt>true</tt> if the type is created through an inferred builder, <tt>false</tt> if the type can be
-     *              created with a public no-arg constructor, or has no recognised builder
+     * @return      <code>true</code> if the type is created through an inferred builder, <code>false</code> if the type
+     *              can be created with a public no-arg constructor, or has no recognised builder
      */
     public static boolean isBuilderOnly(Class<?> type) {
         return findBuilderFactoryMethod(type) != null;
@@ -1295,8 +1295,8 @@ public final class PropertyBindingSupport {
 
     /**
      * The class of the builder of a {@link #isBuilderOnly(Class) builder-only} type, from the return type of its
-     * <tt>builder()</tt> or <tt>newBuilder()</tt> method, without creating a builder; for a validator that reasons
-     * about a declaration without running anything.
+     * <code>builder()</code> or <code>newBuilder()</code> method, without creating a builder; for a validator that
+     * reasons about a declaration without running anything.
      *
      * @param  type the class of the bean
      * @return      the class of the builder, or null if the type is not builder-only
@@ -1308,14 +1308,14 @@ public final class PropertyBindingSupport {
 
     /**
      * Creates the builder of the given type, when the type is {@link #isBuilderOnly(Class) builder-only}, by invoking
-     * its public static <tt>builder()</tt> or <tt>newBuilder()</tt> method.
-     * <p/>
+     * its public static <code>builder()</code> or <code>newBuilder()</code> method.
+     * <p>
      * The properties of the bean are then set on the returned builder, and the bean is created by invoking the
      * {@link #findBuilderMethod(Object, Class, String) builder method}, such as with
      * {@link Builder#build(Class, String)}.
      *
      * @param  type      the class of the bean to create
-     * @return           the builder, or <tt>null</tt> if the type is not builder-only
+     * @return           the builder, or <code>null</code> if the type is not builder-only
      * @throws Exception is thrown if the builder factory method fails
      */
     public static Object newBuilderInstance(Class<?> type) throws Exception {
@@ -1332,13 +1332,13 @@ public final class PropertyBindingSupport {
     }
 
     /**
-     * Finds the name of the method that creates the bean from the given builder: the given <tt>builderMethod</tt> if
-     * set, otherwise <tt>build</tt>, and if the builder has no such method, its single public no-arg method that
-     * returns the type of the bean (such as <tt>create</tt>).
+     * Finds the name of the method that creates the bean from the given builder: the given <code>builderMethod</code>
+     * if set, otherwise <code>build</code>, and if the builder has no such method, its single public no-arg method that
+     * returns the type of the bean (such as <code>create</code>).
      *
      * @param  builder       the builder, typically from {@link #newBuilderInstance(Class)}
      * @param  type          the class of the bean the builder creates
-     * @param  builderMethod the name of the builder method if explicitly configured, or <tt>null</tt> to find it
+     * @param  builderMethod the name of the builder method if explicitly configured, or <code>null</code> to find it
      * @return               the name of the method to invoke on the builder to create the bean
      */
     public static String findBuilderMethod(Object builder, Class<?> type, String builderMethod) {
@@ -1378,11 +1378,11 @@ public final class PropertyBindingSupport {
 
     /**
      * The names of the properties a builder accepts, for an error message or a validator: its public one-argument
-     * methods that return the builder (the fluent setters, <tt>modelName(String)</tt>) and its plain setters
-     * (<tt>setModelName</tt>), sorted.
+     * methods that return the builder (the fluent setters, <code>modelName(String)</code>) and its plain setters
+     * (<code>setModelName</code>), sorted.
      *
      * @param  builderType the class of the builder
-     * @return             the property names, in the form used to set them (<tt>modelName</tt>)
+     * @return             the property names, in the form used to set them (<code>modelName</code>)
      */
     public static List<String> builderPropertyNames(Class<?> builderType) {
         Set<String> names = new TreeSet<>();
@@ -1405,9 +1405,9 @@ public final class PropertyBindingSupport {
     }
 
     /**
-     * The names of the properties a bean accepts once created: its public setters (<tt>setLabel</tt> becomes
-     * <tt>label</tt>), sorted. Together with {@link #builderPropertyNames(Class)} this is what a declaration of a bean
-     * created via a builder can set.
+     * The names of the properties a bean accepts once created: its public setters (<code>setLabel</code> becomes
+     * <code>label</code>), sorted. Together with {@link #builderPropertyNames(Class)} this is what a declaration of a
+     * bean created via a builder can set.
      */
     public static List<String> setterPropertyNames(Class<?> type) {
         Set<String> names = new TreeSet<>();
@@ -1501,8 +1501,8 @@ public final class PropertyBindingSupport {
     }
 
     /**
-     * Finds the public static no-arg <tt>builder()</tt> or <tt>newBuilder()</tt> method of the given type, when the
-     * type has no public no-arg constructor.
+     * Finds the public static no-arg <code>builder()</code> or <code>newBuilder()</code> method of the given type, when
+     * the type has no public no-arg constructor.
      */
     private static Method findBuilderFactoryMethod(Class<?> type) {
         if (type == null || type.isPrimitive() || type.isArray() || type.isInterface() || type.isEnum()) {
@@ -1604,7 +1604,7 @@ public final class PropertyBindingSupport {
 
     /**
      * Finds the best matching constructor for the given parameters.
-     * <p/>
+     * <p>
      * This implementation is similar to the logic in camel-bean.
      *
      * @param  constructors the constructors
@@ -1724,7 +1724,7 @@ public final class PropertyBindingSupport {
 
     /**
      * Finds the best matching factory methods for the given parameters.
-     * <p/>
+     * <p>
      * This implementation is similar to the logic in camel-bean.
      *
      * @param  camelContext  the camel context
@@ -1801,7 +1801,7 @@ public final class PropertyBindingSupport {
      * the given parameters: a whole number is an int (and then a long), a boolean is a boolean, and a bean is of its
      * own type (rather than a super type).
      *
-     * @return the most specific, or <tt>null</tt> if there is no single most specific
+     * @return the most specific, or <code>null</code> if there is no single most specific
      */
     private static <T extends Executable> T mostSpecific(CamelContext camelContext, List<T> candidates, String[] params) {
         T best = null;
@@ -1846,13 +1846,13 @@ public final class PropertyBindingSupport {
     }
 
     /**
-     * Determines and maps the given value is valid according to the supported values by the bean component.
-     * <p/>
+     * Determines and maps the given value if it is valid according to the supported values by the bean component.
+     * <p>
      * This implementation is similar to the logic in camel-bean.
      *
      * @param  camelContext the camel context
      * @param  value        the value
-     * @return              the parameter type the given value is being mapped as, or <tt>null</tt> if not valid.
+     * @return              the parameter type the given value is being mapped as, or <code>null</code> if not valid.
      */
     private static Class<?> getValidParameterType(CamelContext camelContext, String value) {
         if (org.apache.camel.util.ObjectHelper.isEmpty(value)) {

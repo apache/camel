@@ -48,8 +48,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A file based {@link org.apache.camel.spi.ResourceReloadStrategy} which watches a file folder for modified files and
- * reload on file changes.
- * <p/>
+ * reloads on file changes.
+ * <p>
  * The folder is scanned on an interval and each file's modification time and size compared with the previous scan, the
  * way the file component finds changed files. A scan therefore reports all the files of one save together, which is
  * what a reload needs: a route is built with the properties of the moment, so a route and a property saved together
@@ -172,7 +172,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
 
     /**
      * Reloads the files changed since the last scan now, rather than at the next scan, as the Camel CLI asks for right
-     * after an edit (<tt>camel cmd reload --wait</tt>). A file still being written, such as the one just edited, is
+     * after an edit (<code>camel cmd reload --wait</code>). A file still being written, such as the one just edited, is
      * waited for. The files are reloaded on the calling thread, one scan at a time with the watcher.
      *
      * @return the files that changed, also those that are gone; empty when nothing changed
@@ -261,7 +261,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     /**
      * The files whose modification time or length changed since the previous scan, plus the files that are gone. The
      * snapshot is updated as it goes, so a file is reported once per change.
-     * <p/>
+     * <p>
      * A file modified less than {@link #stableTimeout} ago is left for the next scan: a save still being written would
      * otherwise be reloaded half-finished.
      */

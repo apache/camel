@@ -96,7 +96,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
 
     /**
      * Creates a new file based repository using the given {@link java.util.Map} as 1st level cache.
-     * <p/>
+     * <p>
      * Care should be taken to use a suitable underlying {@link java.util.Map} to avoid this class being a memory leak.
      *
      * @param store the file store
@@ -345,7 +345,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
 
     /**
      * Sets the maximum file size for the file store in bytes.
-     * <p/>
+     * <p>
      * The default is 1mb.
      */
     @ManagedAttribute(description = "The maximum file size for the file store in bytes")

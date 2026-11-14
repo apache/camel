@@ -25,9 +25,9 @@ import java.util.Set;
 
 /**
  * A named group of options. A group of options requires that a set of component parameters is given as a whole.
- *
- * <a id="#syntax">The option syntax can be {@code "propertyName"} to denote required property and
- * {@code "!propertyName"} to denote required absence of a property.
+ * <p>
+ * The option syntax can be {@code "propertyName"} to denote a required property and {@code "!propertyName"} to denote
+ * required absence of a property.
  */
 public final class OptionsGroup implements Serializable {
     private final String name;
