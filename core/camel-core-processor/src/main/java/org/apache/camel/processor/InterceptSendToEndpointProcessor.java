@@ -154,17 +154,27 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
             exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
         }
         AsyncProcessor before = AsyncProcessorConverterHelper.convert(current.before());
-        return before.process(exchange, doneSync -> afterBefore(exchange, chain, index, current, callback, doneSync));
+        // what the rest of the chain returned: read only when the before was done on this thread, before it returned
+        boolean[] rest = { true };
+        boolean sync = before.process(exchange,
+                doneSync -> rest[0] = afterBefore(exchange, chain, index, current, callback, doneSync));
+        // the value the callback is called with: false when the before or the rest of the chain went asynchronous
+        return sync && rest[0];
     }
 
-    private void afterBefore(
+    /**
+     * Goes on after the before processor of the interceptor, and returns whether the rest was done synchronously. The
+     * callback is called with false when the before or anything after it was asynchronous, so it gets the value that
+     * {@link #process(Exchange, AsyncCallback)} returns (the contract of {@link AsyncProcessor}).
+     */
+    private boolean afterBefore(
             Exchange exchange, List<Interceptor> chain, int index, Interceptor current, AsyncCallback callback,
             boolean doneSync) {
         // Decide whether to continue or not; similar logic to the Pipeline
         // check for error if so we should break out
         if (!continueProcessing(exchange, "skip sending to original intended destination: " + getEndpoint(), LOG)) {
             callback.done(doneSync);
-            return;
+            return doneSync;
         }
 
         // if the interceptor has predicate, then we should only skip if matched
@@ -176,24 +186,27 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
                         getEndpoint(), exchange);
             }
             callback.done(doneSync);
-            return;
+            return doneSync;
         }
 
         ExchangeHelper.prepareOutToIn(exchange);
 
         AsyncCallback ac1 = doneSync1 -> {
             exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
-            callback.done(doneSync1);
+            callback.done(doneSync && doneSync1);
         };
-        AsyncCallback ac2 = null;
+        AsyncCallback next = ac1;
+        // what the after processor returned: read only when the rest of the chain was done on this thread
+        boolean[] afterSync = { true };
         if (current.after() != null && matched) {
             AsyncProcessor after = AsyncProcessorConverterHelper.convert(current.after());
-            ac2 = doneSync2 -> after.process(exchange, ac1);
+            next = doneSync2 -> afterSync[0] = after.process(exchange, doneSync3 -> ac1.done(doneSync2 && doneSync3));
         }
 
         // route to the next interceptor (or the original destination) and when done, then
         // optional route to the after processor
-        process(exchange, chain, index + 1, ac2 != null ? ac2 : ac1);
+        boolean sync = process(exchange, chain, index + 1, next);
+        return doneSync && sync && afterSync[0];
     }
 
     @Override
