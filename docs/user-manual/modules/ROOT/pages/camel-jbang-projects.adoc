@@ -278,6 +278,11 @@ camel plugin get
 camel plugin delete <plugin-name>
 ----
 
+`camel plugin add` checks that a plugin it does not know (neither a plugin of the Apache Camel project nor a known
+community plugin) can be loaded before it stores it: a name such as `kubernets` exits with code `3` and the plugins of a
+similar name. Give `--gav` for a plugin of your own. A stored plugin that cannot be loaded no longer fails `camel run`
+and `camel export`: they warn and go on without it.
+
 === Custom plugin configuration
 
 By default, the CLI stores the plugin configuration in `~/.camel-jbang-plugins.json`.

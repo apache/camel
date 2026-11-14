@@ -32,6 +32,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.jar.JarEntry;
@@ -422,12 +424,26 @@ public final class PluginHelper {
                     compatibilityCheck(main.getOut(), version, name, properties);
                 }
 
-                ResolveResult res = resolvePlugin(properties, command, version, gav, repos, main.getOut());
+                // a plugin that only contributes to this command (camel run, camel export): one that cannot be loaded
+                // is left out with a warning, rather than failing the command (CAMEL-26931)
+                boolean contributor = target != null && !target.equals(command);
+                ResolveResult res;
+                try {
+                    res = resolvePlugin(properties, command, version, gav, repos, main.getOut());
+                } catch (RuntimeException e) {
+                    if (!contributor) {
+                        throw e;
+                    }
+                    warnNotLoaded(main.getOut(), name, target, e.getMessage());
+                    continue;
+                }
                 if (res.plugin().isPresent()) {
                     activePlugins.put(command, res.plugin().get());
                     if (res.cacheWritten()) {
                         configDirty = true;
                     }
+                } else if (contributor) {
+                    warnNotLoaded(main.getOut(), name, target, "camel-jbang-plugin-" + command + " not found");
                 } else {
                     throw CliException.failure("camel-jbang-plugin-" + command + " not found");
                 }
@@ -438,6 +454,17 @@ public final class PluginHelper {
         }
 
         return activePlugins;
+    }
+
+    // the plugins already warned about, per printer (one per command), as a command may look up the plugins more
+    // than once
+    private static final Map<Printer, Set<String>> WARNED_NOT_LOADED = Collections.synchronizedMap(new WeakHashMap<>());
+
+    private static void warnNotLoaded(Printer printer, String name, String target, String reason) {
+        if (WARNED_NOT_LOADED.computeIfAbsent(printer, p -> ConcurrentHashMap.newKeySet()).add(name)) {
+            printer.printWarn("Plugin " + name + " cannot be loaded (" + reason + "), so camel " + target
+                              + " goes on without it: remove it with camel plugin delete " + name);
+        }
     }
 
     public static Optional<Plugin> getPlugin(String name, String defaultVersion, String gav, String repos, Printer printer) {

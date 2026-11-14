@@ -243,6 +243,29 @@ public class PluginHelperTest {
     }
 
     @Test
+    public void aPluginThatCannotBeLoadedDoesNotFailCamelRun() throws Exception {
+        Path jar = tempDir.resolve("fake-plugin.jar");
+        FakePluginJar.write(jar, "fake");
+        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        long staleMtime = Files.getLastModifiedTime(jar).toMillis() - 1000;
+        // without appliesTo the plugin contributes to camel run and camel export, and it cannot be resolved
+        writeConfig(buildEntry("fake", camelVersion, jar, staleMtime));
+        StringPrinter printer = new StringPrinter();
+        QuitCapture main = new QuitCapture();
+        main.withPrinter(printer);
+
+        // before, camel run failed for it (CAMEL-26931): it is left out with a warning
+        Map<String, Plugin> plugins = assertDoesNotThrow(() -> PluginHelper.getActivePlugins(main, null, "run", true));
+
+        assertTrue(plugins.isEmpty());
+        assertTrue(printer.getStderr().contains("Plugin fake cannot be loaded (camel-jbang-plugin-fake not found), so camel"
+                                                + " run goes on without it: remove it with camel plugin delete fake"),
+                printer.getStderr());
+        // its own command still fails
+        assertThrows(CliException.class, () -> PluginHelper.getActivePlugins(main, null, "fake"));
+    }
+
+    @Test
     public void testCachedPluginThatDoesNotLinkIsResolvedAgain() throws Exception {
         Path jar = tempDir.resolve("unlinked-plugin.jar");
         FakePluginJar.write(jar, "fake", UnlinkedFakePlugin.class.getName());
