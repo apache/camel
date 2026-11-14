@@ -15,7 +15,8 @@ ticket is shared, so leave it unassigned.
    [open pull requests for CAMEL-23832](https://github.com/apache/camel/pulls?q=is%3Apr+is%3Aopen+CAMEL-23832), so that
    you don't take a component that is already in progress.
 3. Open one pull request per component, with CAMEL-23832 in the title. In the same pull request, write `yes` in the
-   "Done" column of the component. If the pull request covers only some of its schemes, write those schemes instead.
+   "Done" column of the component. If the pull request covers only some of its schemes, write those schemes instead. If
+   the table conflicts with another pull request, keep both changes.
 
 ## What to change
 
@@ -28,7 +29,8 @@ ticket is shared, so leave it unassigned.
   sentence that says what the component does, starting with a verb such as Send, Receive or Expose, and name no options.
   It appears in one-line places, such as the component list on the website. The build keeps the Javadoc only up to the
   first line that ends with a period.
-- Change only description text: no option names, default values, labels or types.
+- Change only description text: no option names, default values, labels or types. If you find such a problem, for
+  example a wrong label, report it in the pull request description, so that the reviewers can decide how to fix it.
 
 ## Regenerating the files
 
@@ -40,11 +42,13 @@ these folders, in this order. Do not pass `-Dquickly` here, because it skips the
 3. `dsl/camel-endpointdsl`
 4. `dsl/camel-componentdsl`, if a component option or the component description changed
 
-Commit all generated files in the same commit: the component JSON and its copy in the catalog, the Endpoint DSL and Component DSL classes. If the component description changed, also commit the doc page and its copy in the catalog.
+Commit all generated files in the same commit: the component JSON and its copy in the catalog, the Endpoint DSL and
+Component DSL classes. If the component description changed, also commit the doc page and its copy in the catalog.
 
 ## Components
 
-One row per Maven artifact, with the schemes that it provides.
+One row per Maven artifact, with the schemes that it provides. A pull request that adds or removes a component also adds
+or removes its row.
 
 | Artifact | Schemes | Done |
 |---|---|---|
@@ -349,7 +353,7 @@ One row per Maven artifact, with the schemes that it provides.
 | camel-spring-ldap | spring-ldap |  |
 | camel-spring-rabbitmq | spring-rabbitmq |  |
 | camel-spring-redis | spring-redis |  |
-| camel-spring-ws | spring-ws |  |
+| camel-spring-ws | spring-ws | yes |
 | camel-sql | sql, sql-stored |  |
 | camel-ssh | ssh |  |
 | camel-state-store | state-store |  |
