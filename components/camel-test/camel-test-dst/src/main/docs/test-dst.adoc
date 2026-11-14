@@ -64,6 +64,16 @@ checks:
 |===
 |Component |World (tests) |Fake |What it covers |Issues
 
+|camel-aws2-kinesis
+|`KinesisWorld` (`KinesisConsumerDstTest`)
+|FakeKinesis: a data stream with shards that can be split and merged (GetShardIterator, GetRecords, ListShards) bound as amazonKinesisClient
+a|* the iterator types TRIM_HORIZON and LATEST, with one or two shards at the start and more after resharding
+* shard iterators that expire between two polls, while the route is suspended or an exchange is slow
+* a closed shard and its child shards after a split or a merge (shardClosed ignore and silent)
+* checkpoints with the resumable EIP and KinesisResumeStrategy, and the resume after a route restart
+* route restart and route suspend and resume between two polls
+|CAMEL-25569, CAMEL-25942
+
 |camel-aws2-sqs
 |`SqsWorld` (`SqsRedeliveryDstTest`, `SqsVisibilityDstTest`)
 |FakeSqs: a standard SQS queue (ReceiveMessage, DeleteMessage, ChangeMessageVisibilityBatch) bound as amazonSQSClient
