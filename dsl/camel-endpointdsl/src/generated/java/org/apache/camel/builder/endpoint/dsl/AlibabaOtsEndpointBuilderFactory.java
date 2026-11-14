@@ -114,8 +114,8 @@ public interface AlibabaOtsEndpointBuilderFactory {
         }
         /**
          * The AccessKey pair as an
-         * org.apache.camel.component.alibaba.common.models.ServiceKeys, whose
-         * accessKey is the AccessKey ID and whose secretKey is the AccessKey
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
          * secret. Each of the two is used when the option of the same name is
          * not set. Not used when the otsClient option is set or autowired.
          * 
@@ -133,8 +133,8 @@ public interface AlibabaOtsEndpointBuilderFactory {
         }
         /**
          * The AccessKey pair as an
-         * org.apache.camel.component.alibaba.common.models.ServiceKeys, whose
-         * accessKey is the AccessKey ID and whose secretKey is the AccessKey
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
          * secret. Each of the two is used when the option of the same name is
          * not set. Not used when the otsClient option is set or autowired.
          * 
@@ -214,8 +214,9 @@ public interface AlibabaOtsEndpointBuilderFactory {
          * instanceName, accessKey, secretKey and serviceKeys options are not
          * used. The Camel endpoint does not shut down a client that is set or
          * autowired. If no client is set or autowired, the Camel endpoint
-         * creates a SyncClient from these options when the producer processes
-         * its first message, and shuts it down when the Camel endpoint stops.
+         * creates a SyncClient from these options. It creates this client when
+         * the producer processes its first message, and shuts it down when the
+         * Camel endpoint stops.
          * 
          * The option is a:
          * <code>com.alicloud.openservices.tablestore.SyncClient</code> type.
@@ -235,8 +236,9 @@ public interface AlibabaOtsEndpointBuilderFactory {
          * instanceName, accessKey, secretKey and serviceKeys options are not
          * used. The Camel endpoint does not shut down a client that is set or
          * autowired. If no client is set or autowired, the Camel endpoint
-         * creates a SyncClient from these options when the producer processes
-         * its first message, and shuts it down when the Camel endpoint stops.
+         * creates a SyncClient from these options. It creates this client when
+         * the producer processes its first message, and shuts it down when the
+         * Camel endpoint stops.
          * 
          * The option will be converted to a
          * <code>com.alicloud.openservices.tablestore.SyncClient</code> type.

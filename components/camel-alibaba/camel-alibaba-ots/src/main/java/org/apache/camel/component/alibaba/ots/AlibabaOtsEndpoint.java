@@ -91,8 +91,8 @@ public class AlibabaOtsEndpoint extends DefaultEndpoint {
               displayName = "Secret Key", security = "secret", label = "security")
     private String secretKey;
 
-    @UriParam(description = "The AccessKey pair as an org.apache.camel.component.alibaba.common.models.ServiceKeys, whose"
-                            + " accessKey is the AccessKey ID and whose secretKey is the AccessKey secret. Each of the two is"
+    @UriParam(description = "The AccessKey pair as an org.apache.camel.component.alibaba.common.models.ServiceKeys. Its"
+                            + " accessKey is the AccessKey ID and its secretKey is the AccessKey secret. Each of the two is"
                             + " used when the option of the same name is not set. Not used when the otsClient option is set or"
                             + " autowired.",
               displayName = "Service Keys", security = "secret", label = "security")
@@ -101,8 +101,9 @@ public class AlibabaOtsEndpoint extends DefaultEndpoint {
     @UriParam(description = "To use a custom com.alicloud.openservices.tablestore.SyncClient. The producer sends its requests"
                             + " with this client, and the endpoint, instanceName, accessKey, secretKey and serviceKeys options"
                             + " are not used. The Camel endpoint does not shut down a client that is set or autowired. If no"
-                            + " client is set or autowired, the Camel endpoint creates a SyncClient from these options when the"
-                            + " producer processes its first message, and shuts it down when the Camel endpoint stops.",
+                            + " client is set or autowired, the Camel endpoint creates a SyncClient from these options. It"
+                            + " creates this client when the producer processes its first message, and shuts it down when the"
+                            + " Camel endpoint stops.",
               displayName = "OTS Client", label = "advanced")
     @Metadata(autowired = true)
     private SyncClient otsClient;
