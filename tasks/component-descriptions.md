@@ -1,8 +1,8 @@
 # Component and option descriptions (CAMEL-23832)
 
-[CAMEL-23832](https://issues.apache.org/jira/browse/CAMEL-23832) improves the description of every component option, and
-the description of what each component does, so that they are clear to people and to AI tools. The same was already done
-for the EIPs.
+[CAMEL-23832](https://issues.apache.org/jira/browse/CAMEL-23832) improves the description of every component option and
+the description of what each component does. The goal is clarity for people and AI tools. The EIPs already have improved
+descriptions.
 
 This file tracks which components are done. Anyone, person or agent, can take a component that is not done yet. The
 ticket is shared, so leave it unassigned.
@@ -26,7 +26,7 @@ ticket is shared, so leave it unassigned.
 - Use the official terms of Java and of the library that the component uses, and describe only what the code does.
 - The component description is the Javadoc of the endpoint class, the class annotated with `@UriEndpoint`. Write one
   sentence that says what the component does, starting with a verb such as Send, Receive or Expose, and name no options.
-  It is shown in one-line places, such as the component list on the website. The build keeps the Javadoc only up to the
+  It appears in one-line places, such as the component list on the website. The build keeps the Javadoc only up to the
   first line that ends with a period.
 - Change only description text: no option names, default values, labels or types.
 
