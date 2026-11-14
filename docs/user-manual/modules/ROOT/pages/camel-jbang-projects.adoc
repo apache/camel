@@ -412,7 +412,8 @@ camel generate rest --input=petstore.yaml --dto --runtime=quarkus --package=com.
 ----
 
 `--routes` also generates a route for each operation (YAML only), and `--dto` generates Java data objects
-for the schemas of the specification.
+for the schemas of the specification. Each generated route has a `log` step that says it is not implemented yet: the
+routes run as they are (`camel run petstore-rest.yaml`), and you replace that step with the implementation.
 
 === JSON schema
 

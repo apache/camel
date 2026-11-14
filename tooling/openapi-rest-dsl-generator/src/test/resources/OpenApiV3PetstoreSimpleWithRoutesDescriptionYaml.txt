@@ -9,6 +9,8 @@
         type: "body"
       to: "direct:rest1"
 - route:
+    description: "Update Pet Data"
     from:
       uri: "direct:rest1"
-      description: "Update Pet Data"
+      steps:
+      - log: "Not implemented yet: direct:rest1"

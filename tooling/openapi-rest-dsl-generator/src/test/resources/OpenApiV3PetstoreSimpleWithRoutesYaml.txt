@@ -10,3 +10,5 @@
 - route:
     from:
       uri: "direct:rest1"
+      steps:
+      - log: "Not implemented yet: direct:rest1"
