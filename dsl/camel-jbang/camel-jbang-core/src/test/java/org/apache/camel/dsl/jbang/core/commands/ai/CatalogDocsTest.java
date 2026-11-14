@@ -261,6 +261,20 @@ class CatalogDocsTest {
     }
 
     @Test
+    void aMisspelledNameSuggestsTheNameItIsATypoOf() throws Exception {
+        // the suggestions match by name, alias and title: a typo had none (CAMEL-26932)
+        JsonObject artifact = catalogDoc(Map.of("name", "kafak"));
+        assertTrue(artifact.getString("error").contains("not found"), artifact.toJson());
+        assertEquals(List.of("kafka"), artifact.getCollection("suggestions"), artifact.toJson());
+
+        JsonObject component = catalogDoc(Map.of("name", "platfrom-http", "kind", "component"));
+        assertEquals(List.of("platform-http"), component.getCollection("suggestions"), component.toJson());
+
+        // a name that is close to nothing still has no suggestions
+        assertNull(catalogDoc(Map.of("name", "nosuchthing")).get("suggestions"));
+    }
+
+    @Test
     void docPageReturnsALanguageSubPageAsText() throws Exception {
         JsonObject operators = catalogDoc(Map.of("name", "simple", "kind", "language", "docPage", "operators"));
         assertTrue(operators.getString("doc").contains("There *must* be spaces around the operator"));
