@@ -86,6 +86,15 @@ wildcard to select a file, use the real name of the file in the producer, and th
 consumer that lists the directory instead of a wildcard in `fileName` with `useList=false`. See the
 xref:components::sftp-component.adoc[SFTP component].
 
+=== camel-wordpress - each endpoint uses its own site URL and credentials
+
+Each WordPress endpoint now has a client of its own, set up from the `url`, `apiVersion`, `user` and `password`
+options of that endpoint, and the producers and consumers of the endpoint use that client. The endpoints no longer
+initialise the `WordpressServiceProvider.getInstance()` singleton, which is deprecated together with its `init`
+methods. Code that read services from `WordpressServiceProvider.getInstance()` after Camel created a WordPress endpoint
+must now use `WordpressEndpoint.getServiceProvider()`, or create a provider with
+`WordpressServiceProvider.create(WordpressAPIConfiguration)`.
+
 === camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
 
 A `hazelcast-seda` consumer now restores the headers and exchange properties of an exchange that a producer with
