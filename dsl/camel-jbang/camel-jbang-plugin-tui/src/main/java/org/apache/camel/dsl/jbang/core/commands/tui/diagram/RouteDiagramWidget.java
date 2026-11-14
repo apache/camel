@@ -192,8 +192,8 @@ public class RouteDiagramWidget implements Widget {
             }
         }
         // the dots over the lines, before the boxes
-        for (FlowArrow arrow : flowArrows) {
-            drawFlowDots(buffer, area, arrow);
+        for (FlowDots.Path arrow : flowArrows) {
+            FlowDots.draw(buffer, area, scrollX, scrollY, arrow, flow.get(arrow.key()), density.boxed(), FLOW_KEEP);
         }
 
         // Nodes (on top, skip the structural "route" node)
@@ -309,11 +309,7 @@ public class RouteDiagramWidget implements Widget {
 
     private FlowAnimation flow;
     /** The arrows the dots of the flow move on, in the order the messages go along their cells. */
-    private final List<FlowArrow> flowArrows = new ArrayList<>();
-
-    /** The cells of an arrow before its head, and its head (boxed steps only), which lights up as a dot comes in. */
-    private record FlowArrow(String key, int fromRow, List<int[]> cells, int[] head) {
-    }
+    private final List<FlowDots.Path> flowArrows = new ArrayList<>();
 
     /**
      * The messages moving through the route (with the metrics on): dots on the arrows that move faster and closer
@@ -1188,8 +1184,8 @@ public class RouteDiagramWidget implements Widget {
     // ---- the flow of the messages ----
 
     private static final String SPINNER = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
-    /** The cell of a line lit up as it is: no dot on it. */
-    private static final char LIT = 0;
+    /** What a dot does not cover: the frame of a block, and the head of another arrow. */
+    private static final String FLOW_KEEP = "" + SCOPE_H + SCOPE_V + ARROW;
 
     private String flowKey(LayoutNode node) {
         return layoutRoute.routeId + "/" + node.id;
@@ -1199,17 +1195,17 @@ public class RouteDiagramWidget implements Widget {
      * The counts of the steps to the flow: of each step for when it is stuck, and of the arrow into it for its dots.
      */
     private void updateFlow() {
-        Map<String, StatInfo> stats = new HashMap<>();
+        Map<String, FlowAnimation.Reading> stats = new HashMap<>();
         for (LayoutNode ln : layoutRoute.nodes) {
             if (ln.id == null || ln.treeNode == null || "route".equals(ln.type)) {
                 continue;
             }
             if (ln.treeNode.info.stat != null) {
-                stats.put(flowKey(ln), ln.treeNode.info.stat);
+                stats.put(flowKey(ln), FlowAnimation.Reading.of(ln.treeNode.info.stat));
             }
             StatInfo in = resolveStatInfo(ln);
             if (in != null) {
-                stats.put(flowKey(ln) + ">", in);
+                stats.put(flowKey(ln) + ">", FlowAnimation.Reading.of(in));
             }
         }
         flow.update(stats);
@@ -1217,88 +1213,10 @@ public class RouteDiagramWidget implements Widget {
 
     /** The cells of an arrow as drawn by {@link #drawArrowPath}, in the order a message goes along them. */
     private void addFlowArrow(LayoutNode to, int fromCx, int fromRow, int toCx, int toRow) {
-        if (flow == null || to.id == null || fromRow >= toRow) {
-            return;
+        if (flow != null && to.id != null && fromRow < toRow) {
+            // a boxed step has the head of the arrow above it; without boxes the line goes on to the mark of the step
+            flowArrows.add(FlowDots.path(flowKey(to) + ">", fromCx, fromRow, toCx, toRow, density.boxed() ? ARROW : 0));
         }
-        // a boxed step has the head of the arrow above it; without boxes the line goes on to the mark of the step
-        int end = density.boxed() ? toRow - 1 : toRow;
-        List<int[]> cells = new ArrayList<>();
-        if (fromCx == toCx) {
-            for (int r = fromRow; r < end; r++) {
-                cells.add(new int[] { r, fromCx });
-            }
-        } else {
-            int midRow = fromRow + (toRow - fromRow) / 2;
-            for (int r = fromRow; r < midRow; r++) {
-                cells.add(new int[] { r, fromCx });
-            }
-            int step = toCx > fromCx ? 1 : -1;
-            for (int c = fromCx; c != toCx + step; c += step) {
-                cells.add(new int[] { midRow, c });
-            }
-            for (int r = midRow + 1; r < end; r++) {
-                cells.add(new int[] { r, toCx });
-            }
-        }
-        int[] head = density.boxed() ? new int[] { toRow - 1, toCx } : null;
-        flowArrows.add(new FlowArrow(flowKey(to) + ">", fromRow, cells, head));
-    }
-
-    /** The dots on an arrow that messages go along, red when most of them fail. */
-    private void drawFlowDots(Buffer buffer, Rect area, FlowArrow arrow) {
-        FlowAnimation.Track t = flow.get(arrow.key());
-        if (t == null || t.rate() <= 0) {
-            return;
-        }
-        int spacing = FlowAnimation.spacing(t.rate());
-        long moved = (long) Math.floor(t.phase());
-        // the foreground of the theme: the dots are lights on the lines, whatever the colours of the steps are
-        Color head = t.failRate() * 2 > t.rate() ? failColor() : Theme.baseFg();
-        Color tail = mix(head, Theme.muted().fg().orElse(Color.GRAY), 0.5);
-        List<int[]> cells = arrow.cells();
-        // without boxes a dot would look like the mark of a step: the line itself lights up there
-        char dot = density.boxed() ? '●' : LIT;
-        char trail = density.boxed() ? '•' : LIT;
-        // the head last: an arrow of a compact route is only its head, which then lights up as the dots come by
-        int last = arrow.head() != null ? cells.size() : cells.size() - 1;
-        for (int i = 0; i <= last; i++) {
-            // counted from the top of the diagram: below a box the dots go on at the same pace
-            if (Math.floorMod(arrow.fromRow() + i - moved, spacing) == 0) {
-                if (i == cells.size()) {
-                    flowDot(buffer, area, arrow.head(), ARROW, Style.EMPTY.fg(head).bold(), true);
-                } else {
-                    flowDot(buffer, area, cells.get(i), dot,
-                            density.boxed() ? Style.EMPTY.fg(head) : Style.EMPTY.fg(head).bold(), false);
-                }
-                if (i > 0) {
-                    flowDot(buffer, area, cells.get(i - 1), trail, Style.EMPTY.fg(tail), false);
-                }
-            }
-        }
-    }
-
-    /**
-     * A dot on a line of an arrow, or its head lit up: a count, a label or the frame of a block on the way stays.
-     */
-    private void flowDot(Buffer buffer, Rect area, int[] cell, char ch, Style style, boolean onHead) {
-        int x = area.x() + cell[1] - scrollX;
-        int y = area.y() + cell[0] - scrollY;
-        if (x < area.left() || x >= area.right() || y < area.top() || y >= area.bottom()) {
-            return;
-        }
-        String existing = buffer.get(x, y).symbol();
-        // a head on the line of a branch (compact) is the head of that arrow, not a cell of its line
-        if (onHead
-                ? !existing.equals(String.valueOf(ARROW))
-                : !existing.isEmpty() && (Character.isLetterOrDigit(existing.codePointAt(0))
-                        || existing.charAt(0) == SCOPE_H || existing.charAt(0) == SCOPE_V
-                        || existing.charAt(0) == ARROW)) {
-            return;
-        }
-        if (ch == LIT && existing.isBlank()) {
-            return;
-        }
-        buffer.setString(x, y, ch == LIT ? existing : String.valueOf(ch), style);
     }
 
     /**
@@ -1306,35 +1224,7 @@ public class RouteDiagramWidget implements Widget {
      * on the lines of the other zoom levels: the steps of a busy path light up one after another.
      */
     private Color lit(Color base, LayoutNode node, int row) {
-        FlowAnimation.Track t = flow != null && node.id != null ? flow.get(flowKey(node) + ">") : null;
-        if (t == null || t.rate() <= 0) {
-            return base;
-        }
-        int spacing = FlowAnimation.spacing(t.rate());
-        int at = Math.floorMod(row - (long) Math.floor(t.phase()), spacing);
-        Color light = t.failRate() * 2 > t.rate() ? failColor() : Theme.baseFg();
-        if (at == 0) {
-            return mix(base, light, 0.7);
-        }
-        return at == spacing - 1 ? mix(base, light, 0.35) : base;
-    }
-
-    /** The colour between two colours, {@code t} of the way from the first. */
-    static Color mix(Color from, Color to, double t) {
-        if (t <= 0) {
-            return from;
-        }
-        try {
-            Color.Rgb a = from.toRgb();
-            Color.Rgb b = to.toRgb();
-            return Color.rgb(
-                    a.r() + (int) Math.round((b.r() - a.r()) * t),
-                    a.g() + (int) Math.round((b.g() - a.g()) * t),
-                    a.b() + (int) Math.round((b.b() - a.b()) * t));
-        } catch (RuntimeException e) {
-            // a colour without RGB (the default of the terminal)
-            return t < 0.5 ? from : to;
-        }
+        return FlowDots.lit(base, flow != null && node.id != null ? flow.get(flowKey(node) + ">") : null, row);
     }
 
     /**

@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,10 +61,10 @@ class FlowAnimationTest {
 
     @Test
     void theFramesBetweenTwoReloadsKeepTheRate() {
-        StatInfo first = stat(0, 0, 0);
+        FlowAnimation.Reading first = stat(0, 0, 0);
         flow.update(Map.of("a", first));
         clock.addAndGet(1000);
-        StatInfo second = stat(20, 0, 0);
+        FlowAnimation.Reading second = stat(20, 0, 0);
         flow.update(Map.of("a", second));
         double phase = flow.get("a").phase();
 
@@ -77,11 +76,24 @@ class FlowAnimationTest {
     }
 
     @Test
+    void theSameCountsLaidOutAgainSoonAfterAreNoNewReading() {
+        flow.update(Map.of("a", stat(0, 0, 0)));
+        clock.addAndGet(1000);
+        flow.update(Map.of("a", stat(20, 0, 0)));
+
+        // a zoom lays the diagram out again: new objects, the same counts
+        clock.addAndGet(FlowAnimation.FRAME_MS);
+        flow.update(Map.of("a", stat(20, 0, 0)));
+
+        assertThat(flow.get("a").rate()).as("still moving").isCloseTo(20, within(0.01));
+    }
+
+    @Test
     void withNoNewCountsNothingMoves() {
-        StatInfo stat = stat(0, 0, 0);
+        FlowAnimation.Reading stat = stat(0, 0, 0);
         flow.update(Map.of("a", stat));
         clock.addAndGet(1000);
-        StatInfo busy = stat(30, 0, 0);
+        FlowAnimation.Reading busy = stat(30, 0, 0);
         flow.update(Map.of("a", busy));
 
         clock.addAndGet(FlowAnimation.STALE_MS + 1);
@@ -132,7 +144,7 @@ class FlowAnimationTest {
 
     @Test
     void aFrameIsDueOnlyWhileSomethingMoves() {
-        StatInfo quiet = stat(5, 0, 0);
+        FlowAnimation.Reading quiet = stat(5, 0, 0);
         flow.update(Map.of("a", quiet));
         clock.addAndGet(1000);
         flow.update(Map.of("a", stat(5, 0, 0)));
@@ -159,11 +171,8 @@ class FlowAnimationTest {
         assertThat(FlowAnimation.speed(0)).isZero();
     }
 
-    private static StatInfo stat(long total, long failed, long inflight) {
-        StatInfo s = new StatInfo();
-        s.exchangesTotal = total;
-        s.exchangesFailed = failed;
-        s.exchangesInflight = inflight;
-        return s;
+    /** The counts of a reload: a new object each time, as a reload brings. */
+    private static FlowAnimation.Reading stat(long total, long failed, long inflight) {
+        return new FlowAnimation.Reading(new Object(), total, failed, inflight);
     }
 }

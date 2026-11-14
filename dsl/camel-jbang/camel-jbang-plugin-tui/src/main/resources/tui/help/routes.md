@@ -162,6 +162,7 @@ in the diagram.
   topology (top right of a route) and the tree of the route (bottom right)
 - `Esc` — close diagram (back to route table)
 - `m` — toggle metrics on/off
+- `w` — toggle the live flow: dots on the edges into the routes that get messages
 - `e` — toggle external systems on/off
 - `n` — toggle description labels
 

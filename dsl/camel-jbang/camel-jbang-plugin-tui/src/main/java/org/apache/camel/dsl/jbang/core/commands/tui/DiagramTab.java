@@ -547,6 +547,7 @@ class DiagramTab extends AbstractDiagramTab {
                 }
                 toggles.add(new SubViewBar.Toggle("x", "errors", errorsToggle()));
                 toggles.add(new SubViewBar.Toggle("m", "metrics", metrics));
+                toggles.add(new SubViewBar.Toggle("w", "flow", diagram.zoom.flow().isEnabled() ? "on" : "off"));
                 toggles.add(new SubViewBar.Toggle(
                         "e", "external",
                         switch (externalMode) {

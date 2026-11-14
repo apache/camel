@@ -27,10 +27,10 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
  * The messages moving through a route diagram while it is on screen: how many a second reach each step, and the steps
  * where exchanges wait without any finishing.
  * <p>
- * The numbers come from the stats of the steps, which the diagram loads again about once a second: a reload brings new
- * {@link StatInfo} objects, and the change of the counts since the last one is the rate. The frames in between (every
- * {@link #FRAME_MS} ms) move the dots on the arrows, so the diagram shows where the messages go without any more calls
- * to the integration.
+ * The numbers come from the counts of the steps (or the routes of a topology), which the diagram loads again about once
+ * a second: a reload brings new objects to read them from, and the change of the counts since the last one is the rate.
+ * The frames in between (every {@link #FRAME_MS} ms) move the dots on the arrows, so the diagram shows where the
+ * messages go without any more calls to the integration.
  */
 public final class FlowAnimation {
 
@@ -40,14 +40,29 @@ public final class FlowAnimation {
     static final long STALE_MS = 3000;
     /** Exchanges that wait at a step this long without one finishing make it a stuck step. */
     static final long STUCK_MS = 2000;
+    /**
+     * A new object with the same counts this soon after the last reading is the same reading laid out again (a zoom).
+     */
+    private static final long RELAID_MS = 500;
     /** A track not seen for this long (another route, a step gone after a reload) is forgotten. */
     private static final long FORGET_MS = 60_000;
     /** How much of the rate is from the readings before the last one. */
     private static final double SMOOTHING = 0.6;
 
+    /**
+     * The counts of a step or a route as the diagram has them now, from the object they were read from: the same object
+     * again is no new reading.
+     */
+    public record Reading(Object source, long total, long failed, long inflight) {
+
+        public static Reading of(StatInfo stat) {
+            return new Reading(stat, stat.exchangesTotal, stat.exchangesFailed, stat.exchangesInflight);
+        }
+    }
+
     /** What the diagram knows of one step, or of the arrow into it. */
     public static final class Track {
-        private StatInfo last;
+        private Object last;
         private long total;
         private long failed;
         private long sampleAt;
@@ -106,15 +121,15 @@ public final class FlowAnimation {
     }
 
     /**
-     * Brings the tracks up to date with the stats of the steps on screen, by their key: a stats object not seen before
-     * is a new reading of the counts, the same one again is the frame between two reloads. Then the dots move on by the
+     * Brings the tracks up to date with the counts of the steps on screen, by their key: counts from an object not seen
+     * before are a new reading, from the same one again the frame between two reloads. Then the dots move on by the
      * time since the last frame.
      */
-    public void update(Map<String, StatInfo> stats) {
+    public void update(Map<String, Reading> stats) {
         long now = clock.getAsLong();
         double dt = lastUpdate < 0 ? 0 : Math.min(0.25, (now - lastUpdate) / 1000.0);
         lastUpdate = now;
-        for (Map.Entry<String, StatInfo> e : stats.entrySet()) {
+        for (Map.Entry<String, Reading> e : stats.entrySet()) {
             Track t = tracks.computeIfAbsent(e.getKey(), k -> new Track());
             t.seenAt = now;
             read(t, e.getValue(), now);
@@ -129,8 +144,12 @@ public final class FlowAnimation {
         }
     }
 
-    private static void read(Track t, StatInfo stat, long now) {
-        if (stat == t.last) {
+    private static void read(Track t, Reading stat, long now) {
+        if (stat.source() != t.last && t.last != null && now - t.sampleAt < RELAID_MS
+                && stat.total() == t.total && stat.failed() == t.failed) {
+            t.last = stat.source();
+        }
+        if (stat.source() == t.last) {
             if (now - t.sampleAt > STALE_MS) {
                 // no new numbers: nothing is known to move
                 t.rate = 0;
@@ -140,14 +159,14 @@ public final class FlowAnimation {
         }
         if (t.last != null && now > t.sampleAt) {
             double seconds = (now - t.sampleAt) / 1000.0;
-            t.rate = smooth(t.rate, Math.max(0, stat.exchangesTotal - t.total) / seconds);
-            t.failRate = smooth(t.failRate, Math.max(0, stat.exchangesFailed - t.failed) / seconds);
+            t.rate = smooth(t.rate, Math.max(0, stat.total() - t.total) / seconds);
+            t.failRate = smooth(t.failRate, Math.max(0, stat.failed() - t.failed) / seconds);
         }
-        boolean progressed = t.last == null || stat.exchangesTotal > t.total;
+        boolean progressed = t.last == null || stat.total() > t.total;
         if (progressed) {
             t.progressAt = now;
         }
-        t.inflight = stat.exchangesInflight;
+        t.inflight = stat.inflight();
         if (t.inflight > 0 && !progressed) {
             if (t.stuckSince < 0) {
                 t.stuckSince = t.progressAt;
@@ -155,9 +174,9 @@ public final class FlowAnimation {
         } else {
             t.stuckSince = -1;
         }
-        t.last = stat;
-        t.total = stat.exchangesTotal;
-        t.failed = stat.exchangesFailed;
+        t.last = stat.source();
+        t.total = stat.total();
+        t.failed = stat.failed();
         t.sampleAt = now;
     }
 

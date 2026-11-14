@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,6 +71,8 @@ public class TopologyDiagramWidget implements Widget {
     private Set<String> errorMarks = Set.of();
     private Map<TopologyLayoutNode, List<String>> errorLabels;
     private RouteDensity density = RouteDensity.DETAILED;
+    private FlowAnimation flow;
+    private final List<FlowDots.Path> flowArrows = new ArrayList<>();
 
     public record NodeBox(String routeId, int startRow, int endRow, int startCol, int endCol, int layer) {
     }
@@ -269,6 +272,15 @@ public class TopologyDiagramWidget implements Widget {
         return this;
     }
 
+    /**
+     * The messages moving between the routes (with the metrics on): dots on the edges into the routes that get
+     * messages, faster and closer together the more messages a second the route gets.
+     */
+    public TopologyDiagramWidget withFlow(FlowAnimation flow) {
+        this.flow = flow != null && flow.isEnabled() && showMetrics ? flow : null;
+        return this;
+    }
+
     public List<NodeBox> getNodeBoxes() {
         return nodeBoxes;
     }
@@ -276,6 +288,10 @@ public class TopologyDiagramWidget implements Widget {
     @Override
     public void render(Rect area, Buffer buffer) {
         nodeBoxes.clear();
+        flowArrows.clear();
+        if (flow != null) {
+            updateFlow();
+        }
 
         if (errorLayer != null) {
             drawErrorFrame(buffer, area);
@@ -291,6 +307,10 @@ public class TopologyDiagramWidget implements Widget {
             if (edge.selfLoop) {
                 drawSelfLoop(buffer, area, edge);
             }
+        }
+        // the dots over the lines, before the boxes
+        for (FlowDots.Path arrow : flowArrows) {
+            FlowDots.draw(buffer, area, scrollX, scrollY, arrow, flow.get(arrow.key()), density.boxed(), FLOW_KEEP);
         }
 
         for (TopologyLayoutNode node : layout.nodes) {
@@ -641,6 +661,62 @@ public class TopologyDiagramWidget implements Widget {
             }
             setChar(buffer, area, toTop - 1, toCx, head, edgeStyle);
         }
+        String key = flowKey(edge);
+        if (key != null) {
+            flowArrows.add(FlowDots.path(key, fromCx, fromBottom, toCx, toTop, head));
+        }
+    }
+
+    // ---- the flow of the messages ----
+
+    /** What a dot does not cover: the head of another edge. */
+    private static final String FLOW_KEEP = "" + ARROW + REPLY_ARROW;
+
+    /** The key of the counts of a route (or an external system) of the topology. */
+    private static String flowKey(TopologyLayoutNode node) {
+        String id = node.routeId != null ? node.routeId : node.from;
+        return id != null ? "topology/" + id : null;
+    }
+
+    /** The counts of the routes to the flow, and of the external systems that have counts. */
+    private void updateFlow() {
+        Map<String, FlowAnimation.Reading> readings = new HashMap<>();
+        for (TopologyLayoutNode node : layout.nodes) {
+            String key = flowKey(node);
+            if (key != null && counted(node)) {
+                // a reload lays the topology out anew: new nodes are a new reading
+                readings.put(key, new FlowAnimation.Reading(node, node.exchangesTotal, node.exchangesFailed, 0));
+            }
+        }
+        flow.update(readings);
+    }
+
+    /** A route has counts; an external system only when the integration counts its messages. */
+    private static boolean counted(TopologyLayoutNode node) {
+        return !isExternal(node) || node.exchangesTotal > 0;
+    }
+
+    /**
+     * The counts an edge moves at: those of the route it goes into, which gets the messages; or of the route it comes
+     * from when it goes to a system that is not counted. None from a route that gets no messages: the route it goes
+     * into may get them from another one.
+     */
+    private String flowKey(TopologyLayoutEdge edge) {
+        if (flow == null || edge.to == null || edge.from == null) {
+            return null;
+        }
+        String from = flowKey(edge.from);
+        String to = flowKey(edge.to);
+        if (from == null || to == null) {
+            return null;
+        }
+        if (counted(edge.from)) {
+            FlowAnimation.Track source = flow.get(from);
+            if (source == null || source.rate() <= 0) {
+                return null;
+            }
+        }
+        return counted(edge.to) ? to : counted(edge.from) ? from : null;
     }
 
     private void drawSelfLoop(Buffer buffer, Rect area, TopologyLayoutEdge edge) {

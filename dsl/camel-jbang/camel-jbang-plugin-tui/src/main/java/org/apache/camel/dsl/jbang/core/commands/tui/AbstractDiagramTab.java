@@ -83,7 +83,7 @@ abstract class AbstractDiagramTab extends AbstractTab {
 
     /** The route diagram on screen shows messages moving, and its next frame is due. */
     boolean isFlowFrameDue() {
-        return diagram.isShowDiagram() && !topologyMode && diagramMetrics && diagram.zoom.flow().frameDue();
+        return diagram.isShowDiagram() && diagramMetrics && diagram.zoom.flow().frameDue();
     }
 
     /**
@@ -176,8 +176,8 @@ abstract class AbstractDiagramTab extends AbstractTab {
             ctx.backgroundExecutor.execute(diagram.zoom::persist);
             return true;
         }
-        if (!topologyMode && ke.isCharIgnoreCase('w')) {
-            // the messages moving through the route: dots on the arrows, the busy steps warmer
+        if (ke.isCharIgnoreCase('w')) {
+            // the messages moving through the route and between the routes: dots on the arrows
             diagram.zoom.flow().setEnabled(!diagram.zoom.flow().isEnabled());
             ctx.backgroundExecutor.execute(diagram.zoom::persist);
             return true;

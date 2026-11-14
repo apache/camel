@@ -931,7 +931,7 @@ class DiagramSupport {
                 highlightRouteIds(), false)
                 .withAiDescriptions(aiDescriptions(), Theme.aiAssisted()).withNodeLines(nodeLines)
                 .withGroups(groupTags, groupColors).withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
-                .withErrorMarks(errorMarkRouteIds()).withDensity(topologyDensity);
+                .withErrorMarks(errorMarkRouteIds()).withDensity(topologyDensity).withFlow(zoom.flow());
     }
 
     /** A layout engine whose boxes the widget draws the given number of columns wide. */

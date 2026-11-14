@@ -199,8 +199,8 @@ route says how many of its steps were reached with more than one type
 
 ## Live Flow
 
-With the metrics on, a route diagram shows where the messages go while
-the integration runs, so the busy part of a large route stands out at a
+With the metrics on, a route diagram and the topology show where the
+messages go while the integration runs, so the busy part stands out at a
 glance. `w` turns it off and on (kept for the next start).
 
 - **Dots on the arrows** move along an arrow while messages reach the
@@ -210,7 +210,11 @@ glance. `w` turns it off and on (kept for the next start).
   and overview the lines light up instead, as a dot would look like the
   mark of a step there, and in the overview, which has hardly any lines
   between its steps, the light passes over the steps themselves.
-- **Stuck**: a step where exchanges wait and none has finished for a
+- **In the topology** the dots go along the edges into the routes that
+  get messages, at the pace of the route they go into. An edge from a
+  route that gets no messages has none, even when the route it goes
+  into gets them from another one.
+- **Stuck** (a route diagram): a step where exchanges wait and none has finished for a
   few seconds has a spinner in its top border, with how many wait and
   how long ago the step last finished one (`⠹ 3 inflight · 12s`), or
   `none done` when it never did, such as a call to a system that does
@@ -316,6 +320,7 @@ you an at-a-glance view of where you are in the route.
 
 **Common:**
 - `m` — toggle metrics on/off (default: on)
+- `w` — live flow on or off: dots on the arrows (with the metrics on)
 - `e` — toggle external systems on/off (topology only)
 - `b` — business or technical view (`n` works too)
 - `PgUp/PgDn` — page scroll
