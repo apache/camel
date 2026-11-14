@@ -1754,7 +1754,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageBucketName}.
          */
@@ -1766,7 +1766,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageObjectName}.
          */
@@ -1922,7 +1922,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleCloudStorageComponentCount}.
@@ -1936,7 +1936,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleCloudStorageContentLanguage}.
@@ -1953,7 +1953,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageCustomTime}.
          */
@@ -1965,7 +1965,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageCrc32cHex}.
          */
@@ -1990,7 +1990,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageGeneration}.
          */
@@ -2002,7 +2002,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code com.google.cloud.storage.BlobId} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageBlobId}.
          */
@@ -2014,7 +2014,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageKmsKeyName}.
          */
@@ -2026,7 +2026,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageMediaLink}.
          */
@@ -2038,7 +2038,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleCloudStorageMetageneration}.
@@ -2051,7 +2051,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code com.google.cloud.storage.StorageClass} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleCloudStorageStorageClass}.
@@ -2064,7 +2064,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageCreateTime}.
          */
@@ -2076,7 +2076,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * The option is a: {@code Date} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code GoogleCloudStorageLastUpdate}.
          */
