@@ -435,6 +435,16 @@ public final class PluginHelper {
                     }
                     warnNotLoaded(main.getOut(), name, target, e.getMessage());
                     continue;
+                } catch (LinkageError e) {
+                    // a plugin built for another Camel version, whose classes refer to a class that has moved or is
+                    // gone: a NoClassDefFoundError when it is created (CAMEL-26964)
+                    String reason = notLinked(version, e);
+                    if (!contributor) {
+                        throw CliException.failure("Plugin " + name + " cannot be loaded (" + reason
+                                                   + "): update it, or remove it with camel plugin delete " + name);
+                    }
+                    warnNotLoaded(main.getOut(), name, target, reason);
+                    continue;
                 }
                 if (res.plugin().isPresent()) {
                     activePlugins.put(command, res.plugin().get());
@@ -458,6 +468,15 @@ public final class PluginHelper {
     // the plugins already warned about, per printer (one per command), as a command may look up the plugins more
     // than once
     private static final Map<Printer, Set<String>> WARNED_NOT_LOADED = Collections.synchronizedMap(new WeakHashMap<>());
+
+    /**
+     * Why a plugin that fails with a linkage error cannot be loaded, such as
+     * {@code it does not link with Camel 4.24.0, it is likely built for another version: NoClassDefFoundError org/...}.
+     */
+    public static String notLinked(String camelVersion, LinkageError e) {
+        return "it does not link with Camel " + camelVersion + ", it is likely built for another version: "
+               + e.getClass().getSimpleName() + " " + e.getMessage();
+    }
 
     private static void warnNotLoaded(Printer printer, String name, String target, String reason) {
         if (WARNED_NOT_LOADED.computeIfAbsent(printer, p -> ConcurrentHashMap.newKeySet()).add(name)) {

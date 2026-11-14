@@ -266,6 +266,33 @@ public class PluginHelperTest {
     }
 
     @Test
+    public void aPluginThatDoesNotLinkDoesNotFailCamelRun() throws Exception {
+        // a plugin built for another Camel version, whose classes refer to one that moved: creating it fails with a
+        // NoClassDefFoundError, which is not a RuntimeException. It is found on the classpath of the tests
+        // (META-INF/services/org/apache/camel/camel-jbang-plugin/camel-jbang-plugin-unlinked).
+        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        writeConfig(buildEntryWithoutResolvedBlock("unlinked", camelVersion));
+        StringPrinter printer = new StringPrinter();
+        QuitCapture main = new QuitCapture();
+        main.withPrinter(printer);
+
+        // before, the error failed camel run (CAMEL-26964): it is left out with a warning
+        Map<String, Plugin> plugins = assertDoesNotThrow(() -> PluginHelper.getActivePlugins(main, null, "run", true));
+
+        assertTrue(plugins.isEmpty());
+        String reason = "it does not link with Camel " + camelVersion + ", it is likely built for another version: "
+                        + "NoClassDefFoundError ";
+        assertTrue(printer.getStderr().contains("Plugin unlinked cannot be loaded (" + reason), printer.getStderr());
+        assertTrue(printer.getStderr().contains("so camel run goes on without it: remove it with camel plugin delete unlinked"),
+                printer.getStderr());
+
+        // its own command fails with the reason, rather than with the error
+        CliException e = assertThrows(CliException.class, () -> PluginHelper.getActivePlugins(main, null, "unlinked"));
+        assertTrue(e.getMessage().startsWith("Plugin unlinked cannot be loaded (" + reason), e.getMessage());
+        assertTrue(e.getMessage().endsWith("update it, or remove it with camel plugin delete unlinked"), e.getMessage());
+    }
+
+    @Test
     public void testCachedPluginThatDoesNotLinkIsResolvedAgain() throws Exception {
         Path jar = tempDir.resolve("unlinked-plugin.jar");
         FakePluginJar.write(jar, "fake", UnlinkedFakePlugin.class.getName());

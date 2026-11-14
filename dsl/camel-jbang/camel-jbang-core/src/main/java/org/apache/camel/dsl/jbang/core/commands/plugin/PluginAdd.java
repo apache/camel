@@ -203,7 +203,7 @@ public class PluginAdd extends PluginBaseCommand {
         try {
             // quietly: the answer says why it is not added
             return downloadPlugin(null, new StringPrinter()).isPresent();
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | LinkageError e) {
             return false;
         }
     }
@@ -299,6 +299,10 @@ public class PluginAdd extends PluginBaseCommand {
             resolved = downloadPlugin(releaseGav);
         } catch (Exception e) {
             printer().printErr("Cannot download " + releaseGav, e);
+            return false;
+        } catch (LinkageError e) {
+            // built for another Camel version (CAMEL-26964)
+            printer().printErr("Cannot load " + releaseGav + ": " + PluginHelper.notLinked(cliVersion(), e));
             return false;
         }
         if (resolved.isEmpty()) {

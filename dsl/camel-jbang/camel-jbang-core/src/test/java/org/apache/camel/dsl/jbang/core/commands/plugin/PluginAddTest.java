@@ -215,6 +215,24 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    public void shouldNotChangeConfigWhenSelectedReleaseDoesNotLink() throws Exception {
+        downloader.release("1.6.2", "4.22.2", null);
+        String before = PluginHelper.getOrCreatePluginConfig().toJson();
+
+        TestPluginAdd command = newFixtureCommand();
+        command.doesNotLink = true;
+        // before, the NoClassDefFoundError failed camel plugin add (CAMEL-26964)
+        Assertions.assertEquals(1, command.doCall());
+
+        Assertions.assertTrue(
+                printer.getStderr().contains("Cannot load org.example.plugins:camel-jbang-plugin-fixture:1.6.2: it does not"
+                                             + " link with Camel 4.22.0, it is likely built for another version:"
+                                             + " NoClassDefFoundError org/apache/camel/dsl/jbang/core/common/Printer"),
+                printer.getStderr());
+        Assertions.assertEquals(before, PluginHelper.getOrCreatePluginConfig().toJson());
+    }
+
+    @Test
     public void shouldUseLatestWhenNoReleaseMatches() throws Exception {
         downloader.release("2.0.0", "4.23.0", "[4.23.0,4.24.0)")
                 .release("1.6.2", "4.22.2", null);
@@ -375,6 +393,7 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         private final List<String> downloaded = new ArrayList<>();
         private String cli = "4.22.0";
         private boolean downloadFails;
+        private boolean doesNotLink;
 
         TestPluginAdd(CamelJBangMain main, DependencyDownloader downloader) {
             super(main);
@@ -394,6 +413,10 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
         @Override
         Optional<Plugin> downloadPlugin(String dependency, Printer printer) {
             downloaded.add(dependency);
+            if (doesNotLink) {
+                // a release built for another Camel version, whose classes refer to one that moved
+                throw new NoClassDefFoundError("org/apache/camel/dsl/jbang/core/common/Printer");
+            }
             return downloadFails ? Optional.empty() : Optional.of(new CachedFakePlugin());
         }
     }
