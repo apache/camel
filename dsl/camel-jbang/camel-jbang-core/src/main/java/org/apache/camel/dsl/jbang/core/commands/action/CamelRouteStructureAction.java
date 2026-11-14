@@ -219,7 +219,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         }
 
         // a file of its own, as several commands may run at the same time
-        Path output = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR,
+        Path output = CommandLineHelper.getWorkDir().resolve(
                 "structure-output-" + ProcessHandle.current().pid() + ".json");
         PathUtils.deleteFile(output);
         final String target = output.toString();

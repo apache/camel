@@ -32,7 +32,7 @@ public final class GroupedCommandHelpRenderer {
 
     static {
         GROUPS.put("Running", List.of("run", "dev", "stop", "restart", "ps", "log", "shell", "script"));
-        GROUPS.put("Monitoring", List.of("get", "top", "trace", "hawtio", "jolokia"));
+        GROUPS.put("Monitoring", List.of("status", "get", "top", "trace", "hawtio", "jolokia"));
         GROUPS.put("Actions", List.of("cmd", "bind"));
         GROUPS.put("Development",
                 List.of("init", "export", "debug", "eval", "explain", "transform", "dirty", "doctor", "sbom", "nano"));

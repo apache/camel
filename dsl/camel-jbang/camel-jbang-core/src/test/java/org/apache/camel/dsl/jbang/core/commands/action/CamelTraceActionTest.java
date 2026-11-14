@@ -27,6 +27,7 @@ import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -96,7 +97,14 @@ class CamelTraceActionTest extends ActionCommandTestSupport {
 
         assertThat(callWithSingleProcess(command("--action=clear"))).isZero();
 
-        assertThat(Files.readString(traceFile)).isEqualTo("{}");
+        assertThat(traceFile).isEmptyFile();
+        // the next batch of the connector, which appends a line, is read
+        IOHelper.appendText("{\"traces\":[{\"uid\":2}]}" + System.lineSeparator(), traceFile.toFile());
+        List<String> lines = Files.readAllLines(traceFile);
+        assertThat(lines).hasSize(1);
+        JsonObject next = (JsonObject) Jsoner.deserialize(lines.get(0));
+        JsonArray traces = next.getCollection("traces");
+        assertThat(traces).hasSize(1);
     }
 
     @Test

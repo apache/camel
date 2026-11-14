@@ -59,29 +59,29 @@ import org.slf4j.LoggerFactory;
  * <li>logNewException = true</li>
  * <li>allowRedeliveryWhileStopping = true</li>
  * </ul>
- * <p/>
+ * <p>
  * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited). Setting the
  * maximumRedeliveries to 0 will disable redelivery.
- * <p/>
+ * <p>
  * This policy can be configured either by one of the following two settings:
  * <ul>
  * <li>using conventional options, using all the options defined above</li>
  * <li>using delay pattern to declare intervals for delays</li>
  * </ul>
- * <p/>
- * <b>Note:</b> If using delay patterns then the following options is not used (delay, backOffMultiplier,
+ * <p>
+ * <b>Note:</b> If using delay patterns then the following options are not used (delay, backOffMultiplier,
  * useExponentialBackOff, useCollisionAvoidance)
- * <p/>
- * <b>Using delay pattern</b>: <br/>
- * The delay pattern syntax is: <tt>limit:delay;limit 2:delay 2;limit 3:delay 3;...;limit N:delay N</tt>.
- * <p/>
- * How it works is best illustrate with an example with this pattern: <tt>delayPattern=5:1000;10:5000;20:20000</tt>
- * <br/>
+ * <p>
+ * <b>Using delay pattern</b>: <br>
+ * The delay pattern syntax is: <code>limit:delay;limit 2:delay 2;limit 3:delay 3;...;limit N:delay N</code>.
+ * <p>
+ * How it works is best illustrated with an example with this pattern: <code>delayPattern=5:1000;10:5000;20:20000</code>
+ * <br>
  * The delays will be for attempt in range 0..4 = 0 millis, 5..9 = 1000 millis, 10..19 = 5000 millis, >= 20 = 20000
  * millis.
- * <p/>
- * If you want to set a starting delay, then use 0 as the first limit, eg: <tt>0:1000;5:5000</tt> will use 1 sec delay
- * until attempt number 5 where it will use 5 seconds going forward.
+ * <p>
+ * If you want to set a starting delay, then use 0 as the first limit, eg: <code>0:1000;5:5000</code> will use 1 sec
+ * delay until attempt number 5 where it will use 5 seconds going forward.
  */
 @Configurer
 public class RedeliveryPolicy implements Cloneable, Serializable {
@@ -181,12 +181,12 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     /**
      * Calculates the new redelivery delay based on the last one and then <b>sleeps</b> for the necessary amount of
      * time.
-     * <p/>
+     * <p>
      * This implementation will block while sleeping.
      *
      * @param  redeliveryDelay      previous redelivery delay
      * @param  redeliveryCounter    number of previous redelivery attempts
-     * @return                      the calculate delay
+     * @return                      the calculated delay
      * @throws InterruptedException is thrown if the sleep is interrupted likely because of shutdown
      */
     public long sleep(long redeliveryDelay, int redeliveryCounter) throws InterruptedException {
@@ -450,7 +450,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     /**
      * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
      *
-     * @param redeliverWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @param redeliverWhileStopping <code>true</code> to allow redelivery, <code>false</code> to reject redeliveries
      */
     public RedeliveryPolicy allowRedeliveryWhileStopping(boolean redeliverWhileStopping) {
         setAllowRedeliveryWhileStopping(redeliverWhileStopping);
@@ -709,7 +709,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     /**
      * Whether the option logExhaustedMessageHistory has been configured or not
      *
-     * @return <tt>null</tt> if not configured, or the configured value as true or false
+     * @return <code>null</code> if not configured, or the configured value as true or false
      * @see    #isLogExhaustedMessageHistory()
      */
     public Boolean getLogExhaustedMessageHistory() {
@@ -731,7 +731,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     /**
      * Whether the option logExhaustedMessageBody has been configured or not
      *
-     * @return <tt>null</tt> if not configured, or the configured value as true or false
+     * @return <code>null</code> if not configured, or the configured value as true or false
      * @see    #isLogExhaustedMessageBody()
      */
     public Boolean getLogExhaustedMessageBody() {
@@ -752,12 +752,12 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
     /**
      * Sets whether asynchronous delayed redelivery is allowed.
-     * <p/>
+     * <p>
      * This is disabled by default.
-     * <p/>
+     * <p>
      * When enabled it allows Camel to schedule a future task for delayed redelivery which prevents current thread from
      * blocking while waiting.
-     * <p/>
+     * <p>
      * Exchange which is transacted will however always use synchronous delayed redelivery because the transaction must
      * execute in the same thread context.
      *
@@ -774,7 +774,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     /**
      * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
      *
-     * @param allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @param allowRedeliveryWhileStopping <code>true</code> to allow redelivery, <code>false</code> to reject
+     *                                     redeliveries
      */
     public void setAllowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
         this.allowRedeliveryWhileStopping = allowRedeliveryWhileStopping;

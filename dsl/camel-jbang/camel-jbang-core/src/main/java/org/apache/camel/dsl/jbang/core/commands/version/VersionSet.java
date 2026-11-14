@@ -21,6 +21,7 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -60,7 +61,7 @@ public class VersionSet extends CamelCommand {
         boolean local = !global;
         CommandLineHelper.createPropertyFile(local);
 
-        CommandLineHelper.loadProperties(properties -> {
+        boolean ok = CommandLineHelper.loadProperties(properties -> {
             if (reset) {
                 properties.remove("camel-version");
                 properties.remove("kamelets-version");
@@ -78,9 +79,14 @@ public class VersionSet extends CamelCommand {
                 }
             }
             CommandLineHelper.storeProperties(properties, printer(), local);
-        }, local);
+        }, local, printer());
+        if (!ok) {
+            printer().printErr(
+                    "Cannot set version: config file is malformed. Edit it by hand, escaping '\\' as '\\\\' or using '/'.");
+            return CliExitCode.FAILURE;
+        }
 
-        return 0;
+        return CliExitCode.OK;
     }
 
 }

@@ -25,6 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArgumentsKeepQuotes;
 
 /**
  * Built-in Simple function: {@code ${random(max)}} / {@code ${random(min,max)}}.
@@ -42,14 +43,15 @@ public final class RandomFunctionFactory implements SimpleLanguageFunctionFactor
             throw new SimpleParserException(
                     "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, index);
         }
-        if (values.contains(",")) {
-            String[] tokens = values.split(",", 3);
-            if (tokens.length > 2) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, index);
-            }
-            return MiscExpressionBuilder.randomExpression(tokens[0].trim(), tokens[1].trim());
+        // a comma inside a nested function is part of the argument; a min left out is 0
+        String[] tokens = splitArgumentsKeepQuotes(values);
+        if (tokens.length > 2 || tokens[tokens.length - 1] == null) {
+            throw new SimpleParserException(
+                    "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, index);
         }
-        return MiscExpressionBuilder.randomExpression("0", values.trim());
+        if (tokens.length == 2) {
+            return MiscExpressionBuilder.randomExpression(tokens[0] != null ? tokens[0] : "0", tokens[1]);
+        }
+        return MiscExpressionBuilder.randomExpression("0", tokens[0]);
     }
 }

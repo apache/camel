@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "semantic-micrometer",
+    "title": "Semantic Micrometer",
+    "description": "Export semantic assessments and expert measurements with Micrometer",
+    "deprecated": false,
+    "firstVersion": "4.24.0",
+    "label": "ai,monitoring",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-semantic-micrometer",
+    "version": "4.24.0-SNAPSHOT"
+  }
+}

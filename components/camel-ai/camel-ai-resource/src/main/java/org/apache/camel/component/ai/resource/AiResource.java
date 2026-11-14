@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ai.resource;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants for the AI Resource component.
  *
@@ -26,6 +28,14 @@ public final class AiResource {
     public static final String SCHEME = "ai-resource";
 
     public static final String DEFAULT_MIME_TYPE = "text/plain";
+
+    /** Header containing the concrete URI requested for a resource-template read. */
+    @Metadata(label = "consumer", javaType = "String")
+    public static final String RESOURCE_URI_HEADER = "CamelAiResourceUri";
+
+    /** Prefix for headers carrying raw, client-supplied template variables. */
+    @Metadata(label = "consumer", javaType = "String")
+    public static final String TEMPLATE_VARIABLE_HEADER_PREFIX = "CamelAiResourceTemplateVariable.";
 
     private AiResource() {
     }

@@ -28,6 +28,17 @@ camel run foo.yaml --dev --prop=camel.main.routesReloadInterval=500
 A shorter interval reloads a change sooner. A longer one groups more of one save together, such as several files
 an editor saves one after the other.
 
+To reload a change at once, rather than at the next scan, and hear how it went, use `camel cmd reload --wait`, as an
+AI agent does after it edits a file. It reloads the files changed since the last scan, and prints them, or why the
+reload failed (exit code 1). With `--json` the outcome is one JSON document, with the status `reloaded`, `unchanged`
+or `failed`:
+
+[source,bash]
+----
+$ camel cmd reload foo --wait --json
+{"pid":35136,"name":"foo","status":"reloaded","files":["foo.yaml"]}
+----
+
 `camel dev` is a shortcut for `camel run --dev`, and without files it runs the current folder
 (as `--source-dir=.`):
 

@@ -27,6 +27,7 @@ import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -113,7 +114,14 @@ class CamelReceiveActionTest extends ActionCommandTestSupport {
 
         assertThat(callWithSingleProcess(command("myApp", "--action=clear"))).isZero();
 
-        assertThat(Files.readString(received)).isEqualTo("{}");
+        assertThat(received).isEmptyFile();
+        // the next batch of the connector, which appends a line, is read
+        IOHelper.appendText(batch(message(2, "Bye Camel")).toJson() + System.lineSeparator(), received.toFile());
+        List<String> lines = Files.readAllLines(received);
+        assertThat(lines).hasSize(1);
+        JsonObject next = (JsonObject) Jsoner.deserialize(lines.get(0));
+        JsonArray messages = next.getCollection("messages");
+        assertThat(messages).hasSize(1);
     }
 
     @Test

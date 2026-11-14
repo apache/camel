@@ -64,18 +64,19 @@ abstract class ActionBaseCommand extends CamelCommand {
         while (watch.taken() < timeout) {
             File f = outputFile.toFile();
             try {
-                // give time for response to be ready
-                Thread.sleep(100);
-
                 if (Files.exists(outputFile) && f.length() > 0) {
                     String text = Files.readString(outputFile);
                     return (JsonObject) Jsoner.deserialize(text);
                 }
+            } catch (Exception e) {
+                // not all written yet
+            }
+            try {
+                // give time for response to be ready
+                Thread.sleep(ActionClient.pollDelay(watch.taken()));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 return null;
-            } catch (Exception e) {
-                // ignore
             }
         }
         return null;
@@ -262,7 +263,7 @@ abstract class ActionBaseCommand extends CamelCommand {
             }
         }
 
-        Path workDir = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR, workDirPrefix + ProcessHandle.current().pid());
+        Path workDir = CommandLineHelper.getWorkDir().resolve(workDirPrefix + ProcessHandle.current().pid());
         PathUtils.deleteDirectory(workDir);
         final String target = workDir.toString();
         // anything this boot dumps must be newer than this: guards readers against a stale dump left over from a

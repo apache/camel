@@ -1514,6 +1514,37 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testTheBodyOfAnInsecureOptIn() {
+        // allowJavaSerializedObject of pulsar can be set on the component, but it is an insecure opt-in: it keeps its
+        // default (off) when the route does not set it, so parsed data must be marshalled first; a route that turns it
+        // on sends any body, which says nothing
+        String yaml = """
+                - route:
+                    id: publish
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: pulsar:persistent://public/default/orders
+                - route:
+                    id: legacy
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"id": 1}'
+                        - unmarshal:
+                            json: {}
+                        - to: pulsar:persistent://public/default/orders?allowJavaSerializedObject=true
+                """;
+        assertThat(lines(yaml)).hasSize(1).first().asString()
+                .contains("route publish: to: pulsar needs the body as text, bytes, a stream or a file");
+    }
+
+    @Test
     public void testTheBodyOfMoreComponents() {
         // ssh runs the body as a command and gives its output as a stream, and so does its consumer; spring-redis keeps
         // the body for SET, its default command, gives text for PING and is not known for GET; a couchbase row read with

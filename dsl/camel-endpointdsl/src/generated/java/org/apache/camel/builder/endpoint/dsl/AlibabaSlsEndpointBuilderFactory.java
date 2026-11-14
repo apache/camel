@@ -205,7 +205,6 @@ public interface AlibabaSlsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
          * Group: getLogs
          * 
          * @param reverse the value to set
@@ -221,7 +220,6 @@ public interface AlibabaSlsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
          * Group: getLogs
          * 
          * @param reverse the value to set

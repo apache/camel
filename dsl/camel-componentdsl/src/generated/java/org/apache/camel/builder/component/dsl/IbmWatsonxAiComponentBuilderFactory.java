@@ -159,13 +159,11 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Whether to detect HAP (Harmful, Abusive, Profane content).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param detectHap the value to set
@@ -191,13 +189,11 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Whether to detect PII (Personal Identifiable Information).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param detectPii the value to set
@@ -414,13 +410,11 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Whether to return documents in rerank response.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
          * @param returnDocuments the value to set

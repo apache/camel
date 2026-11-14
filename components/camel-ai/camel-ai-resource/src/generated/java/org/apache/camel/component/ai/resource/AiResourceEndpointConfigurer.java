@@ -37,6 +37,8 @@ public class AiResourceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "resourceUri": target.getConfiguration().setResourceUri(property(camelContext, java.lang.String.class, value)); return true;
         case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "title": target.getConfiguration().setTitle(property(camelContext, java.lang.String.class, value)); return true;
+        case "uritemplate":
+        case "uriTemplate": target.getConfiguration().setUriTemplate(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -57,6 +59,8 @@ public class AiResourceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "resourceUri": return java.lang.String.class;
         case "tags": return java.lang.String.class;
         case "title": return java.lang.String.class;
+        case "uritemplate":
+        case "uriTemplate": return java.lang.String.class;
         default: return null;
         }
     }
@@ -78,6 +82,8 @@ public class AiResourceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "resourceUri": return target.getConfiguration().getResourceUri();
         case "tags": return target.getConfiguration().getTags();
         case "title": return target.getConfiguration().getTitle();
+        case "uritemplate":
+        case "uriTemplate": return target.getConfiguration().getUriTemplate();
         default: return null;
         }
     }

@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @UsesWorkingDirectory
-class ExportTest {
+class ExportTest extends CamelCommandBaseTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
 
@@ -70,8 +70,11 @@ class ExportTest {
     private File workingDir;
 
     @BeforeEach
-    public void setup() throws IOException {
+    @Override
+    public void setup() throws Exception {
+        super.setup();
         LOG.info("Preparing ExportTest");
+        useTestWorkDir();
         workingDir = Files.createTempDirectory("camel-export").toFile();
     }
 

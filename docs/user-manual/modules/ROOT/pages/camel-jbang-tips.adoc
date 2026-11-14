@@ -126,6 +126,16 @@ Wildcards work too:
 camel run https://github.com/apache/camel-kamelets-examples/tree/main/jbang/languages/rou*
 ----
 
+If you hit a GitHub rate limit on directory or wildcard URLs, set a `GITHUB_TOKEN` environment variable
+before running the command.
+The token is forwarded as an `Authorization: Bearer` header only to `api.github.com` (the directory-listing API) — it is never sent to other hosts:
+
+[source,bash]
+----
+export GITHUB_TOKEN=ghp_...
+camel run https://github.com/myorg/my-org-examples/tree/main/jbang/hello-java
+----
+
 === Run from GitHub gists
 
 Gists are a quick way to share small Camel routes:
@@ -187,3 +197,27 @@ curl -X DELETE http://0.0.0.0:8080/q/upload/bar.java
 curl -X DELETE http://0.0.0.0:8080/q/upload/*.java
 curl -X DELETE http://0.0.0.0:8080/q/upload/*
 ----
+
+== Arguments from a file
+
+A long command line can be kept in a file, and given as `@file`: the CLI replaces it with the arguments in that file.
+
+For example, `run.txt` with:
+
+[source,text]
+----
+# the routes and the options to run them with
+run orders.yaml payments.yaml
+--dev
+--property=app.name="My Shop"
+----
+
+[source,bash]
+----
+camel @run.txt
+camel run @routes.txt --dev
+----
+
+The arguments are separated by spaces or line breaks, quotes group words, a line that starts with `#` is a comment,
+and a file can name other files with `@`. Use `@@` for an argument that starts with `@` itself. A file that does not
+exist is a usage error (exit code `2`).

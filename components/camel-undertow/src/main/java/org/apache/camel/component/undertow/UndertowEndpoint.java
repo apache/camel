@@ -142,7 +142,7 @@ public class UndertowEndpoint extends DefaultEndpoint
     private boolean optionsEnabled;
     @UriParam(label = "producer")
     private CookieHandler cookieHandler;
-    @UriParam(label = "producer,websocket")
+    @UriParam(label = "producer,websocket", defaultValue = "false")
     private Boolean sendToAll;
     @UriParam(label = "producer,websocket", defaultValue = "30000")
     private Integer sendTimeout = 30000;

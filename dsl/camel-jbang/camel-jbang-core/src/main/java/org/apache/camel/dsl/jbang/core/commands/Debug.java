@@ -49,6 +49,7 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.run.ProjectRunner;
 import org.apache.camel.dsl.jbang.run.common.ChildProcess;
 import org.apache.camel.dsl.jbang.run.common.MavenCommand;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
@@ -78,7 +79,6 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.jline.jansi.Ansi;
 import org.jline.jansi.AnsiConsole;
 
-import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.CAMEL_JBANG_WORK_DIR;
 import static org.apache.camel.util.IOHelper.buffered;
 
 @CommandDefinition(name = "debug", description = "Debug local Camel integration", generateHelp = true,
@@ -437,8 +437,9 @@ public class Debug extends Run {
                 AtomicReference<Process> processRef = new AtomicReference<>();
                 // the process (and those it started) stops with this JVM, then the files of the run are removed
                 ChildProcess.stopOnExit(processRef::get, () -> {
-                    removeDir(Paths.get(RUN_PLATFORM_DIR));
-                    removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                    // only the directories of runs that are gone, not those of other runs in this directory
+                    ProjectRunner.removeStaleRunDirs();
+                    removeDir(CommandLineHelper.getWorkDir());
                     Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
                 });
 
@@ -544,8 +545,9 @@ public class Debug extends Run {
                 AtomicReference<Process> processRef = new AtomicReference<>();
                 // the process (and those it started) stops with this JVM, then the files of the run are removed
                 ChildProcess.stopOnExit(processRef::get, () -> {
-                    removeDir(Paths.get(RUN_PLATFORM_DIR));
-                    removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                    // only the directories of runs that are gone, not those of other runs in this directory
+                    ProjectRunner.removeStaleRunDirs();
+                    removeDir(CommandLineHelper.getWorkDir());
                     Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
                 });
 

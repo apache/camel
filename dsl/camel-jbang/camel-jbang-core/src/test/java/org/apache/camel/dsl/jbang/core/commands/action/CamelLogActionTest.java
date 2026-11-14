@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.sun.management.UnixOperatingSystemMXBean;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -30,7 +32,10 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.PreviousRun;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -133,6 +138,49 @@ class CamelLogActionTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void aStackTraceStaysWithItsRecordInTheLogsOfSeveralIntegrations() throws Exception {
+        long otherPid = TEST_PID + 1;
+        writeStatusFile(TEST_PID, "orders");
+        writeStatusFile(otherPid, "billing");
+        writeLog(TEST_PID + ".log", line(-300, "Starting"), line(-100, "ERROR Failed"),
+                "java.lang.IllegalStateException: boom", "\tat com.acme.Orders.process(Orders.java:42)",
+                line(-1, "Stopping"));
+        writeLog(otherPid + ".log", line(-200, "Billing"), line(-50, "Billed"));
+        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CommandLineTestHelper.parse(command, "*", "--follow=false", "--logging-color=false");
+
+        assertThat(callWithResponse(command, new JsonObject(), otherPid)).isZero();
+
+        // by time, and the lines of the stack trace right after the record they belong to
+        List<String> lines = lines();
+        assertThat(lines).hasSize(7);
+        assertThat(lines.get(0)).endsWith(": Starting");
+        assertThat(lines.get(1)).endsWith(": Billing");
+        assertThat(lines.get(2)).endsWith(": ERROR Failed");
+        assertThat(lines.get(3)).endsWith("java.lang.IllegalStateException: boom");
+        assertThat(lines.get(4)).endsWith("at com.acme.Orders.process(Orders.java:42)");
+        assertThat(lines.get(5)).endsWith(": Billed");
+        assertThat(lines.get(6)).endsWith(": Stopping");
+    }
+
+    @Test
+    @EnabledOnOs({ OS.LINUX, OS.MAC })
+    void closesTheLogsItRead() throws Exception {
+        writeLog(TEST_PID + ".log", line(-300, "Starting"), line(-1, "Failed"));
+        UnixOperatingSystemMXBean os = (UnixOperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        // warm up: classes and the JARs they are loaded from
+        assertThat(callWithSingleProcess(command())).isZero();
+        long before = os.getOpenFileDescriptorCount();
+
+        // as the shell and the TUI run camel log, in their JVM
+        for (int i = 0; i < 50; i++) {
+            assertThat(callWithSingleProcess(command())).isZero();
+        }
+
+        assertThat(os.getOpenFileDescriptorCount() - before).as("open files").isLessThan(10);
+    }
+
+    @Test
     void logNamedAfterTheIntegration() throws Exception {
         // camel run --logging-file-name, or an older version of Camel
         writeLog("orders.log", line(-1, "Failed"));
@@ -166,6 +214,26 @@ class CamelLogActionTest extends ActionCommandTestSupport {
         // a CLI that runs the command in its JVM keeps the colored lines (not printed on the console)
         assertThat(lines()).hasSize(2);
         assertThat(lines().get(1)).startsWith("orders").endsWith(": Failed");
+    }
+
+    @Test
+    void coloredLinesArePrintedWithoutColorsWhenTheConsoleStripsThem() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        writeLog(TEST_PID + ".log", line(-300, "\u001b[32mStarting\u001b[m"), line(-1, "Failed"));
+        // the output of the console is not a terminal (a file or a pipe), which takes the colors out of each line
+        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer)) {
+            @Override
+            protected boolean colorsStripped() {
+                return true;
+            }
+        };
+        CommandLineTestHelper.parse(command, "orders", "--follow=false", "--prefix=true");
+
+        assertThat(callWithSingleProcess(command)).isZero();
+
+        // printed as without --logging-color: the same text, without the console in between
+        assertThat(lines()).hasSize(2).noneMatch(l -> l.contains("\u001b"));
+        assertThat(lines().get(0)).startsWith("orders").endsWith(": Starting");
     }
 
     @Test

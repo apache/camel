@@ -88,8 +88,9 @@ public class ClickUpWebhookService {
             // malformed sequence into U+FFFD and change what is hashed
             messageBytes = body.readAllBytes();
 
-            LOG.debug("Message body {} to be validated against the given signature {}",
-                    new String(messageBytes, StandardCharsets.UTF_8), signature);
+            // the signature authenticates the event, so it stays out of the log
+            LOG.debug("Message body {} to be validated against the given signature",
+                    new String(messageBytes, StandardCharsets.UTF_8));
 
             body.reset();
         } catch (IOException e) {
@@ -107,12 +108,13 @@ public class ClickUpWebhookService {
                 calculatedSignature.getBytes(StandardCharsets.US_ASCII),
                 signature.getBytes(StandardCharsets.US_ASCII));
         if (!signatureMatches) {
-            LOG.debug("The message signature {} does not match {}.", signature, calculatedSignature);
+            LOG.debug("The message signature does not match.");
 
-            throw new InvalidMessageSignatureException(messageBody, signature, calculatedSignature);
+            // the calculated signature is the valid one for this body, so it stays out of the exception too
+            throw new InvalidMessageSignatureException(messageBody, signature);
         }
 
-        LOG.debug("The message signature {} matches {}.", signature, calculatedSignature);
+        LOG.debug("The message signature matches.");
     }
 
 }

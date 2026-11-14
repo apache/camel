@@ -51,6 +51,7 @@ import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.OptionalValueParser;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeTypeConverter;
@@ -1342,7 +1343,9 @@ public class Run extends CamelCommand implements CommandLifecycle {
             printer().println(
                     "Running " + kind + ": " + name + " in background with PID: " + p.pid()
                               + (backgroundWait > 0 ? " (waiting to startup)" : ""));
-            printer().println("Log: " + logPath);
+            if (backgroundWait <= 0) {
+                printer().println("Log: " + logPath);
+            }
         }
         try {
             if (backgroundWait <= 0) {
@@ -1357,7 +1360,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
                 }
                 if (state < 5) {
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(ProcessFinder.STATUS_POLL_INTERVAL);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         break;
@@ -1377,9 +1380,14 @@ public class Run extends CamelCommand implements CommandLifecycle {
                 // still starting: it is left running, and the log tells why it takes long
                 String waited = backgroundWait < 1000 ? backgroundWait + "ms" : TimeUtils.printDuration(backgroundWait);
                 throw CliException.timeout(kind + ": " + name + " (PID: " + p.pid() + ") is still starting after "
-                                           + waited + "; the log is in " + logPath);
+                                           + waited + "; the log is in "
+                                           + BackgroundLog.logOf(p.pid(), logPath));
             }
             printer().println(kind + ": " + name + " (state: " + extractState(state) + ")");
+            if (!internal) {
+                // started: its log file has all of its logging, and the output only the warnings and errors
+                printer().println("Log: " + BackgroundLog.logOf(p.pid(), logPath));
+            }
             return 0;
         } finally {
             if (internal) {
@@ -1426,7 +1434,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
         String content = TemplateHelper.processTemplate("run-custom-camel-version.ftl", model);
 
-        String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CustomCamelJBang.java";
+        String fn = CommandLineHelper.getWorkDir().resolve("CustomCamelJBang.java").toString();
         Files.writeString(Paths.get(fn), content);
 
         List<String> cmds;
@@ -1451,7 +1459,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
         // need to use jbang command to specify camel version
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");
-        jbangArgs.add(CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CustomCamelJBang.java");
+        jbangArgs.add(CommandLineHelper.getWorkDir().resolve("CustomCamelJBang.java").toString());
 
         jbangArgs.addAll(cmds);
 
@@ -1489,7 +1497,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
     }
 
     private String loadFromCode(String code, String name, boolean file) throws IOException {
-        String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/" + name + ".java";
+        String fn = CommandLineHelper.getWorkDir().resolve(name + ".java").toString();
         if (!file) {
             // need to replace single quote as double quotes (from input string)
             code = code.replace("'", "\"");

@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,6 +118,14 @@ final class FakeJava {
     }
 
     static Result runWithInput(Path script, Map<String, String> env, String input, String... args) throws Exception {
+        return runIn(null, script, env, input, args);
+    }
+
+    /**
+     * Runs the script with the given working directory (null for the one of this JVM).
+     */
+    static Result runIn(Path workDir, Path script, Map<String, String> env, String input, String... args)
+            throws Exception {
         List<String> cmd = new ArrayList<>();
         if (WINDOWS) {
             cmd.add("cmd.exe");
@@ -138,6 +148,9 @@ final class FakeJava {
             pb.environment().put("PATHEXT", ".COM;.EXE;.BAT;.CMD");
         }
         pb.environment().putAll(env);
+        if (workDir != null) {
+            pb.directory(workDir.toFile());
+        }
         Process p = pb.start();
         ExecutorService collectors = Executors.newFixedThreadPool(2);
         Throwable failure = null;
@@ -222,5 +235,69 @@ final class FakeJava {
                 throw new IllegalStateException("launcher could not be terminated");
             }
         }
+    }
+
+    /**
+     * Computes the POSIX cksum hash of the given string, matching the shell expression
+     * {@code printf '%s' "$str" | cksum | cut -d' ' -f1} used in camel.sh for CDS directory hashing.
+     */
+    static String cksumHash(String str) throws Exception {
+        ProcessBuilder pb = new ProcessBuilder(
+                "/bin/sh", "-c",
+                "printf '%s' '" + str.replace("'", "'\\''") + "' | cksum | cut -d' ' -f1");
+        pb.environment().clear();
+        pb.environment().put("PATH", "/usr/bin:/bin");
+        Process p = pb.start();
+        byte[] out = p.getInputStream().readAllBytes();
+        p.waitFor(10, TimeUnit.SECONDS);
+        return new String(out, StandardCharsets.UTF_8).trim();
+    }
+
+    /**
+     * Computes the Windows CDS install-directory hash of the given string, matching the PowerShell expression used in
+     * camel.bat: SHA-256 of the UTF-8 bytes, first 4 bytes as lowercase hex (8 chars). Falls back to {@code "default"}
+     * if the hash cannot be computed (should not happen on Windows JVM).
+     */
+    static String batCdsHash(String str) {
+        try {
+            byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(bytes);
+            return HexFormat.of().formatHex(digest, 0, 4);
+        } catch (Exception e) {
+            return "default";
+        }
+    }
+
+    /**
+     * Returns the Windows CDS BASEDIR string as computed by camel.bat: the {@code %~dp0} of the launcher script (the
+     * bin\ directory path with a trailing backslash), as cmd.exe resolves it. This may differ from
+     * {@code bin.toString() + "\\"} when Windows 8.3 short names are involved (e.g. {@code C:\\Users\\RUNNER~1\\} vs
+     * the full long path), so this method runs a helper batch to capture the actual {@code %~dp0} rather than inferring
+     * it from the Java Path.
+     */
+    static String batBasedirString(Path bin) throws Exception {
+        Path helper = Files.createTempFile(bin, "basedir-probe", ".bat");
+        try {
+            Files.writeString(helper, "@echo %~dp0\r\n", StandardCharsets.UTF_8);
+            String systemRoot = System.getenv("SystemRoot");
+            ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", helper.toString());
+            pb.environment().clear();
+            pb.environment().put("PATH", systemRoot + "\\System32");
+            pb.environment().put("SystemRoot", systemRoot);
+            pb.environment().put("OS", "Windows_NT");
+            Process p = pb.start();
+            String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8).strip();
+            p.waitFor(5, TimeUnit.SECONDS);
+            return out; // e.g. "D:\\a\\...\\bin\\" (trailing backslash included by %~dp0)
+        } finally {
+            Files.deleteIfExists(helper);
+        }
+    }
+
+    /**
+     * The BASEDIR of a launcher home as computed by camel.sh: the directory of the script (bin/).
+     */
+    static Path basedir(Path bin) {
+        return bin;
     }
 }

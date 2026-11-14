@@ -24,7 +24,7 @@ public class OpaEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(19);
+        Set<String> props = new HashSet<>(20);
         props.add("allowKey");
         props.add("batch");
         props.add("bearerToken");
@@ -33,6 +33,7 @@ public class OpaEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("entrypoint");
         props.add("evaluationMode");
         props.add("failOpen");
+        props.add("healthCheckBundles");
         props.add("includeBody");
         props.add("includeHeaders");
         props.add("includeProperties");
