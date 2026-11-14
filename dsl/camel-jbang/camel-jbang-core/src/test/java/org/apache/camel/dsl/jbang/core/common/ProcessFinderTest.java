@@ -119,6 +119,39 @@ class ProcessFinderTest {
     }
 
     @Test
+    void aNameOfARunningIntegrationMatchesOnlyThatIntegration() throws Exception {
+        running(100, "orders", 5);
+        running(200, "orders-v2", 5);
+        running(300, "orders-eu", 5);
+
+        // camel stop orders must not stop orders-v2 and orders-eu
+        assertThat(ProcessFinder.find("orders")).extracting(CamelProcess::pid).containsExactly(100L);
+        assertThat(ProcessFinder.find("ORDERS")).extracting(CamelProcess::pid).containsExactly(100L);
+        assertThat(ProcessFinder.requireAny("orders")).extracting(CamelProcess::pid).containsExactly(100L);
+        // no integration has these names, so they stay prefixes and patterns
+        assertThat(ProcessFinder.find("order")).extracting(CamelProcess::pid).containsExactly(100L, 200L, 300L);
+        assertThat(ProcessFinder.find("orders*")).extracting(CamelProcess::pid).containsExactly(100L, 200L, 300L);
+        assertThat(ProcessFinder.find("orders-e")).extracting(CamelProcess::pid).containsExactly(300L);
+        assertThat(ProcessFinder.find("*")).hasSize(3);
+    }
+
+    @Test
+    void aFileNameOrContextNameOfARunningIntegrationMatchesOnlyThatIntegration() throws Exception {
+        // the name comes from the main class, and the context has a name of its own
+        JsonObject root = statusOf("billing", 5);
+        JsonObject runtime = new JsonObject();
+        runtime.put("mainClass", "Orders");
+        root.put("runtime", runtime);
+        Files.writeString(CommandLineHelper.getCamelDir().resolve("100-status.json"), root.toJson());
+        processes.add(handle(100));
+        running(200, "billing-eu", 5);
+        running(300, "orders-v2", 5);
+
+        assertThat(ProcessFinder.find("billing")).extracting(CamelProcess::pid).containsExactly(100L);
+        assertThat(ProcessFinder.find("orders")).extracting(CamelProcess::pid).containsExactly(100L);
+    }
+
+    @Test
     void theDefaultContextNameOfTheCliMatchesNothing() throws Exception {
         // the name comes from the main class, and the context has the default name of the Camel CLI
         JsonObject root = statusOf("CamelJBang", 5);
@@ -174,10 +207,12 @@ class ProcessFinderTest {
                 .isInstanceOf(CliException.class)
                 .hasMessage("No running Camel integration matches: billing")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
-        assertThatThrownBy(() -> ProcessFinder.requireOne("orders"))
+        // an integration named orders runs, so orders is not ambiguous
+        assertThat(ProcessFinder.requireOne("orders").pid()).isEqualTo(100L);
+        assertThatThrownBy(() -> ProcessFinder.requireOne("ord"))
                 .isInstanceOf(CliException.class)
-                .hasMessage("Name or pid orders matches 2 running Camel integrations: 100 (orders), 200 (orders-eu)."
-                            + " Specify a name or pid that matches exactly one.")
+                .hasMessage("Name or pid ord matches 2 running Camel integrations: 100 (orders), 200 (orders-eu)."
+                            + " Specify the pid, or a name that matches exactly one.")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
     }
 
