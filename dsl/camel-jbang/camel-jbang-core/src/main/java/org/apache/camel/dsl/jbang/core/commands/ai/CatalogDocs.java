@@ -442,7 +442,8 @@ public final class CatalogDocs {
                 return result;
             }
             if (kind != null) {
-                return notFound("Data format", name, catalog.suggestDataFormatNames(name, 5));
+                return notFound("Data format", name,
+                        withNearSpelling(name, catalog.suggestDataFormatNames(name, 5), catalog.findDataFormatNames()));
             }
         }
         if (kind == null || "language".equals(kind)) {
@@ -491,7 +492,8 @@ public final class CatalogDocs {
                 return answer;
             }
             if (kind != null) {
-                return notFound("Language", name, catalog.suggestLanguageNames(name, 5));
+                return notFound("Language", name,
+                        withNearSpelling(name, catalog.suggestLanguageNames(name, 5), catalog.findLanguageNames()));
             }
         }
         if (kind == null || "eip".equals(kind)) {
@@ -519,7 +521,8 @@ public final class CatalogDocs {
                 if (byTerm != null) {
                     return byTerm;
                 }
-                return withErrorHandling(notFound("EIP", name, catalog.suggestEipNames(name, 5)), name);
+                return withErrorHandling(notFound("EIP", name,
+                        withNearSpelling(name, catalog.suggestEipNames(name, 5), catalog.findModelNames())), name);
             }
         }
         if (kind == null || "api".equals(kind)) {

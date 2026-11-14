@@ -269,6 +269,12 @@ class CatalogDocsTest {
 
         JsonObject component = catalogDoc(Map.of("name", "platfrom-http", "kind", "component"));
         assertEquals(List.of("platform-http"), component.getCollection("suggestions"), component.toJson());
+        JsonObject dataFormat = catalogDoc(Map.of("name", "jakson", "kind", "dataformat"));
+        assertEquals(List.of("jackson"), dataFormat.getCollection("suggestions"), dataFormat.toJson());
+        JsonObject language = catalogDoc(Map.of("name", "simpel", "kind", "language"));
+        assertEquals(List.of("simple"), language.getCollection("suggestions"), language.toJson());
+        JsonObject eip = catalogDoc(Map.of("name", "spilt", "kind", "eip"));
+        assertEquals(List.of("split"), eip.getCollection("suggestions"), eip.toJson());
 
         // a name that is close to nothing still has no suggestions
         assertNull(catalogDoc(Map.of("name", "nosuchthing")).get("suggestions"));
