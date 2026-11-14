@@ -172,4 +172,50 @@ public class GenericFileHelperTest {
             }
         }
     }
+
+    @Test
+    public void pathWithoutLinksIsBelowTheDirectoryWithoutResolving(@TempDir Path tmp) throws IOException {
+        Path inbox = Files.createDirectories(tmp.resolve("inbox"));
+        Files.createFile(inbox.resolve("hello.txt"));
+        Files.createDirectories(inbox.resolve("sub"));
+
+        assertTrue(GenericFileHelper.isBelowWithoutLinks(inbox, inbox));
+        assertTrue(GenericFileHelper.isBelowWithoutLinks(inbox.resolve("hello.txt"), inbox));
+        assertTrue(GenericFileHelper.isBelowWithoutLinks(inbox.resolve("sub/hello.txt"), inbox));
+        // the default move folder that does not exist yet
+        assertTrue(GenericFileHelper.isBelowWithoutLinks(inbox.resolve(".camel/hello.txt"), inbox));
+
+        // not below the directory as written, or with a . or .. segment: the links must be resolved to tell
+        assertFalse(GenericFileHelper.isBelowWithoutLinks(tmp.resolve("outside/hello.txt"), inbox));
+        assertFalse(GenericFileHelper.isBelowWithoutLinks(inbox.resolve("sub/../hello.txt"), inbox));
+        assertFalse(GenericFileHelper.isBelowWithoutLinks(inbox.resolve("./hello.txt"), inbox));
+    }
+
+    @Test
+    public void pathThroughLinkIsResolved(@TempDir Path tmp) throws IOException {
+        Path inbox = Files.createDirectories(tmp.resolve("inbox"));
+        Path sub = Files.createDirectories(inbox.resolve("sub"));
+        Path outside = Files.createDirectories(tmp.resolve("outside"));
+        Path camel = inbox.resolve(".camel");
+        Path inner = inbox.resolve("inner");
+        Path startLink = tmp.resolve("start");
+        try {
+            Files.createSymbolicLink(camel, outside);
+            Files.createSymbolicLink(inner, sub);
+            Files.createSymbolicLink(startLink, inbox);
+        } catch (UnsupportedOperationException | IOException e) {
+            Assumptions.abort("Symbolic links are not supported on this platform: " + e.getMessage());
+        }
+
+        // a link below the directory needs resolving: one resolving outside is refused, one resolving inside is not
+        assertFalse(GenericFileHelper.isBelowWithoutLinks(camel.resolve("hello.txt"), inbox));
+        assertFalse(GenericFileHelper.isWithinDirectoryResolvingLinks(camel.resolve("hello.txt"), inbox));
+        assertFalse(GenericFileHelper.isBelowWithoutLinks(inner.resolve("hello.txt"), inbox));
+        assertTrue(GenericFileHelper.isWithinDirectoryResolvingLinks(inner.resolve("hello.txt"), inbox));
+
+        // a directory that is itself a link: the paths below it resolve within it
+        assertTrue(GenericFileHelper.isBelowWithoutLinks(startLink.resolve("hello.txt"), startLink));
+        assertTrue(GenericFileHelper.isWithinDirectoryResolvingLinks(startLink.resolve("hello.txt"), startLink));
+        assertFalse(GenericFileHelper.isWithinDirectoryResolvingLinks(startLink.resolve(".camel/hello.txt"), startLink));
+    }
 }

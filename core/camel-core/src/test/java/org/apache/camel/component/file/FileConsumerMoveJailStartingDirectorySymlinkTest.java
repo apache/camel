@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
@@ -30,6 +31,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.strategy.MarkerFileExclusiveReadLockStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
@@ -85,6 +87,28 @@ class FileConsumerMoveJailStartingDirectorySymlinkTest extends ContextTestSuppor
         consume(QUERY, false);
 
         assertSkipped(file);
+    }
+
+    @Test
+    void skippedFileDoesNotTakeTheReadLock() throws Exception {
+        // a read lock such as changed waits before it is granted, so a skipped file must not take it on every poll
+        AtomicInteger locks = new AtomicInteger();
+        context.getRegistry().bind("countLocks", new MarkerFileExclusiveReadLockStrategy() {
+            @Override
+            public boolean acquireExclusiveReadLock(
+                    GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+                    throws Exception {
+                locks.incrementAndGet();
+                return super.acquireExclusiveReadLock(operations, file, exchange);
+            }
+        });
+        Path file = Files.writeString(inbox.resolve("hello.txt"), "Hello World");
+        createSymbolicLink(inbox.resolve(".camel"), outside);
+
+        consume(QUERY + "&exclusiveReadLockStrategy=#countLocks", false);
+
+        assertSkipped(file);
+        assertEquals(0, locks.get(), "the skipped file must not take the read lock");
     }
 
     @Test

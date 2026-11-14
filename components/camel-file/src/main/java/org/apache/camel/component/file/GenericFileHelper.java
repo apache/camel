@@ -24,7 +24,9 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
@@ -93,7 +95,69 @@ public final class GenericFileHelper {
      * @throws IOException if the path cannot be resolved, for example a dangling symbolic link
      */
     public static boolean isWithinDirectoryResolvingLinks(Path target, Path directory) throws IOException {
+        if (isBelowWithoutLinks(target, directory)) {
+            return true;
+        }
         return resolveExistingPathSegments(target).startsWith(resolveExistingPathSegments(directory));
+    }
+
+    /**
+     * Whether the path is below the directory, segment by segment as written, and no existing segment below the
+     * directory is a symbolic link (or another kind of link, such as a junction on Windows). Such a path resolves
+     * within the directory, wherever the directory itself resolves to, so neither needs a {@link Path#toRealPath}: this
+     * costs one lookup of the attributes per existing segment below the directory. A path with a {@code .} or
+     * {@code ..} segment below the directory, or a segment whose attributes cannot be read, needs the links resolved.
+     *
+     * @param  target    the local path (need not exist yet)
+     * @param  directory the directory
+     * @return           {@code true} if the path is known to stay within the directory, {@code false} if the links must
+     *                   be resolved to tell
+     */
+    static boolean isBelowWithoutLinks(Path target, Path directory) {
+        return isBelowWithoutLinks(target, directory, false);
+    }
+
+    /**
+     * As {@link #isBelowWithoutLinks(Path, Path)}, for a path that is expected to exist (such as a listed file), which
+     * saves a lookup of the last segment.
+     */
+    static boolean isExistingBelowWithoutLinks(Path target, Path directory) {
+        return isBelowWithoutLinks(target, directory, true);
+    }
+
+    private static boolean isBelowWithoutLinks(Path target, Path directory, boolean expectExisting) {
+        final Path absoluteDirectory = directory.toAbsolutePath();
+        final Path absoluteTarget = target.toAbsolutePath();
+        if (!absoluteTarget.startsWith(absoluteDirectory)) {
+            return false;
+        }
+        final int count = absoluteTarget.getNameCount();
+        Path current = absoluteDirectory;
+        for (int i = absoluteDirectory.getNameCount(); i < count; i++) {
+            Path segment = absoluteTarget.getName(i);
+            String name = segment.toString();
+            if (".".equals(name) || "..".equals(name)) {
+                return false;
+            }
+            current = current.resolve(segment);
+            // the last segment of a move target usually does not exist yet, and Files.exists tells without throwing
+            if (i == count - 1 && !expectExisting && !Files.exists(current, LinkOption.NOFOLLOW_LINKS)) {
+                return true;
+            }
+            BasicFileAttributes attributes;
+            try {
+                attributes = Files.readAttributes(current, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+            } catch (NoSuchFileException e) {
+                // this segment does not exist, nor do the ones below it, so none of them is a link
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
+            if (attributes.isSymbolicLink() || attributes.isOther()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

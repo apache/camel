@@ -184,7 +184,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
                 // the move and moveFailed targets depend on the preMove target
                 return true;
             }
-            if (!acceptMoveTarget(operations, endpoint, file, to)) {
+            if (!acceptMoveTarget(operations, endpoint, file, to.getAbsoluteFilePath())) {
                 return false;
             }
             current = to;
@@ -199,8 +199,12 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         if (renamer == null) {
             return true;
         }
+        if (renamer instanceof DefaultMoveRenamer) {
+            // the default .camel folder next to the file has no expression to evaluate
+            return acceptMoveTarget(operations, endpoint, file, DefaultMoveRenamer.target(current));
+        }
         GenericFile<T> to = evaluateMoveTarget(operations, endpoint, exchange, current, renamer);
-        return to == null || acceptMoveTarget(operations, endpoint, file, to);
+        return to == null || acceptMoveTarget(operations, endpoint, file, to.getAbsoluteFilePath());
     }
 
     private GenericFile<T> evaluateMoveTarget(
@@ -224,8 +228,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     }
 
     private boolean acceptMoveTarget(
-            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFile<T> file, GenericFile<T> to) {
-        String target = to.getAbsoluteFilePath();
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFile<T> file, String target) {
         if (operations.isWithinStartingDirectory(target)) {
             return true;
         }

@@ -88,6 +88,10 @@ public class FileOperations implements GenericFileOperations<File> {
     @Override
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         File file = new File(name);
+        if (!file.exists()) {
+            // nothing to delete, also not through a symbolic link, such as the target of a move (renameFile checks it)
+            return false;
+        }
         // such as an existing file in a folder the producer moves existing files to (moveExisting), or the existing
         // target of a consumer move, which must not be deleted through a symbolic link resolving outside
         jailToStartingDirectory(file, "Cannot delete file: ");

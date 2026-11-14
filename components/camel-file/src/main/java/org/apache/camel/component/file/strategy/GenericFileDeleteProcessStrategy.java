@@ -37,14 +37,15 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
             GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
             throws Exception {
 
-        // must invoke super
-        boolean result = super.begin(operations, endpoint, exchange, file);
-        if (!result) {
+        // skip the file before it is processed if it cannot be moved where it would be moved to, and before the read
+        // lock is acquired, so a skipped file does not wait for the read lock on every poll
+        if (!acceptMoveTargets(operations, endpoint, exchange, file, beginRenamer, null, failureRenamer)) {
             return false;
         }
 
-        // skip the file before it is processed if it cannot be moved where it would be moved to
-        if (!acceptMoveTargets(operations, endpoint, exchange, file, beginRenamer, null, failureRenamer)) {
+        // must invoke super
+        boolean result = super.begin(operations, endpoint, exchange, file);
+        if (!result) {
             return false;
         }
 
