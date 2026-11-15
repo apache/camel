@@ -258,6 +258,9 @@ When the FTP/FTPS server stops answering on an open connection (it hangs, or a f
 closing it), the client notices it only when `soTimeout` expires (or `timeout` during a transfer). Camel then does not
 wait on that connection again:
 
+* When the consumer retrieves a file and the server does not answer in time, only that file fails: the consumer closes
+  the connection, which it cannot use any more, and leaves the other files of the poll to the next poll, which connects
+  again.
 * After a failed poll, the consumer closes the connection without sending `QUIT`.
 * When disconnecting, for example when the consumer or the producer stops, the client sends `QUIT` and waits at most
   2 seconds (`soTimeout` when it is shorter) for its reply.

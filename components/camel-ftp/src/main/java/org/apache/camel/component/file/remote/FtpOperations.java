@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Duration;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Exchange;
@@ -123,6 +124,17 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         String username = configuration.getUsername();
         String account = ((FtpConfiguration) configuration).getAccount();
 
+        // connecting replaces the socket of the client without closing it: close a connection that is still open, such
+        // as one whose server no longer answers, so it is not left open
+        if (client.isConnected()) {
+            log.trace("Client disconnect before connecting again");
+            try {
+                client.disconnect();
+            } catch (IOException e) {
+                log.trace("Ignore exception during disconnect: {}", e.getMessage());
+            }
+        }
+
         if (clientConfig != null) {
             log.trace("Configuring FTPClient with config: {}", clientConfig);
             client.configure(clientConfig);
@@ -162,9 +174,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     if (payload.exception instanceof GenericFileOperationFailedException genericFileOperationFailedException) {
                         throw genericFileOperationFailedException;
                     } else {
+                        // no reply string when the client has no reply, such as after it closed the previous connection
                         throw new GenericFileOperationFailedException(
-                                client.getReplyCode(), client.getReplyString(), payload.exception.getMessage(),
-                                payload.exception);
+                                client.getReplyCode(), Objects.toString(client.getReplyString(), ""),
+                                payload.exception.getMessage(), payload.exception);
                     }
                 } else {
                     throw new GenericFileOperationFailedException(

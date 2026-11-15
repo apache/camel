@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -288,6 +289,31 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
         LOG.trace("Done file: {} does not exist", doneFileName);
         return false;
+    }
+
+    /**
+     * A file failed because the server did not answer in time (soTimeout on the control connection, or timeout on the
+     * data connection): the server may no longer answer, and a reply that comes late would be read as the reply to the
+     * next command, so the connection cannot be used for the rest of the batch. It is closed without waiting on it, and
+     * the rest of the batch is left to the next poll, which connects again. Otherwise each remaining file would wait
+     * soTimeout on the connection and fail.
+     */
+    @Override
+    protected void handleException(String message, Exchange exchange, Throwable t) {
+        super.handleException(message, exchange, t);
+        if (loggedIn && ObjectHelper.getException(SocketTimeoutException.class, t) != null) {
+            LOG.debug("Closing the connection to {} after a timeout, the rest of the batch is left to the next poll",
+                    remoteServer());
+            forceDisconnect();
+            // the rest of the batch is not processed
+            pendingExchanges = 0;
+        }
+    }
+
+    @Override
+    public boolean isBatchAllowed() {
+        // the connection was closed after a timeout, see handleException
+        return loggedIn && super.isBatchAllowed();
     }
 
     @Override
