@@ -7517,9 +7517,12 @@ public interface ActiveMQEndpointBuilderFactory {
             return "JMSTimestamp";
         }
         /**
-         * The JMS reply-to destination.
+         * The JMS reply-to destination. On an incoming message this is the
+         * jakarta.jms.Destination of the JMS message. When set on an outgoing
+         * message it may also be a String holding the destination name, which
+         * is normalized and converted to a jakarta.jms.Destination.
          * 
-         * The option is a: {@code jakarta.jms.Destination} type.
+         * The option is a: {@code jakarta.jms.Destination or String} type.
          * 
          * Group: common
          * 
