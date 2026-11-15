@@ -516,7 +516,10 @@ public interface XsltSaxonEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom Saxon configuration.
+         * To use a custom Saxon configuration. The secureProcessing option is
+         * applied to this configuration, which Saxon uses by reference, so
+         * endpoints that share the same configuration must use the same
+         * secureProcessing value.
          * 
          * The option is a: <code>net.sf.saxon.Configuration</code> type.
          * 
@@ -530,7 +533,10 @@ public interface XsltSaxonEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom Saxon configuration.
+         * To use a custom Saxon configuration. The secureProcessing option is
+         * applied to this configuration, which Saxon uses by reference, so
+         * endpoints that share the same configuration must use the same
+         * secureProcessing value.
          * 
          * The option will be converted to a
          * <code>net.sf.saxon.Configuration</code> type.
@@ -737,7 +743,9 @@ public interface XsltSaxonEndpointBuilderFactory {
          * need to turn this off to allow Saxon to be able to use Java extension
          * functions. Note that turning it off also restores the previous,
          * unrestricted parsing of a Source message body that is still to be
-         * parsed, so only do so for trusted input.
+         * parsed, so only do so for trusted input. With a saxonConfiguration,
+         * the feature is set on that configuration, so endpoints that share the
+         * same configuration must use the same secureProcessing value.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -757,7 +765,9 @@ public interface XsltSaxonEndpointBuilderFactory {
          * need to turn this off to allow Saxon to be able to use Java extension
          * functions. Note that turning it off also restores the previous,
          * unrestricted parsing of a Source message body that is still to be
-         * parsed, so only do so for trusted input.
+         * parsed, so only do so for trusted input. With a saxonConfiguration,
+         * the feature is set on that configuration, so endpoints that share the
+         * same configuration must use the same secureProcessing value.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
