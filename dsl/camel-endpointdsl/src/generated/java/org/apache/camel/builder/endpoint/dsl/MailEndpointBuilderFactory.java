@@ -3960,6 +3960,19 @@ public interface MailEndpointBuilderFactory {
         public String mailMessageId() {
             return "CamelMailMessageId";
         }
+        /**
+         * The name of the attachment, on each message produced by
+         * SplitAttachmentsExpression.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SplitAttachmentId}.
+         */
+        public String splitAttachmentId() {
+            return "CamelSplitAttachmentId";
+        }
     }
     static MailEndpointBuilder endpointBuilder(String componentName, String path) {
         class MailEndpointBuilderImpl extends AbstractEndpointBuilder implements MailEndpointBuilder, AdvancedMailEndpointBuilder {
