@@ -1486,6 +1486,15 @@ whereas an explicit empty list in the config restricts the plugin to its own com
 integration reported Running, did nothing, and exited with `0`. In dev mode (`--dev`, `camel dev`) the run still waits
 for files to be added. The message names the `.yml` files of the folder, as the YAML DSL reads `.yaml` files only.
 
+=== camel-jbang - camel config set checks the value, and camel config unset of a key that is not set exits with 3
+
+`camel config set` checks the value against the options the key is the default of, and refuses a value one of them
+does not take, such as `runtime=springboot` or `max-seconds=abc`, with exit code `2`. Before, it stored the value, and
+then every command with that option failed with "DefaultValueProvider failed for option runtime". Such a value in the
+configuration file now fails a command with a message that names the file, the key and the value. A key that no
+command of the CLI has is still stored, with a warning. `camel config unset` of a key that is not set now exits with
+code `3` (not found) and says so, as `camel config get` does; it exited with `0`.
+
 === camel-jbang - camel run exits with 1 when the integration fails to start
 
 When `camel run` cannot start the integration, such as for a route that cannot be created or started, it now exits

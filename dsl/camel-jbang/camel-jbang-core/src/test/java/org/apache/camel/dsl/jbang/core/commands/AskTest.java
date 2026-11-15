@@ -117,6 +117,9 @@ class AskTest {
         assertThat(Ask.smallModelNote("granite4:3b", 3.0)).contains("(3B parameters)");
         assertThat(Ask.smallModelNote("qwen3.6:35b-mlx", 35.1)).isNull();
         assertThat(Ask.smallModelNote("unknown", -1)).isNull();
+        // 14B is small for the tools of Camel; Ollama reports the 27B models as 26.9B
+        assertThat(Ask.smallModelNote("qwen2.5:14b", 14.8)).startsWith("Note: qwen2.5:14b is a small model");
+        assertThat(Ask.smallModelNote("qwen3.8:27b-mlx", 26.9)).isNull();
     }
 
     @Test
