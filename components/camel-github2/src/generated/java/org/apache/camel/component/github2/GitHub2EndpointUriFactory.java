@@ -24,7 +24,7 @@ public class GitHub2EndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(33);
         props.add("apiUrl");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -38,6 +38,7 @@ public class GitHub2EndpointUriFactory extends org.apache.camel.support.componen
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("initialDelay");
         props.add("lazyStartProducer");
         props.add("oauthToken");

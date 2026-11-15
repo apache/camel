@@ -102,6 +102,8 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "handledirectoryparserabsoluteresult":
         case "handleDirectoryParserAbsoluteResult": target.getConfiguration().setHandleDirectoryParserAbsoluteResult(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "idempotent": target.setIdempotent(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "idempotenteager":
         case "idempotentEager": target.setIdempotentEager(property(camelContext, java.lang.Boolean.class, value)); return true;
@@ -306,6 +308,8 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "greedy": return boolean.class;
         case "handledirectoryparserabsoluteresult":
         case "handleDirectoryParserAbsoluteResult": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "idempotent": return java.lang.Boolean.class;
         case "idempotenteager":
         case "idempotentEager": return java.lang.Boolean.class;
@@ -511,6 +515,8 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "greedy": return target.isGreedy();
         case "handledirectoryparserabsoluteresult":
         case "handleDirectoryParserAbsoluteResult": return target.getConfiguration().isHandleDirectoryParserAbsoluteResult();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "idempotent": return target.getIdempotent();
         case "idempotenteager":
         case "idempotentEager": return target.getIdempotentEager();

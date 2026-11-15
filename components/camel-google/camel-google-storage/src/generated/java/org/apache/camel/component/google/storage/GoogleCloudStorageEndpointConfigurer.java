@@ -47,6 +47,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filter": target.getConfiguration().setFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "impersonatedserviceaccount":
         case "impersonatedServiceAccount": target.getConfiguration().setImpersonatedServiceAccount(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
@@ -129,6 +131,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "filter": return java.lang.String.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "impersonatedserviceaccount":
         case "impersonatedServiceAccount": return java.lang.String.class;
         case "includebody":
@@ -207,6 +211,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "exchangePattern": return target.getExchangePattern();
         case "filter": return target.getConfiguration().getFilter();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "impersonatedserviceaccount":
         case "impersonatedServiceAccount": return target.getConfiguration().getImpersonatedServiceAccount();
         case "includebody":
