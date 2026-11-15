@@ -44,6 +44,9 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
             = "createSecret with pojoRequest=true takes a CreateSecretRequest, to create the secret, or an"
               + " AddSecretVersionRequest, to add a version to a secret that exists";
 
+    private static final String CREATE_SECRET_EMPTY_VALUE_HINT
+            = "createSecret takes the value of the secret as the message body, and the value must not be empty";
+
     private GoogleSecretManagerEndpoint endpoint;
 
     public GoogleSecretManagerProducer(GoogleSecretManagerEndpoint endpoint) {
@@ -89,8 +92,15 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
             String secretId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.SECRET_ID, String.class);
             // read the value first: a message without a body then fails before the secret is created, instead of
             // leaving a secret without a version behind
+            String secretValue = exchange.getMessage().getMandatoryBody(String.class);
+            // Secret Manager rejects an empty payload, so an empty value would create the secret and then fail
+            // to add the version, again leaving a secret without a version behind: fail before creating it
+            if (secretValue.isEmpty()) {
+                throw new InvalidPayloadException(
+                        exchange, String.class, exchange.getMessage(), CREATE_SECRET_EMPTY_VALUE_HINT);
+            }
             SecretPayload payload = SecretPayload.newBuilder()
-                    .setData(ByteString.copyFromUtf8(exchange.getMessage().getMandatoryBody(String.class))).build();
+                    .setData(ByteString.copyFromUtf8(secretValue)).build();
             Secret secret = Secret.newBuilder()
                     .setReplication(
                             Replication.newBuilder()
