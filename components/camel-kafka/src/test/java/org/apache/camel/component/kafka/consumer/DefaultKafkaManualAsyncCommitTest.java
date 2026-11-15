@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Processor;
@@ -46,6 +48,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * An asynchronous manual commit is done by the thread of the Kafka consumer, so it can be called from another thread,
@@ -56,6 +59,8 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
 
     private static final String TOPIC = "async-manual-commit";
     private static final TopicPartition PARTITION = new TopicPartition(TOPIC, 0);
+    private static final Processor COMMIT
+            = e -> e.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class).commit();
 
     private final SingleThreadMockConsumer mockConsumer = new SingleThreadMockConsumer();
 
@@ -87,7 +92,7 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
 
     @Test
     void testCommitAfterAggregator() throws Exception {
-        startRoute(true);
+        startRoute(true, COMMIT);
         MockEndpoint mock = getMockEndpoint("mock:committed");
         mock.expectedBodiesReceived("b");
 
@@ -100,7 +105,7 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
 
     @Test
     void testCommitInKafkaRoute() throws Exception {
-        startRoute(false);
+        startRoute(false, COMMIT);
         MockEndpoint mock = getMockEndpoint("mock:committed");
         mock.expectedBodiesReceived("a", "b");
 
@@ -108,6 +113,36 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(2, committedOffset()));
+    }
+
+    @Test
+    void testCommitAfterRevokeIsNotCommitted() throws Exception {
+        List<KafkaManualCommit> manualCommits = new CopyOnWriteArrayList<>();
+        startRoute(false,
+                e -> manualCommits.add(e.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class)));
+        MockEndpoint mock = getMockEndpoint("mock:committed");
+        mock.expectedBodiesReceived("a", "b");
+
+        sendTwoRecords();
+        MockEndpoint.assertIsSatisfied(context);
+
+        // the partition is revoked: the last processed offset is committed (offset 2)
+        mockConsumer.schedulePollTask(() -> mockConsumer.rebalance(List.of()));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> mockConsumer.assignment().isEmpty());
+        assertEquals(2, lastCommittedOffset());
+        int commitsAtRevoke = mockConsumer.commits.size();
+
+        // the route commits the first record after the revoke, from another thread than the consumer
+        manualCommits.get(0).commit();
+
+        // two polls later, the consumer thread has gone through the requested commits at least once
+        int polls = mockConsumer.polls.get();
+        await().atMost(10, TimeUnit.SECONDS).until(() -> mockConsumer.polls.get() >= polls + 2);
+
+        // the commit is not made: it would move back the offset the new owner of the partition committed
+        assertFalse(mockConsumer.commits.subList(commitsAtRevoke, mockConsumer.commits.size()).stream()
+                .anyMatch(offsets -> offsets.containsKey(PARTITION)));
+        assertEquals(2, lastCommittedOffset());
     }
 
     private void sendTwoRecords() {
@@ -121,10 +156,24 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
         return committed != null ? committed.offset() : -1;
     }
 
-    private void startRoute(boolean aggregate) throws Exception {
+    /**
+     * The last offset committed on the partition, also when it is no longer assigned (unlike
+     * {@link MockConsumer#committed(Set)}).
+     */
+    private long lastCommittedOffset() {
+        long offset = -1;
+        for (Map<TopicPartition, OffsetAndMetadata> offsets : mockConsumer.commits) {
+            OffsetAndMetadata committed = offsets.get(PARTITION);
+            if (committed != null) {
+                offset = committed.offset();
+            }
+        }
+        return offset;
+    }
+
+    private void startRoute(boolean aggregate, Processor processor) throws Exception {
         mockConsumer.updateBeginningOffsets(Map.of(PARTITION, 0L));
         mockConsumer.schedulePollTask(() -> mockConsumer.rebalance(List.of(PARTITION)));
-        Processor commit = e -> e.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class).commit();
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -133,11 +182,11 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
                 if (aggregate) {
                     from(uri).routeId("kafka")
                             .aggregate(constant(true), AggregationStrategies.useLatest()).completionSize(2)
-                            .process(commit)
+                            .process(processor)
                             .to("mock:committed");
                 } else {
                     from(uri).routeId("kafka")
-                            .process(commit)
+                            .process(processor)
                             .to("mock:committed");
                 }
             }
@@ -150,6 +199,8 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
      * is in poll.
      */
     private static final class SingleThreadMockConsumer extends MockConsumer<Object, Object> {
+        private final List<Map<TopicPartition, OffsetAndMetadata>> commits = new CopyOnWriteArrayList<>();
+        private final AtomicInteger polls = new AtomicInteger();
         private volatile Thread pollThread;
 
         SingleThreadMockConsumer() {
@@ -159,6 +210,7 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
         @Override
         public synchronized ConsumerRecords<Object, Object> poll(Duration timeout) {
             pollThread = Thread.currentThread();
+            polls.incrementAndGet();
             return super.poll(timeout);
         }
 
@@ -167,6 +219,7 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
             if (Thread.currentThread() != pollThread) {
                 throw new ConcurrentModificationException("KafkaConsumer is not safe for multi-threaded access");
             }
+            commits.add(Map.copyOf(offsets));
             super.commitAsync(offsets, callback);
         }
     }

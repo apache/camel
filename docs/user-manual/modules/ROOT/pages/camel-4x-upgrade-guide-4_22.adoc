@@ -766,6 +766,15 @@ relied on the setter being inert until an exchange arrived must be aware of the 
 Setting `keepOpen` back to `false` remains deferred: the half-open timer attempts to close the circuit on
 its next tick (after `halfOpenAfter` milliseconds, default 30 s).
 
+=== camel-kafka - the asynchronous manual commit is done by the consumer thread
+
+With the `DefaultKafkaManualAsyncCommitFactory`, `KafkaManualCommit.commit()` records the offset, and the consumer
+thread commits it before its next poll, as in Camel 4.21. In Camel 4.22.0 to 4.22.2, the commit ran at once on the
+calling thread. That failed with a `ConcurrentModificationException` when the calling thread was not the consumer
+thread (for example, after an aggregator).
+A commit called after the partition was revoked from the consumer is not made, so it does not move back the offset
+that the new owner of the partition committed.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined

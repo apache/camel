@@ -20,6 +20,7 @@ package org.apache.camel.component.kafka.consumer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Exchange;
@@ -85,11 +86,20 @@ public class AsyncCommitManager extends AbstractCommitManager {
             return;
         }
 
+        // a commit requested after its partition was revoked is not committed: it could move back the offset that the
+        // new owner of the partition committed
+        Set<TopicPartition> assignment = consumer.assignment();
         Map<TopicPartition, OffsetAndMetadata> offsets = new HashMap<>();
         for (TopicPartition partition : requestedOffsets.keySet()) {
             Long offset = requestedOffsets.remove(partition);
-            if (offset != null) {
+            if (offset == null) {
+                continue;
+            }
+            if (assignment.contains(partition)) {
                 offsets.put(partition, new OffsetAndMetadata(offset + 1));
+            } else {
+                LOG.debug("Dropping the requested commit of offset {} on {} from {}: the partition is no longer assigned",
+                        offset, partition, threadId);
             }
         }
         if (!offsets.isEmpty()) {

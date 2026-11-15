@@ -353,9 +353,11 @@ the exception again in the `doCatch` block, or end it with `rollback()`.
 === camel-kafka - the asynchronous manual commit is done by the consumer thread
 
 With the `DefaultKafkaManualAsyncCommitFactory`, `KafkaManualCommit.commit()` records the offset, and the consumer
-thread commits it before its next poll, as in Camel 4.21. In Camel 4.22 and 4.23 the commit was done at once on the
-calling thread, which failed with a `ConcurrentModificationException` when that was not the consumer thread, for
-example after an aggregator.
+thread commits it before its next poll, as in Camel 4.21. In Camel 4.23 (and 4.22 before 4.22.3), the commit ran at
+once on the calling thread. That failed with a `ConcurrentModificationException` when the calling thread was not the
+consumer thread (for example, after an aggregator).
+A commit called after the partition was revoked from the consumer is not made, so it does not move back the offset
+that the new owner of the partition committed.
 
 === camel-jms, camel-sjms, camel-sjms2 - an exception sent back with transferException is not rolled back
 

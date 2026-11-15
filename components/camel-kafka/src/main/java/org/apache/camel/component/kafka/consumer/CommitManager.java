@@ -67,8 +67,8 @@ public interface CommitManager {
     }
 
     /**
-     * Commits the offsets given to {@link #requestCommit(TopicPartition, long)} that are not committed yet. Called by
-     * the consumer thread before each poll.
+     * Commits the offsets given to {@link #requestCommit(TopicPartition, long)} that are not committed yet, for the
+     * partitions that are still assigned to the consumer. Called by the consumer thread before each poll.
      */
     default void commitRequestedOffsets() {
         // NO-OP

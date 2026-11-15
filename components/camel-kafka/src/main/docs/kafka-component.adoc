@@ -316,6 +316,7 @@ You can use an asynchronous commit as well by configuring the `KafkaManualCommit
 
 Then `commit()` records the offset, and the consumer thread commits it before its next poll, using the Kafka asynchronous commit API.
 So the asynchronous commit can be called from a thread other than the consumer thread, for example after an aggregator.
+A commit called after the partition was revoked from the consumer, for example in a rebalance, is not made.
 
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
