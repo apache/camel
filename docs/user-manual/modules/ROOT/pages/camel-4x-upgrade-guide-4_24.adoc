@@ -120,6 +120,20 @@ Starting in 4.24, parameter values provided via the `CamelJpaParameters` header 
 
 Routes that previously relied on evaluating Simple expressions within the `CamelJpaParameters` header should evaluate those expressions in the route before setting the header value.
 
+=== camel-jpa - the producer closes its EntityManager when it fails
+
+When the JPA producer fails, it now closes the `EntityManager` that it created for the exchange, so that a redelivery
+gets a new one. Before, the exchange kept that `EntityManager` until it completed: with Hibernate, after the database
+connection broke during a send, the `EntityManager` kept the broken connection, and every redelivery failed with
+`JDBC begin transaction failed` even once the database was back. An `EntityManager` passed in the `CamelEntityManager`
+header (`usePassedInEntityManager=true`) and the shared `EntityManager` (`sharedEntityManager=true`) are not closed.
+On a transacted route, an `EntityManager` that joined the transaction is closed when the transaction completes.
+
+The entities that an earlier JPA step of the exchange read or saved with that `EntityManager` are detached after such
+a failure, as the JPA specification leaves them after a rollback. A route that handles the failure (for example with
+`onException` and `handled(true)`, or `doCatch`) and goes on using them can no longer load their lazy associations,
+and the next JPA step of the exchange uses a new `EntityManager`.
+
 === camel-openfga - writeTuples and the read operations carry a relationship condition
 
 `writeTuples` now honours a relationship condition set on a tuple in the message body: a `ClientTupleKey` built with
