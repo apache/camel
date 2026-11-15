@@ -25,7 +25,7 @@ public final class LanguageConstants {
                             "script configured on the endpoint. The script is used for this message only, it is never\n" +
                             "cached as the script of the endpoint (also with cacheScript=true), and the header is removed\n" +
                             "after use.",
-              javaType = "String or Expression")
+              javaType = "String or org.apache.camel.Expression")
     public static final String LANGUAGE_SCRIPT = Exchange.LANGUAGE_SCRIPT;
 
     private LanguageConstants() {
