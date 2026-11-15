@@ -45,8 +45,10 @@ public interface FCEndpointBuilderFactory {
         }
 
         /**
-         * FC endpoint URL. Carries higher precedence than region based client
-         * initialization.
+         * The endpoint of Function Compute, which is a host name without
+         * http:// or https://. The producer sends requests to it over HTTPS. If
+         * not set, it is built from the region option, and one of the two is
+         * required. Not used when the fcClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -60,7 +62,10 @@ public interface FCEndpointBuilderFactory {
             return this;
         }
         /**
-         * FC function name.
+         * The name of the function. The CamelAlibabaFcFunctionName header
+         * replaces this option for a request that the producer sends. If that
+         * header is not set, an exchange property of the same name replaces
+         * this option. One of the three is required.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -74,7 +79,11 @@ public interface FCEndpointBuilderFactory {
             return this;
         }
         /**
-         * Function version or alias qualifier.
+         * The version or alias of the service. The CamelAlibabaFcQualifier
+         * header replaces this option for a request that the producer sends. If
+         * that header is not set, an exchange property of the same name
+         * replaces this option. If none of the three is set, the producer adds
+         * no version or alias to the request.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -88,7 +97,10 @@ public interface FCEndpointBuilderFactory {
             return this;
         }
         /**
-         * Alibaba Cloud region.
+         * The region ID of Function Compute, for example cn-hangzhou. Only used
+         * when the endpoint option is not set, to build the endpoint of
+         * Function Compute. Not used when the fcClient option is set or
+         * autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -103,7 +115,11 @@ public interface FCEndpointBuilderFactory {
             return this;
         }
         /**
-         * FC service name.
+         * The name of the service that contains the function. The
+         * CamelAlibabaFcServiceName header replaces this option for a request
+         * that the producer sends. If that header is not set, an exchange
+         * property of the same name replaces this option. One of the three is
+         * required.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -117,7 +133,10 @@ public interface FCEndpointBuilderFactory {
             return this;
         }
         /**
-         * Access key for the cloud user.
+         * The AccessKey ID of the AccessKey pair for the requests that the
+         * producer sends to Function Compute. If not set, the accessKey of the
+         * serviceKeys option is used, and one of the two is required. Not used
+         * when the fcClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -131,7 +150,10 @@ public interface FCEndpointBuilderFactory {
             return this;
         }
         /**
-         * Secret key for the cloud user.
+         * The AccessKey secret of the AccessKey pair for the requests that the
+         * producer sends to Function Compute. If not set, the secretKey of the
+         * serviceKeys option is used, and one of the two is required. Not used
+         * when the fcClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -145,7 +167,11 @@ public interface FCEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configuration object for cloud service authentication.
+         * The AccessKey pair as an
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
+         * secret. Each of the two is used when the option of the same name is
+         * not set. Not used when the fcClient option is set or autowired.
          * 
          * The option is a:
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -160,7 +186,11 @@ public interface FCEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configuration object for cloud service authentication.
+         * The AccessKey pair as an
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
+         * secret. Each of the two is used when the option of the same name is
+         * not set. Not used when the fcClient option is set or autowired.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -233,7 +263,11 @@ public interface FCEndpointBuilderFactory {
             return this;
         }
         /**
-         * Autowire an existing FC client instance.
+         * To use a custom com.aliyun.fc_open20210406.Client. The producer sends
+         * its requests with this client, and the region, endpoint, accessKey,
+         * secretKey and serviceKeys options are not used. If no client is set
+         * or autowired, the Camel endpoint creates a client from these options.
+         * It creates this client when the producer processes its first message.
          * 
          * The option is a: <code>com.aliyun.fc_open20210406.Client</code> type.
          * 
@@ -247,7 +281,11 @@ public interface FCEndpointBuilderFactory {
             return this;
         }
         /**
-         * Autowire an existing FC client instance.
+         * To use a custom com.aliyun.fc_open20210406.Client. The producer sends
+         * its requests with this client, and the region, endpoint, accessKey,
+         * secretKey and serviceKeys options are not used. If no client is set
+         * or autowired, the Camel endpoint creates a client from these options.
+         * It creates this client when the producer processes its first message.
          * 
          * The option will be converted to a
          * <code>com.aliyun.fc_open20210406.Client</code> type.
@@ -288,7 +326,10 @@ public interface FCEndpointBuilderFactory {
          * Syntax: <code>alibaba-fc:operation</code>
          * 
          * Path parameter: operation (required)
-         * Operation to perform
+         * The operation that the producer performs. The CamelAlibabaFcOperation
+         * header replaces this option for a request that the producer sends. If
+         * that header is not set, an exchange property of the same name
+         * replaces this option.
          * There are 2 enums and the value can be one of: invokeFunction,
          * getFunction
          * 
@@ -309,7 +350,10 @@ public interface FCEndpointBuilderFactory {
          * Syntax: <code>alibaba-fc:operation</code>
          * 
          * Path parameter: operation (required)
-         * Operation to perform
+         * The operation that the producer performs. The CamelAlibabaFcOperation
+         * header replaces this option for a request that the producer sends. If
+         * that header is not set, an exchange property of the same name
+         * replaces this option.
          * There are 2 enums and the value can be one of: invokeFunction,
          * getFunction
          * 
@@ -334,7 +378,8 @@ public interface FCEndpointBuilderFactory {
         public static final FCHeaderNameBuilder INSTANCE = new FCHeaderNameBuilder();
 
         /**
-         * FC service name override.
+         * The name of the service that contains the function. This header
+         * replaces the serviceName option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -346,7 +391,8 @@ public interface FCEndpointBuilderFactory {
             return "CamelAlibabaFcServiceName";
         }
         /**
-         * FC function name override.
+         * The name of the function. This header replaces the functionName
+         * option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -358,7 +404,8 @@ public interface FCEndpointBuilderFactory {
             return "CamelAlibabaFcFunctionName";
         }
         /**
-         * Function qualifier override.
+         * The version or alias of the service. This header replaces the
+         * qualifier option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -370,7 +417,9 @@ public interface FCEndpointBuilderFactory {
             return "CamelAlibabaFcQualifier";
         }
         /**
-         * Alibaba Cloud request id.
+         * The request ID that Function Compute returns in the response to
+         * invokeFunction. The producer sets it for invokeFunction, unless the
+         * exchange fails.
          * 
          * The option is a: {@code String} type.
          * 
@@ -382,7 +431,8 @@ public interface FCEndpointBuilderFactory {
             return "CamelAlibabaFcRequestId";
         }
         /**
-         * HTTP status code from FC invoke response.
+         * The HTTP status code of the response to the operation. The producer
+         * sets it, unless the exchange fails.
          * 
          * The option is a: {@code Integer} type.
          * 

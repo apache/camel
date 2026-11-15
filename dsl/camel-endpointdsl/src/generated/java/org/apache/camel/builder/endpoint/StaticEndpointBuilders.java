@@ -355,7 +355,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-fc:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaFcOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 2 enums and the value can be one of: invokeFunction,
      * getFunction
      * 
@@ -376,7 +379,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-fc:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaFcOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 2 enums and the value can be one of: invokeFunction,
      * getFunction
      * 
