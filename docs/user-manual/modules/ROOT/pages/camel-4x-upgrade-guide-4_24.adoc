@@ -32,6 +32,14 @@ camel.component.controlbus.allowed-languages = simple
 
 The `route` command (`controlbus:route?action=...`) is not affected.
 
+=== camel-controlbus - stopping the route of the message runs asynchronously
+
+A `stop`, `suspend`, `restart` or `fail` action of the `route` command on the route that routes the message
+(`routeId=current`), or on the route the message came from, now runs asynchronously, as with `async=true`.
+Before, it waited for that same message until the shutdown timeout (45 seconds by default), then forced the stop and
+the message failed with `RouteStoppingException`. Now the message continues, and the route stops once it is done, so
+the route is not yet stopped when the control bus step returns.
+
 === camel-clickup - the webhook signature check no longer logs signatures
 
 The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.

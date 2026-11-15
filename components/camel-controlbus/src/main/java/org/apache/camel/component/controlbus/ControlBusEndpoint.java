@@ -172,6 +172,9 @@ public class ControlBusEndpoint extends DefaultEndpoint {
      * <p/>
      * Important: If this option is enabled, then any result from the task is not set on the Exchange. This is only
      * possible if executing tasks synchronously.
+     * <p/>
+     * A stop, suspend, restart or fail of the route that routes the exchange, or of the route the exchange came from,
+     * is always executed asynchronously, as the route waits for the exchange to complete before it stops.
      */
     public void setAsync(boolean async) {
         this.async = async;

@@ -92,6 +92,12 @@ public class ControlBusProducer extends DefaultAsyncProducer {
         ActionTask task = new ActionTask(exchange);
         if (getEndpoint().isAsync()) {
             getEndpoint().getComponent().getExecutorService().submit(task);
+        } else if (task.stopsRouteOfExchange()) {
+            // the exchange is inflight in that route, and a graceful stop waits for it to complete: on this thread the
+            // stop would wait for itself until the shutdown timeout
+            LOG.debug("Running the {} action of route {} asynchronously, as the exchange is routed by that route",
+                    getEndpoint().getAction(), task.routeId);
+            getEndpoint().getComponent().getExecutorService().submit(task);
         } else {
             task.run();
         }
@@ -144,19 +150,32 @@ public class ControlBusProducer extends DefaultAsyncProducer {
     private final class ActionTask implements Runnable {
 
         private final Exchange exchange;
+        private final String routeId;
 
         private ActionTask(Exchange exchange) {
             this.exchange = exchange;
+            String id = getEndpoint().getRouteId();
+            if (ObjectHelper.equal("current", id)) {
+                id = ExchangeHelper.getRouteId(exchange);
+            }
+            this.routeId = id;
+        }
+
+        /**
+         * Whether the action stops or suspends the route that routes the exchange, or the route the exchange came from.
+         */
+        boolean stopsRouteOfExchange() {
+            String action = getEndpoint().getAction();
+            boolean stops = "stop".equals(action) || "suspend".equals(action) || "restart".equals(action)
+                    || "fail".equals(action);
+            return stops && routeId != null
+                    && (routeId.equals(ExchangeHelper.getRouteId(exchange)) || routeId.equals(exchange.getFromRouteId()));
         }
 
         @Override
         public void run() {
             String action = getEndpoint().getAction();
-            String id = getEndpoint().getRouteId();
-
-            if (ObjectHelper.equal("current", id)) {
-                id = ExchangeHelper.getRouteId(exchange);
-            }
+            String id = routeId;
 
             Object result = null;
             String task = action + " route " + id;
