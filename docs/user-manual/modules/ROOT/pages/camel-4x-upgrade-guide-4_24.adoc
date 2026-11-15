@@ -364,6 +364,13 @@ The camel-sjms and camel-sjms2 consumers now map a received `jakarta.jms.StreamM
 bytes, as the camel-jms consumer does, so a body sent with `jmsMessageType=Stream` arrives as the bytes that were sent.
 Before, the body was the `jakarta.jms.StreamMessage` itself. To get the JMS message, use `mapJmsMessage=false`.
 
+=== camel-jms, camel-sjms, camel-sjms2 - a poison message goes to the error handler without redeliveries
+
+With `eagerLoadingOfProperties=true`, a poison message (one whose payload or properties cannot be read) now goes to
+the error handler (such as the dead letter channel or `onException`) without redeliveries, with its `eagerPoisonBody`
+body. Before, when the error handler had redeliveries, the first step of the route was redelivered with that body and,
+when it succeeded, the message went on through the route and never reached the error handler.
+
 === camel-keycloak - Keycloak 26.8.2 requires the kc-admin-api client scope
 
 This is a change in Keycloak, not in Camel: from Keycloak 26.8.2 the Admin REST API accepts only access tokens that

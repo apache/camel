@@ -165,6 +165,8 @@ public class EndpointMessageListener implements SessionMessageListener {
                 } catch (Exception e) {
                     // any problems with eager loading then set an exception so Camel error handler can react
                     exchange.setException(e);
+                    // the payload cannot be read again, so there is nothing to redeliver
+                    exchange.getExchangeExtension().setRedeliveryExhausted(true);
                     String text = eagerPoisonBody;
                     try {
                         text = endpoint.getCamelContext().resolveLanguage("simple")
