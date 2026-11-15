@@ -22,6 +22,7 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -70,6 +71,11 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
     private ServiceBusReceiverAsyncClient renewalClient;
     private LockRenewer lockRenewer;
     private final AtomicInteger pendingExchanges = new AtomicInteger();
+    // Set by deferShutdown in peek-lock mode: a graceful stop waits for the exchanges in flight, which settle their
+    // message through the processor client, so the client stays open and the messages it delivers meanwhile are held
+    // (not routed) until the consumer stops
+    private volatile boolean deferredStop;
+    private volatile CountDownLatch stopped = new CountDownLatch(1);
 
     public ServiceBusConsumer(final ServiceBusEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -84,6 +90,9 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        deferredStop = false;
+        stopped = new CountDownLatch(1);
 
         LOG.debug("Creating connection to Azure ServiceBus");
 
@@ -129,7 +138,16 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
     }
 
     private void processMessage(ServiceBusReceivedMessageContext messageContext) {
+        // the latch of this run of the consumer, taken before the check, so a stop and start meanwhile cannot leave the
+        // message waiting for a later stop
+        CountDownLatch stop = stopped;
         pendingExchanges.incrementAndGet();
+        // counted before the check: a graceful stop that does not see this exchange as pending makes it be held here
+        if (deferredStop) {
+            pendingExchanges.decrementAndGet();
+            holdUntilStopped(stop);
+            return;
+        }
         try {
             final ServiceBusReceivedMessage message = messageContext.getMessage();
             final Exchange exchange = createServiceBusExchange(message);
@@ -156,6 +174,20 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
         }
     }
 
+    /**
+     * Holds a message delivered during a graceful stop, without routing or settling it: the processor client delivers
+     * the next message only when processMessage returns, so at most maxConcurrentCalls messages are held (the SDK
+     * renews their lock while they are held). They are released when the stop has closed the client: Service Bus
+     * delivers a held message again once its lock expires.
+     */
+    private static void holdUntilStopped(CountDownLatch stop) {
+        try {
+            stop.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     private void processError(ServiceBusErrorContext errorContext) {
         final Exchange exchange = createServiceBusExchange(errorContext);
 
@@ -176,14 +208,19 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             renewalClient.close();
             renewalClient = null;
         }
-        if (client != null) {
-            if (clientCloseable) {
-                client.close();
-                client = null;
-            } else {
-                // user-provided client: stop accepting messages but don't close
-                client.stop();
+        try {
+            if (client != null) {
+                if (clientCloseable) {
+                    client.close();
+                    client = null;
+                } else {
+                    // user-provided client: stop accepting messages but don't close
+                    client.stop();
+                }
             }
+        } finally {
+            // the client is closed or stopped: release the messages held during a graceful stop
+            stopped.countDown();
         }
 
         // shutdown camel consumer
@@ -205,15 +242,22 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             client.close();
             client = null;
         }
+        stopped.countDown();
 
         super.doShutdown();
     }
 
     @Override
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
-        // stop accepting new messages but keep the connection open
-        // so that in-flight exchanges can still complete/abandon messages
-        if (client != null) {
+        if (clientCloseable && getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
+            // stop routing new messages but keep the client open, so that in-flight exchanges can still
+            // complete/abandon their message: the stop() of the processor client closes its receiver (the default
+            // V2 stack of the SDK), and a message cannot be settled through a closed receiver. If a stop with
+            // abortAfterTimeout gives up, the consumer stays in this state until the route is stopped and started
+            deferredStop = true;
+        } else if (client != null) {
+            // receive and delete mode: nothing to settle; a processorClient given by the user: its messages do not go
+            // through processMessage. Stop receiving
             client.stop();
         }
         return true;
