@@ -95,6 +95,14 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
               description = "Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once."
                             + " If you set it to 5, it will only fire five times. A value of zero or negative means fire forever.")
     private long repeatCount;
+    @UriParam(label = "consumer,scheduler", defaultValue = "0", javaType = "java.time.Duration",
+              description = "How long a poll may run before the health check of the consumer reports DOWN."
+                            + " The health check is otherwise based on the polls that are done, so it stays UP while a poll hangs,"
+                            + " for example on a read without timeout from a connection that went silent."
+                            + " A poll includes routing the messages it polled, so set this above the longest poll you expect."
+                            + " The poll is not interrupted. The value is in millis (not affected by timeUnit)."
+                            + " The default 0 turns this off.")
+    private long healthCheckMaxPollDuration;
 
     protected ScheduledPollEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -177,6 +185,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             spc.setBackoffIdleThreshold(backoffIdleThreshold);
             spc.setBackoffMultiplier(backoffMultiplier);
             spc.setRepeatCount(repeatCount);
+            spc.setHealthCheckMaxPollDuration(healthCheckMaxPollDuration);
             if (delay < 0) {
                 // compute the default delay that are millis to use current time unit
                 long value = timeUnit.convert(DEFAULT_DELAY, TimeUnit.MILLISECONDS);
@@ -413,6 +422,23 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setRepeatCount(long repeatCount) {
         this.repeatCount = repeatCount;
+    }
+
+    public long getHealthCheckMaxPollDuration() {
+        return healthCheckMaxPollDuration;
+    }
+
+    /**
+     * How long a poll may run before the health check of the consumer reports DOWN. The health check is otherwise based
+     * on the polls that are done, so it stays UP while a poll hangs, for example on a read without timeout from a
+     * connection that went silent. A poll includes routing the messages it polled, so set this above the longest poll
+     * you expect. The poll is not interrupted. The value is in millis (not affected by timeUnit). The default 0 turns
+     * this off.
+     *
+     * @since 4.24
+     */
+    public void setHealthCheckMaxPollDuration(long healthCheckMaxPollDuration) {
+        this.healthCheckMaxPollDuration = healthCheckMaxPollDuration;
     }
 
 }

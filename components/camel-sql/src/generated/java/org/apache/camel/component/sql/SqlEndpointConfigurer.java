@@ -55,6 +55,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "fetchsize":
         case "fetchSize": target.setFetchSize(property(camelContext, int.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
@@ -157,6 +159,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "fetchsize":
         case "fetchSize": return int.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "lazystartproducer":
@@ -255,6 +259,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "fetchsize":
         case "fetchSize": return target.getFetchSize();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":

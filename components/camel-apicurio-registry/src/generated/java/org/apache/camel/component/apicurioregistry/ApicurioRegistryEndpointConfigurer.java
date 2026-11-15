@@ -50,6 +50,8 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "fetchcontent":
         case "fetchContent": target.getConfiguration().setFetchContent(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "ifexists":
         case "ifExists": target.getConfiguration().setIfExists(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
@@ -128,6 +130,8 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "fetchcontent":
         case "fetchContent": return boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "ifexists":
         case "ifExists": return java.lang.String.class;
         case "initialdelay":
@@ -207,6 +211,8 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "fetchcontent":
         case "fetchContent": return target.getConfiguration().isFetchContent();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "ifexists":
         case "ifExists": return target.getConfiguration().getIfExists();
         case "initialdelay":

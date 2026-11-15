@@ -24,7 +24,7 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(68);
+        Set<String> props = new HashSet<>(69);
         props.add("accessToken");
         props.add("alwaysIncludeEmail");
         props.add("apiName");
@@ -49,6 +49,7 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("iCalUID");
         props.add("inBody");
         props.add("initialDelay");

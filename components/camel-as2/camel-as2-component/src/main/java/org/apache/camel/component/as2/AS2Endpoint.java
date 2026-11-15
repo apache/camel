@@ -62,7 +62,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
              apiSyntax = "apiName/methodName",
              category = { Category.FILE })
 @Metadata(excludeProperties = "startScheduler,initialDelay,delay,timeUnit,useFixedDelay,pollStrategy,runLoggingLevel,sendEmptyMessageWhenIdle"
-                              + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
+                              + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,healthCheckMaxPollDuration,bridgeErrorHandler")
 @BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.STREAM },
                                    byOption = @BodyType.When(option = "apiName", value = "RECEIPT", carriers = Carrier.POJO),
                                    description = "The EDI message that server/listen receives, decrypted, decompressed and"

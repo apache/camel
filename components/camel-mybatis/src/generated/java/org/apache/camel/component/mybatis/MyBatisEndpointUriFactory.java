@@ -24,7 +24,7 @@ public class MyBatisEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(31);
+        Set<String> props = new HashSet<>(32);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -34,6 +34,7 @@ public class MyBatisEndpointUriFactory extends org.apache.camel.support.componen
         props.add("exchangePattern");
         props.add("executorType");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("initialDelay");
         props.add("inputHeader");
         props.add("lazyStartProducer");

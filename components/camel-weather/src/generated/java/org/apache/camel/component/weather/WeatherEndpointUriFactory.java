@@ -24,7 +24,7 @@ public class WeatherEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(41);
+        Set<String> props = new HashSet<>(42);
         props.add("appid");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -39,6 +39,7 @@ public class WeatherEndpointUriFactory extends org.apache.camel.support.componen
         props.add("geolocationRequestHostIP");
         props.add("greedy");
         props.add("headerName");
+        props.add("healthCheckMaxPollDuration");
         props.add("httpClient");
         props.add("ids");
         props.add("initialDelay");

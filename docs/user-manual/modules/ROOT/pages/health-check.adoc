@@ -253,6 +253,40 @@ camel.health.exclude-pattern = producer:aws*
 ----
 ====
 
+=== Detecting a poll that hangs
+
+The health check of a polling consumer (such as file, ftp, sftp, sql, jpa, mail or aws2-s3) reports on the polls that
+are done: DOWN when the last poll failed, UP when it succeeded. A poll that does not return is not seen, so the check
+stays UP for as long as that poll hangs: for example a poll that waits in a socket read on a connection that went
+silent, with a client that has no read timeout (such as the PostgreSQL JDBC driver with its default `socketTimeout=0`).
+
+To detect this, set the endpoint option `healthCheckMaxPollDuration` to how long a poll may run. While a poll is in
+progress and has been running longer than that, the consumer health check is DOWN:
+
+[source,java]
+----
+from("sftp:myserver/inbox?username=scott&password=RAW(tiger)&healthCheckMaxPollDuration=10m")
+    .to("direct:process");
+----
+
+----
+Consumer has been polling for 10m5s, longer than healthCheckMaxPollDuration (10m0s) route: route1 (sftp://myserver/inbox)
+----
+
+When the poll is done, the check is UP or DOWN by the result of the poll, as before. The check only reports: it does
+not interrupt the poll. To end a poll that hangs, configure a read timeout on the client, such as the `soTimeout` option
+of ftp and sftp, or the `socketTimeout` of the JDBC driver.
+
+The option is off by default (`0`). The value is in milliseconds, or a duration such as `10m`, and does not depend on
+the `timeUnit` option of the consumer. Set it above the longest poll you expect: a poll includes routing the messages it
+polled (a batch consumer routes the whole batch within the poll), so a big file, a large batch or a slow query make a
+poll long without anything being wrong.
+
+The check also applies before the first poll is done, which is otherwise reported with the initial state (see
+_Configuring Initial State_ above), and to consumers that mark themselves ready before their poll is done.
+With more than one concurrent poll (the `scheduler.concurrentConsumers` option), the check is DOWN when polls are in
+progress and none has started for longer than `healthCheckMaxPollDuration`.
+
 === Turning on producer level Health Checks
 
 Only consumer based health checks is enabled by default.

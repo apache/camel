@@ -24,7 +24,7 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(53);
+        Set<String> props = new HashSet<>(54);
         props.add("accessToken");
         props.add("apiName");
         props.add("applicationName");
@@ -44,6 +44,7 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
         props.add("exchangePattern");
         props.add("format");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("historyTypes");
         props.add("id");
         props.add("inBody");
