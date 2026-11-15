@@ -313,6 +313,15 @@ these messages now reach a started route). The hand-over on a graceful stop can 
 the delegated consumer takes to stop (a stop that blocks holds back the failover until it returns). Exchanges in flight
 that the delegated consumer does not wait for in its stop may still be in flight when the leadership moves, as before.
 
+=== camel-ftp - a server that stops answering no longer holds the stop
+
+The `ftp` and `ftps` components no longer wait up to `soTimeout` (5 minutes by default) for the reply to `QUIT` on a
+connection whose server stopped answering. A disconnect, such as when the consumer or the producer stops, still sends
+`QUIT`, but waits at most 2 seconds for its reply (`soTimeout` when it is shorter), then closes the connection. The
+disconnect that the consumer forces after a failed poll closes the connection without sending `QUIT`.
+
+See the xref:components::ftp-component.adoc[FTP component].
+
 === camel-ftp - sftp checks whether a file exists with one lstat request
 
 The `sftp` component now checks whether a remote file exists (`fileExist=Ignore|Fail|Move`, `tempFileName`,

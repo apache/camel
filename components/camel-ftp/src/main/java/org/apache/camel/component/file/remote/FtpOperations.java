@@ -56,6 +56,11 @@ import org.slf4j.LoggerFactory;
  */
 public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
+    /**
+     * How long a disconnect waits at most for the reply to QUIT (soTimeout when it is shorter).
+     */
+    private static final int QUIT_REPLY_TIMEOUT = 2000;
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final FTPClient client;
     protected final FTPClientConfig clientConfig;
@@ -303,9 +308,20 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    /**
+     * Closes the connection without sending QUIT: a forced disconnect recovers from a failure, after which the server
+     * may no longer answer, so it must not wait up to soTimeout for the reply.
+     */
     @Override
     public void forceDisconnect() throws GenericFileOperationFailedException {
-        doDisconnect();
+        clientActivityListener.onDisconnecting(endpoint.getConfiguration().remoteServerInformation());
+        try {
+            log.trace("Client disconnect");
+            client.disconnect();
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        }
+        clientActivityListener.onDisconnected(endpoint.getConfiguration().remoteServerInformation());
     }
 
     protected void doDisconnect() throws GenericFileOperationFailedException {
@@ -313,6 +329,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         clientActivityListener.onDisconnecting(endpoint.getConfiguration().remoteServerInformation());
         try {
             log.trace("Client logout");
+            // the connection is closed anyway, so a server that no longer answers (it hangs, or the connection was lost
+            // without being closed) must not hold the disconnect, such as the stop of the consumer or producer, for
+            // soTimeout while waiting for the reply to QUIT
+            if (client.isConnected()) {
+                int soTimeout = client.getSoTimeout();
+                if (soTimeout <= 0 || soTimeout > QUIT_REPLY_TIMEOUT) {
+                    client.setSoTimeout(QUIT_REPLY_TIMEOUT);
+                }
+            }
             client.logout();
             client.disconnect();
         } catch (IOException e) {
