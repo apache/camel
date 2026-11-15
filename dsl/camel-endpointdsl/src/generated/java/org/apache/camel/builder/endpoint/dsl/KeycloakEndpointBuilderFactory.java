@@ -2991,8 +2991,9 @@ public interface KeycloakEndpointBuilderFactory {
         }
         /**
          * The permission name. Deprecation note: Never read by the component:
-         * the resource permission operations take a PolicyRepresentation as the
-         * POJO request body.
+         * createResourcePermission takes a ResourcePermissionRepresentation as
+         * the POJO request body, and the other permission operations identify
+         * the permission with CamelKeycloakPermissionId.
          * 
          * The option is a: {@code String} type.
          * 
@@ -3005,8 +3006,9 @@ public interface KeycloakEndpointBuilderFactory {
             return "CamelKeycloakPermissionName";
         }
         /**
-         * The scope name. Deprecation note: Never read by the component: the
-         * scope operations take their representation as the POJO request body.
+         * The scope name. Deprecation note: Never read by the component: there
+         * are no authorization-scope operations, and the client scope
+         * operations use CamelKeycloakClientScopeName.
          * 
          * The option is a: {@code String} type.
          * 
@@ -3056,8 +3058,10 @@ public interface KeycloakEndpointBuilderFactory {
         }
         /**
          * The credential type. Deprecation note: Never read by the component:
-         * the credential operations take a CredentialRepresentation as the POJO
-         * request body.
+         * no credential operation takes a CredentialRepresentation request
+         * body. deleteUserCredential uses CamelKeycloakCredentialId, and
+         * resetUserPassword builds a password credential from
+         * CamelKeycloakUserPassword.
          * 
          * The option is a: {@code String} type.
          * 

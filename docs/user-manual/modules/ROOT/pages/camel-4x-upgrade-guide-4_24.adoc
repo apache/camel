@@ -8743,3 +8743,41 @@ if it configured the proxy.
 It is now deprecated, with a `deprecationNote` that says so, and its description no longer claims to configure a proxy.
 Remove `protocol` from the endpoint URI or the configuration. To send the client's traffic through a proxy, use
 `proxyProtocol` together with `proxyHost` and `proxyPort`, which the shared client builder does apply.
+
+=== camel-keycloak - 11 documented headers are deprecated
+
+Eleven of the headers the component documents are never read by it. A route that sets one gets no error and no effect,
+because the producer takes the value from somewhere else:
+
+[cols="1,1"]
+|===
+| Header | Where the value comes from instead
+
+| `CamelKeycloakRoleId`
+| the role operations address a role by its name, `CamelKeycloakRoleName`
+
+| `CamelKeycloakIdpId`
+| the identity provider operations address a provider by its alias, `CamelKeycloakIdpAlias`
+
+| `CamelKeycloakResourceName`, `CamelKeycloakResourceType`, `CamelKeycloakResourceUri`
+| `createResource` and `updateResource` take a `ResourceRepresentation` as the POJO request body
+
+| `CamelKeycloakPolicyName`, `CamelKeycloakPolicyType`
+| the policy operations take a `PolicyRepresentation` as the POJO request body
+
+| `CamelKeycloakPermissionName`
+| `createResourcePermission` takes a `ResourcePermissionRepresentation`, and the other permission operations identify
+the permission with `CamelKeycloakPermissionId`
+
+| `CamelKeycloakScopeName`
+| there are no authorization-scope operations; the client scope operations use `CamelKeycloakClientScopeName`
+
+| `CamelKeycloakCredentialType`
+| no credential operation takes a `CredentialRepresentation` request body: `deleteUserCredential` uses
+`CamelKeycloakCredentialId`, and `resetUserPassword` builds a password credential from `CamelKeycloakUserPassword`
+
+| `CamelKeycloakBatchSize`
+| the bulk operations send every element of the list one by one, with no batching
+|===
+
+Each is now deprecated, with a `deprecationNote` carrying the same information.

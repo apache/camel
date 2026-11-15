@@ -146,14 +146,15 @@ public final class KeycloakConstants {
     public static final String PERMISSION_ID = "CamelKeycloakPermissionId";
 
     @Metadata(description = "The permission name", javaType = "String",
-              deprecationNote = "Never read by the component: the resource permission operations take a PolicyRepresentation as"
-                                + " the POJO request body")
+              deprecationNote = "Never read by the component: createResourcePermission takes a"
+                                + " ResourcePermissionRepresentation as the POJO request body, and the other permission"
+                                + " operations identify the permission with CamelKeycloakPermissionId")
     @Deprecated
     public static final String PERMISSION_NAME = "CamelKeycloakPermissionName";
 
     @Metadata(description = "The scope name", javaType = "String",
-              deprecationNote = "Never read by the component: the scope operations take their representation as the POJO"
-                                + " request body")
+              deprecationNote = "Never read by the component: there are no authorization-scope operations, and the client"
+                                + " scope operations use CamelKeycloakClientScopeName")
     @Deprecated
     public static final String SCOPE_NAME = "CamelKeycloakScopeName";
 
@@ -169,8 +170,9 @@ public final class KeycloakConstants {
     public static final String CREDENTIAL_ID = "CamelKeycloakCredentialId";
 
     @Metadata(description = "The credential type", javaType = "String",
-              deprecationNote = "Never read by the component: the credential operations take a CredentialRepresentation as the"
-                                + " POJO request body")
+              deprecationNote = "Never read by the component: no credential operation takes a CredentialRepresentation request"
+                                + " body. deleteUserCredential uses CamelKeycloakCredentialId, and resetUserPassword builds a"
+                                + " password credential from CamelKeycloakUserPassword")
     @Deprecated
     public static final String CREDENTIAL_TYPE = "CamelKeycloakCredentialType";
 
