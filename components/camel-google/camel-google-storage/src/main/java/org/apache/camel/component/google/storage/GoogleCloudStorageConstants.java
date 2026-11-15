@@ -24,7 +24,7 @@ public final class GoogleCloudStorageConstants {
     @Metadata(label = "producer", description = "The operation to perform.",
               javaType = "org.apache.camel.component.google.storage.GoogleCloudStorageOperations")
     public static final String OPERATION = "CamelGoogleCloudStorageOperation";
-    @Metadata(description = "The bucket Name which this object will be stored or which will be used for the current operation",
+    @Metadata(label = "consumer", description = "The name of the bucket the object was consumed from",
               javaType = "String")
     public static final String BUCKET_NAME = "CamelGoogleCloudStorageBucketName";
     @Metadata(description = "The object Name which will be used for the current operation",

@@ -1749,12 +1749,11 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return "CamelGoogleCloudStorageOperation";
         }
         /**
-         * The bucket Name which this object will be stored or which will be
-         * used for the current operation.
+         * The name of the bucket the object was consumed from.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @return the name of the header {@code GoogleCloudStorageBucketName}.
          */
