@@ -142,11 +142,15 @@ YAML::
 
 Before you can send or receive messages from RabbitMQ, then exchanges, queues and bindings must be setup first.
 
-In development mode, it may be desirable to let Camel automatic do this.
-You can enable this by setting `autoDeclare=true` on the `SpringRabbitMQComponent`.
+Since Camel 4.5, a consumer declares them when it starts, as `autoDeclare` is `true` by default: the exchange, of the
+`exchangeType` (`direct` by default), the queues, and the binding between the exchange, the queues and the routing key.
+A producer declares them only with `autoDeclareProducer=true`.
 
-Then Spring RabbitMQ will automatically declare the necessary elements and set up the binding between the exchange,
-queue and routing keys.
+If the broker already has one of these elements with other settings, such as an exchange of another type or a queue
+with other arguments, the broker refuses the declaration with `PRECONDITION_FAILED` and the consumer fails to start.
+Configure the endpoint with the settings of the existing elements, or turn the declaration off with `autoDeclare=false`
+(on the endpoint or the component), or for some elements with `skipDeclareExchange`, `skipDeclareQueue` or
+`skipBindQueue`.
 
 The elements can be configured using the multivalued `args` option.
 

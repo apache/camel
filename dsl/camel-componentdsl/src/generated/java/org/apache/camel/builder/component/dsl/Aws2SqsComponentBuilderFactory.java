@@ -266,7 +266,10 @@ public interface Aws2SqsComponentBuilderFactory {
         }
     
         /**
-         * The default visibility timeout (in seconds).
+         * The visibility timeout (in seconds) of the queue. When the endpoint
+         * starts, it sets the VisibilityTimeout attribute of the queue, which
+         * applies to every consumer of the queue that does not set its own
+         * visibilityTimeout.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -282,7 +285,7 @@ public interface Aws2SqsComponentBuilderFactory {
     
         
         /**
-         * Delete message from SQS after it has been read.
+         * Delete the message from SQS when the exchange completes successfully.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -320,8 +323,8 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * If enabled, then a scheduled background task will keep extending the
          * message visibility on SQS. This is needed if it takes a long time to
-         * process the message. If set to true defaultVisibilityTimeout must be
-         * set. See details at Amazon docs.
+         * process the message. If set to true visibilityTimeout must be set.
+         * See details at Amazon docs.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -426,10 +429,11 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * The duration (in seconds) that the received messages are hidden from
          * subsequent retrieve requests after being retrieved by a
-         * ReceiveMessage request to set in the
-         * com.amazonaws.services.sqs.model.SetQueueAttributesRequest. This only
-         * makes sense if it's different from defaultVisibilityTimeout. It
-         * changes the queue visibility timeout attribute permanently.
+         * ReceiveMessage request. It is sent with each ReceiveMessage request
+         * and does not change the queue: use defaultVisibilityTimeout to set
+         * the visibility timeout attribute of the queue.
+         * extendMessageVisibility extends the visibility of a message by this
+         * duration.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 

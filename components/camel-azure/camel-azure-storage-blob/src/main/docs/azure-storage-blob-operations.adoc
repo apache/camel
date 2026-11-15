@@ -50,7 +50,12 @@ YAML::
 ====
 
 You can override the container name or blob name at runtime using the `CamelAzureStorageBlobBlobContainerName`
-and `CamelAzureStorageBlobBlobName` headers respectively.
+and `CamelAzureStorageBlobBlobName` headers respectively. The consumer sets `CamelAzureStorageBlobBlobName` to the name of
+the blob it consumed, so a producer later in the same route uses that name instead of its own `blobName`. Remove the
+header before the producer to use its `blobName`.
+
+When `operation` is not set, the producer runs `listBlobContainers`: set `operation=uploadBlockBlob`, for example, to
+upload the message body.
 
 == Operations Reference
 
@@ -62,8 +67,8 @@ programmatic objects (PageRange, BlobBlock, etc.) that cannot be expressed in XM
 | Operation | Description | Notes
 
 | `listBlobContainers`
-| List all blob containers in the storage account.
-| Java-only (requires `ListBlobContainersOptions`)
+| List all blob containers in the storage account. The default operation.
+| Optional `ListBlobContainersOptions` in the `CamelAzureStorageBlobListBlobContainersOptions` header (Java-only)
 
 | `createBlobContainer`
 | Create a new blob container.
@@ -579,7 +584,7 @@ SAS Blob Container tokens can be generated programmatically or via Azure UI. To 
 [source,java]
 ----
 BlobContainerClient blobClient = new BlobContainerClientBuilder()
-        .endpoint(String.format("https://%s.blob.core.windows.net/%s", accountName, accessKey))
+        .endpoint(String.format("https://%s.blob.core.windows.net/%s", accountName, containerName))
         .containerName(containerName)
         .credential(new StorageSharedKeyCredential(accountName, accessKey))
         .buildClient();
