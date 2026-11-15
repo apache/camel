@@ -3580,8 +3580,9 @@ Options:
       --api-key=<api-key>   API key for authentication. Also reads
                             ANTHROPIC_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY,
                             or LLM_API_KEY env vars
-      --model=<model>       Model to use
-                            Default: llama3.2
+      --model=<model>       Model to use. Default: the provider's default; with
+                            Ollama the installed model best at tool calling,
+                            such as qwen3.6
   -v, --verbose             Include detailed technical information
       --format=<format>     Output format (text, markdown)
                             Default: text
@@ -3590,7 +3591,9 @@ Options:
       --catalog-context     Include Camel Catalog descriptions in the prompt
       --show-prompt         Show the prompt sent to the LLM
       --temperature=<temperature>
-                            Temperature for response generation (0.0-2.0)
+                            Temperature for response generation (0.0-2.0), for a
+                            model on this machine: a hosted model uses its own
+                            default
                             Default: 0.7
       --system-prompt=<system-prompt>
                             Custom system prompt
@@ -4902,8 +4905,9 @@ Options:
                             Default: ollama
       --api-key=<api-key>   API key for authentication. Also reads
                             OPENAI_API_KEY or LLM_API_KEY env vars
-      --model=<model>       Model to use
-                            Default: llama3.2
+      --model=<model>       Model to use. Default: with Ollama the installed
+                            model best at tool calling, such as qwen3.6; with an
+                            OpenAI-compatible server the first model it lists
   -v, --verbose             Include detailed security recommendations with code
                             examples
       --format=<format>     Output format (text, markdown)
@@ -4913,7 +4917,9 @@ Options:
       --catalog-context     Include Camel Catalog descriptions in the prompt
       --show-prompt         Show the prompt sent to the LLM
       --temperature=<temperature>
-                            Temperature for response generation (0.0-2.0)
+                            Temperature for response generation (0.0-2.0), for a
+                            model on this machine: a hosted model uses its own
+                            default
                             Default: 0.7
       --system-prompt=<system-prompt>
                             Custom system prompt
@@ -4925,7 +4931,7 @@ Options:
 Examples:
   camel harden hello.java
   camel harden hello.yaml --format=markdown
-  camel harden hello.java --model=gpt-4
+  camel harden hello.java --model=qwen3.6:35b-a3b
 
 == camel hawtio --help
 Launch Hawtio web console
@@ -5242,12 +5248,15 @@ Options:
       --api-key=<api-key>   API key for authentication. Also reads
                             ANTHROPIC_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY,
                             or LLM_API_KEY env vars
-      --model=<model>       Model to use
-                            Default: llama3.2
+      --model=<model>       Model to use. Default: the provider's default; with
+                            Ollama the installed model best at tool calling,
+                            such as qwen3.6
       --timeout=<timeout>   Timeout in seconds for LLM response
                             Default: 300
       --temperature=<temperature>
-                            Temperature for response generation (0.0-2.0)
+                            Temperature for response generation (0.0-2.0), for a
+                            model on this machine: a hosted model uses its own
+                            default
                             Default: 0.3
       --show-prompt         Show the prompt sent to the LLM
   <directory>               Project directory (default: the current directory)
