@@ -362,6 +362,32 @@ consumer is created, also with `poll` and `pollEnrich`, with `IllegalArgumentExc
 The `readLock` option is not checked when a custom `exclusiveReadLockStrategy` or `processStrategy`
 is set, as it does not apply then.
 
+=== Timeouts and dead connections
+
+The SFTP endpoint opens the connection with `connectTimeout` (10 seconds) and uses `soTimeout` (5 minutes) as the read
+timeout of the JSch session. When nothing arrives from the server for `soTimeout`, JSch sends a keep-alive message and
+waits once more; it drops the session after `serverAliveCountMax` (1 by default) keep-alive messages without an answer.
+A connection that went silent (the host is gone, or a firewall or NAT drops the packets) is therefore noticed after
+about twice `soTimeout`: about 10 minutes with the defaults, during which the consumer or producer using it waits.
+These durations are how JSch behaves, approximately, not guarantees of Camel.
+
+Lower `soTimeout` to notice it sooner; `soTimeout=15000` notices it after about 30 seconds. As a server that is alive
+answers the keep-alive message, a command that takes longer than `soTimeout` does not drop the session.
+
+[source,text]
+----
+sftp://scott@sftp.example.com/inbox?password=RAW(tiger)&connectTimeout=5000&soTimeout=15000&throwExceptionOnConnectFailed=true
+----
+
+When `serverAliveInterval` is set, it replaces `soTimeout` as the read timeout of the session: the session is then
+dropped after about `serverAliveInterval` × (`serverAliveCountMax` + 1) without data from the server.
+
+As with FTP, set `throwExceptionOnConnectFailed=true` so that a consumer that cannot connect fails its poll and its
+health check reports it DOWN, and upload under a temporary name (`tempPrefix` or `tempFileName`) so that a broken
+upload does not leave a truncated file under its final name. See
+xref:ftp-component.adoc#_noticing_a_dead_or_silent_server[Noticing a dead or silent server] and
+xref:ftp-component.adoc#_uploads_interrupted_by_a_broken_connection[Uploads interrupted by a broken connection].
+
 === Checking whether a file exists
 
 The `sftp` component checks whether a remote file exists with a single `lstat` request, whatever the number of files
