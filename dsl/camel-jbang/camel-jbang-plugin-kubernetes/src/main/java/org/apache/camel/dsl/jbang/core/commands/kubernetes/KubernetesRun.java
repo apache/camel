@@ -905,8 +905,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 String filename = p.startsWith("file:") ? p.substring("file:".length()) : p;
                 File f = new File(filename);
                 if (!f.isFile()) {
-                    throw CliException.fileNotFound(
-                            "Properties file does not exist: " + filename + " (a property is given as key=value)");
+                    // the hint only when it may have been meant as a property, not for file:path (review)
+                    String hint = p.startsWith("file:") ? "" : " (a property is given as key=value)";
+                    throw CliException.fileNotFound("Properties file does not exist: " + filename + hint);
                 }
                 Properties prop = new Properties();
                 try (FileInputStream input = new FileInputStream(f)) {
