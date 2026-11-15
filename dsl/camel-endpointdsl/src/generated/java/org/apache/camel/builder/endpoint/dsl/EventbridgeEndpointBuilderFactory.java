@@ -2463,7 +2463,9 @@ public interface EventbridgeEndpointBuilderFactory {
         /**
          * The targets to update or add to the rule.
          * 
-         * The option is a: {@code Collection<Target>} type.
+         * The option is a: {@code
+         * Collection<software.amazon.awssdk.services.eventbridge.model.Target>}
+         * type.
          * 
          * Group: common
          * 
