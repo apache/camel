@@ -2344,7 +2344,9 @@ public interface DockerEndpointBuilderFactory {
         /**
          * The exposed ports.
          * 
-         * The option is a: {@code ExposedPorts or ExposedPorts[]} type.
+         * The option is a: {@code com.github.dockerjava.api.model.ExposedPorts
+         * or com.github.dockerjava.api.model.ExposedPort or
+         * com.github.dockerjava.api.model.ExposedPort[]} type.
          * 
          * Group: common
          * 
@@ -2476,7 +2478,9 @@ public interface DockerEndpointBuilderFactory {
         /**
          * With volumes.
          * 
-         * The option is a: {@code Volume or Volume[]} type.
+         * The option is a: {@code com.github.dockerjava.api.model.Volumes or
+         * com.github.dockerjava.api.model.Volume or
+         * com.github.dockerjava.api.model.Volume[]} type.
          * 
          * Group: common
          * 
@@ -2585,7 +2589,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * With volumes from.
          * 
-         * The option is a: {@code VolumesFrom or VolumesFrom[]} type.
+         * The option is a: {@code com.github.dockerjava.api.model.VolumesFrom
+         * or com.github.dockerjava.api.model.VolumesFrom[]} type.
          * 
          * Group: common
          * 
@@ -2609,7 +2614,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * With binds.
          * 
-         * The option is a: {@code Bind or Bind[]} type.
+         * The option is a: {@code com.github.dockerjava.api.model.Bind or
+         * com.github.dockerjava.api.model.Bind[]} type.
          * 
          * Group: common
          * 
@@ -2621,7 +2627,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * With cap add.
          * 
-         * The option is a: {@code Capability or Capability[]} type.
+         * The option is a: {@code com.github.dockerjava.api.model.Capability or
+         * com.github.dockerjava.api.model.Capability[]} type.
          * 
          * Group: common
          * 
@@ -2633,7 +2640,8 @@ public interface DockerEndpointBuilderFactory {
         /**
          * With cap drop.
          * 
-         * The option is a: {@code Capability or Capability[]} type.
+         * The option is a: {@code com.github.dockerjava.api.model.Capability or
+         * com.github.dockerjava.api.model.Capability[]} type.
          * 
          * Group: common
          * 
