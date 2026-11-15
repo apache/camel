@@ -386,6 +386,16 @@ event. Without `list` the informer cannot start: the Kubernetes client logs an E
 with a delay that doubles up to 30 seconds. Creating or deleting a secret or config map still does not reload the
 context.
 
+=== camel-servlet - Rest DSL consumers use the endpoint options
+
+The Rest DSL consumers of camel-servlet now apply the `attachmentMultipartBinding`, `fileNameExtWhitelist`,
+`logException` and `mapHttpMessageBody` options set with `restConfiguration().endpointProperty(...)`, or as component
+options, as `servlet:` routes do. Before, these options were ignored: with
+`attachmentMultipartBinding=true` the uploaded parts were not bound as attachments, and the request body was always
+read. A custom `httpBinding` set on the component is now used by the Rest DSL consumers when it extends
+`ServletRestHttpBinding`. Any other binding set on the component is still used only by `servlet:` routes, as it does
+not map the path placeholders such as `{id}` to headers.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.

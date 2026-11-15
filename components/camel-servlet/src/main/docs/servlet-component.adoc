@@ -235,6 +235,15 @@ The full path where the camel-servlet HTTP endpoint is published depends on:
 For example, if the application context path is `/camel` and `CamelHttpTransportServlet` is configured with a URL mapping of `/services/*`.
 Then a Camel route like `from("servlet:hello")` would be published to a path like http://localhost:8080/camel/services/hello.
 
+=== Rest DSL
+
+The Rest DSL consumers of the servlet component use the endpoint options set with
+`restConfiguration().endpointProperty(...)`, or as component options, such as `attachmentMultipartBinding` and
+`mapHttpMessageBody`.
+A custom `httpBinding` set with `endpointProperty("httpBinding", "#myBinding")` is used as it is. A custom `httpBinding`
+set on the component is used only when it extends `org.apache.camel.component.servlet.ServletRestHttpBinding`, which
+maps the path placeholders such as `{id}` to headers.
+
 === Servlet asynchronous support
 
 To enable Camel to benefit from Servlet asynchronous support, you must enable the `async` boolean init parameter by setting it to `true`.

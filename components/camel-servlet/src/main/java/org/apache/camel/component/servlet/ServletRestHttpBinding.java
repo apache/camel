@@ -25,7 +25,31 @@ import static org.apache.camel.http.base.HttpHelper.evalPlaceholders;
 
 public class ServletRestHttpBinding extends DefaultHttpBinding {
 
+    private boolean attachmentMultipartBinding;
+
     public ServletRestHttpBinding() {
+    }
+
+    public boolean isAttachmentMultipartBinding() {
+        return attachmentMultipartBinding;
+    }
+
+    /**
+     * Whether to bind the parts of a multipart/form-data request as attachments on the Camel message, as the servlet
+     * endpoint does with attachmentMultipartBinding=true.
+     */
+    public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
+        this.attachmentMultipartBinding = attachmentMultipartBinding;
+    }
+
+    @Override
+    protected void populateAttachments(HttpServletRequest request, Message message) {
+        if (attachmentMultipartBinding) {
+            AttachmentHttpBinding.populateMultipartAttachments(request, message, this::isFileNameAccepted,
+                    getFileNameExtWhitelist());
+        } else {
+            super.populateAttachments(request, message);
+        }
     }
 
     @Override

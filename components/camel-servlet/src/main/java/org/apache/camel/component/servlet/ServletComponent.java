@@ -315,13 +315,19 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         ServletEndpoint endpoint = (ServletEndpoint) camelContext.getEndpoint(url, parameters);
 
-        if (!map.containsKey("httpBinding")) {
-            // use the rest binding, if not using a custom http binding
-            HttpBinding binding = new ServletRestHttpBinding();
+        // use the rest binding, if not using a custom http binding on the endpoint, or a rest binding on the component
+        // (a binding that is not a rest binding does not map the path placeholders to headers)
+        if (!map.containsKey("httpBinding") && !(getHttpBinding() instanceof ServletRestHttpBinding)) {
+            ServletRestHttpBinding binding = new ServletRestHttpBinding();
+            binding.setAttachmentMultipartBinding(endpoint.isAttachmentMultipartBinding());
+            binding.setFileNameExtWhitelist(endpoint.getFileNameExtWhitelist());
             binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());
             binding.setTransferException(endpoint.isTransferException());
             binding.setMuteException(endpoint.isMuteException());
+            binding.setLogException(endpoint.isLogException());
+            binding.setDeserializationFilter(getDeserializationFilter());
             binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
+            binding.setMapHttpMessageBody(endpoint.isMapHttpMessageBody());
             binding.setMapHttpMessageHeaders(endpoint.isMapHttpMessageHeaders());
             binding.setMapHttpMessageFormUrlEncodedBody(endpoint.isMapHttpMessageFormUrlEncodedBody());
             endpoint.setHttpBinding(binding);
