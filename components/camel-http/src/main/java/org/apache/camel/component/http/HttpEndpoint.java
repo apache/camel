@@ -94,8 +94,8 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     private String location;
 
     @UriParam(label = "security", description = "To configure security using SSLContextParameters."
-                                                + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
-                                                + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
+                                                + " This takes precedence over the sslContextParameters of the component,"
+                                                + " so endpoints of the same component can use different instances.")
     protected SSLContextParameters sslContextParameters;
 
     @UriParam(label = "advanced", description = "To use a custom HttpContext instance")
@@ -638,9 +638,8 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     }
 
     /**
-     * To configure security using SSLContextParameters. Important: Only one instance of
-     * org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more
-     * different instances, you need to define a new HttpComponent per instance you need.
+     * To configure security using SSLContextParameters. This takes precedence over the sslContextParameters of the
+     * component, so endpoints of the same component can use different instances.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;

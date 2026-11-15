@@ -24,7 +24,7 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(47);
+        Set<String> props = new HashSet<>(48);
         props.add("authTimeout");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -43,6 +43,7 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("exchangePattern");
         props.add("failOnUnknownHost");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("heartbeatInterval");
         props.add("heartbeatReplyMaxWait");
         props.add("host");

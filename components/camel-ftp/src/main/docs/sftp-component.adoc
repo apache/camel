@@ -36,6 +36,31 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== URI format and paths
+
+----
+sftp://[username@]hostname[:port]/directoryname[?options]
+----
+
+The `directoryname` is relative to the directory the user logs in to, usually its home directory. For example,
+`sftp://admin@host/inbox` uses the `inbox` directory in the home directory of `admin`.
+
+Absolute paths are not supported. The component removes the leading slashes, also from `sftp://host//data/inbox`, and
+logs a WARN: that endpoint uses `data/inbox` under the login directory, not `/data/inbox`. As both the consumer and the
+producer create a missing directory (`autoCreate=true`, the default), a wrong path does not fail: the files are read
+from, or written to, a new directory under the login directory.
+
+To use a directory outside the login directory, either:
+
+* create a symbolic link to it in the login directory, and use the link as `directoryname`, or
+* go up with leading `../` segments, such as `sftp://host/../shared/inbox`, and set `jailStartingDirectory=false`. With
+  the default `jailStartingDirectory=true`, the consumer skips every file of such a directory, and the producer refuses
+  to write to it.
+
+For the producer, `directoryname` is the directory to write to, and the file name comes from the `CamelFileName` header
+or the `fileName` option. A file name that leaves the directory with `../` is refused unless
+`jailStartingDirectory=false`.
+
 === Security Best Practices: Host Key Verification
 
 WARNING: By default, the SFTP component has `strictHostKeyChecking=no`, which disables host key verification and makes connections vulnerable to man-in-the-middle (MITM) attacks. For production environments, you should enable strict host key checking to ensure you are connecting to the expected server.
@@ -195,6 +220,26 @@ YAML::
 
 NOTE: When `strictHostKeyChecking=yes` is enabled, Camel's security policy enforcement framework will not flag this as a security violation. The default `strictHostKeyChecking=no` may trigger warnings or failures depending on your configured security policy.
 
+=== Providing the private key
+
+For public key authentication, set the private key with one of these options:
+
+[cols="1,3"]
+|===
+|Option |Value
+
+|`privateKeyFile` |A path on the file system, such as `/home/camel/.ssh/id_rsa`.
+|`privateKeyUri` |A resource, loaded from the classpath by default, or from the file system with the `file:` prefix.
+|`privateKey` |The key as a `byte[]`, usually a bean reference such as `privateKey=#myKey`.
+|`keyPair` |A `java.security.KeyPair` bean, such as `keyPair=#myKeyPair`.
+|===
+
+Set `privateKeyPassphrase` when the key is encrypted. It applies to `privateKeyFile`, `privateKeyUri` and `privateKey`.
+
+The key must keep its line breaks. A key whose line breaks were replaced, for example with spaces when it was copied
+into a one-line property or environment variable, fails with `invalid privatekey`. Load such a key from a file instead,
+or from a bean that holds the original bytes.
+
 === OpenSSH Certificate Authentication
 
 Camel supports OpenSSH certificate-based authentication for SFTP connections, where a user's public key is signed by a Certificate Authority (CA) rather than being individually authorized on the server. This is common in enterprise environments using tools like HashiCorp Vault or custom CA infrastructure.
@@ -318,9 +363,32 @@ option for the proposal: the `jsch.kex` system property sets it for the whole JV
 
 === Restoring Deprecated Key Types and Algorithms
 
-As of Camel 3.17.0, key types and algorithms that use SHA1 have been deprecated. These can be restored, if necessary, by setting JSch configuration directly. E.g.:
+As of Camel 3.17.0, key types and algorithms that use SHA1 are disabled by default: JSch no longer proposes the `ssh-rsa`
+and `ssh-dss` host keys, `ssh-rsa` signatures for public key authentication, or SHA1 key exchanges such as
+`diffie-hellman-group14-sha1`. If your server needs them, set them on the endpoint with these options:
 
-._Java-only: restoring deprecated JSch key types and algorithms_
+[cols="1,2"]
+|===
+|Option |Algorithms (JSch configuration key)
+
+|`serverHostKeys` |Host keys (`server_host_key`)
+|`publicKeyAcceptedAlgorithms` |Signatures for public key authentication (`PubkeyAcceptedAlgorithms`)
+|`keyExchangeProtocols` |Key exchange (`kex`)
+|`ciphers` |Ciphers (`cipher.c2s` and `cipher.s2c`)
+|===
+
+Each option replaces the default list of JSch for that endpoint, so list every algorithm the endpoint may use, the
+preferred one first. For example, for a server that has an RSA host key and only accepts `ssh-rsa` signatures:
+
+[source,text]
+----
+sftp://host/inbox?username=admin&privateKeyFile=/path/to/id_rsa&serverHostKeys=rsa-sha2-512,rsa-sha2-256,ssh-rsa&publicKeyAcceptedAlgorithms=rsa-sha2-512,rsa-sha2-256,ssh-rsa
+----
+
+The options apply to that endpoint only. Setting the JSch configuration directly changes the defaults of the whole JVM,
+so of every SFTP endpoint without these options:
+
+._Java-only: restoring deprecated JSch key types and algorithms for the whole JVM_
 [source,java]
 ----
 JSch.setConfig("server_host_key",  JSch.getConfig("server_host_key") + ",ssh-rsa");
@@ -335,7 +403,36 @@ command to inspect your server's configuration:
 ssh -vvv <server_address>
 ----
 
-As of Camel 3.18.1, these values can also be set on SFTP endpoints by setting the corresponding URI parameters.
+=== Connection errors
+
+When the connection fails, the exception is a `GenericFileOperationFailedException` with the message
+`Cannot connect to sftp://user@host:port`. The message of its cause, from JSch, tells what failed:
+
+[cols="2,3"]
+|===
+|Message of the cause |What to check
+
+|`reject HostKey: <host>`
+|With `strictHostKeyChecking=yes`, the known hosts have no key for the server. Set `knownHostsFile`, `knownHostsUri` or
+`knownHosts` with an entry for the host and port, for example from `ssh-keyscan -p <port> <host>`. For a port other
+than 22, the entry starts with `[host]:port`.
+
+|`Algorithm negotiation fail: algorithmName="..." jschProposal="..." serverProposal="..."`
+|JSch and the server have no algorithm in common. Add one that the server proposes with `serverHostKeys` for
+`server_host_key`, `keyExchangeProtocols` for `kex`, or `ciphers` for `cipher.c2s` and `cipher.s2c`. See
+<<_restoring_deprecated_key_types_and_algorithms,Restoring Deprecated Key Types and Algorithms>>.
+
+|`Auth fail for methods '...'`
+|The server refused the credentials: check the username, password or key. With an RSA key and a server that only
+accepts `ssh-rsa` signatures, add `ssh-rsa` to `publicKeyAcceptedAlgorithms`.
+
+|`invalid privatekey`
+|JSch cannot read the key, for example because its line breaks were lost. See <<_providing_the_private_key,Providing the private key>>.
+
+|`Incorrect passphrase provided.`
+|`privateKeyPassphrase` does not decrypt the key. In a URI, set a passphrase with characters such as `+` or `&` as
+`RAW(...)`, see xref:manual::endpoint.adoc#_configuring_parameter_values_using_raw_values_such_as_passwords[raw values].
+|===
 
 === Symbolic links and the starting directory
 

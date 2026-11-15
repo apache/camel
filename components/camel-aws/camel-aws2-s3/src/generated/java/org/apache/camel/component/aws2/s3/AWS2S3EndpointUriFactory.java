@@ -24,7 +24,7 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(82);
+        Set<String> props = new HashSet<>(83);
         props.add("accessKey");
         props.add("amazonS3Client");
         props.add("amazonS3Presigner");
@@ -56,6 +56,7 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
         props.add("fileName");
         props.add("forcePathStyle");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("ignoreBody");
         props.add("inProgressRepository");
         props.add("includeBody");

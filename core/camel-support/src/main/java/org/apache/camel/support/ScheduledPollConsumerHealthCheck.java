@@ -21,12 +21,22 @@ import java.util.Map;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 
 /**
- * {@link HealthCheck} that uses the last polling state from {@link ScheduledPollConsumer} when reporting the health.
+ * {@link HealthCheck} that uses the last polling state from {@link ScheduledPollConsumer} when reporting the health,
+ * and the poll in progress when it runs longer than {@link ScheduledPollConsumer#getHealthCheckMaxPollDuration()}.
  */
 public class ScheduledPollConsumerHealthCheck implements HealthCheck {
+
+    /**
+     * Detail with how long the consumer has been polling (millis), when that is longer than the
+     * healthCheckMaxPollDuration option of the consumer.
+     *
+     * @since 4.24
+     */
+    public static final String POLL_DURATION = "poll.duration";
 
     private final HealthCheckRegistry registry;
     private HealthCheck.State initialState;
@@ -82,6 +92,21 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
             return builder.unknown().build();
         }
 
+        // a poll that hangs (such as in a read without timeout on a connection that went silent) is not done, so the
+        // state below, which a poll updates when it is done, does not see it
+        long maxPollDuration = consumer.getHealthCheckMaxPollDuration();
+        if (maxPollDuration > 0) {
+            long pollingDuration = consumer.getPollingDuration();
+            if (pollingDuration > maxPollDuration) {
+                builder.down();
+                builder.detail(POLL_DURATION, pollingDuration);
+                String msg = "Consumer has been polling for %s, longer than healthCheckMaxPollDuration (%s) route: %s (%s)";
+                builder.message(String.format(msg, printDuration(pollingDuration), printDuration(maxPollDuration),
+                        consumer.getRouteId(), sanitizedBaseUri));
+                return builder.build();
+            }
+        }
+
         long ec = consumer.getErrorCounter();
         boolean ready = consumer.isConsumerReady();
         Throwable cause = consumer.getLastError();
@@ -122,6 +147,11 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
         }
 
         return builder.build();
+    }
+
+    private static String printDuration(long millis) {
+        // TimeUtils prints less than a second as 0s
+        return millis < 1000 ? millis + "ms" : TimeUtils.printDuration(millis);
     }
 
     public State getInitialState() {

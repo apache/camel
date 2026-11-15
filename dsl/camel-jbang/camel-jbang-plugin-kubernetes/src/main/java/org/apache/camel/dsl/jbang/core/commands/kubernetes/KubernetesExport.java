@@ -44,7 +44,6 @@ import org.apache.camel.dsl.jbang.core.commands.RunHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.run.RunPipeline;
@@ -291,22 +290,18 @@ public class KubernetesExport extends Export {
             context.setServiceAccount(serviceAccount);
         }
 
-        // application-{profile}.properties
-        var applicationProfileProperties = new String[0];
-        if (this.profile != null) {
-            // override from profile specific configuration
-            applicationProfileProperties
-                    = extractPropertiesTraits(exportBaseDir.resolve("application-" + profile + ".properties"));
-        } else {
-            for (String f : files) {
-                String name = FileUtil.stripPath(f);
-                if ("application.properties".equals(name)) {
-                    // load default properties configuration
-                    applicationProfileProperties
-                            = extractPropertiesTraits(exportBaseDir.resolve(f));
-                }
+        // the traits of application.properties, with those of application-{profile}.properties over them: with a
+        // profile, the traits of application.properties were left out (CAMEL-26934)
+        String[] defaultTraits = null;
+        for (String f : files) {
+            String name = FileUtil.stripPath(f);
+            if ("application.properties".equals(name)) {
+                defaultTraits = extractPropertiesTraits(exportBaseDir.resolve(f));
             }
         }
+        String[] profileTraits = this.profile != null
+                ? extractPropertiesTraits(exportBaseDir.resolve("application-" + profile + ".properties")) : null;
+        var applicationProfileProperties = TraitHelper.mergeTraits(profileTraits, defaultTraits);
 
         Traits traitsSpec = getTraitSpec(applicationProfileProperties, applicationProperties);
 
@@ -326,11 +321,6 @@ public class KubernetesExport extends Export {
                 resolvedImageRegistry, resolvedImageGroup, projectName, getVersion(), buildProperties);
         TraitHelper.configureEnvVars(traitsSpec, envVars);
         TraitHelper.configureConnects(traitsSpec, connects);
-
-        Container container = traitsSpec.getContainer();
-        if (container.getName() != null && !container.getName().equals(projectName)) {
-            printer().printf("Custom container name '%s' not supported%n".formatted(container.getName()));
-        }
 
         buildProperties.add("jkube.skip.push=%b".formatted(!imagePush));
 

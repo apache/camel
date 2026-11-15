@@ -1644,7 +1644,7 @@ Usage: camel cmd send [-h] [--properties=<properties>] [--prop=<prop>]
                        [--interval=<interval>] [--timeout=<timeout>]
                        [--show-exchange-properties] [--show-exchange-variables]
                        [--show-headers] [--show-body] [--show-exception]
-                       [--pretty] [--logging-color] [--infra=<infra>]
+                       [--pretty] [--logging-color] [--json] [--infra=<infra>]
                        [--download] [--repo=<repo>] [--fresh] [<name>]
 
 Options:
@@ -1701,6 +1701,8 @@ Options:
                             using JSon or XML format
       --logging-color       Use colored logging
                             Default: true
+      --json                Output the outcome in JSON Format: the status, the
+                            exchange id, and the reply message with --reply
       --infra=<infra>       Send to infrastructure service (e.g., nats, kafka)
       --download            Whether to allow automatic downloading JAR
                             dependencies (over the internet)
@@ -6225,20 +6227,24 @@ Examples:
 
 == camel stop --help
 Shuts down running Camel integrations
-Usage: camel stop [-h] [--kill] [--timeout=<timeout>] [--no-wait] [<name>]
+Usage: camel stop [-h] [--all] [--kill] [--timeout=<timeout>] [--no-wait]
+                   [<name>]
 
 Options:
   -h, --help               Display this help and exit
+      --all                Stop all running Camel integrations
       --kill               To force killing the process (SIGKILL)
       --timeout=<timeout>  How long to wait for the integration to stop, in
                            millis or as a duration such as 30s
                            Default: 60000
       --no-wait            Do not wait for the integration to stop
-  <name>                   Name or pid of running Camel integration(s)
+  <name>                   Name or pid of running Camel integration(s). Without
+                           a name, the one integration that runs (use --all when
+                           several run)
 
 Examples:
   camel stop hello
-  camel stop *
+  camel stop --all
   camel stop 12345
   camel stop hello --timeout=2m
   camel stop hello --kill
@@ -6447,7 +6453,9 @@ Options:
       --sort=<sort>         Sort by pid, name or age for showing status of
                             tracing
                             Default: pid
-      --json                Output the status of tracing in JSON Format
+      --json                Output in JSON Format: the status of tracing, and
+                            with --action=dump each trace as a JSON object per
+                            line
       --timeout=<timeout>   How long to wait for the integration to answer, in
                             millis or as a duration such as 30s
                             Default: 10000

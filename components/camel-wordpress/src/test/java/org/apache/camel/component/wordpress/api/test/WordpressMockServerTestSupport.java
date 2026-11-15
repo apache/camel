@@ -21,6 +21,8 @@ import java.net.BindException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.component.wordpress.api.WordpressAPIConfiguration;
+import org.apache.camel.component.wordpress.api.WordpressConstants;
 import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
@@ -55,8 +57,8 @@ public abstract class WordpressMockServerTestSupport {
                 i++;
             }
         }
-        serviceProvider = WordpressServiceProvider.getInstance();
-        serviceProvider.init(getServerBaseUrl());
+        serviceProvider = WordpressServiceProvider
+                .create(new WordpressAPIConfiguration(getServerBaseUrl(), WordpressConstants.API_VERSION));
         // @formatter:on
         LOGGER.info("Local server up and running on address {} and port {}", localServer.getInetAddress(),
                 localServer.getLocalPort());

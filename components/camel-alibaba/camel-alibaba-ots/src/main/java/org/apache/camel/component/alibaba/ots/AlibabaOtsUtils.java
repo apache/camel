@@ -22,7 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alicloud.openservices.tablestore.ClientConfiguration;
 import com.alicloud.openservices.tablestore.SyncClient;
+import com.alicloud.openservices.tablestore.core.ResourceManager;
+import com.alicloud.openservices.tablestore.core.auth.CredentialsProvider;
+import com.alicloud.openservices.tablestore.core.auth.CredentialsProviderFactory;
 import com.alicloud.openservices.tablestore.model.CapacityUnit;
 import com.alicloud.openservices.tablestore.model.Column;
 import com.alicloud.openservices.tablestore.model.ConsumedCapacity;
@@ -54,11 +58,26 @@ public final class AlibabaOtsUtils {
             throw new IllegalArgumentException("Instance name is required");
         }
 
-        return new SyncClient(
-                endpoint.getEndpoint(),
+        // created first, as it rejects an invalid AccessKey pair
+        CredentialsProvider credentialsProvider = CredentialsProviderFactory.newDefaultCredentialProvider(
                 OpenApiClientSupport.resolveAccessKey(endpoint.getAccessKey(), endpoint.getServiceKeys()),
-                OpenApiClientSupport.resolveSecretKey(endpoint.getSecretKey(), endpoint.getServiceKeys()),
-                endpoint.getInstanceName());
+                OpenApiClientSupport.resolveSecretKey(endpoint.getSecretKey(), endpoint.getServiceKeys()));
+        ClientConfiguration configuration = new ClientConfiguration();
+        // The ResourceManager starts the threads of the HTTP client of the SDK, and the SDK creates it before it rejects
+        // an endpoint or an instance name. Created here, it is shut down when the SyncClient constructor fails.
+        // Otherwise the client owns it, and SyncClient.shutdown shuts it down.
+        ResourceManager resourceManager = new ResourceManager(configuration);
+        try {
+            return new SyncClient(
+                    endpoint.getEndpoint(), credentialsProvider, endpoint.getInstanceName(), configuration, resourceManager);
+        } catch (RuntimeException e) {
+            try {
+                resourceManager.shutdown();
+            } catch (RuntimeException shutdownFailure) {
+                e.addSuppressed(shutdownFailure);
+            }
+            throw e;
+        }
     }
 
     public static ClientConfigurations createClientConfigurations(AlibabaOtsEndpoint endpoint, Exchange exchange) {

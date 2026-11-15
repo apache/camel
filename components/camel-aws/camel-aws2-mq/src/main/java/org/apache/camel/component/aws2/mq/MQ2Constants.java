@@ -43,7 +43,7 @@ public interface MQ2Constants {
     @Metadata(description = "The instance type for the MQ machine in the createBroker operation", javaType = "String")
     String BROKER_INSTANCE_TYPE = "CamelAwsMQBrokerInstanceType";
     @Metadata(description = "The list of users for MQ in the createBroker operation, as User objects of the AWS SDK",
-              javaType = "List<User>")
+              javaType = "List<software.amazon.awssdk.services.mq.model.User>")
     String BROKER_USERS = "CamelAwsMQBrokerUsers";
     @Metadata(description = "If the MQ instance must be publicly available or not.", javaType = "Boolean",
               defaultValue = "false")

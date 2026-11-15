@@ -42,6 +42,7 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         map.put("BackoffMultiplier", int.class);
         map.put("Delay", long.class);
         map.put("Greedy", boolean.class);
+        map.put("HealthCheckMaxPollDuration", long.class);
         map.put("InitialDelay", long.class);
         map.put("RepeatCount", long.class);
         map.put("RunLoggingLevel", org.apache.camel.LoggingLevel.class);
@@ -85,6 +86,8 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "inbody":
         case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
@@ -152,6 +155,8 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "inbody":
         case "inBody": return java.lang.String.class;
         case "initialdelay":
@@ -215,6 +220,8 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "inbody":
         case "inBody": return target.getInBody();
         case "initialdelay":

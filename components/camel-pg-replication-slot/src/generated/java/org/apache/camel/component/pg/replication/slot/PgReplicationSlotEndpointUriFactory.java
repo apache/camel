@@ -24,7 +24,7 @@ public class PgReplicationSlotEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(29);
+        Set<String> props = new HashSet<>(30);
         props.add("autoCreateSlot");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -35,6 +35,7 @@ public class PgReplicationSlotEndpointUriFactory extends org.apache.camel.suppor
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("host");
         props.add("initialDelay");
         props.add("outputPlugin");

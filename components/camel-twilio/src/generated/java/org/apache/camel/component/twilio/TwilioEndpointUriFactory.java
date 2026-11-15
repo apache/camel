@@ -24,7 +24,7 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(64);
+        Set<String> props = new HashSet<>(65);
         props.add("apiName");
         props.add("applicationSid");
         props.add("areaCode");
@@ -44,6 +44,7 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
         props.add("friendlyName");
         props.add("from");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("inBody");
         props.add("initialDelay");
         props.add("ipAccessControlListSid");

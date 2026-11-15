@@ -141,6 +141,10 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
      * <p/>
      * It is not invoked for a group that was completed by its first exchange (for example with a completion size of 1),
      * as such a group was never added to the repository, so there is nothing to confirm.
+     * <p/>
+     * When it returns false or throws an exception, the exchange (which was processed) is kept as not confirmed: the
+     * recover task does not recover it, and invokes this method again for it, as long as {@link #scan(CamelContext)}
+     * returns its exchange id.
      *
      * @param  camelContext the current CamelContext
      * @param  exchangeId   exchange id to confirm
