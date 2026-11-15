@@ -33,11 +33,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.PropertyConfigurerHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -321,19 +321,21 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
             if (executorServices == null) {
                 executorServices = new ExecutorServices();
                 ecc.addContextPlugin(ExecutorServices.class, executorServices);
+                // told when the CamelContext has stopped (and when it starts again)
+                context.addLifecycleStrategy(executorServices);
             }
 
             // lookup executorService for extending class name
             final String endpointClassName = endpointClass.getName();
             ExecutorService executorService = executorServices.pools.get(endpointClassName);
             if (executorService == null || executorService.isShutdown()) {
-                final ServiceStatus status = context.getStatus();
-                if (status == ServiceStatus.Stopping || status == ServiceStatus.Stopped) {
-                    // a pool created now could be created after the ExecutorServiceManager shut down the pools of
-                    // this CamelContext, and then nothing would shut it down until the CamelContext is started and
-                    // stopped again
+                if (executorServices.closed) {
+                    // the CamelContext has stopped (its routes are drained): a pool created now could be created after
+                    // the ExecutorServiceManager shut down the pools of this CamelContext, and then nothing would shut
+                    // it down until the CamelContext is started and stopped again. While the CamelContext is stopping
+                    // and waits for its inflight exchanges, or before it is started, a pool is created as usual
                     throw new RejectedExecutionException(
-                            "CamelContext " + context.getName() + " is " + status + ", no thread pool is created for "
+                            "CamelContext " + context.getName() + " is stopped, no thread pool is created for "
                                                          + endpointClassName);
                 }
                 final ExecutorServiceManager manager = context.getExecutorServiceManager();
@@ -362,8 +364,8 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
      * CamelContext, shut down when the CamelContext stops.
      *
      * @return                            the thread pool
-     * @throws RejectedExecutionException when the CamelContext is stopping or stopped and the pool is not there, or
-     *                                    shut down: no pool is created then
+     * @throws RejectedExecutionException when the CamelContext has stopped and the pool is not there, or shut down: no
+     *                                    pool is created then
      */
     public final ExecutorService getExecutorService() {
         ExecutorService answer = executorService;
@@ -385,9 +387,33 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     /**
      * The thread pools of the API endpoints of one CamelContext, with the endpoint class name as key (a context
-     * plugin).
+     * plugin). As a lifecycle strategy of the CamelContext it knows when no pool may be created: from
+     * {@link #onContextStopped}, which runs after the routes are drained and before the ExecutorServiceManager shuts
+     * its pools down, until the CamelContext starts again.
      */
-    private static final class ExecutorServices {
+    private static final class ExecutorServices extends LifecycleStrategySupport {
         private final Map<String, ExecutorService> pools = new HashMap<>();
+        // guarded by EXECUTOR_SERVICES_LOCK for writes, so a pool is created either before it is set (and then shut
+        // down by the ExecutorServiceManager) or not at all
+        private volatile boolean closed;
+
+        @Override
+        public void onContextStarting(CamelContext context) {
+            setClosed(false);
+        }
+
+        @Override
+        public void onContextStopped(CamelContext context) {
+            setClosed(true);
+        }
+
+        private void setClosed(boolean closed) {
+            EXECUTOR_SERVICES_LOCK.lock();
+            try {
+                this.closed = closed;
+            } finally {
+                EXECUTOR_SERVICES_LOCK.unlock();
+            }
+        }
     }
 }

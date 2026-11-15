@@ -128,7 +128,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
         try {
             executorService = endpoint.getExecutorService();
         } catch (RejectedExecutionException e) {
-            // the CamelContext is stopping or stopped, and has no pool for this endpoint
+            // the CamelContext has stopped, and has no pool for this endpoint
             return rejected(exchange, callback, e);
         }
         if (executorService.isShutdown()) {
