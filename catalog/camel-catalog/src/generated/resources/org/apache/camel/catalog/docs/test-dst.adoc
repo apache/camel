@@ -139,6 +139,16 @@ a|* the polling consumer with maxResults and naturalOrder
 * the pages of conversations.history (oldest and cursor)
 * route suspend and resume while a batch is routed
 |CAMEL-25684, CAMEL-25738
+
+|camel-zookeeper-master
+|`ZooKeeperMasterWorld` (`ZooKeeperMasterDstTest`)
+|FakeZooKeeper: a ZooKeeper ensemble (sessions, ephemeral sequential znodes, one-time watches) with the other nodes of the group as sessions, behind a CuratorFramework shared as the curator bean
+a|* the master consumer (zookeeper-master endpoint) and the MasterRoutePolicy, on the real ZooKeeperGroup
+* connection losses shorter and longer than the session timeout (SUSPENDED, RECONNECTED, LOST)
+* other nodes that join, leave and die
+* a start of the consumer that fails and its retry; with the master consumer, a start that takes long
+* route stop and start, and a route of the policy removed and added again
+|CAMEL-25315, CAMEL-26540, CAMEL-26802, CAMEL-26870, CAMEL-26887
 |===
 // dst worlds: END
 
