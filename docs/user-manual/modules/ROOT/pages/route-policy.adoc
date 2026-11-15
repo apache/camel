@@ -94,6 +94,94 @@ is based its metrics on number of in flight exchanges whereas
 xref:components:eips:throttle-eip.adoc[Throttler] EIP is based on number o
 messages per time unit.
 
+== `ThrottlingExceptionRoutePolicy`
+
+The *`ThrottlingExceptionRoutePolicy`* works like a circuit breaker on the route consumer:
+
+* When `failureThreshold` exchanges fail within `failureWindow`, the circuit opens: the policy suspends the consumer
+(or stops it, if it cannot be suspended). The consumer takes no new messages; with a queue, such as JMS, they wait in
+the queue.
+* After `halfOpenAfter`, the circuit is half open: the policy resumes the consumer, and the next exchange decides.
+A success closes the circuit, a failure opens it again.
+* With a `halfOpenHandler`, the policy calls the handler instead of resuming the consumer, and closes the circuit
+when the handler returns `true`.
+
+The circuit closes by itself, so you do not need to resume the route.
+
+The throttling exception route policy has the following options:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|Option |Default |Description
+|`failureThreshold` |`50` |How many failed exchanges within the `failureWindow` open the circuit.
+|`failureWindow` |`60000` |The sliding window (in millis) in which the failures are counted.
+|`halfOpenAfter` |`30000` |How long (in millis) the circuit stays open before it is half open. Must be greater than 0.
+|`exceptions` | |Only the exceptions of these types count as a failure (FQN class names separated by comma). By default, any exception counts.
+|`keepOpen` |`false` |Whether to always keep the circuit open (it never closes). This is only intended for development and testing.
+|`halfOpenHandler` | |A custom `org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler` that checks whether the circuit can be closed, instead of resuming the consumer.
+|`stateLoggingLevel` |`DEBUG` |The logging level used for logging the state changes.
+|===
+
+For example, to stop consuming from a JMS queue when 5 exchanges fail with a `java.net.ConnectException` within a minute,
+and to try again after 10 seconds:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy();
+policy.setFailureThreshold(5);
+policy.setFailureWindow(60000);
+policy.setHalfOpenAfter(10000);
+policy.setExceptions("java.net.ConnectException");
+
+from("jms:queue:orders")
+    .routePolicy(policy)
+    .to("http://orders-service/orders");
+----
+
+XML::
++
+[source,xml]
+----
+<bean id="ordersPolicy" class="org.apache.camel.throttling.ThrottlingExceptionRoutePolicy">
+    <property name="failureThreshold" value="5"/>
+    <property name="failureWindow" value="60000"/>
+    <property name="halfOpenAfter" value="10000"/>
+    <property name="exceptions" value="java.net.ConnectException"/>
+</bean>
+
+<route routePolicyRef="ordersPolicy">
+    <from uri="jms:queue:orders"/>
+    <to uri="http://orders-service/orders"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+  - name: ordersPolicy
+    type: org.apache.camel.throttling.ThrottlingExceptionRoutePolicy
+    properties:
+      failureThreshold: 5
+      failureWindow: 60000
+      halfOpenAfter: 10000
+      exceptions: java.net.ConnectException
+- route:
+    routePolicyRef: ordersPolicy
+    from:
+      uri: jms:queue:orders
+      steps:
+        - to:
+            uri: http://orders-service/orders
+----
+====
+
 == ScheduledRoutePolicy
 
 See xref:scheduledroutepolicy.adoc[Scheduled Route Policy] for scheduling based route policy.
@@ -120,7 +208,7 @@ from("seda:foo")
 
 XML::
 +
-In XML you configure using the `routePolictRef` attribute on `<route>` as shown:
+In XML you configure using the `routePolicyRef` attribute on `<route>` as shown:
 +
 [source,xml]
 ----
@@ -134,7 +222,7 @@ In XML you configure using the `routePolictRef` attribute on `<route>` as shown:
 
 YAML::
 +
-In YAML you configure using the `routePolictRef` attribute on `route` node as shown:
+In YAML you configure using the `routePolicyRef` attribute on `route` node as shown:
 +
 [source,yaml]
 ----

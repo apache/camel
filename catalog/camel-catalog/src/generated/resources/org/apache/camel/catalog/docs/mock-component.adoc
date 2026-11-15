@@ -60,7 +60,7 @@ Expression.
 
 [NOTE]
 ====
-There is also the xref:others:test-junit5.adoc[Test endpoint], which is a
+There is also the xref:dataset-test-component.adoc[DataSet Test] endpoint, which is a
 Mock endpoint, but which uses a second endpoint to provide the list of
 expected message bodies and automatically sets up the Mock endpoint
 assertions. In other words, it's a Mock endpoint that automatically sets
@@ -436,7 +436,7 @@ include::{examplesdir}/components/camel-spring-parent/camel-spring-xml/src/test/
 
 Then we create a new XML file as follows, where we include the
 `camel-route.xml` file and define a spring bean with the class
-`org.apache.camel.impl.InterceptSendToMockEndpointStrategy` which tells
+`org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy` which tells
 Camel to mock all endpoints:
 
 [source,xml]
@@ -453,7 +453,7 @@ in the constructor for the bean:
 
 [source,xml]
 ----
-<bean id="mockAllEndpoints" class="org.apache.camel.impl.InterceptSendToMockEndpointStrategy">
+<bean id="mockAllEndpoints" class="org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy">
     <constructor-arg index="0" value="log*"/>
 </bean>
 ----
