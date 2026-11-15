@@ -50,6 +50,10 @@ final class OffsetCache {
         lastProcessedOffset.remove(topicPartition);
     }
 
+    public void remove(TopicPartition partition) {
+        lastProcessedOffset.remove(partition);
+    }
+
     public Long getOffset(TopicPartition partition) {
         return lastProcessedOffset.get(partition);
     }
