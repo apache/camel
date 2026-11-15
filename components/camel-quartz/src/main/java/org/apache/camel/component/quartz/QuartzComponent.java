@@ -251,6 +251,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             // read default props to be able to use a single scheduler per camel context
             // if we need more than one scheduler per context use setScheduler(Scheduler)
             // or setFactory(SchedulerFactory) methods
+            warnIfQuartzPropertiesFileIsIgnored();
 
             // must use classloader from StdSchedulerFactory to work even in OSGi
             InputStream is = StdSchedulerFactory.class.getClassLoader().getResourceAsStream("org/quartz/quartz.properties");
@@ -296,6 +297,28 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             LOG.debug("Creating SchedulerFactory: {} with properties: {}", name, prop);
         }
         return answer;
+    }
+
+    /**
+     * Called when none of the options properties, propertiesRef or propertiesFile is set, so this component loads only
+     * org/quartz/quartz.properties. Logs a WARN when a file that Quartz itself would read instead is ignored: when the
+     * org.quartz.properties system property is set (the file it names is not checked), or else when a quartz.properties
+     * is at the root of the classpath.
+     */
+    private void warnIfQuartzPropertiesFileIsIgnored() {
+        String requestedFile = System.getProperty(StdSchedulerFactory.PROPERTIES_FILE);
+        if (requestedFile != null) {
+            LOG.warn("The system property {}={} is ignored by the quartz component, which loads org/quartz/quartz.properties"
+                     + " unless one of the options properties, propertiesRef or propertiesFile is set."
+                     + " Set propertiesFile to use this file (with the file: prefix for a file on the file system),"
+                     + " or set propertiesFile=classpath:org/quartz/quartz.properties to keep the default.",
+                    StdSchedulerFactory.PROPERTIES_FILE, requestedFile);
+        } else if (getCamelContext().getClassResolver().loadResourceAsURL("quartz.properties") != null) {
+            LOG.warn("The quartz.properties at the root of the classpath is ignored by the quartz component, which loads"
+                     + " org/quartz/quartz.properties unless one of the options properties, propertiesRef or propertiesFile"
+                     + " is set. Set propertiesFile=classpath:quartz.properties to use it,"
+                     + " or set propertiesFile=classpath:org/quartz/quartz.properties to keep the default.");
+        }
     }
 
     protected String createInstanceName(Properties prop) {

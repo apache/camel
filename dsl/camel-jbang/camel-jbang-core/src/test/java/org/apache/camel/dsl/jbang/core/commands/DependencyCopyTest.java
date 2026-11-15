@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -37,8 +38,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 /**
  * camel dependency copy: the JARs of the dependencies of the integration, copied to a directory. The dependencies are
@@ -71,6 +75,17 @@ class DependencyCopyTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void resolvesTheDependenciesTogether() throws Exception {
+        MavenDownloader downloader = resolver(null);
+
+        assertThat(command(downloader).doCall()).isZero();
+
+        // one dependency graph, so lib/ gets one version of each library (CAMEL-26931)
+        verify(downloader).resolveArtifacts(argThat(gavs -> gavs.size() > 1
+                && gavs.contains("org.apache.camel:camel-main:4.11.0")), anySet(), eq(true), eq(false));
+    }
+
+    @Test
     void replacesTheJarsOfAnEarlierCopyAndKeepsTheOtherFiles() throws Exception {
         Files.writeString(lib.resolve("camel-main-4.10.0.jar"), "older");
         Files.writeString(lib.resolve("README.txt"), "my notes");
@@ -92,6 +107,7 @@ class DependencyCopyTest extends CamelCommandBaseTestSupport {
                 .contains("Error resolving the artifact: org.apache.camel:camel-main:4.11.0 due to: not in the repository");
         // the other dependencies are copied
         assertThat(jars()).isNotEmpty().doesNotContain("camel-main-4.11.0.jar");
+        assertThat(printer.getStderr()).containsOnlyOnce("Error resolving");
     }
 
     @Test
@@ -130,21 +146,25 @@ class DependencyCopyTest extends CamelCommandBaseTestSupport {
         return command;
     }
 
-    // resolves each dependency to a JAR of its own, except the one with the artifact id that is missing (the export
-    // before the copy resolves the rest as usual)
+    // resolves each dependency to a JAR of its own, and fails a request with the artifact id that is missing (the
+    // export before the copy resolves the rest as usual)
     private MavenDownloader resolver(String missing) throws Exception {
         MavenDownloader downloader = spy(new MavenResolverMixin().downloader());
         doAnswer(inv -> {
             List<String> gavs = inv.getArgument(0);
-            MavenGav gav = MavenGav.parseGav(gavs.get(0));
-            if (gav.getArtifactId().equals(missing)) {
-                throw new MavenResolutionException("not in the repository");
+            List<MavenArtifact> answer = new ArrayList<>();
+            for (String text : gavs) {
+                MavenGav gav = MavenGav.parseGav(text);
+                if (gav.getArtifactId().equals(missing)) {
+                    throw new MavenResolutionException("not in the repository");
+                }
+                Path jar = repo.resolve(gav.getArtifactId() + "-" + gav.getVersion() + ".jar");
+                if (!Files.exists(jar)) {
+                    Files.writeString(jar, gav.toString());
+                }
+                answer.add(new MavenArtifact(gav, jar.toFile()));
             }
-            Path jar = repo.resolve(gav.getArtifactId() + "-" + gav.getVersion() + ".jar");
-            if (!Files.exists(jar)) {
-                Files.writeString(jar, gav.toString());
-            }
-            return List.of(new MavenArtifact(gav, jar.toFile()));
+            return answer;
         }).when(downloader).resolveArtifacts(anyList(), anySet(), anyBoolean(), anyBoolean());
         return downloader;
     }

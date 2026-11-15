@@ -116,7 +116,7 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
         Language language = context.resolveLanguage("file");
         Expression expression
                 = language.createExpression("${file:parent}/" + FileConstants.DEFAULT_SUB_FOLDER + "/${file:onlyname}");
-        return new GenericFileExpressionRenamer<>(expression);
+        return new DefaultMoveRenamer<>(expression);
     }
 
     @SuppressWarnings("unchecked")

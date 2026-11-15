@@ -114,8 +114,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
               description = "If enabled and an Exchange failed processing on the consumer side the response written back to the remote peer"
                             + " won't contain the exception's class, message or stack trace.")
     private boolean muteException = true;
-    @UriParam(label = "consumer,advanced", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
-              description = "If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back.")
+    @UriParam(label = "advanced", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
+              description = "The logging level to use when there is nothing to send: on the consumer (if sync is enabled) when there is no reply to send back, and on the producer when the message has no body.")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
     @UriParam(label = "consumer,advanced", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
               description = "If the server (NettyConsumer) catches an exception then its logged using this logging level.")

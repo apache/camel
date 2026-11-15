@@ -1254,39 +1254,6 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * If sync is enabled this option dictates NettyConsumer which logging
-         * level to use when logging a there is no reply to send back.
-         * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
-         * 
-         * Default: WARN
-         * Group: consumer (advanced)
-         * 
-         * @param noReplyLogLevel the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
-            doSetProperty("noReplyLogLevel", noReplyLogLevel);
-            return this;
-        }
-        /**
-         * If sync is enabled this option dictates NettyConsumer which logging
-         * level to use when logging a there is no reply to send back.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
-         * 
-         * Default: WARN
-         * Group: consumer (advanced)
-         * 
-         * @param noReplyLogLevel the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(String noReplyLogLevel) {
-            doSetProperty("noReplyLogLevel", noReplyLogLevel);
-            return this;
-        }
-        /**
          * If the server (NettyConsumer) catches an
          * java.nio.channels.ClosedChannelException then its logged using this
          * logging level. This is used to avoid logging the closed channel
@@ -1522,6 +1489,41 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder nativeTransport(String nativeTransport) {
             doSetProperty("nativeTransport", nativeTransport);
+            return this;
+        }
+        /**
+         * The logging level to use when there is nothing to send: on the
+         * consumer (if sync is enabled) when there is no reply to send back,
+         * and on the producer when the message has no body.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
+            return this;
+        }
+        /**
+         * The logging level to use when there is nothing to send: on the
+         * consumer (if sync is enabled) when there is no reply to send back,
+         * and on the producer when the message has no body.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(String noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
         /**
@@ -3257,6 +3259,41 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
+         * The logging level to use when there is nothing to send: on the
+         * consumer (if sync is enabled) when there is no reply to send back,
+         * and on the producer when the message has no body.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointProducerBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
+            return this;
+        }
+        /**
+         * The logging level to use when there is nothing to send: on the
+         * consumer (if sync is enabled) when there is no reply to send back,
+         * and on the producer when the message has no body.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointProducerBuilder noReplyLogLevel(String noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
+            return this;
+        }
+        /**
          * Allows to configure additional netty options using option. as prefix.
          * For example option.child.keepAlive=false. See the Netty documentation
          * for possible options that can be used. This is a multi-value option
@@ -4436,6 +4473,41 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder nativeTransport(String nativeTransport) {
             doSetProperty("nativeTransport", nativeTransport);
+            return this;
+        }
+        /**
+         * The logging level to use when there is nothing to send: on the
+         * consumer (if sync is enabled) when there is no reply to send back,
+         * and on the producer when the message has no body.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
+            return this;
+        }
+        /**
+         * The logging level to use when there is nothing to send: on the
+         * consumer (if sync is enabled) when there is no reply to send back,
+         * and on the producer when the message has no body.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointBuilder noReplyLogLevel(String noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
         /**
