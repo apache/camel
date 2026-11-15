@@ -5014,7 +5014,8 @@ Examples:
 == camel infra restart --help
 Restarts a running external service
 Usage: camel infra restart [-h] [--port=<port>] [--log] [--background]
-                            [--prop=<prop>] [--kill] [--json] <service>
+                            [--background-wait] [--prop=<prop>] [--kill]
+                            [--json] <service>
 
 Options:
   -h, --help                Display this help and exit
@@ -5022,6 +5023,11 @@ Options:
       --log                 Log container output to console
       --background          Run in the background
                             Default: false
+      --background-wait     How long to wait for the service in the background
+                            to start, before returning, in millis or as a
+                            duration such as 2m (true waits 60 seconds, false
+                            does not wait)
+                            Default: 60s
       --prop, --property=<prop>
                             Service properties, ex.
                             --property=ollama.model=qwen2.5:0.5b
@@ -5035,14 +5041,20 @@ Examples:
 
 == camel infra run --help
 Run an external service
-Usage: camel infra run [-h] [--log] [--background] [--port=<port>] [--no-ui]
-                        [--prop=<prop>] [--json] <service>
+Usage: camel infra run [-h] [--log] [--background] [--background-wait]
+                        [--port=<port>] [--no-ui] [--prop=<prop>] [--json]
+                        <service>
 
 Options:
   -h, --help                Display this help and exit
       --log                 Log container output to console
       --background          Run in the background
                             Default: false
+      --background-wait     How long to wait for the service in the background
+                            to start, before returning, in millis or as a
+                            duration such as 2m (true waits 60 seconds, false
+                            does not wait)
+                            Default: 60s
       --port=<port>         Override the default port for the service
       --no-ui               Do not start companion UI containers
                             Default: false

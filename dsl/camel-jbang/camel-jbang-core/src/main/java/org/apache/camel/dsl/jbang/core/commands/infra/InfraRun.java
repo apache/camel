@@ -36,8 +36,11 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Arguments;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
+import org.apache.camel.dsl.jbang.core.commands.BackgroundWait;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -47,6 +50,7 @@ import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
@@ -64,6 +68,9 @@ public class InfraRun extends InfraBaseCommand {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfraRun.class);
 
+    // how often a run in the background checks whether the service has started
+    private static final long STARTUP_POLL_INTERVAL = 200;
+
     @Arguments(paramLabel = "service", required = true, description = "Service name")
     private List<String> serviceName;
 
@@ -72,6 +79,13 @@ public class InfraRun extends InfraBaseCommand {
 
     @Option(name = "background", hasValue = false, description = "Run in the background", defaultValue = "false")
     boolean background;
+
+    @Option(name = "background-wait",
+            description = "How long to wait for the service in the background to start, before returning, in millis"
+                          + " or as a duration such as 2m (true waits 60 seconds, false does not wait)",
+            defaultValue = "60s", optionalValue = true, fallbackValue = "true", converter = BackgroundWait.Converter.class,
+            parser = BackgroundWait.Parser.class)
+    long backgroundWait = BackgroundWait.DEFAULT;
 
     @Option(name = "port", description = "Override the default port for the service")
     Integer port;
@@ -171,25 +185,107 @@ public class InfraRun extends InfraBaseCommand {
             }
         }
 
-        cmds.remove("--background=true");
-        cmds.remove("--background");
+        cmds = BackgroundWait.withoutBackgroundOptions(cmds);
 
         addCamelCLICommand(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
 
-        Process p = pb.start();
-        if (jsonOutput) {
-            JsonObject jo = new JsonObject();
-            jo.put("pid", String.valueOf(p.pid()));
-            jo.put("alias", testService);
-            JsonOutput.print(printer(), jo);
-        } else {
-            printer().println(
-                    "Running " + testService + " in background with PID: " + p.pid());
+        return startInBackground(pb, testService);
+    }
+
+    /**
+     * Starts the service in the background, with its output in <tt>~/.camel/&lt;pid&gt;-run.log</tt>, and waits until
+     * it has written its pid file with its service data, which it does once it has started (CAMEL-27004: the output
+     * went to a pipe that nobody read, so a service that could not start, such as with Docker down, was gone without a
+     * word, and the command exited with 0).
+     *
+     * @param  pb           the process of the service
+     * @param  testService  the alias of the service, which names its pid file
+     * @return              0 when the service started, or the exit code of a service that ended before it started
+     * @throws CliException a timeout when the service is still starting after the wait, and is left running
+     */
+    int startInBackground(ProcessBuilder pb, String testService) throws Exception {
+        BackgroundLog.Started started = BackgroundLog.start(pb);
+        Process p = started.process();
+        Path log = started.log();
+        String pid = String.valueOf(p.pid());
+
+        if (!jsonOutput) {
+            printer().println("Running " + testService + " in background with PID: " + pid
+                              + (backgroundWait > 0 ? " (waiting for it to start)" : ""));
         }
-        return 0;
+        if (backgroundWait <= 0) {
+            if (jsonOutput) {
+                JsonObject jo = new JsonObject();
+                jo.put("pid", pid);
+                jo.put("alias", testService);
+                jo.put("log", log.toString());
+                JsonOutput.print(printer(), jo);
+            } else {
+                printer().println("Log: " + log);
+            }
+            return 0;
+        }
+
+        Path pidFile = CommandLineHelper.getCamelDir().resolve(getJsonFileName(testService, pid));
+        long deadline = System.currentTimeMillis() + backgroundWait;
+        String serviceData = startedServiceData(pidFile);
+        while (serviceData == null && p.isAlive() && System.currentTimeMillis() < deadline) {
+            try {
+                Thread.sleep(STARTUP_POLL_INTERVAL);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+            serviceData = startedServiceData(pidFile);
+        }
+
+        if (serviceData != null) {
+            if (jsonOutput) {
+                JsonObject jo = new JsonObject();
+                jo.put("pid", pid);
+                jo.put("alias", testService);
+                jo.put("log", log.toString());
+                jo.put("serviceData", parseServiceData(serviceData));
+                JsonOutput.print(printer(), jo);
+            } else {
+                printer().println(jsonMapper.writerWithDefaultPrettyPrinter()
+                        .writeValueAsString(jsonMapper.readTree(serviceData)));
+                printer().println("Log: " + log);
+            }
+            return 0;
+        }
+        if (!p.isAlive()) {
+            // ended before it started: why is in its output
+            int exitCode = p.exitValue();
+            printer().printErr("Service " + testService + " (PID: " + pid + ") did not start (exit code " + exitCode + ")");
+            String output = BackgroundLog.read(log);
+            if (!output.isBlank()) {
+                // on stderr with --json, so the output stays JSON
+                if (jsonOutput) {
+                    printer().printDiagnostic(output.stripTrailing());
+                } else {
+                    printer().println(output.stripTrailing());
+                }
+            }
+            Files.deleteIfExists(log);
+            return exitCode != 0 ? exitCode : CliExitCode.FAILURE;
+        }
+        // still starting, such as pulling its container image the first time: it is left running
+        String waited = backgroundWait < 1000 ? backgroundWait + "ms" : TimeUtils.printDuration(backgroundWait);
+        throw CliException.timeout("Service " + testService + " (PID: " + pid + ") is still starting after " + waited
+                                   + "; the log is in " + log);
+    }
+
+    /**
+     * The service data the service wrote to its pid file once it started, or null while it has not (the file is created
+     * empty, and written after).
+     */
+    private static String startedServiceData(Path pidFile) {
+        String data = readServiceData(pidFile);
+        return data != null && !data.isBlank() && parseServiceData(data) != null ? data : null;
     }
 
     protected Integer doRun(
@@ -508,6 +604,8 @@ public class InfraRun extends InfraBaseCommand {
             } catch (Exception e) {
                 // ignore
             }
+            // the output of a service in the background, which is of no use once it is stopped
+            BackgroundLog.remove(ProcessHandle.current().pid());
             clearInfraProperties();
             restoreProperties(replacedProperties);
         }

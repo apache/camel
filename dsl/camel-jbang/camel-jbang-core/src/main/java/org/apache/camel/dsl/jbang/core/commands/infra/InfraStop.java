@@ -24,6 +24,7 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
@@ -75,6 +76,8 @@ public class InfraStop extends InfraBaseCommand {
                     }
                     ph.destroyForcibly();
                 });
+                // a killed service cannot remove the output it had in the background
+                BackgroundLog.remove(service.pidNumber());
             }
         }
         if (jsonOutput) {
