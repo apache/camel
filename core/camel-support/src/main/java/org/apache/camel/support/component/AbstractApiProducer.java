@@ -142,7 +142,8 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
             if (claimed.compareAndSet(false, true)) {
                 return rejected(exchange, callback, e);
             }
-            // the rejection policy ran the task before it threw, and the task completes the exchange
+            // a custom rejection policy ran the task synchronously before it threw: the task completes the exchange
+            // (the JDK CallerRuns policy drops the task of a shut down pool, and Abort throws without running it)
             return false;
         }
         if (executorService.isShutdown() && claimed.compareAndSet(false, true)) {
