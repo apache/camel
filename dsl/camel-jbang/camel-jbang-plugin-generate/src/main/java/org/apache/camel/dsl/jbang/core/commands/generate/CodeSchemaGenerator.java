@@ -47,14 +47,17 @@ import tools.jackson.databind.json.JsonMapper;
  * This command downloads the specified Camel component dependencies and generates a JSON Schema (Draft 2020-12) for the
  * given fully qualified class name.
  *
- * Usage Examples: - camel generate schema fhir org.hl7.fhir.r4.model.Patient - camel generate schema http
- * org.apache.camel.component.http.HttpConfiguration
+ * Usage Examples: - camel generate schema fhir org.hl7.fhir.r4.model.Patient - camel generate schema timer
+ * org.apache.camel.component.timer.TimerComponent
  *
  * The generated schema includes: - Public and non-public fields (with getters) - Flattened enums using toString() -
  * Jackson annotations support
  *
- * Exit Codes: - 0: Success - 1: Component not found or dependency download failed - 2: Class not found - 3: Schema
- * generation failed - 4: General error
+ * The schema goes to stdout, or to the file of --output; --verbose tells on stderr what the command does.
+ *
+ * Exit Codes: - 0: Success - 1: the dependencies cannot be downloaded, or the schema cannot be generated - 2: a
+ * component or class name that is empty - 3: the class is not in the dependencies of the component - 70: an unexpected
+ * error
  */
 @CommandDefinition(name = "schema", description = "Create a JSON schema for a given Camel component and Java Object",
                    generateHelp = true, sortOptions = true)
@@ -90,9 +93,9 @@ public class CodeSchemaGenerator extends CamelCommand {
             }
 
             if (verbose) {
-                printer().println("Generating JSON Schema for component: " + camelComponent);
-                printer().println("Class: " + fullyQualifiedName);
-                printer().println("Camel version: " + camelVersion);
+                printer().printDiagnostic("Generating JSON Schema for component: " + camelComponent);
+                printer().printDiagnostic("Class: " + fullyQualifiedName);
+                printer().printDiagnostic("Camel version: " + camelVersion);
             }
 
             // Validate inputs
@@ -137,7 +140,7 @@ public class CodeSchemaGenerator extends CamelCommand {
                 outputSchema(schema);
 
                 if (verbose) {
-                    printer().println("Schema generation completed successfully");
+                    printer().printDiagnostic("Schema generation completed successfully");
                 }
 
                 return 0;
@@ -181,12 +184,12 @@ public class CodeSchemaGenerator extends CamelCommand {
      * @param  verbose        Whether to enable verbose logging
      * @return                DependencyDownloaderClassLoader or null if failed
      */
-    private DependencyDownloaderClassLoader getDependencyDownloaderClassLoader(
+    DependencyDownloaderClassLoader getDependencyDownloaderClassLoader(
             String camelComponent, String version, boolean verbose) {
 
         try {
             if (verbose) {
-                printer().println("Creating dependency downloader class loader...");
+                printer().printDiagnostic("Creating dependency downloader class loader...");
             }
 
             DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(
@@ -199,7 +202,7 @@ public class CodeSchemaGenerator extends CamelCommand {
                 downloader.start();
 
                 if (verbose) {
-                    printer().println("Downloading artifacts for camel-" + camelComponent + ":" + version);
+                    printer().printDiagnostic("Downloading artifacts for camel-" + camelComponent + ":" + version);
                 }
 
                 List<MavenArtifact> artifacts = downloader.downloadArtifacts(
@@ -211,15 +214,15 @@ public class CodeSchemaGenerator extends CamelCommand {
                 if (artifacts == null || artifacts.isEmpty()) {
                     printer().printErr(
                             "Error: No artifacts found for component 'camel-" + camelComponent + "' version '" + version + "'");
-                    printer().printErr("Please verify that the component name is correct and the version exists.");
-                    printer().printErr("Available components can be found at: https://camel.apache.org/components/");
+                    printer().printDiagnostic("Please verify that the component name is correct and the version exists.");
+                    printer().printDiagnostic("Available components can be found at: https://camel.apache.org/components/");
                     IOHelper.close(cl);
                     return null;
                 }
 
                 if (verbose) {
-                    printer().println("Downloaded " + artifacts.size() + " artifact(s)");
-                    artifacts.forEach(artifact -> printer().println("  - " + artifact.getFile().getName()));
+                    printer().printDiagnostic("Downloaded " + artifacts.size() + " artifact(s)");
+                    artifacts.forEach(artifact -> printer().printDiagnostic("  - " + artifact.getFile().getName()));
                 }
 
                 artifacts.forEach(artifact -> cl.addFile(artifact.getFile()));
@@ -259,7 +262,7 @@ public class CodeSchemaGenerator extends CamelCommand {
     private Class<?> loadTargetClass(ClassLoader classLoader, String className) {
         try {
             if (verbose) {
-                printer().println("Loading class: " + className);
+                printer().printDiagnostic("Loading class: " + className);
             }
 
             return classLoader.loadClass(className);
@@ -267,16 +270,17 @@ public class CodeSchemaGenerator extends CamelCommand {
         } catch (ClassNotFoundException e) {
 
             printer().printErr("Class '" + className + "' not found in component dependencies");
-            printer().printErr(System.lineSeparator());
-            printer().printErr("Possible causes:");
-            printer().printErr("  - Class name is incorrect (check spelling and package)");
-            printer().printErr("  - Class is not part of the '" + camelComponent + "' component");
-            printer().printErr("  - Class is in a different artifact not included as dependency");
-            printer().printErr(System.lineSeparator());
-            printer().printErr("To find available classes, you can:");
-            printer().printErr("  - Check the component documentation");
-            printer().printErr("  - Browse the Maven artifact at: https://mvnrepository.com/artifact/org/apache/camel/camel-"
-                               + camelComponent);
+            printer().printDiagnostic("");
+            printer().printDiagnostic("Possible causes:");
+            printer().printDiagnostic("  - Class name is incorrect (check spelling and package)");
+            printer().printDiagnostic("  - Class is not part of the '" + camelComponent + "' component");
+            printer().printDiagnostic("  - Class is in a different artifact not included as dependency");
+            printer().printDiagnostic("");
+            printer().printDiagnostic("To find available classes, you can:");
+            printer().printDiagnostic("  - Check the component documentation");
+            printer().printDiagnostic(
+                    "  - Browse the Maven artifact at: https://mvnrepository.com/artifact/org/apache/camel/camel-"
+                                      + camelComponent);
 
             if (verbose) {
                 e.printStackTrace();
@@ -302,19 +306,19 @@ public class CodeSchemaGenerator extends CamelCommand {
     private JsonNode generateSchema(SchemaGenerator generator, Class<?> targetClass) {
         try {
             if (verbose) {
-                printer().println("Generating schema for class: " + targetClass.getName());
+                printer().printDiagnostic("Generating schema for class: " + targetClass.getName());
             }
 
             return generator.generateSchema(targetClass);
 
         } catch (Exception e) {
             printer().printErr("Error generating schema for class '" + targetClass.getName() + "':");
-            printer().printErr("  " + e.getMessage());
-            printer().printErr(System.lineSeparator());
-            printer().printErr("This might be caused by:");
-            printer().printErr("  - Complex class structure that cannot be serialized");
-            printer().printErr("  - Missing dependencies for the class");
-            printer().printErr("  - Circular references in the class hierarchy");
+            printer().printDiagnostic("  " + e.getMessage());
+            printer().printDiagnostic("");
+            printer().printDiagnostic("This might be caused by:");
+            printer().printDiagnostic("  - Complex class structure that cannot be serialized");
+            printer().printDiagnostic("  - Missing dependencies for the class");
+            printer().printDiagnostic("  - Circular references in the class hierarchy");
 
             if (verbose) {
                 e.printStackTrace();
