@@ -207,8 +207,13 @@ abstract class Exporter {
             MavenGav gav = parseMavenGav(dep);
             String gid = gav.getGroupId();
             if ("org.apache.camel".equals(gid)) {
-                // uses BOM so version should not be included
-                gav.setVersion(null);
+                if (gav.getArtifactId() != null && gav.getArtifactId().startsWith("camel-test-infra-")) {
+                    // camel-test-infra-* is not managed by the BOM, use Camel version
+                    gav.setVersion(request.camelVersion);
+                } else {
+                    // uses BOM so version should not be included
+                    gav.setVersion(null);
+                }
             }
             gavs.add(gav);
         }
