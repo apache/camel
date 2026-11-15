@@ -89,7 +89,7 @@ instruction:
 
 - The first question of each conversation, the one with the instruction, was always "what does this app do". The
   model read more for it (3.9 tool calls per answer instead of 2.1) and passed it 12 of 15 times instead of 8. Most
-  of that gain is one app: in the first run, the model answered from the AI-written summary that the readme tool
+  of that gain is one app. In the first run, the model answered from the AI-written summary that the readme tool
   returned, and left a step out. Since CAMEL-26946 that tool returns the facts of the routes by default.
 - On the questions after it, the instruction faded: 0.10 lookups and no validation per answer. Yet the model wrote
   2.6 times as much code in all (221 code blocks instead of 84) and validated none of it. Its 3 calls of
@@ -101,11 +101,11 @@ instruction:
 - In all, 128 answers passed instead of 130: 4 more on the first question, 6 fewer on the others.
 
 This is one model and one run each. The changes in code, invented options, compactions and time are well beyond the
-variance between the rounds; most changes in the pass rate of a single question are not.
+variance between the rounds. Most changes in the pass rate of a single question are not.
 
 Telling the model to check made it read more and write more, not check what it wrote. The check of the code in an
-answer has to run whether the model asks for it or not. CAMEL-26960 proposes to mark the mistakes in the code of an
-answer, such as an option that does not exist, in the AI panel and in `camel ask`.
+answer has to run whether the model asks for it or not. CAMEL-26960 proposes that the AI panel and `camel ask` mark
+the mistakes in the code of an answer. One such mistake is an option that does not exist.
 
 == Goals
 
@@ -356,23 +356,23 @@ daemon or a native front does not serve too, and the start of the daemon itself.
    readiness pushed over the WebSocket transport.
 . Keep the Java client. At 50-65 ms it answers under the 0.1 s at which a response feels instant, so the commands
   already feel native. A native client for the main platforms, with the Java client as the fallback, is optional.
-. Tell the agents, and check for them. Speed alone does not change how an agent uses the CLI. So what agents read
-  (the Camel CLI pages, the instructions of the MCP server, the system prompt of the AI panel) says that the short
-  commands are cheap to call. Look an option up instead of guessing it, and ask only for the options needed (the
-  `optionsFilter` of `camel_catalog_doc`), since a whole doc page costs context. Telling is not enough for the checks:
-  told to validate every snippet, the local model wrote more code and validated none of it (see the motivation). So
-  the checks run without the agent's choice. The AI panel and `camel ask` mark the mistakes in the code of an answer
-  (CAMEL-26960). The MCP server already validates a file before `camel_write_file` writes it. An agent that edits
-  files with its own tools needs a hook that runs `camel validate yaml` on each edited route file, and the Camel CLI
-  pages show one. That hook runs on every edit, so it is where the daemon saves the most.
+. Tell the agents, and check for them. Speed alone does not change how an agent uses the CLI. The Camel CLI pages,
+  the MCP server's instructions and the AI panel's system prompt say that the short commands are cheap to call. They
+  tell an agent to look an option up instead of guessing it. They also tell it to ask only for the options it needs
+  (the `optionsFilter` of `camel_catalog_doc`), since a whole doc page costs context. Telling is not enough for the
+  checks: told to validate every snippet, the local model wrote more code and validated none of it (see the
+  motivation). So the checks run without the agent's choice. The AI panel and `camel ask` mark the mistakes in the
+  code of an answer (CAMEL-26960). The MCP server already validates a file before `camel_write_file` writes it. An
+  agent that edits files with its own tools needs a hook that runs `camel validate yaml` on each edited route file.
+  The Camel CLI pages show one. That hook runs on every edit, so it is where the daemon saves the most.
 . Measure the agents, not only the commands. The local-model benchmark runs in the AI panel of the TUI, whose tools
   run in the process, so it measures the instruction and the checks, not the daemon. It compares the pass rate, the
   calls and the invented options per answer, the compactions and the time of the model. The first run had the
   instruction in the first message (see the motivation). The next run puts such a line in the system prompt of the
-  AI panel, where it may last past the first question (two jars that differ only in that line). A run after that uses
-  the marks of CAMEL-26960 and counts the invented options shown without a mark. The daemon needs a benchmark that
-  drives `camel` through a shell. Make the daemon the default only after a release as opt-in, and when that
-  benchmark shows the gain.
+  AI panel, where it may last past the first question. It compares two jars that differ only in that line. A run
+  after that uses the marks of CAMEL-26960 and counts the invented options shown without a mark. The daemon needs a
+  benchmark that drives `camel` through a shell. Make the daemon the default only after a release as opt-in, and when
+  that benchmark shows the gain.
 . Do not build the native front. A daemon with a native client is in the same range (21-37 ms measured, against
   10-40 ms estimated), and the native front costs the most: the base classes of the commands change, GraalVM metadata
   must follow every command and option, aesh needs a change, and each release needs a binary per platform, all before
