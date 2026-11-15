@@ -336,6 +336,27 @@ these messages now reach a started route). The hand-over on a graceful stop can 
 the delegated consumer takes to stop (a stop that blocks holds back the failover until it returns). Exchanges in flight
 that the delegated consumer does not wait for in its stop may still be in flight when the leadership moves, as before.
 
+=== camel-ftp - a server that stops answering no longer holds the stop and the rest of the batch
+
+The `ftp` and `ftps` components no longer wait up to `soTimeout` (5 minutes by default) again and again on a connection
+whose server stopped answering:
+
+* A disconnect, such as when the consumer or the producer stops, still sends `QUIT`, but waits at most 2 seconds for
+  its reply (`soTimeout` when it is shorter), then closes the connection. The disconnect that the consumer forces after
+  a failed poll closes the connection without sending `QUIT`.
+* A server that takes more than 2 seconds to answer `QUIT` now makes the disconnect fail after 2 seconds (the
+  connection is closed all the same). A producer with `disconnect=true` or `disconnectOnBatchComplete=true` logs it as
+  a WARN (`Exception occurred during disconnecting from: ... This exception is ignored.`) where it used to wait for the
+  reply; the consumer, and the stop of the consumer or the producer, log it at DEBUG.
+* When the server does not answer in time while the consumer retrieves a file (`soTimeout`, or `timeout` during the
+  transfer), only that file fails: the consumer closes the connection and leaves the other files of the poll to the
+  next poll, which connects again. Before, the consumer went on with the next file on the same connection, and each
+  remaining file waited `soTimeout` and failed. With `streamDownload=true`, when the server does not answer the end of
+  a transfer within `soTimeout` (for example after the route timed out reading the file), the consumer closes the
+  connection and leaves the other files of the poll to the next poll in the same way.
+
+See the xref:components::ftp-component.adoc[FTP component].
+
 === camel-ftp - sftp checks whether a file exists with one lstat request
 
 The `sftp` component now checks whether a remote file exists (`fileExist=Ignore|Fail|Move`, `tempFileName`,

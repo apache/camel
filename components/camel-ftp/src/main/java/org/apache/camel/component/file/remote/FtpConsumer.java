@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -288,6 +289,39 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
         LOG.trace("Done file: {} does not exist", doneFileName);
         return false;
+    }
+
+    /**
+     * A file failed because the server did not answer in time (soTimeout on the control connection, or timeout on the
+     * data connection): the server may no longer answer, and a reply that comes late would be read as the reply to the
+     * next command, so the connection cannot be used for the rest of the batch. It is closed without waiting on it, and
+     * the rest of the batch is left to the next poll, which connects again. Otherwise each remaining file would wait
+     * soTimeout on the connection and fail.
+     */
+    @Override
+    protected void handleException(String message, Exchange exchange, Throwable t) {
+        super.handleException(message, exchange, t);
+        if (loggedIn && ObjectHelper.getException(SocketTimeoutException.class, t) != null) {
+            LOG.debug("Closing the connection to {} after a timeout, the rest of the batch is left to the next poll",
+                    remoteServer());
+            forceDisconnect();
+        }
+    }
+
+    /**
+     * The batch goes on only while the connection is open. It is closed after the server did not answer in time: by
+     * {@link #handleException(String, Exchange, Throwable)} when the consumer retrieves the file, or by
+     * {@link FtpOperations#releaseRetrievedFileResources(Exchange)} at the end of a file streamed to the route
+     * (streamDownload=true). The rest of the batch is then left to the next poll, which connects again.
+     */
+    @Override
+    public boolean isBatchAllowed() {
+        if (!loggedIn || !getOperations().isConnected()) {
+            // the rest of the batch is not processed
+            pendingExchanges = 0;
+            return false;
+        }
+        return super.isBatchAllowed();
     }
 
     @Override
