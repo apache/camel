@@ -42,8 +42,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;
+import org.bson.BsonObjectId;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -235,7 +237,7 @@ class MongoDbConsumerCursorRegenerationTest {
 
         ChangeStreamDocument<Document> event = mock(ChangeStreamDocument.class);
         when(event.getFullDocument()).thenReturn(new Document("_id", 1).append("text", "after the outage"));
-        when(event.getDocumentKey()).thenReturn(new BsonDocument("_id", new BsonInt32(1)));
+        when(event.getDocumentKey()).thenReturn(new BsonDocument("_id", new BsonObjectId(new ObjectId())));
         when(event.getOperationType()).thenReturn(OperationType.INSERT);
         when(event.getResumeToken()).thenReturn(new BsonDocument("_data", new BsonInt32(1)));
         MongoChangeStreamCursor<ChangeStreamDocument<Document>> recovered = mock(MongoChangeStreamCursor.class);
