@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -34,6 +35,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.util.FileUtil;
@@ -543,27 +547,64 @@ public final class ExampleHelper {
      * @param deleteOnExit whether the folder is deleted when this JVM exits; false when the example may outlive it
      */
     public static Path downloadGithubExample(JsonObject entry, boolean deleteOnExit) throws Exception {
+        return downloadGithubExample(entry, deleteOnExit, GITHUB_RAW_URL, Duration.ofSeconds(20));
+    }
+
+    /**
+     * Downloads each file of the example, and fails when one of them cannot be downloaded, so the example does not run
+     * without it (CAMEL-27004: a file that GitHub did not answer with 200, such as at a rate limit, was skipped).
+     *
+     * @param rawUrl  the URL of a file, with the name of the example and the name of the file
+     * @param timeout how long to wait for a file, its content included
+     */
+    static Path downloadGithubExample(JsonObject entry, boolean deleteOnExit, String rawUrl, Duration timeout)
+            throws Exception {
         String name = entry.getString("name");
         List<String> fileNames = getFiles(entry);
         Path tempDir = Files.createTempDirectory(EXAMPLE_DIR_PREFIX);
-
-        HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
-        for (String fileName : fileNames) {
-            String rawUrl = String.format(GITHUB_RAW_URL, name, fileName);
-            HttpResponse<String> res = hc.send(
-                    HttpRequest.newBuilder(new URI(rawUrl)).timeout(Duration.ofSeconds(20)).build(),
-                    HttpResponse.BodyHandlers.ofString());
-            if (res.statusCode() == 200) {
+        try {
+            HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
+            for (String fileName : fileNames) {
+                String url = String.format(rawUrl, name, fileName);
+                String content = downloadFile(hc, url, timeout);
                 Path targetFile = tempDir.resolve(fileName);
                 Files.createDirectories(targetFile.getParent());
-                Files.writeString(targetFile, res.body());
+                Files.writeString(targetFile, content);
             }
+        } catch (Exception e) {
+            // not half an example
+            FileUtil.removeDir(tempDir.toFile());
+            throw e;
         }
 
         if (deleteOnExit) {
             deleteOnExit(tempDir);
         }
         return tempDir;
+    }
+
+    private static String downloadFile(HttpClient hc, String url, Duration timeout) throws Exception {
+        // sendAsync + get(timeout) bounds the content too; HttpRequest.timeout() only bounds the headers
+        var future = hc.sendAsync(HttpRequest.newBuilder(new URI(url)).timeout(timeout).build(),
+                HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> res;
+        try {
+            res = future.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            throw new IOException("Downloading " + url + " timed out after " + timeout.toSeconds() + " seconds", e);
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof IOException ioe) {
+                throw ioe;
+            }
+            throw new IOException("Downloading " + url + " failed", e.getCause());
+        }
+        int status = res.statusCode();
+        if (status != 200) {
+            String hint = status == 403 || status == 429 ? " (GitHub rate limit, try again later)" : "";
+            throw new IOException("Downloading " + url + " failed with HTTP " + status + hint);
+        }
+        return res.body();
     }
 
     /**
