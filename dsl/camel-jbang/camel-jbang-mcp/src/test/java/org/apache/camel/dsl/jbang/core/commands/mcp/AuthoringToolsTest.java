@@ -67,9 +67,7 @@ class AuthoringToolsTest {
                     .isEqualTo(td.isDestructive());
             wrapped.add(m.getName());
         }
-        // camel_error_diagnose keeps its wrapper in DiagnoseTools (catalog per runtime), the rest live here
-        List<String> shared = new ArrayList<>(ToolRegistry.authoringTools().stream().map(ToolDescriptor::name).toList());
-        shared.remove("camel_error_diagnose");
+        List<String> shared = ToolRegistry.authoringTools().stream().map(ToolDescriptor::name).toList();
         assertThat(wrapped).containsExactlyInAnyOrderElementsOf(shared);
     }
 
@@ -245,7 +243,7 @@ class AuthoringToolsTest {
 
     @Test
     void theListingMarksAToolDeterministicExactlyWhenTheSharedDescriptorSaysSo() {
-        for (Class<?> type : List.of(AuthoringTools.class, DiagnoseTools.class)) {
+        for (Class<?> type : List.of(AuthoringTools.class)) {
             for (Method m : type.getMethods()) {
                 ToolDescriptor td = m.getAnnotation(Tool.class) != null ? ToolRegistry.findTool(m.getName()) : null;
                 if (td == null) {

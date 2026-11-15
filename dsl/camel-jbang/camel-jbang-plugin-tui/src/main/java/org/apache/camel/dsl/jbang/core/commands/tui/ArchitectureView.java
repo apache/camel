@@ -55,6 +55,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities.Capabilit
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities.Group;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities.GroupLink;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.FlowFeed;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget.NodeLine;
@@ -115,6 +116,8 @@ final class ArchitectureView {
     private long lastCheck;
     private long summaryModified;
     private String lastGroup;
+    /** Whether the messages move between the groups: the Diagram tab's w, one setting with the topology's. */
+    private boolean flowOn = true;
 
     ArchitectureView(MonitorContext ctx, Consumer<Group> openGroup) {
         this(ctx, openGroup, () -> true);
@@ -586,6 +589,24 @@ final class ArchitectureView {
 
     // ---- rendering ----
 
+    void setFlowOn(boolean flowOn) {
+        this.flowOn = flowOn;
+    }
+
+    /** The next frame of the messages moving between the groups is due. */
+    boolean isFlowFrameDue() {
+        return active && support.zoom.flow().frameDue();
+    }
+
+    private FlowFeed flowFeed() {
+        IntegrationInfo info = ctx != null ? ctx.findSelectedIntegration() : null;
+        Path d = dir;
+        return info == null || d == null
+                ? null
+                : ArchitectureFlow.feed(overview, capabilities, info.routes, info.endpoints,
+                        key -> RouteKeys.runningId(d, key));
+    }
+
     void render(Frame frame, Rect area, String integrationName) {
         render(frame, area, integrationName, List.of());
     }
@@ -617,6 +638,9 @@ final class ArchitectureView {
             spans.addAll(titleSuffix);
             title = Line.from(spans);
         }
+        // the messages moving between the groups, at the counts of the running routes
+        support.zoom.flow().setEnabled(flowOn);
+        support.zoom.setFlowFeed(flowOn ? flowFeed() : null);
         Group selected = selectedGroup();
         if (selected != null && area.width() > 70) {
             List<Rect> chunks = Layout.horizontal()

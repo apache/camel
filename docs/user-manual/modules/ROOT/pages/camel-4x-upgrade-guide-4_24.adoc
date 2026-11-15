@@ -1191,6 +1191,13 @@ as `camel run` already did. Before, the failure left `main()` and only the JVM p
 The JVM no longer prints that same failure a second time. When the application logs nothing at ERROR (such as without
 a logging implementation), the JVM prints it as before.
 
+=== camel-support - API components use one thread pool per CamelContext
+
+The producers of the API components (AS2, Box, Braintree, DHIS2, FHIR, Google Calendar, Google Drive, Google Mail,
+Google Sheets, Twilio and Zendesk) now use one thread pool per component in each CamelContext, instead of one pool
+shared by all the CamelContexts of the JVM. An application with several CamelContexts can therefore have more threads,
+and each pool uses the thread pool profile (such as `CamelGoogleDrive`) of its own CamelContext.
+
 === camel-report-maven-plugin:validate / configuration-validate
 
 The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
@@ -3368,14 +3375,33 @@ of the target version, the OpenRewrite plugin is no longer pinned to a version, 
 `quarkus-maven-plugin` at the Quarkus platform version of the new optional `quarkusPlatformVersion` argument (or the
 latest one), with `-Drewrite=true` for a full run.
 
-In `camel_dependency_check` and `camel_dependency_security_audit` the dependencies are the declared ones: a
-component only in `dependencyManagement` or in the dependencies of a plugin no longer counts, and Spring Boot starters
-and Camel Quarkus extensions count as the component they provide. The version status of `camel_dependency_check`
-compares the project with the latest Camel release, added as `latestVersion`, instead of the catalog version of the
-server. The security audit no longer audits the server's catalog version when the `pom.xml` sets no Camel version:
-it audits the `camelVersion` argument, else lists every advisory of the declared components, and says so in
-`warnings`. Its `reachable` is null when no routes are given, advisories without components are returned as
-`uncheckedAdvisories`, and `clean` is true only when none of them apply.
+In `camel_dependency_check` the dependencies are the declared ones: a component only in `dependencyManagement` or
+in the dependencies of a plugin no longer counts, and Spring Boot starters and Camel Quarkus extensions count as the
+component they provide. Its version status compares the project with the latest Camel release, added as
+`latestVersion`, instead of the catalog version of the server.
+
+=== camel-jbang-mcp - the security audit is part of camel_dependency_check, and four tools are removed
+
+The `camel_dependency_security_audit` MCP tool is removed. `camel_dependency_check` takes the same arguments and
+returns the audit in its new `security` section: the published CVE advisories of each declared artifact at the
+project's Camel version, `reachable` when routes are given, the advisories that name no component as
+`uncheckedAdvisories`, and `clean`. When the `pom.xml` sets no Camel version, the check uses the `camelVersion`
+argument, else lists every advisory of the declared components, and says so in `security.warnings`. The summary
+counts the vulnerable artifacts in `vulnerableArtifactCount` and in `totalIssueCount` when the Camel version is
+known, so a project with a known CVE is no longer reported `healthy`.
+
+These MCP tools are removed, with no replacement tool:
+
+* `camel_error_diagnose`, from both MCP servers (`camel mcp` and `camel tui --mcp`), as it was one of the authoring
+  tools they share: it matched an error against a fixed list of exceptions. `camel_get_errors` returns the failed
+  exchanges of an integration with their stack traces, and `camel_get_log` its log. The exception reference data
+  stays available as the `camel://error/exception-catalog` and `camel://error/exception/\{name}` resources of
+  `camel mcp`.
+* `camel_ai_pipeline_scaffold`: the route it returned referred to beans it did not define. Build such a route with
+  `camel_catalog_doc` and the documentation of the AI components.
+* `camel_route_cost_estimate`: its prices were written into the code and did not follow the provider prices.
+* `camel_route_test_scaffold`: it wrote a JUnit 5 test class. The Camel CLI runs Citrus tests: `camel test init`
+  creates one, and `camel test run` runs it.
 
 === camel-jbang-mcp - camel_openapi_mock_guidance is removed
 

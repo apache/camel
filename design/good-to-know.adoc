@@ -401,8 +401,8 @@ the hints it brought to the user.
 A hint says what can happen before anything ran. When it happens, the same hint explains it. The question is the same
 wherever the failure is seen:
 
-- a failed exchange on the Errors tab or the Timeline of the TUI, `camel get errors`, or the MCP tools
-  `camel_get_errors` and `camel_error_diagnose`;
+- a failed exchange on the Errors tab or the Timeline of the TUI, `camel get errors`, or the MCP tool
+  `camel_get_errors`;
 - messages that went missing between two routes, or arrived twice;
 - a chaos experiment that made it happen on purpose (let there be chaos, CAMEL-26760).
 
@@ -414,7 +414,7 @@ the failure shows, so the explanation uses the same rules, at a second moment:
 - Before: the hint, "pay attention to this", with `tryChaos` the recipe that tries it.
 - After: the failure finds the rule whose outcome it is, and its text is the "why". Without an AI that is one line with
   the error or under the unmet expectation. With an AI (Shift+F8 on the Errors tab or the Explore view of the TUI, or
-  `camel_error_diagnose`), the model writes the explanation from the rule, its facts and what was seen, and offers the
+  the answer of `camel_get_errors`), the model writes the explanation from the rule, its facts and what was seen, and offers the
   choices of the rule; the user decides, as for a hint.
 
 For this the rules get three optional fields, and the vocabulary one condition:
@@ -552,7 +552,7 @@ a component without a fact gives no hint.
    `errorHandler` condition, transient or permanent per exception and HTTP status (the `errors` table of the rule file
    and the `errors` side of `@Facts`), and the "why" line
    and Shift+F8 on the Errors tab and the Explore view of the TUI (the latter after PR #29577, the start dialog of let
-   there be chaos), and in `camel_error_diagnose`.
+   there be chaos), and in the answer of `camel_get_errors`.
 
 == Alternatives considered
 

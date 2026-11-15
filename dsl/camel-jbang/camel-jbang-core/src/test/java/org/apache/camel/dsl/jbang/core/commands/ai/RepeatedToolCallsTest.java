@@ -135,13 +135,14 @@ class RepeatedToolCallsTest {
 
     @Test
     void aToolWithoutAHintIsToldToGoOnWithTheTask() {
-        ToolDescriptor diagnose = ToolRegistry.findTool("camel_error_diagnose");
-        assertThat(diagnose.repeatHint()).isNull();
+        // every deterministic tool of the shared set has a hint, so a tool of the test
+        ToolDescriptor lookup = ToolDescriptor.tool("test_lookup", "A lookup without a hint").deterministic(true);
+        assertThat(lookup.repeatHint()).isNull();
         Map<String, String> error = Map.of("error", "No endpoint could be found for: xyz:test");
-        successfulCall(diagnose, error);
-        successfulCall(diagnose, error);
+        successfulCall(lookup, error);
+        successfulCall(lookup, error);
 
-        assertThat(calls.repeatOf(diagnose, error).getString("note"))
+        assertThat(calls.repeatOf(lookup, error).getString("note"))
                 .isEqualTo("Go on with the next step of your task. " + ASKED_3_TIMES);
     }
 
@@ -229,8 +230,7 @@ class RepeatedToolCallsTest {
 
     @Test
     void theCatalogLookupsAreDeterministic() {
-        for (String name : List.of("camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample",
-                "camel_error_diagnose")) {
+        for (String name : List.of("camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample")) {
             assertThat(ToolRegistry.findTool(name).isDeterministic()).as(name).isTrue();
         }
     }
