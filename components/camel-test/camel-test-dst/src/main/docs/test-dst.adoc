@@ -113,6 +113,16 @@ a|* explicit acknowledgement with onFailure RELEASE or REJECT
 * suspend and resume of the CamelContext
 |CAMEL-25872, CAMEL-25910
 
+|camel-mongodb
+|`MongoDbChangeStreamsWorld` (`MongoDbChangeStreamsDstTest`)
+|FakeMongo: a MongoDB collection and its change stream (resumeAfter, startAfter, drop and invalidate events, the resume of the driver), behind the MongoClient of the connectionBean option
+a|* the change streams consumer with a store of its resume token (changeStreamTokenRepository)
+* a dropped collection, made again by an insert
+* a server that cannot be reached for a while: the cursor cannot be opened, a getMore fails
+* route restarts (the consumer thread interrupted, then the route stopped and started), resuming after the stored token
+* the fullDocument option and cursorRegenerationDelay
+|CAMEL-25679, CAMEL-25946
+
 |camel-nats
 |`NatsWorld` (`NatsConsumerDstTest`)
 |FakeJetStream: a server with one JetStream stream and its pull consumers (AckWait, MaxDeliver, Nak), behind a jnats Connection given with the connection option
