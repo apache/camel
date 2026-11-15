@@ -122,6 +122,16 @@ a|* the JetStream pull consumer with explicit acks and naks, ephemeral or durabl
 * a server restart that deletes the ephemeral consumer, and the subscription made again
 |CAMEL-26884
 
+|camel-paho-mqtt5
+|`PahoMqtt5World` (`PahoMqtt5ConsumerDstTest`)
+|FakeMqtt: an MQTT 5 broker with the session of the client id (Clean Start, Session Expiry, Receive Maximum, resend on reconnect) and a Paho MqttClient subclass on it, given to the consumer by a test component
+a|* QoS 0, 1 and 2 with automatic or manual acknowledgements (manualAcksEnabled)
+* a session that the broker keeps (cleanStart=false, sessionExpiryInterval) or not
+* the automatic reconnect of Paho and the subscription made again
+* the reconnect of the consumer after a failed message, and Receive Maximum
+* route stop and start, with messages queued for a kept session
+|CAMEL-25793, CAMEL-25944
+
 |camel-pulsar
 |`PulsarWorld` (`PulsarConsumerDstTest`)
 |FakePulsar: a broker and client for one topic and one durable subscription
