@@ -52,6 +52,8 @@ public class OBSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "filename":
         case "fileName": target.setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "ignoresslverification":
         case "ignoreSslVerification": target.setIgnoreSslVerification(property(camelContext, boolean.class, value)); return true;
         case "includefolders":
@@ -134,6 +136,8 @@ public class OBSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "filename":
         case "fileName": return java.lang.String.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "ignoresslverification":
         case "ignoreSslVerification": return boolean.class;
         case "includefolders":
@@ -217,6 +221,8 @@ public class OBSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "filename":
         case "fileName": return target.getFileName();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "ignoresslverification":
         case "ignoreSslVerification": return target.isIgnoreSslVerification();
         case "includefolders":

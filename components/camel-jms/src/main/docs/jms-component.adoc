@@ -789,7 +789,12 @@ spec].
 For the `exchange.in.header` the following rules apply for the header
 **keys**:
 
-* Keys starting with `JMS` or `JMSX` are reserved.
+* Keys starting with `JMSX` are sent as properties, except those that the JMS provider sets, such as
+`JMSXDeliveryCount` or `JMSXUserID`.
+* Keys starting with `JMS_` and a vendor name, such as `JMS_IBM_Character_Set`, are sent as vendor-specific properties.
+See <<_vendor_specific_properties,Vendor-specific properties>>.
+* Other keys starting with `JMS` and a letter, such as `JMSType` or `JMSCorrelationID`, are reserved for the standard
+JMS headers: Camel sets the ones it supports on the message and drops the others.
 * `exchange.in.headers` keys must be literals and all be valid Java
 identifiers (do not use dots in the key name).
 * Camel replaces dots & hyphens and the reverse when consuming JMS
@@ -816,6 +821,21 @@ at *DEBUG* level if it drops a given header value. For example:
 2008-07-09 06:43:04,046 [main           ] DEBUG JmsBinding
   - Ignoring non primitive header: order of class: org.apache.camel.component.jms.issues.DummyOrder with value: DummyOrder{orderId=333, itemId=4444, quantity=2}
 ----
+
+==== Vendor-specific properties
+
+The JMS specification keeps the `JMS_<vendor>_` prefix for the properties of a JMS provider, such as
+`JMS_IBM_Character_Set` of IBM MQ. Set them as message headers: Camel sends such a header as a property of the JMS
+message, while it does not send exchange properties.
+
+Since Camel 4.22, when the JMS provider refuses a vendor-specific property, for example because it is read-only,
+Camel logs a WARN and sends the message without it.
+
+A JMS property holds only primitives and strings, so Camel drops a header whose value is a `byte[]`, such as the IBM MQ
+message descriptor field `JMS_IBM_MQMD_MsgId`, unless the `allowAdditionalHeaders` option names it, for example
+`allowAdditionalHeaders=JMS_IBM_MQMD_*`. IBM MQ also writes the `JMS_IBM_MQMD_*` fields only to a destination with its
+`WMQ_MQMD_WRITE_ENABLED` property set to `true`, see
+<<_setting_jms_provider_options_on_the_destination,Setting JMS provider options on the destination>>.
 
 === Message format when receiving
 

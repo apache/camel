@@ -338,6 +338,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
                                     parseServiceData(row.serviceData()), row.uiSupported()))
                                     .map(InfraBaseDTO::toMap)
                                     .collect(Collectors.toList())));
+        } else if (rows.isEmpty() && showPidColumn()) {
+            // camel infra ps printed only the header of the table (CAMEL-26931)
+            printer().printDiagnostic("No running infrastructure services");
         } else {
             int tw = terminalWidth();
             // Size DESCRIPTION to fill the terminal: measure the other columns so it gets the exact remainder.

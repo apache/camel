@@ -58,7 +58,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     private Printer quietPrinter;
 
     @Arguments(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
-               paramLabel = "<files>")
+               paramLabel = "files")
     protected List<String> files = new ArrayList<>();
 
     @OptionList(name = "dep", aliases = { "dependency" }, valueSeparator = ',', description = "Add additional dependencies")

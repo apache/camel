@@ -65,7 +65,7 @@ import static org.apache.camel.dsl.jbang.run.common.GitHubHelper.fetchGithubUrls
 public class Init extends CamelCommand {
 
     private Path filePath; // Defined only for file path completion; the field never used
-    @Argument(description = "Name of integration file (or a github link)", paramLabel = "<file>")
+    @Argument(description = "Name of integration file (or a github link)", paramLabel = "file")
     private String file;
 
     @Option(name = "list", hasValue = false, description = "List available templates")

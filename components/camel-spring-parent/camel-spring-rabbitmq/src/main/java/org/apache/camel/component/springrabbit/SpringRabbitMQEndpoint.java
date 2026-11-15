@@ -820,6 +820,11 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                                 rabbitQueue.getName(), durable, autoDelete, exclusive);
                     }
                     qn = admin.declareQueue(rabbitQueue);
+                    if (qn == null) {
+                        // the declaration failed and the admin ignores declaration exceptions (ignoreDeclarationExceptions):
+                        // use the name of the queue (given, or generated on the client) to bind and consume
+                        qn = rabbitQueue.getName();
+                    }
                 }
                 if (!skipBindQueue) {
                     // bind queue to exchange

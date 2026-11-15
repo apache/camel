@@ -107,6 +107,8 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "filterFile": target.setFilterFile(property(camelContext, java.lang.String.class, value)); return true;
         case "flatten": target.setFlatten(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "idempotent": target.setIdempotent(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "idempotenteager":
         case "idempotentEager": target.setIdempotentEager(property(camelContext, java.lang.Boolean.class, value)); return true;
@@ -348,6 +350,8 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "filterFile": return java.lang.String.class;
         case "flatten": return boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "idempotent": return java.lang.Boolean.class;
         case "idempotenteager":
         case "idempotentEager": return java.lang.Boolean.class;
@@ -590,6 +594,8 @@ public class MinaSftpEndpointConfigurer extends PropertyConfigurerSupport implem
         case "filterFile": return target.getFilterFile();
         case "flatten": return target.isFlatten();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "idempotent": return target.getIdempotent();
         case "idempotenteager":
         case "idempotentEager": return target.getIdempotentEager();

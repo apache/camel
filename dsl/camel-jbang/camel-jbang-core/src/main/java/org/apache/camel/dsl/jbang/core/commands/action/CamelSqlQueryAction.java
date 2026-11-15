@@ -35,7 +35,7 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel cmd sql myApp --query=\"file:query.sql\"" })
 public class CamelSqlQueryAction extends ActionBaseCommand {
 
-    @Argument(required = true, description = "Name or pid of running Camel integration")
+    @Argument(paramLabel = "name", required = true, description = "Name or pid of running Camel integration")
     String name;
 
     @Option(name = "query", aliases = { "sql" }, description = "The SQL query to execute, or file:<path> to load from a file",

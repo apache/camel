@@ -76,7 +76,7 @@ import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelp
 public class KubernetesRun extends KubernetesBaseCommand {
 
     @Arguments(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
-               paramLabel = "<files>")
+               paramLabel = "files")
     public List<String> files = new ArrayList<>();
 
     @Option(name = "service-account", description = "The service account used to run the application.")

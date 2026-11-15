@@ -277,4 +277,20 @@ class CamelTraceActionTest extends ActionCommandTestSupport {
         root.put("trace", trace);
         return root;
     }
+
+    @Test
+    void dumpAsJsonLines() throws Exception {
+        // CAMEL-26929: the dump had no --json; now each trace is a JSON object of its own line
+        writeStatusFile(TEST_PID, status(true, false));
+        writeTraces(exchange());
+
+        assertThat(callWithSingleProcess(dump("--json"))).isZero();
+
+        List<String> lines = printer.getStdout().lines().toList();
+        assertThat(lines).isNotEmpty().allSatisfy(line -> assertThat(Jsoner.deserialize(line)).isInstanceOf(JsonObject.class));
+        JsonObject first = (JsonObject) Jsoner.deserialize(lines.get(0));
+        assertThat(first.getLong("pid")).isEqualTo(TEST_PID);
+        assertThat(first.getBoolean("first")).isTrue();
+        assertThat(lines).anySatisfy(line -> assertThat(line).contains("Hello Camel"));
+    }
 }

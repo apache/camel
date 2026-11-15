@@ -24,7 +24,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(153);
+        Set<String> props = new HashSet<>(154);
         props.add("active");
         props.add("article");
         props.add("articleAttachments");
@@ -74,6 +74,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("groupMembership");
         props.add("group_id");
         props.add("group_membership_id");
+        props.add("healthCheckMaxPollDuration");
         props.add("id");
         props.add("idArticle");
         props.add("idempotencyKey");

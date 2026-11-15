@@ -41,7 +41,7 @@ import org.apache.camel.util.StringHelper;
                            "  camel config set runtime=spring-boot" })
 public class ConfigSet extends CamelCommand {
 
-    @Argument(required = true, description = "Configuration parameter (ex. key=value)")
+    @Argument(paramLabel = "key=value", required = true, description = "Configuration parameter (ex. key=value)")
     String configuration;
 
     @Option(name = "global", hasValue = false, description = "Use global or local configuration")

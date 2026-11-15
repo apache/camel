@@ -44,6 +44,8 @@ public class GoogleFirestoreEndpointConfigurer extends PropertyConfigurerSupport
         case "firestoreclient":
         case "firestoreClient": target.getConfiguration().setFirestoreClient(property(camelContext, com.google.cloud.firestore.Firestore.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
@@ -108,6 +110,8 @@ public class GoogleFirestoreEndpointConfigurer extends PropertyConfigurerSupport
         case "firestoreclient":
         case "firestoreClient": return com.google.cloud.firestore.Firestore.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "lazystartproducer":
@@ -168,6 +172,8 @@ public class GoogleFirestoreEndpointConfigurer extends PropertyConfigurerSupport
         case "firestoreclient":
         case "firestoreClient": return target.getConfiguration().getFirestoreClient();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":

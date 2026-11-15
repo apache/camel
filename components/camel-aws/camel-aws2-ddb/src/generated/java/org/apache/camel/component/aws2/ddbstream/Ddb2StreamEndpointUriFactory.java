@@ -24,7 +24,7 @@ public class Ddb2StreamEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(37);
+        Set<String> props = new HashSet<>(38);
         props.add("accessKey");
         props.add("amazonDynamoDbStreamsClient");
         props.add("backoffErrorThreshold");
@@ -35,6 +35,7 @@ public class Ddb2StreamEndpointUriFactory extends org.apache.camel.support.compo
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("initialDelay");
         props.add("maxResultsPerRequest");
         props.add("overrideEndpoint");

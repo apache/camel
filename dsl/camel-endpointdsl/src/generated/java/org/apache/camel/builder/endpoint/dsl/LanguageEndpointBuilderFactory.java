@@ -428,7 +428,7 @@ public interface LanguageEndpointBuilderFactory {
          * message only, it is never cached as the script of the endpoint (also
          * with cacheScript=true), and the header is removed after use.
          * 
-         * The option is a: {@code String or Expression} type.
+         * The option is a: {@code String or org.apache.camel.Expression} type.
          * 
          * Group: producer
          * 

@@ -142,13 +142,19 @@ YAML::
 
 Before you can send or receive messages from RabbitMQ, then exchanges, queues and bindings must be setup first.
 
-The consumer does this by default (`autoDeclare=true`): it declares the exchange, the queue and the binding between
-them with the routing key. Set `autoDeclare=false` when they are set up in another way.
-The producer declares them only when `autoDeclareProducer=true`.
+Since Camel 4.5, a consumer declares them when it starts, as `autoDeclare` is `true` by default: the exchange, of the
+`exchangeType` (`direct` by default), the queues, and the binding between the exchange, the queues and the routing key.
+A producer declares them only with `autoDeclareProducer=true`.
 
-The consumer declares them when it starts, and again each time the connection factory opens a new connection, for
-example after the connection to RabbitMQ was lost: a queue that RabbitMQ deleted meanwhile, such as an auto-delete or
-exclusive queue, is declared again when the consumer reconnects.
+If the broker already has one of these elements with other settings, such as an exchange of another type or a queue
+with other arguments, the broker refuses the declaration with `PRECONDITION_FAILED` and the consumer fails to start.
+Configure the endpoint with the settings of the existing elements, or turn the declaration off with `autoDeclare=false`
+(on the endpoint or the component), or for some elements with `skipDeclareExchange`, `skipDeclareQueue` or
+`skipBindQueue`.
+
+The consumer declares them again each time the connection factory opens a new connection, for example after the
+connection to RabbitMQ was lost: a queue that RabbitMQ deleted meanwhile, such as an auto-delete or exclusive queue, is
+declared again when the consumer reconnects.
 
 When RabbitMQ is not available when the consumer starts, the consumer logs a warning and starts anyway: the listener
 container keeps trying to connect, and the exchange, queue and binding are declared when it connects.

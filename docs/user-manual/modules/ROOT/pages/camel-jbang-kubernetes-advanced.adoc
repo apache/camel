@@ -375,7 +375,7 @@ NOTE: Disabled by default — enable with `--trait knative-service.enabled=true`
 | map[string]string
 | The annotations added to route.
 This can be used to set knative service-specific annotations
-CLI usage example: -t "knative-service.annotations.'haproxy.router.openshift.io/balance'=true"
+CLI usage example: --trait "knative-service.annotations.'haproxy.router.openshift.io/balance'=true"
 
 | knative-service.class
 | string
