@@ -8743,3 +8743,23 @@ if it configured the proxy.
 It is now deprecated, with a `deprecationNote` that says so, and its description no longer claims to configure a proxy.
 Remove `protocol` from the endpoint URI or the configuration. To send the client's traffic through a proxy, use
 `proxyProtocol` together with `proxyHost` and `proxyPort`, which the shared client builder does apply.
+
+=== camel-thymeleaf - the CamelThymeleafServletContext header is deprecated
+
+The `CamelThymeleafServletContext` header is never read by the component. The web application template resolver is
+built from a `JakartaServletWebApplication`, not from a `ServletContext`, and that object comes from the endpoint:
+
+[source,java]
+----
+WebApplicationTemplateResolver resolver = new WebApplicationTemplateResolver(jakartaServletWebApplication);
+----
+
+A route that sets the header gets no error and no resolver. It is now deprecated, with a `deprecationNote` that says
+so. `jakartaServletWebApplication` is not a URI option; set it on the endpoint:
+
+[source,java]
+----
+ThymeleafEndpoint endpoint = context.getEndpoint("thymeleaf:greeting.html", ThymeleafEndpoint.class);
+endpoint.setJakartaServletWebApplication(
+        JakartaServletWebApplication.buildApplication(servletContext));
+----

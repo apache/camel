@@ -35,7 +35,8 @@ public class ThymeleafConstants {
 
     @Metadata(description = "The ServletContext for a web application.", javaType = "jakarta.servlet.ServletContext",
               deprecationNote = "Never read by the component: the web application template resolver is built from the"
-                                + " jakartaServletWebApplication set on the endpoint")
+                                + " JakartaServletWebApplication given to ThymeleafEndpoint.setJakartaServletWebApplication,"
+                                + " which is not a URI option")
     @Deprecated
     public static final String THYMELEAF_SERVLET_CONTEXT = "CamelThymeleafServletContext";
 

@@ -512,7 +512,9 @@ public interface ThymeleafEndpointBuilderFactory {
         /**
          * The ServletContext for a web application. Deprecation note: Never
          * read by the component: the web application template resolver is built
-         * from the jakartaServletWebApplication set on the endpoint.
+         * from the JakartaServletWebApplication given to
+         * ThymeleafEndpoint.setJakartaServletWebApplication, which is not a URI
+         * option.
          * 
          * The option is a: {@code jakarta.servlet.ServletContext} type.
          * 
