@@ -151,16 +151,18 @@ class ThrottlingExceptionRoutePolicySuppressedExceptionTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() {
+                // the doTry blocks throw a new exception for each message, as an exception instance (shared by all the
+                // messages) gets no suppressed exceptions
                 from("direct:finally").routePolicy(finallyPolicy)
                         .doTry()
-                            .throwException(new IllegalStateException("try"))
+                            .throwException(IllegalStateException.class, "try")
                         .doFinally()
                             .throwException(new IOException("finally"))
                         .end();
 
                 from("direct:onException").routePolicy(onExceptionPolicy)
                         .onException(IOException.class).handled(true)
-                            .throwException(new IllegalStateException("onException"))
+                            .throwException(IllegalStateException.class, "onException")
                         .end()
                         .throwException(new IOException("route"));
 
@@ -189,14 +191,14 @@ class ThrottlingExceptionRoutePolicySuppressedExceptionTest extends ContextTestS
 
                 from("direct:listedInTry").routePolicy(listedInTryPolicy)
                         .doTry()
-                            .throwException(new IOException("try"))
+                            .throwException(IOException.class, "try")
                         .doFinally()
                             .throwException(new IllegalStateException("finally"))
                         .end();
 
                 from("direct:all").routePolicy(allPolicy)
                         .doTry()
-                            .throwException(new IllegalStateException("try"))
+                            .throwException(IllegalStateException.class, "try")
                         .doFinally()
                             .throwException(new IOException("finally"))
                         .end();

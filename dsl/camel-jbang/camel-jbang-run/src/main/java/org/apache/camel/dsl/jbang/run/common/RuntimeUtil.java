@@ -169,9 +169,11 @@ public final class RuntimeUtil {
                 System.setProperty("pid", Long.toString(pid));
                 // make it possible to manage log4j via JMX and camel-cli
                 System.setProperty("log4j2.disable.jmx", "false");
-                if (isOff(level, location) && !isLog4jConfigured()) {
+                if (isOff(level, location) && (CliLogging.isDeferred() || !isLog4jConfigured())) {
                     // most commands log nothing with the logging off, and log4j takes about 200 ms to configure: log4j
-                    // configures itself, with the logging off, when something first logs
+                    // configures itself, with the logging off, when something first logs. With the SLF4J provider of
+                    // the CLI nothing logs to log4j yet, so log4j is not even asked whether it is configured, as that
+                    // starts it (CAMEL-26937)
                     System.setProperty(CONFIGURATION_FILE, OFF_CONFIG);
                     deferred = location;
                     configured = location;
@@ -199,6 +201,8 @@ public final class RuntimeUtil {
         }
 
         setRootLoggingLevel(level);
+        // log4j is configured: the loggers of the SLF4J provider of the CLI log with it from now on
+        CliLogging.loggingConfigured();
     }
 
     private static boolean isOff(String level, String location) {

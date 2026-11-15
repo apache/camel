@@ -31,7 +31,6 @@ import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CliException;
-import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
@@ -85,6 +84,10 @@ public class EvalExpressionCommand extends ActionWatchCommand {
             defaultValue = "10000", converter = TimeoutConverter.class)
     long timeout = 10000;
 
+    @Option(name = "json", hasValue = false,
+            description = "Output in JSON Format: the result as {\"result\": ...}, and an error as the JSON of an error")
+    boolean jsonOutput;
+
     @Mixin
     MavenResolverMixin mavenResolver;
 
@@ -96,15 +99,14 @@ public class EvalExpressionCommand extends ActionWatchCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // as exceptions, so --json prints them as the JSON of an error
         if (template == null || template.isBlank()) {
-            printer().printErr("Template is required");
-            return CliExitCode.USAGE;
+            throw CliException.usage("Template is required");
         }
         if (template.startsWith("file:")) {
             Path f = Path.of(template.substring(5));
             if (!Files.exists(f)) {
-                printer().printErr("Template file does not exist: " + f);
-                return CliExitCode.FILE_NOT_FOUND;
+                throw CliException.fileNotFound("Template file does not exist: " + f);
             }
         }
 
@@ -130,8 +132,7 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                 Run run = new Run(getMain());
                 // requires camel 4.3 onwards
                 if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.2.0")) {
-                    printer().printErr("This requires Camel version 4.3 or newer");
-                    return CliExitCode.USAGE;
+                    throw CliException.usage("This requires Camel version 4.3 or newer");
                 }
                 exit = run.runTransformMessage(camelVersion, mavenResolver);
                 this.pid = run.spawnPid;
@@ -199,14 +200,25 @@ public class EvalExpressionCommand extends ActionWatchCommand {
         String status = jo.getString("status");
         if ("success".equals(status)) {
             String result = jo.getString("result");
-            printer().println(result);
+            if (jsonOutput) {
+                JsonObject out = new JsonObject();
+                out.put("result", result);
+                printer().println(out.toJson());
+            } else {
+                printer().println(result);
+            }
             return 0;
         }
         JsonObject cause = jo.getMap("exception");
         String msg = cause != null ? cause.getString("message") : null;
-        String st = cause != null ? cause.getString("stackTrace") : null;
-        if (st != null) {
-            printer().printDiagnostic(Jsoner.unescape(st));
+        if (msg == null) {
+            // the stack trace of the integration only when the error does not say what is wrong: the message of a
+            // syntax error shows the expression and where it is wrong, and the 30 lines of the stack trace before it
+            // hid that (CAMEL-26931)
+            String st = cause != null ? cause.getString("stackTrace") : null;
+            if (st != null) {
+                printer().printDiagnostic(Jsoner.unescape(st));
+            }
         }
         throw CliException.failure(msg != null ? Jsoner.unescape(msg) : "Evaluation failed: " + answer.error());
     }

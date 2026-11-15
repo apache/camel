@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.launcher;
 
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
+import org.apache.camel.dsl.jbang.run.common.CliLogging;
 
 /**
  * Main class for the Camel CLI Fat-Jar Launcher.
@@ -32,6 +33,9 @@ public class CamelLauncher {
      * @param args command line arguments to pass to Camel CLI
      */
     public static void main(String... args) {
+        // before anything creates a logger: the loggers log nothing until the CLI configures the logging, so a command
+        // that turns the logging off does not start log4j
+        CliLogging.install();
         System.setProperty(LauncherHelper.CAMEL_LAUNCHER_PROPERTY, "true");
 
         // The JAR of this class, which the CLI runs again in another process: the fat JAR, or the launcher JAR in lib/

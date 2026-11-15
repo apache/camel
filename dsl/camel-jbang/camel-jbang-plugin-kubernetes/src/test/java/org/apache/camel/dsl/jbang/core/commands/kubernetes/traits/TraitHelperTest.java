@@ -126,4 +126,19 @@ public class TraitHelperTest {
         Assertions.assertEquals(Map.of("haproxy.router.openshift.io/balance", "roundrobin", "team", "ops"),
                 traits.getRoute().getAnnotations());
     }
+
+    @Test
+    public void aCronScheduleWithACommaIsOneValue() {
+        // CAMEL-26934: the schedule was split at the comma into a list, which failed with a Jackson error (exit 70)
+        Traits traits = TraitHelper.parseTraits(new String[] { "cronjob.schedule=0 1,13 * * *" });
+
+        Assertions.assertEquals("0 1,13 * * *", traits.getCronjob().getSchedule());
+    }
+
+    @Test
+    public void aQuotedValueWithACommaIsOneValue() {
+        Traits traits = TraitHelper.parseTraits(new String[] { "cronjob.timezone=\"Europe/Paris,Europe/Rome\"" });
+
+        Assertions.assertEquals("Europe/Paris,Europe/Rome", traits.getCronjob().getTimezone());
+    }
 }
