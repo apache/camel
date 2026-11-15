@@ -3228,7 +3228,8 @@ public interface DataLakeEndpointBuilderFactory {
          * listFileSystemsSegment on a DataLakeServiceAsyncClient object. Null
          * may be passed.
          * 
-         * The option is a: {@code ListFileSystemsOptions} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.ListFileSystemsOptions} type.
          * 
          * Group: producer
          * 
@@ -3242,7 +3243,7 @@ public interface DataLakeEndpointBuilderFactory {
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
-         * The option is a: {@code Duration} type.
+         * The option is a: {@code java.time.Duration} type.
          * 
          * Group: producer
          * 
@@ -3322,7 +3323,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Defines options available to configure the behavior of a call to
          * listFileSystemsSegment on a DataLakeServiceAsyncClient object.
          * 
-         * The option is a: {@code PublicAccessType} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.PublicAccessType} type.
          * 
          * Group: producer
          * 
@@ -3335,7 +3337,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Non parsed http headers that can be used by the user.
          * 
-         * The option is a: {@code HttpHeaders} type.
+         * The option is a: {@code com.azure.core.http.HttpHeaders} type.
          * 
          * Group: consumer
          * 
@@ -3350,7 +3352,9 @@ public interface DataLakeEndpointBuilderFactory {
          * a variety of requests to the conditions present. These conditions are
          * entirely optional.
          * 
-         * The option is a: {@code DataLakeRequestConditions} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.DataLakeRequestConditions}
+         * type.
          * 
          * Group: producer
          * 
@@ -3365,7 +3369,8 @@ public interface DataLakeEndpointBuilderFactory {
          * listContainersSegment on a DataLakeFileSystemClient object. Null may
          * be passed.
          * 
-         * The option is a: {@code ListPathOptions} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.ListPathsOptions} type.
          * 
          * Group: producer
          * 
@@ -3455,7 +3460,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Access tier of file.
          * 
-         * The option is a: {@code AccessTier} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.AccessTier} type.
          * 
          * Group: consumer
          * 
@@ -3484,7 +3490,8 @@ public interface DataLakeEndpointBuilderFactory {
          * used during a download operation. Passing null as a FileRange value
          * will default to the entire range of the file.
          * 
-         * The option is a: {@code FileRange} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.FileRange} type.
          * 
          * Group: producer
          * 
@@ -3496,7 +3503,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * The configuration used to parallelize data transfer operations.
          * 
-         * The option is a: {@code ParallelTransferOptions} type.
+         * The option is a: {@code
+         * com.azure.storage.common.ParallelTransferOptions} type.
          * 
          * Group: producer
          * 
@@ -3509,7 +3517,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Set of OpenOption used to configure how to open or create a file.
          * 
-         * The option is a: {@code Set<OpenOption>} type.
+         * The option is a: {@code Set<java.nio.file.OpenOption>} type.
          * 
          * Group: producer
          * 
@@ -3522,7 +3530,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Datetime when the access tier of the blob last changed.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -3535,7 +3543,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Archive status of file.
          * 
-         * The option is a: {@code ArchiveStatus} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.ArchiveStatus} type.
          * 
          * Group: consumer
          * 
@@ -3614,7 +3623,7 @@ public interface DataLakeEndpointBuilderFactory {
          * Conclusion time of the last attempted Copy Blob operation where this
          * file was the destination file.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -3696,7 +3705,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Creation time of the file.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -3746,7 +3755,7 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Datetime when the file was last modified.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -3879,7 +3888,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Additional parameters for a set of operations.
          * 
-         * The option is a: {@code PathHttpHeaders} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.PathHttpHeaders} type.
          * 
          * Group: producer
          * 
@@ -3945,7 +3955,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Defines the input serialization for a file query request. either
          * FileQueryJsonSerialization or FileQueryDelimitedSerialization.
          * 
-         * The option is a: {@code FileQuerySerialization} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.FileQuerySerialization} type.
          * 
          * Group: producer
          * 
@@ -3959,7 +3970,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Defines the output serialization for a file query request. either
          * FileQueryJsonSerialization or FileQueryDelimitedSerialization.
          * 
-         * The option is a: {@code FileQuerySerialization} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.FileQuerySerialization} type.
          * 
          * Group: producer
          * 
@@ -3972,7 +3984,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Sets error consumer for file query.
          * 
-         * The option is a: {@code Consumer<FileQueryError>} type.
+         * The option is a: {@code
+         * java.util.function.Consumer<com.azure.storage.file.datalake.models.FileQueryError>} type.
          * 
          * Group: producer
          * 
@@ -3985,7 +3998,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Sets progress consumer for file query.
          * 
-         * The option is a: {@code Consumer<FileQueryProgress>} type.
+         * The option is a: {@code
+         * java.util.function.Consumer<com.azure.storage.file.datalake.models.FileQueryProgress>} type.
          * 
          * Group: producer
          * 
@@ -3998,7 +4012,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Optional parameters for File Query.
          * 
-         * The option is a: {@code FileQueryOptions} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.options.FileQueryOptions} type.
          * 
          * Group: producer
          * 
@@ -4036,7 +4051,8 @@ public interface DataLakeEndpointBuilderFactory {
         /**
          * Sets the file client to use.
          * 
-         * The option is a: {@code DataLakeFileClient} type.
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.DataLakeFileClient} type.
          * 
          * Group: producer
          * 
