@@ -3353,8 +3353,8 @@ public interface Sqs2EndpointBuilderFactory {
          * A map of the attributes requested in ReceiveMessage to their
          * respective values.
          * 
-         * The option is a: {@code Map<MessageSystemAttributeName, String>}
-         * type.
+         * The option is a: {@code
+         * Map<software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName, String>} type.
          * 
          * Group: consumer
          * 
@@ -3366,7 +3366,9 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The Amazon SQS message attributes.
          * 
-         * The option is a: {@code Map<String, MessageAttributeValue>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.sqs.model.MessageAttributeValue>}
+         * type.
          * 
          * Group: consumer
          * 
