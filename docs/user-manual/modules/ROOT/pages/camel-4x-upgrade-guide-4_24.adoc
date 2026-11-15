@@ -1495,6 +1495,18 @@ configuration file now fails a command with a message that names the file, the k
 command of the CLI has is still stored, with a warning. `camel config unset` of a key that is not set now exits with
 code `3` (not found) and says so, as `camel config get` does; it exited with `0`.
 
+=== camel-jbang-mcp - the runtime tools act on the integration a call names
+
+A runtime tool of the MCP server (`camel_runtime_*`) picks its integration by `nameOrPid`. A call that gave the
+integration as `name` (as `camel_run`, `camel_get_log` and `camel_control` take it) had that argument ignored, and the
+tool acted on the only integration that runs, which could be another one. Now `name`, `pid` and `integration` are taken
+for `nameOrPid` (and `nameOrPid` for the `name` of `camel_get_log`, `camel_get_errors`, `camel_control` and
+`camel_eval_expression`), and a call that names the integration with another argument the tool does not take, such as
+`process` or `app`, is refused.
+
+The argument of `camel_runtime_heap_dump` for the file name of the dump is renamed from `name` to `file`: `name` now
+names the integration, like on the other runtime tools.
+
 === camel-jbang - camel run exits with 1 when the integration fails to start
 
 When `camel run` cannot start the integration, such as for a route that cannot be created or started, it now exits

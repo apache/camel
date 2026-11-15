@@ -130,6 +130,43 @@ class McpArgumentGuardrailTest {
     }
 
     @Test
+    void aRuntimeToolGivenTheIntegrationAsNameActsOnThatIntegration() throws Exception {
+        // camel_get_log and camel_control take name, the runtime tools nameOrPid: a model carries one over to the
+        // other, and before, the runtime tool ignored name and acted on the only integration that runs (CAMEL-26932)
+        assertThat(input("camel_runtime_routes", "name", "orders").getArguments().getMap())
+                .containsExactly(Map.entry("nameOrPid", "orders"));
+        assertThat(guardrail.callNote.take()).isEqualTo("nameOrPid is the argument name (got name)");
+        assertThat(input("camel_runtime_route_control", "pid", "4711", "routeId", "route1",
+                "command", "stop").getArguments().getMap())
+                .containsEntry("nameOrPid", "4711");
+        assertThat(input("camel_get_log", "nameOrPid", "orders").getArguments().getMap())
+                .containsEntry("name", "orders");
+        // the file of the heap dump is no longer called name
+        assertThat(input("camel_runtime_heap_dump", "name", "orders", "file", "before-fix").getArguments().getMap())
+                .containsEntry("nameOrPid", "orders").containsEntry("file", "before-fix");
+        // the declared argument wins
+        assertThat(input("camel_runtime_routes", "nameOrPid", "billing", "name", "orders").getArguments().getMap())
+                .containsEntry("nameOrPid", "billing");
+    }
+
+    @Test
+    void aRuntimeToolGivenTheIntegrationByAnotherArgumentIsRefused() throws Exception {
+        assertThatThrownBy(() -> input("camel_runtime_routes", "process", "orders"))
+                .isInstanceOf(ToolCallException.class)
+                .hasMessage("process is not an argument of camel_runtime_routes, so it cannot pick the integration:"
+                            + " give the name or pid of the integration as nameOrPid, or leave process out to use the"
+                            + " only integration that runs");
+        assertThatThrownBy(() -> input("camel_get_errors", "app", "orders"))
+                .hasMessageStartingWith("app is not an argument of camel_get_errors, so it cannot pick the integration:"
+                                        + " give the name or pid of the integration as name,");
+        // with the integration given, another argument is only noted
+        assertThat(input("camel_runtime_routes", "nameOrPid", "orders", "app", "orders").getArguments().getMap())
+                .containsEntry("nameOrPid", "orders");
+        // an argument that does not name an integration is only noted
+        assertThat(input("camel_runtime_routes", "bogus", "x").getArguments().getMap()).containsKey("bogus");
+    }
+
+    @Test
     void aMissingArgumentIsAnsweredWithTheArgumentsOfTheTool() {
         assertThatThrownBy(() -> input("camel_catalog_find", "q", "mqtt"))
                 .isInstanceOf(ToolCallException.class)

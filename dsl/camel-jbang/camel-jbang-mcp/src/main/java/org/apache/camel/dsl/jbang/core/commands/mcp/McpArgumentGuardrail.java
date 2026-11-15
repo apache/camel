@@ -62,6 +62,16 @@ public class McpArgumentGuardrail implements ToolInputGuardrail, ToolOutputGuard
         if (!resolved.missing().isEmpty()) {
             throw new ToolCallException(resolved.missingMessage());
         }
+        String selector = ToolArgumentAliases.ignoredSelector(resolved);
+        if (selector != null) {
+            // without it the tool would act on the only integration that runs, which may be another one
+            throw new ToolCallException(
+                    selector + " is not an argument of " + tool.name() + ", so it cannot pick the"
+                                        + " integration: give the name or pid of the integration as "
+                                        + resolved.declared().stream().map(ToolArgumentAliases.Argument::name)
+                                                .filter(n -> n.equals("nameOrPid")).findFirst().orElse("name")
+                                        + ", or leave " + selector + " out to use the only integration that runs");
+        }
         if (!resolved.renamed().isEmpty()) {
             context.setArguments(new JsonObject(resolved.arguments()));
         }
