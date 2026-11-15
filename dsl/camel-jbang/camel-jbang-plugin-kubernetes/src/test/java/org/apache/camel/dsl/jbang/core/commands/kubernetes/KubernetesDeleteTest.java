@@ -18,7 +18,10 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.NodeBuilder;
@@ -27,6 +30,7 @@ import io.fabric8.kubernetes.api.model.NodeListBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
+import io.fabric8.mockwebserver.http.RecordedRequest;
 import io.fabric8.openshift.api.model.config.v1.ClusterVersion;
 import io.fabric8.openshift.api.model.config.v1.ClusterVersionBuilder;
 import io.fabric8.openshift.client.OpenShiftClient;
@@ -217,6 +221,33 @@ class KubernetesDeleteTest {
         Assertions.assertNull(ocpClient.buildConfigs().withName(name).get());
         Assertions.assertNull(ocpClient.imageStreams().withName(name).get());
         Assertions.assertNull(ocpClient.routes().withName(name).get());
+    }
+
+    @Test
+    public void shouldDeleteTheCronJob() throws Exception {
+        // CAMEL-26934: delete never deleted the CronJob of an integration
+        for (String kind : List.of("/apis/apps/v1/namespaces/test/deployments", "/apis/batch/v1/namespaces/test/cronjobs",
+                "/api/v1/namespaces/test/services", "/api/v1/namespaces/test/configmaps",
+                "/api/v1/namespaces/test/secrets")) {
+            serverDeleteExpect(kind + "?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
+        }
+        KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
+        command.withClient(client);
+        command.namespace = "test";
+        command.name = "my-route";
+        command.doCall();
+
+        List<String> deletes = new ArrayList<>();
+        int requests = server.getRequestCount();
+        for (int i = 0; i < requests; i++) {
+            RecordedRequest request = server.takeRequest(1, TimeUnit.SECONDS);
+            if (request != null && "DELETE".equals(request.getMethod())) {
+                deletes.add(request.getPath());
+            }
+        }
+        Assertions.assertTrue(deletes.contains(
+                "/apis/batch/v1/namespaces/test/cronjobs?labelSelector=app.kubernetes.io%2Fname%3Dmy-route"),
+                deletes.toString());
     }
 
     private void serverDeleteExpect(String path) {

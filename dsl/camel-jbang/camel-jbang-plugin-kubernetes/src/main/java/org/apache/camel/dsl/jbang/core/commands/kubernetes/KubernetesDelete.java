@@ -58,6 +58,12 @@ public class KubernetesDelete extends KubernetesBaseCommand {
         try {
             // delete Deployment cascades to pod
             deleteStatuses.addAll(client.apps().deployments().inNamespace(namespace).withLabels(labels).delete());
+            // delete CronJob, which cascades to its jobs and pods (CAMEL-26934: a CronJob was never deleted)
+            try {
+                deleteStatuses.addAll(client.batch().v1().cronjobs().inNamespace(namespace).withLabels(labels).delete());
+            } catch (Exception ex) {
+                // ignore, as for the ingresses and the Knative services
+            }
             // delete service
             deleteStatuses.addAll(client.services().inNamespace(namespace).withLabels(labels).delete());
             // delete configmap

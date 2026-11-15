@@ -36,6 +36,8 @@ import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import io.fabric8.openshift.api.model.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Model;
@@ -245,6 +247,28 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
                 pod.getVolumes().toString());
         Assertions.assertFalse(container.getVolumeMounts().isEmpty());
         Assertions.assertEquals("ops", cronjob.getMetadata().getAnnotations().get("team"));
+    }
+
+    @Test
+    public void aBackoffLimitOfZeroIsKept() throws Exception {
+        // CAMEL-26934: 0 (no retry) was left out, so Kubernetes retried a failed job 6 times
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + RuntimeType.main);
+        command.traits = new String[] { "cronjob.enabled=true", "cronjob.schedule=\"0 22 * * 1-5\"", "cronjob.backoffLimit=0" };
+        Assertions.assertEquals(0, command.doCall());
+
+        CronJob cronjob = getResource(RuntimeType.main, CronJob.class).orElseThrow();
+        Assertions.assertEquals(0, cronjob.getSpec().getJobTemplate().getSpec().getBackoffLimit());
+    }
+
+    @Test
+    public void aCronjobWithoutScheduleIsAUsageError() throws Exception {
+        // CAMEL-26934: there was no workload at all, and the export exited with 0
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + RuntimeType.main);
+        command.traits = new String[] { "cronjob.enabled=true" };
+
+        CliException e = Assertions.assertThrows(CliException.class, command::doCall);
+        Assertions.assertEquals(CliExitCode.USAGE, e.getExitCode());
+        Assertions.assertTrue(e.getMessage().contains("cronjob.schedule"), e.getMessage());
     }
 
     @ParameterizedTest
