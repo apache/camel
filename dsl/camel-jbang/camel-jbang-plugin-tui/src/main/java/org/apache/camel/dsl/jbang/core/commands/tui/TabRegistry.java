@@ -265,6 +265,11 @@ class TabRegistry {
 
     // ---- Tab access ----
 
+    /** The tab on screen is a route diagram with messages moving through it: it is time for its next frame. */
+    boolean isFlowFrameDue() {
+        return activeTab() instanceof AbstractDiagramTab tab && tab.isFlowFrameDue();
+    }
+
     MonitorTab activeTab() {
         int selected = tabsState.selected();
         return selected == TAB_MORE ? activeMoreTab : primaryTab(selected);
