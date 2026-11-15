@@ -3358,6 +3358,12 @@ file), the command asks there whether to overwrite the file.
   `2`: the first showed every error, the second none. The errors of `--diagram` are printed on stderr, and a graphical
   `--theme` in a terminal without graphics exits with `2`.
 
+=== camel-jbang - camel stop without a name
+
+`camel stop` without a name stops the integration that runs, as before, but when two or more run it stops none: it
+lists them and exits with `2`. Use `camel stop --all` (or `camel stop '*'`) to stop them all, as `camel stop` did. A
+bare `camel stop`, such as of an AI agent, stopped the integrations of the user and of other agents too.
+
 === camel-jbang - camel version list
 
 * `camel version list` prints the `Last updated` note on stderr, so stdout has the table only.

@@ -6223,20 +6223,24 @@ Examples:
 
 == camel stop --help
 Shuts down running Camel integrations
-Usage: camel stop [-h] [--kill] [--timeout=<timeout>] [--no-wait] [<name>]
+Usage: camel stop [-h] [--all] [--kill] [--timeout=<timeout>] [--no-wait]
+                   [<name>]
 
 Options:
   -h, --help               Display this help and exit
+      --all                Stop all running Camel integrations
       --kill               To force killing the process (SIGKILL)
       --timeout=<timeout>  How long to wait for the integration to stop, in
                            millis or as a duration such as 30s
                            Default: 60000
       --no-wait            Do not wait for the integration to stop
-  <name>                   Name or pid of running Camel integration(s)
+  <name>                   Name or pid of running Camel integration(s). Without
+                           a name, the one integration that runs (use --all when
+                           several run)
 
 Examples:
   camel stop hello
-  camel stop *
+  camel stop --all
   camel stop 12345
   camel stop hello --timeout=2m
   camel stop hello --kill

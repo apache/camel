@@ -185,4 +185,69 @@ class StopProcessTest extends ProcessCommandTestSupport {
             assertEquals("", printer.getOutput().trim(), "No output expected when no processes match");
         }
     }
+
+    @Test
+    void testStopWithoutNameWhenSeveralRunStopsNone() throws Exception {
+        // CAMEL-26929: a bare camel stop stopped every integration, also those of the user and of other agents
+        Path orders = running(TEST_PID, "orders");
+        Path billing = running(TEST_PID + 1, "billing");
+        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            mockRunning(mocked);
+
+            CliException e = assertThrows(CliException.class, command::doCall);
+
+            assertEquals(CliExitCode.USAGE, e.getExitCode());
+            assertEquals("2 Camel integrations are running: orders (PID: 12345), billing (PID: 12346)."
+                         + " Give the name or pid of the one to stop, or --all to stop them all",
+                    e.getMessage());
+            assertTrue(Files.exists(orders), "orders keeps running");
+            assertTrue(Files.exists(billing), "billing keeps running");
+        }
+    }
+
+    @Test
+    void testStopAll() throws Exception {
+        Path orders = running(TEST_PID, "orders");
+        Path billing = running(TEST_PID + 1, "billing");
+        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        command.all = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            mockRunning(mocked);
+
+            assertEquals(0, command.doCall());
+
+            assertFalse(Files.exists(orders), "orders is stopped");
+            assertFalse(Files.exists(billing), "billing is stopped");
+        }
+    }
+
+    @Test
+    void testStopAllWithANameIsAUsageError() {
+        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        command.all = true;
+        command.name = "orders";
+
+        CliException e = assertThrows(CliException.class, command::doCall);
+
+        assertEquals(CliExitCode.USAGE, e.getExitCode());
+    }
+
+    // an integration that runs: its status file and its pid file, which camel stop deletes
+    private static Path running(long pid, String name) throws Exception {
+        writeStatusFile(pid, buildContextStatus(name, 5));
+        Path pidFile = CommandLineHelper.getCamelDir().resolve(Long.toString(pid));
+        Files.writeString(pidFile, "");
+        return pidFile;
+    }
+
+    private static void mockRunning(MockedStatic<ProcessHandle> mocked) {
+        ProcessHandle first = mockProcessHandle(TEST_PID);
+        ProcessHandle second = mockProcessHandle(TEST_PID + 1);
+        ProcessHandle current = mockCurrentHandle();
+        mocked.when(ProcessHandle::current).thenReturn(current);
+        mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(first, second));
+    }
 }
