@@ -839,6 +839,7 @@ problems.
 
 The xref:components::ftp-component.adoc[FTP] component has many options. So make sure you have configured it properly.
 Also, a common issue is that you have to use either active or passive mode. So you may have to set `passiveMode=true` on the endpoint configuration.
+When the server refuses the listing of the directory, for example the `PORT` command of active mode, the poll fails and the consumer logs the reply of the server.
 
 == Examples
 

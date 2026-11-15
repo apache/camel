@@ -340,6 +340,15 @@ the `include` or `antInclude` option.
 
 See the xref:components::sftp-component.adoc[SFTP component].
 
+=== camel-ftp - a directory listing the server refuses fails the poll
+
+The `ftp` and `ftps` consumers now fail the poll when the server refuses the listing of a directory, for example the
+`PORT` command of active mode (the default) when the server or a firewall only allows passive mode. The
+`GenericFileOperationFailedException` holds the reply code and text of the server, and is logged like any failed poll.
+Before, the refused listing was taken as an empty directory: the polls found no files and logged nothing. The replies
+450 and 550 (a directory that is missing or empty) still give an empty listing. If such a consumer now fails, set
+`passiveMode=true`. See the xref:components::ftp-component.adoc[FTP component].
+
 === camel-kafka - exactlyOnce: a rejected send that a doCatch catches skips the record
 
 With `exactlyOnce`, a Kafka send through the source producer after an earlier send failed in the same transaction is
