@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.azure.messaging.servicebus.ServiceBusErrorContext;
+import com.azure.messaging.servicebus.ServiceBusException;
 import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
@@ -356,12 +357,27 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                                                 (k, e) -> new LockRenewerEntry(e.message, newLockedUntil, e.startTime));
                                     },
                                     error -> {
-                                        LOG.warn("Failed to renew lock for exchangeId {}: {}", exchangeId,
-                                                error.getMessage());
-                                        entries.remove(exchangeId);
+                                        if (isTransient(error)) {
+                                            // the SDK makes one attempt: keep the entry, so the next run renews
+                                            // the lock again while it is still held
+                                            LOG.warn("Failed to renew lock for exchangeId {}, will try again: {}",
+                                                    exchangeId, error.getMessage());
+                                        } else {
+                                            LOG.warn("Failed to renew lock for exchangeId {}: {}", exchangeId,
+                                                    error.getMessage());
+                                            entries.remove(exchangeId);
+                                        }
                                     });
                 }
             }
+        }
+
+        /**
+         * A transient error (such as a busy server or a connection that was lost) can be retried, as the processor of
+         * the Service Bus .NET SDK does for its own lock renewal; another error (such as a lost lock) ends the renewal.
+         */
+        private static boolean isTransient(Throwable error) {
+            return error instanceof ServiceBusException sbe && sbe.isTransient();
         }
 
         private record LockRenewerEntry(ServiceBusReceivedMessage message, OffsetDateTime lockedUntil, Instant startTime) {

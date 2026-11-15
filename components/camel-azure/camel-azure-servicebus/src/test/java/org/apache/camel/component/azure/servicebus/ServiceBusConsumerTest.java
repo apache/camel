@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import com.azure.core.amqp.exception.AmqpErrorCondition;
+import com.azure.core.amqp.exception.AmqpException;
 import com.azure.core.amqp.models.AmqpAnnotatedMessage;
 import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.*;
@@ -722,6 +724,65 @@ public class ServiceBusConsumerTest {
             // the next run comes at least periodMillis later (the period task scheduler ticks once per second), the
             // renewal itself is a call to Service Bus: waiting for that run leaves at most 2 seconds, or none at all
             verify(renewalClient).renewMessageLock(message);
+        }
+    }
+
+    @Test
+    void lockRenewerRenewsAgainAfterATransientError() throws Exception {
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        when(messageContext.getMessage()).thenReturn(message);
+        // the lock expires before the next runs of the renewer
+        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusSeconds(15));
+        // as the SDK reports a busy server: a transient error, which can be retried
+        ServiceBusException busy = new ServiceBusException(
+                new AmqpException(true, AmqpErrorCondition.SERVER_BUSY_ERROR, "server busy", null),
+                ServiceBusErrorSource.RENEW_LOCK);
+        when(renewalClient.renewMessageLock(any(ServiceBusReceivedMessage.class)))
+                .thenReturn(Mono.error(busy))
+                .thenReturn(Mono.just(OffsetDateTime.now().plusMinutes(1)));
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
+            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+            processMessageCaptor.getValue().accept(messageContext);
+
+            taskCaptor.getValue().run();
+            verify(renewalClient, times(1)).renewMessageLock(message);
+
+            // the next run renews the lock it still holds
+            taskCaptor.getValue().run();
+            verify(renewalClient, times(2)).renewMessageLock(message);
+
+            // the lock was renewed for another minute: the run after does not renew it
+            taskCaptor.getValue().run();
+            verify(renewalClient, times(2)).renewMessageLock(message);
+        }
+    }
+
+    @Test
+    void lockRenewerStopsAfterTheLockIsLost() throws Exception {
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        when(messageContext.getMessage()).thenReturn(message);
+        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusSeconds(15));
+        // as the SDK reports a lock that expired or a message that was settled: not transient
+        ServiceBusException lockLost = new ServiceBusException(
+                new AmqpException(false, AmqpErrorCondition.MESSAGE_LOCK_LOST, "lock lost", null),
+                ServiceBusErrorSource.RENEW_LOCK);
+        when(renewalClient.renewMessageLock(any(ServiceBusReceivedMessage.class))).thenReturn(Mono.error(lockLost));
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
+            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+            processMessageCaptor.getValue().accept(messageContext);
+
+            taskCaptor.getValue().run();
+            taskCaptor.getValue().run();
+
+            verify(renewalClient, times(1)).renewMessageLock(message);
         }
     }
 
