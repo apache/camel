@@ -3333,6 +3333,17 @@ file), the command asks there whether to overwrite the file.
   `2`: the first showed every error, the second none. The errors of `--diagram` are printed on stderr, and a graphical
   `--theme` in a terminal without graphics exits with `2`.
 
+=== camel-jbang - camel kubernetes volumes, --property and trait values
+
+* The volumes of `--config`, `--resource` and `--volume` have different names in the pod: a second volume of the same
+  name gets `-2`, a third `-3` and so on (`--config configmap:db --config secret:db` gives the volumes `db` and `db-2`).
+  Such manifests had two volumes of the same name, which the API server refuses.
+* `camel kubernetes run --property` takes a `key=value` whose value is a path, such as `camel.server.path=/api`, as a
+  property: it was taken for a properties file, and left out. A properties file that does not exist exits with `66`;
+  it was ignored.
+* A quoted trait value, and the value of `cronjob.schedule`, is one value also with a comma in it
+  (`cronjob.schedule=0 1,13 * * *`): it was split into a list, which failed with exit code `70`.
+
 === camel-jbang - camel version list
 
 * `camel version list` prints the `Last updated` note on stderr, so stdout has the table only.

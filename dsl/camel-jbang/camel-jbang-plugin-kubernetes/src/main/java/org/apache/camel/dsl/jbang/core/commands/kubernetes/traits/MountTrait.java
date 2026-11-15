@@ -21,8 +21,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import io.fabric8.kubernetes.api.model.ConfigMapVolumeSourceBuilder;
 import io.fabric8.kubernetes.api.model.KeyToPathBuilder;
@@ -153,7 +155,7 @@ public class MountTrait extends BaseTrait {
     }
 
     private void mountResource(List<Volume> volumes, List<VolumeMount> volumeMounts, MountResource mountResource) {
-        String volumeName = KubernetesHelper.sanitize(mountResource.name);
+        String volumeName = uniqueVolumeName(volumes, KubernetesHelper.sanitize(mountResource.name));
         String dstDir = Optional.ofNullable(mountResource.destinationPath).orElse("");
         String dstFile;
         boolean overrideFilePath = false;
@@ -170,6 +172,28 @@ public class MountTrait extends BaseTrait {
 
         volumes.add(vol);
         volumeMounts.add(mnt);
+    }
+
+    /**
+     * The name of a volume, unique in the pod: the volumes of a pod must have different names, and the name of a volume
+     * is the name of its configmap, secret or claim, so --config configmap:db --config secret:db, or two keys of one
+     * configmap, gave two volumes of the same name, which the API server refuses (CAMEL-26934). The first volume keeps
+     * the name, the next ones get -2, -3 and so on.
+     */
+    static String uniqueVolumeName(List<Volume> volumes, String name) {
+        Set<String> taken = volumes.stream().map(Volume::getName).collect(Collectors.toSet());
+        if (!taken.contains(name)) {
+            return name;
+        }
+        for (int i = 2;; i++) {
+            String suffix = "-" + i;
+            // a volume name is at most 63 characters (a DNS label)
+            String base = name.length() + suffix.length() > 63 ? name.substring(0, 63 - suffix.length()) : name;
+            String candidate = base + suffix;
+            if (!taken.contains(candidate)) {
+                return candidate;
+            }
+        }
     }
 
     private VolumeMount getMount(

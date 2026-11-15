@@ -168,6 +168,15 @@ public final class TraitHelper {
             return Boolean.valueOf(value);
         }
 
+        // a quoted value is one value, also with a comma in it, and so is a cron schedule, as in 0 1,13 * * *, which
+        // was split into a list that the trait cannot take (CAMEL-26934)
+        if (isQuoted(value)) {
+            return value.substring(1, value.length() - 1);
+        }
+        if (traitKey.equalsIgnoreCase("schedule")) {
+            return value;
+        }
+
         if (value.startsWith("[") && value.endsWith("]")) {
             String valueArrayExpression = value.substring(1, value.length() - 1);
             List<String> values = new ArrayList<>();
@@ -187,19 +196,21 @@ public final class TraitHelper {
             return values;
         }
 
-        if (value.startsWith("\"") && value.endsWith("\"")) {
-            return value.substring(1, value.length() - 1);
-        }
-
-        if (value.startsWith("'") && value.endsWith("'")) {
-            return value.substring(1, value.length() - 1);
-        }
-
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
             return value;
         }
+    }
+
+    // one quoted value, not a list of quoted values such as 'a=1','b=2'
+    private static boolean isQuoted(String value) {
+        if (value.length() < 2) {
+            return false;
+        }
+        char quote = value.charAt(0);
+        return (quote == '"' || quote == '\'') && value.charAt(value.length() - 1) == quote
+                && value.substring(1, value.length() - 1).indexOf(quote) == -1;
     }
 
     public static void configureConnects(Traits traitsSpec, String[] connects) {
