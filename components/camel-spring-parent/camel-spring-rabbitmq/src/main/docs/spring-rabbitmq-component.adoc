@@ -102,6 +102,52 @@ YAML::
 ----
 ====
 
+=== Noticing a dead or silent broker
+
+How soon a route notices a broker that stopped answering without closing the connection (the host is gone, or a
+firewall or NAT drops the packets) depends on the connection factory. The durations below describe how Spring AMQP and
+the RabbitMQ Java client behave by default, approximately; they are not guarantees of Camel.
+
+*Publisher confirms.* Without publisher confirms, the producer hands the message to the client and reports success:
+on a silent or reset connection the send succeeds and the message can be lost without an error. Configure the
+connection factory with simple publisher confirms. With the default `confirm=auto` the producer then waits up to
+`confirmTimeout` (5 seconds) for RabbitMQ to confirm each message sent InOnly, and the send fails when it is not
+confirmed, so the error handler can redeliver it. `confirm=enabled` waits the same way, and needs the connection factory
+to have publisher confirms.
+
+*Heartbeat.* The RabbitMQ Java client notices a silent connection through the heartbeat, 60 seconds by default (the
+lower of the values that the client and the broker request). It reads with a timeout of a quarter of the heartbeat and
+closes the connection after more than 8 such timeouts in a row: about 2.25 × the heartbeat, so about 135 seconds by
+default. Until then a consumer receives nothing and logs no error. A lower heartbeat notices it sooner, for example
+about 34 seconds with 15 seconds.
+
+*Channel operations.* An operation that waits for an answer of the broker on a channel, such as opening a channel or
+cancelling a consumer when the route stops, waits until the connection is closed or for up to the `channelRpcTimeout`
+of the client, 10 minutes by default.
+
+[source,xml]
+----
+<bean id="rabbitConnectionFactory" class="org.springframework.amqp.rabbit.connection.CachingConnectionFactory">
+  <property name="uri" value="amqp://localhost:5672"/>
+  <property name="publisherConfirmType" value="SIMPLE"/>
+  <property name="requestedHeartBeat" value="15"/>
+</bean>
+----
+
+In Java, `connectionFactory.getRabbitConnectionFactory().setChannelRpcTimeout(30000)` sets the channel timeout. With
+Spring Boot:
+
+[source,properties]
+----
+spring.rabbitmq.publisher-confirm-type=simple
+spring.rabbitmq.requested-heartbeat=15s
+spring.rabbitmq.channel-rpc-timeout=30s
+----
+
+After the connection breaks, the broker requeues the messages that the consumer received but did not acknowledge,
+while the consumer may still process the ones it had already received: expect duplicates after a reconnect, up to
+`prefetchCount` (250 by default) per consumer. Make the processing idempotent, or lower `prefetchCount`.
+
 === Default Exchange Name
 
 To use default exchange name (which would be an empty exchange name in RabbitMQ) then you should use `default` as name
