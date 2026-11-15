@@ -136,9 +136,10 @@ outside of it, and the producer writes through such links.
 
 Each WordPress endpoint now has a client of its own, set up from the `url`, `apiVersion`, `user` and `password`
 options of that endpoint, and the producers and consumers of the endpoint use that client. The endpoints no longer
-initialise the `WordpressServiceProvider.getInstance()` singleton, which is deprecated together with its `init`
-methods. Code that read services from `WordpressServiceProvider.getInstance()` after Camel created a WordPress endpoint
-must now use `WordpressEndpoint.getServiceProvider()`, or create a provider with
+initialise the `WordpressServiceProvider.getInstance()` singleton; the singleton and its `init` methods are still
+there, unchanged, for code that sets it up itself. Code that read services from
+`WordpressServiceProvider.getInstance()` after Camel created a WordPress endpoint must now use
+`WordpressEndpoint.getServiceProvider()`, or create a provider with
 `WordpressServiceProvider.create(WordpressAPIConfiguration)`.
 
 === camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
