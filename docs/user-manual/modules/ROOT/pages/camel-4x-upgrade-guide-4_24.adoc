@@ -8052,6 +8052,22 @@ consumer resume from an older offset. A log that rolled over and was cut short b
 log rewrote itself after the roll-over holds fewer entries and is replayed: the last entry of a key in it can then be
 an older offset, so the consumer can process again the messages after that offset.
 
+=== camel-core - a producer that calls the callback and then throws
+
+When the producer of an endpoint calls the callback of a send and then throws (an `AsyncProducer` that breaks the
+async contract), the exception is now logged at WARN and no longer set on the exchange, which has already continued,
+and the send is completed once. This now also applies to `to` when the send needs a callback of its own (when event
+notification applies, when `to` sets an exchange pattern that differs from the one of the exchange, or with
+`variableReceive`), to the synchronous sends of the `ProducerTemplate`, and to a send with a send hook (as installed by
+camel-chaos), as it already did for `toD` and the asynchronous sends. When such a `to` throws before it calls the
+callback, the exchange pattern is now restored and the sent event is fired, as when the producer sets the exception on
+the exchange. A plain `to` that does not need a callback of its own (no event notifier, such as camel-micrometer or a
+tracer, and no change of exchange pattern or `variableReceive`) keeps the old behaviour for such a producer.
+
+The asynchronous sends of the `ProducerTemplate` now fire one `ExchangeSendingEvent` and one `ExchangeSentEvent` per
+send; before, each event was fired twice. Tracing (camel-tracing, camel-telemetry), which builds its spans from these
+events, now sees one sending/sent pair per asynchronous send of the `ProducerTemplate` instead of two.
+
 === camel-core - a hook before each step of a route
 
 A new SPI `org.apache.camel.spi.StepHook`, added with `ExtendedCamelContext.addStepHook`, can fail or delay each step of
