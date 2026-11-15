@@ -2832,7 +2832,8 @@ Sets the time unit used for keep alive time. Default value: SECONDS
             <xs:documentation xml:lang="en">
 <![CDATA[
 Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue: each task goes directly to a thread,
-up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue.
+up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue. For a
+scheduled thread pool, 0 or -1 means the queue is not limited.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14094,7 +14095,8 @@ Sets the time unit to use for keep alive time. By default SECONDS is used.
             <xs:documentation xml:lang="en">
 <![CDATA[
 Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue: each task goes directly to a thread,
-up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue.
+up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue. For a
+scheduled thread pool, 0 or -1 means the queue is not limited.
 ]]>
             </xs:documentation>
           </xs:annotation>

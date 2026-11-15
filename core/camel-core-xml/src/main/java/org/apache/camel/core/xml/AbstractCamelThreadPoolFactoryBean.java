@@ -52,7 +52,8 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     @XmlAttribute
     @Metadata(description = "Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue:"
                             + " each task goes directly to a thread, up to maxPoolSize threads, and then the rejected policy applies."
-                            + " Use Integer.MAX_VALUE for an unbounded queue.")
+                            + " Use Integer.MAX_VALUE for an unbounded queue."
+                            + " For a scheduled thread pool, 0 or -1 means the queue is not limited.")
     private String maxQueueSize;
     @XmlAttribute
     @Metadata(description = "Sets whether to allow core threads to timeout", javaType = "java.lang.Boolean")

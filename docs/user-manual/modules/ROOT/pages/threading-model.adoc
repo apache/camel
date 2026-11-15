@@ -26,7 +26,7 @@ The default profile is pre-configured out of the box with the following settings
 | *poolSize* | `10` | Sets the default core pool size (threads to keep minimum in pool)
 | *keepAliveTime* | `60` | Sets the default keep alive time (in seconds) for inactive threads
 | *maxPoolSize* | `20` | Sets the default maximum pool size
-| *maxQueueSize* | `1000` | Sets the default maximum number of tasks in the work queue. Use `0` or `-1` for no work queue, or `Integer.MAX_VALUE` for an unbounded queue.
+| *maxQueueSize* | `1000` | Sets the default maximum number of tasks in the work queue. Use `0` or `-1` for no work queue, or `Integer.MAX_VALUE` for an unbounded queue. For a scheduled thread pool, `0` or `-1` means the queue is not limited.
 | *allowCoreThreadTimeOut* | `true` | Sets default whether to allow core threads to timeout
 | *rejectedPolicy* | `CallerRuns` | Sets the default handler for tasks which cannot be executed by the thread pool. Has three options:
 `Abort`, `CallerRuns`, `Block`. See <<rejected-policy>> for details.
@@ -42,6 +42,7 @@ With the default profile, a pool therefore runs 10 tasks at a time until 1000 ta
 When `maxQueueSize` is `0` or `-1`, there is no work queue: each task goes directly to a thread, up to `maxPoolSize`
 threads, and then the `rejectedPolicy` applies.
 With `Integer.MAX_VALUE` the queue is never full, so the pool never grows past `poolSize`.
+For a scheduled thread pool, `0` or `-1` means the queue is not limited.
 
 You can define as many thread pool profiles as you like. But there must
 be only *one* default profile. A custom thread pool profile will inherit
