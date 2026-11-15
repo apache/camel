@@ -23,7 +23,9 @@ public final class IBMSecretsManagerConstants {
 
     // headers set by the producer only
     @Metadata(label = "producer", description = "Overrides the desired operation to be used in the producer.",
-              javaType = "String")
+              javaType = "org.apache.camel.component.ibm.secrets.manager.IBMSecretsManagerOperation or String",
+              enums = "createArbitrarySecret,createKVSecret,getSecret,deleteSecret,listSecrets,updateSecret,"
+                      + "listSecretVersions")
     public static final String OPERATION = HEADER_PREFIX + "ProducerOperation";
 
     // headers set by the producer only
