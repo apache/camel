@@ -26,6 +26,7 @@ camel eval expression [options]
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--header` | Message header (key=value) |  | List
 | `--isolated` | Whether to run evaluation isolated in local process | false | boolean
+| `--json` | Output in JSON Format: the result as {"result": ...}, and an error as the JSON of an error |  | boolean
 | `--language` | Language to use | simple | String
 | `--predicate` | Whether to force evaluating as predicate | false | boolean
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String

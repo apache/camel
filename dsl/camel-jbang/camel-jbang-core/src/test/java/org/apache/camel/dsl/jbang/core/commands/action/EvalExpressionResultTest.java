@@ -84,8 +84,39 @@ class EvalExpressionResultTest extends ActionCommandTestSupport {
                 .isInstanceOf(CliException.class)
                 .hasMessage("Unknown function: foo")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.FAILURE);
-        // the stack trace on stderr
+        // the message says what is wrong: no stack trace of the integration (CAMEL-26931)
+        assertThat(printer.getStderr()).doesNotContain("at Simple");
+    }
+
+    @Test
+    void failedEvaluationWithoutMessagePrintsTheStackTrace() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject exception = new JsonObject(Map.of("stackTrace", "java.lang.NullPointerException\n\tat Simple"));
+        JsonObject answer = new JsonObject(Map.of("status", "failed", "exception", exception));
+
+        assertThatThrownBy(() -> callWithResponse(command("orders", "--template=${foo}"), answer))
+                .isInstanceOf(CliException.class)
+                .hasMessageStartingWith("Evaluation failed");
         assertThat(printer.getStderr()).contains("at Simple");
+    }
+
+    @Test
+    void resultAsJson() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+
+        int exit = callWithResponse(command("orders", "--template=${body}", "--body=a \"quoted\" text", "--json"),
+                new JsonObject(Map.of("status", "success", "result", "a \"quoted\" text")));
+
+        assertThat(exit).isEqualTo(CliExitCode.OK);
+        assertThat(printer.getStdout()).isEqualTo("{\"result\":\"a \\\"quoted\\\" text\"}");
+    }
+
+    @Test
+    void templateFileThatDoesNotExistIsNotFound() {
+        assertThatThrownBy(() -> command("orders", "--template=file:no-such-template.txt").doCall())
+                .isInstanceOf(CliException.class)
+                .hasMessage("Template file does not exist: no-such-template.txt")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
     }
 
     @Test

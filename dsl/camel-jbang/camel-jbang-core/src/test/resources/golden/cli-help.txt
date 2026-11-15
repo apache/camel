@@ -3512,9 +3512,9 @@ Usage: camel eval expression [-h] [--isolated] [--camel-version=<camel-version>]
                               [--language=<language>] [--predicate]
                               --template=<template> [--body=<body>]
                               [--header=<header>] [--variable=<variable>]
-                              [--timeout=<timeout>] [--download] [--repo=<repo>]
-                              [--fresh] [--watch] [--duration=<duration>]
-                              [<name>]
+                              [--timeout=<timeout>] [--json] [--download]
+                              [--repo=<repo>] [--fresh] [--watch]
+                              [--duration=<duration>] [<name>]
 
 Options:
   -h, --help                Display this help and exit
@@ -3539,6 +3539,8 @@ Options:
       --timeout=<timeout>   Timeout waiting for evaluation to be done, in millis
                             or as a duration such as 30s
                             Default: 10000
+      --json                Output in JSON Format: the result as {"result":
+                            ...}, and an error as the JSON of an error
       --download            Whether to allow automatic downloading JAR
                             dependencies (over the internet)
                             Default: true
