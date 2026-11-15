@@ -700,12 +700,12 @@ public final class SimpleConstants {
                       "param=reverse:boolean:optional:false:Whether to sort in reverse order" })
     public static final String SORT = "sort(exp,reverse)";
 
-    @Metadata(description = "Converts the expression to JSon String representation.",
+    @Metadata(description = "Converts the expression to pretty printed JSon String representation.",
               label = "json", javaType = "String", displayName = "To Pretty JSon",
               annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
     public static final String TO_PRETTY_JSON = "toPrettyJson(exp)";
 
-    @Metadata(description = "Converts the body to JSon String representation.",
+    @Metadata(description = "Converts the body to pretty printed JSon String representation.",
               javaType = "String", label = "json", displayName = "To Pretty JSon Body")
     public static final String TO_PRETTY_JSON_BODY = "toPrettyJsonBody";
 

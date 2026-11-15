@@ -64,8 +64,6 @@ public class Overview extends CamelCommand {
         }
     }
 
-    private static final String DEFAULT_MODEL = "llama3.2";
-
     @Argument(description = "Project directory (default: the current directory)")
     String directory;
 
@@ -98,13 +96,17 @@ public class Overview extends CamelCommand {
             description = "API key for authentication. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or LLM_API_KEY env vars")
     String apiKey;
 
-    @Option(name = "model", description = "Model to use", defaultValue = DEFAULT_MODEL)
-    String model = DEFAULT_MODEL;
+    @Option(name = "model",
+            description = "Model to use. Default: the provider's default; with Ollama the installed model best at"
+                          + " tool calling, such as qwen3.6")
+    String model;
 
     @Option(name = "timeout", description = "Timeout in seconds for LLM response", defaultValue = "300")
     int timeout = 300;
 
-    @Option(name = "temperature", description = "Temperature for response generation (0.0-2.0)", defaultValue = "0.3")
+    @Option(name = "temperature",
+            description = "Temperature for response generation (0.0-2.0), for a model on this machine: a hosted model uses its own default",
+            defaultValue = "0.3")
     double temperature = 0.3;
 
     @Option(name = "show-prompt", hasValue = false, description = "Show the prompt sent to the LLM")
@@ -166,7 +168,7 @@ public class Overview extends CamelCommand {
                 .withUrl(url)
                 .withApiType(apiType)
                 .withApiKey(apiKey)
-                .withModel(model)
+                .withExplicitModel(model)
                 .withTimeout(timeout)
                 .withTemperature(temperature)
                 .withStream(false)

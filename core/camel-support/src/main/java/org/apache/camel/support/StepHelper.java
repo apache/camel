@@ -43,7 +43,7 @@ public final class StepHelper {
     /**
      * Calls the processor of a step with the {@link StepHook} asked first. Without a hook this is
      * {@code processor.process(exchange, callback)}.
-     * <p/>
+     * <p>
      * The caller reads the hook from its own {@link CamelContext}
      * ({@code camelContext.getCamelContextExtension().getStepHook()}), once per call of the step. With a hook, see
      * {@link StepHook} for what the hook can do. A step that the hook failed completes right away without calling the
@@ -75,7 +75,7 @@ public final class StepHelper {
     /**
      * Calls the processor of a step synchronously, with the {@link StepHook} asked first. Without a hook this is
      * {@code processor.process(exchange)}.
-     * <p/>
+     * <p>
      * A step that the hook failed returns without calling the processor, with the exception on the exchange. A delay
      * waits on this thread.
      *

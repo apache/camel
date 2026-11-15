@@ -98,7 +98,7 @@ public class MBeanInfoAssembler implements Service {
      * @param  defaultManagedBean the default managed bean
      * @param  customManagedBean  an optional custom managed bean
      * @param  objectName         the object name
-     * @return                    the model info, or <tt>null</tt> if not possible to create, for example due the
+     * @return                    the model info, or <code>null</code> if not possible to create, for example due the
      *                            managed bean is a proxy class
      * @throws JMException        is thrown if error creating the model info
      */

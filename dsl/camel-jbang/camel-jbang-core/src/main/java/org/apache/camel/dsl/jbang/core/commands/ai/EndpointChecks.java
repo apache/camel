@@ -187,7 +187,9 @@ final class EndpointChecks {
                     int mapIndent = -1;
                     for (int k = j + 1; k < lines.length; k++) {
                         String paramLine = lines[k];
-                        if (paramLine.isBlank()) {
+                        if (paramLine.isBlank() || paramLine.trim().startsWith("#")) {
+                            // a commented-out option is not one: "# idempotentRepository: ..." was reported as the
+                            // unknown option '# idempotentRepository' (CAMEL-26960)
                             continue;
                         }
                         int paramIndent = countLeadingSpaces(paramLine);
@@ -477,7 +479,12 @@ final class EndpointChecks {
             Map.entry("timer:cron", "a cron expression is the cron or quartz component: cron:tick?schedule=0/5+*+*+*+*+?"),
             Map.entry("timer:schedule", "a cron expression is the cron or quartz component: cron:tick?schedule=0/5+*+*+*+*+?"),
             Map.entry("log:message", "the message is the body; a text is set with a setBody step or the log EIP"),
-            Map.entry("log:name", "the logger name is the path: log:com.example"));
+            Map.entry("log:name", "the logger name is the path: log:com.example"),
+            // CAMEL-26960: jdbc:mysql://localhost/orders?user=...&password=..., a JDBC url written as the endpoint
+            Map.entry("jdbc:user", "jdbc: takes the name of a DataSource bean, jdbc:myDataSource; the JDBC url, user and"
+                                   + " password are set on that DataSource"),
+            Map.entry("jdbc:password", "jdbc: takes the name of a DataSource bean, jdbc:myDataSource; the JDBC url, user"
+                                       + " and password are set on that DataSource"));
 
     /** direct:a,direct:b or log:a,mock:b: a comma followed by another scheme inside one uri. */
     static final Pattern SEVERAL_ENDPOINTS_PATTERN

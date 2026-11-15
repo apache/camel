@@ -45,8 +45,9 @@ completions of an exchange. More than one listener can be installed, and they ar
 chaos uses and from the advices of the debugger, the tracer and JMX, so all of them can run together. With no listener
 installed, the routes are built as today and a step costs nothing more.
 
-Steps 1, 2, 3 and 6 of the order of work are built: the step listener SPI, the module with R1, the JUnit extension
-and the CI switch, the on completion listener SPI with R2, and R1 "still pending". The rest is design.
+Steps 1, 2, 3, 5 and 6 of the order of work are built: the step listener SPI, the module with R1, the JUnit extension
+and the CI switch, the on completion listener SPI with R2, the dev console with `camel get sanitizer` and
+`camel run --sanitizer`, and R1 "still pending". The rest is design.
 
 == Motivation
 
@@ -602,16 +603,21 @@ set), and in `camel get sanitizer`.
 
 *In development.* `camel run --sanitizer` adds the dependency, as `--chaos` does; `--dep camel:sanitizer` works too.
 With profile `dev`, the default of `camel run`, it is on (R1; R2 with `camel.sanitizer.checks=callback,commit`, as it is
-on by default only in tests, see Cost). Violations are logged at WARN when they happen; a `sanitizer`
-dev console (`@DevConsole(readOnly = true)`) and `camel get sanitizer` show the report: the violations with their
-stacks, the calls still pending, and the counts per rule.
+on by default only in tests, see Cost). Violations are logged at WARN when they happen; a `sanitizer` dev console
+(read-only, as `@DevConsole` is by default) and `camel get sanitizer` show the report: the violations with their
+stacks, the counts per rule, the commits followed (with R2), and the calls still pending (the still pending warnings,
+and how many calls are pending now).
 
 *Spring Boot and Quarkus.* The plugin works with any `CamelContext`. A Spring Boot application turns it on in
 development with the Camel profile `dev` (`camel.main.profile=dev`, for example in a Spring `dev` profile file) or
 `camel.sanitizer.enabled=true`; a Quarkus application with `%dev.camel.sanitizer.enabled=true`. The options are read
 through the properties component, so `application.properties` works, but their tooling metadata is in camel-main only.
-`camel run --sanitizer` is refused with `--runtime=spring-boot` or `quarkus` for now, as `--chaos` is. (When no profile
-is set, the Javadoc of `camel.main.profile` calls the default `prod`; either way the sanitizer is off.)
+`camel run --sanitizer` with `--runtime=spring-boot` adds plain `camel-sanitizer` (there is no starter) and switches it
+on with `-Dcamel.sanitizer.enabled=true` unless the profile is `prod`, as `--chaos` does since CAMEL-26479; with
+`--runtime=quarkus` it is refused for now: there is no Camel Quarkus extension to add to an existing Quarkus project
+(`--chaos` uses `camel-quarkus-chaos`), and the sanitizer is not tested with Camel Quarkus yet. For a Spring Boot
+application of its own, when no Camel profile is set, the Javadoc of `camel.main.profile` calls the default `prod`;
+either way the sanitizer is off there.
 
 *In a test.* Add the `camel-sanitizer` dependency in test scope and `@CamelSanitizer`, as shown in "Checking your own
 processors and components". `@CamelSanitizer` is meta-annotated with `@ExtendWith(CamelSanitizerExtension.class)`, as
@@ -723,7 +729,9 @@ Each step is its own pull request after this document:
   listener (#29436); then R2, with the JMH run with the sanitizer on (see Cost: R2 is on by default only in tests).
   Done.
 . R3: the `AsyncProcessor` contract, then the sampled overlaps, with the runs on the async component suites.
-. The dev console, `camel get sanitizer` and `camel run --sanitizer`.
+. The dev console, `camel get sanitizer` and `camel run --sanitizer`. Done: `camel get sanitizer` asks the integration
+  for the console through the CLI connector when it runs, rather than reading it from the status file that is written
+  each second, as the report can list 1000 violations with their stacks.
 . R1 "still pending". Done.
 . R4 and its hook on the `ExecutorServiceManager`, if the earlier steps show it is still wanted.
 

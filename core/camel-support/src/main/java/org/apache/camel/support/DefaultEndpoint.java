@@ -110,10 +110,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * Constructs a partially-initialized DefaultEndpoint instance. Useful when creating endpoints manually (e.g., as
      * beans in Spring).
-     * <p/>
-     * Please note that the endpoint URI must be set through properties (or overriding {@link #createEndpointUri()} if
+     * <p>
+     * Please note that the endpoint URI must be set through properties (or overriding {@link #createEndpointUri()}) if
      * one uses this constructor.
-     * <p/>
+     * <p>
      * <b>Note:</b> It is preferred to create endpoints using the associated component.
      */
     protected DefaultEndpoint() {
@@ -199,7 +199,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
-     * Returns the component that created this endpoint, or <tt>null</tt> if none set.
+     * Returns the component that created this endpoint, or <code>null</code> if none set.
      */
     public Component getComponent() {
         return component;
@@ -296,13 +296,13 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
-     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible)
+     * Allows for bridging the consumer to the Camel routing Error Handler, which means any exceptions (if possible)
      * occurred while the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a
      * message and handled by the routing Error Handler. Important: This is only possible if the 3rd party component
      * allows Camel to be alerted if an exception was thrown. Some components handle this internally only, and therefore
      * bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd
      * party component and make this possible for future releases.
-     * <p/>
+     * <p>
      * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be
      * logged at WARN/ERROR level and ignored.
      */
@@ -331,8 +331,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * Sets the {@link org.apache.camel.PollingConsumer} queue size, when {@link EventDrivenPollingConsumer} is being
      * used. Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer}
      * and therefore not using the default {@link EventDrivenPollingConsumer} implementation.
-     * <p/>
-     * The default value is <tt>1000</tt>
+     * <p>
+     * The default value is <code>1000</code>
      */
     public void setPollingConsumerQueueSize(int pollingConsumerQueueSize) {
         this.pollingConsumerQueueSize = pollingConsumerQueueSize;
@@ -346,11 +346,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * Set whether to block when adding to the internal queue off when {@link EventDrivenPollingConsumer} is being used.
      * Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer} and
      * therefore not using the default {@link EventDrivenPollingConsumer} implementation.
-     * <p/>
-     * Setting this option to <tt>false</tt>, will result in an {@link java.lang.IllegalStateException} being thrown
+     * <p>
+     * Setting this option to <code>false</code>, will result in an {@link java.lang.IllegalStateException} being thrown
      * when trying to add to the queue, and it is full.
-     * <p/>
-     * The default value is <tt>true</tt> which will block the producer queue until the queue has space.
+     * <p>
+     * The default value is <code>true</code> which will block the producer queue until the queue has space.
      */
     public void setPollingConsumerBlockWhenFull(boolean pollingConsumerBlockWhenFull) {
         this.pollingConsumerBlockWhenFull = pollingConsumerBlockWhenFull;
@@ -396,7 +396,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     /**
      * Sets the bean properties on the given bean.
-     * <p/>
+     * <p>
      * This is the same logical implementation as {@link DefaultComponent#setProperties(Object, java.util.Map)}
      *
      * @param bean       the bean

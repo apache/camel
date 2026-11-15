@@ -106,7 +106,8 @@ public abstract class LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <code>LRUCache</code> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
      * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
@@ -116,7 +117,8 @@ public abstract class LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <code>LRUCache</code> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
      * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
@@ -126,8 +128,8 @@ public abstract class LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize, and will
-     * stop on eviction.
+     * Constructs an empty <code>LRUCache</code> instance with the specified initial capacity, maximumCacheSize, and
+     * will stop on eviction.
      *
      * @param  initialCapacity          the initial capacity.
      * @param  maximumCacheSize         the max capacity.
@@ -138,8 +140,8 @@ public abstract class LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize,load factor
-     * and ordering mode.
+     * Constructs an empty <code>LRUCache</code> instance with the specified initial capacity, maximumCacheSize, load
+     * factor and ordering mode.
      *
      * @param  initialCapacity          the initial capacity.
      * @param  maximumCacheSize         the max capacity.
@@ -151,7 +153,7 @@ public abstract class LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUSoftCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUSoftCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  maximumCacheSize         the max capacity.
@@ -162,7 +164,7 @@ public abstract class LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUSoftCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUSoftCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  initialCapacity          the initial capacity.
@@ -174,7 +176,7 @@ public abstract class LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUSoftCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUSoftCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  initialCapacity          the initial capacity.
@@ -187,7 +189,7 @@ public abstract class LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUWeakCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUWeakCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  maximumCacheSize         the max capacity.
@@ -198,7 +200,7 @@ public abstract class LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUWeakCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUWeakCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  initialCapacity          the initial capacity.
@@ -210,7 +212,7 @@ public abstract class LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUWeakCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUWeakCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  initialCapacity          the initial capacity.
@@ -223,7 +225,8 @@ public abstract class LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <code>LRUCache</code> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
      * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
@@ -231,7 +234,8 @@ public abstract class LRUCacheFactory {
     public abstract <K, V> Map<K, V> createLRUCache(int maximumCacheSize);
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <code>LRUCache</code> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
      * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
@@ -239,8 +243,8 @@ public abstract class LRUCacheFactory {
     public abstract <K, V> Map<K, V> createLRUCache(int maximumCacheSize, Consumer<V> onEvict);
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize, and will
-     * stop on eviction.
+     * Constructs an empty <code>LRUCache</code> instance with the specified initial capacity, maximumCacheSize, and
+     * will stop on eviction.
      *
      * @param  initialCapacity          the initial capacity.
      * @param  maximumCacheSize         the max capacity.
@@ -249,8 +253,8 @@ public abstract class LRUCacheFactory {
     public abstract <K, V> Map<K, V> createLRUCache(int initialCapacity, int maximumCacheSize);
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize,load factor
-     * and ordering mode.
+     * Constructs an empty <code>LRUCache</code> instance with the specified initial capacity, maximumCacheSize, load
+     * factor and ordering mode.
      *
      * @param  initialCapacity          the initial capacity.
      * @param  maximumCacheSize         the max capacity.
@@ -260,7 +264,7 @@ public abstract class LRUCacheFactory {
     public abstract <K, V> Map<K, V> createLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction);
 
     /**
-     * Constructs an empty <tt>LRUSoftCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUSoftCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  maximumCacheSize         the max capacity.
@@ -269,7 +273,7 @@ public abstract class LRUCacheFactory {
     public abstract <K, V> Map<K, V> createLRUSoftCache(int maximumCacheSize);
 
     /**
-     * Constructs an empty <tt>LRUSoftCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUSoftCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  initialCapacity          the initial capacity.
@@ -279,7 +283,7 @@ public abstract class LRUCacheFactory {
     public abstract <K, V> Map<K, V> createLRUSoftCache(int initialCapacity, int maximumCacheSize);
 
     /**
-     * Constructs an empty <tt>LRUSoftCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUSoftCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  initialCapacity          the initial capacity.
@@ -290,7 +294,7 @@ public abstract class LRUCacheFactory {
     public abstract <K, V> Map<K, V> createLRUSoftCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction);
 
     /**
-     * Constructs an empty <tt>LRUWeakCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUWeakCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  maximumCacheSize         the max capacity.
@@ -300,7 +304,7 @@ public abstract class LRUCacheFactory {
     public abstract <K, V> Map<K, V> createLRUWeakCache(int maximumCacheSize);
 
     /**
-     * Constructs an empty <tt>LRUWeakCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUWeakCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  initialCapacity          the initial capacity.
@@ -311,7 +315,7 @@ public abstract class LRUCacheFactory {
     public abstract <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize);
 
     /**
-     * Constructs an empty <tt>LRUWeakCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * Constructs an empty <code>LRUWeakCache</code> instance with the specified maximumCacheSize, and will stop on
      * eviction.
      *
      * @param  initialCapacity          the initial capacity.

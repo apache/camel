@@ -62,7 +62,8 @@ public class TransformMessageITCase extends JBangTestSupport {
     }
 
     private void runTransformation(String command) {
-        checkCommandOutputsPattern(command, "Camel Main: transform \\(state: (Running|Starting)\\)");
+        // the Camel that transform starts for itself prints nothing of its own on stdout (CAMEL-26931)
+        checkCommandDoesNotOutput(command, "(state: ");
     }
 
     private void checkOutputFile(String contains) throws IOException {

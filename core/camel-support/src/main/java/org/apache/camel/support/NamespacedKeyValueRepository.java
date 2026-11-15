@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link KeyValueRepository} wrapper that isolates entries by prepending a namespace prefix to all keys.
- * <p/>
+ * <p>
  * This adapter ensures that multiple components, patterns (e.g. Cache EIP, State Store, Aggregator, Idempotent
  * Consumer), or named stores sharing a single underlying {@link KeyValueRepository} operate in isolated key partitions
  * without key collisions or unintended cross-namespace mutations during operations such as {@link #clear()} or
