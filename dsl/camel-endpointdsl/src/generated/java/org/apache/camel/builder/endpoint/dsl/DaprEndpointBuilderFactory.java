@@ -1570,7 +1570,7 @@ public interface DaprEndpointBuilderFactory {
          * The HttpExtension object for service invocation. Takes precedence
          * over verb.
          * 
-         * The option is a: {@code HttpExtension} type.
+         * The option is a: {@code io.dapr.client.domain.HttpExtension} type.
          * 
          * Group: producer
          * 
@@ -1583,7 +1583,8 @@ public interface DaprEndpointBuilderFactory {
          * The state operation to perform on the state store. Required for
          * DaprOperation.state operation.
          * 
-         * The option is a: {@code StateOperation} type.
+         * The option is a: {@code
+         * org.apache.camel.component.dapr.StateOperation} type.
          * 
          * Default: get
          * Group: producer
@@ -1706,7 +1707,7 @@ public interface DaprEndpointBuilderFactory {
         /**
          * List of states for bulk save operation.
          * 
-         * The option is a: {@code List<State<?>>} type.
+         * The option is a: {@code List<io.dapr.client.domain.State<?>>} type.
          * 
          * Group: producer
          * 
@@ -1730,7 +1731,8 @@ public interface DaprEndpointBuilderFactory {
         /**
          * List of transactions for execute transactions state operations.
          * 
-         * The option is a: {@code List<TransactionalStateOperation<?>>} type.
+         * The option is a: {@code
+         * List<io.dapr.client.domain.TransactionalStateOperation<?>>} type.
          * 
          * Group: producer
          * 
@@ -1857,7 +1859,7 @@ public interface DaprEndpointBuilderFactory {
         /**
          * Gets the timestamp of when the event occurred.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -1957,7 +1959,8 @@ public interface DaprEndpointBuilderFactory {
          * The lock operation to perform on the store. Required for
          * DaprOperation.lock operation.
          * 
-         * The option is a: {@code LockOperation} type.
+         * The option is a: {@code
+         * org.apache.camel.component.dapr.LockOperation} type.
          * 
          * Default: tryLock
          * Group: producer
@@ -2019,7 +2022,8 @@ public interface DaprEndpointBuilderFactory {
          * The workflow operation to perform.Required for DaprOperation.workflow
          * operation.
          * 
-         * The option is a: {@code WorkflowOperation} type.
+         * The option is a: {@code
+         * org.apache.camel.component.dapr.WorkflowOperation} type.
          * 
          * Default: scheduleNew
          * Group: producer
@@ -2068,7 +2072,7 @@ public interface DaprEndpointBuilderFactory {
         /**
          * The start time of the new workflow.
          * 
-         * The option is a: {@code Instant} type.
+         * The option is a: {@code java.time.Instant} type.
          * 
          * Group: producer
          * 
@@ -2129,7 +2133,7 @@ public interface DaprEndpointBuilderFactory {
         /**
          * Gets the workflow instance's creation time in UTC.
          * 
-         * The option is a: {@code Instant} type.
+         * The option is a: {@code java.time.Instant} type.
          * 
          * Group: producer
          * 
@@ -2141,7 +2145,7 @@ public interface DaprEndpointBuilderFactory {
         /**
          * Gets the workflow instance's last updated time in UTC.
          * 
-         * The option is a: {@code Instant} type.
+         * The option is a: {@code java.time.Instant} type.
          * 
          * Group: producer
          * 
@@ -2216,7 +2220,7 @@ public interface DaprEndpointBuilderFactory {
          * The amount of time to wait for the workflow instance to
          * start/complete.
          * 
-         * The option is a: {@code Duration} type.
+         * The option is a: {@code java.time.Duration} type.
          * 
          * Group: producer
          * 
