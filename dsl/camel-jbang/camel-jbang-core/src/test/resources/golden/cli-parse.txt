@@ -5408,7 +5408,7 @@
 > shell
 > stop
   kill=false
-  name="*"
+  name=null
   noWait=false
   timeout=60000
 > stop --kill
