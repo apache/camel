@@ -3489,6 +3489,12 @@ The DTOs of `camel generate rest --dto` use Jakarta EE (`jakarta.validation`, `j
 Spring (`@DateTimeFormat`). The OpenAPI Generator no longer prints its banner on stdout after the REST DSL, and
 `--input` takes an `http://` or `https://` URL.
 
+=== camel-jbang - camel stop without a name
+
+`camel stop` without a name stops the integration that runs, as before, but when two or more run it stops none: it
+lists them and exits with `2`. Use `camel stop --all` (or `camel stop '*'`) to stop them all, as `camel stop` did. A
+bare `camel stop`, such as of an AI agent, stopped the integrations of the user and of other agents too.
+
 === camel-jbang - camel version list
 
 * `camel version list` prints the `Last updated` note on stderr, so stdout has the table only.
