@@ -79,8 +79,9 @@ import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseComman
                            "  camel doc kafka --example" })
 public class CatalogDoc extends CamelCommand {
 
-    @Argument(required = true, description = "Name of kamelet, component, dataformat, language, EIP, or other Camel resource"
-                                             + " (prefix with eip: for an EIP with the name of a component, such as eip:log)")
+    @Argument(paramLabel = "name", required = true,
+              description = "Name of kamelet, component, dataformat, language, EIP, or other Camel resource"
+                            + " (prefix with eip: for an EIP with the name of a component, such as eip:log)")
     String name;
 
     @Option(name = "camel-version", description = "To use a different Camel version than the default version")

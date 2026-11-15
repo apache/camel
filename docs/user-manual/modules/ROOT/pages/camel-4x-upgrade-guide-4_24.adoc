@@ -3365,6 +3365,15 @@ file), the command asks there whether to overwrite the file.
   `2`: the first showed every error, the second none. The errors of `--diagram` are printed on stderr, and a graphical
   `--theme` in a terminal without graphics exits with `2`.
 
+=== camel-jbang - the options of camel update and catalog --filter
+
+* The options of `camel update run` are named in kebab-case, as the options of the other
+  commands: `--dry-run`, `--open-rewrite-version`, `--camel-artifact`, `--camel-spring-boot-artifact`,
+  `--quarkus-maven-plugin-version`, `--quarkus-maven-plugin-group-id` and `--upgrade-timeout`. The camelCase names
+  (`--dryRun` and so on) still work.
+* `--filter` of the `camel catalog` commands matches a part of the name, as it does for the description:
+  `--filter=aws2` lists the `aws2-*` components (it listed nothing, as only a whole name matched).
+
 === camel-jbang - camel version list
 
 * `camel version list` prints the `Last updated` note on stderr, so stdout has the table only.

@@ -63,7 +63,7 @@ public class InfraRun extends InfraBaseCommand {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfraRun.class);
 
-    @Arguments(required = true, description = "Service name")
+    @Arguments(paramLabel = "service", required = true, description = "Service name")
     private List<String> serviceName;
 
     @Option(name = "log", hasValue = false, description = "Log container output to console")

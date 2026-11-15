@@ -2018,13 +2018,12 @@ Examples:
 
 == camel config set --help
 Set user configuration value
-Usage: camel config set [-h] [--global] <configuration>
+Usage: camel config set [-h] [--global] <key=value>
 
 Options:
   -h, --help    Display this help and exit
       --global  Use global or local configuration
-  <configuration>
-                Configuration parameter (ex. key=value)
+  <key=value>   Configuration parameter (ex. key=value)
 
 Examples:
   camel config set camel-version=4.10.0
@@ -5040,7 +5039,7 @@ Examples:
 == camel infra restart --help
 Restarts a running external service
 Usage: camel infra restart [-h] [--port=<port>] [--log] [--background]
-                            [--prop=<prop>] [--kill] [--json] <serviceName>
+                            [--prop=<prop>] [--kill] [--json] <service>
 
 Options:
   -h, --help                Display this help and exit
@@ -5053,7 +5052,7 @@ Options:
                             --property=ollama.model=qwen2.5:0.5b
       --kill                To force killing the process (SIGKILL) when stopping
       --json                Output in JSON Format
-  <serviceName>             Service name (and optional implementation)
+  <service>                 Service name (and optional implementation)
 
 Examples:
   camel infra restart kafka
@@ -5062,7 +5061,7 @@ Examples:
 == camel infra run --help
 Run an external service
 Usage: camel infra run [-h] [--log] [--background] [--port=<port>] [--no-ui]
-                        [--prop=<prop>] [--json] <serviceName>
+                        [--prop=<prop>] [--json] <service>
 
 Options:
   -h, --help                Display this help and exit
@@ -5076,7 +5075,7 @@ Options:
                             Service properties, ex.
                             --property=ollama.model=qwen2.5:0.5b
       --json                Output in JSON Format
-  <serviceName>             Service name
+  <service>                 Service name
 
 Examples:
   camel infra run kafka
@@ -6694,24 +6693,25 @@ Examples:
 
 == camel update run --help
 Update Camel project
-Usage: camel update run [-h] [--camelArtifact=<camelArtifact>]
-                         [--camelSpringBootArtifact=<camelSpringBootArtifact>]
-                         [--debug] [--download] [--dryRun]
+Usage: camel update run [-h] [--camel-artifact=<camel-artifact>]
+                         [--camel-spring-boot-artifact=<camel-spring-boot-artifact>]
+                         [--debug] [--download] [--dry-run]
                          [--extraActiveRecipes=<extraActiveRecipes>]
                          [--extraRecipeArtifactCoordinates=<extraRecipeArtifactCoordinates>]
-                         [--fresh] [--openRewriteVersion=<openRewriteVersion>]
+                         [--fresh]
+                         [--open-rewrite-version=<open-rewrite-version>]
                          [--quarkus-ext-registry=<quarkus-ext-registry>]
-                         [--quarkusMavenPluginGroupId=<quarkusMavenPluginGroupId>]
-                         [--quarkusMavenPluginVersion=<quarkusMavenPluginVersion>]
+                         [--quarkus-maven-plugin-group-id=<quarkus-maven-plugin-group-id>]
+                         [--quarkus-maven-plugin-version=<quarkus-maven-plugin-version>]
                          [--repo=<repo>] [--runtime=<runtime>]
-                         [--upgradeTimeout=<upgradeTimeout>] <version>
+                         [--upgrade-timeout=<upgrade-timeout>] <version>
 
 Options:
-      --camelArtifact=<camelArtifact>
+      --camel-artifact, --camelArtifact=<camel-artifact>
                             The Maven artifact coordinates for the Camel upgrade
                             recipes.
                             Default: camel-upgrade-recipes
-      --camelSpringBootArtifact=<camelSpringBootArtifact>
+      --camel-spring-boot-artifact, --camelSpringBootArtifact=<camel-spring-boot-artifact>
                             The Maven artifact coordinates for the Camel Spring
                             Boot upgrade recipes.
                             Default: camel-spring-boot-upgrade-recipes
@@ -6720,7 +6720,7 @@ Options:
       --download            Whether to allow automatic downloading JAR
                             dependencies (over the internet)
                             Default: true
-      --dryRun              If set to true, performs a dry run of the update
+      --dry-run, --dryRun   If set to true, performs a dry run of the update
                             process without making any changes.
                             Default: false
       --extraActiveRecipes=<extraActiveRecipes>
@@ -6734,7 +6734,7 @@ Options:
       --fresh               Make sure we use fresh (i.e. non-cached) resources
                             Default: false
   -h, --help                Display this help and exit
-      --openRewriteVersion=<openRewriteVersion>
+      --open-rewrite-version, --openRewriteVersion=<open-rewrite-version>
                             The version of OpenRewrite to use during the update
                             process.
                             Default: 6.0.4
@@ -6744,10 +6744,10 @@ Options:
                             camel.jbang.quarkus.platform.url system property is
                             set (the "/client/platforms" suffix is removed if
                             present).
-      --quarkusMavenPluginGroupId=<quarkusMavenPluginGroupId>
+      --quarkus-maven-plugin-group-id, --quarkusMavenPluginGroupId=<quarkus-maven-plugin-group-id>
                             The group ID of the Quarkus Maven plugin.
                             Default: io.quarkus.platform
-      --quarkusMavenPluginVersion=<quarkusMavenPluginVersion>
+      --quarkus-maven-plugin-version, --quarkusMavenPluginVersion=<quarkus-maven-plugin-version>
                             The version of the Quarkus Maven plugin to use; the
                             default value is looked up in Quarkus Extension
                             Registry
@@ -6756,7 +6756,7 @@ Options:
                             (Use commas to separate multiple repositories)
       --runtime=<runtime>   Runtime (camel-main, spring-boot, quarkus)
                             Default: camel-main
-      --upgradeTimeout=<upgradeTimeout>
+      --upgrade-timeout, --upgradeTimeout=<upgrade-timeout>
                             Time to wait, in seconds, before shutting down the
                             upgrade process
                             Default: 240

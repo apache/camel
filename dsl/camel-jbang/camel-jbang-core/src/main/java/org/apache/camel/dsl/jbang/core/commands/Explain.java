@@ -85,7 +85,7 @@ public class Explain extends CamelCommand {
             "marshal", "unmarshal", "convertBodyTo",
             "enrich", "pollEnrich", "wireTap", "pipeline");
 
-    @Arguments(required = true, description = "Route file(s) to explain")
+    @Arguments(paramLabel = "files", required = true, description = "Route file(s) to explain")
     List<String> files;
 
     @Option(name = "url",
