@@ -68,6 +68,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "kmsdatakeyreuseperiodseconds":
@@ -209,6 +211,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "greedy": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "kmsdatakeyreuseperiodseconds":
@@ -346,6 +350,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "greedy": return target.isGreedy();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "kmsdatakeyreuseperiodseconds":

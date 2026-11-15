@@ -5387,7 +5387,7 @@
 > shell
 > stop
   kill=false
-  name="*"
+  name=null
   noWait=false
   timeout=60000
 > stop --kill
@@ -6099,7 +6099,7 @@
   # OptionParserException: The option --unknown-option is unknown.
 > no-such-command
   error
-  # OptionParserException: Unexpected positional value 'no-such-command' at index 0. Declared positional indexes: none.
+  # OptionParserException: Unknown argument 'no-such-command': camel takes no arguments
 
 @config logging-level=debug
 > run

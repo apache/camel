@@ -24,7 +24,7 @@ public class OAIPMHEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(31);
+        Set<String> props = new HashSet<>(32);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -35,6 +35,7 @@ public class OAIPMHEndpointUriFactory extends org.apache.camel.support.component
         props.add("exchangePattern");
         props.add("from");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("httpHeaders");
         props.add("identifier");
         props.add("ignoreSSLWarnings");

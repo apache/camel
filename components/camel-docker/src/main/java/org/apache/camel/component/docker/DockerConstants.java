@@ -266,7 +266,8 @@ public final class DockerConstants {
     public static final String DOCKER_DISABLE_NETWORK = "CamelDockerDisableNetwork";
     @Metadata(description = "With env", javaType = "String or String[]")
     public static final String DOCKER_ENV = "CamelDockerEnv";
-    @Metadata(description = "The exposed ports", javaType = "ExposedPorts or ExposedPorts[]")
+    @Metadata(description = "The exposed ports",
+              javaType = "com.github.dockerjava.api.model.ExposedPorts or com.github.dockerjava.api.model.ExposedPort or com.github.dockerjava.api.model.ExposedPort[]")
     public static final String DOCKER_EXPOSED_PORTS = "CamelDockerExposedPorts";
     @Metadata(description = "The hostname", javaType = "String")
     public static final String DOCKER_HOSTNAME = "CamelDockerHostname";
@@ -288,7 +289,8 @@ public final class DockerConstants {
     public static final String DOCKER_TTY = "CamelDockerTty";
     @Metadata(description = "With user", javaType = "String")
     public static final String DOCKER_USER = "CamelDockerUser";
-    @Metadata(description = "With volumes", javaType = "Volume or Volume[]")
+    @Metadata(description = "With volumes",
+              javaType = "com.github.dockerjava.api.model.Volumes or com.github.dockerjava.api.model.Volume or com.github.dockerjava.api.model.Volume[]")
     public static final String DOCKER_VOLUMES = "CamelDockerVolumes";
     @Metadata(description = "With working directory", javaType = "String")
     public static final String DOCKER_WORKING_DIR = "CamelDockerWorkingDir";
@@ -310,19 +312,23 @@ public final class DockerConstants {
     public static final String DOCKER_MEMORY_LIMIT = "CamelDockerMemoryLimit";
     @Metadata(description = "With StdIn in open flag", javaType = "Boolean")
     public static final String DOCKER_STD_IN_OPEN = "CamelDockerStdInOpen";
-    @Metadata(description = "With volumes from", javaType = "VolumesFrom or VolumesFrom[]")
+    @Metadata(description = "With volumes from",
+              javaType = "com.github.dockerjava.api.model.VolumesFrom or com.github.dockerjava.api.model.VolumesFrom[]")
     public static final String DOCKER_VOLUMES_FROM = "CamelDockerVolumesFrom";
     @Metadata(description = "With domain name", javaType = "String")
     public static final String DOCKER_DOMAIN_NAME = "CamelDockerDomainName";
-    @Metadata(description = "With binds", javaType = "Bind or Bind[]")
+    @Metadata(description = "With binds",
+              javaType = "com.github.dockerjava.api.model.Bind or com.github.dockerjava.api.model.Bind[]")
     public static final String DOCKER_BINDS = "CamelDockerBinds";
 
     /**
      * Start Container *
      */
-    @Metadata(description = "With cap add", javaType = "Capability or Capability[]")
+    @Metadata(description = "With cap add",
+              javaType = "com.github.dockerjava.api.model.Capability or com.github.dockerjava.api.model.Capability[]")
     public static final String DOCKER_CAP_ADD = "CamelDockerCapAdd";
-    @Metadata(description = "With cap drop", javaType = "Capability or Capability[]")
+    @Metadata(description = "With cap drop",
+              javaType = "com.github.dockerjava.api.model.Capability or com.github.dockerjava.api.model.Capability[]")
     public static final String DOCKER_CAP_DROP = "CamelDockerCapDrop";
     public static final String DOCKER_DEVICES = "CamelDockeDevices";
     public static final String DOCKER_DNS_SEARCH = "CamelDockerDnsSearch";

@@ -53,13 +53,15 @@ public final class MongoDbConstants {
     public static final String RECORDS_AFFECTED = "CamelMongoDbRecordsAffected";
     @Metadata(label = "producer", description = "The number of documents matched by the query.", javaType = "long")
     public static final String RECORDS_MATCHED = "CamelMongoDbRecordsMatched";
-    @Metadata(label = "producer", description = "The sort criteria.", javaType = "Bson or Document")
+    @Metadata(label = "producer", description = "The sort criteria.",
+              javaType = "org.bson.conversions.Bson or org.bson.Document")
     public static final String SORT_BY = "CamelMongoDbSortBy";
     @Metadata(description = "The name of the MongoDB database to target", javaType = "String")
     public static final String DATABASE = "CamelMongoDbDatabase";
     @Metadata(description = "The name of the MongoDB collection to bind to this endpoint", javaType = "String")
     public static final String COLLECTION = "CamelMongoDbCollection";
-    @Metadata(label = "producer", description = "The list of dynamic indexes to create on the fly", javaType = "List<Bson>")
+    @Metadata(label = "producer", description = "The list of dynamic indexes to create on the fly",
+              javaType = "List<org.bson.conversions.Bson>")
     public static final String COLLECTION_INDEX = "CamelMongoDbCollectionIndex";
     @Metadata(label = "producer findAll", description = "Limits the number of elements returned.", javaType = "Integer")
     public static final String LIMIT = "CamelMongoDbLimit";

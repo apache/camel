@@ -482,16 +482,18 @@ public class XsltEndpoint extends ProcessorEndpoint {
                 ? xpathTotalOpLimit
                 : ((XsltComponent) getComponent()).getXpathTotalOpLimit();
 
-        // if xpathTotalOpLimit is configured but no factory was explicitly set, create a default one
-        // so we can set the limit per-factory instance instead of using a JVM-global system property
-        if (factory == null && effectiveXpathTotalOpLimit > 0) {
+        final TransformerFactoryConfigurationStrategy tfConfigStrategy = transformerFactoryConfigurationStrategy != null
+                ? transformerFactoryConfigurationStrategy
+                : ((XsltComponent) getComponent()).getTransformerFactoryConfigurationStrategy();
+
+        // if xpathTotalOpLimit or a configuration strategy is configured but no factory was explicitly set, create the
+        // default one here, so we can set the limit per-factory instance instead of using a JVM-global system property,
+        // and the strategy configures the factory that is used
+        if (factory == null && (effectiveXpathTotalOpLimit > 0 || tfConfigStrategy != null)) {
             factory = new XMLConverterHelper().createTransformerFactory();
         }
 
         if (factory != null) {
-            final TransformerFactoryConfigurationStrategy tfConfigStrategy = transformerFactoryConfigurationStrategy != null
-                    ? transformerFactoryConfigurationStrategy
-                    : ((XsltComponent) getComponent()).getTransformerFactoryConfigurationStrategy();
             if (tfConfigStrategy != null) {
                 tfConfigStrategy.configure(factory, this);
             }

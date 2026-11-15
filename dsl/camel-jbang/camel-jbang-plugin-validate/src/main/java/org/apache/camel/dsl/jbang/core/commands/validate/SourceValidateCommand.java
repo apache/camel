@@ -44,7 +44,7 @@ import org.apache.camel.dsl.yaml.validator.YamlValidator;
                    generateHelp = true, sortOptions = true)
 public class SourceValidateCommand extends CamelCommand {
 
-    @Arguments(required = true, description = "The source files to validate.", paramLabel = "<files>")
+    @Arguments(required = true, description = "The source files to validate.", paramLabel = "files")
     List<String> files = new ArrayList<>();
 
     @Mixin

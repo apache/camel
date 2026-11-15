@@ -39,6 +39,8 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "from": target.setFrom(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "httpheaders":
         case "httpHeaders": target.setHttpHeaders(property(camelContext, java.util.Map.class, value)); return true;
         case "identifier": target.setIdentifier(property(camelContext, java.lang.String.class, value)); return true;
@@ -97,6 +99,8 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "from": return java.lang.String.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "httpheaders":
         case "httpHeaders": return java.util.Map.class;
         case "identifier": return java.lang.String.class;
@@ -156,6 +160,8 @@ public class OAIPMHEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": return target.getExchangePattern();
         case "from": return target.getFrom();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "httpheaders":
         case "httpHeaders": return target.getHttpHeaders();
         case "identifier": return target.getIdentifier();

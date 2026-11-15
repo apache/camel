@@ -54,6 +54,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "flushonsend":
         case "flushOnSend": target.setFlushOnSend(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "jointransaction":
@@ -150,6 +152,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "flushonsend":
         case "flushOnSend": return boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "jointransaction":
@@ -247,6 +251,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "flushonsend":
         case "flushOnSend": return target.isFlushOnSend();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "jointransaction":

@@ -24,7 +24,7 @@ public class QueueEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(34);
+        Set<String> props = new HashSet<>(35);
         props.add("accessKey");
         props.add("accountName");
         props.add("backoffErrorThreshold");
@@ -38,6 +38,7 @@ public class QueueEndpointUriFactory extends org.apache.camel.support.component.
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("initialDelay");
         props.add("lazyStartProducer");
         props.add("maxMessages");

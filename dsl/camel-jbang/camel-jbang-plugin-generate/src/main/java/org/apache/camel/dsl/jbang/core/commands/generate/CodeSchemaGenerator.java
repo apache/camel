@@ -63,10 +63,12 @@ import tools.jackson.databind.json.JsonMapper;
                    generateHelp = true, sortOptions = true)
 public class CodeSchemaGenerator extends CamelCommand {
 
-    @Argument(index = "0", required = true, description = "Camel component name (e.g., 'fhir', 'http', 'jms')")
+    @Argument(paramLabel = "component", index = "0", required = true,
+              description = "Camel component name (e.g., 'fhir', 'http', 'jms')")
     private String camelComponent;
 
-    @Argument(index = "1", required = true, description = "Fully qualified class name (e.g., 'org.hl7.fhir.r4.model.Patient')")
+    @Argument(paramLabel = "class", index = "1", required = true,
+              description = "Fully qualified class name (e.g., 'org.hl7.fhir.r4.model.Patient')")
     private String fullyQualifiedName;
 
     @org.aesh.command.option.Option(name = "camel-version", description = "Camel version to use")

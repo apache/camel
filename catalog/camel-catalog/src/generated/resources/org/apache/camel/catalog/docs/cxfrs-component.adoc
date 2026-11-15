@@ -90,7 +90,7 @@ The `camel-cxfrs` producer supports overriding the service address by setting th
 [source,java]
 ----
  // set up the service address from the message header to override the setting of CXF endpoint
- exchange.getIn().setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(getServiceAddress()));
+ exchange.getIn().setHeader(Exchange.DESTINATION_OVERRIDE_URL, getServiceAddress());
 ----
 
 === Consuming a REST Request - Simple Binding Style
@@ -380,52 +380,21 @@ public interface CustomerServiceResource {
 
 === How to invoke the REST service through camel-cxfrs producer
 
-The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end]
-implements
-http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-Proxy-basedAPI[a
-proxy-based client API], with this API you can invoke the remote REST
-service through a proxy. The `camel-cxfrs` producer is based on this
-http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-Proxy-basedAPI[proxy
-API].
- You need to specify the operation name in the message header and
-prepare the parameter in the message body, the camel-cxfrs producer will
- generate the right REST request for you.
+The `camel-cxfrs` producer calls the REST service with one of the two client APIs of the
+http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end]:
 
-Here is an example:
+* the http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-CXFWebClientAPI[HTTP centric client API]
+(WebClient), which is the default (`httpClientAPI=true`);
+* the http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-Proxy-basedAPI[proxy-based client API], with
+`httpClientAPI=false` or the message header `CamelCxfRsUsingHttpAPI` set to `false`.
 
-._Java-only: Java test API (ProducerTemplate with inline Processor)_
-[source,java]
-----
-Exchange exchange = template.send("direct://proxy", ex -> {
-    ex.setPattern(ExchangePattern.InOut);
-    Message inMessage = ex.getIn();
-    inMessage.setHeader("CamelCxfOperationName", "getCustomer");
-    inMessage.setHeader("CamelCxfRsUsingHttpAPI", Boolean.FALSE);
-    inMessage.setHeader("key", "value");
-    inMessage.setHeader("Accept", "application/json");
-    inMessage.setBody("123");
-});
+==== HTTP centric client API
 
-// get the response message
-Customer response = (Customer) exchange.getMessage().getBody();
-
-assertNotNull(response, "The response should not be null");
-assertEquals(123, response.getId(), "Get a wrong customer id");
-assertEquals("John", response.getName(), "Get a wrong customer name");
-assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
-assertEquals("value", exchange.getMessage().getHeader("key"), "Get a wrong header value");
-----
-
-The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end] also
-provides
-http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-CXFWebClientAPI[an HTTP centric client API]. You can also invoke this API from
-`camel-cxfrs` producer. You need to specify the
+You need to specify the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Exchange.html#HTTP_PATH[HTTP_PATH]
 and
-the https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Exchange.html#HTTP_METHOD[HTTP_METHOD] and
-let the producer use the http centric client API by using the URI option
-*httpClientAPI* or by setting the message header
-`CamelCxfRsUsingHttpAPI`.
+the https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Exchange.html#HTTP_METHOD[HTTP_METHOD]
+headers. Without the `CamelHttpMethod` header, CXF sends a `POST`, even when the message has no body.
 You can turn the response object to the type class specified with the
 message
 header `CamelCxfRsResponseClass`.
@@ -468,4 +437,35 @@ Map<String, String> queryMap = new LinkedHashMap<>();
 queryMap.put("q1", "new");
 queryMap.put("q2", "world");
 inMessage.setHeader("CamelCxfRsQueryMap", queryMap);
+----
+
+==== Proxy-based client API
+
+With the proxy-based API, you need to specify the operation name, the name of the method of the resource class, in the
+`CamelCxfOperationName` header and prepare the parameters in the message body. The camel-cxfrs producer calls that
+method on a proxy of the resource class, which generates the right REST request.
+
+Here is an example:
+
+._Java-only: Java test API (ProducerTemplate with inline Processor)_
+[source,java]
+----
+Exchange exchange = template.send("direct://proxy", ex -> {
+    ex.setPattern(ExchangePattern.InOut);
+    Message inMessage = ex.getIn();
+    inMessage.setHeader("CamelCxfOperationName", "getCustomer");
+    inMessage.setHeader("CamelCxfRsUsingHttpAPI", Boolean.FALSE);
+    inMessage.setHeader("key", "value");
+    inMessage.setHeader("Accept", "application/json");
+    inMessage.setBody("123");
+});
+
+// get the response message
+Customer response = (Customer) exchange.getMessage().getBody();
+
+assertNotNull(response, "The response should not be null");
+assertEquals(123, response.getId(), "Get a wrong customer id");
+assertEquals("John", response.getName(), "Get a wrong customer name");
+assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+assertEquals("value", exchange.getMessage().getHeader("key"), "Get a wrong header value");
 ----

@@ -1124,7 +1124,7 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The type of event received.
          * 
-         * The option is a: {@code EventType} type.
+         * The option is a: {@code org.ehcache.event.EventType} type.
          * 
          * Group: common
          * 

@@ -195,6 +195,16 @@ class ExitCodeContractTest {
                 .contains("Run the command again");
     }
 
+    @Test
+    void aMissingArgumentIsNamedByItsLabel() {
+        // CAMEL-26931: without a label the error held the description of the argument ("Service name are required")
+        assertThat(run("infra", "run")).isEqualTo(CliExitCode.USAGE);
+        assertThat(printer.getStderr()).contains("ERROR: Missing argument: Service name", "<service>")
+                .doesNotContain("are required");
+        assertThat(run("config", "get")).isEqualTo(CliExitCode.USAGE);
+        assertThat(printer.getStderr()).contains("ERROR: Missing argument: Configuration key", "<key>");
+    }
+
     private int run(String... args) {
         main.execute(args);
         return main.exitCode;
