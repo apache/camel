@@ -45,11 +45,12 @@ public class RestBindingAdviceFactory {
     // matched by name: camel-support cannot depend on camel-jackson3, and JSON has no binding factory SPI
     private static final String JACKSON3_PACKAGE = "org.apache.camel.component.jackson3.";
     private static final String FAIL_ON_UNKNOWN_PROPERTIES = "FAIL_ON_UNKNOWN_PROPERTIES";
-    // options not taken from the data format configured on the context: a mapper may be the one it created when it
-    // started, and the request and response data formats keep mappers of their own; the request body type is not chosen
-    // by a header
+    // options not taken from the data format configured on the context (lower case, as compared): a mapper may be the
+    // one it created when it started, and the request and response data formats keep mappers of their own; the body
+    // type comes from the type and outType of the verb, not from a header or the options of the data format
     private static final Set<String> NOT_INHERITED_OPTIONS
-            = Set.of("objectmapper", "xmlmapper", "allowunmarshalltype", "allowjmstype");
+            = Set.of("objectmapper", "xmlmapper", "allowunmarshalltype", "allowjmstype", "unmarshaltype", "uselist",
+                    "collectiontype", "partclass");
 
     /**
      * Builds the {@link RestBindingAdvice} from the given configuration

@@ -1197,8 +1197,10 @@ With Camel Main and Camel JBang, the `camel.dataformat.<name>.*` options (such a
 now also apply to the data formats that the Rest DSL binding creates for `json` and `xml` binding, as they already did
 to the data formats of the routes. The request and response bodies of a REST service can therefore change, for
 instance null fields are left out. The `camel.rest.dataFormatProperties` (`json.in.`, `json.out.`, `xml.in.` and
-`xml.out.`) still take precedence. The `objectMapper`, `xmlMapper`, `allowUnmarshallType` and `allowJmsType` options
-are not taken over: set them with `camel.rest.dataFormatProperties` when the binding needs them.
+`xml.out.`) still take precedence. The `objectMapper`, `xmlMapper`, `allowUnmarshallType`, `allowJmsType`,
+`unmarshalType`, `useList`, `collectionType` and `partClass` options are not taken over: the body type comes from the
+`type` and `outType` of the verb, and the other options can be set with `camel.rest.dataFormatProperties` when the
+binding needs them.
 
 === camel-support - API components use one thread pool per CamelContext
 

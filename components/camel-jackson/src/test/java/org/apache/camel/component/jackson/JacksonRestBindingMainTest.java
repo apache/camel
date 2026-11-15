@@ -87,6 +87,22 @@ public class JacksonRestBindingMainTest {
         assertInstanceOf(TestOtherPojo.class, posted.getReceivedExchanges().get(0).getMessage().getBody());
     }
 
+    @Test
+    void restBindingDoesNotTakeTheBodyTypeOptions() throws Exception {
+        CamelContext context = startMain(Map.of(
+                "camel.dataformat.jackson.unmarshal-type", TestOtherPojo.class.getName(),
+                "camel.dataformat.jackson.use-list", "true",
+                "camel.dataformat.jackson.collection-type", "java.util.ArrayList"));
+
+        MockEndpoint put = context.getEndpoint("mock:put", MockEndpoint.class);
+        put.expectedMessageCount(1);
+        try (ProducerTemplate template = context.createProducerTemplate()) {
+            template.requestBody("direct:put-pojo", "{\"name\":\"Camel\"}");
+        }
+        put.assertIsSatisfied();
+        assertInstanceOf(Map.class, put.getReceivedExchanges().get(0).getMessage().getBody());
+    }
+
     private CamelContext startMain(Map<String, String> properties) {
         main = new Main();
         main.bind("direct-rest", new DirectRestConsumerFactory());
@@ -98,7 +114,8 @@ public class JacksonRestBindingMainTest {
 
                 rest("/pojo")
                         .get().outType(TestOtherPojo.class).to("direct:pojo")
-                        .post().type(TestOtherPojo.class).outType(TestOtherPojo.class).to("mock:posted");
+                        .post().type(TestOtherPojo.class).outType(TestOtherPojo.class).to("mock:posted")
+                        .put().to("mock:put");
 
                 from("direct:pojo").process(e -> {
                     TestOtherPojo pojo = new TestOtherPojo();
