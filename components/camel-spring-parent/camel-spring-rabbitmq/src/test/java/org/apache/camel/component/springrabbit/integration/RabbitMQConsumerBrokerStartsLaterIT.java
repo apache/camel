@@ -37,11 +37,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The broker is not reachable when Camel starts: the route starts, and the consumer declares the exchange, queue and
- * binding when its listener container connects.
+ * binding when its listener container connects, also when the queue has a generated name (no queues option).
  */
 public class RabbitMQConsumerBrokerStartsLaterIT extends RabbitMQITSupport {
 
     private CachingConnectionFactory laterConnectionFactory;
+    private CachingConnectionFactory laterGeneratedConnectionFactory;
     private CachingConnectionFactory testConnectionFactory;
 
     @Override
@@ -50,6 +51,8 @@ public class RabbitMQConsumerBrokerStartsLaterIT extends RabbitMQITSupport {
         // nothing listens on this port yet
         laterConnectionFactory = new CachingConnectionFactory("localhost", closedPort());
         context.getRegistry().bind("laterCF", laterConnectionFactory);
+        laterGeneratedConnectionFactory = new CachingConnectionFactory("localhost", closedPort());
+        context.getRegistry().bind("laterGeneratedCF", laterGeneratedConnectionFactory);
         return context;
     }
 
@@ -62,6 +65,9 @@ public class RabbitMQConsumerBrokerStartsLaterIT extends RabbitMQITSupport {
         }
         if (laterConnectionFactory != null) {
             laterConnectionFactory.destroy();
+        }
+        if (laterGeneratedConnectionFactory != null) {
+            laterGeneratedConnectionFactory.destroy();
         }
     }
 
@@ -81,6 +87,24 @@ public class RabbitMQConsumerBrokerStartsLaterIT extends RabbitMQITSupport {
         new RabbitTemplate(testConnectionFactory).convertAndSend(uniqueName("orders"), "new", "order 1");
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testConsumerWithoutQueuesDeclaresWhenTheBrokerIsReachable() {
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("generated"));
+
+        // the broker is reachable now
+        laterGeneratedConnectionFactory.setHost(service.hostname());
+        laterGeneratedConnectionFactory.setPort(service.port());
+
+        // the queue has a generated name: send to the exchange until the consumer declared, bound and consumes it
+        testConnectionFactory = (CachingConnectionFactory) createConnectionFactory(false);
+        RabbitTemplate template = new RabbitTemplate(testConnectionFactory);
+        MockEndpoint generated = getMockEndpoint("mock:generated");
+        await().atMost(60, TimeUnit.SECONDS).pollInterval(1, TimeUnit.SECONDS).until(() -> {
+            template.convertAndSend(uniqueName("generated"), "new", "order 1");
+            return generated.getReceivedCounter() > 0;
+        });
     }
 
     private static int consumers(RabbitAdmin admin, String queue) {
@@ -103,6 +127,11 @@ public class RabbitMQConsumerBrokerStartsLaterIT extends RabbitMQITSupport {
                      + uniqueName("orders-queue") + "&routingKey=new")
                         .routeId("consumer")
                         .to("mock:result");
+
+                // no queues: the consumer consumes a queue with a generated name
+                from("spring-rabbitmq:" + uniqueName("generated") + "?connectionFactory=#laterGeneratedCF&routingKey=new")
+                        .routeId("generated")
+                        .to("mock:generated");
             }
         };
     }

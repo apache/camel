@@ -17,8 +17,10 @@
 package org.apache.camel.component.springrabbit;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToStartRouteException;
@@ -31,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
+import org.springframework.amqp.AmqpConnectException;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Exchange;
@@ -39,12 +42,17 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionListener;
+import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -58,8 +66,9 @@ import static org.mockito.Mockito.when;
  */
 class SpringRabbitMQConsumerDeclareTest {
 
+    private final List<AbstractMessageListenerContainer> containers = new CopyOnWriteArrayList<>();
     private CamelContext context;
-    private CachingConnectionFactory brokerDown;
+    private BrokerDownConnectionFactory brokerDown;
 
     @BeforeEach
     void setUp() {
@@ -149,6 +158,49 @@ class SpringRabbitMQConsumerDeclareTest {
                 bindings.getAllValues().stream().map(Binding::getDestination).toList());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = { "DMLC", "SMLC" })
+    void consumerWithoutQueuesDeclaresTheSameQueueOnEveryNewConnectionWhenTheBrokerIsDownAtStart(String containerType)
+            throws Exception {
+        BrokerDownConnectionFactory cf = brokerDown();
+        AmqpAdmin admin = admin();
+        // the declaration at start fails as the broker is down; it is up for the next ones
+        doThrow(new AmqpConnectException(new ConnectException("Connection refused"))).doNothing()
+                .when(admin).declareExchange(any(Exchange.class));
+        // no queues: the consumer consumes a queue with a generated name
+        addRoute("spring-rabbitmq:orders?connectionFactory=#cf&routingKey=new&messageListenerContainerType="
+                 + containerType);
+
+        context.start();
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("orders"));
+        AbstractMessageListenerContainer container = containers.get(0);
+        // the running container consumes that queue already, so that it connects to the broker by itself
+        String[] queueNamesAtStart = container.getQueueNames();
+
+        // the broker is up: each new connection declares the queue again
+        ConnectionListener listener = cf.connectionListener();
+        listener.onCreate(mock(Connection.class));
+        listener.onCreate(mock(Connection.class));
+
+        ArgumentCaptor<Queue> queues = ArgumentCaptor.forClass(Queue.class);
+        verify(admin, times(2)).declareQueue(queues.capture());
+        String generated = queues.getAllValues().get(0).getName();
+        assertTrue(generated.startsWith("spring.gen-"), generated);
+        // the same queue, with the flags of a generated queue: durable, not auto-delete, not exclusive
+        for (Queue queue : queues.getAllValues()) {
+            assertEquals(generated, queue.getName());
+            assertTrue(queue.isDurable());
+            assertFalse(queue.isAutoDelete());
+            assertFalse(queue.isExclusive());
+        }
+        ArgumentCaptor<Binding> bindings = ArgumentCaptor.forClass(Binding.class);
+        verify(admin, times(2)).declareBinding(bindings.capture());
+        assertEquals(List.of(generated, generated),
+                bindings.getAllValues().stream().map(Binding::getDestination).toList());
+        assertArrayEquals(new String[] { generated }, queueNamesAtStart);
+        assertArrayEquals(new String[] { generated }, container.getQueueNames());
+    }
+
     @Test
     void consumerWithoutAutoDeclareDoesNotListenToNewConnections() throws Exception {
         ConnectionFactory cf = connectedConnectionFactory();
@@ -162,10 +214,18 @@ class SpringRabbitMQConsumerDeclareTest {
         verify(admin, never()).declareQueue(any(Queue.class));
     }
 
-    private CachingConnectionFactory brokerDown() throws IOException {
+    private BrokerDownConnectionFactory brokerDown() throws IOException {
         // nothing listens on this port
-        brokerDown = new CachingConnectionFactory("localhost", closedPort());
+        brokerDown = new BrokerDownConnectionFactory(closedPort());
         context.getRegistry().bind("cf", brokerDown);
+        DefaultListenerContainerFactory factory = new DefaultListenerContainerFactory();
+        context.getComponent("spring-rabbitmq", SpringRabbitMQComponent.class).setListenerContainerFactory(endpoint -> {
+            AbstractMessageListenerContainer container = factory.createListenerContainer(endpoint);
+            // the container retries to connect meanwhile: a short interval so that it stops quickly
+            container.setRecoveryInterval(100);
+            containers.add(container);
+            return container;
+        });
         return brokerDown;
     }
 
@@ -203,6 +263,29 @@ class SpringRabbitMQConsumerDeclareTest {
                 from(from).routeId("orders").to("mock:orders");
             }
         });
+    }
+
+    /**
+     * A connection factory to a port where nothing listens, which keeps the connection listeners added to it.
+     */
+    private static final class BrokerDownConnectionFactory extends CachingConnectionFactory {
+
+        private final List<ConnectionListener> listeners = new CopyOnWriteArrayList<>();
+
+        private BrokerDownConnectionFactory(int port) {
+            super("localhost", port);
+        }
+
+        @Override
+        public void addConnectionListener(ConnectionListener listener) {
+            super.addConnectionListener(listener);
+            listeners.add(listener);
+        }
+
+        private ConnectionListener connectionListener() {
+            assertEquals(1, listeners.size());
+            return listeners.get(0);
+        }
     }
 
     private static int closedPort() throws IOException {

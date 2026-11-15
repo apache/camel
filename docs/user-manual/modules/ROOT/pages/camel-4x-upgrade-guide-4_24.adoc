@@ -405,16 +405,18 @@ consumed a file.
 
 === camel-spring-rabbitmq - the consumer starts while RabbitMQ is down, and declares again on a new connection
 
-With `autoDeclare=true` (the default), a consumer now starts when RabbitMQ is not available: it logs a warning, its
-listener container keeps trying to connect, and the exchange, queue and binding are declared when it connects. Before,
-the declaration failed with an `AmqpConnectException` and the route did not start. To keep failing the start, set
-`testConnectionOnStartup=true` on the endpoint or on the component.
+With `autoDeclare=true` (the default), a consumer now starts when RabbitMQ is not available: the route shows as started,
+the consumer logs a warning, its listener container keeps trying to connect, and the exchange, queue and binding are
+declared when it connects. Before, the declaration failed with an `AmqpConnectException` and the route did not start.
+If you relied on that failure, for example so that the supervising route controller retries to start the route, or so
+that Camel does not start while RabbitMQ is down, set `testConnectionOnStartup=true` on the endpoint or on the
+component: the consumer then fails to start while RabbitMQ is not available, as before.
 
 The consumer now also declares the exchange, queue and binding again each time the connection factory opens a new
 connection, as Spring's `RabbitAdmin` does, so a queue that RabbitMQ deleted while the connection was lost (an
 auto-delete or exclusive queue, for example) is declared again when the consumer reconnects. Before, they were declared
-only when the consumer started. A consumer with a generated queue name (no `queues` option) declares the same queue
-again.
+only when the consumer started. A consumer without the `queues` option picks the generated name of its queue when it
+starts, before it connects, and declares that same queue again on a new connection.
 
 With a `CachingConnectionFactory` whose cache mode is `CONNECTION`, the consumer behaves as before: it declares only
 when it starts, and does not start while RabbitMQ is down.
