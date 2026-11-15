@@ -271,9 +271,12 @@ YAML::
 ----
 ====
 
-The iterator keeps the connection and the result set open until the exchange is complete.
+Outside a transaction, the iterator keeps the connection and the result set open until the exchange is complete.
+In a transacted route, the query runs on the connection of the transaction, and the commit at the end of the
+transaction releases that connection: read the rows within the transacted route (for example with the Splitter EIP),
+not after it (for example in a route that calls the transacted route).
 The query gets the `fetchSize` and `template.*` options (such as `template.maxRows` and `template.queryTimeout`)
-like the other output types, and in a transacted route it runs on the connection of the transaction.
+like the other output types.
 No `CamelSqlRowCount` header is set, as the number of rows is not known up front.
 
 Whether the rows are loaded as needed depends on the JDBC driver. For example, the PostgreSQL driver only fetches
