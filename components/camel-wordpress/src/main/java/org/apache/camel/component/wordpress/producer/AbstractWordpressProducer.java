@@ -19,7 +19,6 @@ package org.apache.camel.component.wordpress.producer;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.wordpress.WordpressConfiguration;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
-import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
     protected AbstractWordpressProducer(WordpressEndpoint endpoint) {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
-        if (!WordpressServiceProvider.getInstance().hasAuthentication()) {
+        if (!endpoint.getServiceProvider().hasAuthentication()) {
             LOG.warn(
                     "Wordpress Producer hasn't authentication. This may lead to errors during route execution. Wordpress writing operations need authentication.");
         }
