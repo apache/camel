@@ -735,7 +735,8 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * The list of attributes returned by the operation.
          * 
-         * The option is a: {@code Map<String, AttributeValue>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.AttributeValue>} type.
          * 
          * Group: DeleteItem GetItem PutItem UpdateItem
          * 
@@ -761,7 +762,9 @@ public interface Ddb2EndpointBuilderFactory {
          * A map of the table name and corresponding items to get by primary
          * key.
          * 
-         * The option is a: {@code Map<String, KeysAndAttributes>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes>}
+         * type.
          * 
          * Group: producer
          * 
@@ -774,7 +777,8 @@ public interface Ddb2EndpointBuilderFactory {
          * Table names and the respective item attributes from the tables.
          * 
          * The option is a: {@code Map<String, List<Map<String,
-         * AttributeValue>>>} type.
+         * software.amazon.awssdk.services.dynamodb.model.AttributeValue>>>}
+         * type.
          * 
          * Group: BatchGetItems
          * 
@@ -851,7 +855,8 @@ public interface Ddb2EndpointBuilderFactory {
          * A map of the attributes for the item, and must include the primary
          * key values that define the item.
          * 
-         * The option is a: {@code Map<String, AttributeValue>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.AttributeValue>} type.
          * 
          * Group: producer
          * 
@@ -863,7 +868,8 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * The list of items returned by the operation.
          * 
-         * The option is a: {@code List<Map<String,AttributeValue>>} type.
+         * The option is a: {@code
+         * List<Map<String,software.amazon.awssdk.services.dynamodb.model.AttributeValue>>} type.
          * 
          * Group: Query Scan
          * 
@@ -902,7 +908,8 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * The primary key that uniquely identifies each item in a table.
          * 
-         * The option is a: {@code Map<String, AttributeValue>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.AttributeValue>} type.
          * 
          * Group: producer
          * 
@@ -916,7 +923,8 @@ public interface Ddb2EndpointBuilderFactory {
          * together the two old headers *CamelAwsDdbHashKeyValue* and
          * *CamelAwsDdbScanRangeKeyCondition*.
          * 
-         * The option is a: {@code Map<String, Condition>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.Condition>} type.
          * 
          * Group: producer
          * 
@@ -929,7 +937,8 @@ public interface Ddb2EndpointBuilderFactory {
          * The KeySchema that identifies the primary key for this table. From
          * Camel 2.16.0 the type of this header is List and not KeySchema*.
          * 
-         * The option is a: {@code List<KeySchemaElement>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.dynamodb.model.KeySchemaElement>} type.
          * 
          * Group: DeleteTable DescribeTable UpdateTable
          * 
@@ -942,7 +951,8 @@ public interface Ddb2EndpointBuilderFactory {
          * Primary key of the item where the query operation stopped, inclusive
          * of the previous result set.
          * 
-         * The option is a: {@code Map<String, AttributeValue>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.AttributeValue>} type.
          * 
          * Group: Query Scan
          * 
@@ -1059,7 +1069,8 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Evaluates the scan results and returns only the desired values.
          * 
-         * The option is a: {@code Map<String, Condition>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.Condition>} type.
          * 
          * Group: producer
          * 
@@ -1071,7 +1082,8 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Primary key of the item from which to continue an earlier query.
          * 
-         * The option is a: {@code Map<String, AttributeValue>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.AttributeValue>} type.
          * 
          * Group: producer
          * 
@@ -1120,7 +1132,8 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Designates an attribute for a conditional modification.
          * 
-         * The option is a: {@code Map<String, ExpectedAttributeValue>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue>} type.
          * 
          * Group: producer
          * 
@@ -1132,7 +1145,9 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Map of attribute name to the new value and action for the update.
          * 
-         * The option is a: {@code Map<String, AttributeValueUpdate>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate>}
+         * type.
          * 
          * Group: producer
          * 
@@ -1145,7 +1160,8 @@ public interface Ddb2EndpointBuilderFactory {
          * Contains a map of tables and their respective keys that were not
          * processed with the current response.
          * 
-         * The option is a: {@code Map<String,KeysAndAttributes>} type.
+         * The option is a: {@code
+         * Map<String,software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes>} type.
          * 
          * Group: BatchGetItems
          * 
@@ -1373,7 +1389,8 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * The Filter Expression Attribute Values.
          * 
-         * The option is a: {@code Map<String, AttributeValue>} type.
+         * The option is a: {@code Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.AttributeValue>} type.
          * 
          * Group: Query Scan
          * 
