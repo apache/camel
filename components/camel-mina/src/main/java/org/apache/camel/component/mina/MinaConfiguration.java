@@ -370,8 +370,8 @@ public class MinaConfiguration implements Cloneable {
     }
 
     /**
-     * If sync is enabled this option dictates the logging level to use when logging that there is no reply to send
-     * back.
+     * The logging level to use when there is nothing to send: on the consumer (if sync is enabled) when there is no
+     * reply to send back, and on the producer when the message has no body.
      */
     public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
         this.noReplyLogLevel = noReplyLogLevel;

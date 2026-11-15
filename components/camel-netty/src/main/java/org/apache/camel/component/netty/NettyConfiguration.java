@@ -115,7 +115,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                             + " won't contain the exception's class, message or stack trace.")
     private boolean muteException = true;
     @UriParam(label = "advanced", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
-              description = "If sync is enabled this option dictates the logging level to use when logging that there is no reply to send back.")
+              description = "The logging level to use when there is nothing to send: on the consumer (if sync is enabled) when there is no reply to send back, and on the producer when the message has no body.")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
     @UriParam(label = "consumer,advanced", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
               description = "If the server (NettyConsumer) catches an exception then its logged using this logging level.")
