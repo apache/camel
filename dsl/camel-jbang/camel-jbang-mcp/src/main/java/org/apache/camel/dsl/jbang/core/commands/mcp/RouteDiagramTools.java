@@ -149,7 +149,7 @@ public class RouteDiagramTools {
             // an expected failure, such as a source file without routes, or a filter that matches no route
             deleteTempText(tempText, resolvedOutput);
             return new RouteDiagramResult(
-                    false, resolvedOutput, 0L,
+                    false, tempText ? null : resolvedOutput, 0L,
                     "Failed to render diagram (exit code " + e.getExitCode() + "): " + e.getMessage(), null);
         } catch (Throwable e) {
             deleteTempText(tempText, resolvedOutput);
