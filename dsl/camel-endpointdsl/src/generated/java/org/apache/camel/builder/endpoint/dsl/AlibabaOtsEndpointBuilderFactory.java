@@ -332,7 +332,8 @@ public interface AlibabaOtsEndpointBuilderFactory {
 
         /**
          * The operation that the producer performs. This header replaces the
-         * operation option.
+         * operation option. If this header is not set, an exchange property of
+         * the same name replaces the operation option.
          * 
          * The option is a: {@code String} type.
          * 

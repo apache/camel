@@ -18,7 +18,6 @@ package org.apache.camel.component.wordpress.producer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
-import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.camel.component.wordpress.api.model.Post;
 import org.apache.camel.component.wordpress.api.service.WordpressServicePosts;
 import org.slf4j.Logger;
@@ -34,7 +33,7 @@ public class WordpressPostProducer extends AbstractWordpressProducer<Post> {
 
     public WordpressPostProducer(WordpressEndpoint endpoint) {
         super(endpoint);
-        this.servicePosts = WordpressServiceProvider.getInstance().getService(WordpressServicePosts.class);
+        this.servicePosts = endpoint.getServiceProvider().getService(WordpressServicePosts.class);
     }
 
     @Override

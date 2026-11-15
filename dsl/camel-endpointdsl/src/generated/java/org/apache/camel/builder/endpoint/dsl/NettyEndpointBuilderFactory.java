@@ -556,9 +556,10 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
-         * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP - however only
-         * Strings are allowed to be serialized by default.
+         * indicate a text line based codec, where each message ends with the
+         * delimiter. If not specified or the value is false, the default codec
+         * is a String codec without framing, so each read from the socket
+         * becomes one message.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -574,9 +575,10 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
-         * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP - however only
-         * Strings are allowed to be serialized by default.
+         * indicate a text line based codec, where each message ends with the
+         * delimiter. If not specified or the value is false, the default codec
+         * is a String codec without framing, so each read from the socket
+         * becomes one message.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2352,9 +2354,10 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
-         * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP - however only
-         * Strings are allowed to be serialized by default.
+         * indicate a text line based codec, where each message ends with the
+         * delimiter. If not specified or the value is false, the default codec
+         * is a String codec without framing, so each read from the socket
+         * becomes one message.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2370,9 +2373,10 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
-         * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP - however only
-         * Strings are allowed to be serialized by default.
+         * indicate a text line based codec, where each message ends with the
+         * delimiter. If not specified or the value is false, the default codec
+         * is a String codec without framing, so each read from the socket
+         * becomes one message.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4054,9 +4058,10 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
-         * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP - however only
-         * Strings are allowed to be serialized by default.
+         * indicate a text line based codec, where each message ends with the
+         * delimiter. If not specified or the value is false, the default codec
+         * is a String codec without framing, so each read from the socket
+         * becomes one message.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -4072,9 +4077,10 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
-         * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP - however only
-         * Strings are allowed to be serialized by default.
+         * indicate a text line based codec, where each message ends with the
+         * delimiter. If not specified or the value is false, the default codec
+         * is a String codec without framing, so each read from the socket
+         * becomes one message.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

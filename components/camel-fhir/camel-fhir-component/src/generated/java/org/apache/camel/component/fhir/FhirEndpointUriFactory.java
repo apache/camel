@@ -24,7 +24,7 @@ public class FhirEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(84);
+        Set<String> props = new HashSet<>(85);
         props.add("accessToken");
         props.add("apiName");
         props.add("asynchronous");
@@ -49,6 +49,7 @@ public class FhirEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("fhirVersion");
         props.add("forceConformanceCheck");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("iCutoff");
         props.add("iUrl");
         props.add("id");

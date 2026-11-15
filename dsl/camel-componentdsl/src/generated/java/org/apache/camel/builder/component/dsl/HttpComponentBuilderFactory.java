@@ -837,11 +837,8 @@ public interface HttpComponentBuilderFactory {
         }
     
         /**
-         * To configure security using SSLContextParameters. Important: Only one
-         * instance of org.apache.camel.support.jsse.SSLContextParameters is
-         * supported per HttpComponent. If you need to use 2 or more different
-         * instances, you need to define a new HttpComponent per instance you
-         * need.
+         * To configure security using SSLContextParameters. An endpoint can use
+         * another instance with its own sslContextParameters option.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.

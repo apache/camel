@@ -64,6 +64,10 @@ column when it has one column, or `null` when there is no row, and
 A statement that is not a select leaves the body as it is, with the count
 in the `CamelJdbcUpdateCount` header.
 
+When reading a row of a `StreamList` fails (for example, the connection is lost), the iterator keeps failing instead
+of ending, so a split that is redelivered over it fails too, rather than succeeding with the rows read before the
+failure.
+
 *Note:* This component fetches `ResultSetMetaData` to be able to return
 the column name as the key in the `Map`.
 

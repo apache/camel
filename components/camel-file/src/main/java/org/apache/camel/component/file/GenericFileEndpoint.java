@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,6 +60,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
     protected static final int DEFAULT_IN_PROGRESS_CACHE_SIZE = 50000;
+    // the read locks that add the key to the idempotent repository of the endpoint when they acquire the lock
+    private static final Set<String> IDEMPOTENT_READ_LOCKS = Set.of("idempotent", "idempotent-changed", "idempotent-rename");
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileEndpoint.class);
     /**
@@ -302,7 +305,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                                                + "consuming the same files over and over again.")
     protected Boolean idempotent;
     @UriParam(label = "consumer,filter", javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Sets whether to eagerly add the filename to the idempotent repository or wait until the exchange is complete.")
+              description = "Sets whether to eagerly add the filename to the idempotent repository or wait until the exchange is complete."
+                            + " Does not apply with an idempotent read lock (readLock=idempotent, idempotent-changed or"
+                            + " idempotent-rename), which adds the filename when it acquires the lock.")
     private Boolean idempotentEager = Boolean.TRUE;
     @UriParam(label = "consumer,filter", javaType = "java.lang.String", description = "To use a custom idempotent "
                                                                                       + "key. By default the absolute path of the file is used. You can use the File Language, for example to "
@@ -986,9 +991,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     private boolean isIdempotentReadLock() {
-        return exclusiveReadLockStrategy == null
-                && ("idempotent".equals(readLock) || "idempotent-changed".equals(readLock)
-                        || "idempotent-rename".equals(readLock));
+        // the readLock option is not used with a custom process strategy or exclusive read lock strategy
+        return processStrategy == null && exclusiveReadLockStrategy == null && isIdempotentReadLockName(readLock);
+    }
+
+    private static boolean isIdempotentReadLockName(String readLock) {
+        return readLock != null && IDEMPOTENT_READ_LOCKS.contains(readLock);
     }
 
     public String getCharset() {
@@ -1774,7 +1782,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         if (readLock != null) {
             params.put("readLock", readLock);
         }
-        if ("idempotent".equals(readLock) || "idempotent-changed".equals(readLock) || "idempotent-rename".equals(readLock)) {
+        if (isIdempotentReadLockName(readLock)) {
             params.put("readLockIdempotentRepository", idempotentRepository);
         }
         if (readLockCheckInterval > 0) {
