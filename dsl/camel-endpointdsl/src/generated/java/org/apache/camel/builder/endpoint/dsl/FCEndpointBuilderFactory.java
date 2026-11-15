@@ -47,8 +47,9 @@ public interface FCEndpointBuilderFactory {
         /**
          * The endpoint of Function Compute, which is a host name without
          * http:// or https://. The producer sends requests to it over HTTPS. If
-         * not set, it is built from the region option, and one of the two is
-         * required. Not used when the fcClient option is set or autowired.
+         * not set, the region option determines the endpoint, and one of the
+         * two is required. Not used when the fcClient option is set or
+         * autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -379,7 +380,8 @@ public interface FCEndpointBuilderFactory {
 
         /**
          * The name of the service that contains the function. This header
-         * replaces the serviceName option.
+         * replaces the serviceName option. If this header is not set, an
+         * exchange property of the same name replaces the serviceName option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -392,7 +394,8 @@ public interface FCEndpointBuilderFactory {
         }
         /**
          * The name of the function. This header replaces the functionName
-         * option.
+         * option. If this header is not set, an exchange property of the same
+         * name replaces the functionName option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -405,7 +408,8 @@ public interface FCEndpointBuilderFactory {
         }
         /**
          * The version or alias of the service. This header replaces the
-         * qualifier option.
+         * qualifier option. If this header is not set, an exchange property of
+         * the same name replaces the qualifier option.
          * 
          * The option is a: {@code String} type.
          * 

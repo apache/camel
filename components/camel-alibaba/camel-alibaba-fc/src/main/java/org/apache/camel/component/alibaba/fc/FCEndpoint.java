@@ -70,8 +70,8 @@ public class FCEndpoint extends DefaultEndpoint {
     private String region;
 
     @UriParam(description = "The endpoint of Function Compute, which is a host name without http:// or https://. The producer"
-                            + " sends requests to it over HTTPS. If not set, it is built from the region option, and one of the"
-                            + " two is required. Not used when the fcClient option is set or autowired.",
+                            + " sends requests to it over HTTPS. If not set, the region option determines the endpoint, and one"
+                            + " of the two is required. Not used when the fcClient option is set or autowired.",
               displayName = "Endpoint")
     private String endpoint;
 
