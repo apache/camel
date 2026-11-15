@@ -347,6 +347,9 @@ public class KafkaFetchRecords implements Runnable {
                 // which must happen using this polling thread, so we use the commitRecordsRequested to trigger this
                 metricsCollector.collectCommitMetrics(consumer);
 
+                // the asynchronous manual commits, which the route may call from other threads, are done by this thread
+                commitManager.commitRequestedOffsets();
+
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
                 if (consumerListener != null) {
                     if (!consumerListener.afterConsume(consumer)) {
