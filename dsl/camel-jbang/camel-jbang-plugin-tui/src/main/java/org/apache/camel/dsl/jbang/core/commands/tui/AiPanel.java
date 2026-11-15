@@ -1231,8 +1231,8 @@ class AiPanel {
                 runAgentLoop(systemPrompt, question);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                conversation.add(new ConversationEntry(AiRole.ERROR, e.getMessage()));
+            } catch (Exception | Error e) {
+                reportAgentFailure(e);
             } finally {
                 if (agentThread == Thread.currentThread()) {
                     thinking.set(false);
@@ -1243,6 +1243,20 @@ class AiPanel {
         }, "tui-ai-agent");
         agentThread.setDaemon(true);
         agentThread.start();
+    }
+
+    /**
+     * Reports what ended a turn of the built-in model, in the panel and in the AI log, also an Error and a failure with
+     * no message. A plugin jar of the CLI built after the core jar it calls ended each answer in a NoSuchMethodError:
+     * the turn was over with no answer, no error and nothing in the AI log.
+     */
+    private void reportAgentFailure(Throwable e) {
+        String message = e.getMessage() != null ? e.getMessage() : e.toString();
+        if (e instanceof LinkageError) {
+            message = "The jars of the Camel CLI do not match (built at different times?): " + e;
+        }
+        conversation.add(new ConversationEntry(AiRole.ERROR, message));
+        log(LogLevel.ERROR, "Error", message);
     }
 
     /**
@@ -1653,7 +1667,7 @@ class AiPanel {
         agentThread = new Thread(() -> {
             try {
                 runAcpTurn(wireQuestion);
-            } catch (IOException | RuntimeException e) {
+            } catch (IOException | RuntimeException | Error e) {
                 reportAcpTurnFailure(e);
             } finally {
                 if (agentThread == Thread.currentThread()) {
@@ -1671,7 +1685,7 @@ class AiPanel {
      * gone anyway, so a JSON-RPC error from a healthy agent does not cost the user the conversation context. An
      * interrupted turn is already reported as "(cancelled)" by {@link #interruptBusyOperation()}.
      */
-    private void reportAcpTurnFailure(Exception e) {
+    private void reportAcpTurnFailure(Throwable e) {
         AcpAgentClient.AcpException acp = e instanceof AcpAgentClient.AcpException a ? a : null;
         if (acp != null && acp.code() == AcpAgentClient.INTERRUPTED) {
             return;

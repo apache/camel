@@ -1297,6 +1297,69 @@ class AiPanelTest {
         }
     }
 
+    // ---- what ends a turn is shown and logged, also an Error and a failure with no message ----
+
+    @Test
+    void aTurnThatEndsInAnErrorIsShownAndLogged() throws Exception {
+        // a plugin jar built after the core jar it calls (Nov 14 2026): each answer ended with nothing shown or logged
+        AiPanel panel = askFailing(new NoSuchMethodError("'java.util.List AnswerChecks.checkCode(java.lang.String)'"));
+
+        AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
+        assertEquals(AiRole.ERROR, last.role());
+        assertTrue(last.text().startsWith("The jars of the Camel CLI do not match"), last.text());
+        assertTrue(last.text().contains("NoSuchMethodError"), last.text());
+        assertTrue(panel.getActivityLog().stream()
+                .anyMatch(e -> e.level() == AiPanel.LogLevel.ERROR && e.detail().contains("NoSuchMethodError")));
+        assertFalse(panel.isThinkingForTesting());
+    }
+
+    @Test
+    void aFailureWithNoMessageIsNotBlank() throws Exception {
+        AiPanel panel = askFailing(new IllegalStateException());
+
+        AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
+        assertEquals(AiRole.ERROR, last.role());
+        assertEquals("java.lang.IllegalStateException", last.text());
+        assertTrue(panel.getActivityLog().stream()
+                .anyMatch(e -> e.level() == AiPanel.LogLevel.ERROR && "java.lang.IllegalStateException".equals(e.detail())));
+    }
+
+    private static AiPanel askFailing(Throwable failure) throws Exception {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        panel.setClientForTesting(new FailingLlmClient(failure));
+        panel.open();
+        type(panel, "what does this app do");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+        return panel;
+    }
+
+    /** Fails its first request with the given failure. */
+    private static final class FailingLlmClient extends LlmClient {
+
+        private final Throwable failure;
+
+        FailingLlmClient(Throwable failure) {
+            this.failure = failure;
+            withModel("test-model");
+            withApiType(ApiType.openai);
+        }
+
+        @Override
+        public boolean detectEndpoint() {
+            return true;
+        }
+
+        @Override
+        public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+            if (failure instanceof Error error) {
+                throw error;
+            }
+            throw (RuntimeException) failure;
+        }
+    }
+
     /** Always asks for the same tool call, like a model stuck on a failing send. */
     private static final class LoopingLlmClient extends LlmClient {
 
