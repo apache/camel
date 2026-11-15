@@ -98,6 +98,8 @@ public class AsyncCommitManager extends AbstractCommitManager {
             if (assignment.contains(partition)) {
                 offsets.put(partition, new OffsetAndMetadata(offset + 1));
             } else {
+                // requestCommit also recorded the offset in the cache: a later revoke of the partition must not commit it
+                offsetCache.remove(partition);
                 LOG.debug("Dropping the requested commit of offset {} on {} from {}: the partition is no longer assigned",
                         offset, partition, threadId);
             }

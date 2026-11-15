@@ -143,6 +143,14 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
         assertFalse(mockConsumer.commits.subList(commitsAtRevoke, mockConsumer.commits.size()).stream()
                 .anyMatch(offsets -> offsets.containsKey(PARTITION)));
         assertEquals(2, lastCommittedOffset());
+
+        // the partition comes back and is revoked again before any of its records is processed: the dropped request
+        // left no offset behind for that revoke to commit
+        mockConsumer.schedulePollTask(() -> mockConsumer.rebalance(List.of(PARTITION)));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> mockConsumer.assignment().contains(PARTITION));
+        mockConsumer.schedulePollTask(() -> mockConsumer.rebalance(List.of()));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> mockConsumer.assignment().isEmpty());
+        assertEquals(2, lastCommittedOffset());
     }
 
     private void sendTwoRecords() {
