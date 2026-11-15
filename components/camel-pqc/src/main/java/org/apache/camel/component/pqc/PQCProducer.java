@@ -1175,14 +1175,15 @@ public class PQCProducer extends DefaultProducer {
     private void lifecycleRotateKey(Exchange exchange) throws Exception {
         KeyLifecycleManager klm = getRequiredKeyLifecycleManager();
         String oldKeyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
-        String newKeyId = exchange.getMessage().getHeader("CamelPQCNewKeyId", String.class);
+        String newKeyId = exchange.getMessage().getHeader(PQCConstants.NEW_KEY_ID, String.class);
         String algorithm = exchange.getMessage().getHeader(PQCConstants.ALGORITHM, String.class);
 
         if (ObjectHelper.isEmpty(oldKeyId)) {
             throw new IllegalArgumentException("Key ID header (" + PQCConstants.KEY_ID + ") is required for rotateKey");
         }
         if (ObjectHelper.isEmpty(newKeyId)) {
-            throw new IllegalArgumentException("New Key ID header (CamelPQCNewKeyId) is required for rotateKey");
+            throw new IllegalArgumentException(
+                    "New Key ID header (" + PQCConstants.NEW_KEY_ID + ") is required for rotateKey");
         }
         if (ObjectHelper.isEmpty(algorithm)) {
             throw new IllegalArgumentException("Algorithm header (" + PQCConstants.ALGORITHM + ") is required for rotateKey");
