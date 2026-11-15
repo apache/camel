@@ -364,9 +364,9 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
     }
 
     /**
-     * Whether the command leaves out the colors itself, instead of the console: when the output is not a terminal, as
-     * the console would leave them out then too, and finding that out builds a JLine terminal, which costs more than
-     * most commands take to print (CAMEL-26937). Unless the console is told how to print the colors
+     * Whether the command leaves out the colors itself, instead of the console. When the output is not a terminal, the
+     * console would leave them out too, but finding that out builds a JLine terminal, which costs more than most
+     * commands take to print (CAMEL-26937). Not when the console is told how to print the colors
      * ({@code -Djansi.mode}).
      */
     private static boolean stripsColorsItself() {
