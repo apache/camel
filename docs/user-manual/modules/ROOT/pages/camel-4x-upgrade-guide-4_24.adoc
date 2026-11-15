@@ -386,6 +386,17 @@ event. Without `list` the informer cannot start: the Kubernetes client logs an E
 with a delay that doubles up to 30 seconds. Creating or deleting a secret or config map still does not reload the
 context.
 
+=== camel-xslt, camel-xslt-saxon - transformerFactoryConfigurationStrategy and secureProcessing are applied in all configurations
+
+The `xslt` component now calls the `transformerFactoryConfigurationStrategy` of the endpoint or the component also when
+no `transformerFactory`, `transformerFactoryClass` or `xpathTotalOpLimit` is set. Before, the default
+`TransformerFactory` was used without calling the strategy.
+
+With a `saxonConfiguration` bean, the `xslt-saxon` component now applies `secureProcessing` (default `true`) to that
+configuration. Before (since 4.22), the bean replaced the configuration secure processing had been applied to, so a
+stylesheet could call extension functions or use `xsl:result-document`. If such a stylesheet now fails to compile, set
+`secureProcessing=false`, or set the Saxon feature in `saxonConfigurationProperties`, which is applied last.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.

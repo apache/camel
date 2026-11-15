@@ -233,8 +233,10 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
             }
 
             if (factory instanceof TransformerFactoryImpl tf) {
-                XsltSaxonHelper.configureSecureProcessing(tf, secureProcessing);
+                // a custom Saxon configuration replaces the configuration of the factory, so secure processing is
+                // applied after it, and the explicit Saxon configuration properties last
                 XsltSaxonHelper.registerSaxonConfiguration(tf, saxonConfiguration);
+                XsltSaxonHelper.configureSecureProcessing(tf, secureProcessing);
                 XsltSaxonHelper.registerSaxonConfigurationProperties(tf, saxonConfigurationProperties);
                 XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions);
             }
