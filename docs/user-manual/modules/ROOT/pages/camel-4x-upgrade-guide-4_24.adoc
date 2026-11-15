@@ -8743,3 +8743,29 @@ if it configured the proxy.
 It is now deprecated, with a `deprecationNote` that says so, and its description no longer claims to configure a proxy.
 Remove `protocol` from the endpoint URI or the configuration. To send the client's traffic through a proxy, use
 `proxyProtocol` together with `proxyHost` and `proxyPort`, which the shared client builder does apply.
+
+=== camel-whatsapp - both documented headers are deprecated
+
+`CamelWhatsAppPhoneNumberId` and `CamelWhatsAppRecipientPhoneNumberId` were the only two headers the component
+documented, and it reads neither. A route that sets them gets no error and no effect.
+
+The phone number ID is the path parameter of the endpoint, so set it in the URI:
+
+[source,java]
+----
+from("direct:start")
+    .to("whatsapp:1234567890?authorizationToken=token");
+----
+
+The recipient is the `to` field of the `BaseMessage` the producer converts the body to, since `WhatsAppProducer` sends
+`exchange.getIn().getBody(BaseMessage.class)` as it is:
+
+[source,java]
+----
+TextMessageRequest request = new TextMessageRequest();
+request.setTo("15550001111");
+request.setText(new TextMessage());
+request.getText().setBody("Hello");
+----
+
+Both headers are now deprecated, each with a `deprecationNote` that names the replacement.
