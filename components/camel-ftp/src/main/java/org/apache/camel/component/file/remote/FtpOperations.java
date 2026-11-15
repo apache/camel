@@ -978,8 +978,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         log.trace("Listing remote files");
         clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), null);
         try {
-
-            return client.listFiles();
+            return checkListing(client.listFiles(), "the current directory");
         } catch (IOException e) {
             clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -997,11 +996,33 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         try {
-            return client.listFiles(path);
+            return checkListing(client.listFiles(path), "directory: " + path);
         } catch (IOException e) {
             clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
+    }
+
+    /**
+     * The FTP client returns an empty listing, without an exception, when the server refuses the data connection (PORT,
+     * EPRT, PASV, EPSV) or the LIST command, so an empty listing fails unless the server completed it. The replies 450
+     * and 550 still give an empty listing, as servers use them for a directory that is missing or empty.
+     */
+    private FTPFile[] checkListing(FTPFile[] files, String what) {
+        if (files != null && files.length > 0) {
+            return files;
+        }
+        int code = client.getReplyCode();
+        if (FTPReply.isPositiveCompletion(code) || code == FTPReply.FILE_ACTION_NOT_TAKEN
+                || code == FTPReply.FILE_UNAVAILABLE) {
+            return files;
+        }
+        String message = "Cannot list " + what;
+        if (!endpoint.getConfiguration().isPassiveMode()) {
+            message += ". Set passiveMode=true if the server or a firewall refuses data connections in active mode";
+        }
+        clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), message);
+        throw new GenericFileOperationFailedException(code, client.getReplyString(), message);
     }
 
     @Override
