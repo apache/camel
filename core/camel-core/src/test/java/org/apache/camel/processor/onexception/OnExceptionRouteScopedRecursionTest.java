@@ -45,7 +45,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:test").onException(Throwable.class).to("mock:c").log("onException")
-                        .throwException(new NullPointerException("A NPE error here")).end().to("mock:a")
+                        .throwException(NullPointerException.class, "A NPE error here").end().to("mock:a")
                         .log("test").throwException(new IllegalStateException("Bad state")).to("log:test").to("mock:b");
             }
         });
@@ -74,7 +74,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:test").onException(Throwable.class).handled(true).log("onException")
-                        .throwException(new NullPointerException("A NPE error here")).end().to("mock:a")
+                        .throwException(NullPointerException.class, "A NPE error here").end().to("mock:a")
                         .log("test").throwException(new IllegalStateException("Bad state")).to("log:test").to("mock:b");
             }
         });
@@ -109,7 +109,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
                 // need to turn off error handler when linked with direct, in
                 // case you want the same as inlined
                 from("direct:error").errorHandler(noErrorHandler()).to("mock:d").log("error")
-                        .throwException(new NullPointerException("A NPE error here"));
+                        .throwException(NullPointerException.class, "A NPE error here");
             }
         });
         context.start();
@@ -143,7 +143,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
                 // need to turn off error handler when linked with direct, in
                 // case you want the same as inlined
                 from("direct:error").errorHandler(noErrorHandler()).to("mock:d").log("error")
-                        .throwException(new NullPointerException("A NPE error here"));
+                        .throwException(NullPointerException.class, "A NPE error here");
             }
         });
         context.start();
@@ -174,7 +174,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
                         .to("mock:a").log("test")
                         .throwException(new IllegalStateException("Bad state")).to("log:test").to("mock:b");
 
-                from("direct:error").to("mock:d").log("error").throwException(new NullPointerException("A NPE error here"));
+                from("direct:error").to("mock:d").log("error").throwException(NullPointerException.class, "A NPE error here");
             }
         });
         context.start();
@@ -203,7 +203,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
                         .to("direct:error").end().to("mock:a").log("test")
                         .throwException(new IllegalStateException("Bad state")).to("log:test").to("mock:b");
 
-                from("direct:error").to("mock:d").log("error").throwException(new NullPointerException("A NPE error here"));
+                from("direct:error").to("mock:d").log("error").throwException(NullPointerException.class, "A NPE error here");
             }
         });
         context.start();

@@ -160,7 +160,7 @@ class ThrottlingExceptionRoutePolicySuppressedExceptionTest extends ContextTestS
 
                 from("direct:onException").routePolicy(onExceptionPolicy)
                         .onException(IOException.class).handled(true)
-                            .throwException(new IllegalStateException("onException"))
+                            .throwException(IllegalStateException.class, "onException")
                         .end()
                         .throwException(new IOException("route"));
 

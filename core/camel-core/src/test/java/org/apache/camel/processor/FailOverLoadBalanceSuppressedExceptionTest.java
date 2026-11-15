@@ -92,7 +92,7 @@ class FailOverLoadBalanceSuppressedExceptionTest extends ContextTestSupport {
                         .onException(IllegalArgumentException.class).to("direct:audit").end()
                         .throwException(new IllegalArgumentException("original"));
                 from("direct:audit")
-                        .throwException(new IOException("audit"));
+                        .throwException(IOException.class, "audit");
 
                 failover("onWhenFails");
                 from("direct:onWhenFails-attempt")

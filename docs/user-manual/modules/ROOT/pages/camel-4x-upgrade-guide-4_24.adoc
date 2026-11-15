@@ -57,6 +57,14 @@ Starting in 4.24:
 * The Cache EIP stores keys directly without a namespace prefix, preserving documented cache invalidation recipes (`cache.delete(key)` and `cache.clear()`). Note that because cache keys are un-prefixed, calling `clear()` on a `KeyValueRepository` shared with the Cache EIP will clear all entries in that repository, including state-store entries. It is recommended to use a dedicated repository for the Cache EIP when co-located with state-store.
 * `KeyValueAggregationRepository` safely verifies entry types before unmarshalling, ignoring unexpected types gracefully instead of failing with a class cast exception.
 
+=== camel-core - throwException with an exception instance gets no suppressed exceptions
+
+A `throwException` step given an exception instance (`throwException(new MyException("..."))` in Java, or a bean with
+`ref`) sets that one object on every message. The error handler no longer adds the previous exception of the message
+(such as the one an `onException` translates) to it as suppressed: the instance used to keep the exceptions of all the
+messages, and grew with each one. Use `throwException(MyException.class, "...")`, or `exceptionType` and `message`,
+to get a new exception for each message, with the previous exception as suppressed.
+
 === camel-core-model - doTry keeps doCatch and doFinally in its outputs
 
 `doCatch` and `doFinally` written as properties of `doTry` in the YAML DSL are now kept in the outputs of the

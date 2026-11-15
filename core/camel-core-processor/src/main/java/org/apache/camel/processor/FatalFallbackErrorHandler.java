@@ -117,7 +117,9 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                         }
 
                         // add previous as suppressed to exception if not already there
-                        if (previous != null) {
+                        // (but not to an exception that a throwException step shares with all the messages)
+                        if (previous != null
+                                && !ThrowExceptionProcessor.isSharedException(exchange, exchange.getException())) {
                             Throwable[] suppressed = exchange.getException().getSuppressed();
                             boolean found = false;
                             for (Throwable t : suppressed) {

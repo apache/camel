@@ -43,6 +43,7 @@ import org.apache.camel.processor.PooledExchangeTask;
 import org.apache.camel.processor.PooledExchangeTaskFactory;
 import org.apache.camel.processor.PooledTaskFactory;
 import org.apache.camel.processor.PrototypeTaskFactory;
+import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ErrorHandlerRedeliveryCustomizer;
@@ -1049,9 +1050,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 // the previous exception was handled (continued) so this is a new failure
                 previous = null;
             }
-            if (previous != null && previous != e && e != null) {
+            if (previous != null && previous != e && e != null && !ThrowExceptionProcessor.isSharedException(exchange, e)) {
                 // a 2nd exception was thrown while handling a previous exception
                 // so we need to add the previous as suppressed by the new exception
+                // (but not to an exception that a throwException step shares with all the messages)
                 // see also FatalFallbackErrorHandler
                 Throwable[] suppressed = e.getSuppressed();
                 boolean found = false;
@@ -1767,9 +1769,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 // the previous exception was handled (continued) so this is a new failure
                 previous = null;
             }
-            if (previous != null && previous != e) {
+            if (previous != null && previous != e && !ThrowExceptionProcessor.isSharedException(exchange, e)) {
                 // a 2nd exception was thrown while handling a previous exception
                 // so we need to add the previous as suppressed by the new exception
+                // (but not to an exception that a throwException step shares with all the messages)
                 // see also FatalFallbackErrorHandler
                 Throwable[] suppressed = e.getSuppressed();
                 boolean found = false;

@@ -106,6 +106,22 @@ In YML you specify the FQN class name via `exceptionType` and the `message` is t
 ----
 ====
 
+=== Exception instance or exception type
+
+An exception instance, such as `throwException(new IllegalArgumentException("Not allowed"))` in Java, or a bean
+referred to with `ref`, is one object that every message fails with. Camel does not change it: the error handler does
+not add the previous exception of the message (such as the one an `onException` translates) to it as suppressed.
+
+To get a new exception for each message, give the exception type and the message instead, as `exceptionType` and
+`message` do in XML and YAML. The message supports the xref:languages:simple-language.adoc[Simple] language, and the
+new exception has the previous exception of the message as suppressed:
+
+[source,java]
+----
+onException(IOException.class)
+    .throwException(IllegalStateException.class, "Cannot process order ${header.orderId}");
+----
+
 == See Also
 
 See also the related xref:stop-eip.adoc[Stop] EIP.

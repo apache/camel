@@ -36,6 +36,10 @@ import org.apache.camel.util.ObjectHelper;
 public class ThrowExceptionProcessor extends BaseProcessorSupport
         implements Traceable, IdAware, RouteIdAware, StepIdAware, CamelContextAware {
 
+    // The exception instance a throwException step is configured with, which is one object shared by all the messages.
+    // Internal on purpose: a plain property, not an ExchangePropertyKey, as the ones of the RedeliveryErrorHandler.
+    private static final String SHARED_EXCEPTION = "CamelThrowExceptionShared";
+
     private String id;
     private String routeId;
     private String stepId;
@@ -74,6 +78,9 @@ public class ThrowExceptionProcessor extends BaseProcessorSupport
                 exchange.setException(cause);
             } else {
                 exchange.setException(cause);
+                if (cause != null) {
+                    exchange.setProperty(SHARED_EXCEPTION, cause);
+                }
             }
         } catch (Exception e) {
             Class<? extends Exception> exceptionClass = exception != null ? exception.getClass() : type;
@@ -83,6 +90,20 @@ public class ThrowExceptionProcessor extends BaseProcessorSupport
 
         callback.done(true);
         return true;
+    }
+
+    /**
+     * Whether the exception is the instance a throwException step is configured with: one object shared by all the
+     * messages, which Camel must not change (such as by adding the previous exception of a message as suppressed).
+     * <p>
+     * Internal API, for the processors of Camel.
+     *
+     * @param  exchange  the exchange
+     * @param  exception the exception
+     * @return           <code>true</code> if the exception is shared by all the messages
+     */
+    public static boolean isSharedException(Exchange exchange, Throwable exception) {
+        return exception != null && exception == exchange.getProperty(SHARED_EXCEPTION);
     }
 
     @Override
