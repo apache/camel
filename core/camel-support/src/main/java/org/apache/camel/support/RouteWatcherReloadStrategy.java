@@ -140,9 +140,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     /**
      * Used for inclusive filtering of routes from directories.
      *
-     * Typical used for specifying to accept routes in XML or YAML files, such as <tt>*.yaml,*.xml</tt>. Multiple
-     * patterns can be specified separated by comma. A pattern that starts with <tt>!</tt> excludes what it matches,
-     * such as <tt>*,!inbox/**</tt> to watch every file except the files under the inbox folder; a folder that an
+     * Typically used for specifying to accept routes in XML or YAML files, such as <code>*.yaml,*.xml</code>. Multiple
+     * patterns can be specified separated by comma. A pattern that starts with <code>!</code> excludes what it matches,
+     * such as <code>*,!inbox/**</code> to watch every file except the files under the inbox folder; a folder that an
      * exclude matches as a whole is not scanned at all.
      */
     public void setPattern(String pattern) {
@@ -257,8 +257,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     }
 
     /**
-     * A folder that an exclude of the pattern matches as a whole, such as <tt>inbox</tt> for <tt>!inbox/**</tt>: the
-     * folder is left out of the scan, so the files the routes read and write in it are not walked on every scan.
+     * A folder that an exclude of the pattern matches as a whole, such as <code>inbox</code> for
+     * <code>!inbox/**</code>: the folder is left out of the scan, so the files the routes read and write in it are not
+     * walked on every scan.
      */
     @Override
     protected boolean isExcludedDirectory(Path dir) {
@@ -506,11 +507,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      * first, each without reloading the routes, and then the routes of the whole change are reloaded once. A route
      * saved together with a property it uses is therefore built with that property already in place, instead of failing
      * on it and being restored (CAMEL-25032).
-     * <p/>
+     * <p>
      * A properties or Groovy file that fails is reported at once, as when it changed alone, and the other files still
      * reload. A properties file is not reloaded again: the properties component has its new values already, so the file
      * would have no changes left, and its failure would be lost (CAMEL-25834).
-     * <p/>
+     * <p>
      * If the routes fail, the route files are reloaded one at a time: the reload then fails on the one file that is
      * wrong and says which it was, so a mistake in one file does not hide behind the others (CAMEL-24860).
      */
@@ -849,7 +850,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      * which is kept in memory (CAMEL-24899, CAMEL-26444). After a successful restore the remembered set is cleared: the
      * running routes are the last working set again, and the next reload collects their sources itself. The file on
      * disk is untouched and its next save is loaded as usual.
-     * <p/>
+     * <p>
      * The routes a partial load left are removed also when there is nothing to restore, so no route of the failed load
      * runs, as the warning says (CAMEL-26444).
      */
@@ -932,7 +933,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      * Adds the sources of a route to the sources to load again: the file it was loaded from and, for a route from a
      * templated route, the file of the templated route. The route template of a templated route is either in a file,
      * which is loaded again, or added without a resource (from Java), which a reload keeps (CAMEL-25619).
-     * <p/>
+     * <p>
      * A route from a Kamelet is created again by its parent route. Its source is the file with its route template: when
      * that is a file, it is loaded again too, as a route template that is only used through {@code kamelet:} has no
      * route of its own that would bring it back (CAMEL-25619). A Kamelet from the classpath, such as from a Kamelet

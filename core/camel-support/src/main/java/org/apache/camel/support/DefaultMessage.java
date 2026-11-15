@@ -28,7 +28,7 @@ import org.apache.camel.trait.message.MessageTrait;
 
 /**
  * The default implementation of {@link org.apache.camel.Message}
- * <p/>
+ * <p>
  * This implementation uses a {@link org.apache.camel.util.CaseInsensitiveMap} storing the headers. This allows us to be
  * able to lookup headers using case insensitive keys, making it easier for end users as they do not have to be worried
  * about using exact keys. See more details at {@link org.apache.camel.util.CaseInsensitiveMap}. The implementation of

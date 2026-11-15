@@ -162,6 +162,7 @@ in the diagram.
   topology (top right of a route) and the tree of the route (bottom right)
 - `Esc` — close diagram (back to route table)
 - `m` — toggle metrics on/off
+- `w` — toggle the live flow: dots on the edges into the routes that get messages
 - `e` — toggle external systems on/off
 - `n` — toggle description labels
 
@@ -190,6 +191,7 @@ in the diagram.
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view
 - `m` — toggle metrics
+- `w` — toggle the live flow: dots on the arrows, the stuck steps marked
 - `y` — toggle the body types each step has been reached with, beside the arrows
 - `n` — toggle description labels
 - `PgUp/PgDn` — scroll detail panel (when detail is on)

@@ -319,7 +319,7 @@ public class JmsConfiguration implements Cloneable {
                             + " handles the reply message. You can also use this option if you want to use Camel as a proxy between different"
                             + " message brokers and you want to route message from one system to another.")
     private boolean disableReplyTo;
-    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message due to ${exception.message}",
+    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message payload: ${exception.message}",
               description = "If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) is poison (cannot be read/mapped),"
                             + " then set this text as the message body instead so the message can be processed"
                             + " (the cause of the poison are already stored as exception on the Exchange)."

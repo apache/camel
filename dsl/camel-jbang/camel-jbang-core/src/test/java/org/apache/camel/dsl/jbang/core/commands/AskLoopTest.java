@@ -108,6 +108,20 @@ class AskLoopTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void theMistakesOfTheCodeOfTheAnswerAreSaidUnderIt() throws Exception {
+        // CAMEL-26960: an option that does not exist, on stderr, so the answer stays the only output on stdout
+        String text = "Delete the files after reading them:\n\n```yaml\nfrom:\n  uri: file:orders\n  parameters:\n"
+                      + "    deleteAfterRead: true\n```\n";
+        server.reply("/api/chat", 200, answer(text));
+
+        assertThat(command().doCall()).isZero();
+
+        assertThat(printer.getStdout()).isEqualTo(text.strip());
+        assertThat(printer.getStderr()).contains("Check: code block 1, line 4: `deleteAfterRead` is not an option of"
+                                                 + " the `file` component (did you mean `delete`?)");
+    }
+
+    @Test
     void theStatsOnStderr() throws Exception {
         server.reply("/api/chat", 200, answer("The routes are fine"));
 

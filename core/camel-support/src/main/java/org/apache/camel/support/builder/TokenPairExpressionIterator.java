@@ -37,10 +37,10 @@ import org.apache.camel.util.StringHelper;
 /**
  * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} body using an {@link Iterator}, which
  * grabs the content between a start and end token.
- * <p/>
+ * <p>
  * The message body must be able to convert to {@link InputStream} type which is used as stream to access the message
  * body.
- * <p/>
+ * <p>
  * For splitting XML files use {@link TokenXMLExpressionIterator} instead.
  */
 public class TokenPairExpressionIterator extends ExpressionAdapter {

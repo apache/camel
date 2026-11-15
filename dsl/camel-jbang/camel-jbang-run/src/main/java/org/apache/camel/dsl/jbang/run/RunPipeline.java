@@ -760,6 +760,16 @@ public class RunPipeline {
             String sdir = "file:" + request.sourceDir + "/**?optional=true";
             main.addInitialProperty("camel.main.routesIncludePattern", sdir);
             writeSettings("camel.main.routesIncludePattern", sdir);
+            String excluded = sourceDirExcludePattern(request.sourceDir, request.excludes);
+            if (excluded != null) {
+                // --exclude applies to the files of the directory too (CAMEL-26930)
+                String existing = main.getInitialProperties().getProperty("camel.main.routesExcludePattern");
+                if (existing != null && !existing.isBlank()) {
+                    excluded = existing + "," + excluded;
+                }
+                main.addInitialProperty("camel.main.routesExcludePattern", excluded);
+                writeSettings("camel.main.routesExcludePattern", excluded);
+            }
         } else if (js.length() > 0) {
             main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
             writeSettings("camel.main.routesIncludePattern", js.toString());
@@ -1164,7 +1174,8 @@ public class RunPipeline {
             if (request.sourceDir != null) {
                 main.addInitialProperty(SOURCE_DIR, request.sourceDir);
                 main.addInitialProperty("camel.main.routesReloadDirectory", request.sourceDir);
-                main.addInitialProperty("camel.main.routesReloadPattern", sourceDirReloadPattern(request.dataDir));
+                main.addInitialProperty("camel.main.routesReloadPattern",
+                        sourceDirReloadPattern(request.dataDir) + reloadExcludes(request.excludes));
                 main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", "true");
             } else {
                 dataDirWithoutSourceDir.run();
@@ -1236,6 +1247,51 @@ public class RunPipeline {
             answer = answer.getParent();
         }
         return answer != null ? answer : a.getRoot();
+    }
+
+    /**
+     * The routes exclude pattern (camel.main.routesExcludePattern) of the --exclude patterns for the files of a source
+     * directory, or null when there are none. The files of the directory have the location file:dir/name; a pattern
+     * without a folder, such as *.xml, matches a file name in any folder, as it does for the files given by name.
+     */
+    public static String sourceDirExcludePattern(String sourceDir, List<String> excludes) {
+        if (excludes == null || excludes.isEmpty()) {
+            return null;
+        }
+        String dir = sourceDir.replace('\\', '/');
+        while (dir.length() > 1 && dir.endsWith("/")) {
+            dir = dir.substring(0, dir.length() - 1);
+        }
+        StringJoiner sj = new StringJoiner(",");
+        for (String pattern : excludes) {
+            pattern = pattern.trim().replace('\\', '/');
+            while (pattern.startsWith("./")) {
+                pattern = pattern.substring(2);
+            }
+            if (!pattern.isEmpty()) {
+                sj.add("file:" + dir + "/" + (pattern.contains("/") ? pattern : "**/" + pattern));
+            }
+        }
+        return sj.length() > 0 ? sj.toString() : null;
+    }
+
+    /**
+     * The --exclude patterns as excludes of the reload pattern, so a change of an excluded file does not load it.
+     */
+    public static String reloadExcludes(List<String> excludes) {
+        StringBuilder sb = new StringBuilder();
+        if (excludes != null) {
+            for (String pattern : excludes) {
+                pattern = pattern.trim().replace('\\', '/');
+                while (pattern.startsWith("./")) {
+                    pattern = pattern.substring(2);
+                }
+                if (!pattern.isEmpty()) {
+                    sb.append(",!").append(pattern);
+                }
+            }
+        }
+        return sb.toString();
     }
 
     /**

@@ -44,10 +44,10 @@ public final class DataSourceHelper {
     /**
      * Collects and evicts stale connections from all DataSources used by a component: the component's own
      * {@code dataSource} field plus any DataSources held by the component's active endpoints.
-     * <p/>
+     * <p>
      * Identity-based deduplication ensures each DataSource is evicted at most once, even if the same instance is shared
      * between the component and one or more endpoints.
-     * <p/>
+     * <p>
      * {@link InterceptSendToEndpoint} wrappers are unwrapped to the original endpoint before the component check and
      * DataSource extraction. This ensures that intercepted endpoints (created by {@code interceptSendToEndpoint()}) are
      * not silently skipped.
@@ -90,7 +90,7 @@ public final class DataSourceHelper {
 
     /**
      * Evicts stale connections from the given DataSource's connection pool.
-     * <p/>
+     * <p>
      * The following pool implementations are supported (detected via reflection — no compile-time dependency required):
      * <ul>
      * <li><b>HikariCP</b>: {@code softEvictConnections()} is called via {@code HikariPoolMXBean}. Idle connections are
@@ -102,10 +102,10 @@ public final class DataSourceHelper {
      * P6Spy, etc.) are supported via pool-type-specific {@code isWrapperFor(poolType)} / {@code unwrap(poolType)} on
      * {@link java.sql.Wrapper}: the wrapper's {@code unwrap(HikariDataSource.class)} delegates to its target's
      * {@code unwrap}, so the actual pool is reached regardless of how many layers sit on top.
-     * <p/>
+     * <p>
      * Any DataSource not recognised as one of the above is left untouched — a log message is emitted and the pool will
      * naturally replace connections as they expire or are validated.
-     * <p/>
+     * <p>
      * <b>Important:</b> this method only evicts existing connections from the pool. It does <em>not</em> update the
      * pool's credentials. For pools configured with a static password (e.g. Spring Boot
      * {@code spring.datasource.password}), the pool will re-open connections using the <em>old</em> credentials unless

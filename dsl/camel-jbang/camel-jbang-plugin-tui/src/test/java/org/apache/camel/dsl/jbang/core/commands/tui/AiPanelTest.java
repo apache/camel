@@ -1200,6 +1200,69 @@ class AiPanelTest {
         assertFalse(last.byline().contains("correction"), last.byline());
     }
 
+    // ---- the code of an answer is checked, and what does not exist is marked (CAMEL-26960) ----
+
+    @Test
+    void theMistakesOfTheCodeOfAnAnswerAreMarkedAndToldWithTheNextQuestion() throws Exception {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        MarkedLlmClient client = new MarkedLlmClient();
+        panel.setClientForTesting(client);
+        panel.open();
+        type(panel, "how do I retry the call");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+
+        AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
+        assertEquals(AiRole.ASSISTANT, last.role(), last.text());
+        assertTrue(last.text().contains("```\n\n✗ line 4: `multiplier` is not an option of `redeliveryPolicy`"),
+                last.text());
+        assertEquals(1, client.answers, "a mark is not a correction turn: the model is not asked again");
+        assertEquals(0, last.corrections());
+
+        // the model is told with the next question; its answer stays in the history as it wrote it
+        type(panel, "and what else");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+        assertTrue(client.lastQuestion.contains("[Checked against the Camel catalog, your last answer has mistakes"),
+                client.lastQuestion);
+        assertTrue(client.lastQuestion.contains("code block 1, line 4: `multiplier` is not an option of"),
+                client.lastQuestion);
+        assertTrue(client.lastQuestion.endsWith("and what else"), client.lastQuestion);
+        assertEquals(MarkedLlmClient.ANSWER, client.previousAnswer);
+        assertTrue(panel.conversationForTesting().stream().noneMatch(e -> e.role() == AiRole.SYSTEM),
+                "the marks are under the answer already, so no line says that the model is told");
+    }
+
+    /** Answers with a redelivery policy that has an option no redelivery policy has, and keeps what it is sent. */
+    private static final class MarkedLlmClient extends LlmClient {
+
+        static final String ANSWER = "Retry three times:\n\n```yaml\nredeliveryPolicy:\n  maximumRedeliveries: 3\n"
+                                     + "  redeliveryDelay: 1000\n  multiplier: 2\n```\n";
+
+        volatile int answers;
+        volatile String lastQuestion;
+        volatile String previousAnswer;
+
+        MarkedLlmClient() {
+            withModel("test-model");
+            withApiType(ApiType.openai);
+        }
+
+        @Override
+        public boolean detectEndpoint() {
+            return true;
+        }
+
+        @Override
+        public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+            answers++;
+            lastQuestion = messages.get(messages.size() - 1).content();
+            previousAnswer = messages.size() >= 2 ? messages.get(messages.size() - 2).content() : null;
+            return new ChatResponse(answers == 1 ? ANSWER : "Nothing else.", List.of(), "stop", false, TokenUsage.EMPTY);
+        }
+    }
+
     /** Answers with a fallback that is not quoted, and fixes it when asked, like a small local model. */
     private static final class CorrectingLlmClient extends LlmClient {
 
@@ -1231,6 +1294,72 @@ class AiPanelTest {
                     ? "Use `${header.user} ?: 'Guest'` as the expression: the elvis operator goes between placeholders."
                     : "Use `${header.user ?: Guest}` as the expression to fall back to Guest.";
             return new ChatResponse(text, List.of(), "stop", false, TokenUsage.EMPTY);
+        }
+    }
+
+    // ---- what ends a turn is shown and logged, also an Error and a failure with no message ----
+
+    @Test
+    void aTurnThatEndsInAnErrorIsShownAndLogged() throws Exception {
+        // a plugin jar built after the core jar it calls (Nov 14 2026): each answer ended with nothing shown or logged
+        AiPanel panel = askFailing(new NoSuchMethodError("'java.util.List AnswerChecks.checkCode(java.lang.String)'"));
+
+        AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
+        assertEquals(AiRole.ERROR, last.role());
+        assertTrue(last.text().startsWith("The jars of the Camel CLI do not match"), last.text());
+        assertTrue(last.text().contains("NoSuchMethodError"), last.text());
+        assertTrue(panel.getActivityLog().stream()
+                .anyMatch(e -> e.level() == AiPanel.LogLevel.ERROR && e.detail().contains("NoSuchMethodError")));
+        assertFalse(panel.isThinkingForTesting());
+    }
+
+    @Test
+    void aFailureWithNoMessageIsNotBlank() throws Exception {
+        AiPanel panel = askFailing(new IllegalStateException());
+
+        AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
+        assertEquals(AiRole.ERROR, last.role());
+        assertEquals("java.lang.IllegalStateException", last.text());
+        assertTrue(panel.getActivityLog().stream()
+                .anyMatch(e -> e.level() == AiPanel.LogLevel.ERROR && "java.lang.IllegalStateException".equals(e.detail())));
+    }
+
+    private static AiPanel askFailing(Throwable failure) throws Exception {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        panel.setClientForTesting(new FailingLlmClient(failure));
+        panel.open();
+        type(panel, "what does this app do");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+        return panel;
+    }
+
+    /** Fails its first request with the given failure. */
+    private static final class FailingLlmClient extends LlmClient {
+
+        private final Throwable failure;
+
+        FailingLlmClient(Throwable failure) {
+            this.failure = failure;
+            withModel("test-model");
+            withApiType(ApiType.openai);
+        }
+
+        @Override
+        public boolean detectEndpoint() {
+            return true;
+        }
+
+        @Override
+        public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+            if (failure instanceof Error error) {
+                throw error;
+            }
+            if (failure instanceof RuntimeException rte) {
+                throw rte;
+            }
+            throw new RuntimeException(failure);
         }
     }
 

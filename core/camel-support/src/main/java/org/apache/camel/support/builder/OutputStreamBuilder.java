@@ -26,7 +26,7 @@ import org.apache.camel.support.ExchangeHelper;
 
 /**
  * Utility to hide the complexity of choosing which OutputStream implementation to choose.
- * <p/>
+ * <p>
  * Itself masquerades as an OutputStream, but really delegates to a CachedOutputStream or a ByteArrayOutputStream.
  */
 public final class OutputStreamBuilder extends OutputStream {
@@ -43,7 +43,7 @@ public final class OutputStreamBuilder extends OutputStream {
 
     /**
      * Creates a new OutputStreamBuilder with the current exchange
-     * <p/>
+     * <p>
      * Use the {@link #build()} when writing to the stream is finished, and you need the result of this operation.
      *
      * @param  exchange the current Exchange
