@@ -51,6 +51,23 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
     void disconnect() throws GenericFileOperationFailedException;
 
     /**
+     * Disconnects from the remote server when the producer stops.
+     * <p/>
+     * Another thread can still run an operation at that time, such as the upload of an exchange that a forced shutdown
+     * gave up waiting for, which hangs as long as the server does not answer. Unlike {@link #disconnect()}, this method
+     * should not wait for such an operation without bound: it disconnects anyway, so that the operation fails.
+     * <p/>
+     * The default implementation disconnects as {@link #disconnect()} does, when connected.
+     *
+     * @throws GenericFileOperationFailedException can be thrown
+     */
+    default void disconnectOnStop() throws GenericFileOperationFailedException {
+        if (isConnected()) {
+            disconnect();
+        }
+    }
+
+    /**
      * Forces a hard disconnect from the remote server and cause the client to be re-created on next poll.
      *
      * @throws GenericFileOperationFailedException can be thrown
