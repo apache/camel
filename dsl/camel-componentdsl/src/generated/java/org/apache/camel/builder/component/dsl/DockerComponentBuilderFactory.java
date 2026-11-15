@@ -229,7 +229,8 @@ public interface DockerComponentBuilderFactory {
     
         
         /**
-         * Whether to follow redirect filter.
+         * Whether to follow redirect filter. Deprecation note: Not used:
+         * nothing reads this option when the Docker client is built.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -239,6 +240,7 @@ public interface DockerComponentBuilderFactory {
          * @param followRedirectFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default DockerComponentBuilder followRedirectFilter(boolean followRedirectFilter) {
             doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
@@ -246,7 +248,8 @@ public interface DockerComponentBuilderFactory {
     
         
         /**
-         * Whether to use logging filter.
+         * Whether to use logging filter. Deprecation note: Not used: nothing
+         * reads this option when the Docker client is built.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -256,6 +259,7 @@ public interface DockerComponentBuilderFactory {
          * @param loggingFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default DockerComponentBuilder loggingFilter(boolean loggingFilter) {
             doSetProperty("loggingFilter", loggingFilter);
             return this;

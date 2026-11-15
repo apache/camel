@@ -8946,3 +8946,15 @@ file's content. The offset is now honoured in full, and an `EOFException` is thr
 If your offsets can go stale, note that by default (without `moveFailed`) the failing exchange leaves the file in place, so the next poll reads the same
 offset from the resume store and fails again. Clear or reset the recorded offset for that file - or delete the resume
 store entry - to let it be consumed from the start again.
+
+=== camel-docker - the loggingFilter and followRedirectFilter options are deprecated
+
+Neither option has had any effect since Camel 2.18, when the docker-java 3.x upgrade removed the
+`withLoggingFilter` and `withFollowRedirectsFilter` calls they fed. `DockerClientFactory` now builds the whole
+`DockerClientProfile` that the client is created from, and it sets neither of them - `DockerClientProfile` has no field
+for either - so `isLoggingFilter()` and `isFollowRedirectFilter()` are called only by the generated configurers. The
+two matching headers, `CamelDockerLoggingFilter` and `CamelDockerFollowRedirectFilter`, are read nowhere either.
+
+Both options and both header constants are now deprecated. Remove `loggingFilter` and `followRedirectFilter` from the
+endpoint URI or the component configuration; setting them has changed nothing since 2.18. To see the traffic with the
+Docker daemon, raise the log level of the `com.github.dockerjava` loggers.

@@ -384,7 +384,8 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to follow redirect filter.
+         * Whether to follow redirect filter. Deprecation note: Not used:
+         * nothing reads this option when the Docker client is built.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -394,12 +395,14 @@ public interface DockerEndpointBuilderFactory {
          * @param followRedirectFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointConsumerBuilder followRedirectFilter(boolean followRedirectFilter) {
             doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
-         * Whether to follow redirect filter.
+         * Whether to follow redirect filter. Deprecation note: Not used:
+         * nothing reads this option when the Docker client is built.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -409,12 +412,14 @@ public interface DockerEndpointBuilderFactory {
          * @param followRedirectFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointConsumerBuilder followRedirectFilter(String followRedirectFilter) {
             doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
-         * Whether to use logging filter.
+         * Whether to use logging filter. Deprecation note: Not used: nothing
+         * reads this option when the Docker client is built.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -424,12 +429,14 @@ public interface DockerEndpointBuilderFactory {
          * @param loggingFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointConsumerBuilder loggingFilter(boolean loggingFilter) {
             doSetProperty("loggingFilter", loggingFilter);
             return this;
         }
         /**
-         * Whether to use logging filter.
+         * Whether to use logging filter. Deprecation note: Not used: nothing
+         * reads this option when the Docker client is built.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -439,6 +446,7 @@ public interface DockerEndpointBuilderFactory {
          * @param loggingFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointConsumerBuilder loggingFilter(String loggingFilter) {
             doSetProperty("loggingFilter", loggingFilter);
             return this;
@@ -914,7 +922,8 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to follow redirect filter.
+         * Whether to follow redirect filter. Deprecation note: Not used:
+         * nothing reads this option when the Docker client is built.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -924,12 +933,14 @@ public interface DockerEndpointBuilderFactory {
          * @param followRedirectFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointProducerBuilder followRedirectFilter(boolean followRedirectFilter) {
             doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
-         * Whether to follow redirect filter.
+         * Whether to follow redirect filter. Deprecation note: Not used:
+         * nothing reads this option when the Docker client is built.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -939,12 +950,14 @@ public interface DockerEndpointBuilderFactory {
          * @param followRedirectFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointProducerBuilder followRedirectFilter(String followRedirectFilter) {
             doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
-         * Whether to use logging filter.
+         * Whether to use logging filter. Deprecation note: Not used: nothing
+         * reads this option when the Docker client is built.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -954,12 +967,14 @@ public interface DockerEndpointBuilderFactory {
          * @param loggingFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointProducerBuilder loggingFilter(boolean loggingFilter) {
             doSetProperty("loggingFilter", loggingFilter);
             return this;
         }
         /**
-         * Whether to use logging filter.
+         * Whether to use logging filter. Deprecation note: Not used: nothing
+         * reads this option when the Docker client is built.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -969,6 +984,7 @@ public interface DockerEndpointBuilderFactory {
          * @param loggingFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointProducerBuilder loggingFilter(String loggingFilter) {
             doSetProperty("loggingFilter", loggingFilter);
             return this;
@@ -1356,7 +1372,8 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to follow redirect filter.
+         * Whether to follow redirect filter. Deprecation note: Not used:
+         * nothing reads this option when the Docker client is built.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1366,12 +1383,14 @@ public interface DockerEndpointBuilderFactory {
          * @param followRedirectFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointBuilder followRedirectFilter(boolean followRedirectFilter) {
             doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
-         * Whether to follow redirect filter.
+         * Whether to follow redirect filter. Deprecation note: Not used:
+         * nothing reads this option when the Docker client is built.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1381,12 +1400,14 @@ public interface DockerEndpointBuilderFactory {
          * @param followRedirectFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointBuilder followRedirectFilter(String followRedirectFilter) {
             doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
-         * Whether to use logging filter.
+         * Whether to use logging filter. Deprecation note: Not used: nothing
+         * reads this option when the Docker client is built.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1396,12 +1417,14 @@ public interface DockerEndpointBuilderFactory {
          * @param loggingFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointBuilder loggingFilter(boolean loggingFilter) {
             doSetProperty("loggingFilter", loggingFilter);
             return this;
         }
         /**
-         * Whether to use logging filter.
+         * Whether to use logging filter. Deprecation note: Not used: nothing
+         * reads this option when the Docker client is built.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1411,6 +1434,7 @@ public interface DockerEndpointBuilderFactory {
          * @param loggingFilter the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedDockerEndpointBuilder loggingFilter(String loggingFilter) {
             doSetProperty("loggingFilter", loggingFilter);
             return this;
