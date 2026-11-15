@@ -271,6 +271,19 @@ YAML::
 ----
 ====
 
+The iterator keeps the connection and the result set open until the exchange is complete.
+The query gets the `fetchSize` and `template.*` options (such as `template.maxRows` and `template.queryTimeout`)
+like the other output types, and in a transacted route it runs on the connection of the transaction.
+No `CamelSqlRowCount` header is set, as the number of rows is not known up front.
+
+Whether the rows are loaded as needed depends on the JDBC driver. For example, the PostgreSQL driver only fetches
+`fetchSize` rows at a time when the connection has auto-commit off (as in a transacted route); otherwise it loads all
+the rows when the query is executed.
+
+The consumer supports `outputType=StreamList` too, but its iterator can only be used while the poll runs: process it
+in the route of the consumer (for example with the Splitter EIP), and do not hand it over to another thread (such as a
+`seda` endpoint).
+
 === Generated keys
 
 If you insert data using SQL INSERT, then the RDBMS may support auto

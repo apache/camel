@@ -25,16 +25,20 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.sql.DataSource;
+
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
 public class ResultSetIterator implements Iterator<Object>, Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResultSetIterator.class);
 
     private final Connection connection;
+    private final DataSource dataSource;
     private final Statement statement;
     private final ResultSet resultSet;
     private final RowMapper<?> rowMapper;
@@ -43,7 +47,18 @@ public class ResultSetIterator implements Iterator<Object>, Closeable {
 
     public ResultSetIterator(Connection connection, Statement statement, ResultSet resultSet,
                              RowMapper<?> rowMapper) throws SQLException {
+        this(connection, null, statement, resultSet, rowMapper);
+    }
+
+    /**
+     * @param dataSource the data source the connection was obtained from with {@link DataSourceUtils}, so the
+     *                   connection is released with {@link DataSourceUtils#releaseConnection}, which does not close the
+     *                   connection of a transaction
+     */
+    public ResultSetIterator(Connection connection, DataSource dataSource, Statement statement, ResultSet resultSet,
+                             RowMapper<?> rowMapper) throws SQLException {
         this.connection = connection;
+        this.dataSource = dataSource;
         this.statement = statement;
         this.resultSet = resultSet;
         this.rowMapper = rowMapper;
@@ -106,7 +121,7 @@ public class ResultSetIterator implements Iterator<Object>, Closeable {
 
     private void safeCloseConnection() {
         try {
-            connection.close();
+            DataSourceUtils.doReleaseConnection(connection, dataSource);
         } catch (SQLException e) {
             LOG.warn("Error by closing connection: {}", e, e);
         }

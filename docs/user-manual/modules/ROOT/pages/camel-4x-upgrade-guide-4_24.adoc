@@ -3528,6 +3528,17 @@ A single `Map` body is now one batch item, and so is a single `Map` in the `Came
 (sql-stored). Before, its entries were used as the batch items and the call failed (sql: no value found for the named
 parameters, sql-stored: an `SQLException`).
 
+=== camel-sql - outputType=StreamList takes part in the transaction and applies the template options
+
+The producer with `outputType=StreamList` now gets its connection like the other output types: in a transacted route
+the query runs on the connection of the transaction, so it sees the changes made earlier in that transaction, and the
+connection is no longer closed when the iterator is done. Before, the query ran on a connection of its own, outside the
+transaction. The `template.*` options (such as `template.maxRows`, `template.fetchSize` and `template.queryTimeout`)
+now apply to the query too: before, they were ignored.
+
+With the `CamelSqlDataSource` header, the `template.*` options of the endpoint now apply for every output type. Before,
+they were ignored for the `DataSource` of the header.
+
 === camel-sql - JdbcKeyValueRepository: deleteIfExpiredString, and putIfAbsent after a duplicate key
 
 When `JdbcKeyValueRepository` reads an entry that has expired, it deletes the row with the new `deleteIfExpiredString`
