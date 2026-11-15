@@ -1567,6 +1567,34 @@ public interface MNSEndpointBuilderFactory {
             return "CamelAlibabaMnsMessageTag";
         }
         /**
+         * The operation to invoke, overriding the operation the endpoint
+         * resolves. The exchange property of the same name takes precedence
+         * over this header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaMnsOperation}.
+         */
+        public String alibabaMnsOperation() {
+            return "CamelAlibabaMnsOperation";
+        }
+        /**
+         * The name of the topic to publish to, overriding the one the endpoint
+         * resolves. The exchange property of the same name takes precedence
+         * over this header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaMnsTopicName}.
+         */
+        public String alibabaMnsTopicName() {
+            return "CamelAlibabaMnsTopicName";
+        }
+        /**
          * Number of times the message has been dequeued.
          * 
          * The option is a: {@code Integer} type.
