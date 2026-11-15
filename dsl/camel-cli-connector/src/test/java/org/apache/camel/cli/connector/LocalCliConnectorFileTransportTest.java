@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -66,6 +67,8 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
     private File dir;
     private LocalCliConnector connector;
     private final AtomicInteger sigterms = new AtomicInteger();
+    private final CountDownLatch slowEntered = new CountDownLatch(1);
+    private final CountDownLatch slowRelease = new CountDownLatch(1);
 
     @Override
     protected boolean useJmx() {
@@ -92,6 +95,12 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
             public void configure() {
                 from("direct:hello").routeId("hello").setBody(simple("Hello ${body}"));
                 from("direct:other").routeId("other").to("mock:other");
+                from("direct:slow").routeId("slow")
+                        .process(e -> {
+                            slowEntered.countDown();
+                            slowRelease.await(20, TimeUnit.SECONDS);
+                        })
+                        .setBody(simple("Slow ${body}"));
             }
         };
     }
@@ -218,6 +227,42 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
         JsonObject out = awaitJson(file(PID + "-output.json"));
         assertThat(out.getString("status")).isEqualTo("success");
         assertThat(out.toJson()).contains("Hello World");
+    }
+
+    @Test
+    void slowSendDoesNotBlockTheStatusNorStop() throws Exception {
+        startConnector();
+        try {
+            writeAction(action("send", "endpoint", "direct:slow", "body", "World", "exchangePattern", "InOut"), "slow");
+            assertThat(slowEntered.await(5, TimeUnit.SECONDS)).isTrue();
+
+            // the send waits for its reply, and meanwhile the other actions and the status go on
+            writeAction(action("route", "command", "stop", "id", "other"), "fast");
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(
+                    routeState(readJson(file(PID + "-status.json")), "other")).isEqualTo("Stopped"));
+
+            // as does camel stop, which deletes the lock file
+            Files.delete(file(PID).toPath());
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(sigterms).hasValue(1));
+        } finally {
+            slowRelease.countDown();
+        }
+    }
+
+    @Test
+    void sendsAreAnsweredInOrderOnceTheSlowOneIsDone() throws Exception {
+        startConnector();
+        try {
+            writeAction(action("send", "endpoint", "direct:slow", "body", "first", "exchangePattern", "InOut"), "a");
+            assertThat(slowEntered.await(5, TimeUnit.SECONDS)).isTrue();
+            writeAction(action("send", "endpoint", "direct:hello", "body", "second", "exchangePattern", "InOut"), "b");
+            await().during(500, TimeUnit.MILLISECONDS).atMost(2, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertThat(file(PID + "-output-b.json")).doesNotExist());
+        } finally {
+            slowRelease.countDown();
+        }
+        assertThat(awaitJson(file(PID + "-output-a.json")).toJson()).contains("Slow first");
+        assertThat(awaitJson(file(PID + "-output-b.json")).toJson()).contains("Hello second");
     }
 
     @Test

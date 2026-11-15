@@ -65,6 +65,14 @@ public class RepeatedCallSessions {
      * budget (CAMEL-25640).
      */
     void recordSuccessfulAnswer(McpConnection connection, String tool, Map<String, String> args) {
+        recordSuccessfulAnswer(connection, tool, args, null);
+    }
+
+    /**
+     * As {@link #recordSuccessfulAnswer(McpConnection, String, Map)}, with the answer, so a repeated miss, such as a
+     * name the catalog has not got, gets a note of its own (CAMEL-26932).
+     */
+    void recordSuccessfulAnswer(McpConnection connection, String tool, Map<String, String> args, JsonObject answer) {
         if (connection == null || connection.id() == null) {
             return;
         }
@@ -73,7 +81,7 @@ public class RepeatedCallSessions {
             calls = sessions.get(connection.id());
         }
         if (calls != null) {
-            calls.recordSuccessfulAnswer(ToolRegistry.findTool(tool), args);
+            calls.recordSuccessfulAnswer(ToolRegistry.findTool(tool), args, answer);
         }
     }
 }

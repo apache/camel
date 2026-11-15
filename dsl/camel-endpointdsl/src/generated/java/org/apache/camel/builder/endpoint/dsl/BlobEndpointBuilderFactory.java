@@ -4084,12 +4084,13 @@ public interface BlobEndpointBuilderFactory {
             return "CamelAzureStorageBlobBlobContainerName";
         }
         /**
-         * (Operations related to blob) Override/set the blob name on the
-         * exchange headers.
+         * (producer) Override/set the blob name on the exchange headers, for
+         * the operations related to a blob. (consumer) The name of the blob
+         * that was consumed.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code AzureStorageBlobBlobName}.
          */

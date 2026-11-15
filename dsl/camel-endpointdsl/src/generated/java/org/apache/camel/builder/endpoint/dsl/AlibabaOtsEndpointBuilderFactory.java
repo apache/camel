@@ -45,7 +45,10 @@ public interface AlibabaOtsEndpointBuilderFactory {
         }
 
         /**
-         * Tablestore endpoint URL.
+         * The endpoint of the Tablestore instance, which starts with http:// or
+         * https://, for example
+         * https://my-instance.cn-hangzhou.ots.aliyuncs.com. Not used when the
+         * otsClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -60,7 +63,8 @@ public interface AlibabaOtsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tablestore instance name.
+         * The name of the Tablestore instance. Not used when the otsClient
+         * option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -75,7 +79,10 @@ public interface AlibabaOtsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Access key for the cloud user.
+         * The AccessKey ID of the AccessKey pair for the requests that the
+         * producer sends to Tablestore. If not set, the accessKey of the
+         * serviceKeys option is used, and one of the two is required. Not used
+         * when the otsClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -89,7 +96,10 @@ public interface AlibabaOtsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Secret key for the cloud user.
+         * The AccessKey secret of the AccessKey pair for the requests that the
+         * producer sends to Tablestore. If not set, the secretKey of the
+         * serviceKeys option is used, and one of the two is required. Not used
+         * when the otsClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -103,7 +113,11 @@ public interface AlibabaOtsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configuration object for cloud service authentication.
+         * The AccessKey pair as an
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
+         * secret. Each of the two is used when the option of the same name is
+         * not set. Not used when the otsClient option is set or autowired.
          * 
          * The option is a:
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -118,7 +132,11 @@ public interface AlibabaOtsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configuration object for cloud service authentication.
+         * The AccessKey pair as an
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
+         * secret. Each of the two is used when the option of the same name is
+         * not set. Not used when the otsClient option is set or autowired.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -191,7 +209,14 @@ public interface AlibabaOtsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Autowire an existing Tablestore client instance.
+         * To use a custom com.alicloud.openservices.tablestore.SyncClient. The
+         * producer sends its requests with this client, and the endpoint,
+         * instanceName, accessKey, secretKey and serviceKeys options are not
+         * used. The Camel endpoint does not shut down a client that is set or
+         * autowired. If no client is set or autowired, the Camel endpoint
+         * creates a SyncClient from these options. It creates this client when
+         * the producer processes its first message, and shuts it down when the
+         * Camel endpoint stops.
          * 
          * The option is a:
          * <code>com.alicloud.openservices.tablestore.SyncClient</code> type.
@@ -206,7 +231,14 @@ public interface AlibabaOtsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Autowire an existing Tablestore client instance.
+         * To use a custom com.alicloud.openservices.tablestore.SyncClient. The
+         * producer sends its requests with this client, and the endpoint,
+         * instanceName, accessKey, secretKey and serviceKeys options are not
+         * used. The Camel endpoint does not shut down a client that is set or
+         * autowired. If no client is set or autowired, the Camel endpoint
+         * creates a SyncClient from these options. It creates this client when
+         * the producer processes its first message, and shuts it down when the
+         * Camel endpoint stops.
          * 
          * The option will be converted to a
          * <code>com.alicloud.openservices.tablestore.SyncClient</code> type.
@@ -247,7 +279,10 @@ public interface AlibabaOtsEndpointBuilderFactory {
          * Syntax: <code>alibaba-ots:operation</code>
          * 
          * Path parameter: operation (required)
-         * Operation to perform
+         * The operation that the producer performs. The
+         * CamelAlibabaOtsOperation header replaces this option for a request
+         * that the producer sends. If that header is not set, an exchange
+         * property of the same name replaces this option.
          * There are 5 enums and the value can be one of: putRow, getRow,
          * updateRow, deleteRow, listTables
          * 
@@ -268,7 +303,10 @@ public interface AlibabaOtsEndpointBuilderFactory {
          * Syntax: <code>alibaba-ots:operation</code>
          * 
          * Path parameter: operation (required)
-         * Operation to perform
+         * The operation that the producer performs. The
+         * CamelAlibabaOtsOperation header replaces this option for a request
+         * that the producer sends. If that header is not set, an exchange
+         * property of the same name replaces this option.
          * There are 5 enums and the value can be one of: putRow, getRow,
          * updateRow, deleteRow, listTables
          * 
@@ -293,7 +331,8 @@ public interface AlibabaOtsEndpointBuilderFactory {
         public static final AlibabaOtsHeaderNameBuilder INSTANCE = new AlibabaOtsHeaderNameBuilder();
 
         /**
-         * Operation override.
+         * The operation that the producer performs. This header replaces the
+         * operation option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -305,7 +344,8 @@ public interface AlibabaOtsEndpointBuilderFactory {
             return "CamelAlibabaOtsOperation";
         }
         /**
-         * Tablestore request id.
+         * The request ID that Tablestore returns in the response to the
+         * operation. The producer sets it when the operation succeeds.
          * 
          * The option is a: {@code String} type.
          * 

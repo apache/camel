@@ -43,7 +43,7 @@ public final class JacksonXMLTypeConverters {
         // only do this if enabled
         if (!init && exchange != null) {
             // init to see if this is enabled
-            String text = exchange.getContext().getGlobalOptions().get(JacksonXMLConstants.ENABLE_XML_TYPE_CONVERTER);
+            String text = exchange.getContext().getGlobalOptions().get(JacksonXMLConstants.ENABLE_TYPE_CONVERTER);
             enabled = "true".equalsIgnoreCase(text);
             init = true;
         }

@@ -477,11 +477,12 @@ public interface CamundaEndpointBuilderFactory {
         public static final CamundaHeaderNameBuilder INSTANCE = new CamundaHeaderNameBuilder();
 
         /**
-         * Job key for the worker job.
+         * (consumer) Job key of the worker job that was activated. (producer)
+         * Job key of the job to act on, when the body does not carry one.
          * 
          * The option is a: {@code long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code CamundaJobKey}.
          */

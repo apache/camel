@@ -135,9 +135,9 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
     /**
      * Waits until a message is available and then returns it.
-     * <p/>
-     * Returns <tt>null</tt> if this consumer is stopped while waiting, or if the calling thread is interrupted while
-     * waiting. In the latter case the interrupt status of the thread is kept.
+     * <p>
+     * Returns <code>null</code> if this consumer is stopped while waiting, or if the calling thread is interrupted
+     * while waiting. In the latter case the interrupt status of the thread is kept.
      */
     @Override
     public Exchange receive() {
@@ -189,7 +189,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
     /**
      * Registers a receive call in progress and invokes beforePoll.
-     * <p/>
+     * <p>
      * Receive calls from several threads wait for a message at the same time, without holding a lock. afterPoll is
      * therefore only invoked by the last receive call in progress, so a caller is never left waiting after another
      * caller has invoked afterPoll (such as suspending the delegate consumer).

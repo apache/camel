@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -131,6 +132,7 @@ public class LocalCliConnector extends ServiceSupport
     private ExecutorService semanticExecutor;
     private ExecutorService auditExecutor;
     private ExecutorService sendExecutor;
+    private ExecutorService singleSendExecutor;
     private final AtomicLong semanticConsoleLookup = new AtomicLong(System.nanoTime() - SEMANTIC_CONSOLE_RETRY_NANOS);
     private ProducerTemplate producer;
     private ConsumerTemplate consumer;
@@ -246,8 +248,8 @@ public class LocalCliConnector extends ServiceSupport
 
     @Override
     public CompletableFuture<Boolean> dispatchAsync(JsonObject root, CliActionOutput output) {
-        if ("send".equals(root.getString("action")) && RepeatedSend.isRepeated(root)) {
-            return repeatedSend(root, output);
+        if ("send".equals(root.getString("action"))) {
+            return RepeatedSend.isRepeated(root) ? repeatedSend(root, output) : singleSend(root, output);
         }
         boolean auditQuery = "semantic-audit".equals(root.getString("action"));
         if (!auditQuery && !"semantic-evaluate".equals(root.getString("action"))) {
@@ -302,11 +304,38 @@ public class LocalCliConnector extends ServiceSupport
      * status and the other actions go on meanwhile. The transport cancels it when the client gives up the request.
      */
     private CompletableFuture<Boolean> repeatedSend(JsonObject root, CliActionOutput output) {
+        return send(output, () -> repeatedSendResult(root), () -> {
+            if (sendExecutor == null) {
+                sendExecutor = new ThreadPoolBuilder(camelContext).poolSize(2).maxPoolSize(2).maxQueueSize(0)
+                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build("cli-repeated-send", "CliRepeatedSend");
+            }
+            return sendExecutor;
+        }, "Busy: two repeated sends are already running");
+    }
+
+    /**
+     * The send action of one message, on a thread of its own, as an InOut send or a poll waits for the reply or the
+     * message (up to the timeout of the client), and the connector thread must go on writing the status and looking for
+     * the lock file, which camel stop deletes (CAMEL-26911). One at a time and in order, as they were on the connector
+     * thread.
+     */
+    private CompletableFuture<Boolean> singleSend(JsonObject root, CliActionOutput output) {
+        return send(output, () -> sendResult(root), () -> {
+            if (singleSendExecutor == null) {
+                singleSendExecutor = new ThreadPoolBuilder(camelContext).poolSize(1).maxPoolSize(1).maxQueueSize(100)
+                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build("cli-single-send", "CliSend");
+            }
+            return singleSendExecutor;
+        }, "Busy: 100 sends are already waiting");
+    }
+
+    private CompletableFuture<Boolean> send(
+            CliActionOutput output, Callable<JsonObject> send, Callable<ExecutorService> executor, String busy) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         FutureTask<Void> task = new FutureTask<>(() -> {
             try {
                 // capture this request's output; never use the dispatcher's mutable actionOutput from a worker
-                output.write(repeatedSendResult(root));
+                output.write(send.call());
                 result.complete(true);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -326,14 +355,10 @@ public class LocalCliConnector extends ServiceSupport
                 if (isStoppingOrStopped()) {
                     throw new IllegalStateException("CLI connector is stopping or stopped");
                 }
-                if (sendExecutor == null) {
-                    sendExecutor = new ThreadPoolBuilder(camelContext).poolSize(2).maxPoolSize(2).maxQueueSize(0)
-                            .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build("cli-send", "CliRepeatedSend");
-                }
-                sendExecutor.execute(task);
+                executor.call().execute(task);
             }
-        } catch (RejectedExecutionException busy) {
-            result.completeExceptionally(new IllegalStateException("Busy: two repeated sends are already running"));
+        } catch (RejectedExecutionException e) {
+            result.completeExceptionally(new IllegalStateException(busy));
         } catch (Exception e) {
             result.completeExceptionally(e);
         }
@@ -405,6 +430,8 @@ public class LocalCliConnector extends ServiceSupport
                 doActionRouteDumpTask(root);
             } else if ("timeline".equals(action)) {
                 doActionTimelineTask(root);
+            } else if ("sanitizer".equals(action)) {
+                doActionSanitizerTask(root);
             } else if ("route-structure".equals(action)) {
                 doActionRouteStructureTask(root);
             } else if ("route-topology".equals(action)) {
@@ -726,28 +753,25 @@ public class LocalCliConnector extends ServiceSupport
     }
 
     private void doActionSendTask(JsonObject root) throws Exception {
+        // a transport that dispatches on its own thread, rather than with dispatchAsync
+        writeOutput(RepeatedSend.isRepeated(root) ? repeatedSendResult(root) : sendResult(root));
+    }
+
+    private JsonObject sendResult(JsonObject root) throws Exception {
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("send");
-        if (dc != null) {
-
-            if (RepeatedSend.isRepeated(root)) {
-                // a transport that dispatches on its own thread, rather than with dispatchAsync
-                writeOutput(repeatedSendResult(root));
-                return;
-            }
-            waitUntilStarted();
-
-            final Map<String, Object> args = sendOptions(root);
-            String body = root.getString("body");
-            if (body != null) {
-                args.put("body", body);
-            }
-            args.putAll(sendHeaders(root));
-            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, args);
-            writeOutput(json);
-        } else {
-            writeOutput(new JsonObject());
+        if (dc == null) {
+            return new JsonObject();
         }
+        waitUntilStarted();
+
+        final Map<String, Object> args = sendOptions(root);
+        String body = root.getString("body");
+        if (body != null) {
+            args.put("body", body);
+        }
+        args.putAll(sendHeaders(root));
+        return (JsonObject) dc.call(DevConsole.MediaType.JSON, args);
     }
 
     private void waitUntilStarted() throws InterruptedException {
@@ -862,6 +886,21 @@ public class LocalCliConnector extends ServiceSupport
         } else {
             writeOutput(new JsonObject());
         }
+    }
+
+    /**
+     * The report of camel-sanitizer (camel get sanitizer): asked for when needed, not in the status, as it can list up
+     * to 1000 violations with their stacks. An empty answer when camel-sanitizer is not on the classpath. The option
+     * report=false of the console is forwarded (the table of camel get sanitizer does not show the reports).
+     */
+    private void doActionSanitizerTask(JsonObject root) throws Exception {
+        Map<String, Object> params = new HashMap<>();
+        String report = root.getString("report");
+        if (report != null) {
+            params.put("report", report);
+        }
+        JsonObject json = callConsole("sanitizer", params);
+        writeOutput(json != null ? json : new JsonObject());
     }
 
     private void doActionRouteStructureTask(JsonObject root) throws Exception {
@@ -2129,6 +2168,10 @@ public class LocalCliConnector extends ServiceSupport
             if (sendExecutor != null) {
                 camelContext.getExecutorServiceManager().shutdownNow(sendExecutor);
                 sendExecutor = null;
+            }
+            if (singleSendExecutor != null) {
+                camelContext.getExecutorServiceManager().shutdownNow(singleSendExecutor);
+                singleSendExecutor = null;
             }
         }
         ServiceHelper.stopService(producer, consumer);
