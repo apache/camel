@@ -18,17 +18,24 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import java.net.URI;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.aesh.command.Command;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.CommandResult;
 import org.aesh.command.invocation.CommandInvocation;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CliExportContext;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.export.ExportContext;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -213,7 +220,7 @@ public class PluginHelperTest {
         Path jar = tempDir.resolve("fake-plugin.jar");
         FakePluginJar.write(jar, "fake");
 
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         writeConfig(buildEntry("fake", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis()));
 
         CamelJBangMain main = new CamelJBangMain();
@@ -229,7 +236,7 @@ public class PluginHelperTest {
         Path jar = tempDir.resolve("fake-plugin.jar");
         FakePluginJar.write(jar, "fake");
 
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         long staleMtime = Files.getLastModifiedTime(jar).toMillis() - 1000;
         writeConfig(buildEntry("fake", camelVersion, jar, staleMtime));
 
@@ -246,7 +253,7 @@ public class PluginHelperTest {
     public void aPluginThatCannotBeLoadedDoesNotFailCamelRun() throws Exception {
         Path jar = tempDir.resolve("fake-plugin.jar");
         FakePluginJar.write(jar, "fake");
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         long staleMtime = Files.getLastModifiedTime(jar).toMillis() - 1000;
         // without appliesTo the plugin contributes to camel run and camel export, and it cannot be resolved
         writeConfig(buildEntry("fake", camelVersion, jar, staleMtime));
@@ -270,7 +277,7 @@ public class PluginHelperTest {
         // a plugin built for another Camel version, whose classes refer to one that moved: creating it fails with a
         // NoClassDefFoundError, which is not a RuntimeException. It is found on the classpath of the tests
         // (META-INF/services/org/apache/camel/camel-jbang-plugin/camel-jbang-plugin-unlinked).
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         writeConfig(buildEntryWithoutResolvedBlock("unlinked", camelVersion));
         StringPrinter printer = new StringPrinter();
         QuitCapture main = new QuitCapture();
@@ -280,16 +287,61 @@ public class PluginHelperTest {
         Map<String, Plugin> plugins = assertDoesNotThrow(() -> PluginHelper.getActivePlugins(main, null, "run", true));
 
         assertTrue(plugins.isEmpty());
-        String reason = "it does not link with Camel " + camelVersion + ", it is likely built for another version: "
+        String reason = "it does not link with Camel " + camelVersion + " and may be built for another version: "
                         + "NoClassDefFoundError ";
+        String remedy = "run camel plugin add unlinked to select a release for this Camel version, or remove it with"
+                        + " camel plugin delete unlinked";
         assertTrue(printer.getStderr().contains("Plugin unlinked cannot be loaded (" + reason), printer.getStderr());
-        assertTrue(printer.getStderr().contains("so camel run goes on without it: remove it with camel plugin delete unlinked"),
-                printer.getStderr());
+        assertTrue(printer.getStderr().contains("so camel run goes on without it: " + remedy), printer.getStderr());
 
         // its own command fails with the reason, rather than with the error
         CliException e = assertThrows(CliException.class, () -> PluginHelper.getActivePlugins(main, null, "unlinked"));
         assertTrue(e.getMessage().startsWith("Plugin unlinked cannot be loaded (" + reason), e.getMessage());
-        assertTrue(e.getMessage().endsWith("update it, or remove it with camel plugin delete unlinked"), e.getMessage());
+        assertTrue(e.getMessage().endsWith("): " + remedy), e.getMessage());
+    }
+
+    @Test
+    public void aPluginWhoseExporterOrRunCustomizerDoesNotLinkDoesNotFailCamelExport() throws Exception {
+        // plugins built for another Camel version that link, while their exporter or run customizer refers to a class
+        // that moved: the JVM links that class when it is first used, as camel run and camel export ask for it
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
+        JsonObject exporter = cachedEntry("exporter", UnlinkedContributionFakePlugins.UnlinkedExporterPlugin.class,
+                camelVersion);
+        JsonObject customizer = cachedEntry("customizer", UnlinkedContributionFakePlugins.UnlinkedRunCustomizerPlugin.class,
+                camelVersion);
+        // stored with a command of its own: the warning names the plugin, which camel plugin delete takes
+        customizer.put("command", "customize");
+        writeConfig(exporter, customizer);
+        StringPrinter printer = new StringPrinter();
+        CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
+
+        // before, the NoClassDefFoundError failed camel export (CAMEL-26964): both are left out with a warning
+        ExportContext.ActivePlugins plugins
+                = assertDoesNotThrow(() -> CliExportContext.create(main, printer, true).getPlugins(null));
+
+        // the run customizer of the first one links, but the plugin is left out as a whole
+        assertTrue(plugins.runCustomizers().isEmpty(), plugins.runCustomizers().toString());
+        assertTrue(plugins.exporters().isEmpty(), plugins.exporters().toString());
+        String reason = "it does not link with Camel " + camelVersion + " and may be built for another version: "
+                        + "NoClassDefFoundError ";
+        for (String name : List.of("exporter", "customizer")) {
+            assertTrue(printer.getStderr().contains("Plugin " + name + " cannot be loaded (" + reason), printer.getStderr());
+            assertTrue(printer.getStderr().contains("so camel export goes on without it: run camel plugin add " + name
+                                                    + " to select a release for this Camel version, or remove it with"
+                                                    + " camel plugin delete " + name),
+                    printer.getStderr());
+        }
+    }
+
+    @Test
+    public void aStaticInitializerThatFailsIsReportedWithItsCause() {
+        // an ExceptionInInitializerError is a LinkageError without a message of its own: what failed is its cause,
+        // often a bug in the plugin rather than another Camel version
+        String reason = PluginHelper.notLinked("4.24.0", new ExceptionInInitializerError(new IllegalStateException("boom")));
+
+        assertEquals("it does not link with Camel 4.24.0 and may be built for another version: ExceptionInInitializerError"
+                     + " caused by IllegalStateException boom",
+                reason);
     }
 
     @Test
@@ -297,7 +349,7 @@ public class PluginHelperTest {
         Path jar = tempDir.resolve("unlinked-plugin.jar");
         FakePluginJar.write(jar, "fake", UnlinkedFakePlugin.class.getName());
 
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         JsonObject entry = buildEntry("fake", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
         ((JsonObject) entry.get("resolved")).put("className", UnlinkedFakePlugin.class.getName());
         writeConfig(entry);
@@ -333,7 +385,7 @@ public class PluginHelperTest {
         entry.put("name", "fake");
         entry.put("command", "fake");
 
-        try (java.net.URLClassLoader cl = new java.net.URLClassLoader(new java.net.URL[] { jar.toUri().toURL() })) {
+        try (URLClassLoader cl = new URLClassLoader(new URL[] { jar.toUri().toURL() })) {
             boolean written = PluginHelper.writeCache(entry, "9.9.9", null, null, FakePluginJar.PLUGIN_CLASS, cl, "fake",
                     "9.9.9");
             assertTrue(written);
@@ -346,8 +398,8 @@ public class PluginHelperTest {
         assertNotNull(resolved.get("cachedAt"));
 
         Object cp = resolved.get("classpath");
-        assertTrue(cp instanceof java.util.Collection);
-        java.util.Collection<?> classpath = (java.util.Collection<?>) cp;
+        assertTrue(cp instanceof Collection);
+        Collection<?> classpath = (Collection<?>) cp;
         assertEquals(1, classpath.size());
         Map<?, ?> jarEntry = (Map<?, ?>) classpath.iterator().next();
         assertEquals(jar.toAbsolutePath().toString(), jarEntry.get("path"));
@@ -367,7 +419,7 @@ public class PluginHelperTest {
         // both halves — only the presence of the `resolved` block in the config differs.
         Path jar = tempDir.resolve("fake-plugin.jar");
         FakePluginJar.write(jar, "fake");
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
 
         // BEFORE CAMEL-23335: entry has no `resolved` block. resolvePlugin falls through loadFromCache,
         // misses FACTORY_FINDER (no service registered for "fake"), reaches downloadPlugin with no usable
@@ -415,7 +467,7 @@ public class PluginHelperTest {
         // a plugin release selected for an older CLI; loading it uses the cache only, so there is no download
         Path jar = tempDir.resolve("fake-plugin.jar");
         FakePluginJar.write(jar, "compat");
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         JsonObject entry = buildEntry("compat", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
         entry.put("camelVersions", "[4.0.0,4.1.0)");
         entry.put("camelVersionsSource", "inferred");
@@ -636,9 +688,11 @@ public class PluginHelperTest {
         assertEquals(dirPath.resolve(PluginHelper.PLUGIN_CONFIG), result);
     }
 
-    private void writeConfig(JsonObject pluginEntry) throws Exception {
+    private void writeConfig(JsonObject... pluginEntries) throws Exception {
         JsonObject plugins = new JsonObject();
-        plugins.put(pluginEntry.getString("name"), pluginEntry);
+        for (JsonObject pluginEntry : pluginEntries) {
+            plugins.put(pluginEntry.getString("name"), pluginEntry);
+        }
         JsonObject config = new JsonObject();
         config.put("plugins", plugins);
         Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
@@ -651,6 +705,15 @@ public class PluginHelperTest {
         entry.put("command", name);
         entry.put("description", "Fake plugin");
         entry.put("firstVersion", camelVersion);
+        return entry;
+    }
+
+    // a plugin entry whose cache points to a jar with the given plugin class
+    private JsonObject cachedEntry(String name, Class<? extends Plugin> pluginClass, String camelVersion) throws Exception {
+        Path jar = tempDir.resolve(name + "-plugin.jar");
+        FakePluginJar.write(jar, name, pluginClass.getName());
+        JsonObject entry = buildEntry(name, camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
+        ((JsonObject) entry.get("resolved")).put("className", pluginClass.getName());
         return entry;
     }
 
@@ -669,7 +732,7 @@ public class PluginHelperTest {
         JsonObject resolved = new JsonObject();
         resolved.put("camelVersion", camelVersion);
         resolved.put("className", FakePluginJar.PLUGIN_CLASS);
-        java.util.List<JsonObject> cp = new java.util.ArrayList<>();
+        List<JsonObject> cp = new ArrayList<>();
         cp.add(jarEntry);
         resolved.put("classpath", cp);
         entry.put("resolved", resolved);

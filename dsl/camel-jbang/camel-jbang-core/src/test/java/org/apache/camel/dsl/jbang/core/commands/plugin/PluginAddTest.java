@@ -226,7 +226,7 @@ class PluginAddTest extends CamelCommandBaseTestSupport {
 
         Assertions.assertTrue(
                 printer.getStderr().contains("Cannot load org.example.plugins:camel-jbang-plugin-fixture:1.6.2: it does not"
-                                             + " link with Camel 4.22.0, it is likely built for another version:"
+                                             + " link with Camel 4.22.0 and may be built for another version:"
                                              + " NoClassDefFoundError org/apache/camel/dsl/jbang/core/common/Printer"),
                 printer.getStderr());
         Assertions.assertEquals(before, PluginHelper.getOrCreatePluginConfig().toJson());

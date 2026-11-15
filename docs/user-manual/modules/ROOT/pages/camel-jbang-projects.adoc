@@ -282,7 +282,9 @@ camel plugin delete <plugin-name>
 community plugin) can be loaded before it stores it: a name such as `kubernets` exits with code `3` and the plugins of a
 similar name. Give `--gav` for a plugin of your own. A stored plugin that cannot be loaded no longer fails `camel run`
 and `camel export`: they warn and go on without it. This includes a plugin built for another Camel version, whose
-classes do not link with this Camel CLI: the warning says so, and the plugin's own command fails with the same reason.
+classes (or only those of its exporter or run customizer) do not link with this Camel CLI: the warning says so, and the
+plugin's own command fails with the same reason. Run `camel plugin add <plugin-name>` to select a release built for
+this Camel version, or remove the plugin with `camel plugin delete <plugin-name>`.
 
 === Custom plugin configuration
 
