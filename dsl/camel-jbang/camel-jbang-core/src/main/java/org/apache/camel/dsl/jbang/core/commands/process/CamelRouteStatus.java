@@ -54,7 +54,9 @@ import org.apache.camel.util.json.Jsoner;
                            "  camel get route --watch" })
 public class CamelRouteStatus extends ProcessWatchCommand {
 
-    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
+    // the uptime of a route is how long it runs: the oldest first, as the listings of the integrations sort by when
+    // they started (CAMEL-26929)
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> -r.uptime);
 
     @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
