@@ -909,7 +909,10 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Sets whether to eagerly add the filename to the idempotent repository
-         * or wait until the exchange is complete.
+         * or wait until the exchange is complete. Does not apply with an
+         * idempotent read lock (readLock=idempotent, idempotent-changed or
+         * idempotent-rename), which adds the filename when it acquires the
+         * lock.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -925,7 +928,10 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Sets whether to eagerly add the filename to the idempotent repository
-         * or wait until the exchange is complete.
+         * or wait until the exchange is complete. Does not apply with an
+         * idempotent read lock (readLock=idempotent, idempotent-changed or
+         * idempotent-rename), which adds the filename when it acquires the
+         * lock.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.

@@ -77,6 +77,13 @@ at `DEBUG` level with the message only. Checkpoint failures triggered by batch s
 The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.
 The `InvalidMessageSignatureException` of a failed check no longer carries the calculated signature: `getCalculatedSignature()` returns `null` and is deprecated, as is the constructor that takes it.
 
+=== camel-file - idempotent consumer with an idempotent read lock
+
+With `idempotent=true` (or `noop=true`) and `readLock=idempotent`, `idempotent-changed` or `idempotent-rename`, the
+file consumer no longer adds the key to the idempotent repository eagerly, and `idempotentEager` does not apply: the
+read lock adds it when it acquires the lock. Since Camel 4.7 the read lock was refused, and such a consumer never
+consumed a file.
+
 === camel-ftp - sftp uses remote file and directory names as given
 
 The `sftp` component now uses a remote file or directory name exactly as given, also when it contains `*` or `?`.
