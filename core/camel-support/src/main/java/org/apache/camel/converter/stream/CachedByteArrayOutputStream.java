@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * A {@link ByteArrayOutputStream} that is capable of returning a {@link InputStreamCache} view of the buffer.
- * <p/>
+ * <p>
  * This implementation avoids any buffer copying when caching in memory {@link java.io.InputStream} as the buffer can be
  * shared.
  */

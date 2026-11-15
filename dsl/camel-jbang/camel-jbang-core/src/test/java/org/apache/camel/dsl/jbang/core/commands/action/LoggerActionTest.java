@@ -25,6 +25,8 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
@@ -35,6 +37,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -103,6 +106,18 @@ class LoggerActionTest extends CamelCommandBaseTestSupport {
             assertTrue(output.contains("com.example"), "Should list all loggers");
             assertTrue(output.contains("DEBUG"), "Should show DEBUG level");
         }
+    }
+
+    @Test
+    void anUnknownLoggingLevelIsAUsageError() {
+        // it was set as ERROR, with exit code 0 (CAMEL-26929)
+        LoggerAction command = new LoggerAction(new CamelJBangMain().withPrinter(printer));
+        command.loggingLevel = "BOGUS";
+
+        CliException e = assertThrows(CliException.class, command::doCall);
+
+        assertEquals(CliExitCode.USAGE, e.getExitCode());
+        assertEquals("Unknown logging level: BOGUS (ERROR, WARN, INFO, DEBUG, TRACE, OFF)", e.getMessage());
     }
 
     @Test

@@ -85,6 +85,7 @@ camel run [options]
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--resource-dir,--resource-dirs` | Additional resource directories to include on the classpath (recursive, preserving structure) |  | List
 | `--runtime` | Runtime (jbang, camel-main, spring-boot, quarkus). The jbang runtime runs in-process in the Camel CLI JVM which is fast and intended for prototyping. The other runtimes export to a temporary project and run in a separate JVM via Maven, similar to a production deployment. | jbang | RuntimeType
+| `--sanitizer` | Add camel-sanitizer, which reports where the processors of the routes break the contract of AsyncProcessor, and with camel.sanitizer.checks=callback,commit also where the commits of the consumers do not run exactly once (camel get sanitizer); on with profile dev, never with prod. Not with Quarkus yet |  | boolean
 | `--skip-plugins` | Skip resolving plugin dependencies | false | boolean
 | `--source-dir` | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String
 | `--spring-boot-version` | Spring Boot version | 4.1.2 | String

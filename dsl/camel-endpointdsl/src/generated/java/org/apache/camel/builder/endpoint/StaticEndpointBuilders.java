@@ -525,7 +525,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-ots:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaOtsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 5 enums and the value can be one of: putRow, getRow, updateRow,
      * deleteRow, listTables
      * 
@@ -546,7 +549,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-ots:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaOtsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 5 enums and the value can be one of: putRow, getRow, updateRow,
      * deleteRow, listTables
      * 
@@ -16689,7 +16695,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring WebService (camel-spring-ws)
-     * Access external web services as a client or expose your own web services.
+     * Expose SOAP services, or send requests to SOAP services, using Spring Web
+     * Services.
      * 
      * Category: webservice
      * Since: 2.6
@@ -16698,26 +16705,38 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
      * 
      * Path parameter: type
-     * Endpoint mapping type if endpoint mapping is used. rootqname - Offers the
-     * option to map web service requests based on the qualified name of the
-     * root element contained in the message. soapaction - Used to map web
-     * service requests based on the SOAP action specified in the header of the
-     * message. uri - In order to map web service requests that target a
-     * specific URI. xpathresult - Used to map web service requests based on the
-     * evaluation of an XPath expression against the incoming message. The
-     * result of the evaluation should match the XPath result specified in the
-     * endpoint URI. beanname - Allows you to reference an
-     * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object
-     * in order to integrate with existing (legacy) endpoint mappings like
-     * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
+     * The endpoint mapping type, which names the part of a request that is
+     * compared with lookupKey to select the requests for the consumer.
+     * rootqname: the qualified name of the root element of the payload.
+     * soapaction: the SOAP action. uri: the URI of the request. uripath: the
+     * path of the URI of the request. xpathresult: the result of the XPath
+     * expression of the expression option for the request. action: the
+     * WS-Addressing Action header. to: the WS-Addressing To header. beanname:
+     * no part of the request, because lookupKey names a CamelEndpointDispatcher
+     * bean and an existing Spring-WS endpoint mapping maps requests to that
+     * bean. The endpoint URI takes the type as written here, without the
+     * underscore of the enum constant, and ignores its case.
      * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
      * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
      * 
      * Path parameter: lookupKey
-     * Endpoint mapping key if endpoint mapping is used
+     * The value that is compared with the part of the request that type names.
+     * With rootqname, a QName in the form {namespaceURI}localPart, for example
+     * {http://example.com/}GetFoo. With uripath, a value that ends with *
+     * matches each path that starts with the text before the *. With action,
+     * the WS-Addressing Action can be followed by a colon and the To, and with
+     * to, the To can be followed by a colon and the Action. A consumer with
+     * such a combined value takes precedence over a consumer with the Action or
+     * the To alone. With beanname, the name of a CamelEndpointDispatcher bean
+     * in the registry.
      * 
      * Path parameter: webServiceEndpointUri
-     * The default Web Service endpoint uri to use for the producer.
+     * The address that the producer sends requests to. Written in the path of
+     * the endpoint URI in place of type and lookupKey, for example
+     * spring-ws:http://foo.com/bar. The CamelSpringWebserviceEndpointUri header
+     * replaces this address for a request that the producer sends. Not used
+     * when the WebServiceTemplate of the webServiceTemplate option has a
+     * default URI.
      * 
      * @param path type:lookupKey:webServiceEndpointUri
      * @return the dsl builder
@@ -16727,7 +16746,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring WebService (camel-spring-ws)
-     * Access external web services as a client or expose your own web services.
+     * Expose SOAP services, or send requests to SOAP services, using Spring Web
+     * Services.
      * 
      * Category: webservice
      * Since: 2.6
@@ -16736,26 +16756,38 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
      * 
      * Path parameter: type
-     * Endpoint mapping type if endpoint mapping is used. rootqname - Offers the
-     * option to map web service requests based on the qualified name of the
-     * root element contained in the message. soapaction - Used to map web
-     * service requests based on the SOAP action specified in the header of the
-     * message. uri - In order to map web service requests that target a
-     * specific URI. xpathresult - Used to map web service requests based on the
-     * evaluation of an XPath expression against the incoming message. The
-     * result of the evaluation should match the XPath result specified in the
-     * endpoint URI. beanname - Allows you to reference an
-     * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object
-     * in order to integrate with existing (legacy) endpoint mappings like
-     * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
+     * The endpoint mapping type, which names the part of a request that is
+     * compared with lookupKey to select the requests for the consumer.
+     * rootqname: the qualified name of the root element of the payload.
+     * soapaction: the SOAP action. uri: the URI of the request. uripath: the
+     * path of the URI of the request. xpathresult: the result of the XPath
+     * expression of the expression option for the request. action: the
+     * WS-Addressing Action header. to: the WS-Addressing To header. beanname:
+     * no part of the request, because lookupKey names a CamelEndpointDispatcher
+     * bean and an existing Spring-WS endpoint mapping maps requests to that
+     * bean. The endpoint URI takes the type as written here, without the
+     * underscore of the enum constant, and ignores its case.
      * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
      * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
      * 
      * Path parameter: lookupKey
-     * Endpoint mapping key if endpoint mapping is used
+     * The value that is compared with the part of the request that type names.
+     * With rootqname, a QName in the form {namespaceURI}localPart, for example
+     * {http://example.com/}GetFoo. With uripath, a value that ends with *
+     * matches each path that starts with the text before the *. With action,
+     * the WS-Addressing Action can be followed by a colon and the To, and with
+     * to, the To can be followed by a colon and the Action. A consumer with
+     * such a combined value takes precedence over a consumer with the Action or
+     * the To alone. With beanname, the name of a CamelEndpointDispatcher bean
+     * in the registry.
      * 
      * Path parameter: webServiceEndpointUri
-     * The default Web Service endpoint uri to use for the producer.
+     * The address that the producer sends requests to. Written in the path of
+     * the endpoint URI in place of type and lookupKey, for example
+     * spring-ws:http://foo.com/bar. The CamelSpringWebserviceEndpointUri header
+     * replaces this address for a request that the producer sends. Not used
+     * when the WebServiceTemplate of the webServiceTemplate option has a
+     * default URI.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -17238,7 +17270,7 @@ public class StaticEndpointBuilders {
      * ID of the edge node
      * 
      * Path parameter: deviceId
-     * ID of this edge node device
+     * ID of this edge node device. Applies to the device endpoint only.
      * 
      * @param path groupId/edgeNode
      * @return the dsl builder
@@ -17263,7 +17295,7 @@ public class StaticEndpointBuilders {
      * ID of the edge node
      * 
      * Path parameter: deviceId
-     * ID of this edge node device
+     * ID of this edge node device. Applies to the device endpoint only.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

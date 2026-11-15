@@ -292,6 +292,23 @@ public interface Aws2S3ComponentBuilderFactory {
     
         
         /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder useCustomerKey(boolean useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
+            return this;
+        }
+    
+        
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
          * consumer is trying to pickup incoming messages, or the likes, will
@@ -892,23 +909,6 @@ public interface Aws2S3ComponentBuilderFactory {
     
         
         /**
-         * Define if Customer Key must be used or not.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param useCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default Aws2S3ComponentBuilder useCustomerKey(boolean useCustomerKey) {
-            doSetProperty("useCustomerKey", useCustomerKey);
-            return this;
-        }
-    
-        
-        /**
          * Define if SSE S3 must be used or not.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1235,6 +1235,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "customerAlgorithm": getOrCreateConfiguration((AWS2S3Component) component).setCustomerAlgorithm((java.lang.String) value); return true;
             case "customerKeyId": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyId((java.lang.String) value); return true;
             case "customerKeyMD5": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyMD5((java.lang.String) value); return true;
+            case "useCustomerKey": getOrCreateConfiguration((AWS2S3Component) component).setUseCustomerKey((boolean) value); return true;
             case "bridgeErrorHandler": ((AWS2S3Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterRead((boolean) value); return true;
             case "destinationBucket": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucket((java.lang.String) value); return true;
@@ -1267,7 +1268,6 @@ public interface Aws2S3ComponentBuilderFactory {
             case "awsKMSKeyId": getOrCreateConfiguration((AWS2S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
             case "conditionalWritesEnabled": getOrCreateConfiguration((AWS2S3Component) component).setConditionalWritesEnabled((boolean) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((AWS2S3Component) component).setUseAwsKMS((boolean) value); return true;
-            case "useCustomerKey": getOrCreateConfiguration((AWS2S3Component) component).setUseCustomerKey((boolean) value); return true;
             case "useSSES3": getOrCreateConfiguration((AWS2S3Component) component).setUseSSES3((boolean) value); return true;
             case "amazonS3Client": getOrCreateConfiguration((AWS2S3Component) component).setAmazonS3Client((software.amazon.awssdk.services.s3.S3Client) value); return true;
             case "amazonS3Presigner": getOrCreateConfiguration((AWS2S3Component) component).setAmazonS3Presigner((software.amazon.awssdk.services.s3.presigner.S3Presigner) value); return true;

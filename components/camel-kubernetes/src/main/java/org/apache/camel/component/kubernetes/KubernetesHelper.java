@@ -94,15 +94,16 @@ public final class KubernetesHelper {
     }
 
     /**
-     * The delay before a consumer watches again after the Kubernetes client closed its watch with an error.
+     * The delay before a consumer, or a task that reloads the CamelContext, watches again after the Kubernetes client
+     * closed its watch with an error.
      */
-    static final long WATCH_AGAIN_DELAY_MILLIS = 1000;
+    public static final long WATCH_AGAIN_DELAY_MILLIS = 1000;
 
     /**
      * The maximum delay between two attempts to watch again, when watching again keeps failing (for example while the
      * API server cannot be reached).
      */
-    static final long WATCH_AGAIN_MAX_DELAY_MILLIS = 30000;
+    public static final long WATCH_AGAIN_MAX_DELAY_MILLIS = 30000;
 
     /**
      * Creates the first watch of a consumer on its executor. If it fails (the API server cannot be reached, answers 403

@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import io.nats.client.Connection;
@@ -92,6 +93,9 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
     private final MessageHandler handler;
     private final ConsumerConfiguration configuration;
     private final ExecutorService executor;
+    // whether the run of the consumer that made this keeper is still the current one (the consumer may have been
+    // stopped and started again, with a keeper of its own)
+    private final BooleanSupplier running;
     private final Consumer<JetStreamSubscription> onSubscribed;
     private final Lock lock = new ReentrantLock();
     // whether a check is submitted and has not started yet, so that reconnects do not queue several checks
@@ -116,7 +120,7 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
     NatsJetStreamPushConsumerKeeper(NatsConsumer consumer, Connection connection, String streamName, String topic,
                                     String queueName, Dispatcher dispatcher, MessageHandler handler,
                                     ConsumerConfiguration configuration, ExecutorService executor,
-                                    Consumer<JetStreamSubscription> onSubscribed) {
+                                    BooleanSupplier running, Consumer<JetStreamSubscription> onSubscribed) {
         this.consumer = consumer;
         this.connection = connection;
         this.streamName = streamName;
@@ -126,6 +130,7 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
         this.handler = handler;
         this.configuration = configuration;
         this.executor = executor;
+        this.running = running;
         this.onSubscribed = onSubscribed;
         this.trackUnacknowledged = configuration.getAckPolicy() != AckPolicy.None;
         this.maxDeliver = configuration.getMaxDeliver();
@@ -164,7 +169,7 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
     @Override
     public void connectionEvent(Connection conn, Events type) {
         // jnats has subscribed the deliver subject again: is the consumer still there?
-        if (type == Events.RESUBSCRIBED && consumer.isRunAllowed() && checkQueued.compareAndSet(false, true)) {
+        if (type == Events.RESUBSCRIBED && running.getAsBoolean() && checkQueued.compareAndSet(false, true)) {
             try {
                 executor.submit(this::checkConsumer);
             } catch (Exception e) {
@@ -190,7 +195,7 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
             checkQueued.set(false);
             long delay = CHECK_RETRY_DELAY_MILLIS;
             boolean reported = false;
-            for (int attempt = 1; consumer.isRunAllowed(); attempt++) {
+            for (int attempt = 1; running.getAsBoolean(); attempt++) {
                 Boolean gone = consumerGone();
                 if (Boolean.FALSE.equals(gone)) {
                     if (attempt > CHECK_ATTEMPTS) {
@@ -265,14 +270,14 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
                     configuration.getDurable(), topic, goneReason);
             return true;
         }
-        if (!consumer.isRunAllowed()) {
+        if (!running.getAsBoolean()) {
             return true;
         }
         try {
             subscribeAgain();
             return true;
         } catch (Exception e) {
-            if (!consumer.isRunAllowed()) {
+            if (!running.getAsBoolean()) {
                 // the consumer stopped meanwhile (its stop can close the dispatcher): nothing to report
                 LOG.debug("Not subscribing again as the consumer of topic {} is stopping", topic, e);
                 return true;
@@ -365,7 +370,7 @@ final class NatsJetStreamPushConsumerKeeper implements MessageHandler, Connectio
         } catch (Exception e) {
             LOG.debug("Error unsubscribing the push subscription of the deleted consumer", e);
         }
-        if (!consumer.isRunAllowed()) {
+        if (!running.getAsBoolean()) {
             // the consumer was stopped while subscribing: its stop may have ended the previous subscription only
             try {
                 dispatcher.unsubscribe(subscription);
