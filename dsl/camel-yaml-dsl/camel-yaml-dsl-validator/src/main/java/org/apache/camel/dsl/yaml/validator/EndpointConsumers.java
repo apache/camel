@@ -42,7 +42,7 @@ public final class EndpointConsumers {
     private static final Set<String> TEMPLATES = Set.of(
             "routeTemplate", "route-template", "templatedRoute", "templated-route");
     /** The resources whose routes are not in the file: what they consume is not known here. */
-    private static final Set<String> UNKNOWN_KINDS = Set.of("Kamelet", "Pipe", "KameletBinding");
+    private static final Set<String> UNKNOWN_KINDS = Set.of("Kamelet");
     /** The top-level entries that are not routes, nor have steps that send: the beans of the file. */
     private static final Set<String> NOT_STEPS = Set.of("beans", "dataFormats");
 
@@ -55,7 +55,7 @@ public final class EndpointConsumers {
      * The {@code direct:} and {@code seda:} endpoints the routes of a YAML file consume (their input, and a poll or
      * pollEnrich in a route), without their options. Empty when the file is not YAML the routes can be read from; null
      * when a route consumes an endpoint only known at runtime ({@code from: direct:{{name}}}), or the file has route
-     * templates, is a Kamelet or a Pipe, which could consume any of them.
+     * templates, or is a Kamelet, which could consume any of them.
      */
     public static Set<String> consumed(String yaml) {
         JsonNode target = read(yaml);
@@ -231,8 +231,9 @@ public final class EndpointConsumers {
     }
 
     /**
-     * The entries of the file: a list of routes and the like, or the flows of an Integration; null for a Kamelet or a
-     * Pipe, whose routes are not in the file, and an empty list for a YAML file that has no routes.
+     * The entries of the file: a list of routes and the like; null for a Kamelet, whose routes are not in the file, and
+     * an empty list for a YAML file that has no routes (such as a Camel K Pipe or Integration, which Camel does not
+     * load).
      */
     private static JsonNode entries(JsonNode target) {
         if (target.isArray()) {
@@ -242,10 +243,6 @@ public final class EndpointConsumers {
             String kind = target.path("kind").asString("");
             if (UNKNOWN_KINDS.contains(kind)) {
                 return null;
-            }
-            if ("Integration".equals(kind)) {
-                JsonNode flows = target.path("spec").path("flows");
-                return flows.isArray() ? flows : MAPPER.createArrayNode();
             }
         }
         return MAPPER.createArrayNode();

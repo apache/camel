@@ -89,9 +89,6 @@ public class Init extends CamelCommand {
     @Option(name = "kamelets-version", description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     private String kameletsVersion;
 
-    @Option(name = "pipe", hasValue = false, description = "When creating a yaml file should it be created as a Pipe CR")
-    private boolean pipe;
-
     @Option(name = "repo", aliases = { "repos" },
             description = "Additional maven repositories (Use commas to separate multiple repositories)")
     protected String repositories;
@@ -137,10 +134,6 @@ public class Init extends CamelCommand {
         }
 
         String ext = FileUtil.onlyExt(file, false);
-        if ("yaml".equals(ext) && pipe) {
-            ext = "init-pipe.yaml";
-        }
-
         if (fromKamelet != null && !"kamelet.yaml".equals(ext)) {
             printer().printErr("When extending from an existing Kamelet then file must have extension .kamelet.yaml");
             return CliExitCode.USAGE;
@@ -318,12 +311,6 @@ public class Init extends CamelCommand {
         kamelets.put("kamelet-action.yaml", "Kamelet action processor (my-action.kamelet.yaml)");
         categories.put("Kamelets", kamelets);
 
-        Map<String, String> pipes = new LinkedHashMap<>();
-        pipes.put("init-pipe.yaml", "Pipe CR connecting source and sink (my-pipe.yaml --pipe)");
-        pipes.put("pipe.yaml", "Pipe resource (my-pipe.pipe.yaml)");
-        pipes.put("integration.yaml", "Integration CR (my-integration.integration.yaml)");
-        categories.put("Pipes and CRs", pipes);
-
         Map<String, String> restDsl = new LinkedHashMap<>();
         restDsl.put("rest-dsl.yaml", "REST DSL with OpenAPI (my-api.rest-dsl.yaml)");
         categories.put("REST", restDsl);
@@ -355,9 +342,6 @@ public class Init extends CamelCommand {
                 new String[] { "kamelet-source.yaml", "Kamelet source connector", ".kamelet.yaml" },
                 new String[] { "kamelet-sink.yaml", "Kamelet sink connector", ".kamelet.yaml" },
                 new String[] { "kamelet-action.yaml", "Kamelet action processor", ".kamelet.yaml" }));
-        List<String[]> pipeTemplates = new ArrayList<>();
-        pipeTemplates.add(new String[] { "init-pipe.yaml", "Pipe CR (source to sink)", ".yaml" });
-        categories.put("Pipes and CRs", pipeTemplates);
 
         Scanner scanner = new Scanner(input);
 
@@ -414,9 +398,6 @@ public class Init extends CamelCommand {
             } else {
                 defaultName = "my-action.kamelet.yaml";
             }
-        } else if (selected[0].contains("pipe")) {
-            defaultName = "my-pipe.yaml";
-            pipe = true;
         }
 
         // Step 3: Prompt for filename
