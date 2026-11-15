@@ -80,6 +80,36 @@ public class ControlBusStopCurrentRouteTest extends ContextTestSupport {
     }
 
     @Test
+    public void testStopCallingRouteFromSubRoute() throws Exception {
+        // route mid called route stopMid with direct, so the exchange is still inflight in mid
+        getMockEndpoint("mock:stopMid").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:mid").expectedBodiesReceived("Hello World");
+
+        Exchange out = template.send("direct:chain", e -> e.getMessage().setBody("Hello World"));
+
+        assertNull(out.getException());
+        MockEndpoint.assertIsSatisfied(context);
+        RouteController controller = context.getRouteController();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> controller.getRouteStatus("mid").isStopped());
+        assertTrue(controller.getRouteStatus("chain").isStarted());
+    }
+
+    @Test
+    public void testStopRouteOfSplitFromSplitCopy() throws Exception {
+        // the split copy has its own exchange id, and route split waits for the exchange that is split
+        getMockEndpoint("mock:stopSplit").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:split").expectedBodiesReceived("Hello World");
+
+        Exchange out = template.send("direct:splitter", e -> e.getMessage().setBody("Hello World"));
+
+        assertNull(out.getException());
+        MockEndpoint.assertIsSatisfied(context);
+        RouteController controller = context.getRouteController();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> controller.getRouteStatus("split").isStopped());
+        assertTrue(controller.getRouteStatus("splitter").isStarted());
+    }
+
+    @Test
     public void testStopOtherRouteIsDoneWhenTheStepReturns() throws Exception {
         // the route to stop does not route the exchange, so it is stopped on the calling thread
         getMockEndpoint("mock:other").expectedBodiesReceived("Stopped");
@@ -109,6 +139,30 @@ public class ControlBusStopCurrentRouteTest extends ContextTestSupport {
                 from("direct:sub").routeId("sub")
                         .to("controlbus:route?routeId=main&action=stop")
                         .to("mock:sub");
+
+                from("direct:chain").routeId("chain")
+                        .to("direct:mid");
+
+                from("direct:mid").routeId("mid")
+                        .to("direct:stopMid")
+                        .to("mock:mid");
+
+                from("direct:stopMid").routeId("stopMid")
+                        .to("controlbus:route?routeId=mid&action=stop")
+                        .to("mock:stopMid");
+
+                from("direct:splitter").routeId("splitter")
+                        .to("direct:split");
+
+                from("direct:split").routeId("split")
+                        .split(body().tokenize(","))
+                            .to("direct:stopSplit")
+                        .end()
+                        .to("mock:split");
+
+                from("direct:stopSplit").routeId("stopSplit")
+                        .to("controlbus:route?routeId=split&action=stop")
+                        .to("mock:stopSplit");
 
                 from("direct:other").routeId("other")
                         .to("controlbus:route?routeId=foo&action=stop")

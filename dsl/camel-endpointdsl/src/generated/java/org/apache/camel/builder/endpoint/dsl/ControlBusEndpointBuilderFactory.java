@@ -70,8 +70,9 @@ public interface ControlBusEndpointBuilderFactory {
          * Whether to execute the control bus task asynchronously. Important: If
          * this option is enabled, then any result from the task is not set on
          * the Exchange. This is only possible if executing tasks synchronously.
-         * A stop, suspend, restart or fail of the route that routes the
-         * exchange, or of the route the exchange came from, is always executed
+         * A stop, suspend, restart or fail of a route that routes the exchange
+         * (the current route, or a route that called it, such as with direct),
+         * or of the route the exchange came from, is always executed
          * asynchronously, as the route waits for the exchange to complete
          * before it stops.
          * 
@@ -91,8 +92,9 @@ public interface ControlBusEndpointBuilderFactory {
          * Whether to execute the control bus task asynchronously. Important: If
          * this option is enabled, then any result from the task is not set on
          * the Exchange. This is only possible if executing tasks synchronously.
-         * A stop, suspend, restart or fail of the route that routes the
-         * exchange, or of the route the exchange came from, is always executed
+         * A stop, suspend, restart or fail of a route that routes the exchange
+         * (the current route, or a route that called it, such as with direct),
+         * or of the route the exchange came from, is always executed
          * asynchronously, as the route waits for the exchange to complete
          * before it stops.
          * 
