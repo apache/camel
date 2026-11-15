@@ -107,7 +107,8 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * to store the query result and the original message body is preserved.
          * Setting outputHeader will also omit populating the default
          * CamelMyBatisResult header since it would be the same as outputHeader
-         * all the time.
+         * all the time. On a polling consumer, each polled row is stored in
+         * this header instead of the message body.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
