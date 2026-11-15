@@ -142,11 +142,20 @@ YAML::
 
 Before you can send or receive messages from RabbitMQ, then exchanges, queues and bindings must be setup first.
 
-In development mode, it may be desirable to let Camel automatic do this.
-You can enable this by setting `autoDeclare=true` on the `SpringRabbitMQComponent`.
+The consumer does this by default (`autoDeclare=true`): it declares the exchange, the queue and the binding between
+them with the routing key. Set `autoDeclare=false` when they are set up in another way.
+The producer declares them only when `autoDeclareProducer=true`.
 
-Then Spring RabbitMQ will automatically declare the necessary elements and set up the binding between the exchange,
-queue and routing keys.
+The consumer declares them when it starts, and again each time the connection factory opens a new connection, for
+example after the connection to RabbitMQ was lost: a queue that RabbitMQ deleted meanwhile, such as an auto-delete or
+exclusive queue, is declared again when the consumer reconnects.
+
+When RabbitMQ is not available when the consumer starts, the consumer logs a warning and starts anyway: the listener
+container keeps trying to connect, and the exchange, queue and binding are declared when it connects.
+To fail the start instead, set `testConnectionOnStartup=true`.
+
+NOTE: With a `CachingConnectionFactory` whose cache mode is `CONNECTION`, the consumer declares only when it starts, as
+Spring's `RabbitAdmin`, and fails to start when RabbitMQ is not available.
 
 The elements can be configured using the multivalued `args` option.
 

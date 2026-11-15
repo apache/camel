@@ -403,6 +403,24 @@ file consumer no longer adds the key to the idempotent repository eagerly, and `
 read lock adds it when it acquires the lock. Since Camel 4.7 the read lock was refused, and such a consumer never
 consumed a file.
 
+=== camel-spring-rabbitmq - the consumer starts while RabbitMQ is down, and declares again on a new connection
+
+With `autoDeclare=true` (the default), a consumer now starts when RabbitMQ is not available: it logs a warning, its
+listener container keeps trying to connect, and the exchange, queue and binding are declared when it connects. Before,
+the declaration failed with an `AmqpConnectException` and the route did not start. To keep failing the start, set
+`testConnectionOnStartup=true` on the endpoint or on the component.
+
+The consumer now also declares the exchange, queue and binding again each time the connection factory opens a new
+connection, as Spring's `RabbitAdmin` does, so a queue that RabbitMQ deleted while the connection was lost (an
+auto-delete or exclusive queue, for example) is declared again when the consumer reconnects. Before, they were declared
+only when the consumer started. A consumer with a generated queue name (no `queues` option) declares the same queue
+again.
+
+With a `CachingConnectionFactory` whose cache mode is `CONNECTION`, the consumer behaves as before: it declares only
+when it starts, and does not start while RabbitMQ is down.
+
+See xref:components::spring-rabbitmq-component.adoc#_auto_declare_exchanges_queues_and_bindings[Auto declare exchanges, queues and bindings].
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.

@@ -777,7 +777,10 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
             String queuesToDeclare = queues;
             String autoDeleteDefault = "false";
             boolean generateUniqueQueue = false;
-            if (queuesToDeclare == null) {
+            if (queuesToDeclare == null && container != null && container.getQueueNames().length > 0) {
+                // declared again (on a new connection): the container consumes the queue generated the first time
+                queuesToDeclare = String.join(",", container.getQueueNames());
+            } else if (queuesToDeclare == null) {
                 // no explicit queue names so use a single blank so we can create a single new unique queue for the consumer
                 queuesToDeclare = " ";
                 generateUniqueQueue = true;
