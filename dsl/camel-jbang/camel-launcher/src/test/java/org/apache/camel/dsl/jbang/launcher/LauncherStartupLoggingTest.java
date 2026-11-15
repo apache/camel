@@ -60,6 +60,17 @@ class LauncherStartupLoggingTest {
         assertNoLogging(classes);
     }
 
+    @Test
+    void aCommandWithTheLoggingOffDoesNotStartLog4j() throws Exception {
+        // camel doc creates loggers (of the catalog), which made log4j start, only to log nothing (CAMEL-26937)
+        List<String> classes = run(CamelLauncher.class.getName(), "doc", "timer");
+
+        assertThat(classes).as("the SLF4J provider of the CLI")
+                .contains("org.apache.camel.dsl.jbang.run.common.CliLoggerProvider");
+        assertThat(classes.stream().filter(c -> c.startsWith("org.apache.logging.log4j."))).as("log4j is not started")
+                .isEmpty();
+    }
+
     private static void assertNoLogging(List<String> classes) {
         assertThat(classes.stream().filter(c -> c.startsWith("org.slf4j."))).as("no logger").isEmpty();
         assertThat(classes.stream().filter(c -> c.startsWith("org.apache.logging.log4j.core.appender.")))
