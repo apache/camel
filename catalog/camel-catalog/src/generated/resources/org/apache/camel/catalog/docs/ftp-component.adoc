@@ -322,14 +322,52 @@ Camel sets the following exchange properties
 
 === About timeouts
 
-The two sets of libraries (see top) have different API for setting
-timeout. You can use the `connectTimeout` option for both of them to set
-a timeout in millis to establish a network connection. An individual
-`soTimeout` can also be set on the FTP/FTPS, which corresponds to using
-`ftpClient.soTimeout`. Notice SFTP will automatically use
-`connectTimeout` as its `soTimeout`. The `timeout` option only applies
-for FTP/FTPS as the data timeout, which corresponds to the
-`ftpClient.dataTimeout` value. All timeout values are in millis.
+FTP and FTPS use Apache Commons Net and SFTP uses JSch, so the same options map to different settings of each
+library. All timeout values are in milliseconds.
+
+[cols="1,1,4"]
+|===
+| Option | Default | What it bounds
+
+| `connectTimeout` | 10 seconds | Opening the connection to the server (FTP, FTPS and SFTP).
+
+| `soTimeout` | 5 minutes | FTP/FTPS: each read on the control connection, that is the wait for the reply to every
+command (login, `NOOP`, changing directory, listing, the end of each transfer). It corresponds to `ftpClient.soTimeout`.
+For SFTP, see xref:sftp-component.adoc#_timeouts_and_dead_connections[Timeouts and dead connections].
+
+| `timeout` | 30 seconds | FTP/FTPS only: each read on the data connection (downloads and directory listings). It
+corresponds to `ftpClient.dataTimeout`. It does not bound an upload, which only writes to the data connection.
+|===
+
+==== Noticing a dead or silent server
+
+A server that stops answering without closing the connection (the host is gone, or a firewall or NAT drops the
+packets) is noticed only when one of these timeouts expires. With the defaults, every command on such a connection
+waits up to 5 minutes for its reply, for example the `NOOP` that the producer sends before each upload to check the
+connection (`sendNoop=true`). These durations are how the client libraries behave, approximately, not guarantees of
+Camel. Lower `soTimeout` to a little more than your server needs to answer a command:
+
+[source,text]
+----
+ftp://scott@ftp.example.com/inbox?password=RAW(tiger)&connectTimeout=5000&soTimeout=30000&throwExceptionOnConnectFailed=true
+----
+
+By default, a consumer that cannot connect or log in logs a WARN once and skips the poll, which counts as a
+successful poll: its xref:manual::health-check.adoc[health check] stays UP for the whole outage. With
+`throwExceptionOnConnectFailed=true` the failed connection fails the poll, so the health check reports the consumer
+DOWN and the `pollStrategy` gets the error. This applies to FTP, FTPS and SFTP.
+
+==== Uploads interrupted by a broken connection
+
+When the connection breaks during an upload, the server usually keeps the part it received under the name of the
+file, and the producer does not remove it: a consumer on the other side can pick up a truncated file. Upload under a
+temporary name with `tempPrefix` or `tempFileName`. The producer renames the file to its final name only once the
+upload is complete, and a redelivery replaces the temporary file left by the failed attempt.
+
+==== Transfer mode
+
+FTP and FTPS transfer files in ASCII mode by default (`binary=false`), which converts line endings and so corrupts any
+file that is not text. Set `binary=true` for such files.
 
 === Using Local Work Directory
 
