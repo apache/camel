@@ -233,7 +233,8 @@ Defaults to CycloneDX format (`sbom.json`) with `camel-main` runtime.
 
 === Copying dependency JARs
 
-Copy required JARs to a folder (defaults to `lib/`):
+Copy required JARs to a folder (defaults to `lib/`). The dependencies are resolved together, as one dependency graph,
+so the folder has one version of each library:
 
 [source,bash]
 ----
@@ -426,9 +427,11 @@ Generate JSON Schema definitions from Java objects for use with visual developme
 
 [source,bash]
 ----
-camel generate schema fhir org.hl7.fhir.r4.model.Patient
-Schema saved to: ./org.hl7.fhir.r4.model.Patient-schema.json
+camel generate schema fhir org.hl7.fhir.r4.model.Patient > patient-schema.json
 ----
+
+The schema is printed on stdout; `--output=patient-schema.json` writes it to a file instead. `--verbose` tells on
+stderr what the command does (the dependencies it downloads, the class it loads), so stdout stays the schema.
 
 == Version management
 

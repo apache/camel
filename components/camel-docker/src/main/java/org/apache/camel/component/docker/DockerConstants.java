@@ -67,7 +67,15 @@ public final class DockerConstants {
                             + " enables allowConnectionAndCredentialsFromHeaders=true (disabled by default).",
               javaType = "Boolean", defaultValue = "false")
     public static final String DOCKER_SECURE = "CamelDockerSecure";
+    /**
+     * @deprecated nothing reads this header; it pairs with the followRedirectFilter option, which has no effect
+     */
+    @Deprecated
     public static final String DOCKER_FOLLOW_REDIRECT_FILTER = "CamelDockerFollowRedirectFilter";
+    /**
+     * @deprecated nothing reads this header; it pairs with the loggingFilter option, which has no effect
+     */
+    @Deprecated
     public static final String DOCKER_LOGGING_FILTER = "CamelDockerLoggingFilter";
     @Metadata(description = "Check TLS. This header is ignored unless the endpoint"
                             + " enables allowConnectionAndCredentialsFromHeaders=true (disabled by default).",

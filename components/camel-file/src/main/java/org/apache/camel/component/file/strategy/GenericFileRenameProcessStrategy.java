@@ -35,6 +35,12 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     public boolean begin(
             GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
             throws Exception {
+        // skip the file before it is processed if it cannot be moved where it would be moved to, and before the read
+        // lock is acquired, so a skipped file does not wait for the read lock on every poll
+        if (!acceptMoveTargets(operations, endpoint, exchange, file, beginRenamer, commitRenamer, failureRenamer)) {
+            return false;
+        }
+
         // must invoke super
         boolean result = super.begin(operations, endpoint, exchange, file);
         if (!result) {
