@@ -63,7 +63,8 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
  * routing (the producer picks an open shard), enhanced fan-out, the per-shard read limits beyond the injected
  * ProvisionedThroughputExceededException, server-side encryption, the asynchronous client, the expiry of a NextToken
  * (300 seconds), shards that close between two pages of a listing (a page lists the shards as they are then), and a
- * stream deleted and created again with the same name.
+ * stream deleted and created again with the same name. AT_TIMESTAMP is modelled in GetShardIterator, but KinesisWorld
+ * does not configure it.
  * <p>
  * Timing (one-stack rule): every call blocks for its round trip first and then reads the stream (reads take effect at
  * the end of their latency), so a LATEST iterator or a GetRecords answer is not older than the call.
@@ -83,6 +84,8 @@ final class FakeKinesis implements KinesisClient {
         /** The consumers (epochs, see {@link #epoch}) that routed it, in order. */
         final List<Integer> routedIn = new ArrayList<>();
         int completed;
+        /** How often its processing failed (the injected fault). */
+        int failed;
 
         Rec(String shard, int index, String seq, String id, long publishedAt) {
             this.shard = shard;
@@ -256,7 +259,8 @@ final class FakeKinesis implements KinesisClient {
                 // skipped by design when the consumer starts a shard of its first shard list (the first iterator of the
                 // shard in an epoch), and also when, right after its iterator of such a shard expired, it gets a LATEST
                 // iterator again for that shard and has not routed a record of it yet (the consumer has no position to
-                // continue from; -Ddst.kinesis.strictLatest=true excuses only the first). Never for a shard with a
+                // continue from; this second case is CAMEL-26968, and -Ddst.kinesis.strictLatest=true excuses only the
+                // first). Never for a shard with a
                 // checkpoint (the resume strategy starts it after the checkpoint) or a shard created later (read from
                 // its start)
                 boolean first = latestStarts.add(epoch + "/" + shard.id);

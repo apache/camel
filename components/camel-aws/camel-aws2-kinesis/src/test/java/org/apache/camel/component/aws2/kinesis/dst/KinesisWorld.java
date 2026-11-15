@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.kinesis.dst;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,8 +77,8 @@ import org.apache.camel.test.dst.Invariants;
  * Also excused, unless {@code -Ddst.kinesis.strictLatest=true}: with iteratorType=LATEST, when the iterator of a shard
  * of the first shard list from which the consumer has not routed a record yet expires, the consumer has no sequence
  * number to continue from and asks for a LATEST iterator again, which skips the records stored since its previous
- * iterator (for example while the route was suspended for more than five minutes). The default set accepts this;
- * {@code -Ddst.kinesis.strictLatest=true} counts those records as missing.
+ * iterator (for example while the route was suspended for more than five minutes). This is CAMEL-26968. The default set
+ * accepts this; {@code -Ddst.kinesis.strictLatest=true} counts those records as missing.
  * <p>
  * Not explored: a route stop while a poll runs (see above), the KCL consumer (useKclConsumers), the asynchronous
  * client, a configured shardId, AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER and AT_TIMESTAMP as the configured iterator
@@ -102,7 +103,7 @@ import org.apache.camel.test.dst.Invariants;
                   "a restarted route resumes after its checkpoint",
                   "every record is routed once the faults cleared, apart from records skipped by a LATEST iterator",
                   "the checkpoint reaches the last record of each open shard once the faults cleared" },
-          issues = { "CAMEL-25569", "CAMEL-25942" })
+          issues = { "CAMEL-25569", "CAMEL-25942", "CAMEL-26968" })
 final class KinesisWorld {
 
     static final String ROUTE = "kinesis";
@@ -199,7 +200,8 @@ final class KinesisWorld {
                     Invariants.of("a restarted route resumes after its checkpoint",
                             () -> resumedBeforeCheckpoint.isEmpty()
                                     ? null : resumedBeforeCheckpoint + " (" + config() + ")"),
-                    Invariants.of("every record is routed once the faults cleared",
+                    Invariants.of(
+                            "every record is routed once the faults cleared, apart from records skipped by a LATEST iterator",
                             () -> finalRouted ? null : "not routed: " + notRouted() + " (" + config() + ")"),
                     Invariants.of("the checkpoint reaches the last record of each open shard once the faults cleared",
                             () -> finalCheckpointed
@@ -221,10 +223,11 @@ final class KinesisWorld {
         }
         int epoch = kinesis.epoch;
         // with checkpoints, a new iterator of the shard (after an expiry) starts after the checkpoint, which the resume
-        // strategy keeps for the last completed exchange: a record after it that did not complete may be routed again
+        // strategy keeps for the last completed exchange: a record after it that failed (the injected fault) and did not
+        // complete since may be routed again
         String now = checkpointNow().get(shard);
         boolean afterCheckpoint = checkpoints && now != null && Long.parseLong(seq) > Long.parseLong(now)
-                && r.completed == 0;
+                && r.failed > 0 && r.completed == 0;
         if (r.routedIn.contains(epoch) && !afterCheckpoint) {
             duplicates.add(r.id + " of " + shard + " routed again by consumer " + epoch + " at t=" + dst.now());
         }
@@ -249,6 +252,7 @@ final class KinesisWorld {
             inRoute--;
         }
         if (faults && dst.chance(processFailRate)) {
+            r.failed++;
             ledger.record("failed", shard, r.id);
             throw Dst.injected(new IllegalStateException("dst: processing failed for " + r.id));
         }
@@ -319,7 +323,8 @@ final class KinesisWorld {
 
     /**
      * Waits for the sends and operations, switches the faults off, publishes one more record to each open shard, waits
-     * for every record to be routed and checkpointed (or a deadline), takes the final state and stops the route.
+     * for every record to be routed and checkpointed (or a deadline), takes the final state and sets {@code finished}.
+     * It does not stop the route: the run then drops its pending tasks and stops the CamelContext.
      */
     private void finisher(DefaultCamelContext context, DstExecutor operator, long deadline) {
         if (deadline == -1 && (sendsLeft > 0 || opsLeft > 0)) {
@@ -544,7 +549,7 @@ final class KinesisWorld {
         public void forEach(BiFunction<? super Object, ? super Object, Boolean> action) {
             // in key order, so that a run replays exactly
             List<Object> keys = new ArrayList<>(entries.keySet());
-            keys.sort((a, b) -> a.toString().compareTo(b.toString()));
+            keys.sort(Comparator.comparing(Object::toString));
             for (Object key : keys) {
                 if (action.apply(key, entries.get(key))) {
                     entries.remove(key);
