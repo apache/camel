@@ -400,6 +400,14 @@ sibling package whose name merely started with the scanned package name, such as
 and its sub packages, so a `RoutesBuilder` or `@Configuration` class in such a sibling package is no longer
 discovered when running from a JAR; list that package explicitly if it should be scanned.
 
+=== camel-core - addTypeConverters uses the given instance
+
+`TypeConverterRegistry.addTypeConverters(Object)`, also used for the `TypeConverters` beans found in the registry, now
+invokes the non-static `@Converter` methods on the given object, and sets the `CamelContext` on it when it is
+`CamelContextAware`. Before, they ran on a new instance created by the injector: the state of the given object was
+ignored, and a class without a no-arg constructor failed at conversion time. Passing a `Class` still creates the
+instance with the injector.
+
 === camel-core - Model has a new getModelLock method
 
 The `org.apache.camel.model.Model` interface (and so `ModelCamelContext`) has a new method `getModelLock()`, which

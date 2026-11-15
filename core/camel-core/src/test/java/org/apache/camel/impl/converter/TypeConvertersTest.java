@@ -16,15 +16,48 @@
  */
 package org.apache.camel.impl.converter;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Converter;
+import org.apache.camel.TypeConverters;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class TypeConvertersTest extends ContextTestSupport {
 
     private final MyConverters converters = new MyConverters();
+
+    @Test
+    public void testAddInstanceWithoutDefaultConstructor() {
+        context.getTypeConverterRegistry().addTypeConverters(new PrefixConverters("x-"));
+
+        Target target = context.getTypeConverter().convertTo(Target.class, new Source("a"));
+        assertNotNull(target);
+        assertEquals("x-a", target.value());
+    }
+
+    @Test
+    public void testAddConfiguredInstance() {
+        ConfigurableConverters configurable = new ConfigurableConverters();
+        configurable.setPrefix("x-");
+
+        context.getTypeConverterRegistry().addTypeConverters(configurable);
+
+        Target target = context.getTypeConverter().convertTo(Target.class, new Source("a"));
+        assertNotNull(target);
+        assertEquals("x-a", target.value());
+
+        FallbackTarget fallback = context.getTypeConverter().convertTo(FallbackTarget.class, new Source("b"));
+        assertNotNull(fallback);
+        assertEquals("x-b", fallback.value());
+
+        assertSame(context, configurable.getCamelContext());
+    }
 
     @Test
     public void testAdd() {
@@ -56,5 +89,59 @@ public class TypeConvertersTest extends ContextTestSupport {
 
         assertEquals('a', context.getTypeConverter().mandatoryConvertTo(char.class, "a"));
         assertEquals(Boolean.parseBoolean("true"), context.getTypeConverter().mandatoryConvertTo(boolean.class, "true"));
+    }
+
+    public record Source(String value) {
+    }
+
+    public record Target(String value) {
+    }
+
+    public record FallbackTarget(String value) {
+    }
+
+    public static class PrefixConverters implements TypeConverters {
+        private final String prefix;
+
+        public PrefixConverters(String prefix) {
+            this.prefix = prefix;
+        }
+
+        @Converter
+        public Target toTarget(Source source) {
+            return new Target(prefix + source.value());
+        }
+    }
+
+    public static class ConfigurableConverters implements TypeConverters, CamelContextAware {
+        private CamelContext camelContext;
+        private String prefix = "default-";
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        public void setPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        @Converter
+        public Target toTarget(Source source) {
+            return new Target(prefix + source.value());
+        }
+
+        @Converter(fallback = true)
+        public Object toFallbackTarget(Class<?> type, Object value, TypeConverterRegistry registry) {
+            if (type == FallbackTarget.class && value instanceof Source source) {
+                return new FallbackTarget(prefix + source.value());
+            }
+            return null;
+        }
     }
 }
