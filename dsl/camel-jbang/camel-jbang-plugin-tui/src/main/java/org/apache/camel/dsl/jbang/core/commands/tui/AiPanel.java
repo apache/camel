@@ -1232,7 +1232,7 @@ class AiPanel {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (Exception | Error e) {
-                reportAgentFailure(e);
+                reportTurnError("Error", AiTurnFailure.describe(e));
             } finally {
                 if (agentThread == Thread.currentThread()) {
                     thinking.set(false);
@@ -1245,18 +1245,10 @@ class AiPanel {
         agentThread.start();
     }
 
-    /**
-     * Reports what ended a turn of the built-in model, in the panel and in the AI log, also an Error and a failure with
-     * no message. A plugin jar of the CLI built after the core jar it calls ended each answer in a NoSuchMethodError:
-     * the turn was over with no answer, no error and nothing in the AI log.
-     */
-    private void reportAgentFailure(Throwable e) {
-        String message = e.getMessage() != null ? e.getMessage() : e.toString();
-        if (e instanceof LinkageError) {
-            message = "The jars of the Camel CLI do not match (built at different times?): " + e;
-        }
+    /** Shows what ended a turn in the panel and writes it to the AI log. */
+    private void reportTurnError(String logLabel, String message) {
         conversation.add(new ConversationEntry(AiRole.ERROR, message));
-        log(LogLevel.ERROR, "Error", message);
+        log(LogLevel.ERROR, logLabel, message);
     }
 
     /**
@@ -1305,8 +1297,7 @@ class AiPanel {
             turnAiMs += callLatency;
             if (response == null) {
                 String err = "No response from LLM";
-                conversation.add(new ConversationEntry(AiRole.ERROR, err));
-                log(LogLevel.ERROR, "Error", err);
+                reportTurnError("Error", err);
                 return;
             }
             turnRequests++;
@@ -1322,8 +1313,7 @@ class AiPanel {
                         ? "LLM request failed. Check API key and endpoint."
                         : "LLM request failed: " + detail
                           + "\nCheck the endpoint and model (/model lists what the provider offers).";
-                conversation.add(new ConversationEntry(AiRole.ERROR, err));
-                log(LogLevel.ERROR, "Error", err);
+                reportTurnError("Error", err);
                 return;
             }
 
@@ -1428,8 +1418,7 @@ class AiPanel {
         sb.append("\nSee F2 -> AI Log for the full results, then rephrase with more detail (for example the exact ");
         sb.append("endpoint URI or topic) or /retry.");
         sessionTotalTokens += totalUsage.totalTokens();
-        conversation.add(new ConversationEntry(AiRole.ERROR, sb.toString()));
-        log(LogLevel.ERROR, "Error", sb.toString());
+        reportTurnError("Error", sb.toString());
         // keep the history consistent: the turn ends without an answer, so the next question starts fresh from here
         messages.add(LlmClient.Message.assistantWithToolCalls(
                 "(no answer: the iteration limit was reached while calling tools)", List.of()));
@@ -1464,8 +1453,7 @@ class AiPanel {
                     note == null ? shown : shown + "\n\n" + note);
         } else {
             String err = "Empty response from LLM.";
-            conversation.add(new ConversationEntry(AiRole.ERROR, err));
-            log(LogLevel.ERROR, "Error", err);
+            reportTurnError("Error", err);
         }
         messages.add(LlmClient.Message.assistantWithToolCalls(text, List.of()));
         compactHistoryAfterTurn();
@@ -1690,9 +1678,7 @@ class AiPanel {
         if (acp != null && acp.code() == AcpAgentClient.INTERRUPTED) {
             return;
         }
-        String message = e.getMessage() != null ? e.getMessage() : e.toString();
-        conversation.add(new ConversationEntry(AiRole.ERROR, message));
-        log(LogLevel.ERROR, "ACP error", message);
+        reportTurnError("ACP error", AiTurnFailure.describe(e));
         AcpAgentClient agent = acpSession.client();
         boolean dead = agent == null || !agent.isAlive()
                 || (acp != null && (acp.code() == AcpAgentClient.CONNECTION || acp.code() == AcpAgentClient.TIMEOUT));

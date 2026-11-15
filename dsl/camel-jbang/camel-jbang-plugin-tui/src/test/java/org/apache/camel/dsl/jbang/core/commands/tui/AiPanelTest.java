@@ -1356,7 +1356,10 @@ class AiPanelTest {
             if (failure instanceof Error error) {
                 throw error;
             }
-            throw (RuntimeException) failure;
+            if (failure instanceof RuntimeException rte) {
+                throw rte;
+            }
+            throw new RuntimeException(failure);
         }
     }
 
