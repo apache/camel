@@ -50,7 +50,7 @@ import static com.dashjoin.jsonata.Jsonata.jsonata;
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONata", syntax = "jsonata:resourceUri",
              producerOnly = true, remote = false,
-             category = { Category.TRANSFORMATION })
+             category = { Category.TRANSFORMATION }, headersClass = JsonataConstants.class)
 @BodyTypes(producerIn = @BodyType(value = {
         Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.TEXT, Carrier.BYTES,
         Carrier.STREAM, Carrier.FILE }, format = "json",
