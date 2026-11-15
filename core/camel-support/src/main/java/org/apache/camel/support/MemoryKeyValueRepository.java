@@ -37,7 +37,7 @@ import org.apache.camel.support.service.ServiceSupport;
 /**
  * An in-memory implementation of {@link KeyValueRepository} backed by a {@link ConcurrentHashMap} with lazy TTL
  * eviction.
- * <p/>
+ * <p>
  * Expired entries are removed lazily on access ({@link #get}, {@link #contains}) and periodically during
  * {@link #keys()} and {@link #size()} scans. This avoids the overhead of a background eviction thread while still
  * ensuring that expired data is not returned.

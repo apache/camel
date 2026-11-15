@@ -16,16 +16,32 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.awaitility.Awaitility.await;
+
 @Isolated
 public class MulticastParallelMiddleTimeoutTest extends ContextTestSupport {
+
+    // holds the branch that must time out until the test is done: it cannot complete before the timeout,
+    // and it does not keep the graceful shutdown of the CamelContext waiting
+    private final CountDownLatch release = new CountDownLatch(1);
+
+    @AfterEach
+    void releaseTimedOutBranch() {
+        release.countDown();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().size() == 0);
+    }
 
     @Test
     public void testMulticastParallelMiddleTimeout() throws Exception {
@@ -59,7 +75,7 @@ public class MulticastParallelMiddleTimeoutTest extends ContextTestSupport {
 
                 from("direct:a").setBody(constant("A"));
 
-                from("direct:b").delay(1000).setBody(constant("B"));
+                from("direct:b").process(e -> release.await(30, TimeUnit.SECONDS)).setBody(constant("B"));
 
                 from("direct:c").delay(100).setBody(constant("C"));
             }

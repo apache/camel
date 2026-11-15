@@ -67,9 +67,7 @@ class AuthoringToolsTest {
                     .isEqualTo(td.isDestructive());
             wrapped.add(m.getName());
         }
-        // camel_error_diagnose keeps its wrapper in DiagnoseTools (catalog per runtime), the rest live here
-        List<String> shared = new ArrayList<>(ToolRegistry.authoringTools().stream().map(ToolDescriptor::name).toList());
-        shared.remove("camel_error_diagnose");
+        List<String> shared = ToolRegistry.authoringTools().stream().map(ToolDescriptor::name).toList();
         assertThat(wrapped).containsExactlyInAnyOrderElementsOf(shared);
     }
 
@@ -103,13 +101,27 @@ class AuthoringToolsTest {
         assertThat(invalid.getString("status")).isEqualTo("invalid");
         assertThat(Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8)).isEqualTo(route);
 
-        JsonObject listed = tools.camel_get_files(null, dir.toString(), null);
+        JsonObject listed = tools.camel_get_files(null, dir.toString(), null, null, null);
         assertThat(listed.getInteger("totalFiles")).isEqualTo(1);
-        assertThat(tools.camel_get_files(null, dir.toString(), "demo.camel.yaml").getString("content")).isEqualTo(route);
+        assertThat(tools.camel_get_files(null, dir.toString(), "demo.camel.yaml", null, null).getString("content"))
+                .isEqualTo(route);
         assertThat(tools.camel_validate_source(null, null, dir.toString(), "demo.camel.yaml", null, null).getBoolean("valid"))
                 .isTrue();
-        assertThatThrownBy(() -> tools.camel_get_files(null, null, null))
+        assertThatThrownBy(() -> tools.camel_get_files(null, null, null, null, null))
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("directory is required");
+    }
+
+    @Test
+    void aReplaceOfOnlyWhitespaceIsKept(@TempDir Path dir) throws Exception {
+        // a blank replace was left out of the call, and the text was deleted instead (CAMEL-26932)
+        Files.writeString(dir.resolve("application.properties"), "greeting=hello TODO world\n", StandardCharsets.UTF_8);
+
+        JsonObject edited = tools.camel_edit_file(null, dir.toString(), "application.properties", "TODO", " ", null,
+                null);
+
+        assertThat(edited.getString("status")).as(edited.toJson()).isEqualTo("edited");
+        assertThat(Files.readString(dir.resolve("application.properties"), StandardCharsets.UTF_8))
+                .isEqualTo("greeting=hello   world\n");
     }
 
     /** CAMEL-25501: several places of one file in one call, written once. */
@@ -244,7 +256,7 @@ class AuthoringToolsTest {
 
     @Test
     void theListingMarksAToolDeterministicExactlyWhenTheSharedDescriptorSaysSo() {
-        for (Class<?> type : List.of(AuthoringTools.class, DiagnoseTools.class)) {
+        for (Class<?> type : List.of(AuthoringTools.class)) {
             for (Method m : type.getMethods()) {
                 ToolDescriptor td = m.getAnnotation(Tool.class) != null ? ToolRegistry.findTool(m.getName()) : null;
                 if (td == null) {
@@ -261,6 +273,24 @@ class AuthoringToolsTest {
                         .isEqualTo(td.isDeterministicForSomeCalls());
             }
         }
+    }
+
+    @Test
+    void aThirdIdenticalCatalogMissGetsTheSuggestionsNotTheWriteHint() {
+        // CAMEL-26932: a miss is answered as data, so it still counts; its note says what to ask instead
+        AuthoringTools counted = new AuthoringTools();
+        counted.repeatedCalls = new RepeatedCallSessions();
+        McpConnection agent = connection("agent-1");
+
+        JsonObject first = counted.camel_catalog_doc(agent, "kafak", null, null, null, null, null, null, null, null, null);
+        counted.camel_catalog_doc(agent, "kafak", null, null, null, null, null, null, null, null, null);
+        JsonObject third = counted.camel_catalog_doc(agent, "kafak", null, null, null, null, null, null, null, null, null);
+
+        assertThat(first.getString("error")).contains("kafak");
+        assertThat(third.getBoolean("repeated")).isTrue();
+        assertThat(third.getString("note")).startsWith("The answer was: Artifact not found: kafak.")
+                .contains("Use one of the suggestions instead: kafka.")
+                .doesNotContain("camel_write_file");
     }
 
     @Test

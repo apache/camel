@@ -161,6 +161,16 @@ class PropertiesTranslateToolsTest {
     }
 
     @Test
+    void theTracerKeysAreCamelKeysAndCamelTracingIsNot() {
+        // CAMEL-26960: camel.trace is the group of the tracer; camel.tracing is no group, which Camel ignores
+        PropertiesTranslateTools.PropertiesTranslateResult result = tools.camel_properties_translate(
+                "camel.trace.enabled=true\ncamel.tracing.enabled=true", "main", "spring-boot");
+
+        assertThat(result.properties().get(0).status()).isEqualTo("unchanged");
+        assertThat(result.properties().get(1).status()).isEqualTo("unknown");
+    }
+
+    @Test
     void sameRuntimeReturnsKnownKeysUnchanged() {
         PropertiesTranslateTools.PropertiesTranslateResult result = tools.camel_properties_translate(
                 "camel.server.port=8080\ncamel.main.streamCachingEnabled=true",

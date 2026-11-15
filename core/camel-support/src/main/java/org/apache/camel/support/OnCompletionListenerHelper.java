@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * exchange. A place gets the listeners with {@link #getListeners(CamelContext)} and calls them only when the list is
  * not empty, so with no listener installed it only checks that the list is empty. What a listener throws is caught and
  * logged at WARN once per listener (then at DEBUG), so it cannot change the routing.
- * <p/>
+ * <p>
  * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
  *
  * @since 4.24

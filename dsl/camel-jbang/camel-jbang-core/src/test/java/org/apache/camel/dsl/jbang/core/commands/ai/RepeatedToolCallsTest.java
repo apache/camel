@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -63,6 +64,42 @@ class RepeatedToolCallsTest {
         assertThat(fourth.getString("note")).contains("You asked this 4 times now");
     }
 
+    @Test
+    void aRepeatedMissSaysWhatTheAnswerWasAndStillCounts() {
+        // the hint of the tool, to write the file with the options the answer gave, did not fit a miss (CAMEL-26932)
+        Map<String, String> kafak = Map.of("name", "kafak");
+        JsonObject miss = new JsonObject();
+        miss.put("error", "Artifact not found: kafak");
+        miss.put("suggestions", new JsonArray(List.of("kafka")));
+        for (int i = 0; i < 2; i++) {
+            assertThat(calls.repeatOf(catalogDoc, kafak)).isNull();
+            calls.recordSuccessfulAnswer(catalogDoc, kafak, miss);
+        }
+
+        JsonObject note = calls.repeatOf(catalogDoc, kafak);
+        assertThat(note.getBoolean("repeated")).isTrue();
+        assertThat(note.getInteger("timesAsked")).isEqualTo(3);
+        assertThat(note.getString("note"))
+                .startsWith("The answer was: Artifact not found: kafak. Use one of the suggestions instead: kafka.")
+                .contains("You asked this 3 times now")
+                .doesNotContain("camel_write_file");
+        assertThat(note.get("suggestions")).isEqualTo(List.of("kafka"));
+    }
+
+    @Test
+    void aRepeatedMissWithoutSuggestionsSaysToAskWithOtherArguments() {
+        Map<String, String> nope = Map.of("name", "nosuchthing");
+        JsonObject miss = new JsonObject();
+        miss.put("error", "Artifact not found: nosuchthing");
+        calls.recordSuccessfulAnswer(catalogDoc, nope, miss);
+        calls.recordSuccessfulAnswer(catalogDoc, nope, miss);
+
+        JsonObject note = calls.repeatOf(catalogDoc, nope);
+        assertThat(note.getString("note"))
+                .startsWith("The answer was: Artifact not found: nosuchthing. Ask with other arguments instead.");
+        assertThat(note.get("suggestions")).isNull();
+    }
+
     /**
      * r32, a Citrus test step: camel_catalog_sample had no sample of 'send message' as an EIP, and the model asked the
      * same 11 or 12 more times, until its tool calls were spent, without writing the test. The note starts with the
@@ -98,13 +135,14 @@ class RepeatedToolCallsTest {
 
     @Test
     void aToolWithoutAHintIsToldToGoOnWithTheTask() {
-        ToolDescriptor diagnose = ToolRegistry.findTool("camel_error_diagnose");
-        assertThat(diagnose.repeatHint()).isNull();
+        // every deterministic tool of the shared set has a hint, so a tool of the test
+        ToolDescriptor lookup = ToolDescriptor.tool("test_lookup", "A lookup without a hint").deterministic(true);
+        assertThat(lookup.repeatHint()).isNull();
         Map<String, String> error = Map.of("error", "No endpoint could be found for: xyz:test");
-        successfulCall(diagnose, error);
-        successfulCall(diagnose, error);
+        successfulCall(lookup, error);
+        successfulCall(lookup, error);
 
-        assertThat(calls.repeatOf(diagnose, error).getString("note"))
+        assertThat(calls.repeatOf(lookup, error).getString("note"))
                 .isEqualTo("Go on with the next step of your task. " + ASKED_3_TIMES);
     }
 
@@ -192,8 +230,7 @@ class RepeatedToolCallsTest {
 
     @Test
     void theCatalogLookupsAreDeterministic() {
-        for (String name : List.of("camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample",
-                "camel_error_diagnose")) {
+        for (String name : List.of("camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample")) {
             assertThat(ToolRegistry.findTool(name).isDeterministic()).as(name).isTrue();
         }
     }

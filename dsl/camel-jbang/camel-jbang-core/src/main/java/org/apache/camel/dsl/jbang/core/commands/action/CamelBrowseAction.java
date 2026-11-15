@@ -31,6 +31,7 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.process.JsonValues;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
@@ -135,6 +136,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // no ANSI codes of colors in a file or a pipe, unless --logging-color is given
+        loggingColor = colorOutput(loggingColor);
         CamelProcess process = findOne(name);
         this.pid = process.pid();
 
@@ -187,7 +190,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         if (jsonOutput) {
             JsonOutput.printList(printer(), rows.stream().map(r -> {
                 JsonObject jo2 = new JsonObject();
-                jo2.put("pid", r.pid);
+                jo2.put("pid", JsonValues.pid(r.pid));
                 jo2.put("name", r.name);
                 jo2.put("age", r.ago);
                 jo2.put("endpointUri", r.uri);

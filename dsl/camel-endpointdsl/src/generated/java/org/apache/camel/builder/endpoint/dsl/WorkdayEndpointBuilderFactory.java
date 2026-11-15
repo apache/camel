@@ -45,12 +45,27 @@ public interface WorkdayEndpointBuilderFactory {
         }
 
         /**
+         * Workday Host name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
+         */
+        default WorkdayEndpointBuilder host(String host) {
+            doSetProperty("host", host);
+            return this;
+        }
+        /**
          * Workday Report as a service output format.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: json
-         * Group: format
+         * Group: common
          * 
          * @param reportFormat the value to set
          * @return the dsl builder
@@ -60,18 +75,18 @@ public interface WorkdayEndpointBuilderFactory {
             return this;
         }
         /**
-         * Workday Host name.
+         * Workday Tenant name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Group: host
+         * Group: common
          * 
-         * @param host the value to set
+         * @param tenant the value to set
          * @return the dsl builder
          */
-        default WorkdayEndpointBuilder host(String host) {
-            doSetProperty("host", host);
+        default WorkdayEndpointBuilder tenant(String tenant) {
+            doSetProperty("tenant", tenant);
             return this;
         }
         /**
@@ -117,21 +132,6 @@ public interface WorkdayEndpointBuilderFactory {
          */
         default WorkdayEndpointBuilder tokenRefresh(String tokenRefresh) {
             doSetProperty("tokenRefresh", tokenRefresh);
-            return this;
-        }
-        /**
-         * Workday Tenant name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: tenant
-         * 
-         * @param tenant the value to set
-         * @return the dsl builder
-         */
-        default WorkdayEndpointBuilder tenant(String tenant) {
-            doSetProperty("tenant", tenant);
             return this;
         }
     }
