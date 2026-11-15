@@ -31,8 +31,16 @@ public class CachingInjector<T> {
     private T instance;
 
     public CachingInjector(TypeConverterRegistry repository, Class<T> type) {
+        this(repository, type, null);
+    }
+
+    /**
+     * Creates the injector that returns the given instance, and only creates a new instance when it is null.
+     */
+    public CachingInjector(TypeConverterRegistry repository, Class<T> type, T instance) {
         this.repository = repository;
         this.type = type;
+        this.instance = instance;
     }
 
     public T newInstance() {

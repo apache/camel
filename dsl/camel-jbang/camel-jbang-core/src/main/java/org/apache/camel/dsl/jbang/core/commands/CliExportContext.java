@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -25,6 +25,8 @@ import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.run.RunContext;
+import org.apache.camel.dsl.jbang.run.common.PluginExporter;
+import org.apache.camel.dsl.jbang.run.common.PluginRunCustomizer;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.export.ExportContext;
 
@@ -61,17 +63,34 @@ public final class CliExportContext {
             T context, CamelJBangMain main, Printer printer, boolean yes, String target) {
         context.withPrinter(printer)
                 .withPlugins(repos -> {
-                    Map<String, Plugin> active = new LinkedHashMap<>(PluginHelper.getActivePlugins(main, repos, target, true));
-                    // and the plugins built into the CLI, unless the plugin configuration has the same plugin
+                    List<PluginRunCustomizer> runCustomizers = new ArrayList<>();
+                    List<PluginExporter> exporters = new ArrayList<>();
+                    Map<String, Plugin> active = PluginHelper.getActivePlugins(main, repos, target, true);
+                    active.forEach((command, plugin) -> {
+                        Optional<PluginRunCustomizer> runCustomizer;
+                        Optional<PluginExporter> exporter;
+                        try {
+                            runCustomizer = plugin.getRunCustomizer();
+                            exporter = plugin.getExporter();
+                        } catch (LinkageError e) {
+                            // the JVM links the classes of a plugin when they are first used: one built for another
+                            // Camel version may be created, and fail here as its run customizer or exporter refers to
+                            // a class that has moved. It is left out as one that cannot be loaded (CAMEL-26964)
+                            PluginHelper.warnNotLinked(main.getOut(), command, target, e);
+                            return;
+                        }
+                        runCustomizer.ifPresent(runCustomizers::add);
+                        exporter.ifPresent(exporters::add);
+                    });
+                    // and the plugins built into the CLI (they link with it), unless the plugin configuration has the
+                    // same plugin
                     for (Plugin embedded : main.getEmbeddedPlugins(target)) {
                         if (active.values().stream().noneMatch(p -> p.getClass().equals(embedded.getClass()))) {
-                            active.put(embedded.getClass().getName(), embedded);
+                            embedded.getRunCustomizer().ifPresent(runCustomizers::add);
+                            embedded.getExporter().ifPresent(exporters::add);
                         }
                     }
-                    Collection<Plugin> plugins = active.values();
-                    return new ExportContext.ActivePlugins(
-                            plugins.stream().map(Plugin::getRunCustomizer).flatMap(Optional::stream).toList(),
-                            plugins.stream().map(Plugin::getExporter).flatMap(Optional::stream).toList());
+                    return new ExportContext.ActivePlugins(List.copyOf(runCustomizers), List.copyOf(exporters));
                 })
                 .withStartFailureListener(YamlLoadFailureReport::logIfYamlLoadFailure)
                 .withConfirm(message -> CommandHelper.confirmOperation(message, yes));
