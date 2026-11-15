@@ -165,7 +165,7 @@ HTTP response headers as well to the _OUT_ message headers.
 
 === Using System Properties
 
-When setting useSystemProperties to true, the HTTP Client will look for
+When setting `useSystemProperties` to `true`, the HTTP Client will look for
 the following System Properties, and it will use it:
 
 * `ssl.TrustManagerFactory.algorithm`
@@ -181,9 +181,20 @@ the following System Properties, and it will use it:
 * `javax.net.ssl.keyStorePassword`
 * `http.proxyHost`
 * `http.proxyPort`
+* `https.proxyHost`
+* `https.proxyPort`
 * `http.nonProxyHosts`
 * `http.keepAlive`
-* `http.maxConnections`
+
+The `http.proxyHost` and `http.proxyPort` properties apply to `http` targets only. For `https` targets, set
+`https.proxyHost` and `https.proxyPort`.
+
+Without `useSystemProperties`, the HTTP Client does not read these properties, with one exception: it uses the default
+trust store of the JVM, so the `javax.net.ssl.trustStore` properties apply unless `sslContextParameters` is set.
+
+You can set `useSystemProperties` on the endpoint, or on the component for all its endpoints, such as with
+`camel.component.http.use-system-properties=true`. The `https` component is configured on its own, such as with
+`camel.component.https.use-system-properties=true`.
 
 === Response code
 
@@ -539,9 +550,10 @@ Spring XML
 </camelContext>
 ----
 
-Camel will first set the settings from Java System or CamelContext
-Properties and then the endpoint proxy options if provided.
-So you can override the system properties with the endpoint options.
+Camel uses these global options only when `useSystemProperties` is `false`, the default. The JVM system properties,
+such as `http.proxyHost`, are only used with `useSystemProperties=true`, see
+<<_using_system_properties,Using System Properties>>. The proxy options of the endpoint or the component, such as
+`proxyAuthHost` and `proxyAuthPort`, take precedence over both.
 
 There is also a `http.proxyScheme` property you
 can set to explicitly configure the scheme to use.
@@ -917,23 +929,10 @@ class. +
 `org.apache.camel.component.http.HttpClientConfigurer` to do some
 configuration on the http client if you need full control of it.
 
-However, if you _just_ want to specify the keystore and truststore, you
-can do this with Apache HTTP `HttpClientConfigurer`, for example:
-
-._Java-only: programmatic `KeyStore` and `SchemeRegistry` setup_
-[source,java]
-----
-KeyStore keystore = ...;
-KeyStore truststore = ...;
-
-SchemeRegistry registry = new SchemeRegistry();
-registry.register(new Scheme("https", 443, new SSLSocketFactory(keystore, "mypassword", truststore)));
-----
-
-And then you need to create a class that implements
-`HttpClientConfigurer`, and registers https protocol providing a
-keystore or truststore per the example above. Then, from your camel route
-builder class, you can hook it up like so:
+However, if you _just_ want to specify the keystore and truststore, use
+`sslContextParameters` as shown above. If you implement an
+`HttpClientConfigurer`, you can hook it up from your camel route builder
+class like so:
 
 ._Java-only: programmatic `HttpClientConfigurer` setup_
 [source,java]
@@ -954,9 +953,6 @@ If you are doing this using the Spring DSL, you can specify your
 
 <to uri="https://myhostname.com:443/myURL?httpClientConfigurer=#myHttpClientConfigurer"/>
 ----
-
-As long as you implement the `HttpClientConfigurer` and configure your
-keystore and truststore as described above, it will work fine.
 
 [[HTTP-UsingHTTPStoauthenticategotchas]]
 Using HTTPS to authenticate gotchas
@@ -1018,26 +1014,50 @@ public class HttpContextFactory {
 [[HTTP-UsingdifferentSSLContextParameters]]
 Using different SSLContextParameters
 
-The xref:http-component.adoc[HTTP] component only supports one instance of
-`org.apache.camel.support.jsse.SSLContextParameters` per component. If you
-need to use two or more different instances, then you need to set up
-multiple xref:http-component.adoc[HTTP] components as shown below. Where we have
-two components, each using their own instance of `sslContextParameters`
-property.
+The `sslContextParameters` option of an endpoint takes precedence over the one of the component. So endpoints of the
+same component can use different `SSLContextParameters` instances, and you do not need a component per instance. A
+dynamic endpoint can refer to one as well:
 
-._XML-only: Spring bean declarations for multiple HTTP components with different SSL contexts_
-[source,xml]
+[tabs]
+====
+Java::
++
+[source,java]
 ----
-<bean id="http-foo" class="org.apache.camel.component.http.HttpComponent">
-   <property name="sslContextParameters" ref="sslContextParams1"/>
-   <property name="x509HostnameVerifier" ref="hostnameVerifier"/>
-</bean>
+from("direct:start")
+  .toD("https://${header.host}/orders?sslContextParameters=#mySSL");
+----
 
-<bean id="http-bar" class="org.apache.camel.component.http.HttpComponent">
-   <property name="sslContextParameters" ref="sslContextParams2"/>
-   <property name="x509HostnameVerifier" ref="hostnameVerifier"/>
-</bean>
+YAML::
++
+[source,yaml]
 ----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - toD:
+            uri: "https://${header.host}/orders?sslContextParameters=#mySSL"
+----
+====
+
+To define `mySSL` in XML or YAML, see
+xref:manual::camel-configuration-utilities.adoc#_configuring_sslcontextparameters_in_xml_and_yaml_dsl[JSSE Utility].
+
+With Camel Main, the `camel.ssl.*` properties set up global `SSLContextParameters` instead. An `https` endpoint uses
+them when the `https` component has `useGlobalSslContextParameters=true`, and neither the endpoint nor the component
+sets `sslContextParameters`:
+
+[source,properties]
+----
+camel.ssl.enabled=true
+camel.ssl.trust-store=truststore.p12
+camel.ssl.trust-store-password=changeit
+camel.component.https.use-global-ssl-context-parameters=true
+----
+
+When the component or the endpoint has a `clientConnectionManager`, Camel uses that connection manager as it is, and
+`sslContextParameters` is not applied.
 
 == Removing http protocol headers in the Camel Message
 
