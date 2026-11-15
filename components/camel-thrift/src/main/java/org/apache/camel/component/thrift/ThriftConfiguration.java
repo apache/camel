@@ -54,7 +54,7 @@ public class ThriftConfiguration {
     @UriParam(defaultValue = "NONE")
     private ThriftCompressionType compressionType = ThriftCompressionType.NONE;
 
-    @UriParam(label = "consumer")
+    @UriParam(label = "common")
     private int clientTimeout;
 
     @UriParam(label = "consumer", defaultValue = "" + ThriftConstants.THRIFT_CONSUMER_POOL_SIZE)
@@ -156,7 +156,8 @@ public class ThriftConfiguration {
     }
 
     /**
-     * Client timeout for consumers
+     * Socket timeout (SO_TIMEOUT) in milliseconds. On a consumer it applies to the connections accepted from clients.
+     * On a producer it is only used when negotiationType is SSL.
      */
     public int getClientTimeout() {
         return clientTimeout;
