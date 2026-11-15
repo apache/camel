@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
@@ -106,5 +107,23 @@ public class TraitHelperTest {
 
         Traits traitsSpecNull = TraitHelper.parseTraits(null);
         Assertions.assertNotNull(traitsSpecNull);
+    }
+
+    @Test
+    public void anAnnotationAsKeyValue() {
+        // CAMEL-26934: ingress.annotations=k=v was a string where the trait takes a map, which exited with 70
+        Traits traits = TraitHelper.parseTraits(new String[] { "ingress.annotations=team=ops" });
+
+        Assertions.assertEquals(Map.of("team", "ops"), traits.getIngress().getAnnotations());
+    }
+
+    @Test
+    public void anAnnotationAsItsOwnKey() {
+        // the form of the docs, with a key that has dots in it
+        Traits traits = TraitHelper.parseTraits(new String[] {
+                "route.annotations.'haproxy.router.openshift.io/balance'=roundrobin", "route.annotations=team=ops" });
+
+        Assertions.assertEquals(Map.of("haproxy.router.openshift.io/balance", "roundrobin", "team", "ops"),
+                traits.getRoute().getAnnotations());
     }
 }

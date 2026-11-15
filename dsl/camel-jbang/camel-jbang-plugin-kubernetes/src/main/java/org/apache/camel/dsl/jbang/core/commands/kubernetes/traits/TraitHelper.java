@@ -84,8 +84,22 @@ public final class TraitHelper {
 
             // the CRD api is in CamelCase, then we have to
             // convert the kebab-case to CamelCase
-            final String traitKey = StringHelper.dashToCamelCase(traitConfig[0]);
-            final Object traitValue = resolveTraitValue(traitKey, traitConfig[1].trim());
+            final String traitKey;
+            final Object traitValue;
+            if (traitConfig[0].startsWith("annotations.")) {
+                // an annotation as its own key, as the docs show: route.annotations.'haproxy.router.openshift.io/balance'=true
+                traitKey = "annotations";
+                traitValue = annotation(unquote(traitConfig[0].substring("annotations.".length())),
+                        unquote(traitConfig[1].trim()));
+            } else if ("annotations".equals(traitConfig[0]) && traitConfig[1].contains("=")) {
+                // a single annotation as key=value, which was a string where the trait takes a map (exit code 70)
+                String[] annotation = traitConfig[1].trim().split("=", 2);
+                traitKey = "annotations";
+                traitValue = annotation(unquote(annotation[0]), unquote(annotation[1]));
+            } else {
+                traitKey = StringHelper.dashToCamelCase(traitConfig[0]);
+                traitValue = resolveTraitValue(traitKey, traitConfig[1].trim());
+            }
             if (traitConfigMap.containsKey(trait[0])) {
                 Map<String, Object> config = traitConfigMap.get(trait[0]);
 
@@ -200,6 +214,23 @@ public final class TraitHelper {
         } catch (NumberFormatException e) {
             return value;
         }
+    }
+
+    // a map of one annotation, so annotations of several --trait options add up (CAMEL-26934)
+    private static Map<String, String> annotation(String key, String value) {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put(key, value);
+        return map;
+    }
+
+    private static String unquote(String value) {
+        if (value.length() >= 2) {
+            char q = value.charAt(0);
+            if ((q == '"' || q == '\'') && value.charAt(value.length() - 1) == q) {
+                return value.substring(1, value.length() - 1);
+            }
+        }
+        return value;
     }
 
     public static void configureConnects(Traits traitsSpec, String[] connects) {

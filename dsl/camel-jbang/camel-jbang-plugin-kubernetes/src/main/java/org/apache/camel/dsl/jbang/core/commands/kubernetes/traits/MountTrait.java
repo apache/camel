@@ -17,7 +17,6 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -249,7 +248,9 @@ public class MountTrait extends BaseTrait {
             baseMountPoint += CONFIGMAPS;
         }
 
-        return Path.of(baseMountPoint, mountResource.name).toString();
+        // a path in the container, which is a Linux path also when the CLI runs on Windows, where Path joined it with
+        // backslashes (CAMEL-26934)
+        return baseMountPoint + "/" + mountResource.name;
     }
 
     private MountResource parseConfig(String expression, MountResource.ContentType contentType) {
