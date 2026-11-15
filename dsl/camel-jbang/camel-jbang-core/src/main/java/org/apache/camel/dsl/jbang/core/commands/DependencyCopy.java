@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -29,7 +30,6 @@ import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.tooling.maven.MavenArtifact;
-import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 
@@ -42,8 +42,6 @@ public class DependencyCopy extends DependencyList {
 
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
-    private MavenDownloader downloader;
-
     @Option(name = "output-directory", description = "Directory where dependencies should be copied", defaultValue = "lib")
     protected String outputDirectory;
 
@@ -51,6 +49,9 @@ public class DependencyCopy extends DependencyList {
 
     // the artifacts that could not be resolved or copied
     private int failures;
+
+    // the dependencies to copy
+    private final List<MavenGav> gavs = new ArrayList<>();
 
     public DependencyCopy(CamelJBangMain main) {
         super(main);
@@ -94,23 +95,62 @@ public class DependencyCopy extends DependencyList {
 
     @Override
     protected void outputGav(MavenGav gav, int index, int total) {
-        try {
+        // the dependencies are resolved together, once all are known, as one dependency graph: resolved one at a time,
+        // each picks the versions of its own dependencies, and lib/ gets several versions of a library (CAMEL-26931)
+        gavs.add(gav);
+        if (index == total - 1) {
             createOutputDirectory();
-            List<MavenArtifact> artifacts = mavenResolver.downloader().resolveArtifacts(
-                    List.of(gav.toString()), Set.of(), true, gav.getVersion().contains("SNAPSHOT"));
-            for (MavenArtifact artifact : artifacts) {
-                Path target = Paths.get(outputDirectory, artifact.getFile().getName());
-                if (Files.exists(target) || EXCLUDED_GROUP_IDS.contains(artifact.getGav().getGroupId())) {
-                    continue;
-                }
-                Files.copy(artifact.getFile().toPath(), target);
-            }
+            copy(resolve(gavs));
+        }
+    }
+
+    // the artifacts of the dependencies, resolved together; when they cannot be, the ones that can be
+    private List<MavenArtifact> resolve(List<MavenGav> dependencies) {
+        try {
+            return resolveTogether(dependencies);
         } catch (MavenResolutionException e) {
-            failures++;
-            printer().printErr("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
-        } catch (IOException e) {
-            failures++;
-            printer().printErr("Error copying the artifact: " + gav + " due to: " + e.getMessage());
+            // find the dependencies that cannot be resolved, which are printed on stderr, and resolve the others together
+            List<MavenGav> resolvable = new ArrayList<>();
+            for (MavenGav gav : dependencies) {
+                try {
+                    resolveTogether(List.of(gav));
+                    resolvable.add(gav);
+                } catch (MavenResolutionException ex) {
+                    failures++;
+                    printer().printErr("Error resolving the artifact: " + gav + " due to: " + ex.getMessage());
+                }
+            }
+            if (resolvable.isEmpty()) {
+                return List.of();
+            }
+            try {
+                return resolveTogether(resolvable);
+            } catch (MavenResolutionException ex) {
+                failures++;
+                printer().printErr("Error resolving the artifacts: " + resolvable + " due to: " + ex.getMessage());
+                return List.of();
+            }
+        }
+    }
+
+    private List<MavenArtifact> resolveTogether(List<MavenGav> dependencies) throws MavenResolutionException {
+        List<String> list = dependencies.stream().map(MavenGav::toString).toList();
+        boolean snapshot = dependencies.stream().anyMatch(g -> g.getVersion() != null && g.getVersion().contains("SNAPSHOT"));
+        return mavenResolver.downloader().resolveArtifacts(list, Set.of(), true, snapshot);
+    }
+
+    private void copy(List<MavenArtifact> artifacts) {
+        for (MavenArtifact artifact : artifacts) {
+            Path target = Paths.get(outputDirectory, artifact.getFile().getName());
+            if (Files.exists(target) || EXCLUDED_GROUP_IDS.contains(artifact.getGav().getGroupId())) {
+                continue;
+            }
+            try {
+                Files.copy(artifact.getFile().toPath(), target);
+            } catch (IOException e) {
+                failures++;
+                printer().printErr("Error copying the artifact: " + artifact.getGav() + " due to: " + e.getMessage());
+            }
         }
     }
 

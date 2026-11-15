@@ -233,7 +233,8 @@ Defaults to CycloneDX format (`sbom.json`) with `camel-main` runtime.
 
 === Copying dependency JARs
 
-Copy required JARs to a folder (defaults to `lib/`):
+Copy required JARs to a folder (defaults to `lib/`). The dependencies are resolved together, as one dependency graph,
+so the folder has one version of each library:
 
 [source,bash]
 ----
