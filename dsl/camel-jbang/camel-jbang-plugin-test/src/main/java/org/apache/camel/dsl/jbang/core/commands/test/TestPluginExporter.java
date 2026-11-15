@@ -60,6 +60,8 @@ public class TestPluginExporter implements PluginExporter {
 
     public static final Pattern NAME_SEPARATOR_PATTERN = Pattern.compile("[-._]([a-z])");
 
+    private static final List<String> ANALYZER_SUPPORTED_EXTENSIONS = List.of("yaml", "yml", "xml", "groovy");
+
     @Override
     public boolean isEnabled() {
         // assume tests are located in a subdirectory, only perform when this directory is present
@@ -221,7 +223,7 @@ public class TestPluginExporter implements PluginExporter {
                         }
                     });
         } catch (IOException e) {
-            // ignore if test directory cannot be listed
+            LOG.debug("Failed to list test directory {}: {}", testDir, e.getMessage());
         }
 
         return deps;
@@ -286,8 +288,6 @@ public class TestPluginExporter implements PluginExporter {
 
         return javaClassName;
     }
-
-    private static final List<String> ANALYZER_SUPPORTED_EXTENSIONS = List.of("yaml", "yml", "xml", "groovy");
 
     private boolean isTestSource(Path path) {
         String fileName = path.getFileName().toString();

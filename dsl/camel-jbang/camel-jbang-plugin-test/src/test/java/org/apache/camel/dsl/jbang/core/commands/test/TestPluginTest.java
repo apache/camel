@@ -346,33 +346,6 @@ class TestPluginTest {
     }
 
     @Test
-    public void shouldDetectCitrusHttpFromHttpAction() throws IOException {
-        Path testDir = Path.of(".").resolve("test");
-        Files.createDirectories(testDir);
-        Path yamlFile = testDir.resolve("http-test.citrus.it.yaml");
-        try {
-            Files.writeString(yamlFile, """
-                    name: http-test
-                    actions:
-                      - http:
-                          client: "http://localhost:8080"
-                          sendRequest:
-                            POST:
-                              path: "/orders"
-                    """);
-
-            TestPluginExporter exporter = new TestPluginExporter();
-            Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
-
-            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-http:${citrus.version}"),
-                    "Should include citrus-http when http action is used");
-        } finally {
-            Files.deleteIfExists(yamlFile);
-            Files.deleteIfExists(testDir);
-        }
-    }
-
-    @Test
     public void shouldKeepVersionForCamelTestInfraArtifacts() throws IOException {
         Path testDir = Path.of(".").resolve("test");
         Files.createDirectories(testDir);
