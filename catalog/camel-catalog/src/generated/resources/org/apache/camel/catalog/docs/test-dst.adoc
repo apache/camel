@@ -103,6 +103,15 @@ a|* explicit acknowledgement with onFailure RELEASE or REJECT
 * suspend and resume of the CamelContext
 |CAMEL-25872, CAMEL-25910
 
+|camel-nats
+|`NatsWorld` (`NatsConsumerDstTest`)
+|FakeJetStream: a server with one JetStream stream and its pull consumers (AckWait, MaxDeliver, Nak), behind a jnats Connection given with the connection option
+a|* the JetStream pull consumer with explicit acks and naks, ephemeral or durable
+* AckWait and MaxDeliver
+* route stop and start, also while the consumer waits in a fetch
+* a server restart that deletes the ephemeral consumer, and the subscription made again
+|CAMEL-26884
+
 |camel-pulsar
 |`PulsarWorld` (`PulsarConsumerDstTest`)
 |FakePulsar: a broker and client for one topic and one durable subscription
