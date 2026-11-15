@@ -316,9 +316,8 @@ public class JdbcProducer extends DefaultProducer {
     private void closeQuietly(ResultSet rs) {
         if (rs != null) {
             try {
-                if (!rs.isClosed()) {
-                    rs.close();
-                }
+                // close() on a closed result set is a no-op
+                rs.close();
             } catch (Exception sqle) {
                 LOG.debug("Error by closing result set", sqle);
             }
@@ -328,9 +327,8 @@ public class JdbcProducer extends DefaultProducer {
     private void closeQuietly(Statement stmt) {
         if (stmt != null) {
             try {
-                if (!stmt.isClosed()) {
-                    stmt.close();
-                }
+                // close() on a closed statement is a no-op
+                stmt.close();
             } catch (Exception sqle) {
                 LOG.debug("Error by closing statement", sqle);
             }
@@ -350,9 +348,10 @@ public class JdbcProducer extends DefaultProducer {
     private void closeQuietly(Connection con) {
         if (con != null) {
             try {
-                if (!con.isClosed()) {
-                    con.close();
-                }
+                // always close, even when isClosed() returns true: a driver closes its connection itself after a
+                // fatal error (e.g. the database session has ended), and a pool whose wrapper reports that state
+                // (e.g. Agroal) gets the connection back only from close()
+                con.close();
             } catch (Exception sqle) {
                 LOG.debug("Error by closing connection", sqle);
             }
