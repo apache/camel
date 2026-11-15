@@ -349,7 +349,9 @@ public class JdbcProducer extends DefaultProducer {
 
     private void commitQuietly(Connection con) {
         try {
-            con.commit();
+            if (con != null) {
+                con.commit();
+            }
         } catch (Exception sqle) {
             LOG.warn("Error occurred during JDBC commit. This exception will be ignored.", sqle);
         }
