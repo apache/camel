@@ -79,10 +79,16 @@ do the same.
 
 You can configure `JacksonDataFormat` to use a custom `ObjectMapper` in case you need more control of the mapping configuration.
 
-If you set up a single `ObjectMapper` in the registry, then Camel will automatic lookup and use this `ObjectMapper`.
-For example, if you use Spring Boot, then Spring Boot can provide a default `ObjectMapper` for you if you have Spring MVC enabled.
-And this would allow Camel to detect that there is one bean of `ObjectMapper` class type in the Spring Boot bean registry
-and then use it. When this happens you should set a `INFO` logging from Camel.
+Refer to your `ObjectMapper` with the `objectMapper` option, such as `objectMapper=#myMapper`.
+
+By default, Camel does not look up an `ObjectMapper` in the registry. To look one up, set `autoDiscoverObjectMapper=true`
+(and leave `useDefaultObjectMapper` at its default, `true`). Camel then uses the `ObjectMapper` only when there is
+exactly one `com.fasterxml.jackson.databind.ObjectMapper` in the registry, and otherwise creates its own. For example,
+Spring Boot can provide an `ObjectMapper` bean. Camel logs the `ObjectMapper` it found at `DEBUG` level.
+
+Camel uses an `ObjectMapper` from the registry as it is: the options of the data format that configure the mapper, such
+as `include`, `prettyPrint`, `enableFeatures`, `disableFeatures`, `moduleClassNames`, `timezone` and `namingStrategy`,
+are not applied to it.
 
 === Using Jackson for automatic type conversion
 

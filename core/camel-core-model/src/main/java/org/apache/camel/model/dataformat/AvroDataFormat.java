@@ -56,7 +56,8 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
     private String objectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether to lookup and use default Jackson ObjectMapper from the registry.")
+              description = "Whether to lookup and use default Jackson ObjectMapper from the registry."
+                            + " The registry is only searched when autoDiscoverObjectMapper is true as well.")
     private String useDefaultObjectMapper;
     @XmlAttribute(name = "unmarshalType")
     @Metadata(description = "Class name of the java type to use when unmarshalling.")
@@ -106,7 +107,10 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
     private String timezone;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "If set to true then Jackson will lookup for an objectMapper into the registry.")
+              description = "If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson AvroMapper"
+                            + " in the registry, and use it when there is exactly one. The options of this data format that"
+                            + " configure the mapper, such as include, enableFeatures and disableFeatures, are not applied to"
+                            + " that AvroMapper.")
     private String autoDiscoverObjectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
@@ -580,7 +584,8 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * Whether to lookup and use default Jackson ObjectMapper from the registry.
+         * Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when
+         * autoDiscoverObjectMapper is true as well.
          */
         public Builder useDefaultObjectMapper(String useDefaultObjectMapper) {
             this.useDefaultObjectMapper = useDefaultObjectMapper;
@@ -588,7 +593,8 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * Whether to lookup and use default Jackson ObjectMapper from the registry.
+         * Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when
+         * autoDiscoverObjectMapper is true as well.
          */
         public Builder useDefaultObjectMapper(boolean useDefaultObjectMapper) {
             this.useDefaultObjectMapper = Boolean.toString(useDefaultObjectMapper);
@@ -766,7 +772,8 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * If set to true then Jackson will lookup for an objectMapper into the registry
+         * If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson AvroMapper in the
+         * registry, and use it when there is exactly one.
          */
         public Builder autoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
             this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
@@ -774,7 +781,8 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * If set to true then Jackson will lookup for an objectMapper into the registry
+         * If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson AvroMapper in the
+         * registry, and use it when there is exactly one.
          */
         public Builder autoDiscoverObjectMapper(boolean autoDiscoverObjectMapper) {
             this.autoDiscoverObjectMapper = Boolean.toString(autoDiscoverObjectMapper);

@@ -39,11 +39,15 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     private String objectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether to lookup and use default Jackson ObjectMapper from the registry.")
+              description = "Whether to lookup and use default Jackson ObjectMapper from the registry."
+                            + " The registry is only searched when autoDiscoverObjectMapper is true as well.")
     private String useDefaultObjectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false",
-              description = "If set to true then Jackson will look for an objectMapper to use from the registry.")
+              description = "If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ObjectMapper"
+                            + " in the registry, and use it when there is exactly one. The options of this data format that"
+                            + " configure the mapper, such as include, prettyPrint, enableFeatures and disableFeatures, are not"
+                            + " applied to that ObjectMapper.")
     private String autoDiscoverObjectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",
@@ -638,7 +642,8 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * Whether to lookup and use default Jackson ObjectMapper from the registry.
+         * Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when
+         * autoDiscoverObjectMapper is true as well.
          */
         public Builder useDefaultObjectMapper(String useDefaultObjectMapper) {
             this.useDefaultObjectMapper = useDefaultObjectMapper;
@@ -646,7 +651,8 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * Whether to lookup and use default Jackson ObjectMapper from the registry.
+         * Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when
+         * autoDiscoverObjectMapper is true as well.
          */
         public Builder useDefaultObjectMapper(boolean useDefaultObjectMapper) {
             this.useDefaultObjectMapper = Boolean.toString(useDefaultObjectMapper);
@@ -871,7 +877,8 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * If set to true then Jackson will look for an objectMapper to use from the registry
+         * If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ObjectMapper in the
+         * registry, and use it when there is exactly one.
          */
         public Builder autoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
             this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
@@ -879,7 +886,8 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * If set to true then Jackson will look for an objectMapper to use from the registry
+         * If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ObjectMapper in the
+         * registry, and use it when there is exactly one.
          */
         public Builder autoDiscoverObjectMapper(boolean autoDiscoverObjectMapper) {
             this.autoDiscoverObjectMapper = Boolean.toString(autoDiscoverObjectMapper);
