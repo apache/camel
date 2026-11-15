@@ -18,7 +18,9 @@
 package org.apache.camel.component.kafka.consumer;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kafka.KafkaConsumer;
@@ -35,6 +37,8 @@ public class AsyncCommitManager extends AbstractCommitManager {
     private final Consumer<?, ?> consumer;
 
     private final OffsetCache offsetCache = new OffsetCache();
+    // the offsets of the manual commits, which may come from any thread: the consumer thread commits them
+    private final Map<TopicPartition, Long> requestedOffsets = new ConcurrentHashMap<>();
     private final StateRepository<String, String> offsetRepository;
 
     public AsyncCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
@@ -55,12 +59,43 @@ public class AsyncCommitManager extends AbstractCommitManager {
 
     @Override
     public void commit(TopicPartition partition) {
+        // the partition is committed now (for example, it is revoked): its requested offset is not committed later
+        Long requested = requestedOffsets.remove(partition);
         Long offset = offsetCache.getOffset(partition);
+        if (offset == null) {
+            offset = requested;
+        }
         if (offset == null) {
             return;
         }
 
         commitAsync(consumer, partition, offset);
+    }
+
+    @Override
+    public void requestCommit(TopicPartition partition, long partitionLastOffset) {
+        // the Kafka consumer must only be used by its own thread, which commits before its next poll
+        offsetCache.recordOffset(partition, partitionLastOffset);
+        requestedOffsets.put(partition, partitionLastOffset);
+    }
+
+    @Override
+    public void commitRequestedOffsets() {
+        if (requestedOffsets.isEmpty()) {
+            return;
+        }
+
+        Map<TopicPartition, OffsetAndMetadata> offsets = new HashMap<>();
+        for (TopicPartition partition : requestedOffsets.keySet()) {
+            Long offset = requestedOffsets.remove(partition);
+            if (offset != null) {
+                offsets.put(partition, new OffsetAndMetadata(offset + 1));
+            }
+        }
+        if (!offsets.isEmpty()) {
+            LOG.debug("Committing the requested offsets {} from {}", offsets, threadId);
+            consumer.commitAsync(offsets, this::postCommitCallback);
+        }
     }
 
     private void commitAsync(Consumer<?, ?> consumer, TopicPartition partition, long partitionLastOffset) {

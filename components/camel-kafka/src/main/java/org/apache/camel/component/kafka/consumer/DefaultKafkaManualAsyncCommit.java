@@ -28,7 +28,7 @@ public class DefaultKafkaManualAsyncCommit extends DefaultKafkaManualCommit impl
 
     @Override
     public void commit() {
-        commitManager.recordOffset(getPartition(), getRecordOffset());
-        commitManager.commit(getPartition());
+        // can be called from another thread than the consumer, such as the one of an aggregator
+        commitManager.requestCommit(getPartition(), getRecordOffset());
     }
 }

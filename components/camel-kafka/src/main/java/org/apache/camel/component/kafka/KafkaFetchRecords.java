@@ -346,6 +346,9 @@ public class KafkaFetchRecords implements Runnable {
                 // which must happen using this polling thread, so we use the commitRecordsRequested to trigger this
                 metricsCollector.collectCommitMetrics(consumer);
 
+                // the asynchronous manual commits, which the route may call from other threads, are done by this thread
+                commitManager.commitRequestedOffsets();
+
                 /*
                  * The poll is not under the lock: stop() wakes up a consumer that is waiting in poll, which then
                  * throws a WakeupException, so the consumer stops at once instead of after the poll timeout

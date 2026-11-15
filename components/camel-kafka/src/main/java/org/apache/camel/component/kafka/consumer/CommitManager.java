@@ -52,4 +52,25 @@ public interface CommitManager {
      * @param partitionLastOffset the last offset to commit
      */
     void recordOffset(TopicPartition partition, long partitionLastOffset);
+
+    /**
+     * Records the last processed offset and commits it, for an asynchronous manual commit. A commit manager that
+     * commits asynchronously leaves the commit to the consumer thread (see {@link #commitRequestedOffsets()}), so this
+     * can be called from any thread.
+     *
+     * @param partition           the partition to commit the offsets
+     * @param partitionLastOffset the last offset to commit
+     */
+    default void requestCommit(TopicPartition partition, long partitionLastOffset) {
+        recordOffset(partition, partitionLastOffset);
+        commit(partition);
+    }
+
+    /**
+     * Commits the offsets given to {@link #requestCommit(TopicPartition, long)} that are not committed yet. Called by
+     * the consumer thread before each poll.
+     */
+    default void commitRequestedOffsets() {
+        // NO-OP
+    }
 }
