@@ -17,6 +17,7 @@
 package org.apache.camel.impl.console;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.console.DevConsole;
@@ -60,5 +61,25 @@ public class ReceiveDevConsoleTest extends AbstractDevConsoleTest {
         Collection<?> messages = jsonOut.getCollection("messages");
         assertNotNull(messages);
         assertTrue(messages.isEmpty());
+    }
+
+    @Test
+    public void testAMessageWithoutTimestampHasTheTimeItWasReceived() {
+        // camel cmd receive --since filters by the timestamp, which was 0 for most components (CAMEL-26929)
+        DevConsole console = assertConsoleExists("receive", "camel");
+        ServiceHelper.startService(console);
+        JsonObject started = callJson(console, Map.of("endpoint", "direct:in"));
+        assertEquals("direct://in", started.getString("url"), started.toJson());
+
+        long before = System.currentTimeMillis();
+        context.createFluentProducerTemplate().to("direct:in").withBody("Hello").send();
+        long after = System.currentTimeMillis();
+
+        JsonObject dump = callJson(console, Map.of("dump", "true"));
+        List<Map<String, Object>> messages = dump.getCollection("messages");
+        assertEquals(1, messages.size(), dump.toJson());
+        long timestamp = ((Number) messages.get(0).get("timestamp")).longValue();
+        assertTrue(timestamp >= before && timestamp <= after, "the time it was received: " + timestamp);
+        callJson(console, Map.of("enabled", "false"));
     }
 }

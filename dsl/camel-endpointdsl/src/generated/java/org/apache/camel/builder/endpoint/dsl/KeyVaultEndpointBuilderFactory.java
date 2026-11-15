@@ -310,7 +310,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * Overrides the desired operation to be used in the producer.
          * 
          * The option is a: {@code
-         * org.apache.camel.component.azure.key.vault.KeyVaultOperationDefinition} type.
+         * org.apache.camel.component.azure.key.vault.KeyVaultOperation} type.
          * 
          * Group: producer
          * 
@@ -335,7 +335,8 @@ public interface KeyVaultEndpointBuilderFactory {
         /**
          * The secret properties to be used in Key Vault for updating a secret.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code
+         * com.azure.security.keyvault.secrets.models.SecretProperties} type.
          * 
          * Group: producer
          * 

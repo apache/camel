@@ -48,6 +48,7 @@ import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
+import org.apache.camel.dsl.jbang.core.commands.process.JsonValues;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -218,6 +219,8 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // no ANSI codes of colors in a file or a pipe, unless --logging-color is given
+        loggingColor = colorOutput(loggingColor);
         if ("dump".equals(action)) {
             return doDumpCall();
         } else if ("status".equals(action)) {
@@ -266,7 +269,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         if (jsonOutput) {
             JsonOutput.printList(printer(), rows.stream().map(r -> {
                 JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
+                jo.put("pid", JsonValues.pid(r.pid));
                 jo.put("name", r.name);
                 jo.put("age", r.age);
                 jo.put("status", getTraceStatus(r));

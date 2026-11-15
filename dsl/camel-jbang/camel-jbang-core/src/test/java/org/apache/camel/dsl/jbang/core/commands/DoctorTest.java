@@ -108,9 +108,11 @@ class DoctorTest extends CamelCommandBaseTestSupport {
         verify(downloader).setMavenApacheSnapshotEnabled(false);
         verify(downloader).setOffline(true);
         verify(downloader).setFresh(true);
+        // a SNAPSHOT CLI asks for the Apache snapshots; with them disabled (as here) the downloader has none to add
+        String version = new DefaultCamelCatalog().getCatalogVersion();
         verify(downloader).resolveArtifacts(
-                List.of("org.apache.camel:camel-api:" + new DefaultCamelCatalog().getCatalogVersion()),
-                Set.of(), false, false);
+                List.of("org.apache.camel:camel-api:" + version),
+                Set.of(), false, version.endsWith("-SNAPSHOT"));
     }
 
     @Test

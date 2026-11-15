@@ -18,9 +18,11 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import org.aesh.command.Command;
 import org.aesh.command.CommandResult;
@@ -166,6 +168,22 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
         ProcessedOption option = findOption(name);
         Object holder = option != null ? holderOf(option) : null;
         return holder != null ? option.getFieldValue(holder) : null;
+    }
+
+    /**
+     * The names of the options given on the command line (without {@code --}), such as {@code trace}; empty when the
+     * command was not parsed by aesh.
+     */
+    protected Set<String> givenOptions() {
+        Set<String> answer = new HashSet<>();
+        if (processedCommand != null) {
+            for (ProcessedOption option : processedCommand.getOptions()) {
+                if (!option.getValues().isEmpty()) {
+                    answer.add(option.name());
+                }
+            }
+        }
+        return answer;
     }
 
     /**
@@ -337,6 +355,22 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
         return printsToConsole() && AnsiConsole.out().getMode() == AnsiMode.Strip;
     }
 
+    /**
+     * Whether the command prints in colors: as --logging-color says when it is given, else only when it prints to a
+     * terminal, as the default of the option is colors. In a file or a pipe, which an AI agent or a script reads, the
+     * ANSI codes of the colors are noise (CAMEL-26929). A command that prints to another printer than the console keeps
+     * its option.
+     *
+     * @param  loggingColor the --logging-color option
+     * @return              whether to print in colors
+     */
+    protected boolean colorOutput(boolean loggingColor) {
+        if (!loggingColor || isOptionGiven("--logging-color")) {
+            return loggingColor;
+        }
+        return !printsToConsole() || EnvironmentHelper.hasTerminal();
+    }
+
     private boolean printsToConsole() {
         return printer() instanceof Printer.SystemOutPrinter && !EnvironmentHelper.isEmbedded();
     }
@@ -347,8 +381,8 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
 
     protected void printConfigurationValues(String header) {
         if (processedCommand != null) {
-            final Properties configProperties = new Properties();
-            CommandLineHelper.loadProperties(configProperties::putAll);
+            // the global user configuration with the local one laid over it, as the option defaults come from it
+            final Properties configProperties = CommandLineHelper.loadUserConfiguration(printer());
             List<String> lines = new ArrayList<>();
             for (ProcessedOption opt : processedCommand.getOptions()) {
                 Object holder = holderOf(opt);

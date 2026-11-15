@@ -102,8 +102,9 @@ public class ListConsumer extends ProcessWatchCommand {
                     row.id = o.getString("id");
                     row.uri = o.getString("uri");
                     row.state = o.getString("state");
-                    row.className = o.getString("class");
-                    row.hostedService = o.getBooleanOrDefault("hostedService", false);
+                    // the console says clazz and hosted (class and hostedService before Camel 4.23)
+                    row.className = o.getStringOrDefault("clazz", o.getString("class"));
+                    row.hostedService = o.getBooleanOrDefault("hosted", o.getBooleanOrDefault("hostedService", false));
                     row.scheduled = o.getBoolean("scheduled");
                     row.inflight = o.getInteger("inflight");
                     row.polling = o.getBoolean("polling");
@@ -231,6 +232,9 @@ public class ListConsumer extends ProcessWatchCommand {
 
     private String getType(Row r) {
         String s = r.className;
+        if (s == null) {
+            return "";
+        }
         if (s.endsWith("Consumer")) {
             s = s.substring(0, s.length() - 8);
         }

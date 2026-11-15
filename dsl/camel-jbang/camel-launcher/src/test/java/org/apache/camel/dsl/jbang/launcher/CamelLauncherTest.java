@@ -185,7 +185,7 @@ public class CamelLauncherTest {
         main.setOut(new PrintStreamPrinter(ps));
 
         // Run the validate command
-        main.execute("validate", "yaml", "src/test/resources/cheese.yaml");
+        main.execute("validate", "yaml", "src/test/resources/bad.yaml");
 
         Assertions.assertEquals(1, code.get());
 

@@ -103,6 +103,39 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void aCommentedOutOptionIsNotAnOption() {
+        // CAMEL-26960: was the unknown option '# idempotentRepository'
+        String yaml = """
+                - from:
+                    uri: file
+                    parameters:
+                      directoryName: orders
+                      noop: true
+                      # or
+                      # idempotentRepository: "#redisRepo"
+                    steps:
+                      - log: "${body}"
+                """;
+        assertThat(SourceValidator.validateYamlEndpoints(yaml, catalog)).isEmpty();
+    }
+
+    @Test
+    void aJdbcUrlWrittenAsTheEndpointSaysWhatJdbcTakes() {
+        // CAMEL-26960: a benchmark answer wrote the JDBC url of the database as the uri of the jdbc component
+        String yaml = """
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - to: jdbc:mysql://localhost/orders?user=app&password=secret
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors).hasSize(2);
+        assertThat(errors.get(0)).startsWith("Line 4: jdbc: Unknown option 'user'")
+                .contains("jdbc: takes the name of a DataSource bean, jdbc:myDataSource");
+        assertThat(errors.get(1)).startsWith("Line 4: jdbc: Unknown option 'password'");
+    }
+
+    @Test
     void expandedFormInvalidBoolean() {
         String yaml = """
                 - from:

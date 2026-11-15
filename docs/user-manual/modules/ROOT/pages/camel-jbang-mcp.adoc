@@ -6,9 +6,9 @@ runtime introspection tools for live Camel applications, all through the
 https://modelcontextprotocol.io/[Model Context Protocol (MCP)].
 
 With the MCP server running, your AI assistant can look up component documentation, validate
-endpoints and routes, generate test scaffolds, diagnose errors from stack traces, check
-dependencies, plan migrations, review routes for security concerns, and interact with running
-Camel applications — without you having to copy-paste anything.
+endpoints and routes, read the errors and logs of running integrations, check
+dependencies and their known CVEs, plan migrations, review routes for security concerns, and interact
+with running Camel applications — without you having to copy-paste anything.
 
 Built on https://quarkus.io/[Quarkus] with the
 https://docs.quarkiverse.io/quarkus-mcp-server/dev/index.html[quarkus-mcp-server] extension.
@@ -226,27 +226,20 @@ The assistant discovers components, looks up documentation, builds a YAML route,
 * _"Validate this endpoint: ``kafka:myTopic?brkers=localhost:9092``"_ — detects the typo and suggests `brokers`
 * _"Validate this YAML route"_ — checks against the YAML DSL JSON schema, reports invalid elements
 
-=== Understanding, security, and testing
+=== Understanding and security
 
 * _"Explain what this route does"_ — uses `camel_route_context` for catalog-enriched analysis
 * _"Analyze this route for security concerns"_ — uses `camel_route_harden_context` to detect hardcoded credentials, plain-text protocols, known CVE advisories, etc.
 * _"Is my Camel 4.10.1 project affected by known CVEs?"_ — uses `camel_security_advisories` to match the published Apache Camel security advisories against a Camel version or component
-* _"Generate a JUnit 5 test for this route"_ — uses `camel_route_test_scaffold` to produce test class with mock endpoints and test-infra stubs
 
-=== Error diagnosis
+=== Errors
 
-Paste a stack trace:
-
-----
-org.apache.camel.FailedToCreateRouteException: Failed to create route route1 at: >>> To[kafka:myTopic] <<<
-Caused by: org.apache.camel.NoSuchEndpointException: No endpoint could be found for: kafka:myTopic
-----
-
-The assistant uses `camel_error_diagnose` to identify the exception chain, extract components, and suggest fixes (e.g., missing `camel-kafka` dependency).
+* _"Why does my integration fail?"_ — uses `camel_get_errors` for the failed exchanges of the running integration,
+  with their stack traces, and `camel_get_log` for its log
 
 === Dependencies and versions
 
-* _"Check my pom.xml for missing or outdated dependencies"_ — uses `camel_dependency_check`
+* _"Check my pom.xml for missing or outdated dependencies, and for known CVEs"_ — uses `camel_dependency_check`
 * _"What are the latest LTS versions for Spring Boot?"_ — uses `camel_version_list`
 * _"Which dependency do I need for org.postgresql.ds.PGSimpleDataSource, and how do I add it on Quarkus?"_ —
   uses `camel_dependency_for_class`
@@ -417,7 +410,9 @@ passed as the file name, is answered with the argument the source goes in.
   files up front (`routeFiles`, `configFiles`) and, when an integration is selected, which file and line each of its
   routes was loaded from, mapped from the runtime's location (a jar entry of an exported project, a classpath or
   file resource) onto the source under `src/main`. With `file`, a path relative to the directory as the list names
-  it, the content of that file. The `.camel` folders are not listed, but counted (`consumedFiles`): a file consumer
+  it, the content of that file: all of a small file as it is, else at most 2000 lines and 256 KB, from the line
+  `offset` (from 1) and up to `limit` lines, with the answer saying which lines it has and the `offset` to read
+  on from. The `.camel` folders are not listed, but counted (`consumedFiles`): a file consumer
   moves each file it reads into `.camel` (unless `noop=true`), so a data folder whose files were all read is not
   reported as empty.
 
@@ -517,9 +512,6 @@ passed as the file name, is answered with the argument the source goes in.
   takes the newest version, and marks the answer as a guess. Returns `camel.jbang.dependencies`, `--dep`, and
   the `pom.xml` dependency for Camel Main, Spring Boot and Quarkus, or one runtime with `runtime`. Uses the
   JVM proxy settings for the search.
-| `camel_error_diagnose`
-| See <<_error_diagnosis,Error Diagnosis>>; the same shared tool.
-
 | `camel_project_overview`
 | A high-level overview of a project's integrations read from its route sources (YAML, XML, and Java by
   pattern), without a running integration: the routes, the entry points (schedules, HTTP, consumers of external
@@ -541,7 +533,7 @@ passed as the file name, is answered with the argument the source goes in.
 
 ==== Repeated calls
 
-The catalog lookups `camel_catalog_doc`, `camel_catalog_find`, `camel_catalog_sample` and `camel_error_diagnose`
+The catalog lookups `camel_catalog_doc`, `camel_catalog_find` and `camel_catalog_sample`
 are deterministic: the same arguments always give the same answer. Both servers mark them in the tool listing
 with `"_meta": {"camel.apache.org/deterministic": true}`, so a client can notice repeats itself.
 
@@ -667,43 +659,6 @@ camel_catalog_find takes term (required), kind, limit, camelVersion; got q
 | Given a Camel route (YAML, XML, or Java DSL), extracts all components and EIPs used, looks up their documentation
   from the catalog, and returns structured context.
 
-| `camel_route_cost_estimate`
-| Estimates the API cost of a route from the components it uses, for the ones with pay-per-use pricing: Bedrock
-  (runtime and agent-runtime), Textract, S3, SQS, SNS, Kinesis, OpenAI, LangChain4j (chat and embeddings) and
-  Docling (free, self-hosted). Returns a per-execution estimate and a monthly projection at a given throughput.
-  The cost data is approximate, from published AWS pricing (2025-Q2).
-|===
-
-=== Test Scaffolding
-
-[cols="1,3",options="header"]
-|===
-| Tool | Description
-
-| `camel_route_test_scaffold`
-| Generates a JUnit 5 test skeleton from a Camel route definition (YAML or XML). Accepts an optional `format`
-  (`yaml` or `xml`, default `yaml`) and `runtime` (`main` or `spring-boot`, default `main`). For `main` runtime,
-  the generated test extends `CamelTestSupport`; for `spring-boot`, it uses `@CamelSpringBootTest` with
-  `@SpringBootTest`. The tool replaces producer endpoints with mock endpoints, except those of the components
-  the Camel catalog marks internal (`direct:`, `seda:`, `log:`, `mock:` and the like), which stay inside the
-  CamelContext. It generates `@RegisterExtension` stubs for infrastructure components (Kafka, JMS/Artemis,
-  MongoDB, PostgreSQL, Cassandra, Elasticsearch, Redis, RabbitMQ, FTP, Consul, NATS, Pulsar, CouchDB, Infinispan,
-  MinIO, Solr), and produces
-  a `NotifyBuilder` pattern for timer-based routes or `template.sendBody()` for direct/seda consumers. Returns
-  the generated test code, detected components, mock endpoint mappings, test-infra services, and required Maven
-  test dependencies.
-|===
-
-=== AI Pipelines
-
-[cols="1,3",options="header"]
-|===
-| Tool | Description
-
-| `camel_ai_pipeline_scaffold`
-| Generates a YAML DSL route for an AI document-processing pipeline, combining a document processor (Docling for
-  open-source or on-premise, Textract for AWS-managed) with Bedrock LLM services for summarization, extraction,
-  RAG or classification. Returns a runnable route and a matching `application.properties` template.
 |===
 
 === Security Analysis
@@ -732,15 +687,6 @@ camel_catalog_find takes term (required), kind, limit, camelVersion; got q
   severity, a line number and remediation guidance. Distinct from `camel_route_harden_context`, which gives
   general security context and the CVE advisories.
 
-| `camel_dependency_security_audit`
-| Audits a project's dependencies for known vulnerabilities: cross-references the `pom.xml` with the Camel
-  security advisory database for the CVEs affecting each artifact at the project's Camel version, and reports
-  severity, affected and fixed version ranges, and, when routes are given, whether the vulnerable component is
-  actually used by them (reachable). Spring Boot starters and Camel Quarkus extensions are audited as the component
-  they provide. When the `pom.xml` does not set the Camel version (parent-managed), the answer says so and audits
-  the `camelVersion` argument, or without it lists every advisory of the declared components. Advisories that name
-  no component cannot be matched to a dependency and are listed as `uncheckedAdvisories`; the audit is only
-  reported `clean` when there are none. The POM content is sanitized to mask sensitive data.
 |===
 
 ==== Security advisory data
@@ -755,19 +701,6 @@ unavailable rather than returning an empty list, so a missing data set is never 
 The advisories are also browseable as MCP resources: `camel://security/advisories` (full list) and
 `camel://security/advisory/\{cve}` (detail for one CVE).
 
-=== Error Diagnosis
-
-[cols="1,3",options="header"]
-|===
-| Tool | Description
-
-| `camel_error_diagnose`
-| Diagnoses Camel errors from stack traces or error messages. Identifies the exception type against 17 known
-  Camel exceptions (such as `NoSuchEndpointException`, `ResolveEndpointFailedException`,
-  `FailedToCreateRouteException`, `PropertyBindingException`, and others), extracts the components and EIPs
-  involved, and returns common causes, suggested fixes, and links to relevant Camel documentation.
-|===
-
 === Dependency Check
 
 [cols="1,3",options="header"]
@@ -780,7 +713,14 @@ The advisories are also browseable as MCP resources: `camel://security/advisorie
   used in routes (a Spring Boot starter or Camel Quarkus extension counts as its component, and the snippet uses
   the project's runtime artifact; a component only in `dependencyManagement` is not declared), and flags version
   conflicts between the Camel BOM and explicit dependency overrides. Returns actionable recommendations with
-  corrected dependency snippets.
+  corrected dependency snippets. Its `security` section lists the published Camel CVE advisories that affect the
+  declared dependencies at the project's Camel version (see <<_security_advisory_data,Security advisory data>>),
+  with the severity, the affected and fixed versions, and, when routes are given, whether the routes use the
+  vulnerable component (`reachable`). Spring Boot starters and Camel Quarkus extensions are checked as the
+  component they provide. When the `pom.xml` does not set the Camel version (parent-managed), the answer says so
+  in `security.warnings` and checks the `camelVersion` argument, or without it lists every advisory of the declared
+  components. Advisories that name no component cannot be matched to a dependency and are listed as
+  `uncheckedAdvisories`; `security.clean` is only true when there are none.
 |===
 
 === Validation and Transformation

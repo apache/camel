@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A file based implementation of {@link org.apache.camel.spi.IdempotentRepository}.
- * <p/>
+ * <p>
  * This implementation provides a 1st-level in-memory {@link LRUCache} for fast check of the most frequently used keys.
  * When {@link #add(String)} or {@link #contains(String)} methods are being used then in case of 1st-level cache miss,
  * the underlying file is scanned which may cost additional performance. So try to find the right balance of the size of
@@ -130,7 +130,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
     /**
      * Creates a new file based repository using the given {@link java.util.Map} as 1st level cache.
-     * <p/>
+     * <p>
      * Care should be taken to use a suitable underlying {@link java.util.Map} to avoid this class being a memory leak.
      *
      * @param store the file store
@@ -254,7 +254,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     /**
      * Sets the maximum file size for the file store in bytes. You can set the value to 0 or negative to turn this off,
      * and have unlimited file store size.
-     * <p/>
+     * <p>
      * The default is 32mb.
      */
     @ManagedAttribute(description = "The maximum file size for the file store in bytes")
@@ -269,7 +269,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     /**
      * Sets the number of oldest entries to drop from the file store when the maximum capacity is hit to reduce disk
      * space to allow room for new entries.
-     * <p/>
+     * <p>
      * The default is 1000.
      */
     @ManagedAttribute(description = "Number of oldest elements to drop from file store if maximum file size reached")
@@ -324,7 +324,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * Checks the file store if the key exists
      *
      * @param  key the key
-     * @return     <tt>true</tt> if exists in the file, <tt>false</tt> otherwise
+     * @return     <code>true</code> if exists in the file, <code>false</code> otherwise
      */
     protected boolean containsStore(final String key) {
         if (fileStore == null || !fileStore.exists()) {
