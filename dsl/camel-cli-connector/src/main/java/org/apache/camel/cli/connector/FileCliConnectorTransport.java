@@ -98,6 +98,9 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private static final long CLOCK_TICK_MS = 20;
     // how often at most the status is written for the actions answered between two snapshots, as collecting it costs
     private static final long ANSWERED_STATUS_MS = 200;
+    // the trace file starts again when it would grow past this: it grew without limit while tracing is on, about 15 MB a
+    // minute at 100 exchanges a second, and camel trace reads it whole (CAMEL-26929)
+    static final long MAX_TRACE_FILE_SIZE = 10 * 1024 * 1024;
 
     private record PendingAction(File output, boolean replyAlways, CompletableFuture<CliActionOutcome> outcome) {
     }
@@ -446,6 +449,20 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         }
     }
 
+    /**
+     * Deletes the file when the data to append would make it larger than the maximum, so the data starts a new file. A
+     * reader that follows the file sees it become smaller, and reads the new file from its start.
+     *
+     * @return whether the file was deleted
+     */
+    static boolean startNewFileIfFull(File file, long append, long max) {
+        long length = file.length();
+        if (length > 0 && length + append > max) {
+            return FileUtil.deleteFile(file);
+        }
+        return false;
+    }
+
     protected void traceTask() {
         try {
             JsonObject json = snapshots.trace();
@@ -462,6 +479,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
                     // store traces in a special file
                     LOG.trace("Updating trace file: {}", traceFile);
                     String data = json.toJson() + System.lineSeparator();
+                    startNewFileIfFull(traceFile, data.length(), MAX_TRACE_FILE_SIZE);
                     IOHelper.appendText(data, traceFile);
                     json = arr.getMap(arr.size() - 1);
                     traceFilePos = json.getLong("uid");

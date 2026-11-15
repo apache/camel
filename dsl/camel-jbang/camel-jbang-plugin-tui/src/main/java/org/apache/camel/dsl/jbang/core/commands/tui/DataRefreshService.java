@@ -668,6 +668,14 @@ class DataRefreshService {
         traces.set(allTraces);
     }
 
+    /**
+     * Where to read a file that grows on from: the position read up to, or the start when the file is smaller than
+     * that, as the integration started a new trace file when it was full (CAMEL-26929).
+     */
+    static long readFrom(long lastPos, long length) {
+        return length < lastPos ? 0 : lastPos;
+    }
+
     private void readTraceFile(String pid, List<TraceEntry> allTraces) {
         Path traceFile = CommandLineHelper.getCamelDir().resolve(pid + "-trace.json");
         if (!Files.exists(traceFile)) {
@@ -678,6 +686,7 @@ class DataRefreshService {
 
         try (RandomAccessFile raf = new RandomAccessFile(traceFile.toFile(), "r")) {
             long length = raf.length();
+            lastPos = readFrom(lastPos, length);
             if (length <= lastPos) {
                 return; // no new data
             }

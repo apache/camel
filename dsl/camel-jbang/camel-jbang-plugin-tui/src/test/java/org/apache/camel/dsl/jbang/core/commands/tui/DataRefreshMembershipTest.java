@@ -169,4 +169,12 @@ class DataRefreshMembershipTest {
                 },
                 Path::of, Path::of);
     }
+
+    @Test
+    void aTraceFileThatGotSmallerIsReadFromItsStart() {
+        // CAMEL-26929: the integration starts a new trace file when it is full; the panel read nothing from it again
+        assertThat(DataRefreshService.readFrom(10_000, 120)).isZero();
+        assertThat(DataRefreshService.readFrom(10_000, 12_000)).isEqualTo(10_000);
+        assertThat(DataRefreshService.readFrom(0, 120)).isZero();
+    }
 }

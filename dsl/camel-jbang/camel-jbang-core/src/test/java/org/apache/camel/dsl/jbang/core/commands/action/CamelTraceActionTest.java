@@ -277,4 +277,13 @@ class CamelTraceActionTest extends ActionCommandTestSupport {
         root.put("trace", trace);
         return root;
     }
+
+    @Test
+    void aTraceFileThatGotSmallerIsANewFile() {
+        // CAMEL-26929: the integration starts a new trace file when it is full, and camel trace reads it from its start
+        assertThat(CamelTraceAction.isNewFile(10_000, 120)).isTrue();
+        assertThat(CamelTraceAction.isNewFile(10_000, 10_000)).isFalse();
+        assertThat(CamelTraceAction.isNewFile(10_000, 12_000)).isFalse();
+        assertThat(CamelTraceAction.isNewFile(0, 120)).isFalse();
+    }
 }

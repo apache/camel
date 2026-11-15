@@ -514,13 +514,19 @@ public class CamelTraceAction extends ActionBaseCommand {
         int lines = 0;
 
         for (Pid pid : pids.values()) {
+            Path file = getTraceFile(pid.pid);
+            long size = Files.exists(file) ? Files.size(file) : 0;
+            if (pid.reader != null && isNewFile(pid.size, size)) {
+                // the integration started a new trace file, as the old one was full: read the new one from its start
+                IOHelper.close(pid.reader);
+                pid.reader = new LineNumberReader(Files.newBufferedReader(file));
+            }
+            pid.size = size;
             if (pid.reader == null) {
-                Path file = getTraceFile(pid.pid);
                 if (Files.exists(file)) {
                     pid.reader = new LineNumberReader(Files.newBufferedReader(file));
                     if (tail == 0) {
                         // only read new lines so forward to end of reader
-                        long size = Files.size(file);
                         pid.reader.skip(size);
                     }
                 }
@@ -547,6 +553,13 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
 
         return lines;
+    }
+
+    /**
+     * Whether a file that a reader follows was started again: it is smaller than when it was last read (CAMEL-26929).
+     */
+    static boolean isNewFile(long lastSize, long size) {
+        return size < lastSize;
     }
 
     private List<Row> parseTraceLine(Pid pid, String line) {
@@ -942,6 +955,8 @@ public class CamelTraceAction extends ActionBaseCommand {
         Queue<String> fifo;
         int depth;
         LineNumberReader reader;
+        // the size of the trace file when it was last read
+        long size;
     }
 
     private static class Row {
