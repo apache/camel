@@ -2130,6 +2130,20 @@ the body no longer looks finished: `hasNext()` and `next()` now throw a `Runtime
 redelivered over the same iterator (an error handler with redeliveries) found no more rows and the exchange succeeded
 with only the rows read before the failure. It now fails once the redeliveries are exhausted.
 
+=== camel-jdbc, camel-spring-jdbc - outputType=StreamList commits when the exchange is done
+
+With `outputType=StreamList` and `resetAutoCommit=true` (the default), the producer now commits the transaction of the
+statement when the exchange completes, and rolls it back when the exchange fails, instead of committing right after
+the statement is executed, before the route has read the rows. A driver may close the result set at commit: with
+PostgreSQL and `statement.fetchSize`, reading the rows after the first batch failed with
+`ERROR: portal "C_1" does not exist`. A statement with side effects that returns rows (such as an `INSERT` or `DELETE`
+with `RETURNING`) is now rolled back when the exchange fails.
+
+A commit that fails at that time is logged at WARN and does not fail the exchange, which is already complete. Before,
+a failed commit failed the exchange. For a statement with side effects that returns rows, the route now reports
+success (and a consumer such as JMS acknowledges its message) although the change is not committed: use another
+output type, such as `SelectList`, when a failed commit must fail the exchange.
+
 === camel-jgroups-raft - a body that does not convert to a byte array fails the exchange
 
 The `jgroups-raft` producer skipped a message body that has no conversion to `byte[]`, such as a `Map`, a POJO or a

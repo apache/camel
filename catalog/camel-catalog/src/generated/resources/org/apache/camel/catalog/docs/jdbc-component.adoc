@@ -307,6 +307,17 @@ YAML::
 ----
 ====
 
+The result set and the connection stay open until the exchange is done. With `resetAutoCommit=true` (the default),
+the transaction of the statement ends then too: it is committed when the exchange completes, or rolled back when it
+fails. A commit that fails at that time is logged at WARN and does not fail the exchange, which is already complete.
+For a statement with side effects that returns rows (such as an `INSERT` or `DELETE` with `RETURNING`), the route then
+reports success (and a consumer such as JMS acknowledges its message) although the change is not committed: use
+another output type, such as `SelectList`, when a failed commit must fail the exchange.
+
+Whether the rows are loaded as needed depends on the JDBC driver. For example, the PostgreSQL driver fetches
+`statement.fetchSize` rows at a time only when auto-commit is off (as `resetAutoCommit=true` sets it); otherwise it
+loads all the rows when the statement is executed.
+
 === Polling the database every minute
 
 If we want to poll a database using the JDBC component, we need to
