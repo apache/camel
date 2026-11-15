@@ -56,10 +56,12 @@ Each endpoint represents a different timer (in Quartz terms, a `Trigger` and ``J
 
 === Configuring quartz.properties file
 
-By default, Quartz will look for a `quartz.properties` file in the
-`org/quartz` directory of the classpath. If you are using WAR
-deployments, this means just drop the quartz.properties in
-`WEB-INF/classes/org/quartz`.
+By default, the Camel Quartz component loads the `quartz.properties` file
+from the `org/quartz` directory of the classpath, which is the default file in the Quartz JAR.
+Unlike Quartz itself, it does not read a `quartz.properties` file at the root of the classpath,
+or the file set by the `org.quartz.properties` system property, and it logs a WARN when it finds one.
+To use such a file, set the `propertiesFile` option, for example to `classpath:quartz.properties`
+or `file:/etc/myapp/quartz.properties`.
 
 However, the Camel xref:quartz-component.adoc[Quartz] component also allows you
 to configure properties:
