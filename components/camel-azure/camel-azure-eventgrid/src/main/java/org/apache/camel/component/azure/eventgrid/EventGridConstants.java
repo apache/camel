@@ -27,7 +27,7 @@ public final class EventGridConstants {
     @Metadata(description = "The subject of the event.", javaType = "String")
     public static final String SUBJECT = HEADER_PREFIX + "Subject";
 
-    @Metadata(description = "The time the event was generated.", javaType = "OffsetDateTime")
+    @Metadata(description = "The time the event was generated.", javaType = "java.time.OffsetDateTime")
     public static final String EVENT_TIME = HEADER_PREFIX + "EventTime";
 
     @Metadata(description = "The unique identifier for the event.", javaType = "String")
