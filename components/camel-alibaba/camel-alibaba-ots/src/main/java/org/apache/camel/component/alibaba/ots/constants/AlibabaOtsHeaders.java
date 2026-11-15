@@ -20,10 +20,15 @@ import org.apache.camel.spi.Metadata;
 
 public final class AlibabaOtsHeaders {
 
-    @Metadata(label = "producer", description = "Operation override", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The operation that the producer performs. This header replaces the operation option.",
+              javaType = "String")
     public static final String OPERATION = AlibabaOtsProperties.OPERATION;
 
-    @Metadata(label = "producer", description = "Tablestore request id", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The request ID that Tablestore returns in the response to the operation. The producer sets it when"
+                            + " the operation succeeds.",
+              javaType = "String")
     public static final String REQUEST_ID = AlibabaOtsProperties.REQUEST_ID;
 
     private AlibabaOtsHeaders() {

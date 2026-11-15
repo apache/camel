@@ -6857,7 +6857,8 @@ Options:
       --repo, --repos=<repo>
                             Maven repository for downloading the dependencies
                             (Use commas to separate multiple repositories)
-      --reset               Reset by removing any custom version settings
+      --reset               Reset by removing the version settings:
+                            camel-version, kamelets-version, repos and runtime
       --global              Use global or local configuration
   <version>                 Camel version
 

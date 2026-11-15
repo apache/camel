@@ -103,6 +103,9 @@ class CamelSourceTopTest extends ActionCommandTestSupport {
         JsonArray rows = Jsoner.deserialize(printer.getOutput(), (JsonArray) null);
         assertThat(rows).hasSize(2);
         JsonObject to = rows.getMap(0);
+        // which integration, as the other listings say (CAMEL-26929)
+        assertThat(to.getLong("pid")).isEqualTo(TEST_PID);
+        assertThat(to.getString("name")).isEqualTo("myApp");
         assertThat(to.getString("id")).isEqualTo("to1");
         assertThat(to.getString("routeId")).isEqualTo("orders");
         assertThat(to.getString("location")).isEqualTo("file:orders.yaml:14");

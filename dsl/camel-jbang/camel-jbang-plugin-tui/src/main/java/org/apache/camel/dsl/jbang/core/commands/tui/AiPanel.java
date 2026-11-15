@@ -1231,8 +1231,8 @@ class AiPanel {
                 runAgentLoop(systemPrompt, question);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                conversation.add(new ConversationEntry(AiRole.ERROR, e.getMessage()));
+            } catch (Exception | Error e) {
+                reportTurnError("Error", AiTurnFailure.describe(e));
             } finally {
                 if (agentThread == Thread.currentThread()) {
                     thinking.set(false);
@@ -1243,6 +1243,12 @@ class AiPanel {
         }, "tui-ai-agent");
         agentThread.setDaemon(true);
         agentThread.start();
+    }
+
+    /** Shows what ended a turn in the panel and writes it to the AI log. */
+    private void reportTurnError(String logLabel, String message) {
+        conversation.add(new ConversationEntry(AiRole.ERROR, message));
+        log(LogLevel.ERROR, logLabel, message);
     }
 
     /**
@@ -1291,8 +1297,7 @@ class AiPanel {
             turnAiMs += callLatency;
             if (response == null) {
                 String err = "No response from LLM";
-                conversation.add(new ConversationEntry(AiRole.ERROR, err));
-                log(LogLevel.ERROR, "Error", err);
+                reportTurnError("Error", err);
                 return;
             }
             turnRequests++;
@@ -1308,8 +1313,7 @@ class AiPanel {
                         ? "LLM request failed. Check API key and endpoint."
                         : "LLM request failed: " + detail
                           + "\nCheck the endpoint and model (/model lists what the provider offers).";
-                conversation.add(new ConversationEntry(AiRole.ERROR, err));
-                log(LogLevel.ERROR, "Error", err);
+                reportTurnError("Error", err);
                 return;
             }
 
@@ -1414,8 +1418,7 @@ class AiPanel {
         sb.append("\nSee F2 -> AI Log for the full results, then rephrase with more detail (for example the exact ");
         sb.append("endpoint URI or topic) or /retry.");
         sessionTotalTokens += totalUsage.totalTokens();
-        conversation.add(new ConversationEntry(AiRole.ERROR, sb.toString()));
-        log(LogLevel.ERROR, "Error", sb.toString());
+        reportTurnError("Error", sb.toString());
         // keep the history consistent: the turn ends without an answer, so the next question starts fresh from here
         messages.add(LlmClient.Message.assistantWithToolCalls(
                 "(no answer: the iteration limit was reached while calling tools)", List.of()));
@@ -1434,18 +1437,23 @@ class AiPanel {
         if (text != null && !text.isBlank()) {
             long elapsed = MonotonicClock.millis() - thinkingStartTime;
             String note = problems.isEmpty() ? null : answerNote(problems);
+            // the code of the answer is checked too: what does not exist is marked under its block, and the model is
+            // told of it, and of a simple expression left invalid, with the next question (CAMEL-26960)
+            List<AnswerChecks.Mark> marks = AnswerChecks.checkCode(text);
+            String told = AnswerChecks.historyNote(marks, problems);
+            pendingNote = told == null ? pendingNote : pendingNote == null ? told : pendingNote + "\n" + told;
+            String shown = AnswerChecks.withMarks(text, marks);
             ConversationEntry entry = new ConversationEntry(
-                    AiRole.ASSISTANT, text, elapsed, turnAiMs, turnToolMs, turnToolCalls,
+                    AiRole.ASSISTANT, shown, elapsed, turnAiMs, turnToolMs, turnToolCalls,
                     totalUsage.totalTokens(), turnRequests, wrapUp, contextFillPercent(), corrections, note);
             conversation.add(entry);
             usage.addTurn(turnAiMs, turnToolMs, turnToolCalls);
             String label = wrapUp ? "Response after reaching the tool call limit (" : "Response (";
             log(LogLevel.RESPONSE, label + entry.byline() + describeCacheSignal(totalUsage) + ")",
-                    note == null ? text : text + "\n\n" + note);
+                    note == null ? shown : shown + "\n\n" + note);
         } else {
             String err = "Empty response from LLM.";
-            conversation.add(new ConversationEntry(AiRole.ERROR, err));
-            log(LogLevel.ERROR, "Error", err);
+            reportTurnError("Error", err);
         }
         messages.add(LlmClient.Message.assistantWithToolCalls(text, List.of()));
         compactHistoryAfterTurn();
@@ -1647,7 +1655,7 @@ class AiPanel {
         agentThread = new Thread(() -> {
             try {
                 runAcpTurn(wireQuestion);
-            } catch (IOException | RuntimeException e) {
+            } catch (IOException | RuntimeException | Error e) {
                 reportAcpTurnFailure(e);
             } finally {
                 if (agentThread == Thread.currentThread()) {
@@ -1665,14 +1673,12 @@ class AiPanel {
      * gone anyway, so a JSON-RPC error from a healthy agent does not cost the user the conversation context. An
      * interrupted turn is already reported as "(cancelled)" by {@link #interruptBusyOperation()}.
      */
-    private void reportAcpTurnFailure(Exception e) {
+    private void reportAcpTurnFailure(Throwable e) {
         AcpAgentClient.AcpException acp = e instanceof AcpAgentClient.AcpException a ? a : null;
         if (acp != null && acp.code() == AcpAgentClient.INTERRUPTED) {
             return;
         }
-        String message = e.getMessage() != null ? e.getMessage() : e.toString();
-        conversation.add(new ConversationEntry(AiRole.ERROR, message));
-        log(LogLevel.ERROR, "ACP error", message);
+        reportTurnError("ACP error", AiTurnFailure.describe(e));
         AcpAgentClient agent = acpSession.client();
         boolean dead = agent == null || !agent.isAlive()
                 || (acp != null && (acp.code() == AcpAgentClient.CONNECTION || acp.code() == AcpAgentClient.TIMEOUT));

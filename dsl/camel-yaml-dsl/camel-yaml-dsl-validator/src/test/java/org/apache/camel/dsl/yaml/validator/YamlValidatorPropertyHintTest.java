@@ -687,6 +687,31 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testBeanWithItsNameAndAnUnknownKeyIsNotTakenForAKeyedItem() throws Exception {
+        // CAMEL-26960: a local model wrote the setters of a bean under parameters:, and was told that its name is a
+        // property and not the key, which it already was
+        List<Error> errors = validator.validate("""
+                - beans:
+                    - name: orderIds
+                      type: org.apache.camel.processor.idempotent.FileIdempotentRepository
+                      parameters:
+                        fileStore: orders.dat
+                """);
+        assertThat(errors).anyMatch(e -> e.getMessage().contains("property 'parameters' is not defined")
+                && e.getMessage().contains("goes under properties:"));
+        assertThat(errors).noneMatch(e -> e.getMessage().contains("a bean item is written as"));
+
+        errors = validator.validate("""
+                - beans:
+                    - name: orderIds
+                      type: org.apache.camel.processor.idempotent.FileIdempotentRepository
+                      fileStore: orders.dat
+                """);
+        assertThat(errors).anyMatch(e -> e.getMessage().contains("property 'fileStore' is not defined"));
+        assertThat(errors).noneMatch(e -> e.getMessage().contains("a bean item is written as"));
+    }
+
+    @Test
     public void testTemplateBeansKeyedByNameSayHowToWriteThem() throws Exception {
         // CAMEL-24704: the beans of a routeTemplate and a templatedRoute are the same list as the top-level beans
         List<Error> errors = validator.validate("""

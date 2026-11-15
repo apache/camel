@@ -150,7 +150,7 @@ public final class HttpUtil {
      *
      * @param  statusCode        the status code
      * @param  okStatusCodeRange the ok range (inclusive)
-     * @return                   <tt>true</tt> if ok, <tt>false</tt> otherwise
+     * @return                   <code>true</code> if ok, <code>false</code> otherwise
      */
     public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
         String[] ranges = okStatusCodeRange.split(",");
@@ -238,11 +238,11 @@ public final class HttpUtil {
     /**
      * Passes the value or values of a message header to the consumer after applying the filter strategy. This is mostly
      * used to simplify setting the headers of HTTP requests and responses.
-     * <p/>
+     * <p>
      * A {@link Collection} or an object array has one value per element: the elements are converted and filtered one by
      * one as {@link #applyHeader(HeaderFilterStrategy, Exchange, Iterator, TypeConverter, String, BiConsumer)} does,
      * and null elements are skipped. Every other value is a single value, which is filtered as it is and then converted
-     * to a String: a String (it is not split on a delimiter), a <tt>byte[]</tt> or another primitive array, a
+     * to a String: a String (it is not split on a delimiter), a <code>byte[]</code> or another primitive array, a
      * {@link Map}, and an {@link Iterable} that is not a collection (such as a JSON object or JSON array type that
      * iterates over its content).
      *

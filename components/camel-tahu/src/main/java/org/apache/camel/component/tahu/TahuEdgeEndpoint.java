@@ -66,16 +66,19 @@ public class TahuEdgeEndpoint extends TahuDefaultEndpoint implements HeaderFilte
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME, required = true)
     private final String edgeNode;
 
-    @UriPath(label = "producer (device only)", description = "ID of this edge node device")
+    @UriPath(label = "producer", description = "ID of this edge node device. Applies to the device endpoint only.")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private final String deviceId;
 
-    @UriParam(label = "producer (edge node only)", description = "Host ID of the primary host application for this edge node")
+    @UriParam(label = "producer",
+              description = "Host ID of the primary host application for this edge node. Applies to the edge node"
+                            + " endpoint only.")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private String primaryHostId;
 
-    @UriParam(label = "producer (edge node only)",
-              description = "ID of each device connected to this edge node, as a comma-separated list")
+    @UriParam(label = "producer",
+              description = "ID of each device connected to this edge node, as a comma-separated list. Applies to the"
+                            + " edge node endpoint only.")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private String deviceIds;
 
@@ -84,7 +87,8 @@ public class TahuEdgeEndpoint extends TahuDefaultEndpoint implements HeaderFilte
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME, required = true)
     private SparkplugBPayloadMap metricDataTypePayloadMap;
 
-    @UriParam(label = "producer (edge node only),advanced", description = "Flag enabling support for metric aliases",
+    @UriParam(label = "producer,advanced",
+              description = "Flag enabling support for metric aliases. Applies to the edge node endpoint only.",
               defaultValue = "false")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private boolean useAliases = false;
@@ -96,14 +100,14 @@ public class TahuEdgeEndpoint extends TahuDefaultEndpoint implements HeaderFilte
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private volatile HeaderFilterStrategy headerFilterStrategy;
 
-    @UriParam(label = "producer (edge node only),advanced",
-              description = "To use a specific org.eclipse.tahu.message.BdSeqManager implementation to manage edge node birth-death sequence numbers",
+    @UriParam(label = "producer,advanced",
+              description = "To use a specific org.eclipse.tahu.message.BdSeqManager implementation to manage edge node birth-death sequence numbers. Applies to the edge node endpoint only.",
               defaultValue = "org.apache.camel.component.tahu.CamelBdSeqManager")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private volatile BdSeqManager bdSeqManager;
 
-    @UriParam(label = "producer (edge node only),advanced",
-              description = "Path for Sparkplug B NBIRTH/NDEATH sequence number persistence files. This path will contain files named as \"<Edge Node ID>-bdSeqNum\" and must be writable by the executing process' user",
+    @UriParam(label = "producer,advanced",
+              description = "Path for Sparkplug B NBIRTH/NDEATH sequence number persistence files. This path will contain files named as \"<Edge Node ID>-bdSeqNum\" and must be writable by the executing process' user. Applies to the edge node endpoint only.",
               defaultValue = "${sys:java.io.tmpdir}/CamelTahuTemp")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private String bdSeqNumPath;

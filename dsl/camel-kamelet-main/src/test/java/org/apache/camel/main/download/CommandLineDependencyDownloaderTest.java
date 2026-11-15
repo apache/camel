@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main.download;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +111,9 @@ class CommandLineDependencyDownloaderTest {
                         case "downloadDependency" -> {
                             downloaded.add(args[0] + ":" + args[1] + ":" + args[2]);
                             return null;
+                        }
+                        case "downloadDependencies" -> {
+                            return InvocationHandler.invokeDefault(proxy, method, args);
                         }
                         case "downloadRequiredDependency" -> {
                             downloaded.add("required:" + args[0] + ":" + args[1] + ":" + args[2]);
