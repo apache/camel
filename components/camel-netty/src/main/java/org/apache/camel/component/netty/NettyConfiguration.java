@@ -62,9 +62,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam(defaultValue = "true", description = "Setting to set endpoint as one-way (false) or request-response (true)")
     private boolean sync = true;
     @UriParam(label = "codec",
-              description = "Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not"
-                            + " specified or the value is false, then Object Serialization is assumed over TCP - however only Strings are allowed"
-                            + " to be serialized by default.")
+              description = "Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec,"
+                            + " where each message ends with the delimiter. If not specified or the value is false, the default"
+                            + " codec is a String codec without framing, so each read from the socket becomes one message.")
     private boolean textline;
     @UriParam(label = "codec", defaultValue = "LINE", enums = "LINE,NULL",
               description = "The delimiter to use for the textline codec. Possible values are LINE and NULL.")
@@ -418,9 +418,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     }
 
     /**
-     * Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not
-     * specified or the value is false, then Object Serialization is assumed over TCP - however only Strings are allowed
-     * to be serialized by default.
+     * Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec, where
+     * each message ends with the delimiter. If not specified or the value is false, the default codec is a String codec
+     * without framing, so each read from the socket becomes one message.
      */
     public void setTextline(boolean textline) {
         this.textline = textline;
