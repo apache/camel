@@ -396,7 +396,9 @@ public interface StitchEndpointBuilderFactory {
         /**
          * The schema that describes the Stitch message.
          * 
-         * The option is a: {@code StitchSchema or Map} type.
+         * The option is a: {@code
+         * org.apache.camel.component.stitch.client.models.StitchSchema or Map}
+         * type.
          * 
          * Group: producer
          * 

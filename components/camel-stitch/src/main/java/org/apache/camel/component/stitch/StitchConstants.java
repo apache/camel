@@ -28,7 +28,7 @@ public final class StitchConstants {
               javaType = "String")
     public static final String TABLE_NAME = HEADER_PREFIX + "TableName";
     @Metadata(label = "producer", description = "The schema that describes the Stitch message",
-              javaType = "StitchSchema or Map")
+              javaType = "org.apache.camel.component.stitch.client.models.StitchSchema or Map")
     public static final String SCHEMA = HEADER_PREFIX + "Schema";
     @Metadata(label = "producer",
               description = "A collection of strings representing the Primary Key fields in the source table. " +
