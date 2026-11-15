@@ -9017,3 +9017,23 @@ two matching headers, `CamelDockerLoggingFilter` and `CamelDockerFollowRedirectF
 Both options and both header constants are now deprecated. Remove `loggingFilter` and `followRedirectFilter` from the
 endpoint URI or the component configuration; setting them has changed nothing since 2.18. To see the traffic with the
 Docker daemon, raise the log level of the `com.github.dockerjava` loggers.
+
+=== camel-thymeleaf - the CamelThymeleafServletContext header is deprecated
+
+The `CamelThymeleafServletContext` header is never read by the component. The web application template resolver is
+built from a `JakartaServletWebApplication`, not from a `ServletContext`, and that object comes from the endpoint:
+
+[source,java]
+----
+WebApplicationTemplateResolver resolver = new WebApplicationTemplateResolver(jakartaServletWebApplication);
+----
+
+A route that sets the header gets no error and no resolver. It is now deprecated, with a `deprecationNote` that says
+so. `jakartaServletWebApplication` is not a URI option; set it on the endpoint:
+
+[source,java]
+----
+ThymeleafEndpoint endpoint = context.getEndpoint("thymeleaf:greeting.html?resolver=WEB_APP", ThymeleafEndpoint.class);
+endpoint.setJakartaServletWebApplication(
+        JakartaServletWebApplication.buildApplication(servletContext));
+----
