@@ -30,7 +30,8 @@ public interface EventbridgeConstants {
     String RULE_NAME_PREFIX = "CamelAwsEventbridgeRuleNamePrefix";
     @Metadata(description = "The event pattern.", javaType = "String")
     String EVENT_PATTERN = "CamelAwsEventbridgeEventPattern";
-    @Metadata(description = "The targets to update or add to the rule.", javaType = "Collection<Target>")
+    @Metadata(description = "The targets to update or add to the rule.",
+              javaType = "Collection<software.amazon.awssdk.services.eventbridge.model.Target>")
     String TARGETS = "CamelAwsEventbridgeTargets";
     @Metadata(description = "The IDs of the targets to remove from the rule.", javaType = "Collection<String>")
     String TARGETS_IDS = "CamelAwsEventbridgeTargetsIds";
