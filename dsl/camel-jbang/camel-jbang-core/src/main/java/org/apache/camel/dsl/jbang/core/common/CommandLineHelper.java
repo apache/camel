@@ -32,7 +32,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import org.aesh.command.DefaultValueProvider;
+import org.aesh.command.converter.Converter;
+import org.aesh.command.converter.ConverterInvocation;
 import org.aesh.command.impl.internal.ProcessedOption;
+import org.aesh.command.validator.OptionValidatorException;
+import org.aesh.console.AeshContext;
 import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.OrderedProperties;
@@ -294,6 +298,69 @@ public final class CommandLineHelper {
     }
 
     /**
+     * The value of the user configuration for an option, when the option takes it. A value it does not take, such as
+     * runtime=springboot, failed every command with that option with "DefaultValueProvider failed for option runtime",
+     * which named neither the file, the key nor the value (CAMEL-26931); it now fails with exit code 2 and says so.
+     */
+    static String checkConfigValue(ProcessedOption option, String key, String value) {
+        String problem = invalidValue(option, value);
+        if (problem != null) {
+            throw CliException.usage("Invalid value in " + configFileOf(key) + ": " + key + "=" + value + " (" + problem
+                                     + "). Change it with camel config set " + key + "=<value>, or remove it with"
+                                     + " camel config unset " + key);
+        }
+        return value;
+    }
+
+    /**
+     * Why the option does not take the value, or null when it does (or when that cannot be told before the command line
+     * is parsed).
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static String invalidValue(ProcessedOption option, String value) {
+        Converter converter = option.converter();
+        if (converter == null) {
+            return null;
+        }
+        try {
+            converter.convert(new ConverterInvocation() {
+                @Override
+                public String getInput() {
+                    return value;
+                }
+
+                @Override
+                public AeshContext getAeshContext() {
+                    return null;
+                }
+            });
+            return null;
+        } catch (OptionValidatorException | IllegalArgumentException e) {
+            return e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+        } catch (RuntimeException e) {
+            // a converter that needs more than the value: the parser converts it, and reports what it finds
+            return null;
+        }
+    }
+
+    /** The file of the user configuration the key is from: the local file wins over the global one. */
+    private static Path configFileOf(String key) {
+        Path local = Paths.get(LOCAL_USER_CONFIG);
+        if (Files.isRegularFile(local)) {
+            Properties properties = new Properties();
+            try (Reader reader = Files.newBufferedReader(local, StandardCharsets.UTF_8)) {
+                properties.load(reader);
+                if (properties.containsKey(key)) {
+                    return local.toAbsolutePath();
+                }
+            } catch (Exception e) {
+                // the global file then
+            }
+        }
+        return getUserPropertyFile(false);
+    }
+
+    /**
      * The defaults of the options from the user configuration: {@code camel.<command path>.<option>} for one command,
      * else {@code <option>} (as the properties default provider of picocli looked them up). The commands of camel
      * plugin take no defaults from it.
@@ -317,16 +384,17 @@ public final class CommandLineHelper {
             names.addAll(option.getAliases());
             if (tree != null) {
                 for (String name : names) {
-                    String value = properties.getProperty(tree.getQualifiedName().replace(' ', '.') + "." + name);
+                    String key = tree.getQualifiedName().replace(' ', '.') + "." + name;
+                    String value = properties.getProperty(key);
                     if (value != null) {
-                        return value;
+                        return checkConfigValue(option, key, value);
                     }
                 }
             }
             for (String name : names) {
                 String value = properties.getProperty(name);
                 if (value != null) {
-                    return value;
+                    return checkConfigValue(option, name, value);
                 }
             }
             return null;
