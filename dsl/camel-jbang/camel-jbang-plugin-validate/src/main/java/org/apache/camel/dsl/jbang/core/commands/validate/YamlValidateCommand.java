@@ -66,7 +66,7 @@ public class YamlValidateCommand extends CamelCommand {
                           + " camel_validate_source answers")
     boolean jsonOutput;
 
-    @Arguments(required = true, description = "The Camel YAML source files to parse.", paramLabel = "<files>")
+    @Arguments(required = true, description = "The Camel YAML source files to parse.", paramLabel = "files")
     List<String> files = new ArrayList<>();
 
     public YamlValidateCommand(CamelJBangMain main) {

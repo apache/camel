@@ -27,6 +27,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
+
+import javax.lang.model.SourceVersion;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Arguments;
@@ -62,7 +65,7 @@ public class TransformRoute extends CamelCommand {
     }
 
     @Arguments(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
-               paramLabel = "<files>")
+               paramLabel = "files")
     List<String> files = new ArrayList<>();
 
     @Option(name = "output",
@@ -182,6 +185,23 @@ public class TransformRoute extends CamelCommand {
     }
 
     /**
+     * The Java route with the class named after the file it is written to: a class must have the name of its file, and
+     * --output=Out.java got the class named after the route file (CAMEL-26931).
+     */
+    static String withClassName(String java, String fileName, Path out) {
+        String wanted = out.getFileName().toString();
+        if (!wanted.endsWith(".java") || fileName == null || !fileName.endsWith(".java")) {
+            return java;
+        }
+        wanted = wanted.substring(0, wanted.length() - ".java".length());
+        String current = fileName.substring(0, fileName.length() - ".java".length());
+        if (wanted.equals(current) || !SourceVersion.isName(wanted)) {
+            return java;
+        }
+        return java.replaceFirst("\\bclass " + Pattern.quote(current) + "\\b", "class " + wanted);
+    }
+
+    /**
      * To Java, each file is converted without running it (CAMEL-25254): read into the model by the parser of its DSL
      * and written as a route builder class, printed, or written into the output directory (or file, for one file).
      */
@@ -203,7 +223,7 @@ public class TransformRoute extends CamelCommand {
                 Files.createDirectories(out);
                 Files.writeString(out.resolve(r.fileName()), java);
             } else {
-                Files.writeString(out, java);
+                Files.writeString(out, withClassName(java, r.fileName(), out));
             }
         }
         if (out == null) {

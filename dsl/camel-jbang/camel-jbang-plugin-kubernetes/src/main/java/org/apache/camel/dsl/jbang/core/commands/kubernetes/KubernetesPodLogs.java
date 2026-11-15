@@ -38,7 +38,7 @@ import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelp
 public class KubernetesPodLogs extends KubernetesBaseCommand {
 
     @Argument(description = "The Camel file to get logs from. Integration name is derived from the file name.",
-              paramLabel = "<file>")
+              paramLabel = "file")
     protected String filePath;
 
     @Option(name = "label", description = "Label name and value used as a pod selector.")
