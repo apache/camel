@@ -112,7 +112,9 @@ public class CamelTraceAction extends ActionBaseCommand {
             completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @Option(name = "json", hasValue = false, description = "Output the status of tracing in JSON Format")
+    @Option(name = "json", hasValue = false,
+            description = "Output in JSON Format: the status of tracing, and with --action=dump each trace as a JSON object"
+                          + " per line")
     boolean jsonOutput;
 
     @Mixin
@@ -692,6 +694,37 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
     }
 
+    static JsonObject toJson(Row row) {
+        JsonObject jo = new JsonObject();
+        jo.put("pid", JsonValues.pid(row.pid));
+        jo.put("name", row.name);
+        jo.put("uid", row.uid);
+        jo.put("exchangeId", row.exchangeId);
+        jo.put("exchangePattern", row.exchangePattern);
+        jo.put("timestamp", row.timestamp);
+        jo.put("elapsed", row.elapsed);
+        jo.put("threadName", row.threadName);
+        jo.put("location", row.location);
+        jo.put("routeId", row.routeId);
+        jo.put("nodeId", row.nodeId);
+        jo.put("first", row.first);
+        jo.put("last", row.last);
+        jo.put("done", row.done);
+        jo.put("failed", row.failed);
+        putIfNotNull(jo, "endpoint", row.endpoint);
+        putIfNotNull(jo, "endpointService", row.endpointService);
+        putIfNotNull(jo, "aggregate", row.aggregate);
+        putIfNotNull(jo, "message", row.message);
+        putIfNotNull(jo, "exception", row.exception);
+        return jo;
+    }
+
+    private static void putIfNotNull(JsonObject jo, String key, Object value) {
+        if (value != null) {
+            jo.put(key, value);
+        }
+    }
+
     private boolean isValidGrep(String line) {
         if (grep == null) {
             return true;
@@ -730,6 +763,11 @@ public class CamelTraceAction extends ActionBaseCommand {
         String data = getDataAsTable(row);
         boolean valid = filterDepth(row) && isValidSince(limit, row.timestamp) && isValidGrep(data);
         if (!valid) {
+            return;
+        }
+        if (jsonOutput) {
+            // one JSON object per line (JSON Lines), also when following, for a script or an AI agent (CAMEL-26929)
+            printer().println(toJson(row).toJson());
             return;
         }
 

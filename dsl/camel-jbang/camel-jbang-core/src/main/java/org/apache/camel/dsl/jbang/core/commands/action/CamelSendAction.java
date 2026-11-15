@@ -162,6 +162,11 @@ public class CamelSendAction extends ActionBaseCommand {
     @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
+    @Option(name = "json", hasValue = false,
+            description = "Output the outcome of the send in JSON Format: the status, the exchange id and, with --reply, the"
+                          + " reply message (as --show-headers, --show-body and the other --show options say)")
+    boolean jsonOutput;
+
     @Option(name = "infra", description = "Send to infrastructure service (e.g., nats, kafka)")
     String infra;
 
@@ -359,6 +364,9 @@ public class CamelSendAction extends ActionBaseCommand {
             String error = result.status() == ActionClient.Status.TIMEOUT ? "Send timeout: " + result.error() : result.error();
             throw new CliException(result.exitCode(), error);
         }
+        if (jsonOutput) {
+            return showJson(result, jo);
+        }
         printStatusLine(jo);
         if (jo.containsKey("sent")) {
             return showSummary(jo);
@@ -416,6 +424,43 @@ public class CamelSendAction extends ActionBaseCommand {
             return CliExitCode.FAILURE;
         }
         return CliExitCode.OK;
+    }
+
+    /**
+     * The answer of the integration as JSON, with what the --show options leave out removed, so a script or an AI agent
+     * reads the outcome of the send instead of parsing a table (CAMEL-26929).
+     */
+    private int showJson(ActionResult result, JsonObject jo) {
+        JsonObject message = jo.getMap("message");
+        if (message != null) {
+            if (!showExchangeProperties) {
+                message.remove("exchangeProperties");
+            }
+            if (!showExchangeVariables) {
+                message.remove("exchangeVariables");
+            }
+            if (!showHeaders) {
+                message.remove("headers");
+            }
+            if (!showBody) {
+                message.remove("body");
+            }
+        }
+        if (!showException) {
+            jo.remove("exception");
+        }
+        if (!result.isOk() && message == null && jo.getMap("exception") == null && jo.getString("error") == null) {
+            jo.put("error", result.error());
+        }
+        jo.put("pid", pid);
+        printer().println(pretty ? Jsoner.prettyPrint(jo.toJson(), 2) : jo.toJson());
+        String status = jo.getString("status");
+        if ("timeout".equals(status)) {
+            return CliExitCode.TIMEOUT;
+        } else if ("failed".equals(status) || "error".equals(status)) {
+            return CliExitCode.FAILURE;
+        }
+        return result.isOk() || "success".equals(status) ? CliExitCode.OK : CliExitCode.FAILURE;
     }
 
     /** The summary of a repeat or a folder of messages: the errors, as the status line has the counts. */

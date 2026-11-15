@@ -253,4 +253,32 @@ class CamelSendActionResultTest extends ActionCommandTestSupport {
         answer.put("message", message);
         return answer;
     }
+
+    @Test
+    void theOutcomeAsJson() throws Exception {
+        // CAMEL-26929: send had no --json, so a script or an AI agent had to read the status line and the table
+        writeStatusFile(TEST_PID, "orders");
+
+        int exit = callWithResponse(command("orders", "--endpoint=direct:start", "--body=hello", "--reply", "--json"),
+                answer("success"));
+
+        assertThat(exit).isEqualTo(CliExitCode.OK);
+        JsonObject out = (JsonObject) Jsoner.deserialize(printer.getStdout());
+        assertThat(out.getString("status")).isEqualTo("success");
+        assertThat(out.getString("exchangeId")).isEqualTo("ex-1");
+        assertThat(out.getLong("pid")).isEqualTo(TEST_PID);
+        assertThat(printer.getStdout()).doesNotContain("Sent (");
+    }
+
+    @Test
+    void aFailedSendAsJsonIsAFailure() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+
+        int exit = callWithResponse(command("orders", "--endpoint=direct:start", "--json"), answer("error"));
+
+        assertThat(exit).isEqualTo(CliExitCode.FAILURE);
+        JsonObject out = (JsonObject) Jsoner.deserialize(printer.getStdout());
+        assertThat(out.getString("status")).isEqualTo("error");
+        assertThat(out.containsKey("exception")).isTrue();
+    }
 }

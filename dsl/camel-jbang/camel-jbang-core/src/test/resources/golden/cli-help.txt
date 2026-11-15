@@ -1644,7 +1644,7 @@ Usage: camel cmd send [-h] [--properties=<properties>] [--prop=<prop>]
                        [--interval=<interval>] [--timeout=<timeout>]
                        [--show-exchange-properties] [--show-exchange-variables]
                        [--show-headers] [--show-body] [--show-exception]
-                       [--pretty] [--logging-color] [--infra=<infra>]
+                       [--pretty] [--logging-color] [--json] [--infra=<infra>]
                        [--download] [--repo=<repo>] [--fresh] [<name>]
 
 Options:
@@ -1701,6 +1701,10 @@ Options:
                             using JSon or XML format
       --logging-color       Use colored logging
                             Default: true
+      --json                Output the outcome of the send in JSON Format: the
+                            status, the exchange id and, with --reply, the reply
+                            message (as --show-headers, --show-body and the
+                            other --show options say)
       --infra=<infra>       Send to infrastructure service (e.g., nats, kafka)
       --download            Whether to allow automatic downloading JAR
                             dependencies (over the internet)
@@ -6445,7 +6449,9 @@ Options:
       --sort=<sort>         Sort by pid, name or age for showing status of
                             tracing
                             Default: pid
-      --json                Output the status of tracing in JSON Format
+      --json                Output in JSON Format: the status of tracing, and
+                            with --action=dump each trace as a JSON object per
+                            line
       --timeout=<timeout>   How long to wait for the integration to answer, in
                             millis or as a duration such as 30s
                             Default: 10000
