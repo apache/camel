@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -206,6 +207,20 @@ public class DependencyUpdate extends DependencyList {
         }
     }
 
+    /**
+     * Writes the lines with the line separator of the file, and a newline at the end when the file had one: it dropped
+     * the last newline, and wrote CRLF on Windows into a file of LF lines (CAMEL-26931).
+     */
+    static void writeLikeTheFile(Path file, List<String> lines) throws IOException {
+        String original = Files.exists(file) ? Files.readString(file) : "";
+        String separator = original.contains("\r\n") ? "\r\n" : "\n";
+        String text = String.join(separator, lines);
+        if (original.isEmpty() || original.endsWith("\n")) {
+            text += separator;
+        }
+        Files.writeString(file, text);
+    }
+
     private void updateJBangSource(Path file) {
         try {
             List<String> lines = Files.readAllLines(file);
@@ -245,8 +260,7 @@ public class DependencyUpdate extends DependencyList {
                 answer.add(pos, dep);
             }
 
-            String text = String.join(System.lineSeparator(), answer);
-            Files.writeString(file, text);
+            writeLikeTheFile(file, answer);
         } catch (Exception e) {
             printer().printErr("Error updating source file: " + file + " due to: " + e.getMessage());
         }
@@ -316,8 +330,7 @@ public class DependencyUpdate extends DependencyList {
                 answer.add(pos, dep);
             }
 
-            String text = String.join(System.lineSeparator(), answer);
-            Files.writeString(file, text);
+            writeLikeTheFile(file, answer);
         } catch (Exception e) {
             printer().printErr("Error updating source file: " + file + " due to: " + e.getMessage());
         }
@@ -345,8 +358,7 @@ public class DependencyUpdate extends DependencyList {
                 }
                 answer.add(line);
             }
-            String text = String.join(System.lineSeparator(), answer);
-            Files.writeString(file, text);
+            writeLikeTheFile(file, answer);
         } catch (Exception e) {
             printer().printErr("Error stripping //DEPS from: " + file + " due to: " + e.getMessage());
         }
