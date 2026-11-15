@@ -19,6 +19,7 @@ package org.apache.camel.component.atmosphere.websocket;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
 
@@ -42,8 +43,16 @@ public class WebsocketRoute1WithInitParamTest extends WebsocketCamelRouterWithIn
     }
 
     @Test
-    void testPassParametersWebsocketOnOpen() {
-        assertDoesNotThrow(() -> runtTest("/hola1?param1=value1&param2=value2"));
+    void testPassParametersWebsocketOnOpen() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:hola1");
+        mock.expectedMessageCount(2);
+        mock.message(0).header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONOPEN_EVENT_TYPE);
+        mock.message(0).header("param1").isEqualTo("value1");
+        mock.message(0).header("param2").isEqualTo("value2");
+
+        runtTest("/hola1?param1=value1&param2=value2");
+
+        mock.assertIsSatisfied();
     }
 
     // START SNIPPET: payload
@@ -59,11 +68,7 @@ public class WebsocketRoute1WithInitParamTest extends WebsocketCamelRouterWithIn
                 });
 
                 // route for events resending enabled
-                from("atmosphere-websocket:///hola1").to("log:info").process(new Processor() {
-                    public void process(final Exchange exchange) {
-                        checkPassedParameters(exchange);
-                    }
-                });
+                from("atmosphere-websocket:///hola1").to("log:info").to("mock:hola1");
             }
         };
     }
@@ -83,21 +88,5 @@ public class WebsocketRoute1WithInitParamTest extends WebsocketCamelRouterWithIn
         }
     }
 
-    private static void checkPassedParameters(Exchange exchange) {
-        Object connectionKey = exchange.getIn().getHeader(WebsocketConstants.CONNECTION_KEY);
-        Object eventType = exchange.getIn().getHeader(WebsocketConstants.EVENT_TYPE);
-        Object msg = exchange.getIn().getBody();
-
-        assertNull(msg);
-        assertNotNull(connectionKey);
-
-        if (eventType instanceof Integer && eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)) {
-
-            String param1 = (String) exchange.getIn().getHeader("param1");
-            String param2 = (String) exchange.getIn().getHeader("param2");
-
-            assertTrue(param1.equals("value1") && param2.equals("value2"));
-        }
-    }
     // END SNIPPET: payload
 }
