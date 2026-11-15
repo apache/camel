@@ -462,11 +462,58 @@ YAML::
 ----
 ====
 
-=== Using client timeout - SO_TIMEOUT
+=== Timeouts and dead or silent servers
 
-See the
-https://github.com/apache/camel/blob/main/components/camel-http/src/test/java/org/apache/camel/component/http/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
-unit test.
+The component passes to Apache HttpClient only the timeouts that you set to another value than their default, so the
+defaults below are those of HttpClient 5. They describe how the client library behaves, approximately, not guarantees
+of Camel. All values are in milliseconds, and can be set on the component or on the endpoint (the endpoint wins).
+
+[cols="2,1,4"]
+|===
+| Option | Default | What it bounds
+
+| `connectTimeout` | 3 minutes | Opening a new connection, including the TLS handshake.
+
+| `soTimeout` | 3 minutes | Each read on a connection of the endpoint's connection pool: a server that stops sending
+fails the request after this time.
+
+| `responseTimeout` | not set | When set, it replaces `soTimeout` as the read timeout while the request runs.
+
+| `connectionRequestTimeout` | 3 minutes | Waiting for a free connection of the pool (`maxTotalConnections`,
+`connectionsPerRoute`).
+|===
+
+A server that stops answering without closing the connection (the host is gone, or a firewall or NAT drops the
+packets) blocks the request for the read timeout: with the defaults the exchange fails after about 3 minutes with a
+`SocketTimeoutException`. HttpClient does not retry a request that timed out, whatever its method; a redelivery of the
+Camel error handler sends it again. Set the timeouts to what your service needs:
+
+[source,text]
+----
+https://api.example.com/orders?connectTimeout=5000&soTimeout=30000&connectionRequestTimeout=5000
+----
+
+NOTE: `soTimeout` and `connectionTimeToLive` are settings of the connection pool that the component creates for the
+endpoint: they do not apply when you set your own `clientConnectionManager` on the component.
+
+==== Pooled connections closed by the server or by a NAT
+
+The endpoint keeps connections open for reuse. Before reusing a connection that has been idle for more than
+2 seconds, HttpClient checks that the server has not closed it (its `validateAfterInactivity`, which the component does
+not expose). A request sent sooner on a connection that the server closed fails with `NoHttpResponseException`.
+HttpClient retries it once only when the method is idempotent (`GET`, `HEAD`, `PUT`, `DELETE`, `OPTIONS`, `TRACE`), so
+a `POST` or a `PATCH` fails and needs a redelivery of the Camel error handler.
+
+A NAT or firewall that drops an idle connection silently does not close it, so the pool cannot see it: the next
+request on it waits for the read timeout and fails, without a retry by HttpClient. To keep the pool from reusing such a
+connection:
+
+* `httpClient.connectionKeepAlive` (milliseconds): how long an idle connection is kept for reuse when the response of
+the server has no `Keep-Alive` header with a timeout; 3 minutes by default. Set it below the idle timeout of the NAT or
+firewall.
+* `connectionTimeToLive` (component option, milliseconds): the maximum age of a connection, counted from its creation,
+whether it was busy or idle. Below the idle timeout of the NAT or firewall it works too, at the cost of reconnecting
+busy connections as well.
 
 === Configuring a Proxy
 
