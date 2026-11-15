@@ -41,6 +41,12 @@ These rules apply to ALL AI agents working on this codebase.
   first: availability depends on the state and the caller (`4` is only offered once the issue is assigned to you).
 - Set the `fixVersions` field before closing a ticket (it cannot be set on a closed issue).
 
+### Shared Tasks
+
+- The `tasks/` folder lists work that many people and agents share, one file per JIRA ticket, such as
+  `tasks/component-descriptions.md` for CAMEL-23832. Follow the steps in the file.
+- The JIRA ticket of a shared task stays unassigned. The file and the open pull requests show who works on what.
+
 ### Pull Requests
 
 - When pushing new commits, **always update the PR description** (and title if needed) so it describes the current
