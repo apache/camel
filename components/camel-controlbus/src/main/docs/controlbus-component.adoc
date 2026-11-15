@@ -150,8 +150,10 @@ The `current` route id refers to the route that routes the message, so a route c
 ----
 
 A graceful stop waits for the inflight messages of the route, including the one that asks for the stop.
-So a `stop`, `suspend`, `restart` or `fail` of a route that routes the message (the current route, or a route that called it, such as with `direct`), or of the route the message came from, always runs asynchronously, even without `async=true`: the message continues, and the route stops once it is done.
-A copy of the message made by an EIP such as Split or Multicast is routed by the route of that EIP and the routes after it, so a stop of an earlier route from such a copy, other than the route the message came from, needs `async=true`.
+So a `stop`, `suspend`, `restart` or `fail` always runs asynchronously, even without `async=true`, when it targets the current route, a route that called it (such as with `direct`), or the route the message came from.
+The message continues, and the route stops once it is done.
+A copy of the message made by an EIP such as Split or Multicast does not know the routes that called the route of that EIP.
+From such a copy, a stop of one of those routes needs `async=true`, unless it is the route the message came from.
 
 [[ControlBus-Gettingperformancestatistics]]
 === Getting performance statistics
