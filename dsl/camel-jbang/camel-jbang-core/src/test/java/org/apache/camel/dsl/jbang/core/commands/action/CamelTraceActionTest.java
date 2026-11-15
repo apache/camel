@@ -279,6 +279,15 @@ class CamelTraceActionTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void aTraceFileThatGotSmallerIsANewFile() {
+        // CAMEL-26929: the integration starts a new trace file when it is full, and camel trace reads it from its start
+        assertThat(CamelTraceAction.isNewFile(10_000, 120)).isTrue();
+        assertThat(CamelTraceAction.isNewFile(10_000, 10_000)).isFalse();
+        assertThat(CamelTraceAction.isNewFile(10_000, 12_000)).isFalse();
+        assertThat(CamelTraceAction.isNewFile(0, 120)).isFalse();
+    }
+
+    @Test
     void dumpAsJsonLines() throws Exception {
         // CAMEL-26929: the dump had no --json; now each trace is a JSON object of its own line
         writeStatusFile(TEST_PID, status(true, false));
