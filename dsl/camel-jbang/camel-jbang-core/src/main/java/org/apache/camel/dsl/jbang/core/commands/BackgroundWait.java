@@ -24,13 +24,13 @@ import org.apache.camel.dsl.jbang.core.common.StringConverter;
 import org.apache.camel.util.TimeUtils;
 
 /**
- * The <tt>--background-wait</tt> option of camel run: how long to wait for an integration that runs in the background
- * to start, in millis or as a duration such as <tt>2m</tt>. <tt>true</tt> (or no value) waits 60 seconds, and
- * <tt>false</tt> does not wait. A file name after the option is not its value.
+ * The <tt>--background-wait</tt> option of camel run and camel infra run: how long to wait for an integration that runs
+ * in the background to start, in millis or as a duration such as <tt>2m</tt>. <tt>true</tt> (or no value) waits 60
+ * seconds, and <tt>false</tt> does not wait. A file name after the option is not its value.
  */
-final class BackgroundWait {
+public final class BackgroundWait {
 
-    static final long DEFAULT = 60000;
+    public static final long DEFAULT = 60000;
 
     private BackgroundWait() {
     }
@@ -50,7 +50,7 @@ final class BackgroundWait {
     /**
      * The time to wait, in millis (0 is not to wait).
      */
-    static long parse(String text) {
+    public static long parse(String text) {
         String value = text.trim();
         if ("true".equalsIgnoreCase(value)) {
             return DEFAULT;
@@ -73,7 +73,7 @@ final class BackgroundWait {
      * The arguments of camel run for the integration that runs in the background: without <tt>--background</tt> and
      * <tt>--background-wait</tt> (with its value).
      */
-    static List<String> withoutBackgroundOptions(List<String> args) {
+    public static List<String> withoutBackgroundOptions(List<String> args) {
         List<String> answer = new ArrayList<>(args.size());
         for (int i = 0; i < args.size(); i++) {
             String arg = args.get(i);

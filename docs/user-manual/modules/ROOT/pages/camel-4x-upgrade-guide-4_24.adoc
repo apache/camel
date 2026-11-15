@@ -9109,6 +9109,22 @@ The `withFixedPort()` container of `camel-test-infra-artemis` maps the same port
 A service that does not start because a port it maps on the host is taken now fails with one line that names the port,
 and the infra service that has it, instead of the stack trace of the container runtime.
 
+=== camel-jbang - camel infra run --background waits for the service to start
+
+`camel infra run --background` and `camel infra restart --background` wait up to 60 seconds for the service to start,
+and then print its connection details, as `camel infra run` does in the foreground (`--json` adds them as
+`serviceData`, as `camel infra get --json` does). Before, the command returned right away with `0`, and a service that
+could not start, such as with Docker down, was gone without a word. Now:
+
+* A service that ends before it started exits with its exit code (`1` when that was `0`), and prints why.
+* A service that is still starting after the wait, such as while it pulls its container image the first time, exits
+  with `124` and is left running.
+* `--background-wait` takes how long, such as `--background-wait=5m`, or `false` to return right away, as for
+  `camel run --background`.
+
+The output of the service goes to `~/.camel/<pid>-run.log`, instead of a pipe that nobody read. `camel infra stop`
+removes it.
+
 === camel-jbang - camel run loads one version of each library
 
 `camel run` downloads the JARs of each component when it is first used. It now keeps one version of each library: when
