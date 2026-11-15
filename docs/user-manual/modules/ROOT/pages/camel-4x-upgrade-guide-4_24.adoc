@@ -321,6 +321,10 @@ whose server stopped answering:
 * A disconnect, such as when the consumer or the producer stops, still sends `QUIT`, but waits at most 2 seconds for
   its reply (`soTimeout` when it is shorter), then closes the connection. The disconnect that the consumer forces after
   a failed poll closes the connection without sending `QUIT`.
+* A server that takes more than 2 seconds to answer `QUIT` now makes the disconnect fail after 2 seconds (the
+  connection is closed all the same). A producer with `disconnect=true` or `disconnectOnBatchComplete=true` logs it as
+  a WARN (`Exception occurred during disconnecting from: ... This exception is ignored.`) where it used to wait for the
+  reply; the consumer, and the stop of the consumer or the producer, log it at DEBUG.
 * When the server does not answer in time while the consumer retrieves a file (`soTimeout`, or `timeout` during the
   transfer), only that file fails: the consumer closes the connection and leaves the other files of the poll to the
   next poll, which connects again. Before, the consumer went on with the next file on the same connection, and each
