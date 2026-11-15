@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import org.aesh.command.CommandDefinition;
 
 @CommandDefinition(name = "eval",
-                   description = "Evaluate Camel expressions and scripts (use transform --help to see sub commands)",
+                   description = "Evaluate Camel expressions and scripts (use eval --help to see sub commands)",
                    generateHelp = true)
 public class EvalCommand extends CamelCommand {
 

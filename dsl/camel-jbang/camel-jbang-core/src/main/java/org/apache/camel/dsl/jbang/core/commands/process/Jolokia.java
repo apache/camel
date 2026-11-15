@@ -43,7 +43,7 @@ import org.jolokia.jvmagent.client.util.VirtualMachineHandlerOperations;
                            "  camel jolokia myApp --stop" })
 public class Jolokia extends ProcessBaseCommand {
 
-    @Argument(required = true, description = "Name or pid of running Camel integration")
+    @Argument(paramLabel = "name", required = true, description = "Name or pid of running Camel integration")
     String name;
 
     @Option(name = "stop", hasValue = false, description = "Stops the Jolokia JVM Agent in the running Camel integration")

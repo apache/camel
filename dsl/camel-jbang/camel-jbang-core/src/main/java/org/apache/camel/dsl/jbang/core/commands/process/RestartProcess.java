@@ -50,7 +50,7 @@ public class RestartProcess extends ProcessBaseCommand {
      */
     private static final int STARTED = 5;
 
-    @Argument(required = true, description = "Name or pid of running Camel integration")
+    @Argument(paramLabel = "name", required = true, description = "Name or pid of running Camel integration")
     String name;
 
     @Option(name = "timeout",

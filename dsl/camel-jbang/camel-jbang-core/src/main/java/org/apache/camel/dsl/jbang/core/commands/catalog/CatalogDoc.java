@@ -79,8 +79,9 @@ import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseComman
                            "  camel doc kafka --example" })
 public class CatalogDoc extends CamelCommand {
 
-    @Argument(required = true, description = "Name of kamelet, component, dataformat, language, EIP, or other Camel resource"
-                                             + " (prefix with eip: for an EIP with the name of a component, such as eip:log)")
+    @Argument(paramLabel = "name", required = true,
+              description = "Name of kamelet, component, dataformat, language, EIP, or other Camel resource"
+                            + " (prefix with eip: for an EIP with the name of a component, such as eip:log)")
     String name;
 
     @Option(name = "camel-version", description = "To use a different Camel version than the default version")
@@ -542,7 +543,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             printer().printf("Component Name: %s%n", cm.getName());
         }
-        printer().printf("Since: %s%n", fixQuarkusSince(cm.getFirstVersionShort()));
+        printSince(fixQuarkusSince(cm.getFirstVersionShort()));
         printer().println("");
         if (cm.isProducerOnly()) {
             printer().println("Only producer is supported");
@@ -621,7 +622,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             printer().printf("Dataformat Name: %s%n", dm.getName());
         }
-        printer().printf("Since: %s%n", fixQuarkusSince(dm.getFirstVersionShort()));
+        printSince(fixQuarkusSince(dm.getFirstVersionShort()));
         printer().println("");
         printer().printf("%s%n", dm.getDescription());
         printer().println("");
@@ -671,7 +672,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             printer().printf("Language Name: %s%n", lm.getName());
         }
-        printer().printf("Since: %s%n", fixQuarkusSince(lm.getFirstVersionShort()));
+        printSince(fixQuarkusSince(lm.getFirstVersionShort()));
         printer().println("");
         printer().printf("%s%n", lm.getDescription());
         printer().println("");
@@ -721,7 +722,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             printer().printf("Miscellaneous Name: %s%n", om.getName());
         }
-        printer().printf("Since: %s%n", fixQuarkusSince(om.getFirstVersionShort()));
+        printSince(fixQuarkusSince(om.getFirstVersionShort()));
         printer().println("");
         printer().printf("%s%n", om.getDescription());
         printer().println("");
@@ -758,7 +759,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             printer().printf("EIP Name: %s%n", em.getName());
         }
-        printer().printf("Since: %s%n", fixQuarkusSince(em.getFirstVersionShort()));
+        printSince(fixQuarkusSince(em.getFirstVersionShort()));
         printer().println("");
         printer().printf("%s%n", em.getDescription());
         printer().println("");
@@ -949,4 +950,11 @@ public class CatalogDoc extends CamelCommand {
         return since;
     }
 
+    // the version a kind first came in, when the catalog has one: an EIP of the catalog has none, which printed an empty
+    // Since line (CAMEL-26931)
+    private void printSince(String since) {
+        if (since != null && !since.isBlank()) {
+            printer().printf("Since: %s%n", since);
+        }
+    }
 }

@@ -3495,6 +3495,15 @@ Spring (`@DateTimeFormat`). The OpenAPI Generator no longer prints its banner on
 lists them and exits with `2`. Use `camel stop --all` (or `camel stop '*'`) to stop them all, as `camel stop` did. A
 bare `camel stop`, such as of an AI agent, stopped the integrations of the user and of other agents too.
 
+=== camel-jbang - the options of camel update and catalog --filter
+
+* The options of `camel update run` are named in kebab-case, as the options of the other
+  commands: `--dry-run`, `--open-rewrite-version`, `--camel-artifact`, `--camel-spring-boot-artifact`,
+  `--quarkus-maven-plugin-version`, `--quarkus-maven-plugin-group-id` and `--upgrade-timeout`. The camelCase names
+  (`--dryRun` and so on) still work.
+* `--filter` of the `camel catalog` commands matches a part of the name, as it does for the description:
+  `--filter=aws2` lists the `aws2-*` components (it listed nothing, as only a whole name matched).
+
 === camel-jbang - camel version list
 
 * `camel version list` prints the `Last updated` note on stderr, so stdout has the table only.

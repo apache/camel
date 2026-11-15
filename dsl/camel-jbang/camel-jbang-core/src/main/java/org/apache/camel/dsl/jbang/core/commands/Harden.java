@@ -135,7 +135,7 @@ public class Harden extends CamelCommand {
         }
     }
 
-    @Arguments(required = true, description = "Route file(s) to analyze for security hardening")
+    @Arguments(paramLabel = "files", required = true, description = "Route file(s) to analyze for security hardening")
     List<String> files;
 
     @Option(name = "url", description = "LLM API endpoint URL. Auto-detected from 'camel infra' for Ollama if not specified.")

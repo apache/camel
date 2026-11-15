@@ -58,7 +58,7 @@ public class Bind extends CamelCommand {
     }
 
     Path filePath; // Defined only for file path completion; the field never used
-    @Argument(required = true, description = "Name of binding file to be saved", paramLabel = "<file>")
+    @Argument(required = true, description = "Name of binding file to be saved", paramLabel = "file")
     String file;
 
     @Option(name = "source", description = "Source (from) such as a Kamelet or Camel endpoint uri", required = true)

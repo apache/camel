@@ -53,7 +53,7 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel plugin add --command=my-cmd --gav=com.foo:bar:1.0" })
 public class PluginAdd extends PluginBaseCommand {
 
-    @Argument(required = true, description = "The Camel plugin to add", paramLabel = "<name>")
+    @Argument(required = true, description = "The Camel plugin to add", paramLabel = "name")
     String name;
 
     @Option(name = "command", description = "The command that the plugin uses")
