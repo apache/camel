@@ -211,11 +211,6 @@ exception sorter. See xref:sql-component.adoc#_noticing_a_dead_or_silent_databas
 in the SQL component for the pool settings, Spring Boot and Quarkus properties, and starting while the database is
 down.
 
-NOTE: With `outputType=StreamList` the rows are read from the open connection while the route processes them. When
-the connection breaks halfway, the iterator closes itself and reports no more rows, so a redelivery of the
-Splitter that reads it completes with only the rows read before the failure. Do not configure redeliveries for the
-route that splits a `StreamList`: let the exchange fail, and run the query again.
-
 NOTE: With the default `resetAutoCommit=true` the producer commits right after running the statement, before a
 `StreamList` is read. On PostgreSQL a `statement.fetchSize` makes the driver read the rows through a server-side cursor
 of that transaction, which the commit closes: reading past the first `fetchSize` rows fails. Leave `statement.fetchSize`

@@ -365,11 +365,6 @@ throws when the database cannot be reached, so the application does not start. S
 `-1` on the `HikariConfig`, or create the pool with the no-argument constructor and its setters (as Spring Boot
 does): the pool then connects on first use, and the consumer polls again until the database is back.
 
-NOTE: With `outputType=StreamList` the rows are read from the open connection while the route processes them. When
-the connection breaks halfway, the iterator closes itself and reports no more rows, so a redelivery of the
-Splitter that reads it completes with only the rows read before the failure. Do not configure redeliveries for the
-route that splits a `StreamList`: let the exchange fail, and run the query again.
-
 === Using named parameters
 
 In the given route below, we want to get all the projects from the
