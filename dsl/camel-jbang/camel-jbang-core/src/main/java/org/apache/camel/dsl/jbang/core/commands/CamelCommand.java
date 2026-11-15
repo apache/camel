@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.aesh.command.Command;
 import org.aesh.command.CommandResult;
@@ -45,6 +46,9 @@ import org.jline.jansi.AnsiConsole;
 import org.jline.jansi.AnsiMode;
 
 public abstract class CamelCommand implements Command<CommandInvocation>, CommandTree.ParsedCommandAware {
+
+    // an ANSI escape code (CSI), such as the colors of the Jansi Ansi builder
+    private static final Pattern ANSI_CODE = Pattern.compile("\\x1B\\[[0-9;:?]*[ -/]*[@-~]");
 
     // the model of the options of this command, and the tree it runs in (set when the command line is built)
     private ProcessedCommand<?, ?> processedCommand;
@@ -327,7 +331,9 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
      * CLI that runs the command in its own JVM and keeps its output (see {@link CliRunner}).
      */
     protected void printColored(Object text) {
-        if (printsToConsole()) {
+        if (printsToConsole() && stripsColorsItself()) {
+            printer().print(withoutColors(text));
+        } else if (printsToConsole()) {
             AnsiConsole.out().print(text);
         } else {
             printer().print(String.valueOf(text));
@@ -338,7 +344,9 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
      * Prints a line with colors (ANSI escape codes), see {@link #printColored(Object)}.
      */
     protected void printlnColored(Object text) {
-        if (printsToConsole()) {
+        if (printsToConsole() && stripsColorsItself()) {
+            printer().println(withoutColors(text));
+        } else if (printsToConsole()) {
             AnsiConsole.out().println(text);
         } else {
             printer().println(String.valueOf(text));
@@ -352,7 +360,24 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
      * (CAMEL-26911).
      */
     protected boolean colorsStripped() {
-        return printsToConsole() && AnsiConsole.out().getMode() == AnsiMode.Strip;
+        return printsToConsole() && (stripsColorsItself() || AnsiConsole.out().getMode() == AnsiMode.Strip);
+    }
+
+    /**
+     * Whether the command leaves out the colors itself, instead of the console: when the output is not a terminal, as
+     * the console would leave them out then too, and finding that out builds a JLine terminal, which costs more than
+     * most commands take to print (CAMEL-26937). Unless the console is told how to print the colors
+     * ({@code -Djansi.mode}).
+     */
+    private static boolean stripsColorsItself() {
+        return !EnvironmentHelper.hasTerminal()
+                && System.getProperty(AnsiConsole.JANSI_MODE) == null
+                && System.getProperty(AnsiConsole.JANSI_OUT_MODE) == null;
+    }
+
+    // the text without the ANSI escape codes of its colors
+    private static String withoutColors(Object text) {
+        return ANSI_CODE.matcher(String.valueOf(text)).replaceAll("");
     }
 
     /**
