@@ -41,6 +41,7 @@ import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.run.common.CliLogging;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
@@ -253,6 +254,7 @@ public class InfraRun extends InfraBaseCommand {
             URL logConfig = InfraRun.class.getClassLoader().getResource("log4j2-infra.properties");
             if (logConfig != null) {
                 Configurator.reconfigure(logConfig.toURI());
+                CliLogging.loggingConfigured();
             }
             String prefix = "";
             if (testServiceImplementation != null) {

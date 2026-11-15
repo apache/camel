@@ -80,6 +80,7 @@ import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
+import org.apache.camel.dsl.jbang.run.common.CliLogging;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.json.JsonObject;
 
@@ -110,7 +111,12 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     // the plugins whose commands were added, to add them to a new command line too
     private final List<Plugin> plugins = new CopyOnWriteArrayList<>();
 
+    /**
+     * The main method of the CLI that JBang runs (camel-jbang-main/dist/CamelJBang.java).
+     */
     public static void run(String... args) {
+        // before anything creates a logger
+        CliLogging.install();
         run(new CamelJBangMain(), args);
     }
 

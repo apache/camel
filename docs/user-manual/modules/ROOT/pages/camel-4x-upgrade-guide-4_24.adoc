@@ -57,6 +57,16 @@ Starting in 4.24:
 * The Cache EIP stores keys directly without a namespace prefix, preserving documented cache invalidation recipes (`cache.delete(key)` and `cache.clear()`). Note that because cache keys are un-prefixed, calling `clear()` on a `KeyValueRepository` shared with the Cache EIP will clear all entries in that repository, including state-store entries. It is recommended to use a dedicated repository for the Cache EIP when co-located with state-store.
 * `KeyValueAggregationRepository` safely verifies entry types before unmarshalling, ignoring unexpected types gracefully instead of failing with a class cast exception.
 
+=== camel-core - throwException with an exception instance gets no suppressed exceptions
+
+A `throwException` step given an exception instance (`throwException(new MyException("..."))` in Java, or a bean with
+`ref`) sets that one object on every message. The error handler no longer adds the previous exception of the message
+(such as the one an `onException` translates) to it as suppressed: the instance used to keep the exceptions of all the
+messages, and grew with each one. An exception from a predicate of `onException` (such as `handled`), a `doFinally`, an
+`onCompletion`, a saga compensation, or the completion of the aggregation strategy of a Multicast, Recipient List or
+Split is no longer added to it either, and is logged instead. Use `throwException(MyException.class, "...")`, or
+`exceptionType` and `message`, to get a new exception for each message, with the previous exception as suppressed.
+
 === camel-core-model - doTry keeps doCatch and doFinally in its outputs
 
 `doCatch` and `doFinally` written as properties of `doTry` in the YAML DSL are now kept in the outputs of the
@@ -233,6 +243,15 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-wordpress - each endpoint uses its own site URL and credentials
+
+Each WordPress endpoint now has a client of its own, set up from the `url`, `apiVersion`, `user` and `password`
+options of that endpoint, and the producers and consumers of the endpoint use that client. The endpoints no longer
+initialise the `WordpressServiceProvider.getInstance()` singleton, which is deprecated together with its `init`
+methods. Code that read services from `WordpressServiceProvider.getInstance()` after Camel created a WordPress endpoint
+must now use `WordpressEndpoint.getServiceProvider()`, or create a provider with
+`WordpressServiceProvider.create(WordpressAPIConfiguration)`.
+
 === camel-azure-functions - invokeFunction checks the function app and the function name
 
 The `invokeFunction` operation now checks the function app and the function name, from the endpoint or from the
@@ -386,6 +405,13 @@ event. Without `list` the informer cannot start: the Kubernetes client logs an E
 with a delay that doubles up to 30 seconds. Creating or deleting a secret or config map still does not reload the
 context.
 
+=== camel-file - idempotent consumer with an idempotent read lock
+
+With `idempotent=true` (or `noop=true`) and `readLock=idempotent`, `idempotent-changed` or `idempotent-rename`, the
+file consumer no longer adds the key to the idempotent repository eagerly, and `idempotentEager` does not apply: the
+read lock adds it when it acquires the lock. Since Camel 4.7 the read lock was refused, and such a consumer never
+consumed a file.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
@@ -399,6 +425,15 @@ sibling package whose name merely started with the scanned package name, such as
 `com.acme.routes2`. Scanning a directory on the classpath never did this. Both now only include the scanned package
 and its sub packages, so a `RoutesBuilder` or `@Configuration` class in such a sibling package is no longer
 discovered when running from a JAR; list that package explicitly if it should be scanned.
+
+=== camel-core - addTypeConverters uses the given instance
+
+`TypeConverterRegistry.addTypeConverters(Object)`, also used for the `TypeConverters` beans found in the registry, now
+invokes the non-static `@Converter` methods on the given object, and sets the `CamelContext` on it when it is
+`CamelContextAware`. Before, they ran on a new instance created by the injector: the state of the given object was
+ignored, and a class without a no-arg constructor failed at conversion time. The given object is used as is: unlike
+the instance created by the injector, it is not bean post-processed (`@PropertyInject`, `@BeanInject`, ...), so set its
+fields before adding it. Passing a `Class` still creates the instance with the injector.
 
 === camel-core - Model has a new getModelLock method
 
@@ -1190,6 +1225,17 @@ as `camel run` already did. Before, the failure left `main()` and only the JVM p
 (`Exception in thread "main" ...`), so the log file of the application did not say why it stopped.
 The JVM no longer prints that same failure a second time. When the application logs nothing at ERROR (such as without
 a logging implementation), the JVM prints it as before.
+
+=== camel-main - the camel.dataformat options apply to the Rest DSL binding
+
+With Camel Main and Camel JBang, the `camel.dataformat.<name>.*` options (such as `camel.dataformat.jackson.include`)
+now also apply to the data formats that the Rest DSL binding creates for `json` and `xml` binding, as they already did
+to the data formats of the routes. The request and response bodies of a REST service can therefore change, for
+instance null fields are left out. The `camel.rest.dataFormatProperties` (`json.in.`, `json.out.`, `xml.in.` and
+`xml.out.`) still take precedence. The `objectMapper`, `xmlMapper`, `allowUnmarshallType`, `allowJmsType`,
+`unmarshalType`, `useList`, `collectionType` and `partClass` options are not taken over: the body type comes from the
+`type` and `outType` of the verb, and the other options can be set with `camel.rest.dataFormatProperties` when the
+binding needs them.
 
 === camel-support - API components use one thread pool per CamelContext
 
@@ -3351,12 +3397,34 @@ file), the command asks there whether to overwrite the file.
 * `camel dependency copy` deletes the JAR files an earlier copy left in `--output-directory`, and keeps its other files:
   it deleted the whole directory (with `--output-directory=.` the project). It exits with `1` when a dependency cannot
   be resolved or copied (it printed the error and exited with `0`), and with `2` when `--output-directory` is a file.
+* `camel dependency copy` resolves the dependencies together, as one dependency graph, so `--output-directory` gets
+  one version of each library. It resolved each dependency on its own, and could copy two versions of a library (such
+  as `httpclient5` 5.6.4 and 5.6.5, or `slf4j-api` 1.7.36 and 2.0.20).
 * `camel update run --runtime=quarkus --download=false` without `--quarkusMavenPluginVersion` exits with `2`, and a
   version without upgrade recipes exits with `1`: both failed with an internal error (`70`).
 * `camel get error --last` shows the newest error of all the integrations (it showed the newest error of the integration
   with the lowest pid). An `--ago` that is not a duration, and a `--handled` that is not `true` or `false`, exit with
   `2`: the first showed every error, the second none. The errors of `--diagram` are printed on stderr, and a graphical
   `--theme` in a terminal without graphics exits with `2`.
+
+=== camel-jbang - camel kubernetes volumes, --property and trait values
+
+* The volumes of `--config`, `--resource` and `--volume` have different names in the pod: a second volume of the same
+  name gets `-2`, a third `-3` and so on (`--config configmap:db --config secret:db` gives the volumes `db` and `db-2`).
+  Such manifests had two volumes of the same name, which the API server refuses.
+* `camel kubernetes run --property` takes a `key=value` whose value is a path, such as `camel.server.path=/api`, as a
+  property: it was taken for a properties file, and left out. A properties file that does not exist exits with `66`;
+  it was ignored.
+* A quoted trait value, and the value of `cronjob.schedule`, is one value also with a comma in it
+  (`cronjob.schedule=0 1,13 * * *`): it was split into a list, which failed with exit code `70`.
+
+=== camel-jbang - camel generate rest --dto
+
+The DTOs of `camel generate rest --dto` use Jakarta EE (`jakarta.validation`, `jakarta.annotation`) instead of
+`javax`, and no longer use `JsonNullable` of `jackson-databind-nullable` or the Swagger annotations
+(`io.swagger.v3.oas.annotations`), so they compile in a Camel 4 project. With `--runtime=main` they no longer use
+Spring (`@DateTimeFormat`). The OpenAPI Generator no longer prints its banner on stdout after the REST DSL, and
+`--input` takes an `http://` or `https://` URL.
 
 === camel-jbang - camel stop without a name
 
@@ -8964,3 +9032,23 @@ two matching headers, `CamelDockerLoggingFilter` and `CamelDockerFollowRedirectF
 Both options and both header constants are now deprecated. Remove `loggingFilter` and `followRedirectFilter` from the
 endpoint URI or the component configuration; setting them has changed nothing since 2.18. To see the traffic with the
 Docker daemon, raise the log level of the `com.github.dockerjava` loggers.
+
+=== camel-thymeleaf - the CamelThymeleafServletContext header is deprecated
+
+The `CamelThymeleafServletContext` header is never read by the component. The web application template resolver is
+built from a `JakartaServletWebApplication`, not from a `ServletContext`, and that object comes from the endpoint:
+
+[source,java]
+----
+WebApplicationTemplateResolver resolver = new WebApplicationTemplateResolver(jakartaServletWebApplication);
+----
+
+A route that sets the header gets no error and no resolver. It is now deprecated, with a `deprecationNote` that says
+so. `jakartaServletWebApplication` is not a URI option; set it on the endpoint:
+
+[source,java]
+----
+ThymeleafEndpoint endpoint = context.getEndpoint("thymeleaf:greeting.html?resolver=WEB_APP", ThymeleafEndpoint.class);
+endpoint.setJakartaServletWebApplication(
+        JakartaServletWebApplication.buildApplication(servletContext));
+----

@@ -21,7 +21,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
-import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.camel.component.wordpress.api.model.Post;
 import org.apache.camel.component.wordpress.api.model.PostSearchCriteria;
 import org.apache.camel.component.wordpress.api.service.WordpressServicePosts;
@@ -35,13 +34,13 @@ public class WordpressPostConsumer extends AbstractWordpressConsumer {
 
     public WordpressPostConsumer(WordpressEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        servicePosts = WordpressServiceProvider.getInstance().getService(WordpressServicePosts.class);
+        servicePosts = endpoint.getServiceProvider().getService(WordpressServicePosts.class);
     }
 
     public WordpressPostConsumer(WordpressEndpoint endpoint, Processor processor,
                                  ScheduledExecutorService scheduledExecutorService) {
         super(endpoint, processor, scheduledExecutorService);
-        servicePosts = WordpressServiceProvider.getInstance().getService(WordpressServicePosts.class);
+        servicePosts = endpoint.getServiceProvider().getService(WordpressServicePosts.class);
     }
 
     @Override
