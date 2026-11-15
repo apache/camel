@@ -169,7 +169,7 @@ public class LlmClient {
 
         /**
          * The answer of the model for the history: its text and tool calls, and with Anthropic its content blocks as
-         * they came.
+         * they came, as Anthropic wants the thinking blocks of a tool loop back unchanged.
          */
         public static Message assistant(ChatResponse response) {
             return new Message("assistant", response.text(), response.toolCalls(), null, response.contentBlocks());
