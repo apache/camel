@@ -32,6 +32,11 @@
     <name>Camel :: AWS2 Kinesis</name>
     <description>Consuming and Producing data to AWS Kinesis Service</description>
 
+    <properties>
+        <!-- the DST tests load the byte code agent of camel-test-dst when the JVM starts (see test-dst.adoc) -->
+        <camel.surefire.fork.additional-vmargs>"-javaagent:${net.bytebuddy:byte-buddy-agent:jar}"</camel.surefire.fork.additional-vmargs>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <!-- Pin com.squareup.wire:wire-runtime transitively brought in by amazon-kinesis-client
@@ -138,5 +143,29 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- deterministic simulation test of the consumer (dst package) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-dst</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- sets the property net.bytebuddy:byte-buddy-agent:jar to the path of the agent of the DST tests -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>dst-agent-path</id>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -64,6 +64,16 @@ checks:
 |===
 |Component |World (tests) |Fake |What it covers |Issues
 
+|camel-aws2-kinesis
+|`KinesisWorld` (`KinesisConsumerDstTest`)
+|FakeKinesis: a data stream with shards that can be split and merged (GetShardIterator, GetRecords, ListShards) bound as amazonKinesisClient
+a|* the iterator types TRIM_HORIZON and LATEST, with one or two shards at the start and more after resharding
+* shard iterators that expire between two polls, while the route is suspended or an exchange is slow
+* a closed shard and its child shards after a split or a merge (shardClosed ignore and silent)
+* checkpoints with the resumable EIP and KinesisResumeStrategy, and the resume after a route restart
+* route restart and route suspend and resume between two polls
+|CAMEL-25569, CAMEL-25942, CAMEL-26968
+
 |camel-aws2-sqs
 |`SqsWorld` (`SqsRedeliveryDstTest`, `SqsVisibilityDstTest`)
 |FakeSqs: a standard SQS queue (ReceiveMessage, DeleteMessage, ChangeMessageVisibilityBatch) bound as amazonSQSClient
@@ -558,6 +568,7 @@ camel-azure-storage-queue) needs that module in `-pl` too when it is not in the 
 ----
 DST=components/camel-test/camel-test-dst
 SQS=components/camel-aws/camel-aws2-sqs
+KINESIS=components/camel-aws/camel-aws2-kinesis
 EH=components/camel-azure/camel-azure-eventhubs
 SLACK=components/camel-slack
 SHARE=components/camel-kafka-share
@@ -568,8 +579,8 @@ MVN="./mvnw -B -Papache-snapshots test -Dsurefire.failIfNoSpecifiedTests=false -
 $MVN -pl $DST -Dtest='Dst*Test'
 
 # the worlds, 1000 seeds each, then 5000 seeds without stopping at the first failing one
-$MVN -pl $DST,$SQS,$EH,$SLACK,$SHARE,$PULSAR -Dtest='*DstTest'
-$MVN -pl $DST,$SQS,$EH,$SLACK,$SHARE,$PULSAR -Dtest='*DstTest' -Ddst.seeds=5000 -Ddst.maxFailures=100000
+$MVN -pl $DST,$SQS,$KINESIS,$EH,$SLACK,$SHARE,$PULSAR -Dtest='*DstTest'
+$MVN -pl $DST,$SQS,$KINESIS,$EH,$SLACK,$SHARE,$PULSAR -Dtest='*DstTest' -Ddst.seeds=5000 -Ddst.maxFailures=100000
 
 # the self-check: revert the main code of a past fix locally (do not commit), run the world, restore
 git show d09593b4a584 -- $SQS/src/main | git apply -R          # CAMEL-25700
@@ -584,12 +595,15 @@ diff /tmp/seed-8.first $SQS/target/dst/SqsVisibilityDstTest.*/seed-8.trace && ec
 ----
 
 The past fixes of the other worlds are 83aaa80754f9 (CAMEL-25683, Event Hubs), 68329f0919bc (CAMEL-25684, Slack), the
-main code of b62e90ddb2d9 (CAMEL-25869, Pulsar) and the main code of 20c94435789e (CAMEL-25872, Kafka share, whose world
-was also checked with planted faults). Some system properties belong to a world rather than to the harness:
+main code of b62e90ddb2d9 (CAMEL-25869, Pulsar), the main code of 20c94435789e (CAMEL-25872, Kafka share, whose world
+was also checked with planted faults), and the main code of 043ac9ec84ab (CAMEL-25569) and of 847ee9affb4c
+(CAMEL-25942) for Kinesis (`KinesisConsumerDstTest`). Some system properties belong to a world rather than to the harness:
 `dst.sqs.visibilityTimeouts` (the visibility timeouts the SQS world picks from, default `2,3,5,10`; `1` shows
 CAMEL-25737), `dst.replayCheckSeed` (the seed of the in-JVM replay test of the Event Hubs world, default 1),
-`dst.share.pollOnError` (the pollOnError strategies the Kafka share world picks from) and
-`dst.pulsar.subscribeFailRates` (the subscribe failure rates of the Pulsar world, `0` runs without subscribe failures).
+`dst.share.pollOnError` (the pollOnError strategies the Kafka share world picks from),
+`dst.pulsar.subscribeFailRates` (the subscribe failure rates of the Pulsar world, `0` runs without subscribe failures)
+and `dst.kinesis.strictLatest` (`true` counts the records that a LATEST iterator asked for again after an expiry skips,
+CAMEL-26968, as missing).
 
 == Limits
 
