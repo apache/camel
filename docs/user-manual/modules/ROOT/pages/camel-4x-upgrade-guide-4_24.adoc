@@ -2037,6 +2037,14 @@ headers, as before. A `CamelJdbcParameters` header that is not a `Map` (such as 
 with plain `?` placeholders in the same route) is now ignored for named parameters, where before it made the exchange
 fail with `Cannot find key`.
 
+=== camel-jdbc, camel-spring-jdbc, camel-sql - outputType=StreamList: a result that failed to read keeps failing
+
+With `outputType=StreamList`, once reading a row has failed (for example, the connection was lost), the iterator of
+the body no longer looks finished: `hasNext()` and `next()` now throw a `RuntimeCamelException` with the first
+`SQLException` as cause, also after the iterator is closed. Before, `hasNext()` returned `false`, so a split that was
+redelivered over the same iterator (an error handler with redeliveries) found no more rows and the exchange succeeded
+with only the rows read before the failure. It now fails once the redeliveries are exhausted.
+
 === camel-jgroups-raft - a body that does not convert to a byte array fails the exchange
 
 The `jgroups-raft` producer skipped a message body that has no conversion to `byte[]`, such as a `Map`, a POJO or a
