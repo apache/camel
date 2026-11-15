@@ -8743,3 +8743,28 @@ if it configured the proxy.
 It is now deprecated, with a `deprecationNote` that says so, and its description no longer claims to configure a proxy.
 Remove `protocol` from the endpoint URI or the configuration. To send the client's traffic through a proxy, use
 `proxyProtocol` together with `proxyHost` and `proxyPort`, which the shared client builder does apply.
+
+=== camel-hazelcast - the CamelHazelcastCacheType header is deprecated
+
+The `CamelHazelcastCacheType` header is neither set nor read by the component. It was documented for
+`hazelcast-multimap` only, and the multimap listener sets the cache name, the listener type, the listener action and
+the listener time, never the cache type:
+
+[source,java]
+----
+public static void setListenerHeaders(Exchange ex, String listenerType, String listenerAction, String cacheName) {
+    ex.getIn().setHeader(HazelcastConstants.CACHE_NAME, cacheName);
+    HazelcastComponentHelper.setListenerHeaders(ex, listenerType, listenerAction);
+}
+
+public static void setListenerHeaders(Exchange ex, String listenerType, String listenerAction) {
+    ex.getIn().setHeader(HazelcastConstants.LISTENER_ACTION, listenerAction);
+    ex.getIn().setHeader(HazelcastConstants.LISTENER_TYPE, listenerType);
+    ex.getIn().setHeader(HazelcastConstants.LISTENER_TIME, new Date().getTime());
+}
+----
+
+A route reading it gets `null`. It is now deprecated, with a `deprecationNote` that says so, and the rows for it were
+dropped from the consumer header tables of the `hazelcast-map` and `hazelcast-replicatedmap` pages, which also claimed
+their consumer sets it. Nothing replaces it: the cache the event came from is named by `CamelHazelcastCacheName`, and a
+route that needs to know which kind of cache that is can take it from the endpoint it consumes from.
