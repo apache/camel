@@ -99,6 +99,17 @@ class TransformRouteTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void aJavaFileWhoseNameIsNoClassNameKeepsTheClassName() throws Exception {
+        // a qualified name, such as My.Route, would give class My.Route, which does not compile
+        Path yaml = Files.writeString(dir.resolve("hello.camel.yaml"), YAML);
+        Path out = dir.resolve("My.Route.java");
+
+        assertThat(command(List.of(yaml.toString()), "--format=java", "--output=" + out).doCall()).isZero();
+
+        assertThat(Files.readString(out)).contains("extends RouteBuilder").doesNotContain("class My.Route");
+    }
+
+    @Test
     void yamlToJavaFilesInADirectory() throws Exception {
         Path one = Files.writeString(dir.resolve("hello.camel.yaml"), YAML);
         Path two = Files.writeString(dir.resolve("bye.camel.yaml"), YAML.replace("hello", "bye"));

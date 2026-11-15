@@ -186,7 +186,8 @@ public class TransformRoute extends CamelCommand {
 
     /**
      * The Java route with the class named after the file it is written to: a class must have the name of its file, and
-     * --output=Out.java got the class named after the route file (CAMEL-26931).
+     * --output=Out.java got the class named after the route file (CAMEL-26931). A file name that is no class name, such
+     * as My.Route.java, keeps the class name.
      */
     static String withClassName(String java, String fileName, Path out) {
         String wanted = out.getFileName().toString();
@@ -195,7 +196,7 @@ public class TransformRoute extends CamelCommand {
         }
         wanted = wanted.substring(0, wanted.length() - ".java".length());
         String current = fileName.substring(0, fileName.length() - ".java".length());
-        if (wanted.equals(current) || !SourceVersion.isName(wanted)) {
+        if (wanted.equals(current) || !SourceVersion.isIdentifier(wanted) || SourceVersion.isKeyword(wanted)) {
             return java;
         }
         return java.replaceFirst("\\bclass " + Pattern.quote(current) + "\\b", "class " + wanted);
