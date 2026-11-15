@@ -73,7 +73,9 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     private String timeUnit;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer",
-              description = "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue.")
+              description = "Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue:"
+                            + " each task goes directly to a thread, up to maxPoolSize threads, and then the rejected policy applies."
+                            + " Use Integer.MAX_VALUE for an unbounded queue.")
     private String maxQueueSize;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
@@ -238,7 +240,8 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     /**
      * Sets the maximum number of tasks in the work queue.
      * <p/>
-     * Use <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt> for an unbounded queue
+     * Use <tt>0</tt> or <tt>-1</tt> for no work queue: each task goes directly to a thread, up to the max pool size,
+     * and then the rejected policy applies. Use <tt>Integer.MAX_VALUE</tt> for an unbounded queue.
      *
      * @param  maxQueueSize the max queue size
      * @return              the builder
@@ -250,7 +253,8 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     /**
      * Sets the maximum number of tasks in the work queue.
      * <p/>
-     * Use <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt> for an unbounded queue
+     * Use <tt>0</tt> or <tt>-1</tt> for no work queue: each task goes directly to a thread, up to the max pool size,
+     * and then the rejected policy applies. Use <tt>Integer.MAX_VALUE</tt> for an unbounded queue.
      *
      * @param  maxQueueSize the max queue size
      * @return              the builder

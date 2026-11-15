@@ -95,7 +95,8 @@ public class ThreadPoolProfileConfigurationProperties {
     /**
      * Sets the maximum number of tasks in the work queue.
      *
-     * Use -1 or an unbounded queue
+     * Use 0 or -1 for no work queue: each task goes directly to a thread, up to maxPoolSize threads, and then the
+     * rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue.
      */
     public void setMaxQueueSize(Integer maxQueueSize) {
         this.maxQueueSize = maxQueueSize;

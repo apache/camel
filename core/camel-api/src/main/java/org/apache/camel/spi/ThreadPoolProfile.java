@@ -184,7 +184,8 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     /**
      * Gets the maximum number of tasks in the work queue.
      * <p/>
-     * Use <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt> for an unbounded queue
+     * Use <tt>0</tt> or <tt>-1</tt> for no work queue: each task goes directly to a thread, up to the max pool size,
+     * and then the rejected policy applies. Use <tt>Integer.MAX_VALUE</tt> for an unbounded queue.
      *
      * @return the max queue size
      */
@@ -195,7 +196,8 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     /**
      * Sets the maximum number of tasks in the work queue.
      * <p/>
-     * Use <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt> for an unbounded queue
+     * Use <tt>0</tt> or <tt>-1</tt> for no work queue: each task goes directly to a thread, up to the max pool size,
+     * and then the rejected policy applies. Use <tt>Integer.MAX_VALUE</tt> for an unbounded queue.
      *
      * @param maxQueueSize the max queue size
      */

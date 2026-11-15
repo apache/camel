@@ -395,7 +395,7 @@ The camel.threadpool supports 8 options, which are listed below.
 | `camel.threadpool.config` | Adds a configuration for a specific thread pool profile (inherits default values) |  | Map
 | `camel.threadpool.keepAliveTime` | Sets the default keep alive time for inactive threads |  | Long
 | `camel.threadpool.maxPoolSize` | Sets the default maximum pool size |  | Integer
-| `camel.threadpool.maxQueueSize` | Sets the default maximum number of tasks in the work queue. Use -1 or an unbounded queue |  | Integer
+| `camel.threadpool.maxQueueSize` | Sets the default maximum number of tasks in the work queue. Use 0 or -1 for no work queue: each task goes directly to a thread, up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue. |  | Integer
 | `camel.threadpool.poolSize` | Sets the default core pool size (threads to keep minimum in pool) |  | Integer
 | `camel.threadpool.rejectedPolicy` | Sets the default handler for tasks which cannot be executed by the thread pool. |  | ThreadPoolRejectedPolicy
 | `camel.threadpool.timeUnit` | Sets the default time unit used for keep alive time |  | TimeUnit
