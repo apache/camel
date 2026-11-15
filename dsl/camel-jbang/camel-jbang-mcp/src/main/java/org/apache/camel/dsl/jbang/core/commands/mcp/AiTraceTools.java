@@ -116,10 +116,11 @@ public class AiTraceTools {
     JsonObject executeRegistryTool(String toolName, ToolContext ctx, Map<String, String> args) {
         try {
             Object result = ToolRegistry.execute(toolName, ctx, args);
-            return RuntimeTools.toJsonObject(result);
+            return McpToolNames.of(RuntimeTools.toJsonObject(result));
         } catch (ToolExecutionException e) {
             // such as no answer from the integration: not the same as an integration without AI components
-            throw new ToolCallException("Failed to collect AI trace data (" + toolName + "): " + e.getMessage(), null);
+            throw new ToolCallException(
+                    "Failed to collect AI trace data (" + toolName + "): " + McpToolNames.of(e.getMessage()), null);
         }
     }
 
