@@ -70,7 +70,7 @@ public final class ToolArgumentAliases {
      * only integration that runs.
      */
     private static final Set<String> SELECTORS = Set.of("name", "nameorpid", "pid", "integration", "integrationname",
-            "process", "processname", "app", "appname", "context", "contextname");
+            "process", "processname", "app", "appname", "application", "context", "contextname");
 
     private ToolArgumentAliases() {
     }
@@ -156,7 +156,7 @@ public final class ToolArgumentAliases {
      */
     public static String ignoredSelector(Resolved<?> resolved) {
         String selector = resolved.declared().stream().map(Argument::name)
-                .filter(n -> n.equals("nameOrPid") || n.equals("name") && NAME_TOOLS.contains(resolved.tool()))
+                .filter(n -> n.equals("nameOrPid") || (n.equals("name") && NAME_TOOLS.contains(resolved.tool())))
                 .findFirst().orElse(null);
         if (selector == null || resolved.arguments().get(selector) != null) {
             return null;

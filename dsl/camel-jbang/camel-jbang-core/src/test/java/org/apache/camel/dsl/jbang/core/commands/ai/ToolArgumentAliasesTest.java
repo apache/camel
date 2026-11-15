@@ -211,6 +211,9 @@ class ToolArgumentAliasesTest {
                 ToolArgumentAliases.resolve("camel_runtime_routes", runtime, Map.of("Process", "orders"))))
                 .isEqualTo("Process");
         assertThat(ToolArgumentAliases.ignoredSelector(
+                ToolArgumentAliases.resolve("camel_runtime_routes", runtime, Map.of("application", "orders"))))
+                .isEqualTo("application");
+        assertThat(ToolArgumentAliases.ignoredSelector(
                 ToolArgumentAliases.resolve("camel_runtime_routes", runtime, Map.of("bogus", "x")))).isNull();
         assertThat(ToolArgumentAliases.ignoredSelector(ToolArgumentAliases.resolve("camel_runtime_routes", runtime,
                 Map.of("nameOrPid", "orders", "app", "orders")))).isNull();
