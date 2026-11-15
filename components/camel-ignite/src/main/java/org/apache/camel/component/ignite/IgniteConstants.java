@@ -75,7 +75,7 @@ public final class IgniteConstants {
               javaType = "org.apache.camel.component.ignite.compute.IgniteComputeExecutionType", applicableFor = SCHEME_COMPUTE)
     public static final String IGNITE_COMPUTE_EXECUTION_TYPE = "CamelIgniteComputeExecutionType";
     @Metadata(label = "producer", description = "Parameters for APPLY, BROADCAST and EXECUTE operations.",
-              javaType = "Any object or Collection of objects", applicableFor = SCHEME_COMPUTE)
+              javaType = "Object or java.util.Collection<Object>", applicableFor = SCHEME_COMPUTE)
     public static final String IGNITE_COMPUTE_PARAMS = "CamelIgniteComputeParameters";
     @Metadata(label = "producer", description = "Reducer for the APPLY and CALL operations.",
               javaType = "org.apache.ignite.lang.IgniteReducer", applicableFor = SCHEME_COMPUTE)
