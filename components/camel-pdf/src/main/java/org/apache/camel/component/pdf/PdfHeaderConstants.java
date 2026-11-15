@@ -35,13 +35,11 @@ public final class PdfHeaderConstants {
     @Metadata(description = """
             Expected type is
             https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial].
-            *Deprecated.* This header has never been read by the component.
-            PDFBox 2+ decrypts documents at load time (via the password argument to `Loader.loadPDF`);
-            by the time the producer receives a `PDDocument`, decryption has already occurred or failed.
-            Use `Loader.loadPDF(bytes, password)` in a type converter or a `Processor` before the PDF endpoint instead.""",
+            No longer read by the component (no effect since Camel 2.21).""",
               javaType = "org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial",
-              deprecationNote = "Never read by the component: PDDocument is decrypted when it is loaded, and the byte[]"
-                                + " converter loads it without a password")
+              deprecationNote = "No longer read by the component since Camel 2.21: PDFBox 2 decrypts at load time"
+                                + " via Loader.loadPDF(bytes, password). The byte[] converter loads without a password."
+                                + " Decrypt in a Processor before the PDF endpoint instead.")
     @Deprecated
     public static final String DECRYPTION_MATERIAL_HEADER_NAME = "CamelPdfDecryptionMaterial";
 

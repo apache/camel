@@ -8743,3 +8743,24 @@ if it configured the proxy.
 It is now deprecated, with a `deprecationNote` that says so, and its description no longer claims to configure a proxy.
 Remove `protocol` from the endpoint URI or the configuration. To send the client's traffic through a proxy, use
 `proxyProtocol` together with `proxyHost` and `proxyPort`, which the shared client builder does apply.
+
+=== camel-pdf - the CamelPdfDecryptionMaterial header is deprecated
+
+The `CamelPdfDecryptionMaterial` header has had no effect since Camel 2.21. PDFBox 2 decrypts a document when it is
+loaded, from the password argument of `Loader.loadPDF`, so the producer was changed to stop calling the removed
+`PDDocument.openProtection(DecryptionMaterial)` and has not read the header since. A route that sets it gets no error
+and no decryption.
+
+It is now deprecated, with a `deprecationNote` that says so. Remove the header and load the document with its password
+before it reaches the endpoint, in a `Processor`:
+
+[source,java]
+----
+from("direct:start")
+    .process(e -> e.getMessage().setBody(
+            Loader.loadPDF(e.getMessage().getBody(byte[].class), "secret")))
+    .to("pdf:extractText");
+----
+
+The `byte[]` type converter of the component loads without a password, so an encrypted PDF sent as bytes still has to be
+loaded this way.

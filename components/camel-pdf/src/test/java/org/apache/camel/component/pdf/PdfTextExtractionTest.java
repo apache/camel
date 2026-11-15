@@ -29,7 +29,6 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
-import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -79,10 +78,7 @@ public class PdfTextExtractionTest extends CamelTestSupport {
         PDDocument encryptedDocument = Loader.loadPDF(output.toByteArray(), userPass);
 
         expectText();
-        template.sendBodyAndHeader("direct:start",
-                encryptedDocument,
-                PdfHeaderConstants.DECRYPTION_MATERIAL_HEADER_NAME,
-                new StandardDecryptionMaterial(userPass));
+        template.sendBody("direct:start", encryptedDocument);
         resultEndpoint.assertIsSatisfied();
     }
 
