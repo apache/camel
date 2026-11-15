@@ -1180,8 +1180,9 @@ public class TextBodyFlowTest {
 
     @Test
     public void testTheBodyOfBinaryDataFormats() {
-        // avro with its default library, Jackson, gives a Map, which the file producer cannot write; zipFile gives the
-        // content of the entry as a stream, cbor an object of a class, and fory what the data holds, which say nothing
+        // avro with its default library, Jackson, gives a Map, which the file producer cannot write, and with
+        // ApacheAvro an object of instanceClassName; zipFile gives the content of the entry as a stream, cbor an
+        // object of a class, and fory what the data holds, which say nothing
         String yaml = """
                 - route:
                     id: avro
@@ -1190,6 +1191,16 @@ public class TextBodyFlowTest {
                       steps:
                         - unmarshal:
                             avro: {}
+                        - to: file:out
+                - route:
+                    id: avroApache
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            avro:
+                              library: ApacheAvro
+                              instanceClassName: com.acme.Order
                         - to: file:out
                 - route:
                     id: zip
@@ -1217,8 +1228,11 @@ public class TextBodyFlowTest {
                             fory: {}
                         - to: file:out
                 """;
-        assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
-                .contains("route avro: to: file needs the body as text, bytes, a stream or a file"));
+        assertThat(lines(yaml)).hasSize(2)
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route avro: to: file needs the body as text, bytes, a stream or a file"))
+                .anySatisfy(m -> assertThat(m)
+                        .contains("route avroApache: to: file needs the body as text, bytes, a stream or a file"));
     }
 
     @Test
