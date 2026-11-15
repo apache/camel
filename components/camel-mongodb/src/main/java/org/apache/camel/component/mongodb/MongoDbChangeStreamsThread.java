@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.mongodb.MongoCommandException;
 import com.mongodb.MongoException;
+import com.mongodb.MongoServerException;
 import com.mongodb.client.ChangeStreamIterable;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
@@ -27,6 +28,8 @@ import com.mongodb.client.model.changestream.OperationType;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.bson.BsonDocument;
+import org.bson.BsonInt32;
+import org.bson.BsonTimestamp;
 import org.bson.Document;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.DocumentCodec;
@@ -39,9 +42,19 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     private static final DocumentCodec DOCUMENT_CODEC = new DocumentCodec();
     // the server error InvalidResumeToken
     private static final int INVALID_RESUME_TOKEN = 260;
+    // the server errors for a start that the oplog no longer has: ChangeStreamHistoryLost (MongoDB 4.4, and the later
+    // 4.2 releases), ChangeStreamFatalError and 40576 (earlier 4.2 releases)
+    private static final int CHANGE_STREAM_HISTORY_LOST = 286;
+    private static final int CHANGE_STREAM_FATAL_ERROR = 280;
+    private static final int RESUME_POINT_NOT_IN_OPLOG = 40576;
 
     private List<BsonDocument> bsonFilter;
     private BsonDocument resumeToken;
+    // the operation time read just before the change stream was opened without a resume token. Until an exchange
+    // completed (and so there is a resume token), a cursor opened again starts at it instead of the current time, so
+    // the changes made in between are not skipped. It is not stored: a route started again without a stored token
+    // still starts at the current time
+    private BsonTimestamp startTime;
     private CommitManager commitManager;
     private String resumeTokenKey;
 
@@ -68,7 +81,7 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     @Override
     protected MongoCursor initializeCursor() {
         if (resumeToken == null) {
-            return watch().iterator();
+            return openWithoutToken();
         }
         try {
             return watch().resumeAfter(resumeToken).iterator();
@@ -93,6 +106,66 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                     endpoint.getCollection(), e.getErrorMessage());
             return cursor;
         }
+    }
+
+    private MongoCursor openWithoutToken() {
+        if (startTime != null) {
+            // no exchange completed since the change stream was first opened: start where it started
+            try {
+                return watch().startAtOperationTime(startTime).iterator();
+            } catch (MongoCommandException e) {
+                int code = e.getErrorCode();
+                if (code != CHANGE_STREAM_HISTORY_LOST && code != CHANGE_STREAM_FATAL_ERROR
+                        && code != RESUME_POINT_NOT_IN_OPLOG) {
+                    throw e;
+                }
+                // the oplog no longer goes back that far (no exchange completed for longer than the oplog window):
+                // go on from the current time, as the consumer did before it remembered the start
+                log.warn("The change stream of collection {} cannot be started again where it was first opened, as the"
+                         + " oplog no longer goes back that far ({}). Started a new change stream at the current time,"
+                         + " changes made since then may not have been consumed.",
+                        endpoint.getCollection(), e.getErrorMessage());
+                startTime = null;
+            }
+        }
+        startTime = nextOperationTime();
+        return watch().iterator();
+    }
+
+    /**
+     * The operation time right after the one in the reply of a {@code ping} sent just before the change stream is
+     * opened at the current time, or {@code null} when the server does not report one (a standalone server, which has
+     * no change streams) or answers the ping with an error.
+     * <p>
+     * A change stream without a resume option starts at the current time. The driver keeps the operation time of the
+     * reply that opened it, to resume the change stream itself, but does not expose it, and the resume token of the
+     * cursor is only known once a getMore succeeded. So this is where a cursor that the consumer thread opens again
+     * before any exchange completed starts. When the ping and the change stream go to the same member it is not later
+     * than where the first change stream started, so a cursor opened again may also deliver a change made between the
+     * ping and the opening of the first one. With a secondary read preference they can go to different members, and a
+     * cursor opened again then starts at most at a change made before the ping.
+     */
+    private BsonTimestamp nextOperationTime() {
+        BsonDocument reply;
+        try {
+            BsonDocument ping = new BsonDocument("ping", new BsonInt32(1));
+            // sent to a server the change stream may read from (runCommand alone selects the primary)
+            reply = endpoint.getMongoDatabase().runCommand(ping, dbCol.getReadPreference(), BsonDocument.class);
+        } catch (MongoServerException e) {
+            // the change stream can be opened all the same, only it starts at the current time if it has to be opened
+            // again. No server to send it to is not caught here: opening the change stream, with the same read
+            // preference, would fail the same way
+            log.debug("Cannot read the operation time of the server: {}", e.getMessage());
+            return null;
+        }
+        if (reply == null || !reply.isTimestamp("operationTime")) {
+            return null;
+        }
+        BsonTimestamp operationTime = reply.getTimestamp("operationTime");
+        // for read concern local the operation time of a command that writes nothing is the timestamp of the newest
+        // entry of the oplog (runCommand reference; the cluster time through mongos), and a change stream includes the
+        // changes at its startAtOperationTime: start right after it
+        return new BsonTimestamp(operationTime.getTime(), operationTime.getInc() + 1);
     }
 
     private ChangeStreamIterable<Document> watch() {
