@@ -1324,7 +1324,7 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleFirestoreResponseDocumentId}.
@@ -1337,7 +1337,7 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleFirestoreResponseDocumentPath}.
@@ -1350,7 +1350,7 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          * 
          * The option is a: {@code com.google.cloud.Timestamp} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleFirestoreResponseCreateTime}.
@@ -1363,7 +1363,7 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          * 
          * The option is a: {@code com.google.cloud.Timestamp} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleFirestoreResponseUpdateTime}.
@@ -1376,7 +1376,7 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          * 
          * The option is a: {@code com.google.cloud.Timestamp} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * GoogleFirestoreResponseReadTime}.

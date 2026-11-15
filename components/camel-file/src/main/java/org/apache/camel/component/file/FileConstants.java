@@ -26,7 +26,8 @@ public final class FileConstants {
     @Metadata(label = "consumer", description = "A `Long` value containing the last modified timestamp of the file.",
               javaType = "long")
     public static final String FILE_LAST_MODIFIED = Exchange.FILE_LAST_MODIFIED;
-    @Metadata(label = "producer", description = "The local work path", javaType = "File")
+    @Metadata(label = "producer", description = "Path to the local work file, if local work directory is used.",
+              javaType = "String")
     public static final String FILE_LOCAL_WORK_PATH = Exchange.FILE_LOCAL_WORK_PATH;
     @Metadata(label = "consumer", description = "Only the file name (the name with no leading paths).", javaType = "String")
     public static final String FILE_NAME_ONLY = Exchange.FILE_NAME_ONLY;

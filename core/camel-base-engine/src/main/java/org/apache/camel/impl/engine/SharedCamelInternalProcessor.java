@@ -120,7 +120,11 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         // optimise for loop using index access to avoid creating iterator object
         try {
             state = advice.before(exchange);
-        } catch (Exception e) {
+        } catch (VirtualMachineError e) {
+            // left as before (thrown on), as in DelegateSyncProcessor
+            throw e;
+        } catch (Throwable e) {
+            // also an Error: thrown on, the callback would not be called
             return handleException(exchange, originalCallback, e);
         }
 
@@ -134,7 +138,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         }
     }
 
-    private static boolean handleException(Exchange exchange, AsyncCallback originalCallback, Exception e) {
+    private static boolean handleException(Exchange exchange, AsyncCallback originalCallback, Throwable e) {
         exchange.setException(e);
         originalCallback.done(true);
         return true;
@@ -182,10 +186,16 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         }
         try {
             processor.process(exchange);
-        } catch (Exception e) {
+        } catch (VirtualMachineError e) {
+            // left as before (thrown on, now after the callback), as in CamelInternalProcessor
+            throw e;
+        } catch (Throwable e) {
+            // also an Error: thrown on, it would skip the callback (the after of the advice, such as the end of the unit
+            // of work)
             exchange.setException(e);
+        } finally {
+            callback.done(true);
         }
-        callback.done(true);
         return true;
     }
 
@@ -214,7 +224,13 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
             if (resultProcessor != null) {
                 try {
                     resultProcessor.process(exchange);
-                } catch (Exception e) {
+                } catch (VirtualMachineError e) {
+                    // left as before (thrown on)
+                    throw e;
+                } catch (Throwable e) {
+                    // also an Error: thrown on, it would skip the after of the advice and the callback, so the exchange
+                    // would stay inflight, and an asynchronous send could never complete when the endpoint answered on
+                    // another thread
                     exchange.setException(e);
                 }
             }

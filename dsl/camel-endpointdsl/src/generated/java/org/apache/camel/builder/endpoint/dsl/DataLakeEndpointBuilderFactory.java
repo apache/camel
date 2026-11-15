@@ -3252,12 +3252,12 @@ public interface DataLakeEndpointBuilderFactory {
             return "CamelAzureStorageDataLakeDirectoryName";
         }
         /**
-         * Name of the file in azure data lake on which operation is to be
-         * performed.
+         * (producer) Name of the file in azure data lake on which operation is
+         * to be performed. (consumer) Name of the file that was consumed.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code AzureStorageDataLakeFileName}.
          */

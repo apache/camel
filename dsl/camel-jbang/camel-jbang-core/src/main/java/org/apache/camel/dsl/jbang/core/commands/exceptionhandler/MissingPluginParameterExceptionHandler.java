@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -48,6 +49,15 @@ public class MissingPluginParameterExceptionHandler {
     public int handleParseException(Exception ex, String[] args, CommandTree root) {
         Printer err = main.getOut();
         CommandTree command = commandOf(root, args);
+        for (Throwable c = ex.getCause(); c != null; c = c.getCause()) {
+            if (c instanceof CliException cli) {
+                // an error of the CLI while parsing, such as a value of the user configuration an option does not
+                // take: its message says what to fix, which the message of the parser does not (CAMEL-26931)
+                err.printErr(cli.getMessage());
+                printJsonError(command, args, cli.getExitCode(), cli.getMessage());
+                return cli.getExitCode();
+            }
+        }
         String message = ex.getMessage();
         if (command.getCommand() instanceof UsageErrorHandler handler) {
             Integer exitCode = handler.usageError(message, args);

@@ -37,7 +37,7 @@ import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * This is an endpoint when sending to it, is intercepted and is routed in a detour (before and optionally after).
- * <p/>
+ * <p>
  * The endpoint has one interceptor set by {@link #setBefore(Processor)}, {@link #setAfter(Processor)},
  * {@link #setSkip(boolean)} and {@link #setOnWhen(Predicate)} (such as when mocking endpoints), and it can have
  * interceptors that routes register and unregister with {@link #addInterceptor(Interceptor)} and
@@ -71,7 +71,7 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
      * Intercepts sending to the given endpoint
      *
      * @param destination the original endpoint
-     * @param skip        <tt>true</tt> to skip sending after the detour to the original endpoint
+     * @param skip        <code>true</code> to skip sending after the detour to the original endpoint
      */
     public DefaultInterceptSendToEndpoint(final Endpoint destination, boolean skip) {
         this.camelContext = destination.getCamelContext();

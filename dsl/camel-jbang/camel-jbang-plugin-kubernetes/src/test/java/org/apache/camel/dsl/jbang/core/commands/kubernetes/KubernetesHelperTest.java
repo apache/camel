@@ -19,7 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,35 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 class KubernetesHelperTest {
+
+    @Test
+    void theDefaultClientHasTheShortTimeouts() {
+        // they were set after the client was built, which had read them already (CAMEL-26934: run --output yaml took
+        // 40 s against an unreachable API server instead of about 2 s)
+        // the other tests of this JVM may have set them already: as on a fresh start, none is set
+        String[] keys = {
+                "kubernetes.connection.timeout", "kubernetes.request.timeout",
+                "kubernetes.request.retry.backoffLimit" };
+        Map<String, String> before = new HashMap<>();
+        for (String key : keys) {
+            String value = System.clearProperty(key);
+            if (value != null) {
+                before.put(key, value);
+            }
+        }
+        KubernetesHelper.setKubernetesClient(null);
+        try {
+            var config = KubernetesHelper.getKubernetesClient().getConfiguration();
+            Assertions.assertEquals(2000, config.getConnectionTimeout());
+            Assertions.assertEquals(2000, config.getRequestTimeout());
+        } finally {
+            KubernetesHelper.setKubernetesClient(null);
+            for (String key : keys) {
+                System.clearProperty(key);
+            }
+            before.forEach(System::setProperty);
+        }
+    }
 
     private final Path workingDir = Path.of("target", "kubernetes");
 

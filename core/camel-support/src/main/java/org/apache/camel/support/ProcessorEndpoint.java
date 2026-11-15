@@ -26,8 +26,8 @@ import org.apache.camel.Producer;
 /**
  * An endpoint which allows exchanges to be sent into it which just invokes a given {@link Processor}. This component
  * does not support the use of consumers.
- * <p/>
- * <br/>
+ * <p>
+ * <br>
  * Implementors beware that this endpoint creates producers and consumers which do not allow full control of their
  * lifecycle as {@link org.apache.camel.Service} or {@link org.apache.camel.SuspendableService} would do. If your
  * producers/consumers need more control over their lifecycle it is advised instead to extend {@link DefaultEndpoint},

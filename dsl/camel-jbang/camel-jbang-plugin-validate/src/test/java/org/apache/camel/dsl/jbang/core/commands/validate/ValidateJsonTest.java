@@ -121,6 +121,25 @@ class ValidateJsonTest {
         assertThat(e.getMessage()).isEqualTo("No properties files to validate");
     }
 
+    @Test
+    void theCommandsAgreeOnMissingFilesAndNothingToDo() throws Exception {
+        // validate yaml reported a validation error with exit code 1 for a missing file, validate source said
+        // "Validation success (files:0)" and validate normalize exited 0 for nothing to do (CAMEL-26933)
+        String missing = dir.resolve("nope.yaml").toString();
+        CliException e = assertThrows(CliException.class, () -> run(new YamlValidateCommand(main()), missing));
+        assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
+        assertThat(e.getMessage()).isEqualTo("File not found: " + missing);
+
+        Path text = Files.writeString(dir.resolve("notes.txt"), "not a route");
+        e = assertThrows(CliException.class, () -> run(new SourceValidateCommand(main()), text.toString()));
+        assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
+        assertThat(e.getMessage()).startsWith("No files to validate");
+
+        e = assertThrows(CliException.class, () -> run(new YamlNormalizeCommand(main()), text.toString()));
+        assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
+        assertThat(e.getMessage()).isEqualTo("No YAML files to normalize");
+    }
+
     private CamelJBangMain main() {
         printer = new StringPrinter();
         return new CamelJBangMain().withPrinter(printer);

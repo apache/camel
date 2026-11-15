@@ -40,7 +40,8 @@ public final class DataLakeConstants {
               description = "Name of the directory in azure data lake on which operation is to be performed.",
               javaType = "String")
     public static final String DIRECTORY_NAME = HEADER_PREFIX + "DirectoryName";
-    @Metadata(label = "producer", description = "Name of the file in azure data lake on which operation is to be performed.",
+    @Metadata(description = "(producer) Name of the file in azure data lake on which operation is to be performed."
+                            + " (consumer) Name of the file that was consumed.",
               javaType = "String")
     public static final String FILE_NAME = HEADER_PREFIX + "FileName";
     @Metadata(label = "from both", description = "The metadata to associate with the file.",

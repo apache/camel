@@ -75,9 +75,11 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
                 "--disable-auto=true", "--output=yaml", "--runtime=" + rt.runtime(), "--java-version=21");
         int exit = command.doCall();
 
-        Assertions.assertEquals(1, exit);
+        // a file that does not exist, as camel export and camel run say it (CAMEL-26931)
+        Assertions.assertEquals(66, exit);
 
         Assertions.assertTrue(printer.getOutput().contains("ERROR: Project export failed!"));
+        Assertions.assertTrue(printer.getStderr().contains("Path does not exist: mickey-mouse.groovy"), printer.getStderr());
     }
 
     @Test

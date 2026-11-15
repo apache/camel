@@ -339,6 +339,21 @@ class CamelRouteStatusTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void sortByAgeIsTheOldestFirst() throws Exception {
+        // the uptime of a route is how long it runs, and age sorted the youngest first, the opposite of the listings
+        // of the integrations (CAMEL-26929)
+        JsonObject young = route("route-newest", "timer:y", "Started", stats(0, 0, 0, -1));
+        young.put("uptime", "5s");
+        JsonObject old = route("route-oldest", "timer:o", "Started", stats(0, 0, 0, -1));
+        old.put("uptime", "2h");
+        writeStatusFile(TEST_PID, integration("myApp", young, old));
+
+        assertThat(call(command("--sort=age"))).isZero();
+        String output = printer.getOutput();
+        assertThat(output.indexOf("route-oldest")).isLessThan(output.indexOf("route-newest"));
+    }
+
+    @Test
     void testLimitReducesRows() throws Exception {
         JsonObject[] routes = new JsonObject[5];
         for (int i = 0; i < routes.length; i++) {

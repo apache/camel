@@ -818,11 +818,12 @@ public interface GridFsEndpointBuilderFactory {
         public static final GridFsHeaderNameBuilder INSTANCE = new GridFsHeaderNameBuilder();
 
         /**
-         * The content type of the file.
+         * (producer) The content type that findOne read from the metadata of
+         * the file. (consumer) The content type of the file.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code FileContentType}.
          */
@@ -830,11 +831,12 @@ public interface GridFsEndpointBuilderFactory {
             return "CamelFileContentType";
         }
         /**
-         * The size of the file.
+         * (producer) The size of the file that findOne found. (consumer) The
+         * size of the file.
          * 
          * The option is a: {@code long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code FileLength}.
          */
@@ -842,11 +844,12 @@ public interface GridFsEndpointBuilderFactory {
             return "CamelFileLength";
         }
         /**
+         * (producer) The upload date of the file that findOne found. (consumer)
          * The upload date of the file.
          * 
          * The option is a: {@code Date} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code FileLastModified}.
          */
@@ -868,7 +871,8 @@ public interface GridFsEndpointBuilderFactory {
             return "CamelFileName";
         }
         /**
-         * The content type of the file.
+         * The content type to store in the metadata of the file that create
+         * uploads.
          * 
          * The option is a: {@code String} type.
          * 

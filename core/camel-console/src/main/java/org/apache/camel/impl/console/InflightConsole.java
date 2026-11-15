@@ -44,8 +44,8 @@ public class InflightConsole extends AbstractDevConsole {
             @Metadata(description = "The route ID where the exchange currently is") String atRouteId,
             @Metadata(description = "The node ID where the exchange currently is") String nodeId,
             @Metadata(description = "Where the node is in the source, such as orders.camel.yaml:18") String nodeSource,
-            @Metadata(description = "Elapsed time in milliseconds since the exchange started") long elapsed,
-            @Metadata(description = "Duration in milliseconds the exchange has been at the current node") long duration) {
+            @Metadata(description = "Elapsed time in milliseconds the exchange has been at the current node") long elapsed,
+            @Metadata(description = "Duration in milliseconds since the exchange started") long duration) {
     }
 
     public record Response(

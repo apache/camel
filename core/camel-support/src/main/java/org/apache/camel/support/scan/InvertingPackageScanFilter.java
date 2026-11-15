@@ -20,7 +20,7 @@ import org.apache.camel.spi.PackageScanFilter;
 
 /**
  * Package scan filter for inverting the match result of a subfilter. If the subfilter would match and return
- * <tt>true</tt> this filter will invert that match and return <tt>false</tt>.
+ * <code>true</code> this filter will invert that match and return <code>false</code>.
  */
 public class InvertingPackageScanFilter implements PackageScanFilter {
 

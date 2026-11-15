@@ -48,11 +48,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Used for Rest DSL with binding to json/xml for incoming requests and outgoing responses.
- * <p/>
+ * <p>
  * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform from xml/json to Java
  * Objects and reverse again.
- * <p/>
- * The rest producer side is implemented in {@link org.apache.camel.component.rest.RestProducerBindingProcessor}
+ * <p>
+ * The rest producer side is implemented in {@code org.apache.camel.component.rest.RestProducerBindingProcessor}
  *
  * @see RestBindingAdviceFactory
  */
@@ -494,8 +494,8 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     }
 
     /**
-     * Whether the xml is only an empty root element, such as <tt>&lt;el/&gt;</tt> or <tt>&lt;el&gt;&lt;/el&gt;</tt>
-     * (after an optional xml declaration).
+     * Whether the xml is only an empty root element, such as <code>&lt;el/&gt;</code> or
+     * <code>&lt;el&gt;&lt;/el&gt;</code> (after an optional xml declaration).
      */
     static boolean isEmptyXmlRootElement(String xml) {
         if (ObjectHelper.isEmpty(xml)) {

@@ -575,6 +575,44 @@ public final class ExampleHelper {
     }
 
     /**
+     * The environment variable with the folder of an example run in the background, for the JVM that runs it: that JVM
+     * outlives the camel run that made the folder, and deletes it when it ends, such as by camel stop. The folder was
+     * left in the temporary directory (CAMEL-26930).
+     */
+    public static final String EXAMPLE_DIR_ENV = "CAMEL_CLI_EXAMPLE_DIR";
+
+    /**
+     * Deletes the folder of the example when this JVM exits, when the folder is one this CLI made for an example: a
+     * {@value #EXAMPLE_DIR_PREFIX} folder in the temporary directory. Any other folder is left alone.
+     *
+     * @param dir the folder, from {@link #EXAMPLE_DIR_ENV}, or null
+     */
+    public static void deleteExampleDirOnExit(String dir) {
+        Path path = exampleDir(dir);
+        if (path != null) {
+            deleteOnExit(path);
+        }
+    }
+
+    /** The folder, when it is a folder of an example in the temporary directory; else null. */
+    static Path exampleDir(String dir) {
+        return exampleDir(dir, Path.of(System.getProperty("java.io.tmpdir")));
+    }
+
+    static Path exampleDir(String dir, Path tmp) {
+        if (dir == null || dir.isBlank()) {
+            return null;
+        }
+        Path path = realPath(Path.of(dir));
+        if (!Files.isDirectory(path) || path.getFileName() == null
+                || !path.getFileName().toString().startsWith(EXAMPLE_DIR_PREFIX)
+                || !realPath(tmp).equals(path.getParent())) {
+            return null;
+        }
+        return path;
+    }
+
+    /**
      * The folders of examples in the temporary directory that are older than the given age and that none of the given
      * folders (those of running integrations) is in: left behind by runs that ended, or by a process that was killed.
      */

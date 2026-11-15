@@ -21,6 +21,7 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 
 @CommandDefinition(name = "unset", description = "Remove user configuration value", generateHelp = true,
@@ -41,11 +42,22 @@ public class ConfigUnset extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        CommandLineHelper.loadProperties(properties -> {
-            properties.remove(key);
-            CommandLineHelper.storeProperties(properties, printer(), !global);
-        }, !global);
+        boolean[] found = new boolean[1];
+        if (!CommandLineHelper.loadProperties(properties -> {
+            found[0] = properties.remove(key) != null;
+            if (found[0]) {
+                CommandLineHelper.storeProperties(properties, printer(), !global);
+            }
+        }, !global, printer())) {
+            printer().printErr("Cannot unset configuration: the configuration file is malformed. Fix it by hand first.");
+            return CliExitCode.FAILURE;
+        }
+        if (!found[0]) {
+            // as camel config get does (CAMEL-26931)
+            printer().printErr(key + " key not found");
+            return CliExitCode.NOT_FOUND;
+        }
 
-        return 0;
+        return CliExitCode.OK;
     }
 }

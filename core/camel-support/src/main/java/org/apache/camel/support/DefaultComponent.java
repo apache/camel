@@ -226,13 +226,13 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible)
+     * Allows for bridging the consumer to the Camel routing Error Handler, which means any exceptions (if possible)
      * occurred while the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a
      * message and handled by the routing Error Handler. Important: This is only possible if the 3rd party component
      * allows Camel to be alerted if an exception was thrown. Some components handle this internally only, and therefore
      * bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd
      * party component and make this possible for future releases.
-     * <p/>
+     * <p>
      * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be
      * logged at WARN/ERROR level and ignored.
      */
@@ -257,8 +257,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     /**
      * Strategy to do post configuration logic.
-     * <p/>
-     * Can be used to construct an URI based on the remaining parameters. For example the parameters that configures the
+     * <p>
+     * Can be used to construct a URI based on the remaining parameters. For example the parameters that configure the
      * endpoint have been removed from the parameters which leaves only the additional parameters left.
      *
      * @param  uri        the uri
@@ -273,12 +273,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Strategy for validation of parameters, that was not able to be resolved to any endpoint options.
+     * Strategy for validation of parameters, that were not able to be resolved to any endpoint options.
      *
      * @param  uri                            the uri
      * @param  parameters                     the parameters, an empty map if no parameters given
-     * @param  optionPrefix                   optional prefix to filter the parameters for validation. Use <tt>null</tt>
-     *                                        for validate all.
+     * @param  optionPrefix                   optional prefix to filter the parameters for validation. Use
+     *                                        <code>null</code> for validate all.
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
     protected void validateParameters(String uri, Map<String, Object> parameters, String optionPrefix) {
@@ -320,8 +320,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Configure if the parameters using the RAW token syntax need to be resolved before being consumed by
      * {@link #createEndpoint(String, Map)}.
-     * <p/>
-     * As the parameters are used to create an endpoint, by default they should have the token removed so its only the
+     * <p>
+     * As the parameters are used to create an endpoint, by default they should have the token removed so it's only the
      * value we have in parameters however there are some cases where the endpoint may act as a proxy for another
      * endpoint and you need to preserve the values as they are.
      */
@@ -465,7 +465,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param  parameters the parameters
      * @param  key        the key
      * @param  type       the requested type to convert the value from the parameter
-     * @return            the converted value parameter, <tt>null</tt> if parameter does not exist.
+     * @return            the converted value parameter, <code>null</code> if parameter does not exist.
      * @see               #resolveAndRemoveReferenceParameter(Map, String, Class)
      */
     public <T> T getAndRemoveParameter(Map<String, Object> parameters, String key, Class<T> type) {
@@ -659,13 +659,13 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Returns the reminder of the text if it starts with the prefix.
-     * <p/>
-     * Is useable for string parameters that contains commands.
+     * Returns the remainder of the text if it starts with the prefix.
+     * <p>
+     * Is useable for string parameters that contain commands.
      *
      * @param  prefix the prefix
      * @param  text   the text
-     * @return        the reminder, or null if no reminder
+     * @return        the remainder, or null if no remainder
      */
     protected String ifStartsWithReturnRemainder(String prefix, String text) {
         if (text.startsWith(prefix)) {

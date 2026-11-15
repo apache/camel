@@ -19,8 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 import jakarta.enterprise.context.ApplicationScoped;
 
 /**
- * The CDI bean the diagnose resources inject; the reference data itself lives in camel-jbang-core so the shared
- * {@code camel_error_diagnose} tool and the TUI use the same table.
+ * The CDI bean the diagnose resources inject; the reference data itself lives in camel-jbang-core.
  */
 @ApplicationScoped
 public class DiagnoseData extends org.apache.camel.dsl.jbang.core.commands.ai.DiagnoseData {

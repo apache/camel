@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
 import org.apache.camel.dsl.jbang.core.commands.config.BaseConfigTestSupport;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ class VersionSetTest extends BaseConfigTestSupport {
     void shouldStoreVersionInGlobalConfig() throws Exception {
         UserConfigHelper.createUserConfig("");
 
-        VersionSet command = new VersionSet(new CamelJBangMain().withPrinter(printer));
+        VersionSet command = command();
         command.version = "4.10.0";
         command.doCall();
 
@@ -59,11 +60,18 @@ class VersionSetTest extends BaseConfigTestSupport {
     void shouldStoreVersionRepoAndRuntimeTogether() throws Exception {
         UserConfigHelper.createUserConfig("");
 
-        VersionSet command = new VersionSet(new CamelJBangMain().withPrinter(printer));
+        VersionSet command = command();
         command.version = "4.10.0";
         command.repo = "https://repo.example.org/maven";
         command.runtime = RuntimeType.springBoot;
+        String[] asked = new String[1];
+        command.versionCheck = (version, repos) -> {
+            asked[0] = repos;
+            return true;
+        };
         command.doCall();
+        // the version is checked in the repository that is given
+        assertEquals("https://repo.example.org/maven", asked[0]);
 
         CommandLineHelper.loadProperties(properties -> {
             assertEquals("4.10.0", properties.get("camel-version"));
@@ -74,16 +82,53 @@ class VersionSetTest extends BaseConfigTestSupport {
     }
 
     @Test
-    void shouldLeaveExistingConfigUntouchedWhenNothingProvided() throws Exception {
+    void shouldRefuseACallWithNothingToSet() throws Exception {
         UserConfigHelper.createUserConfig("""
                 camel-version=4.9.0
                 """);
 
-        VersionSet command = new VersionSet(new CamelJBangMain().withPrinter(printer));
-        // no version, repo, runtime or reset: doCall must not change the stored value
-        command.doCall();
+        VersionSet command = command();
+        // no version, repo, runtime or reset: it was a silent no-op (CAMEL-26931)
+        assertEquals(CliExitCode.USAGE, command.doCall());
+        assertTrue(printer.getStderr().contains("Give the Camel version to set"), printer.getOutput());
 
         CommandLineHelper.loadProperties(properties -> assertEquals("4.9.0", properties.get("camel-version")));
+    }
+
+    @Test
+    void shouldRefuseAVersionThatDoesNotExist() throws Exception {
+        UserConfigHelper.createUserConfig("""
+                camel-version=4.9.0
+                """);
+
+        VersionSet command = command();
+        command.version = "9.9.9";
+        command.versionCheck = (version, repos) -> false;
+        assertEquals(CliExitCode.NOT_FOUND, command.doCall());
+        assertTrue(printer.getStderr().contains("Camel version 9.9.9 not found"), printer.getOutput());
+
+        CommandLineHelper.loadProperties(properties -> assertEquals("4.9.0", properties.get("camel-version")));
+    }
+
+    @Test
+    void shouldSetAVersionThatCannotBeCheckedWithAWarning() throws Exception {
+        UserConfigHelper.createUserConfig("""
+                repos=https://repo.example.org/maven
+                """);
+
+        String[] asked = new String[1];
+        VersionSet command = command();
+        command.version = "4.10.0";
+        command.versionCheck = (version, repos) -> {
+            asked[0] = repos;
+            return null;
+        };
+        assertEquals(CliExitCode.OK, command.doCall());
+        assertTrue(printer.getStderr().contains("Cannot check that Camel version 4.10.0 exists"), printer.getOutput());
+        // the check asks the repositories that are set already
+        assertEquals("https://repo.example.org/maven", asked[0]);
+
+        CommandLineHelper.loadProperties(properties -> assertEquals("4.10.0", properties.get("camel-version")));
     }
 
     @Test
@@ -96,7 +141,7 @@ class VersionSetTest extends BaseConfigTestSupport {
                 other=keep-me
                 """);
 
-        VersionSet command = new VersionSet(new CamelJBangMain().withPrinter(printer));
+        VersionSet command = command();
         command.reset = true;
         command.doCall();
 
@@ -112,7 +157,7 @@ class VersionSetTest extends BaseConfigTestSupport {
 
     @Test
     void shouldStoreVersionInLocalConfigWhenNotGlobal() throws Exception {
-        VersionSet command = new VersionSet(new CamelJBangMain().withPrinter(printer));
+        VersionSet command = command();
         command.version = "4.10.0";
         command.global = false;
         command.doCall();
@@ -123,4 +168,27 @@ class VersionSetTest extends BaseConfigTestSupport {
         CommandLineHelper.loadProperties(properties -> assertEquals("4.10.0", properties.get("camel-version")), true);
     }
 
+    @Test
+    void malformedConfigRefusesWriteAndReturnsNonZero() throws Exception {
+        // A malformed config file (Windows-style path without escaping) must not be overwritten
+        UserConfigHelper.createUserConfig("path=C:\\users\\name");
+        String originalContent = Files.readString(
+                CommandLineHelper.getHomeDir().resolve(CommandLineHelper.USER_CONFIG));
+
+        VersionSet command = command();
+        command.version = "4.10.0";
+        Integer exitCode = command.doCall();
+
+        // must return non-zero and leave the file untouched
+        assertEquals(CliExitCode.FAILURE, exitCode, "exit code must be 1 on malformed config");
+        String afterContent = Files.readString(
+                CommandLineHelper.getHomeDir().resolve(CommandLineHelper.USER_CONFIG));
+        assertEquals(originalContent, afterContent, "malformed config file must not be overwritten");
+    }
+
+    private VersionSet command() {
+        VersionSet command = new VersionSet(new CamelJBangMain().withPrinter(printer));
+        command.versionCheck = (version, repos) -> true;
+        return command;
+    }
 }

@@ -121,8 +121,6 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        List<Row> rows = new ArrayList<>();
-
         JsonObject jo;
         List<CamelProcess> processes = ProcessFinder.find(name);
         if (processes.size() > 1) {
@@ -145,68 +143,91 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         if (varied) {
             jo = onlyVaried(jo);
             JsonArray routes = jo.getCollection("routes");
-            if (!jsonOutput && (routes == null || routes.isEmpty())) {
-                printer().println("No step has been reached with more than one body type (the message history records"
-                                  + " the body types, such as with camel run --dev)");
+            if (routes == null || routes.isEmpty()) {
+                if (jsonOutput) {
+                    addUnreadSourceParts(jo);
+                    printer().println(Jsoner.prettyPrint(jo.toJson(), 2));
+                } else {
+                    printer().println("No step has been reached with more than one body type (the message history"
+                                      + " records the body types, such as with camel run --dev)");
+                }
                 return 0;
             }
         }
-        if (jsonOutput) {
-            addUnreadSourceParts(jo);
-            String dump = Jsoner.prettyPrint(jo.toJson(), 2);
-            printer().println(dump);
-        } else {
-            JsonArray arr = (JsonArray) jo.get("routes");
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject o = (JsonObject) arr.get(i);
-                Row row = new Row();
-                row.location = extractSourceName(o.getString("source"));
-                row.routeId = o.getString("routeId");
-                row.checksum = o.getString("checksum");
-                if (!rows.contains(row)) {
-                    List<JsonObject> lines = o.getCollection("code");
-                    if (lines != null) {
-                        for (JsonObject line : lines) {
-                            Code code = new Code();
-                            code.line = line.getInteger("line");
-                            code.type = line.getString("type");
-                            code.id = line.getString("id");
-                            code.level = line.getInteger("level");
-                            code.code = line.getString("code");
-                            code.description = line.getString("description");
-                            code.bodyTypes = line.getCollection("bodyTypes");
-                            code.bodyKinds = line.getCollection("bodyKinds");
-                            if (brief) {
-                                // make code brief
-                                code.code = StringHelper.before(code.code, "[", code.code);
-                            } else if (description) {
-                                // show description
-                                code.code = code.type + (code.description != null ? "[" + code.description + "]" : "");
-                            }
-                            row.code.add(code);
-                        }
-                    }
-                    boolean add = true;
-                    if (filter != null && !matchesFilter(filter, row.location, row.routeId)) {
-                        add = false;
-                    }
-                    if (add) {
-                        rows.add(row);
-                    }
-                }
-            }
-            // sort rows
-            rows.sort(ORDER.comparator(sort));
 
-            if (rows.isEmpty() && filter != null) {
-                throw CliException.notFound("No route matching: " + filter);
+        // the same routes for the JSON as for the text: --filter, --sort, --brief and --description were for the text
+        // only, and a filter that matched nothing exited 0 with all the routes in the JSON (CAMEL-26929)
+        List<Row> rows = toRows(jo);
+        rows.sort(ORDER.comparator(sort));
+        if (rows.isEmpty() && filter != null) {
+            throw CliException.notFound("No route matching: " + filter);
+        }
+        if (jsonOutput) {
+            JsonArray routes = new JsonArray();
+            for (Row row : rows) {
+                routes.add(row.json);
             }
-            if (!rows.isEmpty()) {
-                printSource(rows);
-            }
+            JsonObject answer = new JsonObject(jo);
+            answer.put("routes", routes);
+            addUnreadSourceParts(answer);
+            printer().println(Jsoner.prettyPrint(answer.toJson(), 2));
+        } else if (!rows.isEmpty()) {
+            printSource(rows);
         }
 
         return 0;
+    }
+
+    /**
+     * The routes of the dump, once each, that match the filter, with the code of their steps as --brief or
+     * --description asks for. Each row keeps its route as JSON with that code, for --json.
+     */
+    private List<Row> toRows(JsonObject jo) {
+        List<Row> rows = new ArrayList<>();
+        JsonArray arr = jo.getCollection("routes");
+        if (arr == null) {
+            return rows;
+        }
+        for (Object element : arr) {
+            JsonObject o = (JsonObject) element;
+            Row row = new Row();
+            row.location = extractSourceName(o.getString("source"));
+            row.routeId = o.getString("routeId");
+            row.checksum = o.getString("checksum");
+            if (rows.contains(row) || (filter != null && !matchesFilter(filter, row.location, row.routeId))) {
+                continue;
+            }
+            row.json = new JsonObject(o);
+            List<JsonObject> lines = o.getCollection("code");
+            if (lines != null) {
+                JsonArray jsonLines = new JsonArray();
+                for (JsonObject line : lines) {
+                    Code code = new Code();
+                    code.line = line.getInteger("line");
+                    code.type = line.getString("type");
+                    code.id = line.getString("id");
+                    code.level = line.getInteger("level");
+                    code.code = line.getString("code");
+                    code.description = line.getString("description");
+                    code.bodyTypes = line.getCollection("bodyTypes");
+                    code.bodyKinds = line.getCollection("bodyKinds");
+                    if (brief) {
+                        // make code brief
+                        code.code = StringHelper.before(code.code, "[", code.code);
+                    } else if (description) {
+                        // show description
+                        code.code = code.type + (code.description != null ? "[" + code.description + "]" : "");
+                    }
+                    row.code.add(code);
+                    JsonObject jsonLine = new JsonObject(line);
+                    jsonLine.put("code", code.code);
+                    jsonLines.add(jsonLine);
+                }
+                row.json.put("code", jsonLines);
+            }
+            rows.add(row);
+        }
+        return rows;
     }
 
     /**
@@ -375,6 +396,8 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         String routeId;
         String checksum;
         List<Code> code = new ArrayList<>();
+        // the route as JSON, with the code of its steps as the text shows it
+        JsonObject json;
 
         @Override
         public boolean equals(Object o) {

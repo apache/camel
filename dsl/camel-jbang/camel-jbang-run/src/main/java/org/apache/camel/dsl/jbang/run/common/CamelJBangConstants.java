@@ -199,12 +199,12 @@ public final class CamelJBangConstants {
 
     @Deprecated
     @Metadata(description = "Health check at /observe/health on local HTTP server (port 8080 by default)",
-              javaType = "boolean", defaultValue = ".camel-jbang/compile", deprecationNote = "Deprecated: use observe instead")
+              javaType = "boolean", defaultValue = "false", deprecationNote = "Deprecated: use observe instead")
     public static final String HEALTH = "camel.jbang.health";
 
     @Deprecated
     @Metadata(description = "Metrics (Micrometer and Prometheus) at /observe/metrics on local HTTP server (port 8080 by default) when running standalone Camel",
-              javaType = "boolean", defaultValue = ".camel-jbang/compile", deprecationNote = "Deprecated: use observe instead")
+              javaType = "boolean", defaultValue = "false", deprecationNote = "Deprecated: use observe instead")
     public static final String METRICS = "camel.jbang.metrics";
 
     @Metadata(description = "Developer console at /q/dev on local HTTP server (port 8080 by default)",

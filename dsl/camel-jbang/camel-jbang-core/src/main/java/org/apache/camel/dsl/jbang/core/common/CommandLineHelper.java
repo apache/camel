@@ -27,10 +27,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import org.aesh.command.DefaultValueProvider;
+import org.aesh.command.converter.Converter;
+import org.aesh.command.converter.ConverterInvocation;
 import org.aesh.command.impl.internal.ProcessedOption;
+import org.aesh.command.validator.OptionValidatorException;
+import org.aesh.console.AeshContext;
 import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.OrderedProperties;
@@ -39,6 +45,9 @@ import org.apache.camel.util.OrderedProperties;
  * Helper for CLI command line.
  */
 public final class CommandLineHelper {
+
+    /** Paths whose malformed-config warning has already been printed this JVM run, to avoid repeating it. */
+    private static final Set<String> WARNED_PATHS = ConcurrentHashMap.newKeySet();
 
     public static final String USER_CONFIG = ".camel-cli.properties";
     public static final String LOCAL_USER_CONFIG = "camel-cli.properties";
@@ -127,27 +136,53 @@ public final class CommandLineHelper {
     }
 
     public static void augmentWithUserConfiguration(CommandTree commandLine) {
-        Path file = getUserConfigurationFile();
-        if (Files.isRegularFile(file) && Files.exists(file)) {
-            Properties properties = new Properties();
-            try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
-                properties.load(reader);
-            } catch (IOException e) {
-                return;
-            }
+        augmentWithUserConfiguration(commandLine, new Printer.SystemOutPrinter());
+    }
 
+    public static void augmentWithUserConfiguration(CommandTree commandLine, Printer printer) {
+        Properties properties = loadUserConfiguration(printer);
+        if (!properties.isEmpty()) {
             commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(properties));
         }
     }
 
-    private static Path getUserConfigurationFile() {
-        Path file;
-        if (Files.exists(Paths.get(LOCAL_USER_CONFIG))) {
-            file = Paths.get(LOCAL_USER_CONFIG);
-        } else {
-            file = getUserPropertyFile(false);
+    /**
+     * The user configuration as the commands use it: the global file in the user home ({@value #USER_CONFIG}), with the
+     * local file of the current directory ({@value #LOCAL_USER_CONFIG}) laid over it, so a key of the local file wins.
+     * Before, a local file hid the whole global one, such as its repos or camel-version (CAMEL-26931). A file that
+     * cannot be parsed is left out, with a warning (once per file).
+     *
+     * @param  printer where a file that cannot be parsed is reported (once per file)
+     * @return         the configuration, empty when neither file exists
+     */
+    public static Properties loadUserConfiguration(Printer printer) {
+        Properties answer = new OrderedProperties();
+        readInto(getUserPropertyFile(false), answer, printer);
+        readInto(Paths.get(LOCAL_USER_CONFIG), answer, printer);
+        return answer;
+    }
+
+    private static void readInto(Path file, Properties answer, Printer printer) {
+        if (!Files.isRegularFile(file)) {
+            return;
         }
-        return file;
+        // in the order of the file, as the configuration keeps it
+        Properties properties = new OrderedProperties();
+        try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+            properties.load(reader);
+        } catch (Exception e) {
+            // best-effort: a malformed config file (e.g. malformed unicode escape) must never break the CLI;
+            // warn the user so they know to fix it, but let the command continue without its defaults.
+            // Warn once per path: loadProperties may also warn for the same file, so we deduplicate here.
+            String key = file.toAbsolutePath().toString();
+            if (WARNED_PATHS.add(key)) {
+                printer.printErr(
+                        "Warning: could not parse '" + file.toAbsolutePath() + "' (" + e.getMessage()
+                                 + "). Edit the file by hand, escaping '\\' as '\\\\' or using '/'.");
+            }
+            return;
+        }
+        answer.putAll(properties);
     }
 
     public static void createPropertyFile(boolean local) throws IOException {
@@ -162,16 +197,43 @@ public final class CommandLineHelper {
     }
 
     public static void loadProperties(Consumer<Properties> consumer, boolean local) {
+        boolean ok = loadProperties(consumer, local, new Printer.SystemOutPrinter());
+        if (!ok) {
+            // Read-only callers get empty props so the command continues with defaults.
+            // Write callers (config set/unset) use the 3-arg overload and check the return value.
+            consumer.accept(new OrderedProperties());
+        }
+    }
+
+    /**
+     * Loads user properties from the configuration file. When the file exists but is malformed (e.g. a Windows-style
+     * path stored without escaping produces a malformed \\uXXXX sequence), the method warns via the given printer and
+     * returns {@code false} <b>without</b> calling the consumer. This lets callers that write back to the file (config
+     * set, config unset) detect the failure and refuse to overwrite a malformed file.
+     *
+     * @return {@code true} if the file was loaded successfully (or did not exist), {@code false} if the file exists but
+     *         could not be parsed.
+     */
+    public static boolean loadProperties(Consumer<Properties> consumer, boolean local, Printer printer) {
         Path file = getUserPropertyFile(local);
         if (Files.isRegularFile(file) && Files.exists(file)) {
+            Properties prop = new OrderedProperties();
             try (InputStream is = Files.newInputStream(file)) {
-                Properties prop = new OrderedProperties();
                 prop.load(is);
-                consumer.accept(prop);
             } catch (Exception e) {
-                throw new RuntimeException("Cannot load user configuration: " + file);
+                // Warn once per path per JVM run: camel run calls loadProperties from multiple code paths
+                // (resolveRepos, augmentWithUserConfiguration, printConfigurationValues) and each would
+                // print the same message. Using the absolute path as the key deduplicates the warning.
+                String key = file.toAbsolutePath().toString();
+                if (WARNED_PATHS.add(key)) {
+                    printer.printErr("Warning: could not parse '" + file.toAbsolutePath() + "' (" + e.getMessage()
+                                     + "). Edit the file by hand, escaping '\\' as '\\\\' or using '/'.");
+                }
+                return false;
             }
+            consumer.accept(prop);
         }
+        return true;
     }
 
     public static void storeProperties(Properties properties, Printer printer, boolean local) {
@@ -236,6 +298,69 @@ public final class CommandLineHelper {
     }
 
     /**
+     * The value of the user configuration for an option, when the option takes it. A value it does not take, such as
+     * runtime=springboot, failed every command with that option with "DefaultValueProvider failed for option runtime",
+     * which named neither the file, the key nor the value (CAMEL-26931); it now fails with exit code 2 and says so.
+     */
+    static String checkConfigValue(ProcessedOption option, String key, String value) {
+        String problem = invalidValue(option, value);
+        if (problem != null) {
+            throw CliException.usage("Invalid value in " + configFileOf(key) + ": " + key + "=" + value + " (" + problem
+                                     + "). Change it with camel config set " + key + "=<value>, or remove it with"
+                                     + " camel config unset " + key);
+        }
+        return value;
+    }
+
+    /**
+     * Why the option does not take the value, or null when it does (or when that cannot be told before the command line
+     * is parsed).
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static String invalidValue(ProcessedOption option, String value) {
+        Converter converter = option.converter();
+        if (converter == null) {
+            return null;
+        }
+        try {
+            converter.convert(new ConverterInvocation() {
+                @Override
+                public String getInput() {
+                    return value;
+                }
+
+                @Override
+                public AeshContext getAeshContext() {
+                    return null;
+                }
+            });
+            return null;
+        } catch (OptionValidatorException | IllegalArgumentException e) {
+            return e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+        } catch (RuntimeException e) {
+            // a converter that needs more than the value: the parser converts it, and reports what it finds
+            return null;
+        }
+    }
+
+    /** The file of the user configuration the key is from: the local file wins over the global one. */
+    private static Path configFileOf(String key) {
+        Path local = Paths.get(LOCAL_USER_CONFIG);
+        if (Files.isRegularFile(local)) {
+            Properties properties = new Properties();
+            try (Reader reader = Files.newBufferedReader(local, StandardCharsets.UTF_8)) {
+                properties.load(reader);
+                if (properties.containsKey(key)) {
+                    return local.toAbsolutePath();
+                }
+            } catch (Exception e) {
+                // the global file then
+            }
+        }
+        return getUserPropertyFile(false);
+    }
+
+    /**
      * The defaults of the options from the user configuration: {@code camel.<command path>.<option>} for one command,
      * else {@code <option>} (as the properties default provider of picocli looked them up). The commands of camel
      * plugin take no defaults from it.
@@ -259,16 +384,17 @@ public final class CommandLineHelper {
             names.addAll(option.getAliases());
             if (tree != null) {
                 for (String name : names) {
-                    String value = properties.getProperty(tree.getQualifiedName().replace(' ', '.') + "." + name);
+                    String key = tree.getQualifiedName().replace(' ', '.') + "." + name;
+                    String value = properties.getProperty(key);
                     if (value != null) {
-                        return value;
+                        return checkConfigValue(option, key, value);
                     }
                 }
             }
             for (String name : names) {
                 String value = properties.getProperty(name);
                 if (value != null) {
-                    return value;
+                    return checkConfigValue(option, name, value);
                 }
             }
             return null;

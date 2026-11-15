@@ -61,8 +61,8 @@ for %%i in ("%BASEDIR%\..\lib\camel-launcher-*.jar") do (
   if errorlevel 1 if not defined LAUNCHER_JAR set "LAUNCHER_JAR=%%~fi"
 )
 
-@REM Class data sharing: the JVM keeps the classes that a command loads in an archive (one per command and Camel
-@REM version, in %LOCALAPPDATA%\camel-cli\cds), which it creates when the command runs the first time, or again when
+@REM Class data sharing: the JVM keeps the classes that a command loads in an archive (one per command, Camel
+@REM version and install directory, in %LOCALAPPDATA%\camel-cli\cds), which it creates when the command runs the first time, or again when
 @REM the JDK changed, so the command starts faster from then on. CAMEL_CDS=false turns it off, and so do CDS or AOT
 @REM options of JAVA_OPTS. A JVM without CDS (OpenJ9) ignores the options.
 set "CDS_FILE="
@@ -87,7 +87,18 @@ if "!_CDS_REST!"=="." set "_CDS_CMD=!_CDS_ARG!"
 :cdsCommandDone
 for %%j in ("!LAUNCHER_JAR!") do set "_CDS_VERSION=%%~nj"
 set "_CDS_VERSION=!_CDS_VERSION:camel-launcher-=!"
-set "_CDS_DIR=!LOCALAPPDATA!\camel-cli\cds\!_CDS_VERSION!"
+@REM Include a hash of the install directory so two installs of the same version get separate archives.
+@REM Different install methods (SDKMAN, zip) place the launcher in different directories;
+@REM a shared archive from another install points at the wrong JAR or returns wrong install metadata.
+@REM Pass BASEDIR via environment to avoid trailing-backslash breaking PowerShell string quoting.
+set "_CDS_INSTALL_HASH="
+set "_CDS_PS_INPUT=!BASEDIR!"
+set "_CDS_PS_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
+if exist "!_CDS_PS_EXE!" (
+  for /f "delims=" %%h in ('!_CDS_PS_EXE! -NoProfile -NonInteractive -Command "$b=[System.Text.Encoding]::UTF8.GetBytes($env:_CDS_PS_INPUT);$h=[System.Security.Cryptography.SHA256]::Create().ComputeHash($b);($h[0..3]|ForEach-Object{$_.ToString(\"x2\")}) -join \"\"" 2^>nul') do set "_CDS_INSTALL_HASH=%%h"
+)
+if not defined _CDS_INSTALL_HASH set "_CDS_INSTALL_HASH=default"
+set "_CDS_DIR=!LOCALAPPDATA!\camel-cli\cds\!_CDS_VERSION!\!_CDS_INSTALL_HASH!"
 @REM the JVM does not start when the directory of the archive is missing
 if not exist "!_CDS_DIR!\" mkdir "!_CDS_DIR!" 2> nul
 if not exist "!_CDS_DIR!\" goto cdsEnd
@@ -177,11 +188,12 @@ if not defined _RAW exit /b 1
 :tryJavaParseVersion
 set "_RAW=%_RAW:"=%"
 set "_MAJOR="
-for /f "tokens=1,2 delims=." %%a in ("%_RAW%") do (
+@REM The major is before the first dot, dash or plus: 21.0.5, 26-ea and 21+35 are 21, 26 and 21 (as camel.sh reads them).
+for /f "tokens=1,2 delims=.-+" %%a in ("%_RAW%") do (
   if "%%a"=="1" (set "_MAJOR=%%b") else (set "_MAJOR=%%a")
 )
 if not defined _MAJOR exit /b 1
-@REM Reject non-numeric majors (e.g. early-access "17-ea") so the numeric compare below is safe.
+@REM Reject a major that is still not a number, so the numeric compare below is safe.
 for /f "delims=0123456789" %%z in ("%_MAJOR%") do exit /b 1
 if %_MAJOR% LSS %CAMEL_MIN_JAVA% exit /b 1
 set "CAMEL_JAVACMD=%_CAND%"

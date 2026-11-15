@@ -76,7 +76,9 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTestSupport
         var labelsB = service.getSpec().getTemplate().getMetadata().getLabels();
         Map<String, String> annotations = service.getSpec().getTemplate().getMetadata().getAnnotations();
         Assertions.assertEquals("route-service", service.getMetadata().getName());
-        Assertions.assertEquals(8, labelsA.size());
+        // and app.kubernetes.io/runtime, which the Knative Service did not have (CAMEL-26934)
+        Assertions.assertEquals(9, labelsA.size());
+        Assertions.assertEquals("camel", labelsA.get("app.kubernetes.io/runtime"));
         Assertions.assertEquals("route-service", labelsA.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("true", labelsA.get("bindings.knative.dev/include"));
         Assertions.assertEquals("cluster-local", labelsA.get("networking.knative.dev/visibility"));
@@ -91,6 +93,28 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTestSupport
         Assertions.assertEquals("1", annotations.get("autoscaling.knative.dev/minScale"));
         Assertions.assertEquals("10", annotations.get("autoscaling.knative.dev/maxScale"));
         Assertions.assertEquals(300, service.getSpec().getTemplate().getSpec().getTimeoutSeconds());
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void theOptionsOfTheWorkloadApplyToAKnativeService(RuntimeType rt) throws Exception {
+        // the env, the volumes and the labels were not in the Knative Service (CAMEL-26934)
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--image-group=camel-test", "--runtime=" + rt.runtime(), "--env=MY_VAR=hello",
+                "--config=configmap:my-cm", "--label=tier=web");
+        command.traits = new String[] { "knative-service.enabled=true" };
+        Assertions.assertEquals(0, command.doCall());
+
+        Service service = getResource(rt, Service.class)
+                .orElseThrow(() -> new RuntimeCamelException("Missing Knative service in Kubernetes manifest"));
+        var pod = service.getSpec().getTemplate().getSpec();
+        var container = pod.getContainers().get(0);
+        Assertions.assertTrue(container.getEnv().stream()
+                .anyMatch(e -> "MY_VAR".equals(e.getName()) && "hello".equals(e.getValue())), container.getEnv().toString());
+        Assertions.assertTrue(pod.getVolumes().stream()
+                .anyMatch(v -> v.getConfigMap() != null && "my-cm".equals(v.getConfigMap().getName())),
+                pod.getVolumes().toString());
+        Assertions.assertEquals("web", service.getMetadata().getLabels().get("tier"));
     }
 
     @ParameterizedTest

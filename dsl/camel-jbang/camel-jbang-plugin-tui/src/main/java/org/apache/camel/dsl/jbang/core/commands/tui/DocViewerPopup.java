@@ -56,6 +56,13 @@ class DocViewerPopup {
 
     /** The documentation of screenshots and demo recordings, with all the tape commands. */
     static final String RECORDING_DOCS_URL = "https://camel.apache.org/manual/camel-jbang-tui-recording.html";
+    /**
+     * The AI setup in full: the ways to use AI, the providers with the local models that work well, and the coding
+     * agents. The guides of the TUI stay short and point here, so the documentation is the one place to keep current.
+     */
+    static final String AI_WAYS_DOCS_URL = "https://camel.apache.org/manual/camel-jbang-tui-ai-ways.html";
+    static final String AI_PROVIDERS_DOCS_URL = "https://camel.apache.org/manual/camel-jbang-ai-providers.html";
+    static final String AI_AGENTS_DOCS_URL = "https://camel.apache.org/manual/camel-jbang-tui-ai-agents.html";
 
     private boolean showViewer;
     private boolean showPicker;
@@ -400,102 +407,40 @@ class DocViewerPopup {
             status = "**Detected:** Ollama at " + OllamaDoctorSupport.formatDisplayHost(ollama.baseUrl())
                      + " with " + OllamaDoctorSupport.modelCountLabel(ollama.models());
         } else if (ollama.running()) {
-            status = "**Detected:** Ollama is running but has no models. Run `ollama pull qwen3.6:35b-a3b`.";
+            status = "**Detected:** Ollama is running but has no models. Run `ollama pull qwen3.6:35b-a3b` "
+                     + "(on a Mac with Apple Silicon: `qwen3.6:35b-mlx`).";
         } else {
-            status = "**Status:** No AI provider detected. Set an API key, start Ollama, or pick a coding agent "
-                     + "with Ctrl+P in the panel (section 5), then press F8.";
+            status = "**Status:** No AI provider detected. Start Ollama, pick a coding agent with Ctrl+P in the "
+                     + "panel, or set an API key, then press F8.";
         }
         String url = "http://localhost:" + mcpPort + "/mcp";
         openMarkdown("Setup AI",
                 "# Setup AI\n\n"
                                  + status + "\n\n"
-                                 + "Press **F8** to open the AI prompt panel. The panel answers questions about your running\n"
-                                 + "integrations by calling built-in tools (routes, logs, errors, traces, health).\n\n"
-                                 + "## 1. Choose a provider\n\n"
-                                 + "The panel auto-detects a provider from environment variables, in this order:\n\n"
-                                 + "| Environment | Provider |\n"
-                                 + "|-------------|----------|\n"
-                                 + "| `ANTHROPIC_API_KEY` | Anthropic Claude |\n"
-                                 + "| `CLOUD_ML_REGION` + `ANTHROPIC_VERTEX_PROJECT_ID` | Vertex AI |\n"
-                                 + "| `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` | Azure OpenAI |\n"
-                                 + "| `GEMINI_API_KEY` | Google Gemini |\n"
-                                 + "| `OPENAI_API_KEY` | OpenAI |\n"
-                                 + "| `WATSONX_APIKEY` | IBM watsonx.ai |\n"
-                                 + "| `LLM_API_KEY` + `LLM_BASE_URL` | Any OpenAI-compatible server |\n"
-                                 + "| Ollama at `localhost:11434` | Local Ollama (no key needed) |\n\n"
-                                 + "Export the variable before starting the TUI, for example:\n\n"
-                                 + "    export ANTHROPIC_API_KEY=sk-ant-...\n"
-                                 + "    camel tui\n\n"
-                                 + "To pin a provider, model or URL regardless of the environment, open\n"
-                                 + "**F2 → Settings** and set *AI Provider*, *AI Model* and *AI Base URL*\n"
-                                 + "(stored as `camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`).\n\n"
-                                 + "## 2. Local AI with Ollama (no API key)\n\n"
-                                 + "Install Ollama natively for GPU acceleration, pull a model, then press F8:\n\n"
-                                 + "    brew install ollama                          # macOS\n"
-                                 + "    curl -fsSL https://ollama.com/install.sh | sh  # Linux\n"
-                                 + "    ollama pull qwen3.6:35b-a3b\n\n"
-                                 + "The AI panel relies on tool calling. Models smaller than ~14B do not call tools\n"
-                                 + "reliably and answer from training data instead. Use at least 14B. Prefer a\n"
-                                 + "mixture-of-experts model such as `qwen3.6:35b-a3b`: with only 3B parameters active\n"
-                                 + "per token it processes the tool-heavy prompt many times faster than a dense 27B/32B\n"
-                                 + "model, so answers start in seconds instead of a minute.\n\n"
-                                 + "| Model | RAM | Notes |\n"
-                                 + "|-------|-----|-------|\n"
-                                 + "| `qwen3.6:35b-a3b` | ~23 GB | Recommended: fastest prompt processing, needs 32 GB+ |\n"
-                                 + "| `qwen2.5:14b` | ~9 GB | Minimum for 16 GB machines |\n"
-                                 + "| `qwen3.6:27b` | ~18 GB | Strong dense model, several times slower prompt processing |\n"
-                                 + "| `qwen2.5:32b` | ~20 GB | Good quality, slow prompt processing |\n"
-                                 + "| `hermes3:70b` | ~43 GB | Excellent tool calling, needs 64 GB+ |\n"
-                                 + "| `llama3.3:70b` | ~43 GB | Best open model, needs 64 GB+ |\n\n"
-                                 + "`camel infra run ollama` runs Ollama in Docker without GPU acceleration, which is\n"
-                                 + "much slower. Prefer the native install for development.\n\n"
-                                 + "On Apple Silicon, use the default (GGUF) tags rather than the `-mlx` tags: the Ollama\n"
-                                 + "MLX engine cannot yet reuse the cached prompt for Qwen 3.x models, so every question\n"
-                                 + "re-processes the whole prompt.\n\n"
-                                 + "## 3. OpenAI-compatible local servers\n\n"
-                                 + "LM Studio, vLLM, llama.cpp, GPT4All and similar servers work through `LLM_BASE_URL`:\n\n"
-                                 + "    export LLM_API_KEY=any-value\n"
-                                 + "    export LLM_BASE_URL=http://localhost:1234\n"
-                                 + "    camel tui\n\n"
-                                 + "`OPENAI_BASE_URL` is accepted as an alternative to `LLM_BASE_URL`. The model is the first one\n"
-                                 + "the server lists on `/v1/models`; pick another with `/model <name>` in the panel or\n"
-                                 + "*AI Model* in **F2 -> Settings**. The model must support tool calling.\n\n"
-                                 + "## 4. Using the AI panel\n\n"
-                                 + "- **F8** opens and closes the panel; **Enter** sends the prompt\n"
-                                 + "- **Ctrl+P** (or `/provider`) switches provider or model for the session\n"
-                                 + "- `/model <name>` switches the model, `/clear` resets the conversation\n"
-                                 + "- `/run`, `/infra` and `/send` run Camel CLI commands from the prompt\n"
-                                 + "- **Ctrl+U** toggles the usage view with token consumption\n"
-                                 + "- `/help` lists all slash commands; **↑/↓** recalls earlier prompts\n\n"
-                                 + "Check **F2 → Run Doctor** to verify the detected provider and Ollama models.\n\n"
-                                 + "## 5. Use your coding agent inside the panel (ACP)\n\n"
-                                 + "If you already use Claude Code, Codex, OpenCode, IBM Bob, Qwen Code or DeepSeek Harness,\n"
-                                 + "the panel can hand your questions to it over the Agent Client Protocol. No API key is\n"
-                                 + "needed in the TUI: the agent keeps its own login, model, memory and skills.\n\n"
-                                 + "Press **Ctrl+P** in the panel and pick a preset:\n\n"
-                                 + "| Provider | Runs | Before the first question |\n"
-                                 + "|----------|------|---------------------------|\n"
-                                 + "| `acp:claude` | `npx -y @agentclientprotocol/claude-agent-acp` | log in with the `claude` CLI |\n"
-                                 + "| `acp:codex` | `npx -y @agentclientprotocol/codex-acp` | `codex login` |\n"
-                                 + "| `acp:opencode` | `opencode acp` | `opencode auth login` |\n"
-                                 + "| `acp:bob` | `bob acp` | set `BOBSHELL_API_KEY` or run `bob` once |\n"
-                                 + "| `acp:qwen` | `qwen --acp` | set `OPENAI_API_KEY` and `OPENAI_BASE_URL` |\n"
-                                 + "| `acp:dsh` | `npx -y @deepseek-ai/dsh --profile acp` | configure the model key in DeepSeek Harness |\n"
-                                 + "| `acp:custom` | *ACP Command* in **F2 → Settings** | depends on the agent |\n\n"
-                                 + "The `npx` presets need Node.js 22 or newer. The agent starts with your first question and\n"
-                                 + "gets the TUI's tools through an MCP server that is started on demand, so `--mcp` is not\n"
-                                 + "required. Read-only tools are approved automatically; a tool that changes something, or\n"
-                                 + "a file edit or command of the agent's own, opens a permission popup first (**Enter**\n"
-                                 + "allows, **Esc** rejects, **Ctrl+C** cancels the turn). File edits go through the same\n"
-                                 + "`/write confirm|auto|live` modes as the built-in providers. The agent's skills and\n"
-                                 + "commands appear as `/agent:<name>`. Set *AI Provider* to the preset in **F2 → Settings**\n"
-                                 + "to make it the default.\n\n"
-                                 + "## 6. Connect an agent from outside over MCP (optional)\n\n"
-                                 + "Start the TUI with `--mcp` to expose an MCP server, then connect an agent such as\n"
-                                 + "Claude Code from its own terminal:\n\n"
+                                 + "Press **F8** to open the AI panel. It answers questions about your running integrations "
+                                 + "by calling built-in tools (routes, logs, errors, traces, health). Pick one of three ways:\n\n"
+                                 + "1. **A local model with Ollama**, with no API key and nothing leaving your machine. Install "
+                                 + "Ollama natively, then pull `qwen3.6:35b-mlx` on a Mac with Apple Silicon (Ollama 0.40 or "
+                                 + "later), or `qwen3.6:35b-a3b` on other machines. It needs 32 GB of memory or more: smaller "
+                                 + "models do not call the tools reliably.\n"
+                                 + "2. **A coding agent you already use**: Claude Code, Codex, opencode, IBM Bob, Qwen Code or "
+                                 + "DeepSeek Harness. Press **Ctrl+P** in the panel and pick an `acp:` provider. The agent keeps "
+                                 + "its own login and model, so the TUI needs no API key.\n"
+                                 + "3. **An API key** in the environment before you start the TUI, such as "
+                                 + "`export ANTHROPIC_API_KEY=sk-ant-...`. `OPENAI_API_KEY`, `GEMINI_API_KEY` and others work "
+                                 + "too, and `LLM_BASE_URL` points at an OpenAI-compatible server such as LM Studio.\n\n"
+                                 + "Pin a provider, model or URL in **F2 → Settings**, and see what was found with "
+                                 + "**F2 → Run Doctor**. In the panel, `/help` lists the commands.\n\n"
+                                 + "The full guide is online: all providers, the models that work well, and the coding agents.\n\n"
+                                 + "- Ways to use AI: <" + AI_WAYS_DOCS_URL + ">\n"
+                                 + "- Providers and local models: <" + AI_PROVIDERS_DOCS_URL + ">\n"
+                                 + "- Coding agents over ACP and MCP: <" + AI_AGENTS_DOCS_URL + ">\n\n"
+                                 + "## Connect an agent from outside over MCP\n\n"
+                                 + "Start the TUI with `--mcp`, then connect an agent such as Claude Code from its own "
+                                 + "terminal:\n\n"
                                  + "    claude mcp add --transport http camel-tui " + url + "\n\n"
-                                 + "The footer turns green when the agent connects. See **F2 → AI & MCP → MCP Info**\n"
-                                 + "for the available tools and a `.mcp.json` example.\n");
+                                 + "The footer turns green when the agent connects. **F2 → AI & MCP → MCP Info** shows the "
+                                 + "tools and a `.mcp.json` example.\n");
     }
 
     void openMcpInfo() {

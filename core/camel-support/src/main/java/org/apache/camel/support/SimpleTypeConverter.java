@@ -23,7 +23,7 @@ import org.apache.camel.TypeConverter;
 
 /**
  * Another base class for {@link TypeConverter} implementations.
- * <p/>
+ * <p>
  * Implementers need only to implement a {@link ConversionMethod} method, and can rely on the default implementations of
  * the other methods from this support class.
  */

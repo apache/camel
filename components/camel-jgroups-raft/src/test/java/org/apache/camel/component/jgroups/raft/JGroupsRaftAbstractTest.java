@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.awaitility.core.ConditionTimeoutException;
+import org.jgroups.Address;
 import org.jgroups.protocols.raft.InMemoryLog;
 import org.jgroups.raft.RaftHandle;
 import org.junit.jupiter.api.AfterEach;
@@ -52,9 +53,17 @@ public abstract class JGroupsRaftAbstractTest extends CamelTestSupport {
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_CURRENT_TERM, int.class));
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_IS_LEADER, boolean.class));
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LAST_APPLIED, int.class));
-        //assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LEADER_ADDRESS, Address.class));
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LOG_SIZE, int.class));
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_RAFT_ID, String.class));
+    }
+
+    /**
+     * Checked apart from {@link #checkHeaders(Exchange)}: the leader address is only known once a leader has been
+     * elected, so an exchange whose headers were populated while the election was still running (a role change event,
+     * for instance) legitimately carries none.
+     */
+    protected void checkLeaderAddressHeader(Exchange exchange) {
+        assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LEADER_ADDRESS, Address.class));
     }
 
     /**

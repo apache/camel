@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 
 import org.apache.camel.util.TimeSource;
@@ -53,6 +54,8 @@ public final class Dst {
 
     /** Virtual time 0 is this wall clock instant, so code that prints times sees plausible values. */
     public static final long EPOCH_MILLIS = 1_700_000_000_000L;
+    /** The largest wall clock jump, back or forward: 100 years. */
+    public static final long MAX_WALL_CLOCK_JUMP_MILLIS = TimeUnit.DAYS.toMillis(36_525);
 
     private static final int MAX_NESTING = 64;
     /** An untimed wait that has not ended after this much virtual time is reported as a hang. */
@@ -73,6 +76,9 @@ public final class Dst {
     private final List<DstTask<?>> running = new ArrayList<>();
     private final DstExecutor wakeups;
     private long now;
+    /** How far the wall clock jumps of this run moved the wall clock away from the monotonic clock. */
+    private long wallClockOffset;
+    private DstExecutor wallClock;
     private long sequence;
     private long steps;
     private int nesting;
@@ -150,9 +156,95 @@ public final class Dst {
         return now;
     }
 
-    /** Virtual wall clock time in milliseconds. */
+    /**
+     * Virtual wall clock time in milliseconds: {@link #EPOCH_MILLIS} plus {@link #now()}, moved by the wall clock jumps
+     * of the run ({@link #wallClockOffset()}). Without a jump it moves only forward, together with the monotonic clock.
+     */
     public long currentTimeMillis() {
-        return EPOCH_MILLIS + now;
+        return EPOCH_MILLIS + now + wallClockOffset;
+    }
+
+    /**
+     * How far the wall clock jumps of the run ({@link #jumpWallClock(long)}) have moved the wall clock from the
+     * monotonic clock, in milliseconds: negative when the wall clock was moved back. 0 when the run made no jump.
+     */
+    public long wallClockOffset() {
+        return wallClockOffset;
+    }
+
+    /**
+     * Moves the wall clock of the run by {@code deltaMillis}, forward when positive and backward when negative, as an
+     * NTP step or an operator who sets the system time does. The monotonic clock does not move.
+     * <p>
+     * From now on the wall clock reads see the jump: the rewritten reads of the code under test
+     * ({@code @DstInstrument}: {@code System.currentTimeMillis()}, {@code new Date()}, {@code Instant.now()} and the
+     * other {@code java.time} reads), and {@code TimeSource.currentTimeMillis()} and {@code TimeSource.instant()} in
+     * Camel core (for example the expiry of {@code DefaultTimeoutMap}, and the created time of a
+     * {@code MonotonicClock}). {@code System.nanoTime()}, {@code TimeSource.nanoTime()}, {@code StopWatch},
+     * {@code MonotonicClock.elapsed()}, {@link #now()}, the sleeps and waits, and the due times of the tasks do not see
+     * it: a task due in 10 seconds still runs 10 seconds later.
+     * <p>
+     * The jump is written to the trace. Call it from the loop thread, in the deterministic order of the run, or let the
+     * seed choose the jump with {@link #jumpWallClockBetween(long, long, long, long)}.
+     *
+     * @throws IllegalArgumentException if the wall clock would be moved more than {@link #MAX_WALL_CLOCK_JUMP_MILLIS}
+     *                                  away from the monotonic clock
+     */
+    public void jumpWallClock(long deltaMillis) {
+        checkLoopThread("jumpWallClock");
+        // both bounded, so the sum cannot overflow
+        boolean tooFar = deltaMillis < -MAX_WALL_CLOCK_JUMP_MILLIS || deltaMillis > MAX_WALL_CLOCK_JUMP_MILLIS;
+        long offset = tooFar ? 0 : wallClockOffset + deltaMillis;
+        if (tooFar || offset < -MAX_WALL_CLOCK_JUMP_MILLIS || offset > MAX_WALL_CLOCK_JUMP_MILLIS) {
+            throw new IllegalArgumentException(
+                    "a wall clock jump of " + deltaMillis + "ms would move the wall clock more than "
+                                               + MAX_WALL_CLOCK_JUMP_MILLIS + "ms away from the monotonic clock");
+        }
+        wallClockOffset = offset;
+        trace("wall clock jump " + (deltaMillis >= 0 ? "+" : "") + deltaMillis + "ms (wall clock offset " + wallClockOffset
+              + "ms)");
+    }
+
+    /**
+     * A wall clock jump chosen by the seed: draws when it happens, between {@code fromMillis} and {@code toMillis} of
+     * virtual time from now, and how big it is, between {@code minDeltaMillis} and {@code maxDeltaMillis} (a negative
+     * value moves the wall clock back), and schedules it. Both values come from the seeded random source when this is
+     * called, so the same seed makes the same jump at the same time; when the jump is due at the same time as other
+     * tasks, the seed picks the order as for any task. The trace says when the jump is scheduled (its time and size)
+     * and when it happens. A drawn delta of 0 makes no jump.
+     * <p>
+     * The jump is a pending task of the run: a run that waits until nothing is pending runs to it, and
+     * {@link #dropPending()} or {@link #close()} drop it, after which its task never completes. When it happens, it
+     * fails like {@link #jumpWallClock(long)} if the wall clock would end up more than
+     * {@link #MAX_WALL_CLOCK_JUMP_MILLIS} away from the monotonic clock (after other jumps).
+     *
+     * @return the scheduled jump; its result is the delta in milliseconds once it has happened
+     */
+    public DstTask<Long> jumpWallClockBetween(long fromMillis, long toMillis, long minDeltaMillis, long maxDeltaMillis) {
+        checkLoopThread("jumpWallClockBetween");
+        if (fromMillis < 0 || toMillis < fromMillis || toMillis > MAX_WAIT_MILLIS * 365) {
+            throw new IllegalArgumentException(
+                    "the time of the jump must be 0 <= from <= to <= a year: " + fromMillis + ", " + toMillis);
+        }
+        if (maxDeltaMillis < minDeltaMillis || minDeltaMillis < -MAX_WALL_CLOCK_JUMP_MILLIS
+                || maxDeltaMillis > MAX_WALL_CLOCK_JUMP_MILLIS) {
+            throw new IllegalArgumentException(
+                    "the size of the jump must be -" + MAX_WALL_CLOCK_JUMP_MILLIS + " <= min <= max <= "
+                                               + MAX_WALL_CLOCK_JUMP_MILLIS + ": " + minDeltaMillis + ", "
+                                               + maxDeltaMillis);
+        }
+        long at = between(fromMillis, toMillis);
+        long delta = between(minDeltaMillis, maxDeltaMillis);
+        trace("wall clock jump of " + (delta >= 0 ? "+" : "") + delta + "ms scheduled at t=" + (now + at));
+        if (wallClock == null) {
+            wallClock = new DstExecutor(this, "wall-clock", Integer.MAX_VALUE);
+        }
+        return wallClock.schedule("wall clock jump " + (delta >= 0 ? "+" : "") + delta + "ms", at, () -> {
+            if (delta != 0) {
+                jumpWallClock(delta);
+            }
+            return delta;
+        });
     }
 
     public long steps() {

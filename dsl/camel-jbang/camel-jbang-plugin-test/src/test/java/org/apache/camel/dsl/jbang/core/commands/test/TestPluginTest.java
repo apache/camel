@@ -33,6 +33,7 @@ import org.citrusframework.spi.Resources;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class TestPluginTest {
 
@@ -66,6 +67,25 @@ class TestPluginTest {
 
         Assertions.assertTrue(targetDir.resolve("citrus-application.properties").toFile().exists());
         Assertions.assertTrue(targetDir.resolve("sample.citrus.it.yaml").toFile().exists());
+    }
+
+    @Test
+    public void initDoesNotOverwriteATest(@TempDir Path dir) throws Exception {
+        // camel test init replaced an edited test without a word (CAMEL-26933)
+        CamelJBangMain camelJBangMain = createCamelJBangMain();
+        camelJBangMain.execute("test", "init", "edited.citrus.it.yaml", "--directory", dir.toString());
+        Path test = dir.resolve("edited.citrus.it.yaml");
+        Files.writeString(test, "name: my edited test\n");
+
+        camelJBangMain.execute("test", "init", "edited.citrus.it.yaml", "--directory", dir.toString());
+
+        Assertions.assertEquals("name: my edited test\n", Files.readString(test));
+        Assertions.assertTrue(printer.getOutput().contains("Test already exists: " + test + " (use --force to overwrite it)"),
+                printer.getOutput());
+
+        camelJBangMain.execute("test", "init", "edited.citrus.it.yaml", "--directory", dir.toString(), "--force");
+
+        Assertions.assertNotEquals("name: my edited test\n", Files.readString(test));
     }
 
     @Test

@@ -111,52 +111,84 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
         podFound = true;
 
         var terminated = isPodTerminated(podRes);
-        if (!terminated) {
-
-            LogWatch logs;
-            if (tail < 0) {
-                if (!ObjectHelper.isEmpty(container)) {
-                    logs = podRes.inContainer(container).watchLog();
-                } else {
-                    logs = podRes.watchLog();
-                }
-            } else {
-                if (!ObjectHelper.isEmpty(container)) {
-                    logs = podRes.inContainer(container).tailingLines(tail).watchLog();
-                } else {
-                    logs = podRes.tailingLines(tail).watchLog();
-                }
-            }
-
-            try (logs; BufferedReader reader = new BufferedReader(new InputStreamReader(logs.getOutput()))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    printer().println(line);
-                    if (maxMessageCount > 0 && ++messageCount > maxMessageCount) {
-                        return false;
-                    }
-                    retryCount = 0;
-                }
-                readFailed = false;
-            } catch (IOException e) {
-                printer().printErr("Failed to read pod logs - " + e.getMessage());
-                readFailed = true;
-            }
-
-            terminated = isPodTerminated(podRes);
+        if (terminated) {
+            // a pod that has finished, such as the pod of a CronJob: its log once, as kubectl logs does
+            printLog(podRes);
+            return false;
         }
+
+        LogWatch logs;
+        if (tail < 0) {
+            if (!ObjectHelper.isEmpty(container)) {
+                logs = podRes.inContainer(container).watchLog();
+            } else {
+                logs = podRes.watchLog();
+            }
+        } else {
+            if (!ObjectHelper.isEmpty(container)) {
+                logs = podRes.inContainer(container).tailingLines(tail).watchLog();
+            } else {
+                logs = podRes.tailingLines(tail).watchLog();
+            }
+        }
+
+        try (logs; BufferedReader reader = new BufferedReader(new InputStreamReader(logs.getOutput()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                printer().println(line);
+                if (maxMessageCount > 0 && ++messageCount > maxMessageCount) {
+                    return false;
+                }
+                retryCount = 0;
+            }
+            readFailed = false;
+        } catch (IOException e) {
+            printer().printErr("Failed to read pod logs - " + e.getMessage());
+            readFailed = true;
+        }
+
+        terminated = isPodTerminated(podRes);
 
         return !terminated;
     }
 
+    private void printLog(PodResource podRes) {
+        String log;
+        try {
+            if (!ObjectHelper.isEmpty(container)) {
+                log = tail < 0
+                        ? podRes.inContainer(container).getLog() : podRes.inContainer(container).tailingLines(tail).getLog();
+            } else {
+                log = tail < 0 ? podRes.getLog() : podRes.tailingLines(tail).getLog();
+            }
+        } catch (RuntimeException e) {
+            printer().printErr("Failed to read pod logs - " + e.getMessage());
+            readFailed = true;
+            return;
+        }
+        readFailed = false;
+        if (log != null) {
+            for (String line : log.split("\\R")) {
+                printer().println(line);
+                if (maxMessageCount > 0 && ++messageCount > maxMessageCount) {
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Whether the pod has finished: the phase {@code Succeeded} or {@code Failed}.
+     */
     private boolean isPodTerminated(PodResource podRes) {
+        // not Terminated, which is no pod phase: the log of a finished pod was printed again and again (CAMEL-26934)
         var phase = "Unknown";
         try {
             phase = Optional.ofNullable(podRes).map(pr -> getPodPhase(pr.get())).orElse(phase);
         } catch (RuntimeException ex) {
             printer().printErr(ex);
         }
-        return "Terminated".equals(phase);
+        return "Succeeded".equals(phase) || "Failed".equals(phase);
     }
 
     private boolean sleepWell() {

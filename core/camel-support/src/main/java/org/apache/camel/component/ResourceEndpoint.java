@@ -71,7 +71,7 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
 
     /**
      * Gets the resource as an input stream considering the cache flag as well.
-     * <p/>
+     * <p>
      * If cache is enabled then the resource content is cached in an internal buffer and this content is returned to
      * avoid loading the resource over and over again.
      *
@@ -176,8 +176,8 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
 
     /**
      * Path to the resource.
-     * <p/>
-     * You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these
+     * <p>
+     * You can prefix with: classpath, file, http, ref, or bean. classpath, file and http load the resource using these
      * protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean
      * to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod
      *

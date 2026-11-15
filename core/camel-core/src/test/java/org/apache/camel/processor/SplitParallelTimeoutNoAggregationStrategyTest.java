@@ -16,23 +16,37 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.awaitility.Awaitility.await;
+
 @Isolated
 @Timeout(60)
 public class SplitParallelTimeoutNoAggregationStrategyTest extends ContextTestSupport {
 
     private final Phaser phaser = new Phaser(3);
+
+    // holds the branch that must time out until the test is done: it cannot complete before the timeout,
+    // and it does not keep the graceful shutdown of the CamelContext waiting
+    private final CountDownLatch release = new CountDownLatch(1);
+
+    @AfterEach
+    void releaseTimedOutBranch() {
+        release.countDown();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().size() == 0);
+    }
 
     @BeforeEach
     void sendEarly() {
@@ -67,7 +81,8 @@ public class SplitParallelTimeoutNoAggregationStrategyTest extends ContextTestSu
                         .end() // end split
                         .to("mock:result");
 
-                from("direct:a").process(e -> phaser.arriveAndAwaitAdvance()).delay(200).setBody(constant("A"));
+                from("direct:a").process(e -> phaser.arriveAndAwaitAdvance()).process(e -> release.await(30, TimeUnit.SECONDS))
+                        .setBody(constant("A"));
 
                 from("direct:b").process(e -> phaser.arriveAndAwaitAdvance()).setBody(constant("B"));
 

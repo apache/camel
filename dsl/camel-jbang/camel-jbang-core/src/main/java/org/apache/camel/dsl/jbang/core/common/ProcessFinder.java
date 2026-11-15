@@ -40,7 +40,9 @@ import org.apache.camel.util.json.Jsoner;
  * <p/>
  * A number is a pid. A name matches the name of the integration (as <tt>camel ps</tt> shows it, without file extension)
  * or its CamelContext name: it is a prefix (<tt>foo</tt> matches <tt>foo-bar</tt>) unless it ends with <tt>!</tt>
- * (<tt>foo!</tt> matches only <tt>foo</tt>), and it may use wildcards and regular expressions.
+ * (<tt>foo!</tt> matches only <tt>foo</tt>), and it may use wildcards and regular expressions. When an integration has
+ * exactly the given name, the name matches only the integrations of that name: with <tt>foo</tt> and <tt>foo-bar</tt>
+ * running, <tt>foo</tt> matches only <tt>foo</tt>, and <tt>fo</tt> both.
  */
 public final class ProcessFinder {
 
@@ -119,7 +121,7 @@ public final class ProcessFinder {
         if (found.size() > 1) {
             throw CliException.notFound("Name or pid " + nameOrPid + " matches " + found.size()
                                         + " running Camel integrations: " + describe(found)
-                                        + ". Specify a name or pid that matches exactly one.");
+                                        + ". Specify the pid, or a name that matches exactly one.");
         }
         return found.get(0);
     }
@@ -228,7 +230,27 @@ public final class ProcessFinder {
                     }
                 });
         answer.sort(Comparator.comparingLong(CamelProcess::pid));
+        if (answer.size() > 1 && isPlainName(nameOrPid, byPid)) {
+            // orders matches orders-v2 too, unless an integration is named orders
+            List<CamelProcess> same = answer.stream().filter(p -> hasName(p, nameOrPid)).toList();
+            if (!same.isEmpty()) {
+                return new ArrayList<>(same);
+            }
+        }
         return answer;
+    }
+
+    // a name as it is given, not a pid, an exact name (foo!) or a pattern (foo*)
+    private static boolean isPlainName(String nameOrPid, boolean byPid) {
+        return nameOrPid != null && !byPid && !nameOrPid.endsWith("!") && !nameOrPid.endsWith("*");
+    }
+
+    private static boolean hasName(CamelProcess p, String name) {
+        if (p.name() != null && (p.name().equalsIgnoreCase(name) || name.equalsIgnoreCase(FileUtil.onlyName(p.name())))) {
+            return true;
+        }
+        String contextName = p.contextName();
+        return contextName != null && !"CamelJBang".equals(contextName) && contextName.equalsIgnoreCase(name);
     }
 
     private static String pattern(String name) {

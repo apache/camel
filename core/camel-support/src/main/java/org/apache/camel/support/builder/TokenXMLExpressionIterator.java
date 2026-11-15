@@ -42,14 +42,14 @@ import org.apache.camel.util.StringHelper;
 
 /**
  * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} XML body using an
- * {@link java.util.Iterator}, which grabs the content between a XML start and end token, where the end token
+ * {@link java.util.Iterator}, which grabs the content between an XML start and end token, where the end token
  * corresponds implicitly to either the end tag or the self-closing start tag.
- * <p/>
+ * <p>
  * The message body must be able to convert to {@link java.io.InputStream} type which is used as stream to access the
  * message body.
- * <p/>
+ * <p>
  * Can be used to split big XML files.
- * <p/>
+ * <p>
  * This implementation supports inheriting namespaces from a parent/root tag.
  */
 public class TokenXMLExpressionIterator extends ExpressionAdapter {

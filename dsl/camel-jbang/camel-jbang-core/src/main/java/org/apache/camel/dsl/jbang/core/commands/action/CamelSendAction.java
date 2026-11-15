@@ -27,7 +27,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,6 +53,7 @@ import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.run.ConfiguredRun;
@@ -78,7 +81,9 @@ import org.jline.jansi.Ansi;
                            "  camel cmd send --endpoint=kafka:refunds --body=file:test/chaos/refunds-fails/" })
 public class CamelSendAction extends ActionBaseCommand {
 
-    @Argument(description = "To use an existing running Camel integration for sending the message (name or pid)")
+    @Argument(description = "The running Camel integration to send to (name or pid). Without it, the integration that"
+                            + " runs, unless --endpoint is a system outside the integrations, such as kafka:topic,"
+                            + " which the CLI sends to itself")
     String name;
 
     @Option(name = "properties",
@@ -157,6 +162,10 @@ public class CamelSendAction extends ActionBaseCommand {
     @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
+    @Option(name = "json", hasValue = false,
+            description = "Output the outcome in JSON Format: the status, the exchange id, and the reply message with --reply")
+    boolean jsonOutput;
+
     @Option(name = "infra", description = "Send to infrastructure service (e.g., nats, kafka)")
     String infra;
 
@@ -178,6 +187,8 @@ public class CamelSendAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // no ANSI codes of colors in a file or a pipe, unless --logging-color is given
+        loggingColor = colorOutput(loggingColor);
         if (headers != null) {
             for (String h : headers) {
                 if (!h.contains("=")) {
@@ -185,9 +196,10 @@ public class CamelSendAction extends ActionBaseCommand {
                 }
             }
         }
-        // timeout cannot be too low
-        if (timeout < 5000) {
-            timeout = 5000;
+        // the integration bounds the send by the timeout as given: a timeout below 5 seconds was raised to 5 seconds
+        // without a word, while the send itself was not bounded at all (CAMEL-26929)
+        if (timeout <= 0) {
+            throw CliException.usage("--timeout must be more than 0, was: " + timeout);
         }
         if (repeat < 0 || repeat > MAX_MESSAGES) {
             throw CliException.usage("--repeat must be between 1 and " + MAX_MESSAGES + ", was: " + repeat);
@@ -210,9 +222,50 @@ public class CamelSendAction extends ActionBaseCommand {
             return doCallInfra(infra);
         } else if (name != null) {
             return doCall(name);
+        } else if (endpoint == null || isInsideAnIntegration(endpoint)) {
+            // the Camel of this command has no routes: camel cmd send --body=... is for the integration that runs
+            return doCall(String.valueOf(theRunningIntegration().pid()));
         } else {
+            // a system outside the integrations, such as kafka:topic, from the Camel of this command
             return doCallLocal();
         }
+    }
+
+    /**
+     * The schemes of the endpoints that only an integration has: a send from the Camel of this command reaches nobody.
+     */
+    private static final Set<String> INTERNAL_SCHEMES
+            = Set.of("direct", "seda", "stub", "disruptor", "disruptor-vm", "mock", "dataset", "vm");
+
+    /** Whether the endpoint is a route id, a pattern or an endpoint in the memory of an integration. */
+    static boolean isInsideAnIntegration(String endpoint) {
+        int colon = endpoint.indexOf(':');
+        return colon < 0 || endpoint.endsWith("*")
+                || INTERNAL_SCHEMES.contains(endpoint.substring(0, colon).toLowerCase(Locale.ROOT));
+    }
+
+    /**
+     * The one integration that runs, for a send without a name.
+     *
+     * @throws CliException (exit code 3) when none runs, or several
+     */
+    private CamelProcess theRunningIntegration() {
+        List<CamelProcess> running = ProcessFinder.find(null);
+        if (running.size() == 1) {
+            return running.get(0);
+        }
+        if (running.isEmpty()) {
+            throw CliException.notFound(endpoint == null
+                    ? "No running Camel integration to send to: start one with camel run, or give --endpoint to send"
+                      + " to a system such as kafka:topic"
+                    : "No running Camel integration to send to: " + endpoint + " is in an integration, so start it"
+                      + " with camel run first");
+        }
+        String names = running.stream()
+                .map(p -> p.name() != null && !p.name().isEmpty() ? p.name() + " (pid " + p.pid() + ")" : "pid " + p.pid())
+                .collect(Collectors.joining(", "));
+        throw CliException.notFound(running.size() + " Camel integrations are running: " + names
+                                    + ". Give the name or pid of the one to send to.");
     }
 
     /**
@@ -310,6 +363,9 @@ public class CamelSendAction extends ActionBaseCommand {
             String error = result.status() == ActionClient.Status.TIMEOUT ? "Send timeout: " + result.error() : result.error();
             throw new CliException(result.exitCode(), error);
         }
+        if (jsonOutput) {
+            return showJson(result, jo);
+        }
         printStatusLine(jo);
         if (jo.containsKey("sent")) {
             return showSummary(jo);
@@ -367,6 +423,43 @@ public class CamelSendAction extends ActionBaseCommand {
             return CliExitCode.FAILURE;
         }
         return CliExitCode.OK;
+    }
+
+    /**
+     * The answer of the integration as JSON, with what the --show options leave out removed, so a script or an AI agent
+     * reads the outcome of the send instead of parsing a table (CAMEL-26929).
+     */
+    private int showJson(ActionResult result, JsonObject jo) {
+        JsonObject message = jo.getMap("message");
+        if (message != null) {
+            if (!showExchangeProperties) {
+                message.remove("exchangeProperties");
+            }
+            if (!showExchangeVariables) {
+                message.remove("exchangeVariables");
+            }
+            if (!showHeaders) {
+                message.remove("headers");
+            }
+            if (!showBody) {
+                message.remove("body");
+            }
+        }
+        if (!showException) {
+            jo.remove("exception");
+        }
+        if (!result.isOk() && message == null && jo.getMap("exception") == null && jo.getString("error") == null) {
+            jo.put("error", result.error());
+        }
+        jo.put("pid", pid);
+        printer().println(pretty ? Jsoner.prettyPrint(jo.toJson(), 2) : jo.toJson());
+        String status = jo.getString("status");
+        if ("timeout".equals(status)) {
+            return CliExitCode.TIMEOUT;
+        } else if ("failed".equals(status) || "error".equals(status)) {
+            return CliExitCode.FAILURE;
+        }
+        return result.isOk() || "success".equals(status) ? CliExitCode.OK : CliExitCode.FAILURE;
     }
 
     /** The summary of a repeat or a folder of messages: the errors, as the status line has the counts. */

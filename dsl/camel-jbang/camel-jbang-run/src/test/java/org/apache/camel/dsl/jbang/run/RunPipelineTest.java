@@ -40,6 +40,67 @@ class RunPipelineTest {
     }
 
     @Test
+    void anOptionGivenOnTheCommandLineWinsOverTheApplicationProperties() {
+        // with camel.main.tracing=false in the file, --trace printed nothing (CAMEL-26930)
+        RunRequest request = request();
+        request.givenOptions.add("trace");
+        request.givenOptions.add("console");
+        KameletMain main = new KameletMain("jbang");
+        Properties profile = new Properties();
+        profile.setProperty("camel.main.tracing", "false");
+        profile.setProperty("camel.jbang.console", "false");
+        RunPipeline pipeline = new RunPipeline(request);
+
+        pipeline.writeOption(main, profile, "trace", "camel.main.tracing", "true");
+        pipeline.writeOption(main, profile, "console", "camel.jbang.console", "true");
+
+        // camel-main binds the override, KameletMain reads the initial property
+        assertThat(main.getOverrideProperties().getProperty("camel.main.tracing")).isEqualTo("true");
+        assertThat(main.getInitialProperties().getProperty("camel.main.tracing")).isEqualTo("true");
+        assertThat(main.getOverrideProperties().getProperty("camel.jbang.console")).isEqualTo("true");
+        assertThat(main.getInitialProperties().getProperty("camel.jbang.console")).isEqualTo("true");
+    }
+
+    @Test
+    void theApplicationPropertiesAreTheDefaultOfAnOptionNotGiven() {
+        RunRequest request = request();
+        KameletMain main = new KameletMain("jbang");
+        Properties profile = new Properties();
+        profile.setProperty("camel.jbang.health", "true");
+        RunPipeline pipeline = new RunPipeline(request);
+
+        pipeline.writeOption(main, profile, "health", "camel.jbang.health", "false");
+        pipeline.writeOption(main, profile, "metrics", "camel.jbang.metrics", "false");
+
+        assertThat(main.getInitialProperties().getProperty("camel.jbang.health")).isEqualTo("true");
+        // no override: none was given
+        assertThat(main.getOverrideProperties()).isNull();
+        // neither given nor in the file: the default of the option, as before
+        assertThat(main.getInitialProperties().getProperty("camel.jbang.metrics")).isEqualTo("false");
+    }
+
+    @Test
+    void theVersionsGivenOnTheCommandLineWinOverTheApplicationProperties() {
+        RunRequest request = request();
+        request.camelVersion = "4.23.0";
+        request.javaVersion = "25";
+        request.stub = "jms";
+        request.givenOptions.add("camel-version");
+        request.givenOptions.add("stub");
+        Properties profile = new Properties();
+        profile.setProperty("camel.jbang.camel-version", "4.18.0");
+        profile.setProperty("camel.jbang.javaVersion", "21");
+        profile.setProperty("camel.jbang.stub", "kafka");
+
+        RunProfileProperties.applyTo(request, profile);
+
+        assertThat(request.camelVersion).isEqualTo("4.23.0");
+        assertThat(request.stub).isEqualTo("jms");
+        // not given: the file
+        assertThat(request.javaVersion).isEqualTo("21");
+    }
+
+    @Test
     void shouldAlignManagementPortWithAppPortForOpenApiUi() {
         RunRequest request = request();
         request.openapiUi = true;
@@ -77,6 +138,51 @@ class RunPipelineTest {
         assertThat(main.getOverrideProperties().getProperty("camel.management.openapiUiEnabled")).isEqualTo("true");
         assertThat(main.getOverrideProperties().getProperty("camel.server.enabled")).isEqualTo("true");
         assertThat(main.getOverrideProperties().getProperty("camel.management.enabled")).isEqualTo("true");
+    }
+
+    @Test
+    void debuggingWithTheSanitizerTurnsOffItsStillPendingWarning() {
+        // camel debug runs camel run with --prop=camel.debug.enabled=true: a breakpoint holds the calls of the steps
+        // around it, which are not callbacks still pending
+        RunRequest request = request();
+        request.sanitizer = true;
+        request.applicationProperties = new String[] { "camel.debug.enabled=true" };
+        KameletMain main = new KameletMain("jbang");
+
+        new RunPipeline(request).applySanitizerRuntimeOptions(main, null);
+
+        // an initial property, which the application properties and the command line override
+        assertThat(main.getInitialProperties().getProperty("camel.sanitizer.pendingTimeout")).isEqualTo("0");
+    }
+
+    @Test
+    void debuggingWithTheSanitizerKeepsAPendingTimeoutThatIsSet() {
+        RunRequest request = request();
+        request.sanitizer = true;
+        request.applicationProperties
+                = new String[] { "camel.debug.enabled=true", "camel.sanitizer.pendingTimeout=5m" };
+        KameletMain main = new KameletMain("jbang");
+        new RunPipeline(request).applySanitizerRuntimeOptions(main, null);
+        assertThat(main.getInitialProperties().getProperty("camel.sanitizer.pendingTimeout")).isNull();
+
+        request.applicationProperties = null;
+        Properties profile = new Properties();
+        profile.setProperty("camel.debug.enabled", "true");
+        profile.setProperty("camel.sanitizer.pendingTimeout", "5m");
+        main = new KameletMain("jbang");
+        new RunPipeline(request).applySanitizerRuntimeOptions(main, profile);
+        assertThat(main.getInitialProperties().getProperty("camel.sanitizer.pendingTimeout")).isNull();
+    }
+
+    @Test
+    void runningWithTheSanitizerKeepsItsStillPendingWarning() {
+        RunRequest request = request();
+        request.sanitizer = true;
+        KameletMain main = new KameletMain("jbang");
+
+        new RunPipeline(request).applySanitizerRuntimeOptions(main, new Properties());
+
+        assertThat(main.getInitialProperties().getProperty("camel.sanitizer.pendingTimeout")).isNull();
     }
 
     @Test

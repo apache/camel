@@ -188,8 +188,9 @@ public final class BlobConstants {
               description = "(Operations related to container and blob) Override/set the container name on the exchange headers.",
               javaType = "String")
     public static final String BLOB_CONTAINER_NAME = HEADER_PREFIX + "BlobContainerName";
-    @Metadata(label = "producer",
-              description = "(Operations related to blob) Override/set the blob name on the exchange headers.",
+    @Metadata(label = "common",
+              description = "(producer) Override/set the blob name on the exchange headers, for the operations related"
+                            + " to a blob. (consumer) The name of the blob that was consumed.",
               javaType = "String")
     public static final String BLOB_NAME = HEADER_PREFIX + "BlobName";
     @Metadata(label = "producer",

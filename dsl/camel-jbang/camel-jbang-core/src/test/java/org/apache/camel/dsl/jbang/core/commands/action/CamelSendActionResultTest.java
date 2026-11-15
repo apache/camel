@@ -58,12 +58,29 @@ class CamelSendActionResultTest extends ActionCommandTestSupport {
         assertThat(action.getString("endpoint")).isEqualTo("direct:start");
         assertThat(action.getString("body")).isEqualTo("hello");
         assertThat(action.getString("exchangePattern")).isEqualTo("InOnly");
-        // the timeout is at least 5 seconds
-        assertThat(action.getLong("pollTimeout")).isEqualTo(5000L);
+        // the timeout as given: it was raised to 5 seconds without a word, and the integration bounds the send by it
+        // (CAMEL-26929)
+        assertThat(action.getLong("pollTimeout")).isEqualTo(100L);
         JsonArray headers = action.getCollection("headers");
         JsonObject header = headers.getMap(0);
         assertThat(header.getString("key")).isEqualTo("id");
         assertThat(header.getString("value")).isEqualTo("1");
+    }
+
+    @Test
+    void aTimeoutOfZeroIsAUsageError() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+
+        assertThatThrownBy(() -> callWithResponse(command("orders", "--endpoint=direct:start", "--timeout=0"),
+                answer("success")))
+                .isInstanceOfSatisfying(CliException.class,
+                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.USAGE))
+                .hasMessage("--timeout must be more than 0, was: 0");
+        assertThatThrownBy(() -> callWithResponse(command("orders", "--endpoint=direct:start", "--timeout=-1"),
+                answer("success")))
+                .isInstanceOfSatisfying(CliException.class,
+                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.USAGE))
+                .hasMessage("--timeout must be more than 0, was: -1");
     }
 
     @Test
@@ -235,5 +252,48 @@ class CamelSendActionResultTest extends ActionCommandTestSupport {
         message.put("body", body);
         answer.put("message", message);
         return answer;
+    }
+
+    @Test
+    void theOutcomeAsJson() throws Exception {
+        // CAMEL-26929: send had no --json, so a script or an AI agent had to read the status line and the table
+        writeStatusFile(TEST_PID, "orders");
+
+        int exit = callWithResponse(command("orders", "--endpoint=direct:start", "--body=hello", "--reply", "--json"),
+                answer("success"));
+
+        assertThat(exit).isEqualTo(CliExitCode.OK);
+        JsonObject out = (JsonObject) Jsoner.deserialize(printer.getStdout());
+        assertThat(out.getString("status")).isEqualTo("success");
+        assertThat(out.getString("exchangeId")).isEqualTo("ex-1");
+        assertThat(out.getLong("pid")).isEqualTo(TEST_PID);
+        assertThat(printer.getStdout()).doesNotContain("Sent (");
+    }
+
+    @Test
+    void theSummaryOfARepeatAsJson() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject summary = new JsonObject(
+                Map.of("status", "success", "sent", 10L, "failed", 0L, "elapsed", 3000L,
+                        "endpoint", "direct://start", "errors", new JsonArray()));
+
+        int exit = callWithResponse(command("orders", "--endpoint=direct:start", "--repeat=10", "--json"), summary);
+
+        assertThat(exit).isEqualTo(CliExitCode.OK);
+        JsonObject out = (JsonObject) Jsoner.deserialize(printer.getStdout());
+        assertThat(out.getLong("sent")).isEqualTo(10L);
+        assertThat(out.getString("status")).isEqualTo("success");
+    }
+
+    @Test
+    void aFailedSendAsJsonIsAFailure() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+
+        int exit = callWithResponse(command("orders", "--endpoint=direct:start", "--json"), answer("error"));
+
+        assertThat(exit).isEqualTo(CliExitCode.FAILURE);
+        JsonObject out = (JsonObject) Jsoner.deserialize(printer.getStdout());
+        assertThat(out.getString("status")).isEqualTo("error");
+        assertThat(out.containsKey("exception")).isTrue();
     }
 }

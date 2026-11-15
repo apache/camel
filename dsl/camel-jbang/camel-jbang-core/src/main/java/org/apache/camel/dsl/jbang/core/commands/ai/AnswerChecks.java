@@ -17,16 +17,22 @@
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import com.networknt.schema.Error;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.LanguageValidationResult;
+import org.apache.camel.dsl.yaml.validator.ProjectFacts;
+import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +47,11 @@ import org.slf4j.LoggerFactory;
  * date, ...), so a Maven {@code ${camel-version}} or a shell variable in the same answer is left alone. What the
  * catalog cannot judge is skipped as in {@link SimpleChecks}: a function of a language that is not on the classpath, a
  * property placeholder used as a logical operand.
+ * <p>
+ * The code blocks of an answer are checked for what does not exist (CAMEL-26960): the keys and options of YAML routes
+ * and of fragments of them ({@link YamlFragment}), the options of their endpoint uris, and the {@code camel.*} keys of
+ * properties lines. A model told to look options up and to validate its snippets wrote more of them and validated none,
+ * so the check does not wait to be asked. Its mistakes are marked under their block, not sent back for a correction.
  */
 public final class AnswerChecks {
 
@@ -52,6 +63,46 @@ public final class AnswerChecks {
             return expression + ": " + error;
         }
     }
+
+    /**
+     * A mistake in the code of an answer: a key, an option or a {@code camel.*} property that does not exist, which a
+     * user who copies the code takes into a route. block is the number of the fenced code block in the answer, 1 for
+     * the first; line is the line in that block, 1 for the line after the fence, or 0 when it is not known.
+     */
+    public record Mark(int block, int line, String message) {
+
+        /** {@code code block 2, line 4: `multiplier` is not an option of `redeliveryPolicy`}. */
+        public String describe() {
+            return "code block " + block + (line > 0 ? ", line " + line : "") + ": " + message;
+        }
+    }
+
+    /** A fenced code block of an answer: its number (1 for the first), language, code and the line of its end fence. */
+    private record CodeBlock(int number, String language, String code, int closingLine) {
+    }
+
+    /** A camel.* key at the start of a properties line: camel.server.port=8080. */
+    private static final Pattern CAMEL_PROPERTY = Pattern.compile("^\\s*(camel\\.[\\w.\\[\\]-]+)\\s*=");
+
+    /** The camel.* keys of the CLI and of other runtimes, which the catalog does not know. */
+    private static final List<String> OTHER_PROPERTIES = List.of("camel.jbang.", "camel.springboot.", "camel.k.");
+
+    /** What the properties check says of a key that does not exist, and the hint after it. */
+    private static final Pattern UNKNOWN_PROPERTY = Pattern.compile("Unknown (option|component|dataformat|language)(.*)$");
+
+    /** What the endpoint check says of an option the component does not have: line, scheme, option, the hint after. */
+    private static final Pattern UNKNOWN_ENDPOINT_OPTION
+            = Pattern.compile("^Line (\\d+): ([^:\\s]+): Unknown option '([^']+)'(.*)$");
+
+    /**
+     * A value of the wrong type, as the schema says it: what was found, and the hint of the validator if it has one.
+     */
+    private static final Pattern TYPE_FOUND = Pattern.compile("^(\\w+) found, \\w+ expected(?: \\((.+)\\))?$");
+
+    /** The catalog's suggestions, and the words after them. */
+    private static final Pattern DID_YOU_MEAN = Pattern.compile("^\\.?\\s*Did you mean: \\[([^]]*)]\\.?(.*)$");
+
+    private static final Pattern UNKNOWN_KEY = Pattern.compile("property '([^']+)'");
 
     private static final Logger LOG = LoggerFactory.getLogger(AnswerChecks.class);
 
@@ -145,6 +196,236 @@ public final class AnswerChecks {
             }
         }
         return new ArrayList<>(problems.values());
+    }
+
+    /** The mistakes of the code blocks of an answer, checked against the default catalog. */
+    public static List<Mark> checkCode(String markdown) {
+        return checkCode(markdown, defaultCatalog());
+    }
+
+    /**
+     * The mistakes of the code blocks of an answer, checked against the given catalog: the keys and options of YAML
+     * routes and of fragments of them, the options of their endpoint uris, and the camel.* keys of properties lines in
+     * any block. Code in an answer is partial on purpose, so only what does not exist is a mistake, not a missing
+     * option, a placeholder value or a fragment shown without its route: a mark that is wrong costs the user's trust in
+     * the others.
+     */
+    public static List<Mark> checkCode(String markdown, CamelCatalog catalog) {
+        if (markdown == null || markdown.isBlank() || catalog == null) {
+            return List.of();
+        }
+        List<Mark> marks = new ArrayList<>();
+        for (CodeBlock block : codeBlocks(markdown)) {
+            try {
+                marks.addAll(propertyMarks(block, catalog));
+                if (block.language().equals("yaml") || block.language().equals("yml")) {
+                    marks.addAll(yamlMarks(block, catalog));
+                }
+            } catch (Exception e) {
+                // best effort, as for the simple expressions: the cause is in the debug log
+                LOG.debug("Cannot check code block {} of the answer", block.number(), e);
+            }
+        }
+        return marks;
+    }
+
+    /**
+     * The answer with its marks: under each code block with a mistake, one line per mark, indented as the fence is, so
+     * the user sees it where the code is. The code is left as it is, so copying a code block copies only the code.
+     */
+    public static String withMarks(String markdown, List<Mark> marks) {
+        if (markdown == null || marks == null || marks.isEmpty()) {
+            return markdown;
+        }
+        Map<Integer, Integer> blockEndingAt = new HashMap<>();
+        for (CodeBlock block : codeBlocks(markdown)) {
+            blockEndingAt.put(block.closingLine(), block.number());
+        }
+        String[] lines = markdown.split("\n", -1);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < lines.length; i++) {
+            sb.append(lines[i]);
+            Integer number = blockEndingAt.get(i);
+            List<Mark> here = number == null ? List.of() : marks.stream().filter(m -> m.block() == number).toList();
+            if (!here.isEmpty()) {
+                String indent = lines[i].substring(0, lines[i].indexOf('`'));
+                sb.append('\n');
+                for (Mark mark : here) {
+                    sb.append('\n').append(indent).append("✗ ").append(mark.line() > 0 ? "line " + mark.line() + ": " : "")
+                            .append(mark.message());
+                }
+                if (i + 1 < lines.length && !lines[i + 1].isBlank()) {
+                    sb.append('\n');
+                }
+            }
+            if (i < lines.length - 1) {
+                sb.append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * What the model is told with the next question about the mistakes left in its last answer, the marks of its code
+     * and the simple expressions it did not fix, so that its next answer does not repeat them; null when there are
+     * none. The user sees them under the answer already.
+     */
+    public static String historyNote(List<Mark> marks, List<Problem> problems) {
+        List<String> found = new ArrayList<>();
+        if (marks != null) {
+            marks.forEach(m -> found.add(m.describe()));
+        }
+        if (problems != null) {
+            problems.forEach(p -> found.add("invalid simple expression " + p.message()));
+        }
+        return found.isEmpty()
+                ? null
+                : "Checked against the Camel catalog, your last answer has mistakes, which the user sees marked: "
+                  + String.join("; ", found) + ". Do not repeat them.";
+    }
+
+    /** The fenced code blocks of an answer; one whose fence is not closed (the model ran out of tokens) is left out. */
+    private static List<CodeBlock> codeBlocks(String markdown) {
+        List<CodeBlock> answer = new ArrayList<>();
+        String[] lines = markdown.split("\n", -1);
+        String language = null;
+        StringBuilder code = null;
+        for (int i = 0; i < lines.length; i++) {
+            String trimmed = lines[i].trim();
+            if (trimmed.startsWith("```")) {
+                if (code == null) {
+                    String tag = trimmed.substring(3).trim().toLowerCase(Locale.ROOT);
+                    language = tag.contains(" ") ? tag.substring(0, tag.indexOf(' ')) : tag;
+                    code = new StringBuilder();
+                } else {
+                    answer.add(new CodeBlock(answer.size() + 1, language, code.toString(), i));
+                    code = null;
+                }
+            } else if (code != null) {
+                code.append(lines[i]).append('\n');
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The camel.* keys of the properties lines of a block that the catalog does not know, in a block of any language: a
+     * model writes application.properties lines in a yaml block too.
+     */
+    private static List<Mark> propertyMarks(CodeBlock block, CamelCatalog catalog) {
+        List<Mark> marks = new ArrayList<>();
+        String[] lines = block.code().split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            Matcher key = CAMEL_PROPERTY.matcher(lines[i]);
+            if (!key.find() || OTHER_PROPERTIES.stream().anyMatch(key.group(1)::startsWith)) {
+                continue;
+            }
+            String msg = PropertiesChecks.validatePropertyLine(lines[i].strip(), catalog, null);
+            Matcher unknown = msg != null ? UNKNOWN_PROPERTY.matcher(msg) : null;
+            if (unknown != null && unknown.find()) {
+                String what = unknown.group(1).equals("option")
+                        ? "a Camel option" : "a Camel option: there is no such " + unknown.group(1);
+                marks.add(new Mark(block.number(), i + 1, "`" + key.group(1) + "` is not " + what + hint(unknown.group(2))));
+            }
+        }
+        return marks;
+    }
+
+    /** The keys, options and endpoint options of a YAML block that do not exist; nothing when it is not Camel YAML. */
+    private static List<Mark> yamlMarks(CodeBlock block, CamelCatalog catalog) throws Exception {
+        YamlFragment fragment = YamlFragment.of(block.code());
+        if (fragment == null) {
+            return List.of();
+        }
+        List<Mark> marks = new ArrayList<>();
+        for (Error error : SourceValidator.yamlValidator(catalog).validate(fragment.content(), ProjectFacts.NONE)) {
+            Mark mark = schemaMark(block.number(), fragment, error);
+            if (mark != null) {
+                marks.add(mark);
+            }
+        }
+        for (String msg : EndpointChecks.validateYamlEndpoints(fragment.content(), catalog)) {
+            Matcher m = UNKNOWN_ENDPOINT_OPTION.matcher(msg);
+            int line = m.matches() ? Integer.parseInt(m.group(1)) - fragment.shift() : 0;
+            if (line > 0) {
+                marks.add(new Mark(
+                        block.number(), line,
+                        "`" + m.group(3) + "` is not an option of the `" + m.group(2) + "` component" + hint(m.group(4))));
+            }
+        }
+        return marks;
+    }
+
+    /**
+     * The mark of an error of the schema, or null when it is no mistake of the block: an unknown key where the wrapping
+     * put the block, a required key it leaves out, a value of the wrong type the validator has no hint for (a
+     * placeholder often is one).
+     */
+    private static Mark schemaMark(int block, YamlFragment fragment, Error error) {
+        String location = String.valueOf(error.getInstanceLocation());
+        String message = error.getMessage();
+        if (message == null || fragment.items().matcher(location).matches()) {
+            return null;
+        }
+        String text = null;
+        if ("additionalProperties".equals(error.getKeyword())) {
+            Matcher key = UNKNOWN_KEY.matcher(message);
+            int after = message.indexOf("additional properties");
+            if (key.find()) {
+                text = "`" + key.group(1) + "` is not " + owner(location)
+                       + (after >= 0 ? hint(message.substring(after + "additional properties".length())) : "");
+            }
+        } else if ("type".equals(error.getKeyword())) {
+            // a hint of the validator in place of the message (expression: holds the language as its key, ...) or after
+            // it (onException is a map, not a list, ...); a bare "string found, object expected" is left out, and so is
+            // null, the value of a key a fragment leaves empty (steps: with a comment under it)
+            Matcher found = TYPE_FOUND.matcher(message);
+            text = !found.matches() ? message : "null".equals(found.group(1)) ? null : found.group(2);
+        }
+        if (text == null) {
+            return null;
+        }
+        return new Mark(block, Math.max(YamlValidator.lineOf(fragment.content(), error) - fragment.shift(), 0), text);
+    }
+
+    /** What an unknown key is not a part of: an option of the EIP at the location, or an EIP for an item of steps. */
+    private static String owner(String location) {
+        String[] parts = location.split("/");
+        String last = parts.length > 0 ? parts[parts.length - 1] : "";
+        if (!last.matches("\\d+")) {
+            return "an option of `" + last + "`";
+        }
+        String list = parts.length > 1 ? parts[parts.length - 2] : "";
+        return switch (list) {
+            case "steps" -> "an EIP";
+            case "beans" -> "a key of a bean";
+            default -> "a key of the items of `" + list + "`";
+        };
+    }
+
+    /**
+     * The hint after what a check says, as a mark writes it: " (did you mean `delete`?)" for the catalog's ". Did you
+     * mean: [delete]", the check's own words in parentheses, or nothing.
+     */
+    private static String hint(String rest) {
+        // the schema's "did you mean 'backOffMultiplier'?" as code, as the names of the mark are
+        String text = rest == null ? "" : rest.strip().replaceAll("did you mean '([\\w.-]+)'\\?", "did you mean `$1`?");
+        Matcher dym = DID_YOU_MEAN.matcher(text);
+        if (dym.matches()) {
+            List<String> names = new ArrayList<>();
+            for (String name : dym.group(1).split(",")) {
+                if (!name.isBlank()) {
+                    names.add("`" + name.strip() + "`");
+                }
+            }
+            String more = dym.group(2).strip();
+            return (names.isEmpty() ? "" : " (did you mean " + String.join(" or ", names) + "?)")
+                   + (more.isEmpty() ? "" : " " + more);
+        }
+        if (text.isEmpty()) {
+            return "";
+        }
+        return text.startsWith("(") ? " " + text : " (" + text.replaceFirst("^[.,:;]\\s*", "") + ")";
     }
 
     /**

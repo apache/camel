@@ -159,6 +159,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // no ANSI codes of colors in a file or a pipe, unless --logging-color is given
+        loggingColor = colorOutput(loggingColor);
         if (it) {
             // cannot run in watch mode for interactive
             watch = false;
@@ -167,6 +169,20 @@ public class CamelHistoryAction extends ActionWatchCommand {
             }
         }
         return super.doCall();
+    }
+
+    /**
+     * The entry with the pid and the name of its integration first, as the other listings have them (CAMEL-26929).
+     */
+    private static Object withIntegration(Object entry, CamelProcess process) {
+        if (entry instanceof JsonObject jo) {
+            JsonObject answer = new JsonObject();
+            answer.put("pid", process.pid());
+            answer.put("name", process.name());
+            answer.putAll(jo);
+            return answer;
+        }
+        return entry;
     }
 
     @Override
@@ -188,9 +204,11 @@ public class CamelHistoryAction extends ActionWatchCommand {
                                 entry = Jsoner.deserialize(line, (JsonArray) null);
                             }
                             if (entry instanceof JsonArray array) {
-                                entries.addAll(array);
+                                for (Object e : array) {
+                                    entries.add(withIntegration(e, process));
+                                }
                             } else if (entry != null) {
-                                entries.add(entry);
+                                entries.add(withIntegration(entry, process));
                             }
                         }
                     }

@@ -55,5 +55,11 @@ public class LabelTrait extends BaseTrait {
                         .endMetadata()
                         .endJobTemplate()
                         .endSpec());
+        // a Knative Service had none, also not app.kubernetes.io/runtime (CAMEL-26934)
+        context.doWithKnativeServices(
+                k -> k.editOrNewMetadata()
+                        .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
+                        .addToLabels(context.getLabels())
+                        .endMetadata());
     }
 }

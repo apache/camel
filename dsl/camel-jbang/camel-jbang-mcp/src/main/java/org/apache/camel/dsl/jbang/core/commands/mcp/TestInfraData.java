@@ -22,22 +22,17 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
 /**
- * Shared holder for Camel test infrastructure reference data used by both {@link TestScaffoldTools} (MCP Tool) and
- * {@link TestInfraResources} (MCP Resources).
+ * Camel test infrastructure reference data for {@link TestInfraResources} (MCP Resources).
  * <p>
  * Contains the registry of test-infra services (Testcontainers-based) that map component schemes to their corresponding
  * service classes, factory classes, and Maven artifact IDs.
  */
 @ApplicationScoped
 public class TestInfraData {
-
-    /** Component schemes that are internally triggered (user can send messages to them). */
-    private static final Set<String> SENDABLE_SCHEMES = Set.of("direct", "seda");
 
     private static final Map<String, TestInfraInfo> TEST_INFRA_MAP;
 
@@ -164,13 +159,6 @@ public class TestInfraData {
      */
     public List<String> getSupportedSchemes() {
         return List.copyOf(TEST_INFRA_MAP.keySet());
-    }
-
-    /**
-     * Get the set of component schemes that are internally triggered (user can send messages to them).
-     */
-    public Set<String> getSendableSchemes() {
-        return SENDABLE_SCHEMES;
     }
 
     /**

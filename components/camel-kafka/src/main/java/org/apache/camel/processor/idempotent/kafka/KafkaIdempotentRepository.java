@@ -325,10 +325,19 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     private void addToCache(ConsumerRecord<String, String> consumerRecord) {
         cacheCounter.incrementAndGet();
+        String value = consumerRecord.value();
+        String messageId = consumerRecord.key();
+        // a record without a value (a tombstone) or an add or remove without a key is not written by this repository:
+        // skip it, so the records after it in the same poll are still applied, and the start does not fail
+        if (value == null || (messageId == null && !CacheAction.clear.name().equals(value))) {
+            LOG.warn(
+                    "Unexpected record with key:\"{}\" and value:\"{}\" received on [topic:{}, partition:{}, offset:{}]. Ignoring.",
+                    messageId, value, consumerRecord.topic(), consumerRecord.partition(), consumerRecord.offset());
+            return;
+        }
         CacheAction action;
         try {
-            action = CacheAction.valueOf(consumerRecord.value());
-            String messageId = consumerRecord.key();
+            action = CacheAction.valueOf(value);
             if (action == CacheAction.add) {
                 LOG.debug("Adding to cache messageId:{}", messageId);
                 cache.put(messageId, messageId);
@@ -343,7 +352,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         } catch (IllegalArgumentException iax) {
             LOG.warn(
                     "Unexpected action value:\"{}\" received on [topic:{}, partition:{}, offset:{}]. Ignoring.",
-                    consumerRecord.key(), consumerRecord.topic(),
+                    value, consumerRecord.topic(),
                     consumerRecord.partition(), consumerRecord.offset());
         }
     }

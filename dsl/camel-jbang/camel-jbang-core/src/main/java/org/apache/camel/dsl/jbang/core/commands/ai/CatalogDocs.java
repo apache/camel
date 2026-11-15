@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,6 +50,7 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.TransformerModel;
+import org.apache.camel.util.ArtifactUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -413,7 +415,8 @@ public final class CatalogDocs {
                 return group;
             }
             if (kind != null) {
-                return notFound("Component", name, catalog.suggestComponentNames(name, 5));
+                return notFound("Component", name,
+                        withNearSpelling(name, catalog.suggestComponentNames(name, 5), catalog.findComponentNames()));
             }
         }
         if (kind == null || "dataformat".equals(kind)) {
@@ -439,7 +442,8 @@ public final class CatalogDocs {
                 return result;
             }
             if (kind != null) {
-                return notFound("Data format", name, catalog.suggestDataFormatNames(name, 5));
+                return notFound("Data format", name,
+                        withNearSpelling(name, catalog.suggestDataFormatNames(name, 5), catalog.findDataFormatNames()));
             }
         }
         if (kind == null || "language".equals(kind)) {
@@ -488,7 +492,8 @@ public final class CatalogDocs {
                 return answer;
             }
             if (kind != null) {
-                return notFound("Language", name, catalog.suggestLanguageNames(name, 5));
+                return notFound("Language", name,
+                        withNearSpelling(name, catalog.suggestLanguageNames(name, 5), catalog.findLanguageNames()));
             }
         }
         if (kind == null || "eip".equals(kind)) {
@@ -516,7 +521,8 @@ public final class CatalogDocs {
                 if (byTerm != null) {
                     return byTerm;
                 }
-                return withErrorHandling(notFound("EIP", name, catalog.suggestEipNames(name, 5)), name);
+                return withErrorHandling(notFound("EIP", name,
+                        withNearSpelling(name, catalog.suggestEipNames(name, 5), catalog.findModelNames())), name);
             }
         }
         if (kind == null || "api".equals(kind)) {
@@ -573,6 +579,11 @@ public final class CatalogDocs {
         suggestions.addAll(catalog.suggestEipNames(name, 3));
         suggestions.addAll(findBeans(catalog, name).stream().map(PojoBeanModel::getName).limit(3).toList());
         suggestions.addAll(KameletDefinitions.suggest(name, KameletDefinitions.catalog().keySet(), 3));
+        List<String> names = new ArrayList<>(catalog.findComponentNames());
+        names.addAll(catalog.findDataFormatNames());
+        names.addAll(catalog.findLanguageNames());
+        names.addAll(catalog.findModelNames());
+        suggestions = withNearSpelling(name, suggestions, names);
         JsonObject answer = withErrorHandling(notFound("Artifact", name, suggestions), name);
         if (name.toLowerCase(Locale.ROOT).contains("kamelet")) {
             // kamelet-custom, custom-kamelet: how to write one
@@ -1946,6 +1957,18 @@ public final class CatalogDocs {
         JsonObject err = new JsonObject();
         err.put("error", message);
         return err;
+    }
+
+    /**
+     * The suggestions, or the name that is a typo away from the given one when the catalog suggests nothing: kafak is
+     * kafka (CAMEL-26932). The suggestions match by name, alias and title, which a misspelled name has none of.
+     */
+    static List<String> withNearSpelling(String name, List<String> suggestions, Collection<String> names) {
+        if (!suggestions.isEmpty()) {
+            return suggestions;
+        }
+        String closest = ArtifactUtils.closest(name, names);
+        return closest != null ? List.of(closest) : suggestions;
     }
 
     /**

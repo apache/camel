@@ -137,7 +137,8 @@ class RunExportGoldenTest {
                 run("code", List.of(), "--code=from(\"timer:code\").to(\"log:code\")"),
                 run("stub-all", files("yaml/hello.camel.yaml"), "--stub=all"),
                 run("stub-names", files("yaml/hello.camel.yaml"), "--stub=log,timer:hello"),
-                run("chaos", files("yaml/hello.camel.yaml"), "--chaos"));
+                run("chaos", files("yaml/hello.camel.yaml"), "--chaos"),
+                run("sanitizer", files("yaml/hello.camel.yaml"), "--sanitizer"));
     }
 
     static Stream<Case> exportCases() {
@@ -306,7 +307,12 @@ class RunExportGoldenTest {
                 new MavenCase("maven-project", files("pomproject/pom.xml"), List.of(), true),
                 // camel run --chaos adds camel-chaos to the exported project
                 new MavenCase(
-                        "maven-main-chaos", files("yaml/hello.camel.yaml"), List.of("--runtime=main", "--chaos"), false));
+                        "maven-main-chaos", files("yaml/hello.camel.yaml"), List.of("--runtime=main", "--chaos"), false),
+                // camel run --sanitizer adds plain camel-sanitizer (there is no starter), and switches it on in the run
+                // (the released Camel of the case has no camel-sanitizer: only what the run writes is checked)
+                new MavenCase(
+                        "maven-spring-boot-sanitizer", files("yaml/hello.camel.yaml"),
+                        List.of("--runtime=spring-boot", "--camel-version=4.13.0", "--sanitizer"), false));
     }
 
     @ParameterizedTest(name = "{0}")

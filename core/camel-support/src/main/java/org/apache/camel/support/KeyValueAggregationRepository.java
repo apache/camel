@@ -36,14 +36,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An adapter that implements {@link RecoverableAggregationRepository} by delegating to a {@link KeyValueRepository}.
- * <p/>
+ * <p>
  * Exchanges are serialized and deserialized using {@link DefaultExchangeHolder}. Active (in-progress) aggregates are
  * stored under the correlation key. Completed-but-unconfirmed aggregates (for recovery) are stored under a separate key
  * derived from the exchange ID.
- * <p/>
+ * <p>
  * This allows any {@link KeyValueRepository} implementation to be used as an aggregation repository without
  * implementing the {@link org.apache.camel.spi.AggregationRepository} interface directly.
- * <p/>
+ * <p>
  * When created with the no-arg constructor, a {@link MemoryKeyValueRepository} is used by default.
  *
  * @since 4.23
@@ -81,7 +81,7 @@ public class KeyValueAggregationRepository extends ServiceSupport
     /**
      * Creates an aggregation repository adapter that defaults to an in-memory {@link MemoryKeyValueRepository}. The
      * repository is created lazily when the service starts.
-     * <p/>
+     * <p>
      * To use a custom {@link KeyValueRepository}, call {@link #setRepository(KeyValueRepository)} before starting, or
      * use the {@link #KeyValueAggregationRepository(KeyValueRepository)} constructor.
      */
@@ -101,7 +101,7 @@ public class KeyValueAggregationRepository extends ServiceSupport
     /**
      * Creates an aggregation repository adapter backed by the given key-value repository, which keeps the completed
      * exchanges for recovery under the given name.
-     * <p/>
+     * <p>
      * Use this when several aggregators share the same key-value repository: the recover task of an aggregator scans
      * all the completed exchanges of its repository and sends them again, so an aggregator would otherwise recover, and
      * send a second time on its own route, an exchange that another aggregator completed and is still processing.

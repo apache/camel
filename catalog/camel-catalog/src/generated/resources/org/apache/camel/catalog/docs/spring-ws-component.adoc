@@ -2,7 +2,7 @@
 :doctitle: Spring WebService
 :shortname: spring-ws
 :artifactid: camel-spring-ws
-:description: Access external web services as a client or expose your own web services.
+:description: Expose SOAP services, or send requests to SOAP services, using Spring Web Services.
 :since: 2.6
 :supportlevel: Stable
 :tabs-sync-option:

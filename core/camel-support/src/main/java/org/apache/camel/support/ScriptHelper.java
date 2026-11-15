@@ -33,13 +33,13 @@ public final class ScriptHelper {
 
     /**
      * Resolves the expression/predicate whether it refers to an external script on the file/classpath etc. This
-     * requires to use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>.
-     * <p/>
+     * requires to use the prefix <code>resource:</code> such as
+     * <code>resource:classpath:com/foo/myscript.groovy</code>, <code>resource:file:/var/myscript.groovy</code>.
+     * <p>
      * If not then the returned value is returned as-is.
-     * <p/>
+     * <p>
      * The resource is regarded as mandatory and an exception is thrown if the resource cannot be loaded. Adding
-     * </tt>?optional=true<tt> as suffix will mark the resource as optional and <tt>null</tt> is returned if the
+     * <code>?optional=true</code> as suffix will mark the resource as optional and <code>null</code> is returned if the
      * resource could not be loaded.
      */
     public static String resolveOptionalExternalScript(CamelContext camelContext, String expression) {
@@ -48,16 +48,16 @@ public final class ScriptHelper {
 
     /**
      * Resolves the expression/predicate whether it refers to an external script on the file/classpath etc. This
-     * requires to use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>.
-     * <p/>
+     * requires to use the prefix <code>resource:</code> such as
+     * <code>resource:classpath:com/foo/myscript.groovy</code>, <code>resource:file:/var/myscript.groovy</code>.
+     * <p>
      * If not then the returned value is returned as-is.
-     * <p/>
+     * <p>
      * If the exchange is provided (not null), then the external script can be referred via simple language for dynamic
-     * values, etc. <tt>resource:classpath:${header.myFileName}</tt>
-     * <p/>
+     * values, etc. <code>resource:classpath:${header.myFileName}</code>
+     * <p>
      * The resource is regarded as mandatory and an exception is thrown if the resource cannot be loaded. Adding
-     * </tt>?optional=true<tt> as suffix will mark the resource as optional and <tt>null</tt> is returned if the
+     * <code>?optional=true</code> as suffix will mark the resource as optional and <code>null</code> is returned if the
      * resource could not be loaded.
      */
     public static String resolveOptionalExternalScript(CamelContext camelContext, Exchange exchange, String expression) {
@@ -112,8 +112,8 @@ public final class ScriptHelper {
 
     /**
      * Whether the expression/predicate refers to an external script on the file/classpath etc. This requires to use the
-     * prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:ref:myResource</tt>, <tt>resource:file:/var/myscript.groovy</tt>.
+     * prefix <code>resource:</code> such as <code>resource:classpath:com/foo/myscript.groovy</code>,
+     * <code>resource:ref:myResource</code>, <code>resource:file:/var/myscript.groovy</code>.
      */
     public static boolean hasExternalScript(String external) {
         if (external.startsWith("resource:")) {

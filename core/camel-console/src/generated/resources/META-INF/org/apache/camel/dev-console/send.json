@@ -118,7 +118,7 @@
       "autowired": false,
       "secret": false,
       "defaultValue": 20000,
-      "description": "Timeout when using poll mode"
+      "description": "Timeout of the send, or of the poll in poll mode, in millis"
     }
   },
   "response": {

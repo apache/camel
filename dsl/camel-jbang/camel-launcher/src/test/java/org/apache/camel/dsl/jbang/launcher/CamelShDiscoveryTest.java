@@ -402,7 +402,8 @@ class CamelShDiscoveryTest {
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
 
-        Path archives = cache.resolve("camel-cli/cds/9.9.9");
+        String hash = FakeJava.cksumHash(FakeJava.basedir(h).toString());
+        Path archives = cache.resolve("camel-cli/cds/9.9.9/" + hash);
         assertEquals(0, r.exitCode(), r.stderr());
         assertTrue(r.stdout().contains("|-XX:+AutoCreateSharedArchive|-XX:SharedArchiveFile=" + archives.resolve("version.jsa")
                                        + "|-Xlog:cds*=off|-jar|"),
@@ -421,7 +422,10 @@ class CamelShDiscoveryTest {
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "--help");
 
-        assertTrue(r.stdout().contains("-XX:SharedArchiveFile=" + cache.resolve("camel-cli/cds/9.9.9/camel.jsa") + "|"),
+        String hash = FakeJava.cksumHash(FakeJava.basedir(h).toString());
+        assertTrue(
+                r.stdout()
+                        .contains("-XX:SharedArchiveFile=" + cache.resolve("camel-cli/cds/9.9.9/" + hash + "/camel.jsa") + "|"),
                 r.stdout());
     }
 
@@ -436,7 +440,10 @@ class CamelShDiscoveryTest {
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "get");
 
-        assertTrue(r.stdout().contains("-XX:SharedArchiveFile=" + userHome.resolve(".cache/camel-cli/cds/9.9.9/get.jsa")),
+        String hash = FakeJava.cksumHash(FakeJava.basedir(h).toString());
+        assertTrue(
+                r.stdout().contains(
+                        "-XX:SharedArchiveFile=" + userHome.resolve(".cache/camel-cli/cds/9.9.9/" + hash + "/get.jsa")),
                 r.stdout());
     }
 
@@ -446,7 +453,8 @@ class CamelShDiscoveryTest {
         Path h = home(base);
         Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
         Path cache = base.resolve("cache");
-        Path archive = Files.createDirectories(cache.resolve("camel-cli/cds/9.9.9")).resolve("version.jsa");
+        String hash = FakeJava.cksumHash(FakeJava.basedir(h).toString());
+        Path archive = Files.createDirectories(cache.resolve("camel-cli/cds/9.9.9/" + hash)).resolve("version.jsa");
         Files.createFile(archive);
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", java.toString());
@@ -456,6 +464,28 @@ class CamelShDiscoveryTest {
 
         assertTrue(r.stdout().contains("-XX:SharedArchiveFile=" + archive), r.stdout());
         assertFalse(Files.exists(archive));
+    }
+
+    @Test
+    void twoInstallDirectoriesGetDistinctArchives(@TempDir Path base) throws Exception {
+        // Two installs of the same version (e.g. SDKMAN + Homebrew) must get separate CDS archives
+        Path h1 = home(Files.createDirectories(base.resolve("install-a")));
+        Path h2 = home(Files.createDirectories(base.resolve("install-b")));
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
+        Path cache = base.resolve("cache");
+        Map<String, String> env1 = new HashMap<>();
+        env1.put("JAVACMD", java.toString());
+        env1.put("XDG_CACHE_HOME", cache.toString());
+        Map<String, String> env2 = new HashMap<>(env1);
+
+        FakeJava.Result r1 = FakeJava.run(h1.resolve("camel.sh"), env1, "version");
+        FakeJava.Result r2 = FakeJava.run(h2.resolve("camel.sh"), env2, "version");
+
+        String hash1 = FakeJava.cksumHash(FakeJava.basedir(h1).toString());
+        String hash2 = FakeJava.cksumHash(FakeJava.basedir(h2).toString());
+        assertFalse(hash1.equals(hash2), "different install dirs must produce different hashes");
+        assertTrue(r1.stdout().contains("cds/9.9.9/" + hash1 + "/version.jsa"), r1.stdout());
+        assertTrue(r2.stdout().contains("cds/9.9.9/" + hash2 + "/version.jsa"), r2.stdout());
     }
 
     @Test

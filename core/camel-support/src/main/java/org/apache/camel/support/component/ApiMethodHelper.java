@@ -217,7 +217,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Gets methods that match the given name and arguments.
-     * <p/>
+     * <p>
      * Note that the args list is a required subset of arguments for returned methods.
      *
      * @param  name case sensitive method name or alias to lookup
@@ -230,7 +230,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Gets methods that match the given name and arguments.
-     * <p/>
+     * <p>
      * Note that the args list is a required subset of arguments for returned methods.
      *
      * @param  name     case sensitive method name or alias to lookup
@@ -272,7 +272,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @param  methods   list of methods to filter
      * @param  matchType whether the arguments are an exact match, a subset or a super set of method args
      * @return           methods with arguments that satisfy the match type.
-     *                   <p/>
+     *                   <p>
      *                   For SUPER_SET match, if methods with exact match are found, methods that take a subset are
      *                   ignored
      */
@@ -287,7 +287,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @param  matchType whether the arguments are an exact match, a subset or a super set of method args
      * @param  argNames  argument names to filter the list
      * @return           methods with arguments that satisfy the match type.
-     *                   <p/>
+     *                   <p>
      *                   For SUPER_SET match, if methods with exact match are found, methods that take a subset are
      *                   ignored
      */

@@ -19,7 +19,8 @@ The exit codes and streams on this page apply from Camel 4.24 onwards.
 | `1`
 | Failed
 | The command ran, but the outcome is negative: validation found errors, a check failed,
-  or the integration rejected the action.
+  the integration rejected the action, or `camel run` could not start the integration (such as a route that cannot
+  be created): the log of the integration has the stack trace.
 
 | `2`
 | Usage error
@@ -118,6 +119,8 @@ With it, stdout is exactly one JSON document, also when the command fails:
 
 * A list is a JSON array, and `[]` when there is nothing to list, such as `camel ps --json` when no integration
   is running.
+* A list is a list also for one integration, such as `camel get about --json`.
+* A row of a listing of running integrations says which integration it is of: `pid`, a number, and `name`.
 * An error is a JSON object, with the exit code of the command in `code`:
 +
 [source,json]

@@ -36,7 +36,8 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @Metadata(description = "Sets the maximum number of times a message exchange will be redelivered. Setting a negative value will retry forever.")
     private String maximumRedeliveries;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", description = "Sets the maximum redelivery delay. Use -1 if you wish to have no maximum")
+    @Metadata(defaultValue = "1000",
+              description = "Sets the initial delay in milliseconds before the first redelivery attempt.")
     private String redeliveryDelay;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
@@ -72,7 +73,9 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
               description = "Sets the logging level to use for log messages when retries are attempted.")
     private String retryAttemptedLogLevel;
     @XmlAttribute
-    @Metadata(defaultValue = "0", description = "Sets the interval for log messages when retries are attempted.")
+    @Metadata(defaultValue = "1",
+              description = "Sets how often to log redelivery attempts. For example, a value of 3 logs "
+                            + "every 3rd redelivery attempt.")
     private String retryAttemptedLogInterval;
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean", description = "Sets whether to log retry attempts")
@@ -83,7 +86,8 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     private String logStackTrace;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
-              description = "Sets whether stack traces should be logged or not")
+              description = "Whether stack traces should be logged when a retry attempt failed. "
+                            + "Can be used to include or reduce verbose logging.")
     private String logRetryStackTrace;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",

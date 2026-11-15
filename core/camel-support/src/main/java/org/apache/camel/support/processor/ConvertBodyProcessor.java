@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which converts the payload of the input message to be of the given type
- * <p/>
+ * <p>
  * If the conversion fails an {@link org.apache.camel.InvalidPayloadException} is thrown.
  */
 public class ConvertBodyProcessor extends ServiceSupport

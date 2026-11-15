@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AggregationStrategy;
@@ -23,16 +24,25 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.awaitility.Awaitility.await;
 
-@Isolated("Short timeouts cause problems with parallel test execution")
 @DisabledOnOs(architectures = { "s390x" },
               disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
+
+    // holds the branch that must time out until the test is done: it cannot complete before the timeout,
+    // and it does not keep the graceful shutdown of the CamelContext waiting
+    private final CountDownLatch release = new CountDownLatch(1);
+
+    @AfterEach
+    void releaseTimedOutBranch() {
+        release.countDown();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().size() == 0);
+    }
 
     @Test
     public void testMulticastParallelStreamingTimeout() throws Exception {
@@ -42,14 +52,10 @@ public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
         mock.message(0).body().not(body().contains("A"));
         mock.message(0).body().contains("B");
         mock.message(0).body().contains("C");
-        // Use a short result wait time so each Awaitility attempt checks quickly
-        // without blocking (default 0 maps to 10s internally in MockEndpoint)
-        mock.setResultWaitTime(100);
 
         template.sendBody("direct:start", "Hello");
 
-        await().atMost(20, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override
@@ -71,7 +77,7 @@ public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
                         // use end to indicate end of multicast route
                         .end().to("mock:result");
 
-                from("direct:a").delay(20000).setBody(constant("A"));
+                from("direct:a").process(e -> release.await(30, TimeUnit.SECONDS)).setBody(constant("A"));
 
                 from("direct:b").delay(500).setBody(constant("B"));
 

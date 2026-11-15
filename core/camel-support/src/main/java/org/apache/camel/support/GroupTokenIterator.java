@@ -31,12 +31,12 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.Scanner;
 
 /**
- * Group based {@link Iterator} which groups the given {@link Iterator} a number of times and then return a combined
+ * Group based {@link Iterator} which groups the given {@link Iterator} a number of times and then returns a combined
  * response as a String.
- * <p/>
+ * <p>
  * This implementation uses an internal byte array buffer, to combine the response. The token is inserted between the
  * individual parts.
- * <p/>
+ * <p>
  * For example if you group by new line, then a new line token is inserted between the lines.
  */
 public final class GroupTokenIterator implements Iterator<Object>, Closeable {
@@ -56,8 +56,8 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
      *
      * @param  exchange                 the exchange used to create this group iterator
      * @param  it                       the iterator to group
-     * @param  token                    then token used to separate between the parts, use <tt>null</tt> to not add the
-     *                                  token
+     * @param  token                    the token used to separate between the parts, use <code>null</code> to not add
+     *                                  the token
      * @param  group                    number of parts to group together
      * @throws IllegalArgumentException is thrown if group is not a positive number
      */

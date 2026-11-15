@@ -23,13 +23,16 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +42,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.jar.JarEntry;
@@ -83,6 +87,9 @@ public final class PluginHelper {
 
     // the plugins warned about by compatibilityCheck, to warn once
     private static final Set<String> COMPATIBILITY_WARNED = ConcurrentHashMap.newKeySet();
+
+    /** Plugin config paths whose corrupt-file warning has already been printed this JVM run. */
+    private static final Set<String> WARNED_PLUGIN_PATHS = ConcurrentHashMap.newKeySet();
 
     private static final FactoryFinder FACTORY_FINDER
             = new DefaultFactoryFinder(new DefaultClassResolver(), FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/");
@@ -156,6 +163,11 @@ public final class PluginHelper {
         // optimization is acceptable since this prefix-options pattern is uncommon.
         String target = args[0];
         if (target == null || target.isBlank() || target.startsWith("-")) {
+            // --version (-V) only prints the version string: no plugins needed.
+            // All other global flags (--help, etc.) still need plugins for the full listing.
+            if ("--version".equals(target) || "-V".equals(target)) {
+                return false;
+            }
             return true;
         }
         if (PLUGIN_CONSUMING_BUILTINS.contains(target)) {
@@ -187,16 +199,22 @@ public final class PluginHelper {
         if (Arrays.stream(PluginType.values()).anyMatch(p -> p.getCommand().equals(command))) {
             return true;
         }
-        JsonObject config = getPluginConfig();
-        if (config != null) {
-            JsonObject plugins = config.getMap("plugins");
-            for (String pluginKey : plugins.keySet()) {
-                JsonObject properties = plugins.getMap(pluginKey);
-                String name = properties.getOrDefault("name", pluginKey).toString();
-                if (command.equals(properties.getOrDefault("command", name).toString())) {
-                    return true;
+        try {
+            JsonObject config = getPluginConfig();
+            if (config != null) {
+                JsonObject plugins = config.getMap("plugins");
+                if (plugins != null) {
+                    for (String pluginKey : plugins.keySet()) {
+                        JsonObject properties = plugins.getMap(pluginKey);
+                        String name = properties.getOrDefault("name", pluginKey).toString();
+                        if (command.equals(properties.getOrDefault("command", name).toString())) {
+                            return true;
+                        }
+                    }
                 }
             }
+        } catch (Exception e) {
+            // corrupt plugin config — treat as no plugins configured; logged elsewhere via warnCorruptPluginConfig
         }
         return PluginHelper.class.getClassLoader().getResource(PLUGIN_SERVICE_DIR + "camel-jbang-plugin-" + command) != null;
     }
@@ -309,9 +327,8 @@ public final class PluginHelper {
         }
 
         if (repos == null) {
-            // fallback to load user configuration
-            Properties configProperties = new Properties();
-            CommandLineHelper.loadProperties(configProperties::putAll);
+            // fallback to load user configuration (the global file with the local one laid over it)
+            Properties configProperties = CommandLineHelper.loadUserConfiguration(new Printer.SystemOutPrinter());
             repos = configProperties.getProperty("repos");
             if (repos == null) {
                 repos = configProperties.getProperty("repo");
@@ -359,11 +376,21 @@ public final class PluginHelper {
     public static Map<String, Plugin> getActivePlugins(
             CamelJBangMain main, String repos, String target, boolean legacyContributors) {
         Map<String, Plugin> activePlugins = new HashMap<>();
-        JsonObject config = getPluginConfig();
+        JsonObject config;
+        try {
+            config = getPluginConfig();
+        } catch (RuntimeCamelException e) {
+            // corrupt plugin JSON — warn once and continue with no plugins
+            warnCorruptPluginConfig(main.getOut(), e);
+            return activePlugins;
+        }
         if (config != null) {
             CamelCatalog catalog = new DefaultCamelCatalog();
             String version = catalog.getCatalogVersion();
             JsonObject plugins = config.getMap("plugins");
+            if (plugins == null) {
+                return activePlugins;
+            }
 
             boolean configDirty = false;
             for (String pluginKey : plugins.keySet()) {
@@ -396,12 +423,36 @@ public final class PluginHelper {
                     compatibilityCheck(main.getOut(), version, name, properties);
                 }
 
-                ResolveResult res = resolvePlugin(properties, command, version, gav, repos, main.getOut());
+                // a plugin that only contributes to this command (camel run, camel export): one that cannot be loaded
+                // is left out with a warning, rather than failing the command (CAMEL-26931)
+                boolean contributor = target != null && !target.equals(command);
+                ResolveResult res;
+                try {
+                    res = resolvePlugin(properties, command, version, gav, repos, main.getOut());
+                } catch (RuntimeException e) {
+                    if (!contributor) {
+                        throw e;
+                    }
+                    warnNotLoaded(main.getOut(), name, target, e.getMessage());
+                    continue;
+                } catch (LinkageError e) {
+                    // a plugin built for another Camel version, whose classes refer to a class that has moved or is
+                    // gone: a NoClassDefFoundError when it is created (CAMEL-26964)
+                    String reason = notLinked(version, e);
+                    if (!contributor) {
+                        throw CliException.failure("Plugin " + name + " cannot be loaded (" + reason + "): "
+                                                   + addOrDelete(name));
+                    }
+                    warnNotLoaded(main.getOut(), name, target, reason, addOrDelete(name));
+                    continue;
+                }
                 if (res.plugin().isPresent()) {
                     activePlugins.put(command, res.plugin().get());
                     if (res.cacheWritten()) {
                         configDirty = true;
                     }
+                } else if (contributor) {
+                    warnNotLoaded(main.getOut(), name, target, "camel-jbang-plugin-" + command + " not found");
                 } else {
                     throw CliException.failure("camel-jbang-plugin-" + command + " not found");
                 }
@@ -412,6 +463,84 @@ public final class PluginHelper {
         }
 
         return activePlugins;
+    }
+
+    // the plugins already warned about, per printer (one per command), as a command may look up the plugins more
+    // than once
+    private static final Map<Printer, Set<String>> WARNED_NOT_LOADED = Collections.synchronizedMap(new WeakHashMap<>());
+
+    /**
+     * Why a plugin that fails with a linkage error cannot be loaded, such as
+     * {@code it does not link with Camel 4.24.0 and may be built for another version: NoClassDefFoundError org/...}.
+     * The error may also come from elsewhere, such as a newer Java ({@link UnsupportedClassVersionError}) or a static
+     * initializer of the plugin that fails ({@link ExceptionInInitializerError}, without a message of its own: its
+     * cause says what failed).
+     */
+    public static String notLinked(String camelVersion, LinkageError e) {
+        String error = e.getClass().getSimpleName();
+        if (e.getMessage() != null) {
+            error += " " + e.getMessage();
+        } else if (e.getCause() != null) {
+            Throwable cause = e.getCause();
+            error += " caused by " + cause.getClass().getSimpleName()
+                     + (cause.getMessage() != null ? " " + cause.getMessage() : "");
+        }
+        return "it does not link with Camel " + camelVersion + " and may be built for another version: " + error;
+    }
+
+    /**
+     * Warns, once, that a plugin is left out of camel run or camel export as its run customizer or exporter does not
+     * link with this Camel version: the JVM links the classes of a plugin when they are first used, so a plugin that
+     * could be created may still fail when asked for them (CAMEL-26964).
+     *
+     * @param printer where to warn
+     * @param command the command of the plugin, as the keys of {@link #getActivePlugins(CamelJBangMain, String)}
+     * @param target  the command that goes on without the plugin, such as run or export
+     * @param e       the error
+     */
+    public static void warnNotLinked(Printer printer, String command, String target, LinkageError e) {
+        String name = nameOf(command);
+        warnNotLoaded(printer, name, target, notLinked(new DefaultCamelCatalog().getCatalogVersion(), e),
+                addOrDelete(name));
+    }
+
+    // the name of the plugin of the given command in the plugin configuration, which camel plugin add and camel plugin
+    // delete take
+    private static String nameOf(String command) {
+        try {
+            JsonObject config = getPluginConfig();
+            JsonObject plugins = config != null ? config.getMap("plugins") : null;
+            if (plugins != null) {
+                for (String pluginKey : plugins.keySet()) {
+                    JsonObject properties = plugins.getMap(pluginKey);
+                    String name = properties.getOrDefault("name", pluginKey).toString();
+                    if (command.equals(properties.getOrDefault("command", name).toString())) {
+                        return name;
+                    }
+                }
+            }
+        } catch (RuntimeException e) {
+            // corrupt plugin config: warned about by getActivePlugins
+        }
+        return command;
+    }
+
+    // what to do about a plugin built for another Camel version: camel plugin add selects the release built for this
+    // one, as compatibilityCheck says
+    private static String addOrDelete(String name) {
+        return "run camel plugin add " + name + " to select a release for this Camel version, or remove it with"
+               + " camel plugin delete " + name;
+    }
+
+    private static void warnNotLoaded(Printer printer, String name, String target, String reason) {
+        warnNotLoaded(printer, name, target, reason, "remove it with camel plugin delete " + name);
+    }
+
+    private static void warnNotLoaded(Printer printer, String name, String target, String reason, String remedy) {
+        if (WARNED_NOT_LOADED.computeIfAbsent(printer, p -> ConcurrentHashMap.newKeySet()).add(name)) {
+            printer.printWarn("Plugin " + name + " cannot be loaded (" + reason + "), so camel " + target
+                              + " goes on without it: " + remedy);
+        }
     }
 
     public static Optional<Plugin> getPlugin(String name, String defaultVersion, String gav, String repos, Printer printer) {
@@ -776,11 +905,19 @@ public final class PluginHelper {
     }
 
     public static JsonObject getOrCreatePluginConfig() {
-        return Optional.ofNullable(getPluginConfig()).orElseGet(PluginHelper::createPluginConfig);
+        JsonObject existing = getPluginConfig();
+        if (existing != null) {
+            return existing;
+        }
+        return createPluginConfig();
     }
 
     public static JsonObject getOrCreatePluginConfig(Path configPath) {
-        return Optional.ofNullable(getPluginConfig(configPath)).orElseGet(() -> PluginHelper.createPluginConfig(configPath));
+        JsonObject existing = getPluginConfig(configPath);
+        if (existing != null) {
+            return existing;
+        }
+        return createPluginConfig(configPath);
     }
 
     public static JsonObject getPluginConfig() {
@@ -795,7 +932,12 @@ public final class PluginHelper {
                 return (JsonObject) Jsoner.deserialize(text);
             }
         } catch (Exception e) {
-            // ignore
+            // The file exists but cannot be read (AccessDeniedException, MalformedInputException)
+            // or the JSON is corrupt — either way throw so the caller does not silently overwrite it.
+            throw new RuntimeCamelException(
+                    "Plugin configuration file exists but is corrupt or unreadable: "
+                                            + getCustomPluginConfigPath(configPath) + " (" + e.getMessage() + ")",
+                    e);
         }
 
         return null;
@@ -813,15 +955,55 @@ public final class PluginHelper {
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            Files.writeString(f, config.toJson(),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.WRITE,
-                    StandardOpenOption.TRUNCATE_EXISTING);
+            atomicWriteJson(f, config.toJson());
         } catch (IOException e) {
             throw new RuntimeCamelException("Failed to create plugin configuration", e);
         }
 
         return config;
+    }
+
+    /**
+     * Writes {@code content} to {@code target} atomically: writes to a sibling temp file first, then moves it into
+     * place with {@link StandardCopyOption#REPLACE_EXISTING}. When atomic move is not supported by the underlying
+     * filesystem, falls back to a plain overwriting move (rename(2)), which is still safe — a reader never observes a
+     * half-written file.
+     */
+    private static void atomicWriteJson(Path target, String content) throws IOException {
+        // Resolve symlinks so the move replaces the target file, not the symlink itself.
+        Path realTarget;
+        try {
+            realTarget = target.toRealPath();
+        } catch (IOException e) {
+            // file does not exist yet — no symlink to resolve
+            realTarget = target;
+        }
+        Path dir = realTarget.getParent();
+        if (dir != null) {
+            Files.createDirectories(dir);
+        }
+        Path tmp = dir != null
+                ? Files.createTempFile(dir, "." + realTarget.getFileName(), ".tmp")
+                : Files.createTempFile("." + realTarget.getFileName(), ".tmp");
+        try {
+            Files.writeString(tmp, content, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            try {
+                Files.move(tmp, realTarget, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                tmp = null; // moved successfully, nothing to delete
+            } catch (AtomicMoveNotSupportedException e) {
+                // fall back: non-atomic replace — still better than truncate-then-write
+                Files.move(tmp, realTarget, StandardCopyOption.REPLACE_EXISTING);
+                tmp = null;
+            }
+        } finally {
+            if (tmp != null) {
+                try {
+                    Files.deleteIfExists(tmp);
+                } catch (IOException ignored) {
+                    // best effort
+                }
+            }
+        }
     }
 
     public static void savePluginConfig(JsonObject plugins) {
@@ -831,12 +1013,20 @@ public final class PluginHelper {
     public static void savePluginConfig(JsonObject plugins, Path configPath) {
         Path f = getCustomPluginConfigPath(configPath);
         try {
-            Files.writeString(f, plugins.toJson(),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.WRITE,
-                    StandardOpenOption.TRUNCATE_EXISTING);
+            atomicWriteJson(f, plugins.toJson());
         } catch (IOException e) {
             throw new RuntimeCamelException("Failed to save plugin configuration", e);
+        }
+    }
+
+    /**
+     * Warns about a corrupt or unreadable plugin configuration file, once per path per JVM run, so multiple callers
+     * (e.g. {@code getActivePlugins} and {@code printAvailablePlugins}) do not repeat the message.
+     */
+    public static void warnCorruptPluginConfig(Printer printer, Exception e) {
+        String key = e.getMessage() != null ? e.getMessage() : "unknown-corrupt-plugin-config";
+        if (WARNED_PLUGIN_PATHS.add(key)) {
+            printer.printErr("Warning: " + e.getMessage() + ". Fix the JSON by hand or delete the file.");
         }
     }
 

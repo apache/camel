@@ -44,5 +44,10 @@ public class AnnotationTrait extends BaseTrait {
                 s -> s.editOrNewMetadata()
                         .addToAnnotations(context.getAnnotations())
                         .endMetadata());
+        // a CronJob had none (CAMEL-26934)
+        context.doWithCronJobs(
+                j -> j.editOrNewMetadata()
+                        .addToAnnotations(context.getAnnotations())
+                        .endMetadata());
     }
 }

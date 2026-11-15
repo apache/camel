@@ -17,11 +17,12 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.EnvVarBuilder;
-import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Environment;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
@@ -35,8 +36,8 @@ public class EnvTrait extends BaseTrait {
 
     @Override
     public boolean configure(Traits traitConfig, TraitContext context) {
-        Optional<DeploymentBuilder> deployment = context.getDeployment();
-        if (deployment.isEmpty()) {
+        // a workload: a Deployment, a CronJob or a Knative Service (CAMEL-26934: only a Deployment had the variables)
+        if (context.getDeployment().isEmpty() && context.getCronJob().isEmpty() && context.getKnativeService().isEmpty()) {
             return false;
         }
 
@@ -49,23 +50,48 @@ public class EnvTrait extends BaseTrait {
         Environment envTrait = traitConfig.getEnvironment();
 
         if (ObjectHelper.isNotEmpty(envTrait.getVars())) {
+            List<EnvVar> vars = envTrait.getVars().stream().map(envvar -> {
+                String[] parts = envvar.split("=", 2);
+                if (parts.length != 2) {
+                    throw new RuntimeCamelException(
+                            "Invalid environment variable '%s', must be in NAME=value format".formatted(envvar));
+                }
+                return new EnvVarBuilder()
+                        .withName(parts[0])
+                        .withValue(parts[1])
+                        .build();
+            }).collect(Collectors.toList());
             context.doWithDeployments(
                     d -> d.editSpec()
                             .editTemplate()
                             .editSpec()
                             .editFirstContainer()
-                            .addAllToEnv(envTrait.getVars().stream().map(envvar -> {
-                                String[] parts = envvar.split("=", 2);
-                                if (parts.length != 2) {
-                                    throw new RuntimeCamelException(
-                                            "Invalid environment variable '%s', must be in NAME=value format"
-                                                    .formatted(envvar));
-                                }
-                                return new EnvVarBuilder()
-                                        .withName(parts[0])
-                                        .withValue(parts[1])
-                                        .build();
-                            }).collect(Collectors.toList()))
+                            .addAllToEnv(vars)
+                            .endContainer()
+                            .endSpec()
+                            .endTemplate()
+                            .endSpec());
+            // and the other workloads: a CronJob and a Knative Service had no variables (CAMEL-26934)
+            context.doWithCronJobs(
+                    j -> j.editOrNewSpec()
+                            .editOrNewJobTemplate()
+                            .editOrNewSpec()
+                            .editOrNewTemplate()
+                            .editOrNewSpec()
+                            .editFirstContainer()
+                            .addAllToEnv(vars)
+                            .endContainer()
+                            .endSpec()
+                            .endTemplate()
+                            .endSpec()
+                            .endJobTemplate()
+                            .endSpec());
+            context.doWithKnativeServices(
+                    k -> k.editOrNewSpec()
+                            .editOrNewTemplate()
+                            .editOrNewSpec()
+                            .editFirstContainer()
+                            .addAllToEnv(vars)
                             .endContainer()
                             .endSpec()
                             .endTemplate()

@@ -317,23 +317,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
         // merge the properties from files
         if (properties != null) {
-            List<String> definiteProperties = new ArrayList<>();
-            for (String p : properties) {
-                if (p.startsWith("file:") || p.contains(File.separator)) {
-                    String filename = p.startsWith("file:") ? p.substring("file:".length()) : p;
-                    File f = new File(filename);
-                    if (f.exists()) {
-                        Properties prop = new Properties();
-                        try (FileInputStream input = new FileInputStream(f)) {
-                            prop.load(input);
-                        }
-                        prop.forEach((k, v) -> definiteProperties.add(k + "=" + v));
-                    }
-                } else {
-                    definiteProperties.add(p);
-                }
-            }
-            properties = definiteProperties.toArray(new String[definiteProperties.size()]);
+            properties = mergeProperties(properties);
         }
         // when user sets configuration or resources from configmap/secret
         // the projected properties files must be set in the app runtime
@@ -706,6 +690,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         pb.command(args.toArray(String[]::new));
 
+        useKubeConfig(pb);
         Path log = mavenOutput(pb);
         try {
             Process p = pb.start();
@@ -782,6 +767,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         pb.command(args.toArray(String[]::new));
 
+        useKubeConfig(pb);
         Path log = mavenOutput(pb);
         try {
             Process p = pb.start();
@@ -803,6 +789,16 @@ public class KubernetesRun extends KubernetesBaseCommand {
      *
      * @return the log file, or <tt>null</tt> with --verbose
      */
+    /**
+     * The Kubernetes client of the JKube plugin reads KUBECONFIG: the cluster of --kube-config, when it is given
+     * (CAMEL-26934: the build deployed to the current context).
+     */
+    void useKubeConfig(ProcessBuilder pb) {
+        if (kubeConfig != null) {
+            pb.environment().put("KUBECONFIG", Path.of(kubeConfig).toAbsolutePath().toString());
+        }
+    }
+
     private Path mavenOutput(ProcessBuilder pb) throws IOException {
         if (!quiet && verbose) {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
@@ -850,7 +846,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
             if (verbose) {
                 printer().print("Automatic Kubernetes cluster detection... ");
             }
-            this.clusterType = KubernetesHelper.discoverClusterType().name();
+            this.clusterType = KubernetesHelper.discoverClusterType(client()).name();
             if (verbose) {
                 printer().println(this.clusterType);
             }
@@ -890,6 +886,39 @@ public class KubernetesRun extends KubernetesBaseCommand {
         if (imagePush == null) {
             this.imagePush = true;
         }
+    }
+
+    /**
+     * The properties of --property: a key=value, or the properties of a file (file:path, or a path). A key=value is a
+     * property also when its value is a path, such as camel.server.path=/api, which was taken for a file that does not
+     * exist and silently left out (CAMEL-26934).
+     *
+     * @throws CliException with exit code 66 for a properties file that does not exist
+     */
+    static String[] mergeProperties(String[] properties) throws IOException {
+        List<String> definiteProperties = new ArrayList<>();
+        for (String p : properties) {
+            int eq = p.indexOf('=');
+            String key = eq > 0 ? p.substring(0, eq) : null;
+            boolean keyValue = key != null && !key.contains("/") && !key.contains(File.separator);
+            if (p.startsWith("file:") || !keyValue) {
+                String filename = p.startsWith("file:") ? p.substring("file:".length()) : p;
+                File f = new File(filename);
+                if (!f.isFile()) {
+                    // the hint only when it may have been meant as a property, not for file:path (review)
+                    String hint = p.startsWith("file:") ? "" : " (a property is given as key=value)";
+                    throw CliException.fileNotFound("Properties file does not exist: " + filename + hint);
+                }
+                Properties prop = new Properties();
+                try (FileInputStream input = new FileInputStream(f)) {
+                    prop.load(input);
+                }
+                prop.forEach((k, v) -> definiteProperties.add(k + "=" + v));
+            } else {
+                definiteProperties.add(p);
+            }
+        }
+        return definiteProperties.toArray(new String[0]);
     }
 
     /*

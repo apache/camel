@@ -18,23 +18,31 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import java.net.URI;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.aesh.command.Command;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.CommandResult;
 import org.aesh.command.invocation.CommandInvocation;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CliExportContext;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.export.ExportContext;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -212,7 +220,7 @@ public class PluginHelperTest {
         Path jar = tempDir.resolve("fake-plugin.jar");
         FakePluginJar.write(jar, "fake");
 
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         writeConfig(buildEntry("fake", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis()));
 
         CamelJBangMain main = new CamelJBangMain();
@@ -228,7 +236,7 @@ public class PluginHelperTest {
         Path jar = tempDir.resolve("fake-plugin.jar");
         FakePluginJar.write(jar, "fake");
 
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         long staleMtime = Files.getLastModifiedTime(jar).toMillis() - 1000;
         writeConfig(buildEntry("fake", camelVersion, jar, staleMtime));
 
@@ -242,11 +250,106 @@ public class PluginHelperTest {
     }
 
     @Test
+    public void aPluginThatCannotBeLoadedDoesNotFailCamelRun() throws Exception {
+        Path jar = tempDir.resolve("fake-plugin.jar");
+        FakePluginJar.write(jar, "fake");
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
+        long staleMtime = Files.getLastModifiedTime(jar).toMillis() - 1000;
+        // without appliesTo the plugin contributes to camel run and camel export, and it cannot be resolved
+        writeConfig(buildEntry("fake", camelVersion, jar, staleMtime));
+        StringPrinter printer = new StringPrinter();
+        QuitCapture main = new QuitCapture();
+        main.withPrinter(printer);
+
+        // before, camel run failed for it (CAMEL-26931): it is left out with a warning
+        Map<String, Plugin> plugins = assertDoesNotThrow(() -> PluginHelper.getActivePlugins(main, null, "run", true));
+
+        assertTrue(plugins.isEmpty());
+        assertTrue(printer.getStderr().contains("Plugin fake cannot be loaded (camel-jbang-plugin-fake not found), so camel"
+                                                + " run goes on without it: remove it with camel plugin delete fake"),
+                printer.getStderr());
+        // its own command still fails
+        assertThrows(CliException.class, () -> PluginHelper.getActivePlugins(main, null, "fake"));
+    }
+
+    @Test
+    public void aPluginThatDoesNotLinkDoesNotFailCamelRun() throws Exception {
+        // a plugin built for another Camel version, whose classes refer to one that moved: creating it fails with a
+        // NoClassDefFoundError, which is not a RuntimeException. It is found on the classpath of the tests
+        // (META-INF/services/org/apache/camel/camel-jbang-plugin/camel-jbang-plugin-unlinked).
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
+        writeConfig(buildEntryWithoutResolvedBlock("unlinked", camelVersion));
+        StringPrinter printer = new StringPrinter();
+        QuitCapture main = new QuitCapture();
+        main.withPrinter(printer);
+
+        // before, the error failed camel run (CAMEL-26964): it is left out with a warning
+        Map<String, Plugin> plugins = assertDoesNotThrow(() -> PluginHelper.getActivePlugins(main, null, "run", true));
+
+        assertTrue(plugins.isEmpty());
+        String reason = "it does not link with Camel " + camelVersion + " and may be built for another version: "
+                        + "NoClassDefFoundError ";
+        String remedy = "run camel plugin add unlinked to select a release for this Camel version, or remove it with"
+                        + " camel plugin delete unlinked";
+        assertTrue(printer.getStderr().contains("Plugin unlinked cannot be loaded (" + reason), printer.getStderr());
+        assertTrue(printer.getStderr().contains("so camel run goes on without it: " + remedy), printer.getStderr());
+
+        // its own command fails with the reason, rather than with the error
+        CliException e = assertThrows(CliException.class, () -> PluginHelper.getActivePlugins(main, null, "unlinked"));
+        assertTrue(e.getMessage().startsWith("Plugin unlinked cannot be loaded (" + reason), e.getMessage());
+        assertTrue(e.getMessage().endsWith("): " + remedy), e.getMessage());
+    }
+
+    @Test
+    public void aPluginWhoseExporterOrRunCustomizerDoesNotLinkDoesNotFailCamelExport() throws Exception {
+        // plugins built for another Camel version that link, while their exporter or run customizer refers to a class
+        // that moved: the JVM links that class when it is first used, as camel run and camel export ask for it
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
+        JsonObject exporter = cachedEntry("exporter", UnlinkedContributionFakePlugins.UnlinkedExporterPlugin.class,
+                camelVersion);
+        JsonObject customizer = cachedEntry("customizer", UnlinkedContributionFakePlugins.UnlinkedRunCustomizerPlugin.class,
+                camelVersion);
+        // stored with a command of its own: the warning names the plugin, which camel plugin delete takes
+        customizer.put("command", "customize");
+        writeConfig(exporter, customizer);
+        StringPrinter printer = new StringPrinter();
+        CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
+
+        // before, the NoClassDefFoundError failed camel export (CAMEL-26964): both are left out with a warning
+        ExportContext.ActivePlugins plugins
+                = assertDoesNotThrow(() -> CliExportContext.create(main, printer, true).getPlugins(null));
+
+        // the run customizer of the first one links, but the plugin is left out as a whole
+        assertTrue(plugins.runCustomizers().isEmpty(), plugins.runCustomizers().toString());
+        assertTrue(plugins.exporters().isEmpty(), plugins.exporters().toString());
+        String reason = "it does not link with Camel " + camelVersion + " and may be built for another version: "
+                        + "NoClassDefFoundError ";
+        for (String name : List.of("exporter", "customizer")) {
+            assertTrue(printer.getStderr().contains("Plugin " + name + " cannot be loaded (" + reason), printer.getStderr());
+            assertTrue(printer.getStderr().contains("so camel export goes on without it: run camel plugin add " + name
+                                                    + " to select a release for this Camel version, or remove it with"
+                                                    + " camel plugin delete " + name),
+                    printer.getStderr());
+        }
+    }
+
+    @Test
+    public void aStaticInitializerThatFailsIsReportedWithItsCause() {
+        // an ExceptionInInitializerError is a LinkageError without a message of its own: what failed is its cause,
+        // often a bug in the plugin rather than another Camel version
+        String reason = PluginHelper.notLinked("4.24.0", new ExceptionInInitializerError(new IllegalStateException("boom")));
+
+        assertEquals("it does not link with Camel 4.24.0 and may be built for another version: ExceptionInInitializerError"
+                     + " caused by IllegalStateException boom",
+                reason);
+    }
+
+    @Test
     public void testCachedPluginThatDoesNotLinkIsResolvedAgain() throws Exception {
         Path jar = tempDir.resolve("unlinked-plugin.jar");
         FakePluginJar.write(jar, "fake", UnlinkedFakePlugin.class.getName());
 
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         JsonObject entry = buildEntry("fake", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
         ((JsonObject) entry.get("resolved")).put("className", UnlinkedFakePlugin.class.getName());
         writeConfig(entry);
@@ -282,7 +385,7 @@ public class PluginHelperTest {
         entry.put("name", "fake");
         entry.put("command", "fake");
 
-        try (java.net.URLClassLoader cl = new java.net.URLClassLoader(new java.net.URL[] { jar.toUri().toURL() })) {
+        try (URLClassLoader cl = new URLClassLoader(new URL[] { jar.toUri().toURL() })) {
             boolean written = PluginHelper.writeCache(entry, "9.9.9", null, null, FakePluginJar.PLUGIN_CLASS, cl, "fake",
                     "9.9.9");
             assertTrue(written);
@@ -295,8 +398,8 @@ public class PluginHelperTest {
         assertNotNull(resolved.get("cachedAt"));
 
         Object cp = resolved.get("classpath");
-        assertTrue(cp instanceof java.util.Collection);
-        java.util.Collection<?> classpath = (java.util.Collection<?>) cp;
+        assertTrue(cp instanceof Collection);
+        Collection<?> classpath = (Collection<?>) cp;
         assertEquals(1, classpath.size());
         Map<?, ?> jarEntry = (Map<?, ?>) classpath.iterator().next();
         assertEquals(jar.toAbsolutePath().toString(), jarEntry.get("path"));
@@ -316,7 +419,7 @@ public class PluginHelperTest {
         // both halves — only the presence of the `resolved` block in the config differs.
         Path jar = tempDir.resolve("fake-plugin.jar");
         FakePluginJar.write(jar, "fake");
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
 
         // BEFORE CAMEL-23335: entry has no `resolved` block. resolvePlugin falls through loadFromCache,
         // misses FACTORY_FINDER (no service registered for "fake"), reaches downloadPlugin with no usable
@@ -364,7 +467,7 @@ public class PluginHelperTest {
         // a plugin release selected for an older CLI; loading it uses the cache only, so there is no download
         Path jar = tempDir.resolve("fake-plugin.jar");
         FakePluginJar.write(jar, "compat");
-        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         JsonObject entry = buildEntry("compat", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
         entry.put("camelVersions", "[4.0.0,4.1.0)");
         entry.put("camelVersionsSource", "inferred");
@@ -585,9 +688,11 @@ public class PluginHelperTest {
         assertEquals(dirPath.resolve(PluginHelper.PLUGIN_CONFIG), result);
     }
 
-    private void writeConfig(JsonObject pluginEntry) throws Exception {
+    private void writeConfig(JsonObject... pluginEntries) throws Exception {
         JsonObject plugins = new JsonObject();
-        plugins.put(pluginEntry.getString("name"), pluginEntry);
+        for (JsonObject pluginEntry : pluginEntries) {
+            plugins.put(pluginEntry.getString("name"), pluginEntry);
+        }
         JsonObject config = new JsonObject();
         config.put("plugins", plugins);
         Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
@@ -600,6 +705,15 @@ public class PluginHelperTest {
         entry.put("command", name);
         entry.put("description", "Fake plugin");
         entry.put("firstVersion", camelVersion);
+        return entry;
+    }
+
+    // a plugin entry whose cache points to a jar with the given plugin class
+    private JsonObject cachedEntry(String name, Class<? extends Plugin> pluginClass, String camelVersion) throws Exception {
+        Path jar = tempDir.resolve(name + "-plugin.jar");
+        FakePluginJar.write(jar, name, pluginClass.getName());
+        JsonObject entry = buildEntry(name, camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
+        ((JsonObject) entry.get("resolved")).put("className", pluginClass.getName());
         return entry;
     }
 
@@ -618,7 +732,7 @@ public class PluginHelperTest {
         JsonObject resolved = new JsonObject();
         resolved.put("camelVersion", camelVersion);
         resolved.put("className", FakePluginJar.PLUGIN_CLASS);
-        java.util.List<JsonObject> cp = new java.util.ArrayList<>();
+        List<JsonObject> cp = new ArrayList<>();
         cp.add(jarEntry);
         resolved.put("classpath", cp);
         entry.put("resolved", resolved);
@@ -641,5 +755,108 @@ public class PluginHelperTest {
         public CommandResult execute(CommandInvocation invocation) {
             return CommandResult.SUCCESS;
         }
+    }
+
+    // --- CAMEL-26913: atomic write for savePluginConfig ---
+
+    @Test
+    void savePluginConfigWritesAtomically() throws Exception {
+        // create a valid plugin config
+        Path configPath = tempDir.resolve(PluginHelper.PLUGIN_CONFIG);
+        JsonObject config = PluginHelper.createPluginConfig(tempDir);
+
+        // add a fake plugin entry
+        JsonObject plugins = config.getMap("plugins");
+        JsonObject fakePlugin = new JsonObject();
+        fakePlugin.put("name", "fake");
+        fakePlugin.put("command", "fake");
+        plugins.put("fake", fakePlugin);
+
+        // save via the atomic path
+        PluginHelper.savePluginConfig(config, tempDir);
+
+        // the file must exist and have the expected content
+        assertTrue(Files.exists(configPath));
+        String content = Files.readString(configPath);
+        assertTrue(content.contains("\"fake\""));
+
+        // no temp files left behind
+        try (var stream = Files.list(tempDir)) {
+            long tmpCount = stream.filter(p -> p.getFileName().toString().endsWith(".tmp")).count();
+            assertEquals(0, tmpCount, "Stray .tmp files found in " + tempDir);
+        }
+    }
+
+    @Test
+    void savePluginConfigPreservesExistingFileOnWrite() throws Exception {
+        // start with a valid config
+        PluginHelper.createPluginConfig(tempDir);
+        Path configPath = tempDir.resolve(PluginHelper.PLUGIN_CONFIG);
+
+        // reading back produces the same object
+        JsonObject read = PluginHelper.getPluginConfig(tempDir);
+        assertNotNull(read);
+        PluginHelper.savePluginConfig(read, tempDir);
+
+        // content should be equivalent — round-trip must preserve the plugins map
+        String afterSave = Files.readString(configPath);
+        assertNotNull(afterSave);
+        assertTrue(afterSave.contains("\"plugins\""), "saved config must still contain the plugins key");
+        JsonObject reRead = PluginHelper.getPluginConfig(tempDir);
+        assertNotNull(reRead);
+        assertNotNull(reRead.getMap("plugins"), "plugins map must be preserved after save");
+    }
+
+    @Test
+    void emptyJsonObjectDoesNotCauseNpe() throws Exception {
+        // {} without a "plugins" key must not NPE — getActivePlugins should return empty
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, "{}", StandardOpenOption.CREATE);
+
+        CamelJBangMain main = new CamelJBangMain();
+        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "version");
+        assertTrue(plugins.isEmpty());
+    }
+
+    @Test
+    void isPluginCommandHandlesEmptyJsonObject() throws Exception {
+        // {} without a "plugins" key must not NPE in isPluginCommand
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, "{}", StandardOpenOption.CREATE);
+
+        assertFalse(PluginHelper.isPluginCommand("fake"));
+    }
+
+    @Test
+    void truncatedJsonThrowsOnGetPluginConfig() throws Exception {
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, "{ \"plugins\": { \"foo\":", StandardOpenOption.CREATE);
+
+        assertThrows(RuntimeException.class, () -> PluginHelper.getPluginConfig());
+    }
+
+    @Test
+    void corruptPluginJsonDoesNotCrashGetActivePlugins() throws Exception {
+        // A truncated/corrupt plugin JSON must not crash camel run, camel --help, etc.
+        // getActivePlugins must warn and return empty map instead of throwing.
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, "{ \"plugins\": { \"foo\":", StandardOpenOption.CREATE);
+
+        StringPrinter out = new StringPrinter();
+        CamelJBangMain main = new CamelJBangMain().withPrinter(out);
+        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "run");
+
+        assertThat(plugins).isEmpty();
+        assertThat(out.getStderr()).contains("corrupt");
+    }
+
+    @Test
+    void getOrCreatePluginConfigRefusesToOverwriteCorruptFile() throws Exception {
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, "TRUNCATED GARBAGE", StandardOpenOption.CREATE);
+
+        assertThrows(RuntimeException.class, () -> PluginHelper.getOrCreatePluginConfig());
+        // the corrupt file must still exist (not overwritten)
+        assertEquals("TRUNCATED GARBAGE", Files.readString(userConfig));
     }
 }

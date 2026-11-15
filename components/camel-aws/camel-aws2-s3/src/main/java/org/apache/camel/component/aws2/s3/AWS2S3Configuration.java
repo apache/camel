@@ -101,7 +101,7 @@ public class AWS2S3Configuration implements Cloneable, AwsCommonConfiguration {
     private boolean useAwsKMS;
     @UriParam(label = "producer,advanced")
     private String awsKMSKeyId;
-    @UriParam(label = "producer,advanced", defaultValue = "false")
+    @UriParam(label = "common,advanced", defaultValue = "false")
     private boolean useCustomerKey;
     @UriParam(label = "common,advanced")
     private String customerKeyId;

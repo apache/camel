@@ -2573,7 +2573,7 @@ Sets the maximum number of times a message exchange will be redelivered. Setting
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum redelivery delay. Use -1 if you wish to have no maximum. Default value: 1000
+Sets the initial delay in milliseconds before the first redelivery attempt. Default value: 1000
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -2660,7 +2660,7 @@ Sets the logging level to use for log messages when retries are attempted. Defau
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the interval for log messages when retries are attempted. Default value: 0
+Sets how often to log redelivery attempts. For example, a value of 3 logs every 3rd redelivery attempt. Default value: 1
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -2687,7 +2687,8 @@ Sets whether stack traces should be logged or not. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets whether stack traces should be logged or not. Default value: false
+Whether stack traces should be logged when a retry attempt failed. Can be used to include or reduce verbose logging.
+Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>

@@ -26,7 +26,7 @@ import javax.naming.NamingException;
 /**
  * A factory of the Camel {@link javax.naming.InitialContext} which allows a {@link java.util.Map} to be used to create
  * a JNDI context.
- * <p/>
+ * <p>
  * This implementation is singleton based, by creating a <b>new</b> context once, and reusing it on each call to
  * {@link #getInitialContext(java.util.Hashtable)}.
  */
@@ -37,10 +37,10 @@ public class CamelSingletonInitialContextFactory extends CamelInitialContextFact
 
     /**
      * Gets or creates the context with the given environment.
-     * <p/>
+     * <p>
      * This implementation will create the context once, and then return the same instance on multiple calls.
      *
-     * @param  environment                  the environment, must not be <tt>null</tt>
+     * @param  environment                  the environment, must not be <code>null</code>
      * @return                              the created context.
      * @throws javax.naming.NamingException is thrown if creation failed.
      */
