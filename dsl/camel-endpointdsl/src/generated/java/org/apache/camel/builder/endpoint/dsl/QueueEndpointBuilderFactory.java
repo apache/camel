@@ -1849,7 +1849,7 @@ public interface QueueEndpointBuilderFactory {
         /**
          * Returns non-parsed httpHeaders that can be used by the user.
          * 
-         * The option is a: {@code HttpHeaders} type.
+         * The option is a: {@code com.azure.core.http.HttpHeaders} type.
          * 
          * Group: common
          * 
@@ -1886,7 +1886,7 @@ public interface QueueEndpointBuilderFactory {
         /**
          * The time the Message was inserted into the Queue.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: common
          * 
@@ -1899,7 +1899,7 @@ public interface QueueEndpointBuilderFactory {
         /**
          * The time that the Message will expire and be automatically deleted.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: common
          * 
@@ -1926,7 +1926,7 @@ public interface QueueEndpointBuilderFactory {
         /**
          * The time that the message will again become visible in the Queue.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: common
          * 
@@ -1977,7 +1977,8 @@ public interface QueueEndpointBuilderFactory {
         /**
          * (listQueues) Options for listing queues.
          * 
-         * The option is a: {@code QueuesSegmentOptions} type.
+         * The option is a: {@code
+         * com.azure.storage.queue.models.QueuesSegmentOptions} type.
          * 
          * Group: producer
          * 
@@ -1991,7 +1992,7 @@ public interface QueueEndpointBuilderFactory {
          * (All) An optional timeout value beyond which a RuntimeException will
          * be raised.
          * 
-         * The option is a: {@code Duration} type.
+         * The option is a: {@code java.time.Duration} type.
          * 
          * Group: producer
          * 
@@ -2021,7 +2022,7 @@ public interface QueueEndpointBuilderFactory {
          * will default to 0 and the message will be instantly visible. The
          * timeout must be between 0 seconds and 7 days.
          * 
-         * The option is a: {@code Duration} type.
+         * The option is a: {@code java.time.Duration} type.
          * 
          * Group: producer
          * 
@@ -2036,7 +2037,7 @@ public interface QueueEndpointBuilderFactory {
          * unset the value will default to 7 days, if -1 is passed the message
          * will not expire. The time to live must be -1 or any positive number.
          * 
-         * The option is a: {@code Duration} type.
+         * The option is a: {@code java.time.Duration} type.
          * 
          * Group: producer
          * 
