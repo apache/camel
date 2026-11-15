@@ -263,11 +263,28 @@ abstract class ActionBaseCommand extends CamelCommand {
             }
         }
 
-        Path workDir = CommandLineHelper.getWorkDir().resolve(workDirPrefix + ProcessHandle.current().pid());
-        PathUtils.deleteDirectory(workDir);
+        // a directory of its own for each dump: the MCP server renders diagrams in one JVM, also at the same time,
+        // and a directory per pid, deleted at the start of each dump, made the calls fail each other (CAMEL-26932)
+        Path parent = CommandLineHelper.getWorkDir();
+        Files.createDirectories(parent);
+        Path workDir = Files.createTempDirectory(parent, workDirPrefix + ProcessHandle.current().pid() + "-");
+        SourceDump answer = null;
+        try {
+            answer = dumpRoutesFromSource(sourceFiles, workDir, ignoreLoadingError, compile);
+            return answer;
+        } finally {
+            if (answer == null) {
+                // the caller deletes the directory of a dump
+                PathUtils.deleteDirectory(workDir);
+            }
+        }
+    }
+
+    private SourceDump dumpRoutesFromSource(
+            List<String> sourceFiles, Path workDir, boolean ignoreLoadingError, boolean compile)
+            throws Exception {
         final String target = workDir.toString();
-        // anything this boot dumps must be newer than this: guards readers against a stale dump left over from a
-        // previous --watch iteration whose cleanup above raced with (or lost against) a slow filesystem
+        // anything this boot dumps must be newer than this: guards readers against a stale dump
         Instant bootStart = Instant.now();
 
         if (!compile && TransformJavaRoutes.applies(sourceFiles)) {
@@ -291,7 +308,8 @@ abstract class ActionBaseCommand extends CamelCommand {
             }
         };
         run.files = sourceFiles;
-        run.executionLimitOptions.maxSeconds = 1;
+        // the routes are dumped while Camel starts, and a transform run stops once Camel has started
+        // (camel.main.durationMaxSeconds=-1): a run of a fixed second only made each diagram a second slower
         int exit = run.runTransform(ignoreLoadingError);
         if (exit != 0) {
             return null;
