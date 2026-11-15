@@ -45,11 +45,12 @@ import org.apache.camel.util.IOHelper;
  * </tr>
  * </table>
  *
- * In both cases the attachment name is written to a the camel header &quot;CamelSplitAttachmentId&quot;
+ * In both cases the attachment name is written to the Camel header &quot;CamelSplitAttachmentId&quot;, which is
+ * {@link MailConstants#MAIL_SPLIT_ATTACHMENT_ID}.
  */
 public class SplitAttachmentsExpression extends ExpressionAdapter {
 
-    public static final String HEADER_NAME = "CamelSplitAttachmentId";
+    public static final String HEADER_NAME = MailConstants.MAIL_SPLIT_ATTACHMENT_ID;
 
     public SplitAttachmentsExpression() {
     }
