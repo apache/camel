@@ -40,6 +40,8 @@ public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "executortype":
         case "executorType": target.setExecutorType(property(camelContext, org.apache.ibatis.session.ExecutorType.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "inputheader":
@@ -103,6 +105,8 @@ public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "executortype":
         case "executorType": return org.apache.ibatis.session.ExecutorType.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "inputheader":
@@ -167,6 +171,8 @@ public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "executortype":
         case "executorType": return target.getExecutorType();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "inputheader":

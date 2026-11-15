@@ -40,6 +40,8 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "feedheader":
         case "feedHeader": target.setFeedHeader(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "idempotent": target.setIdempotent(property(camelContext, boolean.class, value)); return true;
         case "idempotentrepository":
         case "idempotentRepository": target.setIdempotentRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
@@ -95,6 +97,8 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "feedheader":
         case "feedHeader": return boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "idempotent": return boolean.class;
         case "idempotentrepository":
         case "idempotentRepository": return org.apache.camel.spi.IdempotentRepository.class;
@@ -151,6 +155,8 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "feedheader":
         case "feedHeader": return target.isFeedHeader();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "idempotent": return target.isIdempotent();
         case "idempotentrepository":
         case "idempotentRepository": return target.getIdempotentRepository();

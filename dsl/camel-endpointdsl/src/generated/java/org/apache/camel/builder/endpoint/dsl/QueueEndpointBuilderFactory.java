@@ -493,6 +493,48 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default QueueEndpointConsumerBuilder healthCheckMaxPollDuration(long healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
+         * How long a poll may run before the health check of the consumer
+         * reports DOWN. The health check is otherwise based on the polls that
+         * are done, so it stays UP while a poll hangs, for example on a read
+         * without timeout from a connection that went silent. A poll includes
+         * routing the messages it polled, so set this above the longest poll
+         * you expect. The poll is not interrupted. The value is in millis (not
+         * affected by timeUnit). The default 0 turns this off.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param healthCheckMaxPollDuration the value to set
+         * @return the dsl builder
+         */
+        default QueueEndpointConsumerBuilder healthCheckMaxPollDuration(String healthCheckMaxPollDuration) {
+            doSetProperty("healthCheckMaxPollDuration", healthCheckMaxPollDuration);
+            return this;
+        }
+        /**
          * Milliseconds before the first poll starts.
          * 
          * The option is a: <code>long</code> type.
@@ -1849,7 +1891,7 @@ public interface QueueEndpointBuilderFactory {
         /**
          * Returns non-parsed httpHeaders that can be used by the user.
          * 
-         * The option is a: {@code HttpHeaders} type.
+         * The option is a: {@code com.azure.core.http.HttpHeaders} type.
          * 
          * Group: common
          * 
@@ -1886,7 +1928,7 @@ public interface QueueEndpointBuilderFactory {
         /**
          * The time the Message was inserted into the Queue.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: common
          * 
@@ -1899,7 +1941,7 @@ public interface QueueEndpointBuilderFactory {
         /**
          * The time that the Message will expire and be automatically deleted.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: common
          * 
@@ -1926,7 +1968,7 @@ public interface QueueEndpointBuilderFactory {
         /**
          * The time that the message will again become visible in the Queue.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: common
          * 
@@ -1977,7 +2019,8 @@ public interface QueueEndpointBuilderFactory {
         /**
          * (listQueues) Options for listing queues.
          * 
-         * The option is a: {@code QueuesSegmentOptions} type.
+         * The option is a: {@code
+         * com.azure.storage.queue.models.QueuesSegmentOptions} type.
          * 
          * Group: producer
          * 
@@ -1991,7 +2034,7 @@ public interface QueueEndpointBuilderFactory {
          * (All) An optional timeout value beyond which a RuntimeException will
          * be raised.
          * 
-         * The option is a: {@code Duration} type.
+         * The option is a: {@code java.time.Duration} type.
          * 
          * Group: producer
          * 
@@ -2021,7 +2064,7 @@ public interface QueueEndpointBuilderFactory {
          * will default to 0 and the message will be instantly visible. The
          * timeout must be between 0 seconds and 7 days.
          * 
-         * The option is a: {@code Duration} type.
+         * The option is a: {@code java.time.Duration} type.
          * 
          * Group: producer
          * 
@@ -2036,7 +2079,7 @@ public interface QueueEndpointBuilderFactory {
          * unset the value will default to 7 days, if -1 is passed the message
          * will not expire. The time to live must be -1 or any positive number.
          * 
-         * The option is a: {@code Duration} type.
+         * The option is a: {@code java.time.Duration} type.
          * 
          * Group: producer
          * 

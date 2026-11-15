@@ -24,7 +24,7 @@ public class RobotFrameworkEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(68);
+        Set<String> props = new HashSet<>(69);
         props.add("allowContextMapAll");
         props.add("allowTemplateFromHeader");
         props.add("argumentFiles");
@@ -43,6 +43,7 @@ public class RobotFrameworkEndpointUriFactory extends org.apache.camel.support.c
         props.add("excludes");
         props.add("exitOnFailure");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("includes");
         props.add("initialDelay");
         props.add("lazyStartProducer");

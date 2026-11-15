@@ -98,6 +98,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "forceocr":
         case "forceOcr": target.getConfiguration().setForceOcr(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "imageexportmode":
         case "imageExportMode": target.getConfiguration().setImageExportMode(property(camelContext, java.lang.String.class, value)); return true;
         case "imagesscale":
@@ -248,6 +250,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "forceocr":
         case "forceOcr": return java.lang.Boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "imageexportmode":
         case "imageExportMode": return java.lang.String.class;
         case "imagesscale":
@@ -399,6 +403,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "forceocr":
         case "forceOcr": return target.getConfiguration().getForceOcr();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "imageexportmode":
         case "imageExportMode": return target.getConfiguration().getImageExportMode();
         case "imagesscale":

@@ -47,6 +47,8 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "includegriddata":
         case "includeGridData": target.getConfiguration().setIncludeGridData(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
@@ -114,6 +116,8 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "includegriddata":
         case "includeGridData": return boolean.class;
         case "initialdelay":
@@ -182,6 +186,8 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "includegriddata":
         case "includeGridData": return target.getConfiguration().isIncludeGridData();
         case "initialdelay":

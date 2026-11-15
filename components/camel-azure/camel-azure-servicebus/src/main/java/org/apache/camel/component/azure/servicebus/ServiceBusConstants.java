@@ -45,15 +45,15 @@ public final class ServiceBusConstants {
               javaType = "long")
     public static final String ENQUEUED_SEQUENCE_NUMBER = HEADER_PREFIX + "EnqueuedSequenceNumber";
     @Metadata(label = "consumer", description = "Gets the datetime at which this message was enqueued in Azure Service Bus.",
-              javaType = "OffsetDateTime")
+              javaType = "java.time.OffsetDateTime")
     public static final String ENQUEUED_TIME = HEADER_PREFIX + "EnqueuedTime";
     @Metadata(label = "consumer", description = "Gets the datetime at which this message will expire.",
-              javaType = "OffsetDateTime")
+              javaType = "java.time.OffsetDateTime")
     public static final String EXPIRES_AT = HEADER_PREFIX + "ExpiresAt";
     @Metadata(label = "consumer", description = "Gets the lock token for the current message.", javaType = "String")
     public static final String LOCK_TOKEN = HEADER_PREFIX + "LockToken";
     @Metadata(label = "consumer", description = "Gets the datetime at which the lock of this message expires.",
-              javaType = "OffsetDateTime")
+              javaType = "java.time.OffsetDateTime")
     public static final String LOCKED_UNTIL = HEADER_PREFIX + "LockedUntil";
     @Metadata(label = "consumer", description = "Gets the identifier for the message.", javaType = "String")
     public static final String MESSAGE_ID = HEADER_PREFIX + "MessageId";
@@ -61,7 +61,7 @@ public final class ServiceBusConstants {
               javaType = "String")
     public static final String PARTITION_KEY = HEADER_PREFIX + "PartitionKey";
     @Metadata(label = "consumer", description = "The representation of message as defined by AMQP protocol.",
-              javaType = "AmqpAnnotatedMessage")
+              javaType = "com.azure.core.amqp.models.AmqpAnnotatedMessage")
     public static final String RAW_AMQP_MESSAGE = HEADER_PREFIX + "RawAmqpMessage";
     @Metadata(label = "consumer", description = "Gets the address of an entity to send replies to.", javaType = "String")
     public static final String REPLY_TO = HEADER_PREFIX + "ReplyTo";
@@ -75,7 +75,8 @@ public final class ServiceBusConstants {
     public static final String SESSION_ID = HEADER_PREFIX + "SessionId";
     @Metadata(label = "consumer", description = "Gets the subject for the message.", javaType = "String")
     public static final String SUBJECT = HEADER_PREFIX + "Subject";
-    @Metadata(label = "consumer", description = "Gets the duration before this message expires.", javaType = "Duration")
+    @Metadata(label = "consumer", description = "Gets the duration before this message expires.",
+              javaType = "java.time.Duration")
     public static final String TIME_TO_LIVE = HEADER_PREFIX + "TimeToLive";
     @Metadata(label = "consumer", description = "Gets the \"to\" address.", javaType = "String")
     public static final String TO = HEADER_PREFIX + "To";
@@ -84,13 +85,13 @@ public final class ServiceBusConstants {
     @Metadata(description = "(producer)Overrides the OffsetDateTime at which the message should appear in the Service Bus queue or topic. "
                             +
                             "(consumer) Gets the scheduled enqueue time of this message.",
-              javaType = "OffsetDateTime")
+              javaType = "java.time.OffsetDateTime")
     public static final String SCHEDULED_ENQUEUE_TIME = HEADER_PREFIX + "ScheduledEnqueueTime";
 
     // headers evaluated by the producer
     @Metadata(label = "producer",
               description = "Overrides the transaction in service. This object just contains transaction id.",
-              javaType = "ServiceBusTransactionContext")
+              javaType = "com.azure.messaging.servicebus.ServiceBusTransactionContext")
     public static final String SERVICE_BUS_TRANSACTION_CONTEXT = HEADER_PREFIX + "ServiceBusTransactionContext";
     @Metadata(label = "producer", description = "Overrides the desired operation to be used in the producer.",
               javaType = "org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition")

@@ -81,6 +81,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "forcepathstyle":
         case "forcePathStyle": target.getConfiguration().setForcePathStyle(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "ignorebody":
         case "ignoreBody": target.getConfiguration().setIgnoreBody(property(camelContext, boolean.class, value)); return true;
         case "inprogressrepository":
@@ -247,6 +249,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "forcepathstyle":
         case "forcePathStyle": return boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "ignorebody":
         case "ignoreBody": return boolean.class;
         case "inprogressrepository":
@@ -409,6 +413,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "forcepathstyle":
         case "forcePathStyle": return target.getConfiguration().isForcePathStyle();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "ignorebody":
         case "ignoreBody": return target.getConfiguration().isIgnoreBody();
         case "inprogressrepository":

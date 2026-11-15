@@ -1034,11 +1034,9 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure security using SSLContextParameters. Important: Only one
-         * instance of org.apache.camel.util.jsse.SSLContextParameters is
-         * supported per HttpComponent. If you need to use 2 or more different
-         * instances, you need to define a new HttpComponent per instance you
-         * need.
+         * To configure security using SSLContextParameters. This takes
+         * precedence over the sslContextParameters of the component, so
+         * endpoints of the same component can use different instances.
          * 
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
@@ -1053,11 +1051,9 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure security using SSLContextParameters. Important: Only one
-         * instance of org.apache.camel.util.jsse.SSLContextParameters is
-         * supported per HttpComponent. If you need to use 2 or more different
-         * instances, you need to define a new HttpComponent per instance you
-         * need.
+         * To configure security using SSLContextParameters. This takes
+         * precedence over the sslContextParameters of the component, so
+         * endpoints of the same component can use different instances.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.

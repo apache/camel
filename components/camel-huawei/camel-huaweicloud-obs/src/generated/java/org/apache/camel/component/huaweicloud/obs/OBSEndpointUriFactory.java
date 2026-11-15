@@ -24,7 +24,7 @@ public class OBSEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(42);
+        Set<String> props = new HashSet<>(43);
         props.add("accessKey");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -41,6 +41,7 @@ public class OBSEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("exchangePattern");
         props.add("fileName");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("ignoreSslVerification");
         props.add("includeFolders");
         props.add("initialDelay");
