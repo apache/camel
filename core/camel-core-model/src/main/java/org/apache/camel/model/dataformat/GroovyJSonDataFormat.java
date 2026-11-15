@@ -88,7 +88,7 @@ public class GroovyJSonDataFormat extends DataFormatDefinition {
 
         /**
          * To pretty printing output nicely formatted.
-         * <p/>
+         * <p>
          * Is by default true.
          */
         public Builder prettyPrint(String prettyPrint) {
@@ -98,7 +98,7 @@ public class GroovyJSonDataFormat extends DataFormatDefinition {
 
         /**
          * To pretty printing output nicely formatted.
-         * <p/>
+         * <p>
          * Is by default true.
          */
         public Builder prettyPrint(boolean prettyPrint) {

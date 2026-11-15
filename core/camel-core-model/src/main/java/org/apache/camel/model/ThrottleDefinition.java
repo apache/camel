@@ -227,8 +227,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     /**
      * Whether or not the caller should run the task when it was rejected by the thread pool.
-     * <p/>
-     * Is by default <tt>true</tt>
+     * <p>
+     * Is by default <code>true</code>
      *
      * @param  callerRunsWhenRejected whether or not the caller should run
      * @return                        the builder
@@ -239,8 +239,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     /**
      * Whether or not the caller should run the task when it was rejected by the thread pool.
-     * <p/>
-     * Is by default <tt>true</tt>
+     * <p>
+     * Is by default <code>true</code>
      *
      * @param  callerRunsWhenRejected whether or not the caller should run
      * @return                        the builder
@@ -281,8 +281,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     /**
      * Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request
      * limit
-     * <p/>
-     * Is by default <tt>false</tt>
+     * <p>
+     * Is by default <code>false</code>
      *
      * @param  rejectExecution throw the RejectExecutionException if the exchange exceeds the request limit
      * @return                 the builder
@@ -294,8 +294,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     /**
      * Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request
      * limit
-     * <p/>
-     * Is by default <tt>false</tt>
+     * <p>
+     * Is by default <code>false</code>
      *
      * @param  rejectExecution throw the RejectExecutionException if the exchange exceeds the request limit
      * @return                 the builder

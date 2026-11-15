@@ -177,7 +177,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * Override this method to define ordering of {@link RouteBuilder} classes that are added to Camel from various
      * runtimes such as camel-main, camel-spring-boot. This allows end users to control the ordering if some routes must
      * be added and started before others.
-     * <p/>
+     * <p>
      * Use low numbers for higher priority. Normally the sorting will start from 0 and move upwards. So if you want to
      * be last then use {@link Integer#MAX_VALUE} or eg {@link #LOWEST}.
      */
@@ -193,7 +193,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     /**
      * <b>Called on initialization to build the routes using the fluent builder syntax.</b>
-     * <p/>
+     * <p>
      * This is a central method for RouteBuilder implementations to implement the routes using the Java fluent builder
      * syntax.
      *
@@ -599,7 +599,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      *
      * @param  key       the property key
      * @param  type      the type to convert the value as
-     * @return           the value, or <tt>null</tt> if value is empty
+     * @return           the value, or <code>null</code> if value is empty
      * @throws Exception is thrown if property with key not found or error converting to the given type.
      */
     public <T> T propertyInject(String key, Class<T> type) throws Exception {

@@ -34,10 +34,10 @@ import org.apache.camel.util.ObjectHelper;
  * A helper class for including portions of the <a href="http://camel.apache.org/expression.html">expression</a> and
  * <a href="http://camel.apache.org/predicate.html">predicate</a> <a href="http://camel.apache.org/dsl.html">Java
  * DSL</a>
- * <p/>
+ * <p>
  * Implementation of this builder should favor build expressions using the definition classes from the
- * <tt>org.apache.camel.model.language</tt> package, to build the routes using the same types as it would happen when
- * using XML DSL.
+ * <code>org.apache.camel.model.language</code> package, to build the routes using the same types as it would happen
+ * when using XML DSL.
  */
 public final class Builder {
 
@@ -49,10 +49,10 @@ public final class Builder {
 
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a> value builder.
-     * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     * <p>
+     * This method accepts dual parameters. Either a bean instance or a reference to a bean (String).
      *
-     * @param  beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @param  beanOrBeanRef either an instance of a bean or a reference to bean to lookup in the Registry
      * @return               the builder
      */
     public static ValueBuilder method(final Object beanOrBeanRef) {
@@ -61,10 +61,10 @@ public final class Builder {
 
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a> value builder.
-     * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     * <p>
+     * This method accepts dual parameters. Either a bean instance or a reference to a bean (String).
      *
-     * @param  beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @param  beanOrBeanRef either an instance of a bean or a reference to bean to lookup in the Registry
      * @param  method        the method name
      * @return               the builder
      */

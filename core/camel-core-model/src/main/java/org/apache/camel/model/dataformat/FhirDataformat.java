@@ -580,20 +580,18 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         }
 
         /**
-         * If set to <code>true<code> (which is the default), resource references containing a version
-         * will have the version removed when the resource is encoded. This is generally good behaviour because
-         * in most situations, references from one resource to another should be to the resource by ID, not
-         * by ID and version. In some cases though, it may be desirable to preserve the version in resource
-         * links. In that case, this value should be set to <code>false</code>.
+         * If set to <code>true</code> (which is the default), resource references containing a version will have the
+         * version removed when the resource is encoded. This is generally good behaviour because in most situations,
+         * references from one resource to another should be to the resource by ID, not by ID and version. In some cases
+         * though, it may be desirable to preserve the version in resource links. In that case, this value should be set
+         * to <code>false</code>.
          * <p>
          * This method provides the ability to globally disable reference encoding. If finer-grained control is needed,
          * use {@link #setDontStripVersionsFromReferencesAtPaths(List)}
-         * </p>
          *
-         * @param stripVersionsFromReferences Set this to
-         *                                    <code>false<code> to prevent the parser from removing resource versions
-         *                                    from references (or <code>null</code> to apply the default setting from
-         *                                    the parser options.
+         * @param stripVersionsFromReferences Set this to <code>false</code> to prevent the parser from removing
+         *                                    resource versions from references (or <code>null</code> to apply the
+         *                                    default setting from the parser options).
          */
         public T stripVersionsFromReferences(String stripVersionsFromReferences) {
             this.stripVersionsFromReferences = stripVersionsFromReferences;
@@ -601,20 +599,18 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         }
 
         /**
-         * If set to <code>true<code> (which is the default), resource references containing a version
-         * will have the version removed when the resource is encoded. This is generally good behaviour because
-         * in most situations, references from one resource to another should be to the resource by ID, not
-         * by ID and version. In some cases though, it may be desirable to preserve the version in resource
-         * links. In that case, this value should be set to <code>false</code>.
+         * If set to <code>true</code> (which is the default), resource references containing a version will have the
+         * version removed when the resource is encoded. This is generally good behaviour because in most situations,
+         * references from one resource to another should be to the resource by ID, not by ID and version. In some cases
+         * though, it may be desirable to preserve the version in resource links. In that case, this value should be set
+         * to <code>false</code>.
          * <p>
          * This method provides the ability to globally disable reference encoding. If finer-grained control is needed,
          * use {@link #setDontStripVersionsFromReferencesAtPaths(List)}
-         * </p>
          *
-         * @param stripVersionsFromReferences Set this to
-         *                                    <code>false<code> to prevent the parser from removing resource versions
-         *                                    from references (or <code>null</code> to apply the default setting from
-         *                                    the parser options.
+         * @param stripVersionsFromReferences Set this to <code>false</code> to prevent the parser from removing
+         *                                    resource versions from references (or <code>null</code> to apply the
+         *                                    default setting from the parser options).
          */
         public T stripVersionsFromReferences(boolean stripVersionsFromReferences) {
             this.stripVersionsFromReferences = Boolean.toString(stripVersionsFromReferences);

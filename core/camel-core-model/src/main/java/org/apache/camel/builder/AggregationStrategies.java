@@ -35,7 +35,7 @@ public final class AggregationStrategies {
 
     /**
      * Creates a {@link FlexibleAggregationStrategy} pivoting around a particular type, e.g. it casts all
-     * <tt>pick expression</tt> results to the desired type.
+     * <code>pick expression</code> results to the desired type.
      *
      * @param type The type the {@link FlexibleAggregationStrategy} deals with.
      */
@@ -45,7 +45,7 @@ public final class AggregationStrategies {
 
     /**
      * Creates a {@link FlexibleAggregationStrategy} with no particular type, i.e. performing no casts or type
-     * conversion of <tt>pick expression</tt> results.
+     * conversion of <code>pick expression</code> results.
      */
     public static FlexibleAggregationStrategy<Object> flexible() {
         return new FlexibleAggregationStrategy<>();

@@ -34,7 +34,7 @@ import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * A base {@link ExpressionNode} which does <b>not</b> support any outputs.
- * <p/>
+ * <p>
  * This node is to be extended by definitions which need to support an expression but the definition should not contain
  * any outputs, such as {@link org.apache.camel.model.TransformDefinition}.
  */
