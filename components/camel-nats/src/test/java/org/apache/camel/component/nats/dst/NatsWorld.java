@@ -37,8 +37,9 @@ import org.apache.camel.test.dst.Invariants;
  * The world around a camel-nats JetStream pull consumer: a fake NATS server with one stream ({@link FakeJetStream}) on
  * a connection shared through the connection option, a publisher, a route whose processing is sometimes slower than
  * AckWait and sometimes fails, and an operator that stops and starts the route (also while the consumer waits in a
- * fetch) and restarts the server (the ephemeral consumers are deleted). Faults: fetches fail, the flush of the stop
- * times out, acks are lost.
+ * fetch) and restarts the server or deletes the ephemeral consumers while connected (a waiting fetch gets 409 Server
+ * Shutdown or 409 Consumer Deleted). Faults: a fetch ends empty at its timeout while the connection is down, the flush
+ * of the stop times out, acks are lost.
  * <p>
  * The seed picks pullBatchSize, pullFetchTimeout, ackWait, maxDeliver, nackWait, a durable or an ephemeral consumer,
  * and the fault rates.
@@ -51,8 +52,9 @@ import org.apache.camel.test.dst.Invariants;
  * Properties: a message is acknowledged only after its exchange completed, and nak'd only after it failed; a stopped
  * consumer leaves no subscription active on the shared connection, and does not close it; once the faults cleared every
  * message is acknowledged, or given up by the server after MaxDeliver (or skipped by a consumer created again after a
- * server restart, when the ack of the message was lost); the consumer uses the connection as documented. Messages may
- * be delivered more than once (AckWait, lost acks, a consumer created again after a server restart).
+ * server restart, when the ack of the message was lost), and a message published then is acknowledged (the fetch loop
+ * still runs); the consumer uses the connection as documented. Messages may be delivered more than once (AckWait, lost
+ * acks, a consumer created again after a server restart).
  * <p>
  * Not explored: push subscriptions and core NATS subjects (their dispatchers deliver on threads of jnats), manualAck,
  * AckAll and AckNone, a connection created by the consumer itself; a stop between two messages of a fetched batch (the
@@ -70,7 +72,8 @@ import org.apache.camel.test.dst.Invariants;
                   "route stop and start, also while the consumer waits in a fetch",
                   "a server restart that deletes the ephemeral consumer, and the subscription made again" },
           faults = {
-                  "fetch fails", "the flush of the stop times out", "an ack is lost", "the server restarts",
+                  "a fetch ends empty while the connection is down", "the flush of the stop times out", "an ack is lost",
+                  "the server restarts (409 Server Shutdown) or the consumer is deleted (409 Consumer Deleted)",
                   "processing fails", "processing is slower than AckWait" },
           invariants = {
                   "the consumer uses the connection as documented",
@@ -104,6 +107,8 @@ final class NatsWorld {
     private boolean finished;
     private String finalStatus;
     private boolean finalSettled;
+    /** Published once the faults cleared: it must end acknowledged, so the fetch loop still runs. */
+    private FakeJetStream.Msg end;
 
     NatsWorld(Dst dst) {
         this.dst = dst;
@@ -171,11 +176,12 @@ final class NatsWorld {
                                     ? null : wrongAcks + " (" + config() + ")"),
                     Invariants.of("a stopped consumer leaves no subscription active",
                             () -> leftActive.isEmpty() ? null : leftActive + " (" + config() + ")"),
-                    Invariants.of("every message is acknowledged once the faults cleared, or given up after MaxDeliver",
+                    Invariants.of("every message is acknowledged once the faults cleared, or given up after MaxDeliver (or"
+                                  + " skipped by a consumer made again after its ack was lost)",
                             () -> finalSettled && "Started".equals(finalStatus)
                                     ? null
-                                    : "route " + finalStatus + ", unsettled " + nats.unsettled() + " (" + config()
-                                      + ")"));
+                                    : "route " + finalStatus + ", unsettled " + nats.unsettled() + ", end message "
+                                      + (end == null ? "not published" : end.state) + " (" + config() + ")"));
         } finally {
             dst.dropPending();
             context.stop();
@@ -226,13 +232,14 @@ final class NatsWorld {
         if (deadline == -2) {
             faults = false;
             nats.faults = false;
-            dst.trace("world: faults cleared");
+            end = nats.publish("end");
+            dst.trace("world: faults cleared, end message published");
             long d = dst.now() + 30 * 60_000L;
             operator.schedule("finisher", 500, () -> finisher(context, operator, d));
             return;
         }
         ServiceStatus status = context.getRouteController().getRouteStatus(ROUTE);
-        boolean settled = nats.settled();
+        boolean settled = nats.settled() && end.state == FakeJetStream.State.ACKED;
         if ((inRoute > 0 || !settled || status != ServiceStatus.Started) && dst.now() < deadline) {
             operator.schedule("finisher", 500, () -> finisher(context, operator, deadline));
             return;

@@ -68,11 +68,16 @@ import static org.mockito.Mockito.when;
  * (https://docs.nats.io/using-nats/developer/develop_jetstream/consumers#acknowledging-messages): Ack, Nak (redeliver
  * now) and Nak with a delay; an ack is a fire-and-forget publish, so it can be lost (assumed here: the message is then
  * delivered again after AckWait).</li>
- * <li>[P] Pull (jnats JetStreamSubscription.fetch): waits up to the timeout for up to batch messages and returns what
- * it got; after the subscription was unsubscribed it throws IllegalStateException; when the server deletes the consumer
- * while the pull waits it throws JetStreamStatusException with status 409 "Consumer Deleted", and a later pull to the
- * missing consumer gets status 503, which ends the fetch with no message; getConsumerInfo answers null for a consumer
- * the server does not have.</li>
+ * <li>[P] Pull (jnats 2.26.4 JetStreamSubscription.fetch, NatsJetStreamPullSubscription._fetch and
+ * PullMessageManager.manageStatus): one pull request that expires with the timeout, and a partial batch is held until
+ * the pull expires, the batch is full or a status ends the fetch, so it returns what it got then; the server sends each
+ * message as soon as it is available, so its AckWait runs from then, also while the fetch holds it; after the
+ * subscription was unsubscribed it throws IllegalStateException; while the connection is down the pull request is
+ * buffered and the fetch ends empty at its timeout; when the server deletes the consumer while the pull waits and the
+ * client is connected, the fetch throws JetStreamStatusException with status 409 "Consumer Deleted"; a 409 "Server
+ * Shutdown" (a server restart) is a warning, and the fetch keeps waiting until its timeout and returns the messages it
+ * got before; a later pull to the missing consumer gets status 503, which ends the fetch at once with no message;
+ * getConsumerInfo answers null for a consumer the server does not have.</li>
  * <li>[F] flush (jnats Connection.flush): throws TimeoutException when the server does not answer within the
  * timeout.</li>
  * </ul>
@@ -80,8 +85,10 @@ import static org.mockito.Mockito.when;
  * limits and retention, the reconnect of the connection itself (the connection stays CONNECTED; a server restart is
  * modelled as the deletion of the ephemeral consumer).
  * <p>
- * Timing (one-stack rule): a fetch waits first and takes its messages at the end of its wait; acks and naks take effect
- * at once; flush blocks for its round trip.
+ * Timing (one-stack rule): a fetch waits first and takes its messages at the end of its wait, and their AckWait runs
+ * from when each became available (published, released after AckWait or a nak, or the end of a nak delay) or from the
+ * start of the fetch if later, as if the server had sent it then; acks and naks take effect at once; flush blocks for
+ * its round trip.
  */
 final class FakeJetStream {
 
@@ -101,6 +108,8 @@ final class FakeJetStream {
         State state = State.AVAILABLE;
         int deliveries;
         long redeliverAt;
+        /** When it became available last: published, released after AckWait or a nak, or the end of a nak delay. */
+        long availableSince;
         boolean ackLost;
 
         Msg(long seq, String id) {
@@ -115,6 +124,11 @@ final class FakeJetStream {
         final long startSeq;
         boolean active = true;
         boolean deleted;
+        /**
+         * Deleted by a server restart: a waiting fetch gets 409 Server Shutdown (a warning) instead of Consumer
+         * Deleted.
+         */
+        boolean serverShutdown;
         boolean durable;
         private Object proxySelf;
 
@@ -159,11 +173,15 @@ final class FakeJetStream {
             }
         }
 
-        /** [P] [C] waits up to the timeout, then takes the messages due at the end of its wait. */
+        /**
+         * [P] [C] holds a partial batch until the pull expires (the timeout), the batch is full or a status ends it,
+         * then takes the messages available at the end of its wait.
+         */
         private List<Message> fetch(int batch, long timeout) throws InterruptedException {
             if (!active) {
                 throw new IllegalStateException("Subscription is inactive");
             }
+            long wait = Math.max(1, timeout);
             if (deleted) {
                 // [P] a pull to a consumer the server does not have is answered 503 (no responders), which jnats takes
                 // as the end of the fetch: it returns what it has, nothing
@@ -171,18 +189,43 @@ final class FakeJetStream {
                 return new ArrayList<>();
             }
             if (faults && dst.chance(fetchFailRate)) {
-                dst.block(dst.between(1, 50), name + " fetch fails");
+                // [P] the connection is down: the pull request is buffered, no message comes, and the fetch ends empty at
+                // its timeout
                 ledger.record("fetchFault", "s", name);
-                throw Dst.injected(new IllegalArgumentException("dst: fetch failed"));
+                dst.trace("fake: " + name + " fetch while the connection is down");
+                dst.awaitUntil(() -> !active, wait, name + " fetch while the connection is down");
+                if (!active) {
+                    throw new IllegalStateException("Subscription is inactive");
+                }
+                return new ArrayList<>();
             }
-            dst.awaitUntil(() -> !active || deleted || available(startSeq), Math.max(1, timeout), name + " fetch");
+            long fetchStart = dst.now();
+            dst.awaitUntil(() -> !active || deleted || availableCount(startSeq) >= batch, wait, name + " fetch");
             if (!active) {
                 throw new IllegalStateException("Subscription is inactive");
             }
             dst.block(dst.between(1, 20), name + " fetch answer");
+            if (deleted && serverShutdown) {
+                // [P] 409 Server Shutdown is a warning: jnats keeps waiting until the timeout and returns the messages the
+                // server sent before it shut down
+                List<Message> answer = take(batch, fetchStart);
+                long left = fetchStart + wait - dst.now();
+                if (left > 0) {
+                    dst.awaitUntil(() -> !active, left, name + " fetch after the server shut down");
+                }
+                if (!active) {
+                    throw new IllegalStateException("Subscription is inactive");
+                }
+                return answer;
+            }
             if (deleted) {
                 throw new JetStreamStatusException(new Status(409, Status.CONSUMER_DELETED));
             }
+            return take(batch, fetchStart);
+        }
+
+        /** [C] takes up to batch available messages, with their AckWait from when the server sent them. */
+        private List<Message> take(int batch, long fetchStart) {
             redeliver();
             List<Message> answer = new ArrayList<>();
             for (Msg m : messages.values()) {
@@ -195,7 +238,8 @@ final class FakeJetStream {
                 }
                 m.state = State.PENDING;
                 m.deliveries++;
-                m.redeliverAt = dst.now() + ackWaitMillis;
+                // the server sent it when it became available, or when the pull arrived: its AckWait runs from then
+                m.redeliverAt = Math.max(fetchStart, m.availableSince) + ackWaitMillis;
                 String delivery = m.id + "#" + m.deliveries;
                 ledger.record("delivered", "s", delivery);
                 onDelivery.accept(delivery);
@@ -235,18 +279,26 @@ final class FakeJetStream {
         this.streamCreated = ZonedDateTime.ofInstant(Instant.ofEpochMilli(Dst.EPOCH_MILLIS), ZoneOffset.UTC);
     }
 
-    void publish(String id) {
+    Msg publish(String id) {
         Msg m = new Msg(nextSeq++, id);
+        m.availableSince = dst.now();
         messages.put(m.seq, m);
         ledger.record("published", "s", id);
+        return m;
     }
 
-    /** [C] a server restart: the ephemeral consumers are gone. */
+    /**
+     * [C] [P] the ephemeral consumers are gone: after a server restart (a waiting fetch got 409 Server Shutdown), or
+     * deleted while the client is connected (a waiting fetch gets 409 Consumer Deleted); the seed picks which.
+     */
     void restartServer() {
-        dst.trace("fake: server restart, the ephemeral consumers are deleted");
+        boolean shutdown = dst.chance(0.5);
+        dst.trace("fake: " + (shutdown ? "server restart" : "consumer deletion while connected")
+                  + ", the ephemeral consumers are deleted");
         for (Sub s : subscriptions) {
             if (!s.durable) {
                 s.deleted = true;
+                s.serverShutdown = shutdown;
             }
         }
     }
@@ -266,18 +318,21 @@ final class FakeJetStream {
             ledger.record("maxDeliver", "s", m.id);
         } else {
             m.state = State.AVAILABLE;
+            // the end of AckWait, or of the delay of a nak
+            m.availableSince = m.redeliverAt;
         }
         dst.trace("fake: " + m.id + " " + why + " -> " + m.state);
     }
 
-    boolean available(long from) {
+    int availableCount(long from) {
         redeliver();
+        int count = 0;
         for (Msg m : messages.values()) {
             if (m.seq >= from && m.state == State.AVAILABLE && m.redeliverAt <= dst.now()) {
-                return true;
+                count++;
             }
         }
-        return false;
+        return count;
     }
 
     boolean settled() {
@@ -466,6 +521,7 @@ final class FakeJetStream {
                 if (m.seq >= start && (m.state == State.PENDING || m.state == State.AVAILABLE)) {
                     m.state = State.AVAILABLE;
                     m.redeliverAt = dst.now();
+                    m.availableSince = dst.now();
                 }
             }
         }
