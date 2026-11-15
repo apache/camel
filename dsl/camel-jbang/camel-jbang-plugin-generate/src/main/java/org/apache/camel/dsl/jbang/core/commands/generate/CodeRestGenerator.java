@@ -105,9 +105,9 @@ public class CodeRestGenerator extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        // validate that the input file exists
+        // validate that the input file exists; a URL is read by the parser (it was refused as a file that does not exist)
         File f = new File(input);
-        if (!f.exists() && !f.isFile()) {
+        if (!isUrl(input) && !f.isFile()) {
             printer().printErr("Input file " + input + " does not exist");
             return CliExitCode.FILE_NOT_FOUND;
         }
@@ -157,6 +157,10 @@ public class CodeRestGenerator extends CamelCommand {
         return 0;
     }
 
+    private static boolean isUrl(String input) {
+        return input.startsWith("http://") || input.startsWith("https://");
+    }
+
     /**
      * The directory of the package of the DTOs, in the working directory.
      */
@@ -174,8 +178,11 @@ public class CodeRestGenerator extends CamelCommand {
     // the generator writes into a temporary directory, from which the DTOs are copied into the directory of their package
     private void generateDto(Path packageDir) throws IOException {
         final String code = "code";
-        final String generatorName = RuntimeType.quarkus.equals(runtime) ? "jaxrs-spec" : "java-camel";
-        final String library = RuntimeType.quarkus.equals(runtime) ? "quarkus" : "spring-boot";
+        // the DTOs of Spring Boot may use Spring (such as @DateTimeFormat); the others only Jackson and Jakarta, as a
+        // Camel Main project has no Spring (CAMEL-26933)
+        final boolean springBoot = RuntimeType.springBoot.equals(runtime);
+        final String generatorName = springBoot ? "java-camel" : "jaxrs-spec";
+        final String library = springBoot ? "spring-boot" : "quarkus";
         File output = createTempDirectory().toFile();
         try {
             generateDto(code, generatorName, library, output);
@@ -196,15 +203,22 @@ public class CodeRestGenerator extends CamelCommand {
                 .setLibrary(library)
                 .setInputSpec(input)
                 .setModelPackage(packageName)
+                // the DTOs compile with what a Camel 4 project has: Jakarta EE (not javax), no JsonNullable of
+                // jackson-databind-nullable, and no Swagger annotations (CAMEL-26933)
                 .setAdditionalProperties(
-                        Map.of(
-                                SERIALIZABLE_MODEL, "false",
-                                "useJakartaEe", "false",
-                                "useSwaggerAnnotations", "false",
-                                GENERATE_MODELS, "true",
-                                "generatePom", "false",
-                                "generateApis", "false",
-                                "sourceFolder", code))
+                        Map.ofEntries(
+                                Map.entry(SERIALIZABLE_MODEL, "false"),
+                                Map.entry("useJakartaEe", "true"),
+                                Map.entry("useSwaggerAnnotations", "false"),
+                                Map.entry("documentationProvider", "none"),
+                                Map.entry("annotationLibrary", "none"),
+                                Map.entry("openApiNullable", "false"),
+                                Map.entry(GENERATE_MODELS, "true"),
+                                Map.entry("generatePom", "false"),
+                                Map.entry("generateApis", "false"),
+                                Map.entry("sourceFolder", code)))
+                // no banner of the generator on stdout, where the REST DSL is printed
+                .addGlobalProperty("quiet", "true")
                 .setOutputDir(output.getAbsolutePath());
 
         final ClientOptInput clientOptInput = configurator.toClientOptInput();

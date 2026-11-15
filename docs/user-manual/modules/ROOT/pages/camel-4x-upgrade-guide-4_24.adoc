@@ -3365,6 +3365,14 @@ file), the command asks there whether to overwrite the file.
   `2`: the first showed every error, the second none. The errors of `--diagram` are printed on stderr, and a graphical
   `--theme` in a terminal without graphics exits with `2`.
 
+=== camel-jbang - camel generate rest --dto
+
+The DTOs of `camel generate rest --dto` use Jakarta EE (`jakarta.validation`, `jakarta.annotation`) instead of
+`javax`, and no longer use `JsonNullable` of `jackson-databind-nullable` or the Swagger annotations
+(`io.swagger.v3.oas.annotations`), so they compile in a Camel 4 project. With `--runtime=main` they no longer use
+Spring (`@DateTimeFormat`). The banner of the OpenAPI Generator is no longer printed on stdout after the REST DSL, and
+`--input` takes an `http://` or `https://` URL.
+
 === camel-jbang - camel version list
 
 * `camel version list` prints the `Last updated` note on stderr, so stdout has the table only.
