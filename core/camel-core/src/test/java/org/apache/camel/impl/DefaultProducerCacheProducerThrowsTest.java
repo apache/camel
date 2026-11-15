@@ -54,6 +54,7 @@ public class DefaultProducerCacheProducerThrowsTest extends ContextTestSupport {
     private final AtomicInteger created = new AtomicInteger();
     private final AtomicInteger sending = new AtomicInteger();
     private final AtomicInteger sent = new AtomicInteger();
+    private final AtomicInteger syncCalls = new AtomicInteger();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -221,6 +222,28 @@ public class DefaultProducerCacheProducerThrowsTest extends ContextTestSupport {
             }
             // the producer is back in the pool after each send
             assertEquals(1, created.get());
+            // and the unit of work of each send is done
+            assertEquals(0, context.getInflightRepository().size());
+        } finally {
+            cache.stop();
+        }
+    }
+
+    @Test
+    public void testTransactedSyncSendCallsTheSyncMethodOfTheProducer() {
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, 0);
+        cache.start();
+        try {
+            Exchange exchange = newExchange("ok");
+            exchange.getExchangeExtension().setTransacted(true);
+
+            Exchange out = cache.send(endpoint(), exchange, null);
+
+            // a transacted exchange is sent with process(Exchange) of the producer, not its async method
+            assertNull(out.getException());
+            assertEquals(1, syncCalls.get());
+            assertEquals("Done (sync)", out.getMessage().getBody());
+            assertEquals(0, context.getInflightRepository().size());
         } finally {
             cache.stop();
         }
@@ -332,6 +355,13 @@ public class DefaultProducerCacheProducerThrowsTest extends ContextTestSupport {
         public Producer createProducer() {
             created.incrementAndGet();
             return new DefaultAsyncProducer(this) {
+                @Override
+                public void process(Exchange exchange) {
+                    // the sync method, which only a transacted exchange reaches here
+                    syncCalls.incrementAndGet();
+                    exchange.getMessage().setBody("Done (sync)");
+                }
+
                 @Override
                 public boolean process(Exchange exchange, AsyncCallback callback) {
                     Object mode = exchange.getMessage().getHeader("mode");

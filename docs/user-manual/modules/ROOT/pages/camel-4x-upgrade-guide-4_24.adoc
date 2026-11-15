@@ -8049,10 +8049,12 @@ notification applies, when `to` sets an exchange pattern that differs from the o
 `variableReceive`), to the synchronous sends of the `ProducerTemplate`, and to a send with a send hook (as installed by
 camel-chaos), as it already did for `toD` and the asynchronous sends. When such a `to` throws before it calls the
 callback, the exchange pattern is now restored and the sent event is fired, as when the producer sets the exception on
-the exchange.
+the exchange. A plain `to` that does not need a callback of its own (no event notifier, such as camel-micrometer or a
+tracer, and no change of exchange pattern or `variableReceive`) keeps the old behaviour for such a producer.
 
 The asynchronous sends of the `ProducerTemplate` now fire one `ExchangeSendingEvent` and one `ExchangeSentEvent` per
-send; before, each event was fired twice.
+send; before, each event was fired twice. Tracing (camel-tracing, camel-telemetry), which builds its spans from these
+events, now sees one sending/sent pair per asynchronous send of the `ProducerTemplate` instead of two.
 
 === camel-core - a hook before each step of a route
 

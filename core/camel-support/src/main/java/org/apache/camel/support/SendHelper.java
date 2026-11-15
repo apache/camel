@@ -275,22 +275,35 @@ public final class SendHelper {
                 }
             }
 
+            // whether the producer of the first of two sends is running (and not the second send)
+            boolean firstOfTwo = false;
             try {
                 if (!twice) {
                     return producer.process(exchange, this);
                 }
                 again = copyForSecondSend();
+                firstOfTwo = true;
                 if (!producer.process(exchange, this::firstSendDone)) {
                     // the first send goes on asynchronously: the thread that completes it makes the second send
                     return false;
                 }
+                firstOfTwo = false;
                 // the first send completed on this thread, which makes the second send
                 return secondSend(true);
             } catch (RuntimeException e) {
                 if (!STATE.compareAndSet(this, RUNNING, COMPLETED)) {
-                    // the producer called the callback and then threw (or the first of two sends completed on another
-                    // thread, which goes on with the exchange): the send is not completed again, and the exception is
-                    // not set on the exchange. The caller, which knows that its callback was called, handles it
+                    if (firstOfTwo) {
+                        // the producer completed the first of two sends (HANDED_OFF) and then threw: the thread that
+                        // completed it makes the second send and completes the send, maybe still running, so this
+                        // thread leaves the exchange alone and tells the caller the send goes on asynchronously
+                        LOG.warn("The producer of {} threw an exception after it completed the first of two sends. This"
+                                 + " exception is ignored.",
+                                endpoint, e);
+                        return false;
+                    }
+                    // the producer called the callback and then threw: the send is not completed again, and the
+                    // exception is not set on the exchange. The caller, which knows that its callback was called,
+                    // handles it
                     throw e;
                 }
                 // the caller handles a producer that throws as it does without a hook

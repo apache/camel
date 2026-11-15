@@ -45,6 +45,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -259,6 +260,50 @@ class SendHelperTest extends ContextTestSupport {
         assertEquals(1, count(exchange, PRODUCER_COUNT));
         assertEquals(1, count(exchange, AFTER_COUNT));
         assertSame(failure, exchange.getException());
+    }
+
+    /**
+     * SEND_TWICE: the producer completes the first send asynchronously (so the thread that completed it makes the
+     * second send, which is still running) and then throws. The send goes on asynchronously and completes once, when
+     * the second send is done; the exception is not set on the exchange.
+     */
+    @Test
+    void testSendTwiceFirstSendHandedOffThenThrowGoesOnAsynchronously() {
+        Exchange exchange = newExchange(Mode.TWICE, Kind.SYNC);
+        Completion completion = new Completion();
+        AsyncCallback[] second = new AsyncCallback[1];
+        AtomicInteger calls = new AtomicInteger();
+
+        boolean sync = SendHelper.process(exchange, endpoint, new AsyncProcessorSupport() {
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                exchange.getProperty(PRODUCER_COUNT, AtomicInteger.class).incrementAndGet();
+                if (calls.incrementAndGet() == 2) {
+                    // the second send goes on asynchronously
+                    second[0] = callback;
+                    return false;
+                }
+                // the first send completes as if on another thread (which then makes the second send), and then throws
+                exchange.getMessage().setBody("Reply");
+                callback.done(false);
+                throw new IllegalStateException("Simulated producer that throws");
+            }
+        }, completion);
+
+        // the send is not completed by the throw: the second send owns it
+        assertFalse(sync);
+        assertEquals(0, completion.count.get());
+        assertNull(exchange.getException());
+        assertEquals(2, count(exchange, PRODUCER_COUNT));
+
+        exchange.getMessage().setBody("Second reply");
+        second[0].done(false);
+
+        assertEquals(1, completion.count.get());
+        assertFalse(completion.doneSync);
+        assertNull(exchange.getException());
+        assertEquals("Second reply", exchange.getMessage().getBody());
+        assertEquals(1, count(exchange, AFTER_COUNT));
     }
 
     /**

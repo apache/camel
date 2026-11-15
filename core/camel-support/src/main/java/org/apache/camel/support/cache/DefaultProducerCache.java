@@ -399,6 +399,9 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                 this.doneSync = doneSync;
                 callback.done(doneSync);
             } else {
+                // not passed on (SendProcessor.SentCallback passes it on to the route step around it, which ignores
+                // it): here the callback runs the after advices of the shared processor, such as the end of the unit
+                // of work, and completes the sync send, which must happen once
                 LOG.warn("The producer of {} completed the exchange after the send was completed (more than once, or after"
                          + " it threw). This is ignored.",
                         endpoint);
@@ -407,8 +410,9 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            // a transacted exchange is sent synchronously
-            PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext()).process(this, exchange);
+            // a transacted exchange: the sync method of the producer, as before (no callback that can be called twice);
+            // SharedCamelInternalProcessor.processTransacted sets an exception it throws on the exchange
+            producer.process(exchange);
         }
 
         @Override
