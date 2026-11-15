@@ -39,7 +39,7 @@ the original Exchange is complete. In the default `AfterConsumer` mode, Camel sp
 copy of the Exchange, so the onCompletion route does not interfere with the original route.
 
 By default, the onCompletion route runs synchronously, in the thread that completes the original Exchange,
-after it is complete (or before the consumer writes the response, in `BeforeConsumer` mode).
+after it is complete. In `BeforeConsumer` mode, it runs before the consumer writes the response.
 To run it in a separate thread, concurrently with the original thread, set `parallelProcessing`
 or `executorService` (see <<Using onCompletion with or without thread pool>>).
 

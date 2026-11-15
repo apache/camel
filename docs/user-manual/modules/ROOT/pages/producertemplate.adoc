@@ -122,10 +122,10 @@ by a thrown Exception. How do I retrieve this Exception?
 The `sendBody` and `requestBody` methods (and their variants with headers) return the body *only*.
 When processing fails, they throw a `CamelExecutionException`:
 
-* `getCause()` is the exception that failed the exchange. An EIP such as
+* `getCause()` returns the exception that caused the exchange to fail. An EIP such as
 xref:components:eips:multicast-eip.adoc[Multicast] can wrap it in another exception, so use
 `ObjectHelper.getException(MyException.class, e)` to find it in the cause chain.
-* `getExchange()` is the failed exchange.
+* `getExchange()` returns the failed exchange.
 
 ._Java-only: catching the exception thrown by requestBody_
 [source,java]

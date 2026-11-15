@@ -595,7 +595,7 @@ This means Camel has special features that apply only to Spring XML.
 
 === Using property placeholders for any kind of attribute in Spring XML files
 
-Every attribute of the XML DSL is a string, so you can use a `{{key}}` placeholder in any attribute,
+Every attribute of the XML DSL is a string, so you can use a `+{{key}}+` placeholder in any attribute,
 also for an option that is a boolean or a number.
 
 In the example below we use a placeholder for the `stopOnException` option of the
@@ -616,7 +616,7 @@ stop = true
 ----
 
 NOTE: The `prop:` placeholder namespace (`\http://camel.apache.org/schema/placeholder`) was removed in Camel 3.1
-(see xref:camel-3x-upgrade-guide-3_1.adoc#_property_placeholders[Property Placeholders]). An attribute such as `prop:stopOnException="stop"` fails the XML schema validation. Use `stopOnException="{{stop}}"` instead.
+(see xref:camel-3x-upgrade-guide-3_1.adoc#_property_placeholders[Property Placeholders]). An attribute such as `prop:stopOnException="stop"` fails the XML schema validation. Use `+stopOnException="{{stop}}"+` instead.
 
 === Bridging Camel property placeholders with Spring XML files
 
