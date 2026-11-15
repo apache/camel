@@ -41,7 +41,8 @@ ftps://[username@]hostname[:port]/directoryname[?options]
 ----
 
 Where `directoryname` represents the underlying directory. The directory
-name is a relative path. Absolute path is *not* supported. The
+name is a path relative to the directory the user logs in to, usually its home directory.
+Absolute path is *not* supported. The
 relative path can contain nested folders, such as /inbox/us.
 
 [NOTE]
