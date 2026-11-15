@@ -260,7 +260,9 @@ wait on that connection again:
 
 * When the consumer retrieves a file and the server does not answer in time, only that file fails: the consumer closes
   the connection, which it cannot use any more, and leaves the other files of the poll to the next poll, which connects
-  again.
+  again. With `streamDownload=true`, the route reads the file from the server: when that read times out, the file fails
+  in the route, and the consumer waits up to `soTimeout` for the reply that ends the transfer, then closes the
+  connection in the same way.
 * After a failed poll, the consumer closes the connection without sending `QUIT`.
 * When disconnecting, for example when the consumer or the producer stops, the client sends `QUIT` and waits at most
   2 seconds (`soTimeout` when it is shorter) for its reply.

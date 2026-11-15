@@ -324,7 +324,9 @@ whose server stopped answering:
 * When the server does not answer in time while the consumer retrieves a file (`soTimeout`, or `timeout` during the
   transfer), only that file fails: the consumer closes the connection and leaves the other files of the poll to the
   next poll, which connects again. Before, the consumer went on with the next file on the same connection, and each
-  remaining file waited `soTimeout` and failed.
+  remaining file waited `soTimeout` and failed. With `streamDownload=true`, when the server does not answer the end of
+  a transfer within `soTimeout` (for example after the route timed out reading the file), the consumer closes the
+  connection and leaves the other files of the poll to the next poll in the same way.
 
 See the xref:components::ftp-component.adoc[FTP component].
 

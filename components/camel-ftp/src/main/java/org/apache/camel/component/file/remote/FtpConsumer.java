@@ -305,15 +305,23 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             LOG.debug("Closing the connection to {} after a timeout, the rest of the batch is left to the next poll",
                     remoteServer());
             forceDisconnect();
-            // the rest of the batch is not processed
-            pendingExchanges = 0;
         }
     }
 
+    /**
+     * The batch goes on only while the connection is open. It is closed after the server did not answer in time: by
+     * {@link #handleException(String, Exchange, Throwable)} when the consumer retrieves the file, or by
+     * {@link FtpOperations#releaseRetrievedFileResources(Exchange)} at the end of a file streamed to the route
+     * (streamDownload=true). The rest of the batch is then left to the next poll, which connects again.
+     */
     @Override
     public boolean isBatchAllowed() {
-        // the connection was closed after a timeout, see handleException
-        return loggedIn && super.isBatchAllowed();
+        if (!loggedIn || !getOperations().isConnected()) {
+            // the rest of the batch is not processed
+            pendingExchanges = 0;
+            return false;
+        }
+        return super.isBatchAllowed();
     }
 
     @Override

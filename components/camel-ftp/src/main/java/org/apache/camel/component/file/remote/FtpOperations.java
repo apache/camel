@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.SocketTimeoutException;
 import java.time.Duration;
 import java.util.Iterator;
 import java.util.Objects;
@@ -496,6 +497,18 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     throw new GenericFileOperationFailedException(
                             client.getReplyCode(), client.getReplyString());
                 }
+            } catch (SocketTimeoutException e) {
+                // the server did not answer in time at the end of the streamed transfer: a reply that comes late would be
+                // read as the reply to the next command, so the connection cannot be used any more. It is closed
+                // without waiting on it, and the consumer leaves the rest of the batch to the next poll, which connects
+                // again
+                GenericFileOperationFailedException failure = new GenericFileOperationFailedException(e.getMessage(), e);
+                try {
+                    forceDisconnect();
+                } catch (GenericFileOperationFailedException fe) {
+                    failure.addSuppressed(fe);
+                }
+                throw failure;
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }

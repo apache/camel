@@ -41,7 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * When the FTP server stops answering on the connection of the consumer in the middle of a batch, only the file being
  * transferred fails: the consumer closes the connection, which cannot be used any more, and leaves the rest of the
  * batch to the next poll, which connects again. Before, every remaining file of the batch sent a command on the dead
- * connection and waited soTimeout for its reply.
+ * connection and waited soTimeout for its reply. The same holds when the file is streamed to the route
+ * (streamDownload=true).
  */
 public class FtpConsumerBatchAfterReadTimeoutTest extends CamelTestSupport {
 
@@ -90,6 +91,44 @@ public class FtpConsumerBatchAfterReadTimeoutTest extends CamelTestSupport {
         }
         assertEquals(List.of("f-03.txt"), failures.files, "the files that failed");
         // no file of the batch waited soTimeout for a reply on the connection that stopped answering
+        assertEquals(List.of(), server.commandsOnSilentConnections(), "the commands sent after the stall");
+        await().atMost(5, TimeUnit.SECONDS).until(() -> server.silentConnectionsOpen() == 0);
+    }
+
+    @ParameterizedTest
+    @EnumSource(FakeFtpServer.Stall.class)
+    void streamedReadTimeoutFailsOnlyTheFileBeingRead(FakeFtpServer.Stall stall) throws Exception {
+        for (int i = 1; i <= FILES; i++) {
+            server.addFile(String.format("/inbox/f-%02d.txt", i), ("content of file " + i).getBytes(StandardCharsets.UTF_8));
+        }
+        // with streamDownload the route reads the file from the data connection: the connection stops answering at the
+        // 3rd file, before the reply to RETR (the consumer fails to retrieve the file), or in the middle of the transfer
+        // (the route fails to read the file, then the consumer waits for the reply that ends the transfer)
+        server.stallOn(command -> command.equals("RETR inbox/f-03.txt"), stall);
+
+        Map<String, String> delivered = new ConcurrentHashMap<>();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                onException(Exception.class)
+                        .process(e -> failures.files.add(e.getMessage().getHeader(Exchange.FILE_NAME_ONLY, String.class)));
+
+                from("ftp://camel@127.0.0.1:" + server.port() + "/inbox?password=secret&passiveMode=true"
+                     + "&noop=true&sortBy=file:name&initialDelay=0&delay=100&soTimeout=1000&timeout=1000"
+                     + "&streamDownload=true&stepwise=false&exceptionHandler=#failures")
+                        .process(e -> delivered.put(e.getMessage().getHeader(Exchange.FILE_NAME, String.class),
+                                e.getMessage().getBody(String.class)));
+            }
+        });
+
+        await().atMost(30, TimeUnit.SECONDS).until(() -> delivered.size() == FILES);
+
+        for (int i = 1; i <= FILES; i++) {
+            assertEquals("content of file " + i, delivered.get(String.format("f-%02d.txt", i)));
+        }
+        // in the route or in the consumer
+        assertEquals(List.of("f-03.txt"), failures.files, "the files that failed");
+        // the next file of the batch did not wait soTimeout for a reply on the connection that stopped answering
         assertEquals(List.of(), server.commandsOnSilentConnections(), "the commands sent after the stall");
         await().atMost(5, TimeUnit.SECONDS).until(() -> server.silentConnectionsOpen() == 0);
     }
