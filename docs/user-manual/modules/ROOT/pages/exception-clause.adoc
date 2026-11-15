@@ -170,8 +170,10 @@ technique.
 
 When a route calls another route, such as with `direct`, a failure in the called route is dealt with by the error
 handler of the called route, also when it is the default error handler, and the exception clauses of the calling
-route do not run for it. See xref:error-handler.adoc#_error_handling_across_routes[Error handling across routes]
-for what the calling route sees, and how to deal with the failure there instead.
+route do not run for it. An exception that escapes a `doTry` block of the called route is different: the error
+handler of the called route does not deal with it, and the exception clauses of the calling route run for it. See
+xref:error-handler.adoc#_error_handling_across_routes[Error handling across routes] for what the calling route sees,
+and how to deal with the failure there instead.
 
 == How Does Camel Select Which Clause Should Handle a Given Thrown Exception?
 

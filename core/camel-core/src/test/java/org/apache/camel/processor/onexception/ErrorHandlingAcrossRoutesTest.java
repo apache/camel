@@ -25,6 +25,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
+import org.apache.camel.component.rest.DummyRestConsumerFactory;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.TryDefinition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,11 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * The statements of the section "Error handling across routes" of error-handler.adoc that no other test covers: the
- * onException of the calling route does not run for a failure the called route's error handler dealt with. Covered
- * elsewhere: the redeliveries of the called route (DoTryCalledRouteErrorHandlerTest), a dead letter channel in the
- * called route (MultiErrorHandlerInRouteTest, SedaInOutWithErrorDeadLetterChannelTest), a continued failure
- * (OnExceptionContinueSubRouteTest) and the redelivery of a whole called route without error handler
- * (RedeliverToSubRouteTest).
+ * onException of the calling route does not run for a failure the called route's error handler dealt with, and it does
+ * run for an exception that escapes a doTry of the called route. Covered elsewhere: the redeliveries of the called
+ * route (DoTryCalledRouteErrorHandlerTest), a dead letter channel in the called route (MultiErrorHandlerInRouteTest,
+ * SedaInOutWithErrorDeadLetterChannelTest), a continued failure (OnExceptionContinueSubRouteTest) and the redelivery of
+ * a whole called route without error handler (RedeliverToSubRouteTest).
  */
 @Timeout(20)
 class ErrorHandlingAcrossRoutesTest extends ContextTestSupport {
@@ -268,6 +271,114 @@ class ErrorHandlingAcrossRoutesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         assertInstanceOf(IOException.class, out.getException());
+    }
+
+    /**
+     * The error handler of a route is not in use for the steps of a doTry block, so an exception that escapes the doTry
+     * of the called route is not dealt with by the error handler of the called route, but by the one of the calling
+     * route: its onException runs, and its redeliveries call the sub route again.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = { "notCaught", "thrownFromDoCatch", "thrownFromDoFinally" })
+    void exceptionEscapingTheDoTryOfTheCalledRoute(String how) throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                caller(this, "direct:sub");
+                RouteDefinition sub = from("direct:sub");
+                sub.onException(Exception.class).handled(true).to("mock:subOnException");
+                TryDefinition doTry = sub.doTry().process(failing());
+                switch (how) {
+                    case "notCaught" -> doTry.doCatch(IllegalStateException.class).to("mock:catch").end();
+                    case "thrownFromDoCatch" -> doTry.doCatch(IOException.class)
+                            .throwException(new IllegalStateException("Thrown from doCatch")).end();
+                    default -> doTry.doCatch(IOException.class).to("mock:catch")
+                            .doFinally().throwException(new IllegalStateException("Thrown from doFinally")).end();
+                }
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:subOnException").expectedMessageCount(0);
+        getMockEndpoint("mock:callerOnException").expectedMessageCount(1);
+        getMockEndpoint("mock:afterCall").expectedMessageCount(0);
+
+        Exchange out = send();
+
+        assertMockEndpointsSatisfied();
+        // the first call and the 2 redeliveries of the caller, each calls the sub route again
+        assertEquals(3, attempts.get());
+        assertNull(out.getException());
+    }
+
+    /**
+     * The control of the case above: the same exception thrown after the doTry block of the called route is dealt with
+     * by the error handler of the called route.
+     */
+    @Test
+    void exceptionThrownAfterTheDoTryOfTheCalledRoute() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                caller(this, "direct:sub");
+                RouteDefinition sub = from("direct:sub");
+                sub.onException(Exception.class).handled(true).to("mock:subOnException");
+                sub.doTry().process(failing()).doCatch(IOException.class).to("mock:catch").end()
+                        .throwException(new IllegalStateException("Thrown after the doTry"));
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:subOnException").expectedMessageCount(1);
+        getMockEndpoint("mock:callerOnException").expectedMessageCount(0);
+        getMockEndpoint("mock:afterCall").expectedMessageCount(0);
+
+        Exchange out = send();
+
+        assertMockEndpointsSatisfied();
+        assertEquals(1, attempts.get());
+        assertNull(out.getException());
+    }
+
+    /**
+     * With inline routes, the direct route that a REST service calls is part of the REST route: an exception that
+     * escapes its doTry fails the exchange, as in any single route. Without inline routes, the REST route is the
+     * calling route, and its onException runs.
+     */
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void exceptionEscapingTheDoTryOfTheDirectRouteOfARestService(boolean inlineRoutes) throws Exception {
+        context.getRegistry().bind("dummy-rest", new DummyRestConsumerFactory());
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                restConfiguration().host("localhost").inlineRoutes(inlineRoutes);
+                onException(IllegalStateException.class).handled(true).to("mock:onException");
+
+                rest("/say").get("/hello").to("direct:hello");
+                from("direct:hello")
+                        .doTry()
+                            .process(failing())
+                        .doCatch(IOException.class)
+                            .throwException(new IllegalStateException("Thrown from doCatch"))
+                        .end();
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:onException").expectedMessageCount(inlineRoutes ? 0 : 1);
+
+        // the input of the REST service is a seda endpoint created by the DummyRestConsumerFactory
+        Exchange out = template.send("seda:get-say-hello", ExchangePattern.InOut, e -> e.getMessage().setBody("Hello"));
+
+        assertMockEndpointsSatisfied();
+        assertEquals(inlineRoutes ? 1 : 2, context.getRoutes().size());
+        assertEquals(1, attempts.get());
+        if (inlineRoutes) {
+            assertInstanceOf(IllegalStateException.class, out.getException());
+        } else {
+            assertNull(out.getException());
+        }
     }
 
     public class Inventory {
