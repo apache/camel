@@ -2208,7 +2208,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * The message delivery mode.
          * 
-         * The option is a: {@code MessageDeliveryMode} type.
+         * The option is a: {@code
+         * org.springframework.amqp.core.MessageDeliveryMode} type.
          * 
          * Group: common
          * 
