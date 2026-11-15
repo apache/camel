@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.wordpress.api;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.component.wordpress.api.service.WordpressService;
 import org.apache.camel.component.wordpress.api.service.WordpressServicePosts;
@@ -27,12 +27,18 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Gives access to the WordPress services (posts and users) of one WordPress site.
+ * <p>
+ * Use {@link #create(WordpressAPIConfiguration)} to get a provider of its own for a site. Each WordPress endpoint holds
+ * its own provider.
+ */
 public final class WordpressServiceProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WordpressServiceProvider.class);
 
-    private HashMap<Class<? extends WordpressService>, WordpressService> services;
-    private WordpressAPIConfiguration configuration;
+    private volatile Map<Class<? extends WordpressService>, WordpressService> services;
+    private volatile WordpressAPIConfiguration configuration;
 
     private WordpressServiceProvider() {
 
@@ -42,19 +48,53 @@ public final class WordpressServiceProvider {
         private static final WordpressServiceProvider INSTANCE = new WordpressServiceProvider();
     }
 
+    /**
+     * Creates a new provider for the WordPress site of the given configuration.
+     *
+     * @param  config the site URL, API version and authentication
+     * @return        a provider that is not shared with anyone else
+     */
+    public static WordpressServiceProvider create(WordpressAPIConfiguration config) {
+        final WordpressServiceProvider provider = new WordpressServiceProvider();
+        provider.doInit(config);
+        return provider;
+    }
+
+    /**
+     * The provider shared by the whole JVM.
+     *
+     * @deprecated the WordPress endpoints do not use this instance; use {@link #create(WordpressAPIConfiguration)}
+     */
+    @Deprecated(since = "4.24")
     public static WordpressServiceProvider getInstance() {
         return ServiceProviderHolder.INSTANCE;
     }
 
+    /**
+     * @deprecated use {@link #create(WordpressAPIConfiguration)}
+     */
+    @Deprecated(since = "4.24")
     public void init(String wordpressApiUrl) {
-        this.init(wordpressApiUrl, WordpressConstants.API_VERSION);
+        this.doInit(new WordpressAPIConfiguration(wordpressApiUrl, WordpressConstants.API_VERSION));
     }
 
+    /**
+     * @deprecated use {@link #create(WordpressAPIConfiguration)}
+     */
+    @Deprecated(since = "4.24")
     public void init(String wordpressApiUrl, String apiVersion) {
-        this.init(new WordpressAPIConfiguration(wordpressApiUrl, apiVersion));
+        this.doInit(new WordpressAPIConfiguration(wordpressApiUrl, apiVersion));
     }
 
+    /**
+     * @deprecated use {@link #create(WordpressAPIConfiguration)}
+     */
+    @Deprecated(since = "4.24")
     public void init(WordpressAPIConfiguration config) {
+        this.doInit(config);
+    }
+
+    private void doInit(WordpressAPIConfiguration config) {
         ObjectHelper.notNullOrEmpty(config.getApiUrl(),
                 "Please inform the Wordpress API url , eg.: http://myblog.com/wp-json/wp");
 
@@ -68,9 +108,7 @@ public final class WordpressServiceProvider {
         servicePosts.setWordpressAuthentication(config.getAuthentication());
         serviceUsers.setWordpressAuthentication(config.getAuthentication());
 
-        this.services = new HashMap<>();
-        this.services.put(WordpressServicePosts.class, servicePosts);
-        this.services.put(WordpressServiceUsers.class, serviceUsers);
+        this.services = Map.of(WordpressServicePosts.class, servicePosts, WordpressServiceUsers.class, serviceUsers);
         this.configuration = config;
 
         LOGGER.info("Wordpress Service Provider initialized using base URL: {}, API Version {}", config.getApiUrl(),
@@ -79,7 +117,8 @@ public final class WordpressServiceProvider {
 
     @SuppressWarnings("unchecked")
     public <T extends WordpressService> T getService(Class<T> wordpressServiceClazz) {
-        T service = (T) this.services.get(wordpressServiceClazz);
+        final Map<Class<? extends WordpressService>, WordpressService> current = this.services;
+        T service = current != null ? (T) current.get(wordpressServiceClazz) : null;
         if (service == null) {
             throw new IllegalArgumentException(String.format("Couldn't find a Wordpress Service '%s'", wordpressServiceClazz));
         }
@@ -87,10 +126,8 @@ public final class WordpressServiceProvider {
     }
 
     public boolean hasAuthentication() {
-        if (this.configuration != null) {
-            return this.configuration.getAuthentication() != null;
-        }
-        return false;
+        final WordpressAPIConfiguration current = this.configuration;
+        return current != null && current.getAuthentication() != null;
     }
 
 }
