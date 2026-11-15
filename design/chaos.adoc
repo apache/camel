@@ -276,9 +276,9 @@ camel get chaos myapp --report
 |Level |Hook |Faults
 
 |Sends to any endpoint
-|The send hook of camel-core (CAMEL-26331): one helper that the six places that fire `ExchangeSendingEvent` share
-(`SendProcessor`, `DefaultProducerCache` twice, `EventNotifierCallback`, `MulticastProcessor`,
-`EventNotifierProducer`), with a hook before and after the producer.
+|The send hook of camel-core (CAMEL-26331): one helper that the five places that fire `ExchangeSendingEvent` share
+(`SendProcessor`, `DefaultProducerCache` twice, `MulticastProcessor`, `EventNotifierProducer`), with a hook before and
+after the producer.
 |`error` (the producer is not called), `delay`, `drop` (a send that reports success), `corrupt` (the message sent).
 
 |Messages that enter a route

@@ -207,25 +207,6 @@ public interface MinaComponentBuilderFactory {
     
         
         /**
-         * If sync is enabled this option dictates MinaConsumer which logging
-         * level to use when logging a there is no reply to send back.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
-         * 
-         * Default: WARN
-         * Group: consumer (advanced)
-         * 
-         * @param noReplyLogLevel the value to set
-         * @return the dsl builder
-         */
-        default MinaComponentBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
-            doSetProperty("noReplyLogLevel", noReplyLogLevel);
-            return this;
-        }
-    
-        
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -356,6 +337,26 @@ public interface MinaComponentBuilderFactory {
          */
         default MinaComponentBuilder maximumPoolSize(int maximumPoolSize) {
             doSetProperty("maximumPoolSize", maximumPoolSize);
+            return this;
+        }
+    
+        
+        /**
+         * The logging level to use when there is nothing to send: on the
+         * consumer (if sync is enabled) when there is no reply to send back,
+         * and on the producer when the message has no body.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default MinaComponentBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
     
@@ -648,7 +649,6 @@ public interface MinaComponentBuilderFactory {
             case "bridgeErrorHandler": ((MinaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clientMode": getOrCreateConfiguration((MinaComponent) component).setClientMode((boolean) value); return true;
             case "muteException": getOrCreateConfiguration((MinaComponent) component).setMuteException((boolean) value); return true;
-            case "noReplyLogLevel": getOrCreateConfiguration((MinaComponent) component).setNoReplyLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "lazyStartProducer": ((MinaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "cachedAddress": getOrCreateConfiguration((MinaComponent) component).setCachedAddress((boolean) value); return true;
             case "lazySessionCreation": getOrCreateConfiguration((MinaComponent) component).setLazySessionCreation((boolean) value); return true;
@@ -656,6 +656,7 @@ public interface MinaComponentBuilderFactory {
             case "configuration": ((MinaComponent) component).setConfiguration((org.apache.camel.component.mina.MinaConfiguration) value); return true;
             case "disconnectOnNoReply": getOrCreateConfiguration((MinaComponent) component).setDisconnectOnNoReply((boolean) value); return true;
             case "maximumPoolSize": getOrCreateConfiguration((MinaComponent) component).setMaximumPoolSize((int) value); return true;
+            case "noReplyLogLevel": getOrCreateConfiguration((MinaComponent) component).setNoReplyLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "orderedThreadPoolExecutor": getOrCreateConfiguration((MinaComponent) component).setOrderedThreadPoolExecutor((boolean) value); return true;
             case "transferExchange": getOrCreateConfiguration((MinaComponent) component).setTransferExchange((boolean) value); return true;
             case "allowDefaultCodec": getOrCreateConfiguration((MinaComponent) component).setAllowDefaultCodec((boolean) value); return true;

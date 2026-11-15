@@ -45,6 +45,38 @@ public interface ThriftEndpointBuilderFactory {
             return (AdvancedThriftEndpointConsumerBuilder) this;
         }
         /**
+         * Socket timeout (SO_TIMEOUT) in milliseconds. On a consumer it applies
+         * to the connections accepted from clients. On a producer it is only
+         * used when negotiationType is SSL.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param clientTimeout the value to set
+         * @return the dsl builder
+         */
+        default ThriftEndpointConsumerBuilder clientTimeout(int clientTimeout) {
+            doSetProperty("clientTimeout", clientTimeout);
+            return this;
+        }
+        /**
+         * Socket timeout (SO_TIMEOUT) in milliseconds. On a consumer it applies
+         * to the connections accepted from clients. On a producer it is only
+         * used when negotiationType is SSL.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param clientTimeout the value to set
+         * @return the dsl builder
+         */
+        default ThriftEndpointConsumerBuilder clientTimeout(String clientTimeout) {
+            doSetProperty("clientTimeout", clientTimeout);
+            return this;
+        }
+        /**
          * Protocol compression mechanism type.
          * 
          * The option is a:
@@ -110,34 +142,6 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointConsumerBuilder exchangeProtocol(String exchangeProtocol) {
             doSetProperty("exchangeProtocol", exchangeProtocol);
-            return this;
-        }
-        /**
-         * Client timeout for consumers.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: consumer
-         * 
-         * @param clientTimeout the value to set
-         * @return the dsl builder
-         */
-        default ThriftEndpointConsumerBuilder clientTimeout(int clientTimeout) {
-            doSetProperty("clientTimeout", clientTimeout);
-            return this;
-        }
-        /**
-         * Client timeout for consumers.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: consumer
-         * 
-         * @param clientTimeout the value to set
-         * @return the dsl builder
-         */
-        default ThriftEndpointConsumerBuilder clientTimeout(String clientTimeout) {
-            doSetProperty("clientTimeout", clientTimeout);
             return this;
         }
         /**
@@ -471,6 +475,38 @@ public interface ThriftEndpointBuilderFactory {
         }
 
         /**
+         * Socket timeout (SO_TIMEOUT) in milliseconds. On a consumer it applies
+         * to the connections accepted from clients. On a producer it is only
+         * used when negotiationType is SSL.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param clientTimeout the value to set
+         * @return the dsl builder
+         */
+        default ThriftEndpointProducerBuilder clientTimeout(int clientTimeout) {
+            doSetProperty("clientTimeout", clientTimeout);
+            return this;
+        }
+        /**
+         * Socket timeout (SO_TIMEOUT) in milliseconds. On a consumer it applies
+         * to the connections accepted from clients. On a producer it is only
+         * used when negotiationType is SSL.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param clientTimeout the value to set
+         * @return the dsl builder
+         */
+        default ThriftEndpointProducerBuilder clientTimeout(String clientTimeout) {
+            doSetProperty("clientTimeout", clientTimeout);
+            return this;
+        }
+        /**
          * Protocol compression mechanism type.
          * 
          * The option is a:
@@ -715,6 +751,38 @@ public interface ThriftEndpointBuilderFactory {
             return (AdvancedThriftEndpointBuilder) this;
         }
 
+        /**
+         * Socket timeout (SO_TIMEOUT) in milliseconds. On a consumer it applies
+         * to the connections accepted from clients. On a producer it is only
+         * used when negotiationType is SSL.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param clientTimeout the value to set
+         * @return the dsl builder
+         */
+        default ThriftEndpointBuilder clientTimeout(int clientTimeout) {
+            doSetProperty("clientTimeout", clientTimeout);
+            return this;
+        }
+        /**
+         * Socket timeout (SO_TIMEOUT) in milliseconds. On a consumer it applies
+         * to the connections accepted from clients. On a producer it is only
+         * used when negotiationType is SSL.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param clientTimeout the value to set
+         * @return the dsl builder
+         */
+        default ThriftEndpointBuilder clientTimeout(String clientTimeout) {
+            doSetProperty("clientTimeout", clientTimeout);
+            return this;
+        }
         /**
          * Protocol compression mechanism type.
          * 

@@ -386,6 +386,13 @@ event. Without `list` the informer cannot start: the Kubernetes client logs an E
 with a delay that doubles up to 30 seconds. Creating or deleting a secret or config map still does not reload the
 context.
 
+=== camel-file - idempotent consumer with an idempotent read lock
+
+With `idempotent=true` (or `noop=true`) and `readLock=idempotent`, `idempotent-changed` or `idempotent-rename`, the
+file consumer no longer adds the key to the idempotent repository eagerly, and `idempotentEager` does not apply: the
+read lock adds it when it acquires the lock. Since Camel 4.7 the read lock was refused, and such a consumer never
+consumed a file.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
@@ -1495,6 +1502,18 @@ configuration file now fails a command with a message that names the file, the k
 command of the CLI has is still stored, with a warning. `camel config unset` of a key that is not set now exits with
 code `3` (not found) and says so, as `camel config get` does; it exited with `0`.
 
+=== camel-jbang-mcp - the runtime tools act on the integration a call names
+
+A runtime tool of the MCP server (`camel_runtime_*`) picks its integration by `nameOrPid`. A call that gave the
+integration as `name` (as `camel_run`, `camel_get_log` and `camel_control` take it) had that argument ignored, and the
+tool acted on the only integration that runs, which could be another one. Now `name`, `pid` and `integration` are taken
+for `nameOrPid` (and `nameOrPid` for the `name` of `camel_get_log`, `camel_get_errors`, `camel_control` and
+`camel_eval_expression`), and a call that names the integration with another argument the tool does not take, such as
+`process` or `app`, is refused.
+
+The argument of `camel_runtime_heap_dump` for the file name of the dump is renamed from `name` to `file`: `name` now
+names the integration, like on the other runtime tools.
+
 === camel-jbang - camel run exits with 1 when the integration fails to start
 
 When `camel run` cannot start the integration, such as for a route that cannot be created or started, it now exits
@@ -2462,6 +2481,31 @@ same value. Previously, `getFile()` preserved the backslash while `getDirectory(
 which could cause the producer to create a spurious directory with a backslash in its name and the
 consumer to miss files in a backslash-named directory. On Windows, where `java.io.File` already
 normalizes both separators to `\`, this change has no effect.
+
+=== camel-file - the consumer skips a file it would move through a symbolic link resolving outside the starting directory
+
+With `jailStartingDirectory` enabled (the default), the file consumer now resolves symbolic links on the targets of
+`preMove`, `move` and `moveFailed`, including the default `.camel` folder. It checks these targets before the file is
+processed. When a target is inside the starting directory but resolves outside of it through a link, the consumer skips
+the file. It logs a WARN the first time. The file is not processed and not moved, and it stays in the folder. Before,
+the existing target was deleted and the file was moved wherever the link pointed. A target that depends on what the
+route sets can only be checked when the file is moved. Such a move fails, and the file is consumed again on the next
+poll.
+
+The file producer now refuses to delete or rename onto a file through such a link. This covers `fileExist=Move` with
+`moveExisting`, and the rename of a file written with `tempFileName`. The write fails.
+
+The expressions of `preMove`, `move` and `moveFailed` are evaluated before the file is processed, so each of them is
+evaluated one extra time per file: for a file processed without error, `move` is now evaluated twice and `moveFailed`
+once, where before `move` was evaluated once and `moveFailed` not at all. This matters for an expression with side
+effects, such as a bean that hands out a sequence number. The default `.camel` folder has no expression to evaluate.
+
+Targets configured outside the starting directory (such as `move=../archive`) and links resolving inside it work as
+before. A deployment that links one of these folders to another directory on purpose, such as `.camel` on another
+volume, should point the option at the folder the link resolves to, such as `move=/mnt/volume2/${file:name}`, as a
+target configured outside the starting directory is not checked. Setting `jailStartingDirectory=false` also keeps
+following those links, but then the consumer also reads a file in the starting directory that is a link to a file
+outside of it, and the producer writes through such links.
 
 === camel-flatpack - with splitRows each message has its own row, and a failing row fails the producer
 
@@ -8040,6 +8084,22 @@ consumer resume from an older offset. A log that rolled over and was cut short b
 log rewrote itself after the roll-over holds fewer entries and is replayed: the last entry of a key in it can then be
 an older offset, so the consumer can process again the messages after that offset.
 
+=== camel-core - a producer that calls the callback and then throws
+
+When the producer of an endpoint calls the callback of a send and then throws (an `AsyncProducer` that breaks the
+async contract), the exception is now logged at WARN and no longer set on the exchange, which has already continued,
+and the send is completed once. This now also applies to `to` when the send needs a callback of its own (when event
+notification applies, when `to` sets an exchange pattern that differs from the one of the exchange, or with
+`variableReceive`), to the synchronous sends of the `ProducerTemplate`, and to a send with a send hook (as installed by
+camel-chaos), as it already did for `toD` and the asynchronous sends. When such a `to` throws before it calls the
+callback, the exchange pattern is now restored and the sent event is fired, as when the producer sets the exception on
+the exchange. A plain `to` that does not need a callback of its own (no event notifier, such as camel-micrometer or a
+tracer, and no change of exchange pattern or `variableReceive`) keeps the old behaviour for such a producer.
+
+The asynchronous sends of the `ProducerTemplate` now fire one `ExchangeSendingEvent` and one `ExchangeSentEvent` per
+send; before, each event was fired twice. Tracing (camel-tracing, camel-telemetry), which builds its spans from these
+events, now sees one sending/sent pair per asynchronous send of the `ProducerTemplate` instead of two.
+
 === camel-core - a hook before each step of a route
 
 A new SPI `org.apache.camel.spi.StepHook`, added with `ExtendedCamelContext.addStepHook`, can fail or delay each step of
@@ -8893,6 +8953,18 @@ file's content. The offset is now honoured in full, and an `EOFException` is thr
 If your offsets can go stale, note that by default (without `moveFailed`) the failing exchange leaves the file in place, so the next poll reads the same
 offset from the resume store and fails again. Clear or reset the recorded offset for that file - or delete the resume
 store entry - to let it be consumed from the start again.
+
+=== camel-docker - the loggingFilter and followRedirectFilter options are deprecated
+
+Neither option has had any effect since Camel 2.18, when the docker-java 3.x upgrade removed the
+`withLoggingFilter` and `withFollowRedirectsFilter` calls they fed. `DockerClientFactory` now builds the whole
+`DockerClientProfile` that the client is created from, and it sets neither of them - `DockerClientProfile` has no field
+for either - so `isLoggingFilter()` and `isFollowRedirectFilter()` are called only by the generated configurers. The
+two matching headers, `CamelDockerLoggingFilter` and `CamelDockerFollowRedirectFilter`, are read nowhere either.
+
+Both options and both header constants are now deprecated. Remove `loggingFilter` and `followRedirectFilter` from the
+endpoint URI or the component configuration; setting them has changed nothing since 2.18. To see the traffic with the
+Docker daemon, raise the log level of the `com.github.dockerjava` loggers.
 
 === camel-thymeleaf - the CamelThymeleafServletContext header is deprecated
 
