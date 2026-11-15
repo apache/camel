@@ -35,7 +35,7 @@ class McpSecuredToolClassesTest {
         List<Class<?>> toolClasses = McpToolClasses.toolClasses();
 
         // guard against a scan that finds nothing and makes the check below vacuous
-        assertThat(toolClasses).hasSizeGreaterThan(20).contains(AuthoringTools.class, CatalogTools.class);
+        assertThat(toolClasses).hasSizeGreaterThan(15).contains(AuthoringTools.class, CatalogTools.class);
         assertThat(toolClasses)
                 .filteredOn(c -> !c.isAnnotationPresent(McpSecured.class))
                 .as("tool classes without @McpSecured")

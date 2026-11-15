@@ -191,8 +191,13 @@ public class AuthoringTools {
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
             @ToolArg(description = "File path relative to the directory, e.g. src/main/resources/camel/foo.camel.yaml,"
                                    + " to read; omitted lists the files",
-                     required = false) String file) {
-        return call("camel_get_files", args("directory", directory, "file", file), null, clientRoot(roots));
+                     required = false) String file,
+            @ToolArg(description = "The first line of the file to read, from 1 (default 1). A large file comes in parts:"
+                                   + " the answer says the offset of the next part",
+                     required = false) Integer offset,
+            @ToolArg(description = "How many lines of the file to read (default 2000)", required = false) Integer limit) {
+        return call("camel_get_files", args("directory", directory, "file", file, "offset", offset, "limit", limit), null,
+                clientRoot(roots));
     }
 
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
@@ -238,8 +243,14 @@ public class AuthoringTools {
                 }
             }
         }
-        return call("camel_edit_file", args("directory", directory, "file", file, "find", find, "replace", replace,
-                "edits", editsJson(edits), "camelVersion", camelVersion), null, clientRoot(roots));
+        Map<String, String> arguments = args("directory", directory, "file", file, "find", find,
+                "edits", editsJson(edits), "camelVersion", camelVersion);
+        if (replace != null) {
+            // as it is: args() leaves out a blank value, and a replace of only whitespace (a newline, the indentation
+            // of a YAML line) then deleted the text it was to replace (CAMEL-26932)
+            arguments.put("replace", replace);
+        }
+        return call("camel_edit_file", arguments, null, clientRoot(roots));
     }
 
     /**
@@ -532,7 +543,7 @@ public class AuthoringTools {
         }
         JsonObject result = call(tool, args, catalogService, configure);
         if (repeatedCalls != null) {
-            repeatedCalls.recordSuccessfulAnswer(connection, tool, args);
+            repeatedCalls.recordSuccessfulAnswer(connection, tool, args, result);
         }
         return result;
     }

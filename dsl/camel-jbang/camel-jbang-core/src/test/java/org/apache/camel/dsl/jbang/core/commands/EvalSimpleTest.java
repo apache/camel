@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.action.EvalExpressionCommand;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
@@ -50,8 +51,8 @@ class EvalSimpleTest extends CamelCommandBaseTestSupport {
 
             var lines = printer.getLines();
             Assertions.assertNotNull(lines);
-            Assertions.assertEquals(2, lines.size());
-            Assertions.assertEquals("11", lines.get(1));
+            // only the value: the state line of the Camel it starts was printed first (CAMEL-26931)
+            Assertions.assertEquals(List.of("11"), lines);
         } catch (Exception e) {
             // ignore if camel is not installed
         }

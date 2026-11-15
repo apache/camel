@@ -373,6 +373,19 @@ assigns the scope to `admin-cli` and `security-admin-console` only. When the `ke
 pre-obtained `accessToken` must be issued with that scope too. Username and password authentication uses `admin-cli`
 and keeps working. The integration tests of camel-keycloak now run against Keycloak 26.8.2.
 
+=== camel-kubernetes - the context reload on a secret or config map update lists the resources
+
+With `camel.vault.kubernetes.refreshEnabled=true` or `camel.vault.kubernetescm.refreshEnabled=true`, the task that
+reloads the CamelContext now uses a Kubernetes informer: it lists the Secrets (or ConfigMaps) of the namespace and then
+watches them, and lists them again when the API server closes the watch (for example with 410 Gone), so an update made
+while the watch was closed still reloads the context. Before, it only watched them, and such an update was missed. When
+RBAC is enabled, the ServiceAccount now needs the `list` permission on `secrets` (or `configmaps`) in addition to
+`watch`. The `list` permission does not widen what the ServiceAccount can read: the watch the task used before had no
+resource version, so the API server already sent it every existing Secret (or ConfigMap) of the namespace as an ADDED
+event. Without `list` the informer cannot start: the Kubernetes client logs an ERROR, the task a WARN, and it tries again
+with a delay that doubles up to 30 seconds. Creating or deleting a secret or config map still does not reload the
+context.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
@@ -1178,6 +1191,13 @@ as `camel run` already did. Before, the failure left `main()` and only the JVM p
 The JVM no longer prints that same failure a second time. When the application logs nothing at ERROR (such as without
 a logging implementation), the JVM prints it as before.
 
+=== camel-support - API components use one thread pool per CamelContext
+
+The producers of the API components (AS2, Box, Braintree, DHIS2, FHIR, Google Calendar, Google Drive, Google Mail,
+Google Sheets, Twilio and Zendesk) now use one thread pool per component in each CamelContext, instead of one pool
+shared by all the CamelContexts of the JVM. An application with several CamelContexts can therefore have more threads,
+and each pool uses the thread pool profile (such as `CamelGoogleDrive`) of its own CamelContext.
+
 === camel-report-maven-plugin:validate / configuration-validate
 
 The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
@@ -1433,6 +1453,13 @@ built for Camel 4.24:
 * A test sets the options of a command with `CommandLineTestHelper.parse(command, args...)` (in the test jar of
   `camel-jbang-core`) instead of `CommandLine.populateCommand`.
 
+=== camel-jbang - camel validate exits with 66 for a missing file or nothing to validate
+
+`camel validate yaml` of a file that does not exist now exits with code `66` (file not found), as `validate source` and
+`validate properties` do; before, it reported a validation error with code `1`. `camel validate source` and
+`camel validate normalize` given no file they can handle (such as `notes.txt`) now exit with code `66`; before, they
+reported success with code `0`.
+
 === camel-jbang - plugins declare which commands they contribute to
 
 A CLI plugin can now declare which built-in commands it participates in beyond its own command, using the
@@ -1452,12 +1479,46 @@ NOTE: The annotation default (`appliesTo = {}`) is not equivalent to `appliesTo:
 An unset annotation value means no filtering (backward compatible — the plugin is loaded for `run` and `export`),
 whereas an explicit empty list in the config restricts the plugin to its own command only.
 
+=== camel-jbang - camel run of a folder without routes exits with 1
+
+`camel run .` and `camel run --source-dir=dir`, without dev mode, now end with exit code `1` and
+`No routes found in: <dir>` when the folder has no routes, as a run of files without routes does. Before, the
+integration reported Running, did nothing, and exited with `0`. In dev mode (`--dev`, `camel dev`) the run still waits
+for files to be added. The message names the `.yml` files of the folder, as the YAML DSL reads `.yaml` files only.
+
+=== camel-jbang - camel config set checks the value, and camel config unset of a key that is not set exits with 3
+
+`camel config set` checks the value against the options the key is the default of, and refuses a value one of them
+does not take, such as `runtime=springboot` or `max-seconds=abc`, with exit code `2`. Before, it stored the value, and
+then every command with that option failed with "DefaultValueProvider failed for option runtime". Such a value in the
+configuration file now fails a command with a message that names the file, the key and the value. A key that no
+command of the CLI has is still stored, with a warning. `camel config unset` of a key that is not set now exits with
+code `3` (not found) and says so, as `camel config get` does; it exited with `0`.
+
 === camel-jbang - camel run exits with 1 when the integration fails to start
 
 When `camel run` cannot start the integration, such as for a route that cannot be created or started, it now exits
 with code `1` (fix the route) instead of `70` (internal error), and prints the error as one `ERROR:` line on stderr.
 The stack trace is in the log of the integration, and is no longer printed a second time on stderr (add `--verbose`
 for it). Scripts that checked for `70` after a failed start should check for `1`.
+
+=== camel-jbang - a Camel version that does not exist exits with 3
+
+A `--camel-version` that was never released, in `camel catalog`, `camel doc` and `camel validate`, now says
+`Camel version X not found in <repositories>` and exits with code `3` (not found) instead of `1` with "Cannot
+resolve dependencies". A Maven repository that cannot be reached still exits with `1`. `camel version set` checks
+that the version exists before it stores it: a version that does not exist exits with `3` and is not stored, and when
+the repositories cannot be reached the version is stored with a warning. `camel version set` without a version,
+`--runtime`, `--repo` or `--reset` is now a usage error (exit code `2`) instead of doing nothing.
+
+=== camel-jbang - a name of a running integration matches only that integration
+
+A name given to `camel stop`, `camel get`, `camel cmd`, `camel trace` and the other commands for running integrations
+is still a prefix, but when an integration has exactly that name, the name now matches only that integration. With
+`orders` and `orders-v2` running, `camel stop orders` stops only `orders` (before, it stopped both), and
+`camel cmd send orders` sends to `orders` (before, it failed because the name matched two integrations). The same
+applies to the CamelContext name, and to the `nameOrPid` argument of the runtime tools of the MCP server. To act on
+all integrations whose names start with `orders`, use `orders*`.
 
 === camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
 
@@ -1469,6 +1530,15 @@ the failure was thrown from the `doTry`. Now such failures go to the `doCatch`, 
 A failure of the fallback itself is now also caught by the `doCatch` (before, it was thrown from the `doTry`).
 
 To have those steps use the error handler of the route, move them out of the `doTry` block.
+
+=== camel-jbang - camel cmd send without a name sends to the integration that runs
+
+`camel cmd send` without an integration name started a Camel of its own, without routes, and sent from there. That is
+still so for an endpoint of a system outside the integrations (such as `kafka:topic`). Without `--endpoint`, the
+message went nowhere and was reported as sent. An endpoint that only an integration has (`direct:`, `seda:`, `stub:`,
+a route id) waited for the timeout. Now both go to the integration that runs. With none running, or several, the
+command exits with `3` and says what to give. A send without an endpoint to an integration without routes is now
+an error, rather than reported as sent.
 
 === camel-aws2-kinesis - each endpoint uses its own client
 
@@ -1579,6 +1649,17 @@ The producer no longer reads the `CamelOaimphIgnoreSSLWarnings` header, and the 
 constant is removed. Use the `ignoreSSLWarnings` option of the endpoint instead; when only some repositories need it,
 send to them through an endpoint URI that sets the option.
 
+=== camel-jbang - camel run options win over application.properties
+
+An option given to `camel run` on the command line now wins over the same setting in `application.properties`. Before,
+the file won for most options: with `camel.main.tracing=false` in the file, `--trace` printed nothing, and with
+`camel.jbang.console=false`, `--console` had no effect. This applies to `--trace`, `--backlog-trace`, `--console`,
+`--health`, `--metrics`, `--mcp`, `--openapi-ui`, `--stub`, `--modeline`, `--ignore-loading-error`, `--lazy-bean`,
+`--prompt`, `--gav`, `--open-api`, `--verbose`, `--jfr`, `--source-dir`, `--data-dir`, `--exclude`,
+`--camel-version`, `--kamelets-version`, `--java-version`, `--background`, `--background-wait`, `--jvm-debug`, the
+Maven settings options and the logging options. An
+option that is not given still takes its value from the file.
+
 === camel-clickhouse - a query in a binary format returns a byte[] body
 
 A `query` with a binary `format` (such as `RowBinary`, `Native`, `Parquet`, `Arrow` or `Avro`) now returns the result
@@ -1589,6 +1670,13 @@ returns a `String`.
 Inserting a `List` of `Map` now fails with a `ClickHouseException` that says why, and so does a `List` of objects when no
 class is registered on the `Client` for the table. Before, both failed with a `NullPointerException` from the ClickHouse
 client.
+
+=== camel-jbang - a local camel-cli.properties no longer hides the global one
+
+When the current directory has a `camel-cli.properties`, the Camel CLI used it instead of the global
+`~/.camel-cli.properties`, so a project file with one key dropped all the global settings, such as `repos`,
+`camel-version` or `runtime`. The local file is now laid over the global one: its keys win, and the other global keys
+still apply.
 
 === camel-clickup - an event of another kind than taskTimeTrackedUpdated reaches the route
 
@@ -2155,6 +2243,15 @@ that a route sends to and no route consumes, so they report the same endpoints o
 
 So `camel validate` can report an endpoint it did not report before.
 
+=== camel-jbang - camel validate properties reports a key of a group Camel does not have
+
+`camel validate properties`, `camel validate source` and the AI file tools now report a `camel.*` key of a group
+Camel does not have when a Camel key is near it, such as `camel.tracing.enabled` (for `camel.trace.enabled`),
+`camel.profile` (for `camel.main.profile`) and `camel.kafka.brokers` (for `camel.component.kafka.brokers`), and
+`camel.logging.level` (for `logging.level.root`). Camel
+ignores such a key without a warning, so the line had no effect. A file with one, which passed before, now fails the
+check.
+
 === camel-jbang - the AI file tools stay inside the project directory, also through a symbolic link
 
 The file tools of `camel mcp`, `camel ask` and the TUI AI agents (`camel_validate_source`, `camel_get_files`,
@@ -2704,6 +2801,14 @@ stops sending no longer hangs the download for that long. Set the `aether.connec
 (in millis) for a longer timeout. A repository that cannot be connected to is now logged with a WARN and not used
 for the rest of the run.
 
+=== camel-jbang - dependencies are resolved with the breadth-first collector of Maven Resolver
+
+The Camel CLI (and other tools that download with `camel-tooling-maven`) now resolves dependencies with the
+breadth-first collector of Maven Resolver (`aether.dependencyCollector.impl=bf`), which downloads the POMs in parallel,
+instead of the depth-first one Maven uses by default. It resolves the same dependencies; a cold `camel run` with five
+components downloads them about a third faster. Set the `aether.dependencyCollector.impl=df` system property to go back.
+The dependencies given with `--dep` or `camel.jbang.dependencies` are now resolved together, as one dependency graph.
+
 === camel-pqc - KeyLifecycleManager behaviour aligned across the implementations
 
 Four differences between the `KeyLifecycleManager` implementations are resolved. All four are corrections, but each
@@ -2747,16 +2852,28 @@ A script that checks the exit code of a command must take these changes into acc
   cannot be generated and `70` for an unexpected error, instead of `4`, `2`, `3` and `4`.
 * `camel transform dataweave` exits with `2` without `--input` or `--expression`, and with `66` when the input path does
   not exist or holds no `.dwl` files, instead of `1`.
+* `camel cmd send --timeout` bounds the send in the integration: a send that does not complete in time is `Timeout`
+  with exit `124`, and the exchange goes on in the integration. Before, it only bounded how long the CLI waited, and a
+  timeout below 5 seconds was raised to 5 seconds. A send to a `direct` endpoint that no route consumes fails at once
+  with "No consumers available" and exit `1`, instead of waiting 30 seconds for a consumer.
 * `camel cmd sql` exits with `124` instead of `1` when the query does not answer in time.
 * A source file of `camel cmd route-diagram`, `camel cmd route-structure` and `camel cmd route-topology` that does not
   exist exits with `66` instead of `1`. The parts of a Java route the parser could not read are printed as a warning on
   stderr (also with `--json`, which lists them in `unread` as before).
+* `camel cmd route-structure --json` has the routes of `--filter`, in the order of `--sort`, with the code of
+  `--brief` or `--description`, as the text output: these options were ignored with `--json`. A filter that matches no
+  route exits with `3` instead of `0` with all the routes.
 * A file or directory that does not exist exits with `66` instead of `1`: a source file or `--source-dir` of
-  `camel run`, the route file of `camel explain` and `camel harden` (checked before the LLM is contacted), and the
-  `pom.xml` of `camel dependency runtime`.
+  `camel run`, the route file of `camel explain` and `camel harden` (checked before the LLM is contacted), the
+  `pom.xml` of `camel dependency runtime`, a file of `camel export`, `camel kubernetes run` and `camel dependency list`, `copy` and `sbom`
+  (whose "Path does not exist" is now on stderr), and a file of `camel transform route`, which now names it.
 * A name that does not exist exits with `3` instead of `1`: the Kamelet of `camel init --from-kamelet`, the service of
   `camel infra run`, the key of `camel config get`, the name given to `camel doc`, and the plugin of
   `camel plugin delete`.
+* `camel cmd receive --action=start --endpoint=<pattern>` exits with `3`, "No endpoint matching", when the pattern
+  matches no endpoint of the integration, instead of `0`. With `--output=json`, the line "Starting to receive messages
+  ..." is printed on stderr, so stdout has only the JSON, and `--action=status --output=json` prints JSON instead of the
+  table.
 * `camel cmd memory-leak` and `camel restart` exit with `3` when no running integration, or more than one, matches the
   name. `camel cmd memory-leak` exits with `124` when the integration does not reply in time.
 * `camel init` without a file, or with `--from-kamelet` and a file that is not a `.kamelet.yaml` file,
@@ -3267,14 +3384,33 @@ of the target version, the OpenRewrite plugin is no longer pinned to a version, 
 `quarkus-maven-plugin` at the Quarkus platform version of the new optional `quarkusPlatformVersion` argument (or the
 latest one), with `-Drewrite=true` for a full run.
 
-In `camel_dependency_check` and `camel_dependency_security_audit` the dependencies are the declared ones: a
-component only in `dependencyManagement` or in the dependencies of a plugin no longer counts, and Spring Boot starters
-and Camel Quarkus extensions count as the component they provide. The version status of `camel_dependency_check`
-compares the project with the latest Camel release, added as `latestVersion`, instead of the catalog version of the
-server. The security audit no longer audits the server's catalog version when the `pom.xml` sets no Camel version:
-it audits the `camelVersion` argument, else lists every advisory of the declared components, and says so in
-`warnings`. Its `reachable` is null when no routes are given, advisories without components are returned as
-`uncheckedAdvisories`, and `clean` is true only when none of them apply.
+In `camel_dependency_check` the dependencies are the declared ones: a component only in `dependencyManagement` or
+in the dependencies of a plugin no longer counts, and Spring Boot starters and Camel Quarkus extensions count as the
+component they provide. Its version status compares the project with the latest Camel release, added as
+`latestVersion`, instead of the catalog version of the server.
+
+=== camel-jbang-mcp - the security audit is part of camel_dependency_check, and four tools are removed
+
+The `camel_dependency_security_audit` MCP tool is removed. `camel_dependency_check` takes the same arguments and
+returns the audit in its new `security` section: the published CVE advisories of each declared artifact at the
+project's Camel version, `reachable` when routes are given, the advisories that name no component as
+`uncheckedAdvisories`, and `clean`. When the `pom.xml` sets no Camel version, the check uses the `camelVersion`
+argument, else lists every advisory of the declared components, and says so in `security.warnings`. The summary
+counts the vulnerable artifacts in `vulnerableArtifactCount` and in `totalIssueCount` when the Camel version is
+known, so a project with a known CVE is no longer reported `healthy`.
+
+These MCP tools are removed, with no replacement tool:
+
+* `camel_error_diagnose`, from both MCP servers (`camel mcp` and `camel tui --mcp`), as it was one of the authoring
+  tools they share: it matched an error against a fixed list of exceptions. `camel_get_errors` returns the failed
+  exchanges of an integration with their stack traces, and `camel_get_log` its log. The exception reference data
+  stays available as the `camel://error/exception-catalog` and `camel://error/exception/\{name}` resources of
+  `camel mcp`.
+* `camel_ai_pipeline_scaffold`: the route it returned referred to beans it did not define. Build such a route with
+  `camel_catalog_doc` and the documentation of the AI components.
+* `camel_route_cost_estimate`: its prices were written into the code and did not follow the provider prices.
+* `camel_route_test_scaffold`: it wrote a JUnit 5 test class. The Camel CLI runs Citrus tests: `camel test init`
+  creates one, and `camel test run` runs it.
 
 === camel-jbang-mcp - camel_openapi_mock_guidance is removed
 
@@ -8743,6 +8879,20 @@ if it configured the proxy.
 It is now deprecated, with a `deprecationNote` that says so, and its description no longer claims to configure a proxy.
 Remove `protocol` from the endpoint URI or the configuration. To send the client's traffic through a proxy, use
 `proxyProtocol` together with `proxyHost` and `proxyPort`, which the shared client builder does apply.
+
+=== camel-file - a resume offset past the end of the file now fails the exchange
+
+The file resume support positions the body at the offset recorded for the file. It did that with a single unchecked
+`skip(offset)`, and both `InputStream.skip` and `Reader.skip` are specified to skip *up to* the requested amount, so the
+return value is the only thing that says where the stream actually is. It was discarded.
+
+The reachable case is an offset that no longer fits the file, which is what a recorded offset becomes once the file is
+truncated or replaced: the stream ran to the end and the exchange carried an empty body as if that were the
+file's content. The offset is now honoured in full, and an `EOFException` is thrown when the file ends first.
+
+If your offsets can go stale, note that by default (without `moveFailed`) the failing exchange leaves the file in place, so the next poll reads the same
+offset from the resume store and fails again. Clear or reset the recorded offset for that file - or delete the resume
+store entry - to let it be consumed from the start again.
 
 === camel-hazelcast - the CamelHazelcastCacheType header is deprecated
 

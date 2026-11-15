@@ -136,6 +136,26 @@ class JBangRunnerTest {
     }
 
     @Test
+    void aDirectoryWithoutRoutesEndsTheRun() throws Exception {
+        // camel run . reported Running and exited with 0 for a folder without routes (CAMEL-26930)
+        Path empty = Files.createDirectories(dir.resolve("noroutes"));
+        Files.writeString(empty.resolve("routes.yml"), "- from:\n    uri: timer:x\n    steps:\n      - log: hi\n");
+        Files.writeString(empty.resolve("docker-compose.yml"), "services: {}\n");
+        RunRequest request = request();
+        request.baseDir = null;
+        request.files.clear();
+        request.files.add(empty.toString());
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+
+        assertThat(integration.waitFor()).isEqualTo(KameletMainIntegration.FAILURE);
+        // the .yml file is named, as the YAML DSL reads .yaml files only; the compose file is no route
+        assertThat(printer.getOutput()).contains("No routes found in: " + empty)
+                .contains(" (a YAML DSL file ends with .yaml, such as routes.camel.yaml, so these are not loaded: routes.yml)")
+                .doesNotContain("docker-compose.yml");
+    }
+
+    @Test
     void nothingToRunEndsTheRun() throws Exception {
         RunRequest request = request();
         request.files.clear();
@@ -242,8 +262,11 @@ class JBangRunnerTest {
         RunRequest dev = new RunRequest();
         dev.dev = true;
         assertThat(integration(main, dev).hasNoRoutes()).isFalse();
+        // a source directory without dev mode has nothing added to it later (CAMEL-26930)
         RunRequest sourceDir = new RunRequest();
         sourceDir.sourceDir = "src";
+        assertThat(integration(main, sourceDir).hasNoRoutes()).isTrue();
+        sourceDir.dev = true;
         assertThat(integration(main, sourceDir).hasNoRoutes()).isFalse();
         // or no files are wanted
         RunRequest empty = new RunRequest();

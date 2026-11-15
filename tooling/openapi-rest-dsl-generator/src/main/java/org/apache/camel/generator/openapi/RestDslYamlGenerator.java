@@ -159,13 +159,20 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         // add Routes
         if (generateRoutes) {
             for (Map.Entry<String, String> entry : toTagData.entrySet()) {
-                ObjectNode from = JsonNodeFactory.instance.objectNode();
-                from.set("uri", new StringNode(entry.getKey()));
+                ObjectNode route = JsonNodeFactory.instance.objectNode();
+                // the description is one of the route, not of its from (which has none): such a route did not validate
                 String description = entry.getValue();
                 if (description != null && !description.isBlank()) {
-                    from.set("description", new StringNode(description));
+                    route.set("description", new StringNode(description));
                 }
-                ObjectNode route = JsonNodeFactory.instance.objectNode();
+                ObjectNode from = JsonNodeFactory.instance.objectNode();
+                from.set("uri", new StringNode(entry.getKey()));
+                // a step to replace with the implementation: a route without steps fails to start
+                // ("Route ... has no output processors")
+                ArrayNode steps = JsonNodeFactory.instance.arrayNode();
+                steps.add(JsonNodeFactory.instance.objectNode()
+                        .put("log", "Not implemented yet: " + entry.getKey()));
+                from.set("steps", steps);
                 route.set("from", from);
                 ((ArrayNode) node).add(xmlMapper.createObjectNode().set("route", route));
             }

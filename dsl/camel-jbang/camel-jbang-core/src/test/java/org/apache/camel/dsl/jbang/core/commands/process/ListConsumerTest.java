@@ -17,11 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.impl.console.ConsumerDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -107,6 +110,59 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         }
     }
 
+    @Test
+    void testJsonOutputShowsType() throws Exception {
+        JsonObject root = new JsonObject();
+        root.put("context", contextObj());
+        root.put("consumers", consumerContainer(consumer()));
+        writeStatusFile(TEST_PID, root);
+
+        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        command.sort = "pid";
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            assertTrue(printer.getOutput().contains("\"type\":\"org.apache.camel.component.timer.Timer\""),
+                    "Consumer suffix should be removed from type");
+        }
+    }
+
+    @Test
+    void testConsumerOfOlderCamelVersion() throws Exception {
+        // Camel 4.22 and older say class and hostedService
+        JsonObject c = consumer();
+        c.put("class", c.remove("clazz"));
+        c.put("hostedService", c.remove("hosted"));
+        JsonObject root = new JsonObject();
+        root.put("context", contextObj());
+        root.put("consumers", consumerContainer(c));
+        writeStatusFile(TEST_PID, root);
+
+        ListConsumer command = new ListConsumer(new CamelJBangMain().withPrinter(printer));
+        command.sort = "pid";
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            assertTrue(printer.getOutput().contains("\"type\":\"org.apache.camel.component.timer.Timer\""));
+        }
+    }
+
     private static JsonObject contextObj() {
         JsonObject ctx = new JsonObject();
         ctx.put("name", "myApp");
@@ -121,19 +177,13 @@ class ListConsumerTest extends ProcessCommandTestSupport {
         return container;
     }
 
+    // built from the record of the consumer console, so a renamed key breaks this test
     private static JsonObject consumer() {
-        JsonObject c = new JsonObject();
-        c.put("id", "route1");
-        c.put("uri", "timer:tick");
-        c.put("state", "Started");
-        c.put("class", "org.apache.camel.component.timer.TimerConsumer");
-        c.put("inflight", 0);
-        c.put("polling", false);
-        c.put("scheduled", false);
-        c.put("hostedService", false);
-        c.put("totalCounter", 0L);
-        c.put("delay", 0L);
-        c.put("period", 1000L);
-        return c;
+        ConsumerDevConsole.ConsumerEntry entry = new ConsumerDevConsole.ConsumerEntry(
+                "route1", "timer:tick", "Started", "org.apache.camel.component.timer.TimerConsumer", false, false, 0, true,
+                null, null, null, null, null, null, null, null, null, null, "OFF", 0L, null, null, null, null, null, null,
+                null, null, null, "tick", false, 1000L, null);
+        JsonObject response = JsonRecordSupport.toJsonObject(new ConsumerDevConsole.Response(List.of(entry)));
+        return (JsonObject) ((JsonArray) response.get("consumers")).get(0);
     }
 }

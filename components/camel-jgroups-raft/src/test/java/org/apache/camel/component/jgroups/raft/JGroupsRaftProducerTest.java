@@ -64,15 +64,19 @@ public class JGroupsRaftProducerTest extends JGroupsRaftAbstractTest {
 
         assertNotNull(res.getIn().getBody());
         checkHeaders(res);
+        checkLeaderAddressHeader(res);
         assertNotNull(res2.getIn().getBody());
         checkHeaders(res2);
+        checkLeaderAddressHeader(res2);
         assertNotNull(res3.getIn().getBody());
         checkHeaders(res3);
+        checkLeaderAddressHeader(res3);
 
         // a text body is converted to bytes
         Exchange resText = template.request("direct:start", exchange -> exchange.getIn().setBody(MESSAGE));
         assertNull(resText.getException());
         assertInstanceOf(byte[].class, resText.getIn().getBody());
         checkHeaders(resText);
+        checkLeaderAddressHeader(resText);
     }
 }

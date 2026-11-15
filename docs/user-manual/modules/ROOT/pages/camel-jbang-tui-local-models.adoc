@@ -27,8 +27,8 @@ camel tui
 On a Mac with Apple Silicon and Ollama 0.40 or later, pull the MLX build `qwen3.6:35b-mlx` instead: the same model,
 with faster prompt processing and answers on the M chips.
 
-Then press *F8*. How to install Ollama, which models work well (at least 14B, with tool calling; a
-mixture-of-experts model such as `qwen3.6:35b-a3b` is the fastest) and how the context window is chosen
+Then press *F8*. How to install Ollama, which models work well (the ones measured on Camel tasks; the
+mixture-of-experts model `qwen3.6:35b-a3b` is the fastest) and how the context window is chosen
 are described in xref:camel-jbang-ai-providers.adoc#_ollama[AI Providers and Local Models], shared with
 `camel ask` and the other AI commands.
 
@@ -146,9 +146,11 @@ measured prompt; the panel title shows the fill as `ctx 34%`.
 
 *Choosing the model.* With no `camel.tui.ai.model` set the panel takes `llama3.2` when it is installed,
 otherwise the first installed model; run `/model <name>` in the panel or set *AI Model* in
-*F2 -> Settings* to pin one. The model must support tool calling and should have at least 14B
-parameters; a mixture-of-experts model such as `qwen3.6:35b-a3b` prefills several times faster than a
-dense model of similar quality, which is what matters for a tool-heavy prompt. *F2 -> Run Doctor* shows
+*F2 -> Settings* to pin one. The model must support tool calling; small models do not call the tools
+reliably, so pick one of the models measured on Camel tasks, listed in
+xref:camel-jbang-ai-providers.adoc#_model_requirements[Model requirements]. The mixture-of-experts model
+`qwen3.6:35b-a3b` prefills several times faster than a dense model of similar quality, which is what
+matters for a tool-heavy prompt. *F2 -> Run Doctor* shows
 whether Ollama was found, which models are installed and whether they are large enough.
 
 *Where to look.* The <<_ollama_tab,Ollama tab>> is the instrument for all of the above: tokens per second live and

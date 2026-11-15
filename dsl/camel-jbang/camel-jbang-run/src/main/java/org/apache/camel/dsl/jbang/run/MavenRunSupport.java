@@ -195,6 +195,19 @@ final class MavenRunSupport {
         return args;
     }
 
+    /**
+     * The sanitizer of a run with Spring Boot ({@code camel run --sanitizer}) as a JVM argument:
+     * {@code camel.sanitizer.enabled=true}, as Spring Boot has no Camel profile {@code dev} to switch it on. It stays
+     * off with profile {@code prod}. It is an argument of the run only, so the exported project does not have it
+     * switched on.
+     */
+    static List<String> projectSanitizerJvmArgs(RunRequest request) {
+        if (request.sanitizer && !"prod".equalsIgnoreCase(request.profile)) {
+            return List.of("-Dcamel.sanitizer.enabled=true");
+        }
+        return List.of();
+    }
+
     private static String quoteValue(String arg) {
         int eq = arg.indexOf('=');
         return arg.substring(0, eq + 1) + "\"" + arg.substring(eq + 1) + "\"";
@@ -202,8 +215,8 @@ final class MavenRunSupport {
 
     /**
      * The JVM arguments the exported Quarkus or Spring Boot project is run with ({@code jvm.args} and
-     * {@code spring-boot.run.jvmArguments}): {@code --jvm-args}, the flight recording, the execution limits and chaos.
-     * Returns null when there are none.
+     * {@code spring-boot.run.jvmArguments}): {@code --jvm-args}, the flight recording, the execution limits, chaos and
+     * the sanitizer. Returns null when there are none.
      */
     static String exportedRunJvmArgs(RunRequest request, Printer printer) {
         String args = mergeJvmArgs(request.jvmArgs, jfrJvmArgs(request, printer));
@@ -214,6 +227,10 @@ final class MavenRunSupport {
         List<String> chaos = projectChaosJvmArgs(request);
         if (!chaos.isEmpty()) {
             args = mergeJvmArgs(args, String.join(" ", chaos));
+        }
+        List<String> sanitizer = projectSanitizerJvmArgs(request);
+        if (!sanitizer.isEmpty()) {
+            args = mergeJvmArgs(args, String.join(" ", sanitizer));
         }
         return args != null && !args.isBlank() ? args.trim() : null;
     }
@@ -389,6 +406,10 @@ final class MavenRunSupport {
             // once the Camel Quarkus BOM has it (apache/camel-quarkus#9459), else plain camel-chaos
             eq.dependencies.add("camel:chaos");
         }
+        if (request.sanitizer) {
+            // plain camel-sanitizer with Spring Boot (there is no starter); Quarkus refuses --sanitizer for now (see Run)
+            eq.dependencies.add("camel:sanitizer");
+        }
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";
@@ -492,6 +513,7 @@ final class MavenRunSupport {
             args.add(request.jvmArgs.trim());
         }
         args.addAll(projectChaosJvmArgs(request));
+        args.addAll(projectSanitizerJvmArgs(request));
         return args;
     }
 

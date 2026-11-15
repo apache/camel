@@ -4123,9 +4123,9 @@ public interface FileEndpointBuilderFactory {
             return "CamelFileLastModified";
         }
         /**
-         * The local work path.
+         * Path to the local work file, if local work directory is used.
          * 
-         * The option is a: {@code File} type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 

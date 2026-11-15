@@ -1231,8 +1231,8 @@ class AiPanel {
                 runAgentLoop(systemPrompt, question);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                conversation.add(new ConversationEntry(AiRole.ERROR, e.getMessage()));
+            } catch (Exception | Error e) {
+                reportTurnError("Error", AiTurnFailure.describe(e));
             } finally {
                 if (agentThread == Thread.currentThread()) {
                     thinking.set(false);
@@ -1243,6 +1243,12 @@ class AiPanel {
         }, "tui-ai-agent");
         agentThread.setDaemon(true);
         agentThread.start();
+    }
+
+    /** Shows what ended a turn in the panel and writes it to the AI log. */
+    private void reportTurnError(String logLabel, String message) {
+        conversation.add(new ConversationEntry(AiRole.ERROR, message));
+        log(LogLevel.ERROR, logLabel, message);
     }
 
     /**
@@ -1291,8 +1297,7 @@ class AiPanel {
             turnAiMs += callLatency;
             if (response == null) {
                 String err = "No response from LLM";
-                conversation.add(new ConversationEntry(AiRole.ERROR, err));
-                log(LogLevel.ERROR, "Error", err);
+                reportTurnError("Error", err);
                 return;
             }
             turnRequests++;
@@ -1308,13 +1313,12 @@ class AiPanel {
                         ? "LLM request failed. Check API key and endpoint."
                         : "LLM request failed: " + detail
                           + "\nCheck the endpoint and model (/model lists what the provider offers).";
-                conversation.add(new ConversationEntry(AiRole.ERROR, err));
-                log(LogLevel.ERROR, "Error", err);
+                reportTurnError("Error", err);
                 return;
             }
 
             if (response.toolCalls() != null && !response.toolCalls().isEmpty()) {
-                messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), response.toolCalls()));
+                messages.add(LlmClient.Message.assistant(response));
 
                 List<LlmClient.ToolResult> results = new ArrayList<>();
                 for (LlmClient.ToolCall toolCall : response.toolCalls()) {
@@ -1414,8 +1418,7 @@ class AiPanel {
         sb.append("\nSee F2 -> AI Log for the full results, then rephrase with more detail (for example the exact ");
         sb.append("endpoint URI or topic) or /retry.");
         sessionTotalTokens += totalUsage.totalTokens();
-        conversation.add(new ConversationEntry(AiRole.ERROR, sb.toString()));
-        log(LogLevel.ERROR, "Error", sb.toString());
+        reportTurnError("Error", sb.toString());
         // keep the history consistent: the turn ends without an answer, so the next question starts fresh from here
         messages.add(LlmClient.Message.assistantWithToolCalls(
                 "(no answer: the iteration limit was reached while calling tools)", List.of()));
@@ -1434,18 +1437,23 @@ class AiPanel {
         if (text != null && !text.isBlank()) {
             long elapsed = MonotonicClock.millis() - thinkingStartTime;
             String note = problems.isEmpty() ? null : answerNote(problems);
+            // the code of the answer is checked too: what does not exist is marked under its block, and the model is
+            // told of it, and of a simple expression left invalid, with the next question (CAMEL-26960)
+            List<AnswerChecks.Mark> marks = AnswerChecks.checkCode(text);
+            String told = AnswerChecks.historyNote(marks, problems);
+            pendingNote = told == null ? pendingNote : pendingNote == null ? told : pendingNote + "\n" + told;
+            String shown = AnswerChecks.withMarks(text, marks);
             ConversationEntry entry = new ConversationEntry(
-                    AiRole.ASSISTANT, text, elapsed, turnAiMs, turnToolMs, turnToolCalls,
+                    AiRole.ASSISTANT, shown, elapsed, turnAiMs, turnToolMs, turnToolCalls,
                     totalUsage.totalTokens(), turnRequests, wrapUp, contextFillPercent(), corrections, note);
             conversation.add(entry);
             usage.addTurn(turnAiMs, turnToolMs, turnToolCalls);
             String label = wrapUp ? "Response after reaching the tool call limit (" : "Response (";
             log(LogLevel.RESPONSE, label + entry.byline() + describeCacheSignal(totalUsage) + ")",
-                    note == null ? text : text + "\n\n" + note);
+                    note == null ? shown : shown + "\n\n" + note);
         } else {
             String err = "Empty response from LLM.";
-            conversation.add(new ConversationEntry(AiRole.ERROR, err));
-            log(LogLevel.ERROR, "Error", err);
+            reportTurnError("Error", err);
         }
         messages.add(LlmClient.Message.assistantWithToolCalls(text, List.of()));
         compactHistoryAfterTurn();
@@ -1647,7 +1655,7 @@ class AiPanel {
         agentThread = new Thread(() -> {
             try {
                 runAcpTurn(wireQuestion);
-            } catch (IOException | RuntimeException e) {
+            } catch (IOException | RuntimeException | Error e) {
                 reportAcpTurnFailure(e);
             } finally {
                 if (agentThread == Thread.currentThread()) {
@@ -1665,14 +1673,12 @@ class AiPanel {
      * gone anyway, so a JSON-RPC error from a healthy agent does not cost the user the conversation context. An
      * interrupted turn is already reported as "(cancelled)" by {@link #interruptBusyOperation()}.
      */
-    private void reportAcpTurnFailure(Exception e) {
+    private void reportAcpTurnFailure(Throwable e) {
         AcpAgentClient.AcpException acp = e instanceof AcpAgentClient.AcpException a ? a : null;
         if (acp != null && acp.code() == AcpAgentClient.INTERRUPTED) {
             return;
         }
-        String message = e.getMessage() != null ? e.getMessage() : e.toString();
-        conversation.add(new ConversationEntry(AiRole.ERROR, message));
-        log(LogLevel.ERROR, "ACP error", message);
+        reportTurnError("ACP error", AiTurnFailure.describe(e));
         AcpAgentClient agent = acpSession.client();
         boolean dead = agent == null || !agent.isAlive()
                 || (acp != null && (acp.code() == AcpAgentClient.CONNECTION || acp.code() == AcpAgentClient.TIMEOUT));
@@ -2370,77 +2376,36 @@ class AiPanel {
     }
 
     private String buildAiSetupGuide() {
+        // short: the documentation online is the one place with the full setup and the models that work well
         return """
                 ## AI Assistant — Getting Started
 
                 No LLM provider was detected. Choose one of the options below, then press **F8** to reopen this panel.
 
-                > **Tool calling is required.** This panel inspects your Camel process by
-                > invoking built-in tools. Models smaller than ~14B do not reliably call
-                > tools and will answer from training knowledge instead — use at least 14B.
-                > Prefer a mixture-of-experts model such as qwen3.6:35b-a3b: it processes
-                > the tool-heavy prompt many times faster than a dense 27B/32B model.
+                ### Option A: a local model with Ollama (no API key)
 
-                ---
-
-                ### Option A: Local — Ollama (no API key needed)
-
-                Run models entirely on your machine — no data leaves your host.
+                Install Ollama natively (`brew install ollama` on macOS, `curl -fsSL https://ollama.com/install.sh | sh`
+                on Linux), then pull a model:
 
                 ```
-                # macOS
-                brew install ollama
-
-                # Linux
-                curl -fsSL https://ollama.com/install.sh | sh
-
-                # then on both:
-                ollama serve             # start the daemon (skip if auto-started)
-                ollama pull qwen3.6:35b-a3b  # recommended
+                ollama pull qwen3.6:35b-mlx  # on a Mac with Apple Silicon (Ollama 0.40 or later)
+                ollama pull qwen3.6:35b-a3b  # on other machines
                 ```
 
-                Ollama is auto-detected at `localhost:11434` — no configuration needed.
+                It needs 32 GB of memory or more: smaller models do not call the tools reliably.
 
-                **Models that work well** (tool-calling capable, ≥14B):
+                ### Option B: a coding agent you already use
 
-                | Model | RAM | Notes |
-                |---|---|---|
-                | qwen3.6:35b-a3b | ~23 GB | Recommended: only 3B active per token, fastest prompt processing |
-                | qwen2.5:14b | ~9 GB | Minimum for 16 GB machines |
-                | qwen3.6:27b | ~18 GB | Strong dense model, several times slower prompt processing |
-                | qwen2.5:32b | ~20 GB | Good quality, slow prompt processing |
-                | hermes3:70b  | ~43 GB | Excellent tool calling, needs 64 GB+ |
-                | llama3.3:70b | ~43 GB | Best open model, needs 64 GB+ |
+                Press **Ctrl+P** and pick an `acp:` provider: Claude Code, Codex, opencode, IBM Bob, Qwen Code or
+                DeepSeek Harness. The agent keeps its own login and model.
 
-                **Tip:** Install Ollama natively — `camel infra run ollama` uses Docker and
-                loses GPU acceleration (Metal on macOS, CUDA on Linux), making inference
-                much slower. Native install is always preferred for development use.
+                ### Option C: an API key
 
-                ---
+                Set `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY` or the key of another provider before you
+                start the TUI, or press **Ctrl+P** to pick a provider now.
 
-                ### Option B: Cloud provider (API key required)
-
-                Set one environment variable before starting the TUI:
-
-                | Variable | Provider |
-                |---|---|
-                | `ANTHROPIC_API_KEY` | Claude |
-                | `OPENAI_API_KEY` | OpenAI (GPT-4o etc.) |
-                | `GEMINI_API_KEY` | Gemini |
-                | `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` | Azure OpenAI |
-                | `WATSONX_APIKEY` | IBM watsonx.ai |
-
-                For any **OpenAI-compatible** server (LM Studio, vLLM, llama.cpp, GPT4All, …):
-
-                ```
-                export LLM_API_KEY=any-value
-                export LLM_BASE_URL=http://localhost:1234
-                ```
-
-                `OPENAI_BASE_URL` is also supported as an alternative to `LLM_BASE_URL`.
-
-                Or press **Ctrl+P** to select and configure a provider now.
-                """;
+                The full guide, with every provider and the models that work well:
+                """ + "<" + DocViewerPopup.AI_PROVIDERS_DOCS_URL + ">\n";
     }
 
     /**
