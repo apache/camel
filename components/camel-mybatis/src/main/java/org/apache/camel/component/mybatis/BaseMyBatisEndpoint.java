@@ -30,7 +30,7 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
     private ExecutorType executorType;
     @UriParam(label = "producer")
     private String inputHeader;
-    @UriParam(label = "common")
+    @UriParam
     private String outputHeader;
 
     protected BaseMyBatisEndpoint() {
@@ -100,7 +100,8 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
      * result is stored in the message body, any existing content in the message body is discarded. If outputHeader is
      * set, the value is used as the name of the header to store the query result and the original message body is
      * preserved. Setting outputHeader will also omit populating the default CamelMyBatisResult header since it would be
-     * the same as outputHeader all the time.
+     * the same as outputHeader all the time. On a polling consumer, each polled row is stored in this header instead of
+     * the message body.
      */
     public void setOutputHeader(String outputHeader) {
         this.outputHeader = outputHeader;
