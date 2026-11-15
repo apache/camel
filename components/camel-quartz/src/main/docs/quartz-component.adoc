@@ -59,9 +59,12 @@ Each endpoint represents a different timer (in Quartz terms, a `Trigger` and ``J
 By default, the Camel Quartz component loads the `quartz.properties` file
 from the `org/quartz` directory of the classpath, which is the default file in the Quartz JAR.
 Unlike Quartz itself, it does not read a `quartz.properties` file at the root of the classpath,
-or the file set by the `org.quartz.properties` system property, and it logs a WARN when it finds one.
+or the file set by the `org.quartz.properties` system property. It logs a WARN when this system property is set,
+or else when it finds a `quartz.properties` file at the root of the classpath.
 To use such a file, set the `propertiesFile` option, for example to `classpath:quartz.properties`
 or `file:/etc/myapp/quartz.properties`.
+To keep the default file without the WARN, for example when the application keeps a `quartz.properties` file
+at the root of the classpath for a Quartz scheduler of its own, set `propertiesFile` to `classpath:org/quartz/quartz.properties`.
 
 However, the Camel xref:quartz-component.adoc[Quartz] component also allows you
 to configure properties:

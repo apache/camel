@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestExecutionConfiguration;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -50,6 +51,8 @@ class QuartzIgnoredPropertiesFileWarningTest extends CamelTestSupport {
 
     // the thread count of org/quartz/quartz.properties in the Quartz JAR
     private static final int DEFAULT_THREAD_COUNT = 10;
+    // the propertiesFile value the WARN names to keep the default file without the WARN
+    private static final String KEEP_DEFAULT = "classpath:org/quartz/quartz.properties";
 
     private final List<String> warnings = new CopyOnWriteArrayList<>();
     private final AbstractAppender appender
@@ -68,9 +71,9 @@ class QuartzIgnoredPropertiesFileWarningTest extends CamelTestSupport {
     private URLClassLoader classLoader;
 
     @Override
-    public boolean isUseRouteBuilder() {
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
         // each test configures the component before it starts the context
-        return false;
+        testExecutionConfiguration.withUseRouteBuilder(false);
     }
 
     @BeforeEach
@@ -89,7 +92,7 @@ class QuartzIgnoredPropertiesFileWarningTest extends CamelTestSupport {
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
+    protected void cleanupResources() throws Exception {
         if (classLoader != null) {
             classLoader.close();
         }
@@ -103,6 +106,7 @@ class QuartzIgnoredPropertiesFileWarningTest extends CamelTestSupport {
 
         assertEquals(DEFAULT_THREAD_COUNT, threadPoolSize(quartz));
         assertEquals(1, warningsContaining("propertiesFile=classpath:quartz.properties"), warnings::toString);
+        assertEquals(1, warningsContaining("propertiesFile=" + KEEP_DEFAULT), warnings::toString);
     }
 
     @Test
@@ -114,6 +118,7 @@ class QuartzIgnoredPropertiesFileWarningTest extends CamelTestSupport {
 
         assertEquals(DEFAULT_THREAD_COUNT, threadPoolSize(quartz));
         assertEquals(1, warningsContaining(file.toString()), warnings::toString);
+        assertEquals(1, warningsContaining("propertiesFile=" + KEEP_DEFAULT), warnings::toString);
     }
 
     @Test
@@ -123,6 +128,18 @@ class QuartzIgnoredPropertiesFileWarningTest extends CamelTestSupport {
         QuartzComponent quartz = startQuartz("classpath:quartz.properties");
 
         assertEquals(3, threadPoolSize(quartz));
+        assertEquals(0, warningsContaining("quartz.properties"), warnings::toString);
+    }
+
+    @Test
+    void keepsDefaultWithoutWarningWithPropertiesFileOfQuartzJar() throws Exception {
+        addQuartzPropertiesToClasspathRoot();
+        Path file = writeQuartzProperties(dir.resolve("my-quartz.properties"));
+        System.setProperty(StdSchedulerFactory.PROPERTIES_FILE, file.toString());
+
+        QuartzComponent quartz = startQuartz(KEEP_DEFAULT);
+
+        assertEquals(DEFAULT_THREAD_COUNT, threadPoolSize(quartz));
         assertEquals(0, warningsContaining("quartz.properties"), warnings::toString);
     }
 
