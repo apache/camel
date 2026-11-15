@@ -7764,6 +7764,15 @@ options no longer apply to it. An `outputClass` that does not resolve fails with
 names the class, and a message without a body fails with an `InvalidPayloadException`. The `transacted` option is
 deprecated, as it is not used.
 
+=== camel-jdbc, camel-spring-jdbc - outputType=StreamList commits when the exchange is done
+
+With `outputType=StreamList` and `resetAutoCommit=true` (the default), the producer now commits the transaction of the
+statement when the exchange completes, and rolls it back when the exchange fails, instead of committing right after
+the statement is executed, before the route has read the rows. A driver may close the result set at commit: with
+PostgreSQL and `statement.fetchSize`, reading the rows after the first batch failed with
+`ERROR: portal "C_1" does not exist`. A statement with side effects that returns rows (such as an `INSERT` or `DELETE`
+with `RETURNING`) is now rolled back when the exchange fails.
+
 === camel-jsch - scp without a known hosts file
 
 With `useUserKnownHostsFile=false` and no `knownHostsFile`, scp no longer fails with a `NullPointerException`: no host
