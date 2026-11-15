@@ -3370,7 +3370,7 @@ file), the command asks there whether to overwrite the file.
 The DTOs of `camel generate rest --dto` use Jakarta EE (`jakarta.validation`, `jakarta.annotation`) instead of
 `javax`, and no longer use `JsonNullable` of `jackson-databind-nullable` or the Swagger annotations
 (`io.swagger.v3.oas.annotations`), so they compile in a Camel 4 project. With `--runtime=main` they no longer use
-Spring (`@DateTimeFormat`). The banner of the OpenAPI Generator is no longer printed on stdout after the REST DSL, and
+Spring (`@DateTimeFormat`). The OpenAPI Generator no longer prints its banner on stdout after the REST DSL, and
 `--input` takes an `http://` or `https://` URL.
 
 === camel-jbang - camel version list
