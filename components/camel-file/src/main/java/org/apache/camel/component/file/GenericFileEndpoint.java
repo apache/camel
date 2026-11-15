@@ -977,7 +977,18 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     public boolean isIdempotentEager() {
+        // an idempotent read lock adds the key to the same idempotent repository when it acquires the lock, so the
+        // consumer only checks the repository: adding the key eagerly would make the read lock refuse every file
+        if (isIdempotentReadLock()) {
+            return false;
+        }
         return idempotentEager != null ? idempotentEager : false;
+    }
+
+    private boolean isIdempotentReadLock() {
+        return exclusiveReadLockStrategy == null
+                && ("idempotent".equals(readLock) || "idempotent-changed".equals(readLock)
+                        || "idempotent-rename".equals(readLock));
     }
 
     public String getCharset() {

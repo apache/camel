@@ -386,6 +386,13 @@ event. Without `list` the informer cannot start: the Kubernetes client logs an E
 with a delay that doubles up to 30 seconds. Creating or deleting a secret or config map still does not reload the
 context.
 
+=== camel-file - idempotent consumer with an idempotent read lock
+
+With `idempotent=true` (or `noop=true`) and `readLock=idempotent`, `idempotent-changed` or `idempotent-rename`, the
+file consumer no longer adds the key to the idempotent repository eagerly, and `idempotentEager` does not apply: the
+read lock adds it when it acquires the lock. Since Camel 4.7 the read lock was refused, and such a consumer never
+consumed a file.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
