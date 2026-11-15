@@ -56,7 +56,7 @@ class SourceSizeTest {
 
     /** The files and the methods (class.method) over the limits, and the most lines each may have. */
     private static final String OVER_THE_LIMITS = """
-            AiPanel.java 3197
+            AiPanel.java 3093
             AiPanel.runAgentLoop 156
             AiUsageStats.render 166
             CamelMonitor.java 2632

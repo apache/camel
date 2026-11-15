@@ -1052,7 +1052,8 @@ public class MulticastProcessor extends BaseProcessorSupport
                 // no error handler has seen it yet, so it is not exhausted (as when aggregate throws)
                 exhaust = false;
             } else if (cause != completionFailure) {
-                cause.addSuppressed(completionFailure);
+                // (or logged, when the cause is the exception instance of a throwException step)
+                ThrowExceptionProcessor.addSuppressed(original, cause, completionFailure);
             }
             exception = true;
         }

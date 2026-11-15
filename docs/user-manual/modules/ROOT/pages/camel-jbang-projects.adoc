@@ -233,7 +233,8 @@ Defaults to CycloneDX format (`sbom.json`) with `camel-main` runtime.
 
 === Copying dependency JARs
 
-Copy required JARs to a folder (defaults to `lib/`):
+Copy required JARs to a folder (defaults to `lib/`). The dependencies are resolved together, as one dependency graph,
+so the folder has one version of each library:
 
 [source,bash]
 ----
@@ -281,7 +282,10 @@ camel plugin delete <plugin-name>
 `camel plugin add` checks that a plugin it does not know (neither a plugin of the Apache Camel project nor a known
 community plugin) can be loaded before it stores it: a name such as `kubernets` exits with code `3` and the plugins of a
 similar name. Give `--gav` for a plugin of your own. A stored plugin that cannot be loaded no longer fails `camel run`
-and `camel export`: they warn and go on without it.
+and `camel export`: they warn and go on without it. This includes a plugin built for another Camel version, whose
+classes (or only those of its exporter or run customizer) do not link with this Camel CLI: the warning says so, and the
+plugin's own command fails with the same reason. Run `camel plugin add <plugin-name>` to select a release built for
+this Camel version, or remove the plugin with `camel plugin delete <plugin-name>`.
 
 === Custom plugin configuration
 
@@ -426,9 +430,11 @@ Generate JSON Schema definitions from Java objects for use with visual developme
 
 [source,bash]
 ----
-camel generate schema fhir org.hl7.fhir.r4.model.Patient
-Schema saved to: ./org.hl7.fhir.r4.model.Patient-schema.json
+camel generate schema fhir org.hl7.fhir.r4.model.Patient > patient-schema.json
 ----
+
+The schema is printed on stdout; `--output=patient-schema.json` writes it to a file instead. `--verbose` tells on
+stderr what the command does (the dependencies it downloads, the class it loads), so stdout stays the schema.
 
 == Version management
 
