@@ -35,12 +35,13 @@ headers, or send to a log to log the response message, etc.
 === onCompletion with route scope
 
 The OnCompletion EIP allows you to add custom routes/processors when
-the original Exchange is complete. Camel spins off a
-copy of the Exchange and routes it in a separate
-thread, similar to a Wire Tap. This allows the
-original thread to continue while the onCompletion route is running
-concurrently. We chose this model as we did not want the
-onCompletion route to interfere with the original route.
+the original Exchange is complete. In the default `AfterConsumer` mode, Camel spins off a
+copy of the Exchange, so the onCompletion route does not interfere with the original route.
+
+By default, the onCompletion route runs synchronously, in the thread that completes the original Exchange,
+after it is complete (or before the consumer writes the response, in `BeforeConsumer` mode).
+To run it in a separate thread, concurrently with the original thread, set `parallelProcessing`
+or `executorService` (see <<Using onCompletion with or without thread pool>>).
 
 === Multiple onCompletions
 
