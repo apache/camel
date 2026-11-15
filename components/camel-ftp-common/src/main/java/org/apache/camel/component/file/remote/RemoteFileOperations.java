@@ -52,11 +52,13 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
 
     /**
      * Disconnects from the remote server when the producer stops.
-     * <p/>
-     * Another thread can still run an operation at that time, such as the upload of an exchange that a forced shutdown
-     * gave up waiting for, which hangs as long as the server does not answer. Unlike {@link #disconnect()}, this method
-     * should not wait for such an operation without bound: it disconnects anyway, so that the operation fails.
-     * <p/>
+     * <p>
+     * Another thread can still run an operation at that time. As long as the shutdown of Camel is not forced, such as
+     * when a producer cache evicts the producer, this method should wait for it, as {@link #disconnect()} does: it can
+     * be a healthy but slow upload. Once the shutdown is forced, the operation is one that the shutdown gave up waiting
+     * for, such as an upload that hangs as long as the server does not answer: unlike {@link #disconnect()}, this
+     * method should then not wait for it without bound, but disconnect anyway, so that the operation fails.
+     * <p>
      * The default implementation disconnects as {@link #disconnect()} does, when connected.
      *
      * @throws GenericFileOperationFailedException can be thrown
