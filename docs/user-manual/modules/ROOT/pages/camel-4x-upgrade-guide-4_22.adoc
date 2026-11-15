@@ -132,6 +132,15 @@ target configured outside the starting directory is not checked. Setting `jailSt
 following those links, but then the consumer also reads a file in the starting directory that is a link to a file
 outside of it, and the producer writes through such links.
 
+=== camel-wordpress - each endpoint uses its own site URL and credentials
+
+Each WordPress endpoint now has a client of its own, set up from the `url`, `apiVersion`, `user` and `password`
+options of that endpoint, and the producers and consumers of the endpoint use that client. The endpoints no longer
+initialise the `WordpressServiceProvider.getInstance()` singleton, which is deprecated together with its `init`
+methods. Code that read services from `WordpressServiceProvider.getInstance()` after Camel created a WordPress endpoint
+must now use `WordpressEndpoint.getServiceProvider()`, or create a provider with
+`WordpressServiceProvider.create(WordpressAPIConfiguration)`.
+
 === camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
 
 A `hazelcast-seda` consumer now restores the headers and exchange properties of an exchange that a producer with
