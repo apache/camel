@@ -323,7 +323,9 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     }
 
     /**
-     * Creates the injector that provides the instance the non-static converter methods of the given type are invoked on
+     * Creates the injector that provides the instance the non-static converter methods of the given type are invoked
+     * on. By default, the injector creates the instance lazily, the first time one of these methods is invoked.
+     * Override to supply an instance that already exists (see {@link TypeConvertersLoader}).
      */
     protected CachingInjector<?> createInjector(TypeConverterRegistry registry, Class<?> type) {
         return new CachingInjector<>(registry, CastUtils.cast(type, Object.class));

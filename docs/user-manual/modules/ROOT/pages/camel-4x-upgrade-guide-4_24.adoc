@@ -405,8 +405,9 @@ discovered when running from a JAR; list that package explicitly if it should be
 `TypeConverterRegistry.addTypeConverters(Object)`, also used for the `TypeConverters` beans found in the registry, now
 invokes the non-static `@Converter` methods on the given object, and sets the `CamelContext` on it when it is
 `CamelContextAware`. Before, they ran on a new instance created by the injector: the state of the given object was
-ignored, and a class without a no-arg constructor failed at conversion time. Passing a `Class` still creates the
-instance with the injector.
+ignored, and a class without a no-arg constructor failed at conversion time. The given object is used as is: unlike
+the instance created by the injector, it is not bean post-processed (`@PropertyInject`, `@BeanInject`, ...), so set its
+fields before adding it. Passing a `Class` still creates the instance with the injector.
 
 === camel-core - Model has a new getModelLock method
 
