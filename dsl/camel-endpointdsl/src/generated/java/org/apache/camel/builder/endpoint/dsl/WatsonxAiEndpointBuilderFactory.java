@@ -918,7 +918,8 @@ public interface WatsonxAiEndpointBuilderFactory {
         /**
          * The operation to perform.
          * 
-         * The option is a: {@code WatsonxAiOperations} type.
+         * The option is a: {@code
+         * org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations} type.
          * 
          * Group: producer
          * 
