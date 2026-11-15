@@ -573,13 +573,22 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
     }
 
     public ResultSetIterator queryForStreamList(Connection connection, Statement statement, ResultSet rs) throws SQLException {
+        return queryForStreamList(connection, null, statement, rs);
+    }
+
+    /**
+     * @param dataSource the data source the connection was obtained from, so the iterator releases the connection
+     *                   without closing the connection of a transaction
+     */
+    public ResultSetIterator queryForStreamList(Connection connection, DataSource dataSource, Statement statement, ResultSet rs)
+            throws SQLException {
         if (outputClass == null) {
             RowMapper<?> rowMapper = rowMapperFactory.newColumnRowMapper();
-            return new ResultSetIterator(connection, statement, rs, rowMapper);
+            return new ResultSetIterator(connection, dataSource, statement, rs, rowMapper);
         } else {
             Class<?> outputClazz = getCamelContext().getClassResolver().resolveClass(outputClass);
             RowMapper<?> rowMapper = rowMapperFactory.newBeanRowMapper(outputClazz);
-            return new ResultSetIterator(connection, statement, rs, rowMapper);
+            return new ResultSetIterator(connection, dataSource, statement, rs, rowMapper);
         }
     }
 
