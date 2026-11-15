@@ -17,9 +17,11 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -57,7 +59,7 @@ public class RouteDiagramTools {
     public RouteDiagramResult camel_render_route_diagram(
             @ToolArg(description = "Absolute or relative path to the Camel route source file (YAML, XML, Java, ...)") String sourceFile,
             @ToolArg(description = "Optional output file path. For image themes a PNG is written; for text themes a .txt "
-                                   + "file is written. If not specified, a temporary file is created.",
+                                   + "file is written. If not specified, a PNG goes to a temporary file, and a text diagram is only returned.",
                      required = false) String outputFile,
             @ToolArg(description = "Color theme: 'light' (default), 'dark', 'transparent', 'ascii' (plain ASCII art), "
                                    + "'unicode' (box-drawing characters), or a custom spec like "
@@ -89,6 +91,8 @@ public class RouteDiagramTools {
         boolean textMode = theme != null && TEXT_THEMES.contains(theme.toLowerCase());
 
         String resolvedOutput;
+        // a text diagram is returned as text: a file of its own only when the caller asks for one
+        boolean tempText = textMode && (outputFile == null || outputFile.isBlank());
         try {
             if (outputFile == null || outputFile.isBlank()) {
                 String suffix = textMode ? ".txt" : ".png";
@@ -127,32 +131,53 @@ public class RouteDiagramTools {
             if (textMode) {
                 String asciiContent = success ? Files.readString(out.toPath()) : null;
                 String message = success
-                        ? withNotes("ASCII diagram generated (" + size + " bytes)", capturingPrinter)
+                        ? withNotes("ASCII diagram generated (" + size + " bytes)", capturingPrinter, resolvedOutput)
                         : "Failed to render diagram (exit code " + exit + "): " + capturingPrinter.getOutput();
+                if (tempText) {
+                    // the diagram is in the answer: no file is left behind for each call (CAMEL-26932)
+                    Files.deleteIfExists(out.toPath());
+                    return new RouteDiagramResult(success, null, size, message, asciiContent);
+                }
                 return new RouteDiagramResult(success, resolvedOutput, size, message, asciiContent);
             }
 
             String message = success
-                    ? withNotes("Diagram saved to: " + resolvedOutput, capturingPrinter)
+                    ? withNotes("Diagram saved to: " + resolvedOutput, capturingPrinter, resolvedOutput)
                     : "Failed to render diagram (exit code " + exit + "): " + capturingPrinter.getOutput();
             return new RouteDiagramResult(success, resolvedOutput, size, message, null);
         } catch (CliException e) {
             // an expected failure, such as a source file without routes, or a filter that matches no route
+            deleteTempText(tempText, resolvedOutput);
             return new RouteDiagramResult(
                     false, resolvedOutput, 0L,
                     "Failed to render diagram (exit code " + e.getExitCode() + "): " + e.getMessage(), null);
         } catch (Throwable e) {
+            deleteTempText(tempText, resolvedOutput);
             throw new ToolCallException(
                     "Failed to render route diagram (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 
     /**
-     * The message, followed by what the command printed, such as the parts of a Java route the parser could not read.
+     * The message, followed by what the command printed, such as the parts of a Java route the parser could not read,
+     * without the line that says where the diagram is saved, which the message already says (or which is a file of the
+     * tool's own).
      */
-    private static String withNotes(String message, CapturingPrinter printer) {
-        String notes = printer.getOutput();
+    private static String withNotes(String message, CapturingPrinter printer, String output) {
+        String saved = "Diagram saved to: " + output;
+        String notes = printer.getOutput().lines().filter(line -> !line.strip().equals(saved))
+                .collect(Collectors.joining("\n")).strip();
         return notes.isEmpty() ? message : message + "\n" + notes;
+    }
+
+    private static void deleteTempText(boolean tempText, String file) {
+        if (tempText && file != null) {
+            try {
+                Files.deleteIfExists(Path.of(file));
+            } catch (IOException e) {
+                // a file in the temporary directory
+            }
+        }
     }
 
     /**
