@@ -242,7 +242,7 @@ The Rest DSL consumers of the servlet component use the endpoint options set wit
 `mapHttpMessageBody`.
 A custom `httpBinding` set with `endpointProperty("httpBinding", "#myBinding")` is used as it is. A custom `httpBinding`
 set on the component is used only when it extends `org.apache.camel.component.servlet.ServletRestHttpBinding`, which
-maps the path placeholders such as `{id}` to headers.
+maps the path placeholders such as `+{id}+` to headers.
 
 === Servlet asynchronous support
 

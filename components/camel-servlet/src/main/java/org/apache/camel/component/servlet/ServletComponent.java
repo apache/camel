@@ -325,6 +325,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             binding.setTransferException(endpoint.isTransferException());
             binding.setMuteException(endpoint.isMuteException());
             binding.setLogException(endpoint.isLogException());
+            // allowJavaSerializedObject is not copied on purpose: Rest DSL consumers deserialize an
+            // application/x-java-serialized-object request only with transferException=true, where this filter applies
             binding.setDeserializationFilter(getDeserializationFilter());
             binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
             binding.setMapHttpMessageBody(endpoint.isMapHttpMessageBody());
