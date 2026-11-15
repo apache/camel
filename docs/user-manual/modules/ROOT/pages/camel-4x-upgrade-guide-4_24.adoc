@@ -8981,7 +8981,7 @@ so. `jakartaServletWebApplication` is not a URI option; set it on the endpoint:
 
 [source,java]
 ----
-ThymeleafEndpoint endpoint = context.getEndpoint("thymeleaf:greeting.html", ThymeleafEndpoint.class);
+ThymeleafEndpoint endpoint = context.getEndpoint("thymeleaf:greeting.html?resolver=WEB_APP", ThymeleafEndpoint.class);
 endpoint.setJakartaServletWebApplication(
         JakartaServletWebApplication.buildApplication(servletContext));
 ----
