@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -129,6 +130,61 @@ class AskLoopTest extends CamelCommandBaseTestSupport {
 
         assertThat(printer.getStdout()).isEqualTo("The routes are fine");
         assertThat(printer.getStderr()).contains("10 input / 5 output / 15 total tokens");
+    }
+
+    @Test
+    void aQuestionOfAChatThatFailsLeavesNoTraceInTheHistory() throws Exception {
+        // CAMEL-26932: the failed turn stayed in the history, and was sent again with every later question
+        server.reply("/api/chat", 500, "{\"error\":\"model runner has crashed\"}")
+                .thenReply("/api/chat", 200, answer("Two routes"));
+        Ask command = command();
+        command.askTools = new AskTools(-1);
+        List<LlmClient.Message> history = new ArrayList<>();
+
+        assertThat(command.runAgentLoop(client(), "system", List.of(), history, "first question")).isEqualTo(1);
+        assertThat(history).isEmpty();
+
+        assertThat(command.runAgentLoop(client(), "system", List.of(), history, "second question")).as(printer.getStderr())
+                .isZero();
+        JsonArray messages = (JsonArray) server.lastRequest().get("messages");
+        assertThat(messages.stream().map(m -> ((JsonObject) m).getString("content")))
+                .containsExactly("system", "second question");
+    }
+
+    @Test
+    void theToolResultsOfAChatStayBounded() throws Exception {
+        // CAMEL-26932: every tool result of the chat stayed in the history in full, until it was larger than the
+        // context window of the model
+        server.reply("/api/chat", 200, toolCall("big"), answer("one"), toolCall("big"), answer("two"),
+                toolCall("big"), answer("three"));
+        Ask command = command();
+        String big = "x".repeat(ChatHistory.MAX_TOOL_RESULT_CHARS * 2);
+        command.askTools = new AskTools(-1) {
+            @Override
+            public String executeTool(String name, JsonObject args) {
+                return big;
+            }
+        };
+        List<LlmClient.Message> history = new ArrayList<>();
+
+        for (String question : List.of("first", "second", "third")) {
+            assertThat(command.runAgentLoop(client(), "system", List.of(), history, question)).as(printer.getStderr()).isZero();
+        }
+
+        List<Integer> results = history.stream().filter(m -> m.toolResults() != null)
+                .map(m -> m.toolResults().get(0).content().length()).toList();
+        assertThat(results).hasSize(3);
+        // the result of the first question is shrunk, the one of the previous question is kept, all are cut
+        assertThat(results.get(0)).isLessThan(ChatHistory.COMPACT_TOOL_RESULT_CHARS + 100);
+        assertThat(results.subList(1, 3)).allMatch(length -> length > ChatHistory.MAX_TOOL_RESULT_CHARS
+                && length < ChatHistory.MAX_TOOL_RESULT_CHARS + 200);
+    }
+
+    private LlmClient client() {
+        LlmClient client = LlmClient.create().withUrl(server.url()).withApiType(LlmClient.ApiType.ollama)
+                .withExplicitModel("test").withStream(true).withTimeout(30).withPrinter(printer);
+        assertThat(client.detectEndpoint()).isTrue();
+        return client;
     }
 
     private Ask command(String... args) {

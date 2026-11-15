@@ -29,6 +29,11 @@ camel ask
 This opens a `ask>` prompt where you can have a multi-turn conversation,
 with the AI maintaining context across questions.
 
+The history of the chat is sent with every question, so it is kept bounded, as in the AI panel of the TUI: a tool
+result is cut at 18,000 characters, once a question is answered the tool results of the questions before the previous
+one are shrunk to their start, and the chat keeps the last 20 questions. A question that fails (the model cannot be
+reached, or gives no answer within `--max-iterations`) leaves no trace in the history, so you can ask again.
+
 === What the AI can do
 
 The agent has access to tools that let it:

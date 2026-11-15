@@ -129,7 +129,7 @@ public class Ask extends CamelCommand {
     private String pendingNote;
 
     private long targetPid;
-    private AskTools askTools;
+    AskTools askTools;
     // the chat's reader, or one made on the terminal for the first call to confirm
     private LineReader confirmReader;
 
@@ -241,7 +241,31 @@ public class Ask extends CamelCommand {
         return 0;
     }
 
-    private int runAgentLoop(
+    /**
+     * Answers a question, with the history of the chat so far. The history stays bounded, as it is sent with every
+     * request: tool results are cut, and after an answer the older ones are shrunk and the oldest turns dropped (as in
+     * the AI panel of the TUI). A question that fails leaves no trace in the history: else the next request repeats the
+     * failed turn, and once the history is larger than the context window of the model every later question fails
+     * (CAMEL-26932).
+     */
+    int runAgentLoop(
+            LlmClient client, String systemPrompt,
+            List<LlmClient.ToolDef> tools, List<LlmClient.Message> messages,
+            String userQuestion) {
+        int start = messages.size();
+        String note = pendingNote;
+        int answer = askWithHistory(client, systemPrompt, tools, messages, userQuestion);
+        if (answer == 0) {
+            ChatHistory.compact(messages, ChatHistory.MAX_HISTORY_TURNS, ChatHistory.COMPACT_TOOL_RESULT_CHARS);
+        } else {
+            messages.subList(start, messages.size()).clear();
+            // the mistakes of the answer before are told with the next question
+            pendingNote = note;
+        }
+        return answer;
+    }
+
+    private int askWithHistory(
             LlmClient client, String systemPrompt,
             List<LlmClient.ToolDef> tools, List<LlmClient.Message> messages,
             String userQuestion) {
@@ -275,7 +299,7 @@ public class Ask extends CamelCommand {
                     if (showTools) {
                         printer().printDiagnostic("[result] " + truncate(result, 200));
                     }
-                    results.add(new LlmClient.ToolResult(toolCall.id(), result));
+                    results.add(new LlmClient.ToolResult(toolCall.id(), ChatHistory.truncateToolResult(result)));
                 }
                 messages.add(LlmClient.Message.toolResults(results));
             } else {
