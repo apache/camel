@@ -3463,7 +3463,8 @@ public interface BlobEndpointBuilderFactory {
          * (uploadBlockBlob, commitBlobBlockList, createAppendBlob,
          * createPageBlob) Additional parameters for a set of operations.
          * 
-         * The option is a: {@code BlobHttpHeaders} type.
+         * The option is a: {@code
+         * com.azure.storage.blob.models.BlobHttpHeaders} type.
          * 
          * Group: producer
          * 
@@ -3487,7 +3488,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Creation time of the blob.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -3499,7 +3500,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Datetime when the blob was last modified.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -3764,7 +3765,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Datetime when the last copy operation on the blob completed.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -3831,7 +3832,8 @@ public interface BlobEndpointBuilderFactory {
          * (producer) (uploadBlockBlob, commitBlobBlockList) Defines values for
          * AccessTier. (consumer) Access tier of the blob.
          * 
-         * The option is a: {@code AccessTier} type.
+         * The option is a: {@code com.azure.storage.blob.models.AccessTier}
+         * type.
          * 
          * Group: common
          * 
@@ -3857,7 +3859,8 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Archive status of the blob.
          * 
-         * The option is a: {@code ArchiveStatus} type.
+         * The option is a: {@code com.azure.storage.blob.models.ArchiveStatus}
+         * type.
          * 
          * Group: consumer
          * 
@@ -3869,7 +3872,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Datetime when the access tier of the blob last changed.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -3922,7 +3925,7 @@ public interface BlobEndpointBuilderFactory {
         /**
          * Returns non-parsed httpHeaders that can be used by the user.
          * 
-         * The option is a: {@code HttpHeaders} type.
+         * The option is a: {@code com.azure.core.http.HttpHeaders} type.
          * 
          * Group: consumer
          * 
@@ -3960,7 +3963,8 @@ public interface BlobEndpointBuilderFactory {
          * (listBlobs) Defines options available to configure the behavior of a
          * call to listBlobsFlatSegment on a BlobContainerClient object.
          * 
-         * The option is a: {@code ListBlobsOptions} type.
+         * The option is a: {@code
+         * com.azure.storage.blob.models.ListBlobsOptions} type.
          * 
          * Group: producer
          * 
@@ -3973,7 +3977,8 @@ public interface BlobEndpointBuilderFactory {
         /**
          * (listBlobs) The details for listing specific blobs.
          * 
-         * The option is a: {@code BlobListDetails} type.
+         * The option is a: {@code
+         * com.azure.storage.blob.models.BlobListDetails} type.
          * 
          * Group: producer
          * 
@@ -4031,7 +4036,7 @@ public interface BlobEndpointBuilderFactory {
          * (All) An optional timeout value beyond which a RuntimeException will
          * be raised.
          * 
-         * The option is a: {@code Duration} type.
+         * The option is a: {@code java.time.Duration} type.
          * 
          * Group: producer
          * 
@@ -4044,7 +4049,8 @@ public interface BlobEndpointBuilderFactory {
          * (createContainer) Specifies how the data in this container is
          * available to the public. Pass null for no public access.
          * 
-         * The option is a: {@code PublicAccessType} type.
+         * The option is a: {@code
+         * com.azure.storage.blob.models.PublicAccessType} type.
          * 
          * Group: producer
          * 
@@ -4059,7 +4065,8 @@ public interface BlobEndpointBuilderFactory {
          * will restrict the successful operation of a variety of requests to
          * the conditions present. These conditions are entirely optional.
          * 
-         * The option is a: {@code BlobRequestConditions} type.
+         * The option is a: {@code
+         * com.azure.storage.blob.models.BlobRequestConditions} type.
          * 
          * Group: producer
          * 
@@ -4116,7 +4123,8 @@ public interface BlobEndpointBuilderFactory {
          * be a modulus of 512 and the end offset must be a modulus of 512 - 1.
          * Examples of valid byte ranges are 0-511, 512-1023, etc.
          * 
-         * The option is a: {@code PageRange} type.
+         * The option is a: {@code com.azure.storage.blob.models.PageRange}
+         * type.
          * 
          * Group: producer
          * 
@@ -4215,7 +4223,8 @@ public interface BlobEndpointBuilderFactory {
          * (listBlobContainers) A ListBlobContainersOptions which specifies what
          * data should be returned by the service.
          * 
-         * The option is a: {@code ListBlobContainersOptions} type.
+         * The option is a: {@code
+         * com.azure.storage.blob.models.ListBlobContainersOptions} type.
          * 
          * Group: producer
          * 
@@ -4230,7 +4239,8 @@ public interface BlobEndpointBuilderFactory {
          * to use to download to file or upload from file. Number of parallel
          * transfers parameter is ignored for downloads.
          * 
-         * The option is a: {@code ParallelTransferOptions} type.
+         * The option is a: {@code
+         * com.azure.storage.blob.models.ParallelTransferOptions} type.
          * 
          * Group: producer
          * 
@@ -4348,7 +4358,7 @@ public interface BlobEndpointBuilderFactory {
          * missing; to ensure all events from the hour are returned, round the
          * start time down by an hour.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: producer
          * 
@@ -4365,7 +4375,7 @@ public interface BlobEndpointBuilderFactory {
          * missing; to ensure all events from the hour are returned, round the
          * end time up by an hour.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: producer
          * 
@@ -4379,7 +4389,7 @@ public interface BlobEndpointBuilderFactory {
          * (getChangeFeed) This gives additional context that is passed through
          * the Http pipeline during the service call.
          * 
-         * The option is a: {@code Context} type.
+         * The option is a: {@code com.azure.core.util.Context} type.
          * 
          * Group: producer
          * 
