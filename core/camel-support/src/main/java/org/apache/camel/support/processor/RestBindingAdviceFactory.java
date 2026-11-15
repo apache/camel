@@ -17,12 +17,16 @@
 package org.apache.camel.support.processor;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestClientRequestValidator;
 import org.apache.camel.spi.RestClientResponseValidator;
 import org.apache.camel.spi.RestConfiguration;
@@ -30,6 +34,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.PropertyConfigurerHelper;
 import org.apache.camel.support.ResolverHelper;
 
 /**
@@ -40,6 +45,11 @@ public class RestBindingAdviceFactory {
     // matched by name: camel-support cannot depend on camel-jackson3, and JSON has no binding factory SPI
     private static final String JACKSON3_PACKAGE = "org.apache.camel.component.jackson3.";
     private static final String FAIL_ON_UNKNOWN_PROPERTIES = "FAIL_ON_UNKNOWN_PROPERTIES";
+    // options not taken from the data format configured on the context: a mapper may be the one it created when it
+    // started, and the request and response data formats keep mappers of their own; the request body type is not chosen
+    // by a header
+    private static final Set<String> NOT_INHERITED_OPTIONS
+            = Set.of("objectmapper", "xmlmapper", "allowunmarshalltype", "allowjmstype");
 
     /**
      * Builds the {@link RestBindingAdvice} from the given configuration
@@ -72,13 +82,13 @@ public class RestBindingAdviceFactory {
             // this will create a new instance as the name was not already pre-created
             if (optional) {
                 try {
-                    json = camelContext.createDataFormat(name);
+                    json = createDataFormat(camelContext, name);
                 } catch (IllegalArgumentException e) {
                     // ignore
                 }
             } else {
-                json = camelContext.createDataFormat(name);
-                outJson = camelContext.createDataFormat(name);
+                json = createDataFormat(camelContext, name);
+                outJson = createDataFormat(camelContext, name);
             }
 
             if (json != null) {
@@ -105,8 +115,8 @@ public class RestBindingAdviceFactory {
                 name = "jaxb";
             }
             // this will create a new instance as the name was not already pre-created
-            xml = camelContext.createDataFormat(name);
-            outXml = camelContext.createDataFormat(name);
+            xml = createDataFormat(camelContext, name);
+            outXml = createDataFormat(camelContext, name);
 
             // is xml binding required?
             if (mode.contains("xml") && xml == null) {
@@ -147,6 +157,40 @@ public class RestBindingAdviceFactory {
                 bc.getRequiredHeaders(), bc.getResponseCodes(), bc.getResponseHeaders(), requestValidator, responseValidator);
         advice.setResponseCodeHeaders(bc.getResponseCodeHeaders());
         return advice;
+    }
+
+    /**
+     * Creates a new data format, with the options of the data format of the same name that is configured on the context
+     * (such as with camel.dataformat.jackson.* in Camel Main), as data formats in routes do. The rest configuration's
+     * data format properties are applied afterwards, so they take precedence.
+     */
+    private static DataFormat createDataFormat(CamelContext camelContext, String name) {
+        DataFormat answer = camelContext.createDataFormat(name);
+        if (answer != null && camelContext.getDataFormatNames().contains(name)) {
+            DataFormat configured = camelContext.resolveDataFormat(name);
+            if (configured != null && configured.getClass() == answer.getClass()) {
+                copyOptions(camelContext, name, configured, answer);
+            }
+        }
+        return answer;
+    }
+
+    private static void copyOptions(CamelContext camelContext, String name, DataFormat source, DataFormat target) {
+        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
+                .resolvePropertyConfigurer(name + "-dataformat", camelContext);
+        if (configurer == null) {
+            configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, source);
+        }
+        if (configurer instanceof ExtendedPropertyConfigurerGetter getter) {
+            for (String option : getter.getAllOptions(source).keySet()) {
+                if (!NOT_INHERITED_OPTIONS.contains(option.toLowerCase(Locale.ROOT))) {
+                    Object value = getter.getOptionValue(source, option, true);
+                    if (value != null) {
+                        configurer.configure(camelContext, target, option, value, true);
+                    }
+                }
+            }
+        }
     }
 
     protected static void setupJson(

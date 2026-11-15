@@ -82,6 +82,11 @@ The `value` in `dataFormatProperty` must be defined as a string value, so we use
 ----
 ====
 
+The binding creates data formats of its own. They start from the options of the data format of the same name that is
+configured on the CamelContext, such as with `camel.dataformat.jackson.include=NON_NULL` in Camel Main, except the
+`objectMapper`, `xmlMapper`, `allowUnmarshallType` and `allowJmsType` options. The `dataFormatProperty` options are
+applied after them, so they take precedence.
+
 To use binding you must include the necessary data formats on the
 classpath, such as `camel-jaxb` / `camel-jacksonxml` (or `camel-jackson3xml`) and/or `camel-jackson` (or `camel-jackson3`). And then enable
 the binding mode. You can configure the binding mode globally on the

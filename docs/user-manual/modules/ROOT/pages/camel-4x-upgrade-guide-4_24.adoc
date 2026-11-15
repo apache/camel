@@ -1191,6 +1191,15 @@ as `camel run` already did. Before, the failure left `main()` and only the JVM p
 The JVM no longer prints that same failure a second time. When the application logs nothing at ERROR (such as without
 a logging implementation), the JVM prints it as before.
 
+=== camel-main - the camel.dataformat options apply to the Rest DSL binding
+
+With Camel Main and Camel JBang, the `camel.dataformat.<name>.*` options (such as `camel.dataformat.jackson.include`)
+now also apply to the data formats that the Rest DSL binding creates for `json` and `xml` binding, as they already did
+to the data formats of the routes. The request and response bodies of a REST service can therefore change, for
+instance null fields are left out. The `camel.rest.dataFormatProperties` (`json.in.`, `json.out.`, `xml.in.` and
+`xml.out.`) still take precedence. The `objectMapper`, `xmlMapper`, `allowUnmarshallType` and `allowJmsType` options
+are not taken over: set them with `camel.rest.dataFormatProperties` when the binding needs them.
+
 === camel-support - API components use one thread pool per CamelContext
 
 The producers of the API components (AS2, Box, Braintree, DHIS2, FHIR, Google Calendar, Google Drive, Google Mail,
