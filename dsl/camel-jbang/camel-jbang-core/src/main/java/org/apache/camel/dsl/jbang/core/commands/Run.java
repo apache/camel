@@ -68,6 +68,7 @@ import org.apache.camel.dsl.jbang.run.RunProfileProperties;
 import org.apache.camel.dsl.jbang.run.RunRequest;
 import org.apache.camel.dsl.jbang.run.RunSettings;
 import org.apache.camel.dsl.jbang.run.RunningIntegration;
+import org.apache.camel.dsl.jbang.run.common.ChildProcess;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
@@ -1311,10 +1312,8 @@ public class Run extends CamelCommand implements CommandLifecycle {
             return runBackgroundProcess(pb, "Camel Main");
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
-            Process p = pb.start();
-            this.spawnPid = p.pid();
             // wait for that process to exit as we run in foreground
-            return p.waitFor();
+            return waitForChild(pb.start());
         }
     }
 
@@ -1337,10 +1336,8 @@ public class Run extends CamelCommand implements CommandLifecycle {
             return runBackgroundProcess(pb, "Camel Main");
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
-            Process p = pb.start();
-            this.spawnPid = p.pid();
             // wait for that process to exit as we run in foreground
-            return p.waitFor();
+            return waitForChild(pb.start());
         }
     }
 
@@ -1664,11 +1661,34 @@ public class Run extends CamelCommand implements CommandLifecycle {
             return runBackgroundProcess(pb, "Camel Main");
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
-            Process p = pb.start();
-            this.spawnPid = p.pid();
             // wait for that process to exit as we run in foreground
-            return p.waitFor();
+            return waitForChild(pb.start());
         }
+    }
+
+    /**
+     * Waits for the JVM this run started in the foreground, and stops it when this JVM is stopped, such as by a kill of
+     * its pid (SIGTERM). Ctrl+C reaches both, but a kill reaches this JVM only, and the child went on running without
+     * its parent (CAMEL-26930).
+     */
+    private int waitForChild(Process process) throws InterruptedException {
+        this.spawnPid = process.pid();
+        Thread hook = childStopHook(process);
+        Runtime.getRuntime().addShutdownHook(hook);
+        try {
+            return process.waitFor();
+        } finally {
+            try {
+                Runtime.getRuntime().removeShutdownHook(hook);
+            } catch (IllegalStateException e) {
+                // shutting down already
+            }
+        }
+    }
+
+    /** The shutdown hook that stops the JVM this run started: gracefully, then forcibly after a while. */
+    static Thread childStopHook(Process process) {
+        return new Thread(() -> ChildProcess.stop(process, ChildProcess.STOP_SECONDS), "CamelChildProcessStop");
     }
 
     /**
