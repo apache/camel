@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.BaseDelegateProcessorSupport;
+import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.saga.CamelSagaCoordinator;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
@@ -114,10 +115,10 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
                     final Exception cause = exchange.getException();
                     coordinator.compensate(exchange).whenComplete((done, ex) -> {
                         if (ex != null) {
-                            // keep the exception that caused the compensation, and attach the compensation failure to it.
-                            // This adds to the exception instance thrown by the route: if a route throws a shared
-                            // instance, its suppressed exceptions grow with every failed compensation
-                            cause.addSuppressed(unwrap(ex));
+                            // keep the exception that caused the compensation, and attach the compensation failure to it
+                            // (or log it, when the cause is the exception instance of a throwException step, which all
+                            // the messages share)
+                            ThrowExceptionProcessor.addSuppressed(exchange, cause, unwrap(ex));
                             exchange.setException(cause);
                             callback.done(false);
                         } else {

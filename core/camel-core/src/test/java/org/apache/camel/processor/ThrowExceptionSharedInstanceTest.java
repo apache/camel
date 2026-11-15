@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.io.IOException;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,12 +31,17 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * The exception instance a throwException step is configured with is shared by all the messages, so the error handlers
- * must not add the previous exception of each message to it as suppressed.
+ * and the EIPs must not add other exceptions of each message to it as suppressed.
  */
 public class ThrowExceptionSharedInstanceTest extends ContextTestSupport {
 
     private final IllegalStateException translated = new IllegalStateException("Translated");
     private final IllegalStateException afterCatch = new IllegalStateException("After catch");
+    private final IOException handledThrows = new IOException("Handled throws");
+    private final IOException finallyThrows = new IOException("Finally throws");
+    private final IOException onCompletionThrows = new IOException("OnCompletion throws");
+    private final IOException multicastThrows = new IOException("Multicast throws");
+    private final IllegalStateException onCopy = new IllegalStateException("On copy");
 
     @Test
     public void testOnExceptionThrowsInstance() {
@@ -55,6 +61,57 @@ public class ThrowExceptionSharedInstanceTest extends ContextTestSupport {
             assertSame(afterCatch, out.getException());
         }
         assertEquals(0, afterCatch.getSuppressed().length);
+    }
+
+    @Test
+    public void testHandledPredicateThrows() {
+        for (int i = 0; i < 3; i++) {
+            Exchange out = template.send("direct:handledThrows", e -> {
+            });
+            assertSame(handledThrows, out.getException());
+        }
+        assertEquals(0, handledThrows.getSuppressed().length);
+    }
+
+    @Test
+    public void testDoFinallyThrows() {
+        for (int i = 0; i < 3; i++) {
+            Exchange out = template.send("direct:finallyThrows", e -> {
+            });
+            assertSame(finallyThrows, out.getException());
+        }
+        assertEquals(0, finallyThrows.getSuppressed().length);
+    }
+
+    @Test
+    public void testOnCompletionThrows() {
+        for (int i = 0; i < 3; i++) {
+            Exchange out = template.send("direct:onCompletionThrows", e -> {
+            });
+            assertSame(onCompletionThrows, out.getException());
+        }
+        assertEquals(0, onCompletionThrows.getSuppressed().length);
+    }
+
+    @Test
+    public void testMulticastCompletionThrows() {
+        for (int i = 0; i < 3; i++) {
+            Exchange out = template.send("direct:multicastThrows", e -> {
+            });
+            assertSame(multicastThrows, out.getException());
+        }
+        assertEquals(0, multicastThrows.getSuppressed().length);
+    }
+
+    @Test
+    public void testOnExceptionThrowsInstanceOnCopy() {
+        // the instance is thrown on a copy of the exchange (by the topic load balancer), and then set on the exchange
+        for (int i = 0; i < 3; i++) {
+            Exchange out = template.send("direct:onCopy", e -> {
+            });
+            assertSame(onCopy, out.getException());
+        }
+        assertEquals(0, onCopy.getSuppressed().length);
     }
 
     @Test
@@ -92,7 +149,54 @@ public class ThrowExceptionSharedInstanceTest extends ContextTestSupport {
                 from("direct:typeAndMessage")
                         .onException(IOException.class).throwException(IllegalStateException.class, "Translated").end()
                         .throwException(IOException.class, "Failure of ${exchangeId}");
+
+                from("direct:handledThrows")
+                        .onException(IOException.class).handled(e -> {
+                            throw new IllegalArgumentException("Handled failed of " + e.getExchangeId());
+                        }).end()
+                        .throwException(handledThrows);
+
+                from("direct:finallyThrows")
+                        .doTry()
+                            .throwException(finallyThrows)
+                        .doFinally()
+                            .throwException(IllegalStateException.class, "Finally failed of ${exchangeId}")
+                        .end();
+
+                from("direct:onCompletionThrows")
+                        .onCompletion().onFailureOnly().modeBeforeConsumer()
+                            .throwException(IllegalStateException.class, "OnCompletion failed of ${exchangeId}")
+                        .end()
+                        .throwException(onCompletionThrows);
+
+                from("direct:multicastThrows")
+                        .multicast(new FailingOnCompletion())
+                            .to("direct:multicastBranch")
+                        .end();
+                from("direct:multicastBranch")
+                        .throwException(multicastThrows);
+
+                from("direct:onCopy")
+                        .onException(IOException.class).to("direct:topic").end()
+                        .throwException(IOException.class, "Failure of ${exchangeId}");
+                from("direct:topic").errorHandler(noErrorHandler())
+                        .loadBalance().topic().to("direct:onCopyBranch");
+                from("direct:onCopyBranch")
+                        .throwException(onCopy);
             }
         };
+    }
+
+    private static final class FailingOnCompletion implements AggregationStrategy {
+
+        @Override
+        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+            return oldExchange != null ? oldExchange : newExchange;
+        }
+
+        @Override
+        public void onCompletion(Exchange exchange, Exchange inputExchange) {
+            throw new IllegalStateException("Completion failed of " + inputExchange.getExchangeId());
+        }
     }
 }

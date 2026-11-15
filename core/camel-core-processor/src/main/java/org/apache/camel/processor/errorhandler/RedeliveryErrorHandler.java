@@ -464,7 +464,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      * Evaluates a predicate of the error handler (such as handled or continued). A predicate that fails (throws an
      * exception) is regarded as <code>false</code>, as the error handler must still handle the exchange (such as the
      * dead letter channel which always handles the exchange). The original caused exception is kept, and the exception
-     * from the predicate is logged and added as suppressed to the original exception.
+     * from the predicate is logged and added as suppressed to the original exception (unless that is the exception
+     * instance of a throwException step, which all the messages share).
      */
     static boolean matchesPredicate(Predicate predicate, Exchange exchange, String name) {
         try {
@@ -480,7 +481,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         if (original == null) {
             original = exchange.getException();
         }
-        if (original != null && original != e) {
+        if (original != null && original != e && !ThrowExceptionProcessor.isSharedException(original)) {
             original.addSuppressed(e);
         }
         LOG.warn("Error evaluating the {} predicate of the error handler on exchange: {}. The predicate is regarded as false."
@@ -1050,7 +1051,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 // the previous exception was handled (continued) so this is a new failure
                 previous = null;
             }
-            if (previous != null && previous != e && e != null && !ThrowExceptionProcessor.isSharedException(exchange, e)) {
+            if (previous != null && previous != e && e != null && !ThrowExceptionProcessor.isSharedException(e)) {
                 // a 2nd exception was thrown while handling a previous exception
                 // so we need to add the previous as suppressed by the new exception
                 // (but not to an exception that a throwException step shares with all the messages)
@@ -1769,7 +1770,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 // the previous exception was handled (continued) so this is a new failure
                 previous = null;
             }
-            if (previous != null && previous != e && !ThrowExceptionProcessor.isSharedException(exchange, e)) {
+            if (previous != null && previous != e && !ThrowExceptionProcessor.isSharedException(e)) {
                 // a 2nd exception was thrown while handling a previous exception
                 // so we need to add the previous as suppressed by the new exception
                 // (but not to an exception that a throwException step shares with all the messages)

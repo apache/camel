@@ -366,8 +366,9 @@ public class OnCompletionProcessor extends BaseProcessorSupport
             exchange.getExchangeExtension().setRedeliveryExhausted(exhausted);
             if (cause != null) {
                 // if there is any exception in onCompletionProcessor, the exception should be suppressed
+                // (or logged, when the cause is the exception instance of a throwException step)
                 if (exchange.isFailed()) {
-                    cause.addSuppressed(exchange.getException());
+                    ThrowExceptionProcessor.addSuppressed(exchange, cause, exchange.getException());
                 }
                 exchange.setException(cause);
             }

@@ -40,6 +40,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,6 +55,7 @@ public class SagaCompensationFailureTest extends ContextTestSupport {
     private final AtomicReference<CamelSagaCoordinator> coordinator = new AtomicReference<>();
     private final AtomicReference<String> manualSagaId = new AtomicReference<>();
     private final List<String> sagaServiceWarnings = new CopyOnWriteArrayList<>();
+    private final IllegalArgumentException sharedFailure = new IllegalArgumentException("shared failure");
 
     @Test
     public void testFailedCompensationKeepsTheOriginalException() {
@@ -70,6 +72,17 @@ public class SagaCompensationFailureTest extends ContextTestSupport {
         assertInstanceOf(RuntimeCamelException.class, suppressed[0]);
         assertTrue(suppressed[0].getMessage().contains("Unable to compensate all required steps of the saga"),
                 suppressed[0].getMessage());
+    }
+
+    @Test
+    public void testFailedCompensationOfThrowExceptionInstance() {
+        // the exception instance of a throwException step is shared by all the messages, so the compensation failure
+        // of each message is not attached to it
+        for (int i = 0; i < 2; i++) {
+            Exchange result = template.send("direct:saga-shared-fails", e -> e.getMessage().setBody("hello"));
+            assertSame(sharedFailure, result.getException());
+        }
+        assertEquals(0, sharedFailure.getSuppressed().length);
     }
 
     @Test
@@ -145,6 +158,10 @@ public class SagaCompensationFailureTest extends ContextTestSupport {
                         .process(e -> {
                             throw new IllegalArgumentException("business failure");
                         });
+
+                from("direct:saga-shared-fails")
+                        .saga().compensation("direct:finalization-fails")
+                        .throwException(sharedFailure);
 
                 from("direct:saga-completion-fails")
                         .saga().completion("direct:finalization-fails")

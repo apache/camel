@@ -39,10 +39,12 @@ class FailOverLoadBalanceSuppressedExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                // the doTry blocks throw a new exception for each message, as an exception instance (shared by all the
+                // messages) gets no suppressed exceptions
                 failover("finally");
                 from("direct:finally-attempt")
                         .doTry()
-                            .throwException(new IOException("original"))
+                            .throwException(IOException.class, "original")
                         .doFinally()
                             .throwException(new IllegalArgumentException("cleanup"))
                         .end();
@@ -50,7 +52,7 @@ class FailOverLoadBalanceSuppressedExceptionTest extends ContextTestSupport {
                 failover("finallyRoute");
                 from("direct:finallyRoute-attempt")
                         .doTry()
-                            .throwException(new IOException("original"))
+                            .throwException(IOException.class, "original")
                         .doFinally()
                             .to("direct:cleanup")
                         .end();
@@ -78,7 +80,7 @@ class FailOverLoadBalanceSuppressedExceptionTest extends ContextTestSupport {
                 failover("monitoredFinally");
                 from("direct:monitoredFinally-attempt")
                         .doTry()
-                            .throwException(new IllegalArgumentException("original"))
+                            .throwException(IllegalArgumentException.class, "original")
                         .doFinally()
                             .throwException(new IOException("cleanup"))
                         .end();
@@ -127,7 +129,7 @@ class FailOverLoadBalanceSuppressedExceptionTest extends ContextTestSupport {
                 from("direct:onException")
                         .onException(IllegalArgumentException.class).handled(true).to("mock:onException").end()
                         .doTry()
-                            .throwException(new IOException("original"))
+                            .throwException(IOException.class, "original")
                         .doFinally()
                             .throwException(new IllegalArgumentException("cleanup"))
                         .end();

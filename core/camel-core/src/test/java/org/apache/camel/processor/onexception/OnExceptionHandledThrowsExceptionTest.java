@@ -57,7 +57,9 @@ public class OnExceptionHandledThrowsExceptionTest extends ContextTestSupport {
                             throw new IllegalArgumentException("Another Forced");
                         }).to("log:foo?showAll=true").to("mock:handled");
 
-                from("direct:start").throwException(new IOException("Forced"));
+                // a new exception for each message, as an exception instance (shared by all the messages) gets no
+                // suppressed exceptions
+                from("direct:start").throwException(IOException.class, "Forced");
             }
         };
     }

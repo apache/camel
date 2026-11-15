@@ -172,9 +172,10 @@ public class FinallyProcessor extends BaseDelegateProcessorSupport
                     }
                 } else {
                     // the original exception is kept, and an exception from the doFinally is added as suppressed
+                    // (or logged, when the original is the exception instance of a throwException step)
                     Exception finallyException = exchange.getException();
                     if (finallyException != null && finallyException != exception) {
-                        exception.addSuppressed(finallyException);
+                        ThrowExceptionProcessor.addSuppressed(exchange, exception, finallyException);
                     }
                     // set exception back on exchange
                     exchange.setException(exception);

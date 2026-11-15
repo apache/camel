@@ -138,7 +138,9 @@ public class DoTryEdgeCasesTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .doTry()
-                            .throwException(new IOException("original"))
+                            // a new exception for each message, as an exception instance (shared by all the
+                            // messages) gets no suppressed exceptions
+                            .throwException(IOException.class, "original")
                         .doCatch(IllegalArgumentException.class)
                             .to("mock:catch")
                         .doFinally()

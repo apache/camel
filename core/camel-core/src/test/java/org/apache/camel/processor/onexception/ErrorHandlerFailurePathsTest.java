@@ -69,7 +69,9 @@ public class ErrorHandlerFailurePathsTest extends ContextTestSupport {
                     throw new IllegalArgumentException("retryWhile failed");
                 });
 
-                from("direct:start").throwException(new IOException("Forced"));
+                // a new exception for each message, as an exception instance (shared by all the messages) gets no
+                // suppressed exceptions
+                from("direct:start").throwException(IOException.class, "Forced");
             }
         });
         context.start();
