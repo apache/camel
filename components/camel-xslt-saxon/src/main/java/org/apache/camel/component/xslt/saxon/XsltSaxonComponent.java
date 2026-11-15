@@ -75,7 +75,8 @@ public class XsltSaxonComponent extends XsltComponent {
      * Feature for XML secure processing (see javax.xml.XMLConstants). This is enabled by default. However, when using
      * Saxon Professional you may need to turn this off to allow Saxon to be able to use Java extension functions. Note
      * that turning it off also restores the previous, unrestricted parsing of a {@code Source} message body that is
-     * still to be parsed, so only do so for trusted input.
+     * still to be parsed, so only do so for trusted input. With a saxonConfiguration, the feature is set on that
+     * configuration, so endpoints that share the same configuration must use the same secureProcessing value.
      */
     public void setSecureProcessing(boolean secureProcessing) {
         this.secureProcessing = secureProcessing;
@@ -86,7 +87,9 @@ public class XsltSaxonComponent extends XsltComponent {
     }
 
     /**
-     * To use a custom Saxon configuration
+     * To use a custom Saxon configuration. It is shared by all the endpoints of this component that do not set their
+     * own. The secureProcessing option is applied to this configuration, which Saxon uses by reference, so endpoints
+     * that share the same configuration must use the same secureProcessing value.
      */
     public void setSaxonConfiguration(Configuration saxonConfiguration) {
         this.saxonConfiguration = saxonConfiguration;

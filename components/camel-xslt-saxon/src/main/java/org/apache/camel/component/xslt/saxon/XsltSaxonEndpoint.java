@@ -143,7 +143,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     }
 
     /**
-     * To use a custom Saxon configuration
+     * To use a custom Saxon configuration. The secureProcessing option is applied to this configuration, which Saxon
+     * uses by reference, so endpoints that share the same configuration must use the same secureProcessing value.
      */
     public void setSaxonConfiguration(Configuration saxonConfiguration) {
         this.saxonConfiguration = saxonConfiguration;
@@ -192,7 +193,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
      * Feature for XML secure processing (see javax.xml.XMLConstants). This is enabled by default. However, when using
      * Saxon Professional you may need to turn this off to allow Saxon to be able to use Java extension functions. Note
      * that turning it off also restores the previous, unrestricted parsing of a {@code Source} message body that is
-     * still to be parsed, so only do so for trusted input.
+     * still to be parsed, so only do so for trusted input. With a saxonConfiguration, the feature is set on that
+     * configuration, so endpoints that share the same configuration must use the same secureProcessing value.
      */
     public void setSecureProcessing(boolean secureProcessing) {
         this.secureProcessing = secureProcessing;
@@ -223,10 +225,13 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
 
         TransformerFactory factory = getTransformerFactory();
         if (factory == null) {
-            if (getTransformerFactoryClass() == null) {
+            final String factoryClassName = getTransformerFactoryClass() != null
+                    ? getTransformerFactoryClass()
+                    : ((XsltSaxonComponent) getComponent()).getTransformerFactoryClass();
+            if (factoryClassName == null) {
                 factory = new TransformerFactoryImpl();
             } else {
-                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(getTransformerFactoryClass(),
+                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(factoryClassName,
                         TransformerFactory.class, XsltSaxonComponent.class.getClassLoader());
                 LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
@@ -243,7 +248,9 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
 
             XsltSaxonHelper.configureExternalAccess(factory);
 
-            final TransformerFactoryConfigurationStrategy strategy = getTransformerFactoryConfigurationStrategy();
+            final TransformerFactoryConfigurationStrategy strategy = getTransformerFactoryConfigurationStrategy() != null
+                    ? getTransformerFactoryConfigurationStrategy()
+                    : ((XsltSaxonComponent) getComponent()).getTransformerFactoryConfigurationStrategy();
             if (strategy != null) {
                 strategy.configure(factory, this);
             }

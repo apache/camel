@@ -390,12 +390,17 @@ context.
 
 The `xslt` component now calls the `transformerFactoryConfigurationStrategy` of the endpoint or the component also when
 no `transformerFactory`, `transformerFactoryClass` or `xpathTotalOpLimit` is set. Before, the default
-`TransformerFactory` was used without calling the strategy.
+`TransformerFactory` was used without calling the strategy. The `xslt-saxon` component now also uses the
+`transformerFactoryConfigurationStrategy` and `transformerFactoryClass` set on the component, which it ignored before;
+the endpoint options still take precedence.
 
 With a `saxonConfiguration` bean, the `xslt-saxon` component now applies `secureProcessing` (default `true`) to that
 configuration. Before (since 4.22), the bean replaced the configuration secure processing had been applied to, so a
 stylesheet could call extension functions or use `xsl:result-document`. If such a stylesheet now fails to compile, set
 `secureProcessing=false`, or set the Saxon feature in `saxonConfigurationProperties`, which is applied last.
+Saxon uses the bean by reference, so `secureProcessing` is set on the bean itself: endpoints that share a
+`saxonConfiguration` (for example all the endpoints, when it is set on the component) must use the same
+`secureProcessing` value, otherwise the endpoint created last sets it for all of them.
 
 === Java
 
