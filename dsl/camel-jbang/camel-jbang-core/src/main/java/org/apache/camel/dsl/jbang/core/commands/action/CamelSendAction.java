@@ -163,8 +163,7 @@ public class CamelSendAction extends ActionBaseCommand {
     boolean loggingColor = true;
 
     @Option(name = "json", hasValue = false,
-            description = "Output the outcome of the send in JSON Format: the status, the exchange id and, with --reply, the"
-                          + " reply message (as --show-headers, --show-body and the other --show options say)")
+            description = "Output the outcome in JSON Format: the status, the exchange id, and the reply message with --reply")
     boolean jsonOutput;
 
     @Option(name = "infra", description = "Send to infrastructure service (e.g., nats, kafka)")

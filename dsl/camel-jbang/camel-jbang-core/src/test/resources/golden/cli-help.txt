@@ -1701,10 +1701,8 @@ Options:
                             using JSon or XML format
       --logging-color       Use colored logging
                             Default: true
-      --json                Output the outcome of the send in JSON Format: the
-                            status, the exchange id and, with --reply, the reply
-                            message (as --show-headers, --show-body and the
-                            other --show options say)
+      --json                Output the outcome in JSON Format: the status, the
+                            exchange id, and the reply message with --reply
       --infra=<infra>       Send to infrastructure service (e.g., nats, kafka)
       --download            Whether to allow automatic downloading JAR
                             dependencies (over the internet)

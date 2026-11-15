@@ -271,6 +271,21 @@ class CamelSendActionResultTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void theSummaryOfARepeatAsJson() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject summary = new JsonObject(
+                Map.of("status", "success", "sent", 10L, "failed", 0L, "elapsed", 3000L,
+                        "endpoint", "direct://start", "errors", new JsonArray()));
+
+        int exit = callWithResponse(command("orders", "--endpoint=direct:start", "--repeat=10", "--json"), summary);
+
+        assertThat(exit).isEqualTo(CliExitCode.OK);
+        JsonObject out = (JsonObject) Jsoner.deserialize(printer.getStdout());
+        assertThat(out.getLong("sent")).isEqualTo(10L);
+        assertThat(out.getString("status")).isEqualTo("success");
+    }
+
+    @Test
     void aFailedSendAsJsonIsAFailure() throws Exception {
         writeStatusFile(TEST_PID, "orders");
 
