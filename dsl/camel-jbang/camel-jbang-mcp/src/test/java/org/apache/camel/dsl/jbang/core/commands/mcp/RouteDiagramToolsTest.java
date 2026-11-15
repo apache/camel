@@ -18,6 +18,13 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.junit.jupiter.api.Test;
@@ -101,5 +108,76 @@ class RouteDiagramToolsTest {
         // a PNG image, not the text diagram
         assertThat(Files.readAllBytes(png)).startsWith(0x89, 'P', 'N', 'G');
         assertThat(result.asciiDiagram()).isNull();
+    }
+
+    @Test
+    void theMessageSaysOnceWhereTheImageIs(@TempDir Path dir) throws Exception {
+        Path png = dir.resolve("orders.png");
+
+        RouteDiagramTools.RouteDiagramResult result = new RouteDiagramTools().camel_render_route_diagram(
+                route(dir, "orders").toString(), png.toString(), null, null, null, null, null, null, null);
+
+        assertThat(result.success()).isTrue();
+        assertThat(result.message()).isEqualTo("Diagram saved to: " + png.toAbsolutePath());
+    }
+
+    @Test
+    void aTextDiagramLeavesNoFileBehind(@TempDir Path dir) throws Exception {
+        Path source = route(dir, "orders");
+        List<Path> before = tempDiagrams();
+
+        RouteDiagramTools.RouteDiagramResult result = new RouteDiagramTools().camel_render_route_diagram(
+                source.toString(), null, "ascii", null, null, null, null, null, null);
+
+        assertThat(result.success()).isTrue();
+        assertThat(result.asciiDiagram()).contains("orders");
+        assertThat(result.outputFile()).isNull();
+        assertThat(result.message()).doesNotContain("saved to");
+        // CAMEL-26932: a temporary file was left for each call
+        assertThat(tempDiagrams()).isEqualTo(before);
+    }
+
+    @Test
+    void callsAtTheSameTime(@TempDir Path dir) throws Exception {
+        // CAMEL-26932: the calls shared one work directory, which each deleted at its start, so of three calls at
+        // once one failed with NoSuchFileException and one timed out
+        List<String> routes = List.of("first", "second", "third");
+        RouteDiagramTools tools = new RouteDiagramTools();
+        ExecutorService executor = Executors.newFixedThreadPool(routes.size());
+        try {
+            List<Future<RouteDiagramTools.RouteDiagramResult>> calls = new ArrayList<>();
+            for (String id : routes) {
+                Path source = route(dir, id);
+                calls.add(executor.submit(() -> tools.camel_render_route_diagram(
+                        source.toString(), null, "ascii", null, null, null, null, null, null)));
+            }
+            for (int i = 0; i < routes.size(); i++) {
+                RouteDiagramTools.RouteDiagramResult result = calls.get(i).get(60, TimeUnit.SECONDS);
+                assertThat(result.success()).as(result.message()).isTrue();
+                assertThat(result.asciiDiagram()).contains(routes.get(i));
+            }
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    private static Path route(Path dir, String id) throws Exception {
+        Path source = dir.resolve(id + ".camel.yaml");
+        Files.writeString(source, """
+                - route:
+                    id: %s
+                    from:
+                      uri: timer:%s
+                      steps:
+                        - to:
+                            uri: log:%s
+                """.formatted(id, id, id));
+        return source;
+    }
+
+    private static List<Path> tempDiagrams() throws Exception {
+        try (Stream<Path> files = Files.list(Path.of(System.getProperty("java.io.tmpdir")))) {
+            return files.filter(f -> f.getFileName().toString().startsWith("camel-route-diagram-")).sorted().toList();
+        }
     }
 }
