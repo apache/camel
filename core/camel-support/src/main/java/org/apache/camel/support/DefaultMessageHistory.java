@@ -93,7 +93,7 @@ public class DefaultMessageHistory implements MessageHistory {
      * body), the size the {@link MessageSizeStrategy}'s (lengths only, no reading or conversion) and only when that
      * strategy is enabled. For every factory that builds a history entry (CAMEL-24844). The type also goes to the
      * {@link BodyTypeRegistry} of the CamelContext (CAMEL-25750).
-     * <p/>
+     * <p>
      * A factory should look the registry up once and call {@link #captureBody(Exchange, BodyTypeRegistry)} instead, as
      * this method looks it up on every call.
      */
@@ -158,6 +158,12 @@ public class DefaultMessageHistory implements MessageHistory {
         if (elapsed < 0) {
             elapsed = 0;
         }
+    }
+
+    @Override
+    public long getElapsedSinceCreated() {
+        // the monotonic clock, as the node processing time is measured
+        return clock.elapsed();
     }
 
     @Override

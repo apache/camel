@@ -64,15 +64,10 @@ public class NatsConsumer extends DefaultConsumer {
     private final Processor processor;
     private ExecutorService executor;
     private Connection connection;
-    // set by the consuming task and read when the consumer stops
-    private volatile Dispatcher dispatcher;
-    // the message handler of the dispatcher, which keeps the messages in flight of that dispatcher (one per start)
-    private volatile NatsConsumingTask.CamelNatsMessageHandler dispatcherHandler;
     private boolean active;
-    // set by the consuming task, and again by the push consumer keeper, and read when the consumer stops
-    private volatile JetStreamSubscription jetStreamSubscription;
-    // set by the consuming task and read when the consumer stops
-    private volatile NatsJetStreamPushConsumerKeeper pushConsumerKeeper;
+    // the run of the current start, null while the consumer is stopped: its consuming task sets what it made in it, and
+    // the stop of that start ends it
+    private volatile Run currentRun;
 
     public NatsConsumer(NatsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -107,7 +102,9 @@ public class NatsConsumer extends DefaultConsumer {
             LOG.warn(
                     "exchangePattern=InOut has no effect on JetStream messages: replies are for core NATS only, as the reply subject of a JetStream message is its ack subject");
         }
-        this.executor.submit(new NatsConsumingTask(this.connection, config));
+        Run run = new Run(this.executor);
+        this.currentRun = run;
+        this.executor.submit(new NatsConsumingTask(this.connection, config, run));
     }
 
     @Override
@@ -116,10 +113,14 @@ public class NatsConsumer extends DefaultConsumer {
         // an interrupt during the flush is kept until the end: jnats drops a message to the server (an UNSUB) that is
         // queued on an interrupted thread
         boolean interrupted = false;
+        // the task of this run sees from now on that its run ended: what it sets in the run after this is either seen
+        // below, or ended by the task itself
+        final Run run = this.currentRun;
+        this.currentRun = null;
 
-        if (this.pushConsumerKeeper != null) {
-            this.pushConsumerKeeper.stop();
-            this.pushConsumerKeeper = null;
+        final NatsJetStreamPushConsumerKeeper keeper = run != null ? run.pushConsumerKeeper : null;
+        if (keeper != null) {
+            keeper.stop();
         }
 
         if (configuration.isFlushConnection() && ObjectHelper.isNotEmpty(this.connection)) {
@@ -139,7 +140,7 @@ public class NatsConsumer extends DefaultConsumer {
             }
         }
 
-        final Dispatcher stoppedDispatcher = this.dispatcher;
+        final Dispatcher stoppedDispatcher = run != null ? run.dispatcher : null;
         if (stoppedDispatcher != null) {
             try {
                 stoppedDispatcher.unsubscribe(configuration.getTopic());
@@ -149,7 +150,7 @@ public class NatsConsumer extends DefaultConsumer {
             // a JetStream push subscription belongs to the dispatcher (it cannot unsubscribe directly) and is on its
             // deliver subject, not on the topic: end it through the dispatcher, which matters when the connection is
             // shared and stays open. This does not interrupt the dispatcher thread, which may still run an exchange
-            JetStreamSubscription pushSubscription = this.jetStreamSubscription;
+            JetStreamSubscription pushSubscription = run.jetStreamSubscription;
             if (pushSubscription != null && pushSubscription.isActive()) {
                 try {
                     stoppedDispatcher.unsubscribe(pushSubscription);
@@ -162,7 +163,7 @@ public class NatsConsumer extends DefaultConsumer {
             // in flight
             final Connection stoppedConnection = this.connection;
             Runnable close = () -> closeDispatcher(stoppedConnection, stoppedDispatcher);
-            NatsConsumingTask.CamelNatsMessageHandler handler = this.dispatcherHandler;
+            NatsConsumingTask.CamelNatsMessageHandler handler = run.dispatcherHandler;
             if (handler != null) {
                 // the handler of this dispatcher only: a message of an earlier run that is still in flight (after a
                 // forced stop) closes the dispatcher of its own run
@@ -170,11 +171,9 @@ public class NatsConsumer extends DefaultConsumer {
             } else {
                 close.run();
             }
-            this.dispatcher = null;
-            this.dispatcherHandler = null;
         }
 
-        final JetStreamSubscription stoppedSubscription = this.jetStreamSubscription;
+        final JetStreamSubscription stoppedSubscription = run != null ? run.jetStreamSubscription : null;
         if (ObjectHelper.isNotEmpty(stoppedSubscription) && stoppedSubscription.isActive()) {
             try {
                 stoppedSubscription.unsubscribe();
@@ -247,10 +246,44 @@ public class NatsConsumer extends DefaultConsumer {
         this.active = active;
     }
 
+    /**
+     * One start of the consumer, and what its consuming task made for it, which the stop of that start ends.
+     * <p>
+     * The same consumer can be stopped and started again (a route policy does so, such as the throttling policies, as
+     * this consumer is not suspendable) while the task of the first start is still in its subscribe: the task then sees
+     * that its run is no longer the current one, ends what it made itself, and does not touch the run of the new start.
+     * The task writes each field before it checks {@link #isCurrent()}, and the stop clears the current run before it
+     * reads the fields (all volatile): so either the task sees the stop, or the stop sees what the task made (or both,
+     * and both end it).
+     */
+    final class Run {
+        // the executor of this start, which the push consumer keeper of this run uses
+        private final ExecutorService executor;
+        volatile Dispatcher dispatcher;
+        // the message handler of the dispatcher, which keeps the messages in flight of that dispatcher
+        volatile NatsConsumingTask.CamelNatsMessageHandler dispatcherHandler;
+        // set by the consuming task, and again by the push consumer keeper or the pull subscribe again
+        volatile JetStreamSubscription jetStreamSubscription;
+        volatile NatsJetStreamPushConsumerKeeper pushConsumerKeeper;
+
+        Run(ExecutorService executor) {
+            this.executor = executor;
+        }
+
+        /**
+         * Whether this run is the one of the current start and the consumer runs: false once the consumer stops, and
+         * stays false after it is started again.
+         */
+        boolean isCurrent() {
+            return currentRun == this && isRunAllowed();
+        }
+    }
+
     class NatsConsumingTask implements Runnable {
 
         private final Connection connection;
         private final NatsConfiguration configuration;
+        private final Run run;
         // stream sequences of the JetStream messages fetched by the pull loop and not acknowledged yet, and the highest
         // fetched: where a new ephemeral consumer must start when the server deleted the one this consumer used
         private final NavigableSet<Long> unacknowledged = new ConcurrentSkipListSet<>();
@@ -264,9 +297,10 @@ public class NatsConsumer extends DefaultConsumer {
         // whether the WARN that the durable consumer is gone was logged, so that it is logged once until it is back
         private boolean durableGoneReported;
 
-        NatsConsumingTask(Connection connection, NatsConfiguration configuration) {
+        NatsConsumingTask(Connection connection, NatsConfiguration configuration, Run run) {
             this.connection = connection;
             this.configuration = configuration;
+            this.run = run;
         }
 
         @Override
@@ -287,9 +321,9 @@ public class NatsConsumer extends DefaultConsumer {
                     setupStandardNatsConsumer(topic, queueName, maxMessages);
                 }
             } catch (final Exception e) {
-                if (!NatsConsumer.this.isRunAllowed()) {
-                    // the consumer stopped meanwhile (its stop closes the dispatcher that a JetStream push subscribe
-                    // uses, which then fails): nothing to report
+                if (!run.isCurrent()) {
+                    // the consumer stopped meanwhile, and may have started again (its stop closes the dispatcher that a
+                    // JetStream push subscribe uses, which then fails): nothing to report
                     LOG.debug("Not consuming from topic {} as the consumer is stopping",
                             getEndpoint().getConfiguration().getTopic(), e);
                 } else {
@@ -361,20 +395,20 @@ public class NatsConsumer extends DefaultConsumer {
                 JetStreamSubscription pullSubscription = this.connection.jetStream().subscribe(
                         NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
                         pullOptions);
-                NatsConsumer.this.jetStreamSubscription = pullSubscription;
-                if (!NatsConsumer.this.isRunAllowed()) {
-                    // stopped while subscribing: doStop may have run before the subscription was set, and then did
-                    // not end it
+                run.jetStreamSubscription = pullSubscription;
+                if (!run.isCurrent()) {
+                    // stopped while subscribing (and maybe started again): doStop may have run before the subscription
+                    // was set, and then did not end it
                     unsubscribeStopped(pullSubscription);
                     return;
                 }
 
                 NatsConsumer.this.setActive(true);
-                runPullFetchLoop(NatsConsumer.this.jetStreamSubscription, messageHandler, cc);
+                runPullFetchLoop(pullSubscription, messageHandler, cc);
             } else {
                 Dispatcher pushDispatcher = this.connection.createDispatcher(messageHandler);
-                NatsConsumer.this.dispatcher = pushDispatcher;
-                NatsConsumer.this.dispatcherHandler = messageHandler;
+                run.dispatcher = pushDispatcher;
+                run.dispatcherHandler = messageHandler;
                 if (stoppedBeforeSubscribe(pushDispatcher)) {
                     return;
                 }
@@ -394,23 +428,24 @@ public class NatsConsumer extends DefaultConsumer {
                 // more than its inactive threshold, server restart); a durable consumer is not created again
                 NatsJetStreamPushConsumerKeeper keeper = new NatsJetStreamPushConsumerKeeper(
                         NatsConsumer.this, this.connection, streamName, configuration.getTopic(), queueName,
-                        pushDispatcher, messageHandler, cc, NatsConsumer.this.executor,
-                        sub -> NatsConsumer.this.jetStreamSubscription = sub);
-                NatsConsumer.this.jetStreamSubscription = this.connection.jetStream().subscribe(
+                        pushDispatcher, messageHandler, cc, run.executor, run::isCurrent,
+                        sub -> run.jetStreamSubscription = sub);
+                JetStreamSubscription pushSubscription = this.connection.jetStream().subscribe(
                         NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
                         queueName,
                         pushDispatcher,
                         keeper,
                         autoAck,
                         pushOptions);
-                NatsConsumer.this.pushConsumerKeeper = keeper;
-                keeper.start(NatsConsumer.this.jetStreamSubscription,
+                run.jetStreamSubscription = pushSubscription;
+                run.pushConsumerKeeper = keeper;
+                keeper.start(pushSubscription,
                         streamInfo != null ? streamInfo.getCreateTime() : null,
                         streamInfo != null && streamInfo.getStreamState() != null
                                 ? streamInfo.getStreamState().getLastSequence() : -1);
-                if (!NatsConsumer.this.isRunAllowed()) {
-                    // stopped while subscribing: doStop did not see the keeper (it saw the dispatcher, and ends the
-                    // subscription through it)
+                if (!run.isCurrent()) {
+                    // stopped while subscribing: doStop did not see the keeper (it saw the dispatcher, as this run was
+                    // current after the dispatcher was set, and ends the subscription through it)
                     keeper.stop();
                     return;
                 }
@@ -443,7 +478,7 @@ public class NatsConsumer extends DefaultConsumer {
             JetStreamSubscription sub = subscription;
             int batchSize = configuration.getPullBatchSize();
             Duration fetchTimeout = Duration.ofMillis(configuration.getPullFetchTimeout());
-            while (NatsConsumer.this.isRunAllowed() && !Thread.currentThread().isInterrupted()) {
+            while (run.isCurrent() && !Thread.currentThread().isInterrupted()) {
                 long fetchStarted = System.nanoTime();
                 try {
                     List<Message> messages = sub.fetch(batchSize, fetchTimeout);
@@ -464,7 +499,7 @@ public class NatsConsumer extends DefaultConsumer {
                     }
                     durableGoneReported = false;
                     for (Message msg : messages) {
-                        if (!NatsConsumer.this.isRunAllowed()) {
+                        if (!run.isCurrent()) {
                             break;
                         }
                         try {
@@ -627,8 +662,8 @@ public class NatsConsumer extends DefaultConsumer {
             JetStreamSubscription sub = this.connection.jetStream().subscribe(configuration.getTopic(),
                     PullSubscribeOptions.builder().configuration(again).build());
             unacknowledged.clear();
-            NatsConsumer.this.jetStreamSubscription = sub;
-            if (!NatsConsumer.this.isRunAllowed()) {
+            run.jetStreamSubscription = sub;
+            if (!run.isCurrent()) {
                 // stopping: doStop may have unsubscribed the old subscription before this one was assigned, and the
                 // stop interrupts this thread
                 unsubscribeStopped(sub);
@@ -658,15 +693,16 @@ public class NatsConsumer extends DefaultConsumer {
         }
 
         /**
-         * Whether the consumer stopped before this run subscribed with the dispatcher it just set; if so, closes that
-         * dispatcher, which has no subscription yet. The dispatcher field is volatile and written before the run state
-         * is read here, and a stop sets the state before doStop reads the field: so either this run sees the stop, or
-         * doStop sees the dispatcher and closes it (on the stopping thread, and a subscribe on the closed dispatcher
-         * fails). Closing it here, before any subscribe, matters: doStop interrupts this thread, and jnats drops the
-         * UNSUB of a close on an interrupted thread, so the server would keep a subscription that a later close ended.
+         * Whether the run ended (the consumer stopped, and may have started again) before it subscribed with the
+         * dispatcher it just set; if so, closes that dispatcher, which has no subscription yet. The dispatcher field of
+         * the run is volatile and written before the run is checked here, and a stop clears the current run before
+         * doStop reads the field: so either this run sees the stop, or doStop sees the dispatcher and closes it (on the
+         * stopping thread, and a subscribe on the closed dispatcher fails). Closing it here, before any subscribe,
+         * matters: doStop interrupts this thread, and jnats drops the UNSUB of a close on an interrupted thread, so the
+         * server would keep a subscription that a later close ended.
          */
         private boolean stoppedBeforeSubscribe(Dispatcher runDispatcher) {
-            if (NatsConsumer.this.isRunAllowed()) {
+            if (run.isCurrent()) {
                 return false;
             }
             LOG.debug("Not subscribing to topic {} as the consumer is stopping", configuration.getTopic());
@@ -677,8 +713,8 @@ public class NatsConsumer extends DefaultConsumer {
         private void setupStandardNatsConsumer(String topic, String queueName, Integer maxMessages) {
             CamelNatsMessageHandler messageHandler = new CamelNatsMessageHandler();
             Dispatcher standardDispatcher = connection.createDispatcher(messageHandler);
-            NatsConsumer.this.dispatcher = standardDispatcher;
-            NatsConsumer.this.dispatcherHandler = messageHandler;
+            run.dispatcher = standardDispatcher;
+            run.dispatcherHandler = messageHandler;
             if (stoppedBeforeSubscribe(standardDispatcher)) {
                 return;
             }

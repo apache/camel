@@ -78,6 +78,28 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
         Assertions.assertTrue(task.getEvent().endsWith("stop"));
     }
 
+    @Test
+    public void testSchedulerKeepsRunningAfterAnErrorOfATask() {
+        counter.set(0);
+        AtomicInteger failingCalls = new AtomicInteger();
+
+        PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(context);
+        if (scheduler instanceof TimerListenerManager timerListenerManager) {
+            // speedup unit test
+            timerListenerManager.setInterval(10);
+        }
+        // such as a NoClassDefFoundError of a periodic task: the other tasks, and this one, must still run
+        scheduler.schedulePeriodTask(() -> {
+            if (failingCalls.incrementAndGet() == 1) {
+                throw new AssertionError("task failed");
+            }
+        }, 10);
+        scheduler.schedulePeriodTask(counter::incrementAndGet, 10);
+        context.start();
+
+        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(() -> counter.get() > 2 && failingCalls.get() > 1);
+    }
+
     private class MyTask extends ServiceSupport implements Runnable {
 
         private volatile String event = "";

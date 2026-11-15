@@ -424,7 +424,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 if (task.hasState()) {
                     states[j++] = state;
                 }
-            } catch (Exception e) {
+            } catch (VirtualMachineError e) {
+                // left as before (thrown on), as in DelegateSyncProcessor
+                throw e;
+            } catch (Throwable e) {
+                // also an Error (such as a NoClassDefFoundError of the data format of a rest binding): thrown on, it
+                // would skip the after of the advices whose before ran (such as the end of the unit of work), and the
+                // exchange would stay inflight
                 return handleException(exchange, originalCallback, e, afterTask, i, j);
             }
         }
@@ -568,7 +574,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     private boolean handleException(
-            Exchange exchange, AsyncCallback originalCallback, Exception e, CamelInternalTask afterTask,
+            Exchange exchange, AsyncCallback originalCallback, Throwable e, CamelInternalTask afterTask,
             int count, int stateCount) {
         // error in before so break out
         exchange.setException(e);
@@ -714,7 +720,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     if (isRoutePolicyRunAllowed(policy)) {
                         policy.onExchangeBegin(route, exchange);
                     }
-                } catch (Exception e) {
+                } catch (VirtualMachineError e) {
+                    // left as before (thrown on)
+                    throw e;
+                } catch (Throwable e) {
+                    // also an Error, as for an exception: the other policies are still called
                     LOG.warn("Error occurred during onExchangeBegin on RoutePolicy: {}. This exception will be ignored", policy,
                             e);
                 }
@@ -735,7 +745,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     if (isRoutePolicyRunAllowed(policy)) {
                         policy.onExchangeDone(route, exchange);
                     }
-                } catch (Exception e) {
+                } catch (VirtualMachineError e) {
+                    // left as before (thrown on)
+                    throw e;
+                } catch (Throwable e) {
+                    // also an Error, as for an exception: the other policies are still called
                     LOG.warn("Error occurred during onExchangeDone on RoutePolicy: {}. This exception will be ignored",
                             policy, e);
                 }

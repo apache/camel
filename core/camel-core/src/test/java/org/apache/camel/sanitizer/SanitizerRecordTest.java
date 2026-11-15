@@ -148,6 +148,30 @@ class SanitizerRecordTest {
         assertTrue(text.contains("at " + SanitizerRecordTest.class.getName()), text);
     }
 
+    @Test
+    void aReportShowsTheFramesOfBothCallbacksWithTheirFileAndLine() {
+        // the stack of the first callback is kept as the frames of the StackWalker and turned into file and line only
+        // when the report is made (CAMEL-26812): the report must still show them as a stack trace does
+        Sanitizer sanitizer = new Sanitizer(context, 32, session);
+        SanitizerStepListener.StepCall call = new SanitizerStepListener.StepCall(sanitizer, "ex", "r", "s");
+        firstCallback(call);
+        call.callback();
+        String text = sanitizer.getViolations().get(0).getText();
+        String file = "(" + SanitizerRecordTest.class.getSimpleName() + ".java:";
+        // each stack is checked on its own: the first one also holds the frame of this method
+        int second = text.indexOf("second call of the callback");
+        assertTrue(second > 0, text);
+        String name = SanitizerRecordTest.class.getName();
+        assertTrue(text.substring(0, second).contains("at " + name + ".firstCallback" + file), text);
+        assertTrue(text.substring(second)
+                .contains("at " + name + ".aReportShowsTheFramesOfBothCallbacksWithTheirFileAndLine" + file), text);
+        assertFalse(text.substring(second).contains(".firstCallback("), text);
+    }
+
+    private static void firstCallback(SanitizerStepListener.StepCall call) {
+        call.callback();
+    }
+
     private static void await(CyclicBarrier barrier, Runnable action) {
         try {
             barrier.await(10, TimeUnit.SECONDS);

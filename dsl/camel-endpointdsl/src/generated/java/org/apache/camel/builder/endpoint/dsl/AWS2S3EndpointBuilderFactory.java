@@ -1456,6 +1456,36 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointConsumerBuilder useCustomerKey(boolean useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointConsumerBuilder useCustomerKey(String useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
+            return this;
+        }
+        /**
          * If this option is true and includeBody is false, then the
          * S3Object.close() method will be called on exchange completion. This
          * option is strongly related to includeBody option. In case of setting
@@ -2792,6 +2822,36 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder useCustomerKey(boolean useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder useCustomerKey(String useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
+            return this;
+        }
+        /**
          * Define the id of KMS key to use in case KMS is enabled.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2911,36 +2971,6 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AdvancedAWS2S3EndpointProducerBuilder useAwsKMS(String useAwsKMS) {
             doSetProperty("useAwsKMS", useAwsKMS);
-            return this;
-        }
-        /**
-         * Define if Customer Key must be used or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param useCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAWS2S3EndpointProducerBuilder useCustomerKey(boolean useCustomerKey) {
-            doSetProperty("useCustomerKey", useCustomerKey);
-            return this;
-        }
-        /**
-         * Define if Customer Key must be used or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param useCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAWS2S3EndpointProducerBuilder useCustomerKey(String useCustomerKey) {
-            doSetProperty("useCustomerKey", useCustomerKey);
             return this;
         }
         /**
@@ -3614,6 +3644,36 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AdvancedAWS2S3EndpointBuilder customerKeyMD5(String customerKeyMD5) {
             doSetProperty("customerKeyMD5", customerKeyMD5);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointBuilder useCustomerKey(boolean useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         * 
+         * @param useCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointBuilder useCustomerKey(String useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
             return this;
         }
         /**

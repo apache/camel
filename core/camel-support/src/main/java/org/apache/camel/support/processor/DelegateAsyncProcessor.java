@@ -33,8 +33,8 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * A Delegate pattern which delegates processing to a nested {@link AsyncProcessor} which can be useful for
  * implementation inheritance when writing an {@link org.apache.camel.spi.Policy}
- * <p/>
- * <b>Important:</b> This implementation <b>does</b> support the asynchronous routing engine. If you are implementing a
+ * <p>
+ * <b>Important:</b> This implementation <b>does</b> support the asynchronous routing engine. If you are implementing an
  * EIP pattern please use this as the delegate.
  *
  * @see DelegateSyncProcessor

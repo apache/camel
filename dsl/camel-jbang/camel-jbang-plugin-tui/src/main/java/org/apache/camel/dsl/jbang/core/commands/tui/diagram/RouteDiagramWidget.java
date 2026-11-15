@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +163,10 @@ public class RouteDiagramWidget implements Widget {
         foldHits.clear();
         arrowCells.clear();
         arrowEnds.clear();
+        flowArrows.clear();
+        if (flow != null) {
+            updateFlow();
+        }
 
         if (errorFrame != null) {
             drawErrorFrame(buffer, area);
@@ -185,6 +190,10 @@ public class RouteDiagramWidget implements Widget {
                     drawArrow(buffer, area, ln.parentNode, ln);
                 }
             }
+        }
+        // the dots over the lines, before the boxes
+        for (FlowDots.Path arrow : flowArrows) {
+            FlowDots.draw(buffer, area, scrollX, scrollY, arrow, flow.get(arrow.key()), density.boxed(), FLOW_KEEP);
         }
 
         // Nodes (on top, skip the structural "route" node)
@@ -295,6 +304,20 @@ public class RouteDiagramWidget implements Widget {
     /** The route has error handling: a dim mark on its from box, whether the error handling is shown or not. */
     public RouteDiagramWidget withErrorMark(boolean mark) {
         this.errorMark = mark;
+        return this;
+    }
+
+    private FlowAnimation flow;
+    /** The arrows the dots of the flow move on, in the order the messages go along their cells. */
+    private final List<FlowDots.Path> flowArrows = new ArrayList<>();
+
+    /**
+     * The messages moving through the route (with the metrics on): dots on the arrows that move faster and closer
+     * together the more messages there are (at the overview, a light over the steps), and the steps where exchanges
+     * wait with none finishing marked as stuck.
+     */
+    public RouteDiagramWidget withFlow(FlowAnimation flow) {
+        this.flow = flow != null && flow.isEnabled() && showMetrics ? flow : null;
         return this;
     }
 
@@ -492,7 +515,8 @@ public class RouteDiagramWidget implements Widget {
             // a remote endpoint is an edge of the integration: its own color, as in the topology
             eipColor = external ? externalColor() : getEipColor(node.type);
         }
-        Style borderStyle = Style.EMPTY.fg(eipColor);
+        String stuck = highlighted ? null : stuckText(node);
+        Style borderStyle = stuck != null ? Theme.warning().bold() : Style.EMPTY.fg(eipColor);
         if (selected) {
             borderStyle = borderStyle.patch(selectionStyle());
         }
@@ -547,6 +571,10 @@ public class RouteDiagramWidget implements Widget {
             // bodies of more than one kind reach the step: it needs attention
             writeText(buffer, area, row, col + boxWidth - 3, BodyTypes.MARK, Theme.warning());
         }
+        if (stuck != null) {
+            // exchanges wait here with none finishing: how many, and for how long, in the top border
+            writeText(buffer, area, row, col + 1, stuck, borderStyle);
+        }
 
         // Link indicator for nodes that connect to other routes
         String linkedRouteId = findLinkedRouteId(node);
@@ -591,6 +619,7 @@ public class RouteDiagramWidget implements Widget {
                 && to.id != null && highlightNodeIds.contains(to.id);
 
         drawArrowPath(buffer, area, fromCx, fromBottom, toCx, toTop, dashed, external, bothHighlighted);
+        addFlowArrow(to, fromCx, fromBottom, toCx, toTop);
         if (density != RouteDensity.OVERVIEW) {
             // the steps of the overview are next to each other: no room for a count
             addArrowEnd(to, fromCx, fromBottom, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
@@ -611,6 +640,7 @@ public class RouteDiagramWidget implements Widget {
                 && to.id != null && highlightNodeIds.contains(to.id);
 
         drawArrowPath(buffer, area, fromCx, fromRow, toCx, toTop, dashed, false, highlighted);
+        addFlowArrow(to, fromCx, fromRow, toCx, toTop);
         if (density != RouteDensity.OVERVIEW) {
             addArrowEnd(to, fromCx, fromRow, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
         }
@@ -1090,7 +1120,8 @@ public class RouteDiagramWidget implements Widget {
         } else if (stat != null && stat.exchangesFailed > 0) {
             color = highlightFailColor();
         } else {
-            color = isExternalEndpoint(node) ? externalColor() : getEipColor(node.type);
+            // no lines between the steps: the light of the messages passes over the steps themselves
+            color = lit(isExternalEndpoint(node) ? externalColor() : getEipColor(node.type), node, row);
         }
         String cell;
         if ("from".equals(node.type)) {
@@ -1148,6 +1179,94 @@ public class RouteDiagramWidget implements Widget {
 
     static List<String> wrapText(String text, int maxWidth) {
         return DiagramText.wrap(text, maxWidth, MAX_WRAP_LINES);
+    }
+
+    // ---- the flow of the messages ----
+
+    private static final String SPINNER = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
+    /** What a dot does not cover: the frame of a block, and the head of another arrow. */
+    private static final String FLOW_KEEP = "" + SCOPE_H + SCOPE_V + ARROW;
+
+    private String flowKey(LayoutNode node) {
+        return layoutRoute.routeId + "/" + node.id;
+    }
+
+    /**
+     * The counts of the steps to the flow: of each step for when it is stuck, and of the arrow into it for its dots.
+     */
+    private void updateFlow() {
+        Map<String, FlowAnimation.Reading> stats = new HashMap<>();
+        for (LayoutNode ln : layoutRoute.nodes) {
+            if (ln.id == null || ln.treeNode == null || "route".equals(ln.type)) {
+                continue;
+            }
+            if (ln.treeNode.info.stat != null) {
+                stats.put(flowKey(ln), FlowAnimation.Reading.of(ln.treeNode.info.stat));
+            }
+            StatInfo in = resolveStatInfo(ln);
+            if (in != null) {
+                stats.put(flowKey(ln) + ">", FlowAnimation.Reading.of(in));
+            }
+        }
+        flow.update(stats);
+    }
+
+    /** The cells of an arrow as drawn by {@link #drawArrowPath}, in the order a message goes along them. */
+    private void addFlowArrow(LayoutNode to, int fromCx, int fromRow, int toCx, int toRow) {
+        if (flow != null && to.id != null && fromRow < toRow) {
+            // a boxed step has the head of the arrow above it; without boxes the line goes on to the mark of the step
+            flowArrows.add(FlowDots.path(flowKey(to) + ">", fromCx, fromRow, toCx, toRow, density.boxed() ? ARROW : 0));
+        }
+    }
+
+    /**
+     * The colour of a step of the overview as the light of the messages into it passes over it, at the pace of the dots
+     * on the lines of the other zoom levels: the steps of a busy path light up one after another.
+     */
+    private Color lit(Color base, LayoutNode node, int row) {
+        return FlowDots.lit(base, flow != null && node.id != null ? flow.get(flowKey(node) + ">") : null, row);
+    }
+
+    /**
+     * The text in the top border of a step where exchanges wait with none finishing: a spinner, how many, and how long;
+     * or null. A step with steps inside it (a choice, a split) waits for them, so only the step itself has it.
+     */
+    private String stuckText(LayoutNode node) {
+        if (flow == null || node.id == null || node.treeNode == null || "from".equals(node.type)
+                || !node.treeNode.children.isEmpty()) {
+            return null;
+        }
+        FlowAnimation.Track t = flow.get(flowKey(node));
+        long waited = flow.stuckMillis(t);
+        if (waited < 0) {
+            return null;
+        }
+        char spin = SPINNER.charAt((int) (flow.now() / 100 % SPINNER.length()));
+        // since the step last finished an exchange, as the integration says; the time the diagram has watched it else
+        StatInfo stat = node.treeNode.info.stat;
+        String age;
+        if (stat != null && stat.lastCompletedExchangeTimestamp > 0) {
+            age = duration(Math.max(waited, System.currentTimeMillis() - stat.lastCompletedExchangeTimestamp));
+        } else if (stat != null && stat.exchangesTotal == 0) {
+            age = "none done";
+        } else {
+            age = duration(waited);
+        }
+        String head = " " + spin + " ";
+        for (String text : List.of(head + t.inflight() + " inflight · " + age + " ",
+                head + t.inflight() + " · " + age + " ", head + age + " ")) {
+            if (CharWidth.of(text) <= boxWidth - 5) {
+                return text;
+            }
+        }
+        return null;
+    }
+
+    private static String duration(long millis) {
+        if (millis < 60_000) {
+            return millis / 1000 + "s";
+        }
+        return millis < 3_600_000 ? millis / 60_000 + "m" : millis / 3_600_000 + "h";
     }
 
     private void setChar(Buffer buffer, Rect area, int gridRow, int gridCol, char ch, Style style) {

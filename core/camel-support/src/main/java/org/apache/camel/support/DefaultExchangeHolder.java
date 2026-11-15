@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Holder object for sending an exchange over a remote wire as a serialized object. This is usually configured using the
- * <tt>transferExchange=true</tt> option on the endpoint. <br/>
+ * <code>transferExchange=true</code> option on the endpoint. <br>
  * <b>Note:</b> Message body of type {@link File} or {@link WrappedFile} is <b>not</b> supported and a
- * {@link RuntimeExchangeException} is thrown. <br/>
+ * {@link RuntimeExchangeException} is thrown. <br>
  * As opposed to normal usage where only the body part of the exchange is transferred over the wire, this holder object
  * serializes the following fields over the wire:
  * <ul>
@@ -46,19 +46,19 @@ import org.slf4j.LoggerFactory;
  * <li>out body</li>
  * <li>exception</li>
  * </ul>
- * <br/>
+ * <br>
  * The exchange properties are not propagated by default. However you can specify they should be included by the
- * {@link DefaultExchangeHolder#marshal(Exchange, boolean)} method. <br/>
- * And the following headers is transferred if their values are of primitive types, String or Number based.
+ * {@link DefaultExchangeHolder#marshal(Exchange, boolean)} method. <br>
+ * And the following headers are transferred if their values are of primitive types, String or Number based.
  * <ul>
  * <li>in headers</li>
  * <li>out headers</li>
  * </ul>
- * The body is serialized and stored as serialized bytes. The header and exchange properties, exchange variables are
- * only include primitive, String, and Number types (and Exception types for exchange properties). Any other type is
- * skipped. Any message body object that is not serializable will be skipped and Camel will log this at <tt>WARN</tt>
- * level. And any message header values that is not a primitive value will be skipped and Camel will log this at
- * <tt>DEBUG</tt> level.
+ * The body is serialized and stored as serialized bytes. The header and exchange properties, exchange variables only
+ * include primitive, String, and Number types (and Exception types for exchange properties). Any other type is skipped.
+ * Any message body object that is not serializable will be skipped and Camel will log this at <code>WARN</code> level.
+ * And any message header values that are not a primitive value will be skipped and Camel will log this at
+ * <code>DEBUG</code> level.
  */
 public class DefaultExchangeHolder implements Serializable {
 
@@ -77,10 +77,10 @@ public class DefaultExchangeHolder implements Serializable {
     /**
      * Creates a payload object with the information from the given exchange.
      *
-     * Exchange properties and variables is included. Serialized values are skipped.
+     * Exchange properties and variables are included. Serialized values are skipped.
      *
-     * @param  exchange the exchange, must <b>not</b> be <tt>null</tt>
-     * @return          the holder object with information copied form the exchange
+     * @param  exchange the exchange, must <b>not</b> be <code>null</code>
+     * @return          the holder object with information copied from the exchange
      */
     public static DefaultExchangeHolder marshal(Exchange exchange) {
         return marshal(exchange, true, false);
@@ -89,9 +89,9 @@ public class DefaultExchangeHolder implements Serializable {
     /**
      * Creates a payload object with the information from the given exchange. Serialized values are skipped.
      *
-     * @param  exchange          the exchange, must <b>not</b> be <tt>null</tt>
+     * @param  exchange          the exchange, must <b>not</b> be <code>null</code>
      * @param  includeProperties whether or not to include exchange properties and variables
-     * @return                   the holder object with information copied form the exchange
+     * @return                   the holder object with information copied from the exchange
      */
     public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties) {
         return marshal(exchange, includeProperties, false, true);
@@ -100,10 +100,10 @@ public class DefaultExchangeHolder implements Serializable {
     /**
      * Creates a payload object with the information from the given exchange.
      *
-     * @param  exchange              the exchange, must <b>not</b> be <tt>null</tt>
+     * @param  exchange              the exchange, must <b>not</b> be <code>null</code>
      * @param  includeProperties     whether or not to include exchange properties and variables
      * @param  allowSerializedValues whether or not to include serialized values
-     * @return                       the holder object with information copied form the exchange
+     * @return                       the holder object with information copied from the exchange
      */
     public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties, boolean allowSerializedValues) {
         return marshal(exchange, includeProperties, allowSerializedValues, true);
@@ -112,11 +112,11 @@ public class DefaultExchangeHolder implements Serializable {
     /**
      * Creates a payload object with the information from the given exchange.
      *
-     * @param  exchange              the exchange, must <b>not</b> be <tt>null</tt>
+     * @param  exchange              the exchange, must <b>not</b> be <code>null</code>
      * @param  includeProperties     whether or not to include exchange properties and variables
      * @param  allowSerializedValues whether or not to include serialized headers
      * @param  preserveExchangeId    whether to preserve exchange id
-     * @return                       the holder object with information copied form the exchange
+     * @return                       the holder object with information copied from the exchange
      */
     public static DefaultExchangeHolder marshal(
             Exchange exchange, boolean includeProperties,
@@ -154,8 +154,8 @@ public class DefaultExchangeHolder implements Serializable {
     /**
      * Transfers the information from the payload to the exchange.
      *
-     * @param exchange the exchange to set values from the payload, must <b>not</b> be <tt>null</tt>
-     * @param payload  the payload with the values, must <b>not</b> be <tt>null</tt>
+     * @param exchange the exchange to set values from the payload, must <b>not</b> be <code>null</code>
+     * @param payload  the payload with the values, must <b>not</b> be <code>null</code>
      */
     public static void unmarshal(Exchange exchange, DefaultExchangeHolder payload) {
         ObjectHelper.notNull(exchange, "exchange");
@@ -189,7 +189,7 @@ public class DefaultExchangeHolder implements Serializable {
 
     /**
      * Adds a property to the payload.
-     * <p/>
+     * <p>
      * This can be done in special situations where additional information must be added which was not provided from the
      * source.
      *
@@ -209,7 +209,7 @@ public class DefaultExchangeHolder implements Serializable {
 
     /**
      * Adds a variable to the payload.
-     * <p/>
+     * <p>
      * This can be done in special situations where additional information must be added which was not provided from the
      * source.
      *
@@ -358,7 +358,7 @@ public class DefaultExchangeHolder implements Serializable {
 
     /**
      * We only want to store header values of primitive and String related types.
-     * <p/>
+     * <p>
      * This default implementation will allow:
      * <ul>
      * <li>any primitives and their counter Objects (Integer, Double etc.)</li>
@@ -373,7 +373,7 @@ public class DefaultExchangeHolder implements Serializable {
      * @param  headerName            the header name
      * @param  headerValue           the header value
      * @param  allowSerializedValues whether to include serialized values
-     * @return                       the value to use, <tt>null</tt> to ignore this header
+     * @return                       the value to use, <code>null</code> to ignore this header
      */
     protected static Object getValidHeaderValue(String headerName, Object headerValue, boolean allowSerializedValues) {
         if (headerValue instanceof String) {
@@ -403,14 +403,14 @@ public class DefaultExchangeHolder implements Serializable {
     /**
      * We only want to store exchange property values of primitive and String related types, and as well any caught
      * exception that Camel routing engine has caught.
-     * <p/>
+     * <p>
      * This default implementation will allow the same values as {@link #getValidHeaderValue(String, Object, boolean)}
      * and in addition any value of type {@link Throwable}.
      *
      * @param  propertyName          the property name
      * @param  propertyValue         the property value
      * @param  allowSerializedValues whether to include serialized values
-     * @return                       the value to use, <tt>null</tt> to ignore this header
+     * @return                       the value to use, <code>null</code> to ignore this property
      */
     protected static Object getValidExchangePropertyValue(
             String propertyName, Object propertyValue, boolean allowSerializedValues) {

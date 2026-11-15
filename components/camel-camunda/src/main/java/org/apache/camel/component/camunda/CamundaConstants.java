@@ -22,7 +22,9 @@ public final class CamundaConstants {
 
     public static final String HEADER_PREFIX = "CamelCamunda";
 
-    @Metadata(label = "producer", description = "Job key for the worker job", javaType = "long")
+    @Metadata(description = "(consumer) Job key of the worker job that was activated."
+                            + " (producer) Job key of the job to act on, when the body does not carry one.",
+              javaType = "long")
     public static final String JOB_KEY = HEADER_PREFIX + "JobKey";
 
     @Metadata(label = "producer", description = "Resource name for deploy operation", javaType = "String")

@@ -33,6 +33,7 @@ import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.GenericKubernetesResourceList;
 import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import io.fabric8.kubernetes.client.dsl.base.ResourceDefinitionContext;
@@ -84,21 +85,24 @@ public final class KubernetesHelper {
      */
     public static KubernetesClient getKubernetesClient() {
         if (kubernetesClient == null) {
+            // the timeouts before the client is built, which reads them (CAMEL-26934: 40 s against an unreachable API)
+            setKubernetesClientProperties();
             kubernetesClient = new KubernetesClientBuilder().build();
         }
-        setKubernetesClientProperties();
         return kubernetesClient;
     }
 
     /**
-     * Create or get Kubernetes client with given config.
+     * Create or get Kubernetes client with given config: the contents of a kube config file.
      */
     public static KubernetesClient getKubernetesClient(String config) {
         if (clients.containsKey(config)) {
             return clients.get(config);
         }
         setKubernetesClientProperties();
-        var client = new KubernetesClientBuilder().withConfig(config).build();
+        // as a kube config file (CAMEL-26934): withConfig(String) reads the text as a fabric8 Config, so the clusters
+        // and contexts of a kube config were ignored and the client went to the default kubernetes.default.svc
+        var client = new KubernetesClientBuilder().withConfig(Config.fromKubeconfig(config)).build();
         clients.put(config, client);
         return client;
     }
@@ -145,27 +149,37 @@ public final class KubernetesHelper {
      * @return The cluster type may be: Openshift, Minikube or Kubernetes.
      */
     static ClusterType discoverClusterType() {
+        return discoverClusterType(getKubernetesClient());
+    }
+
+    /**
+     * Verify what cluster the given client is connected to (the cluster of --kube-config, when it is given).
+     *
+     * @see #discoverClusterType()
+     */
+    static ClusterType discoverClusterType(KubernetesClient client) {
         ClusterType cluster = ClusterType.KUBERNETES;
-        if (isConnectedToOpenshift()) {
+        if (isConnectedToOpenshift(client)) {
             cluster = ClusterType.OPENSHIFT;
-        } else if (isConnectedToMinikube()) {
+        } else if (isConnectedToMinikube(client)) {
             cluster = ClusterType.MINIKUBE;
         }
         return cluster;
     }
 
-    private static boolean isConnectedToOpenshift() {
+    private static boolean isConnectedToOpenshift(KubernetesClient client) {
         boolean ocp = false;
         try {
-            APIGroup apiGroup = getKubernetesClient().getApiGroup("route.openshift.io");
+            APIGroup apiGroup = client.getApiGroup("route.openshift.io");
             ocp = apiGroup != null;
         } catch (RuntimeException e) {
-            System.out.println("Failed to detect cluster: " + e.getMessage() + ", default to kubernetes.");
+            // on stderr: the output may be the YAML of run --output yaml
+            System.err.println("Failed to detect cluster: " + e.getMessage() + ", default to kubernetes.");
         }
         return ocp;
     }
 
-    private static boolean isConnectedToMinikube() {
+    private static boolean isConnectedToMinikube(KubernetesClient client) {
         boolean minikube = false;
         boolean minikubeEnv = false;
         try {
@@ -175,12 +189,12 @@ public final class KubernetesHelper {
                     .withNamespaced(false)
                     .build();
             // if there is a node with minikube label, then it's minikube
-            GenericKubernetesResourceList list = getKubernetesClient().genericKubernetesResources(nodecrd)
+            GenericKubernetesResourceList list = client.genericKubernetesResources(nodecrd)
                     .withLabels(Collections.singletonMap("minikube.k8s.io/name", null)).list();
             minikube = list.getItems().size() > 0;
             minikubeEnv = isMinikubeDockerEnv();
             if (minikube && !minikubeEnv) {
-                System.out.println(
+                System.err.println(
                         "It seems you have minikube running but forgot to run \"eval $(minikube docker-env)\", default cluster to kubernetes.");
             }
         } catch (Exception e) {

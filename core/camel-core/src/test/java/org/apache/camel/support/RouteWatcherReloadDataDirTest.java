@@ -120,6 +120,31 @@ public class RouteWatcherReloadDataDirTest extends ContextTestSupport {
     }
 
     @Test
+    public void testTheFilesARunWritesAreNotWatched() throws Exception {
+        // CAMEL-26930: camel dev > run.log in the project reloaded all the routes every 2 seconds; the pattern of
+        // camel run --dev with a source directory leaves out logs, the build output, git and the Camel folders
+        start("*,!test/**,!*.log,!target/**,!.git/**,!.camel/**,!.camel-jbang/**");
+        assertThat(scanNames()).containsExactly("order-0.json", "order-1.json", "shop.camel.yaml");
+
+        Files.writeString(dir.resolve("run.log"), "a line");
+        Files.createDirectories(dir.resolve("logs"));
+        Files.writeString(dir.resolve("logs/app.log"), "a line");
+        Files.createDirectories(dir.resolve("target/classes"));
+        Files.writeString(dir.resolve("target/classes/Foo.class"), "bytes");
+        Files.createDirectories(dir.resolve(".git"));
+        Files.writeString(dir.resolve(".git/index"), "index");
+        Files.createDirectories(dir.resolve(".camel"));
+        Files.writeString(dir.resolve(".camel/order-1.json"), "{}");
+        Files.createDirectories(dir.resolve(".camel-jbang"));
+        Files.writeString(dir.resolve(".camel-jbang/app.lock"), "lock");
+        assertThat(scanNames()).isEmpty();
+
+        // the route is still watched
+        Files.writeString(dir.resolve("shop.camel.yaml"), "one and two");
+        assertThat(scanNames()).containsExactly("shop.camel.yaml");
+    }
+
+    @Test
     public void testTestFolderIsNotWatched() throws Exception {
         // CAMEL-26494: the pattern of camel run --dev with a source directory leaves the test folder out, with the
         // Citrus tests of the project (whatever their name) and their data

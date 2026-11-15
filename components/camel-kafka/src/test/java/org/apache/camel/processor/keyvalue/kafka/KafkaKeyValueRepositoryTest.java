@@ -18,6 +18,7 @@ package org.apache.camel.processor.keyvalue.kafka;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -39,8 +40,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Unit tests for the expiry handling of {@link KafkaKeyValueRepository}, without a Kafka broker: the changelog sends to
- * a {@link MockProducer}, and the records of the topic are applied by calling the repository's poller callback.
+ * Unit tests of {@link KafkaKeyValueRepository} (expiry, and the records of the topic it cannot apply), without a Kafka
+ * broker: the changelog sends to a {@link MockProducer}, and the records of the topic are applied by calling the
+ * repository's poller callback.
  */
 public class KafkaKeyValueRepositoryTest {
 
@@ -147,14 +149,98 @@ public class KafkaKeyValueRepositoryTest {
         assertEquals(0, producer.history().size());
     }
 
+    @Test
+    void putWithoutKeyIsSkippedAndTheNextRecordsAreApplied() throws Exception {
+        applyPut("key1", "a", 0);
+
+        // the repository never writes such a record, another application or a tool can: before, the
+        // NullPointerException of the cache failed the start, or the rest of the poll
+        apply(null, putPayload("b", 0));
+        applyPut("key2", "c", 0);
+
+        assertEquals("a", repository.get("key1"));
+        assertEquals("c", repository.get("key2"));
+        assertEquals(Set.of("key1", "key2"), repository.keys());
+    }
+
+    @Test
+    void deleteWithoutKeyIsSkippedAndTheNextRecordsAreApplied() throws Exception {
+        applyPut("key1", "a", 0);
+
+        apply(null, new byte[] { 1 });
+        applyPut("key2", "c", 0);
+
+        assertEquals(Set.of("key1", "key2"), repository.keys());
+    }
+
+    @Test
+    void clearWithoutKeyIsApplied() throws Exception {
+        // control: the repository writes a clear without a key
+        applyPut("key1", "a", 0);
+
+        apply(null, new byte[] { 2 });
+
+        assertEquals(0, repository.size());
+    }
+
+    @Test
+    void putWhoseValueCannotBeReadIsSkipped() throws Exception {
+        applyPut("key1", "old", 0);
+
+        // a value that is not a serialized object: skipped, the cache keeps the value it has
+        byte[] payload = putPayload("ignored", 0);
+        apply("key1", Arrays.copyOf(payload, 12));
+        applyPut("key2", "b", 0);
+
+        assertEquals("old", repository.get("key1"));
+        assertEquals("b", repository.get("key2"));
+    }
+
+    @Test
+    void ownPutWhoseValueTheDeserializationFilterRejectsKeepsItsValue() throws Exception {
+        repository.setDeserializationFilter("java.lang.String;!*");
+
+        // the poller reads back the put of this repository: the value stays in the cache
+        repository.put("key1", 42, null);
+        apply("key1", producer.history().get(0).value());
+
+        assertEquals(42, repository.get("key1"));
+    }
+
+    @Test
+    void putWhoseValueTheDeserializationFilterRejectsIsSkipped() throws Exception {
+        repository.setDeserializationFilter("java.lang.String;!*");
+
+        // such as a class that the deserialization filter does not allow
+        applyPut("key1", 42, 0);
+        applyPut("key2", "b", 0);
+
+        assertNull(repository.get("key1"));
+        assertEquals("b", repository.get("key2"));
+    }
+
     /**
      * Applies a put record of the topic to the cache, as the poller does.
      */
     private void applyPut(String key, Object value, long expiresAt) {
+        apply(key, putPayload(value, expiresAt));
+    }
+
+    private byte[] putPayload(Object value, long expiresAt) {
         try {
             Method serialize = KafkaKeyValueRepository.class.getDeclaredMethod("serializePutAction", Object.class, long.class);
             serialize.setAccessible(true);
-            byte[] payload = (byte[]) serialize.invoke(repository, value, expiresAt);
+            return (byte[]) serialize.invoke(repository, value, expiresAt);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Applies a record of the topic to the cache, as the poller does.
+     */
+    private void apply(String key, byte[] payload) {
+        try {
             Method addToCache = KafkaKeyValueRepository.class.getDeclaredMethod("addToCache", ConsumerRecord.class);
             addToCache.setAccessible(true);
             addToCache.invoke(repository, new ConsumerRecord<>("test-topic", 0, 0L, key, payload));

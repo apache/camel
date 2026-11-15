@@ -768,7 +768,7 @@ public interface AmqpComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: Poison JMS message due to ${exception.message}
+         * Default: Poison JMS message payload: ${exception.message}
          * Group: consumer (advanced)
          * 
          * @param eagerPoisonBody the value to set

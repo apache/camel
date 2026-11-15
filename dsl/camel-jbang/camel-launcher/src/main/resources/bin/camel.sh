@@ -120,10 +120,10 @@ for f in "$LIBDIR"/camel-launcher-*.jar; do
   fi
 done
 
-# Class data sharing: the JVM keeps the classes that a command loads in an archive (one per command and Camel version,
-# in the cache directory of the user), which it creates when the command runs the first time, or again when the JDK
-# changed, so the command starts faster from then on. CAMEL_CDS=false turns it off, and so do CDS or AOT options of
-# JAVA_OPTS. A JVM without CDS (OpenJ9) ignores the options.
+# Class data sharing: the JVM keeps the classes that a command loads in an archive (one per command, Camel version
+# and install directory, in the cache directory of the user), which it creates when the command runs the first time,
+# or again when the JDK changed, so the command starts faster from then on. CAMEL_CDS=false turns it off, and so
+# do CDS or AOT options of JAVA_OPTS. A JVM without CDS (OpenJ9) ignores the options.
 CDS_FILE=
 camel_cds_file() {
   [ "$CAMEL_CDS" != "false" ] && [ -n "$LAUNCHER_JAR" ] || return 1
@@ -134,9 +134,14 @@ camel_cds_file() {
   esac
   _cds_version=`basename "$LAUNCHER_JAR" .jar`
   _cds_version=${_cds_version#camel-launcher-}
+  # Include a hash of the install directory so two installs of the same version get separate archives.
+  # Different install methods (SDKMAN, Homebrew, zip) place the launcher in different directories;
+  # a shared archive from another install points at the wrong JAR (child processes) or returns wrong
+  # install-method metadata (camel self-update, update notice).
+  _cds_install_hash=`printf '%s' "$BASEDIR" | cksum | cut -d' ' -f1`
   _cds_cache=${XDG_CACHE_HOME:-${HOME:+$HOME/.cache}}
   [ -n "$_cds_cache" ] || return 1
-  _cds_dir="$_cds_cache/camel-cli/cds/$_cds_version"
+  _cds_dir="$_cds_cache/camel-cli/cds/$_cds_version/$_cds_install_hash"
   # the JVM does not start when the directory of the archive is missing
   mkdir -p "$_cds_dir" 2>/dev/null && [ -w "$_cds_dir" ] || return 1
   CDS_FILE="$_cds_dir/$_cds_cmd.jsa"

@@ -52,6 +52,7 @@ class CamelBatDiscoveryTest {
     private static final String JAVA25 = "openjdk version \"25\" 2025-09-16";
     private static final String JAVA17 = "openjdk version \"17.0.2\" 2022-01-18";
     private static final String JAVA17_EA = "openjdk version \"17-ea\"";
+    private static final String JAVA26_EA = "openjdk version \"26-ea\" 2026-03-17";
     private static final String JAVA11 = "openjdk version \"11.0.20\" 2023-07-18";
     private static final String JAVA8 = "java version \"1.8.0_202\"";
     private static final String GARBAGE = "totally not a java banner";
@@ -66,7 +67,9 @@ class CamelBatDiscoveryTest {
         Path system32 = Path.of(systemRoot, "System32");
         assertTrue(Files.isDirectory(system32), "Windows test fixture requires SystemRoot\\System32: " + system32);
         Map<String, String> env = new HashMap<>();
-        env.put("PATH", system32.toString());
+        // Include System32 and PowerShell so camel.bat's CDS install-directory hash works.
+        Path powerShell = Path.of(systemRoot, "System32", "WindowsPowerShell", "v1.0");
+        env.put("PATH", system32 + ";" + powerShell);
         return env;
     }
 
@@ -107,7 +110,8 @@ class CamelBatDiscoveryTest {
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
 
-        Path archives = localAppData.resolve("camel-cli").resolve("cds").resolve("9.9.9");
+        String hash = FakeJava.batCdsHash(FakeJava.batBasedirString(h));
+        Path archives = localAppData.resolve("camel-cli").resolve("cds").resolve("9.9.9").resolve(hash);
         assertEquals(0, r.exitCode(), r.stderr());
         assertTrue(r.stdout().contains("-XX:+AutoCreateSharedArchive \"-XX:SharedArchiveFile="
                                        + archives.resolve("version.jsa") + "\" \"-Xlog:cds*=off\" -jar "),
@@ -126,8 +130,9 @@ class CamelBatDiscoveryTest {
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "--help");
 
+        String hash = FakeJava.batCdsHash(FakeJava.batBasedirString(h));
         assertTrue(r.stdout().contains(
-                "-XX:SharedArchiveFile=" + localAppData.resolve("camel-cli\\cds\\9.9.9\\camel.jsa") + "\""),
+                "-XX:SharedArchiveFile=" + localAppData.resolve("camel-cli\\cds\\9.9.9\\" + hash + "\\camel.jsa") + "\""),
                 r.stdout());
     }
 
@@ -137,7 +142,8 @@ class CamelBatDiscoveryTest {
         Path h = home(base);
         Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
         Path localAppData = Files.createDirectories(base.resolve("lad"));
-        Path archive = Files.createDirectories(localAppData.resolve("camel-cli\\cds\\9.9.9")).resolve("version.jsa");
+        String hash = FakeJava.batCdsHash(FakeJava.batBasedirString(h));
+        Path archive = Files.createDirectories(localAppData.resolve("camel-cli\\cds\\9.9.9\\" + hash)).resolve("version.jsa");
         Files.createFile(archive);
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", java.toString());
@@ -392,7 +398,24 @@ class CamelBatDiscoveryTest {
     }
 
     @Test
-    void rejectsNonnumericMajorAndContinuesToFallback(@TempDir Path base) throws Exception {
+    void acceptsAnEarlyAccessJdkOfARecentVersion(@TempDir Path base) throws Exception {
+        // 26-ea is Java 26, as camel.sh reads it (CAMEL-26933)
+        Path h = home(base);
+        Path earlyAccess = FakeJava.writeFakeJava(base.resolve("early-access"), "java", JAVA26_EA, 0, "EARLY");
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA21, 0, "FALLBACK");
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", earlyAccess.toString());
+        env.put("CAMEL_FALLBACK_JAVA", fallback.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=EARLY"), r.stdout());
+    }
+
+    @Test
+    void rejectsAnEarlyAccessJdkBelowTheMinimumAndContinuesToFallback(@TempDir Path base) throws Exception {
+        // 17-ea is Java 17 (the version is split on the dash too), which is below the minimum
         Path h = home(base);
         Path earlyAccess = FakeJava.writeFakeJava(base.resolve("early-access"), "java", JAVA17_EA, 0, "EARLY");
         Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA21, 0, "FALLBACK");

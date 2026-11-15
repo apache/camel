@@ -108,6 +108,67 @@ public class TimerListenerManagerTest extends ContextTestSupport {
         }
     }
 
+    @Test
+    public void testErrorOfAListenerKeepsTheTimerRunning() throws Exception {
+        // before, the Error ended the scheduled task: no listener was called again
+        assertTimerKeepsRunningAfter(() -> {
+            throw new AssertionError("listener failed");
+        });
+    }
+
+    @Test
+    public void testExceptionOfAListenerKeepsTheTimerRunning() throws Exception {
+        // control: an exception was already ignored
+        assertTimerKeepsRunningAfter(() -> {
+            throw new IllegalStateException("listener failed");
+        });
+    }
+
+    private void assertTimerKeepsRunningAfter(Runnable failure) throws Exception {
+        TimerListenerManager manager = new TimerListenerManager();
+        manager.setCamelContext(context);
+        manager.setInterval(10);
+        FailingListener failing = new FailingListener(failure);
+        CountingListener next = new CountingListener(3);
+        manager.addTimerListener(failing);
+        manager.addTimerListener(next);
+        manager.start();
+        try {
+            // the listener after the failing one is called in the same run, and on the next runs
+            assertTrue(next.await(), "The timer should keep calling the other listener");
+            assertTrue(failing.awaitCalledAgain(), "The timer should call the failing listener again");
+        } finally {
+            manager.shutdown();
+        }
+    }
+
+    /**
+     * Fails in its first call.
+     */
+    private static class FailingListener implements TimerListener {
+
+        private final AtomicBoolean first = new AtomicBoolean(true);
+        private final CountDownLatch calledAgain = new CountDownLatch(1);
+        private final Runnable failure;
+
+        FailingListener(Runnable failure) {
+            this.failure = failure;
+        }
+
+        @Override
+        public void onTimer() {
+            if (first.compareAndSet(true, false)) {
+                failure.run();
+            } else {
+                calledAgain.countDown();
+            }
+        }
+
+        boolean awaitCalledAgain() throws InterruptedException {
+            return calledAgain.await(5, TimeUnit.SECONDS);
+        }
+    }
+
     /**
      * Blocks the timer thread in its first call until released.
      */

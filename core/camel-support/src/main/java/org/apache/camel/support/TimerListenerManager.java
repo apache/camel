@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link TimerListener} manager which triggers the {@link org.apache.camel.TimerListener} listeners once every
  * second.
- * <p/>
+ * <p>
  * Also ensure when adding and remove listeners, that they are correctly removed to avoid leaking memory.
  *
  * @see TimerListener
@@ -66,7 +66,7 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
 
     /**
      * Gets the interval in millis.
-     * <p/>
+     * <p>
      * The default interval is 1000 millis.
      *
      * @return interval in millis.
@@ -101,13 +101,19 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
                 // ignore
                 LOG.debug("Error occurred during onTimer for TimerListener: {}. This exception will be ignored.",
                         listener, e);
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is thrown on, and ends the scheduled task
+                throw e;
+            } catch (Error e) {
+                // thrown on, it would end the scheduled task, and no listener would be called again
+                LOG.warn("Error occurred during onTimer for TimerListener: {}. This error will be ignored.", listener, e);
             }
         }
     }
 
     /**
      * Adds the listener.
-     * <p/>
+     * <p>
      * It may be important to implement {@link #equals(Object)} and {@link #hashCode()} for the listener to ensure that
      * we can remove the same listener again, when invoking remove.
      *
@@ -123,7 +129,7 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
 
     /**
      * Removes the listener.
-     * <p/>
+     * <p>
      * It may be important to implement {@link #equals(Object)} and {@link #hashCode()} for the listener to ensure that
      * we can remove the same listener again, when invoking remove.
      *

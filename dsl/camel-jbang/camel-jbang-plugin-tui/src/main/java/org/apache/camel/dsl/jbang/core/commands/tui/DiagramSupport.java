@@ -931,7 +931,8 @@ class DiagramSupport {
                 highlightRouteIds(), false)
                 .withAiDescriptions(aiDescriptions(), Theme.aiAssisted()).withNodeLines(nodeLines)
                 .withGroups(groupTags, groupColors).withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
-                .withErrorMarks(errorMarkRouteIds()).withDensity(topologyDensity);
+                .withErrorMarks(errorMarkRouteIds()).withDensity(topologyDensity)
+                .withFlow(zoom.flow(), zoom.flowFeed());
     }
 
     /** A layout engine whose boxes the widget draws the given number of columns wide. */
@@ -1569,7 +1570,7 @@ class DiagramSupport {
                 .withDensity(zoom.densityOf(routeLayout)).withFoldedSteps(zoom.foldedStepsOf(routeLayout))
                 .withErrorFrame(layoutShowErrorPaths ? routeErrorFrames.get(currentRouteId) : null)
                 .withErrorMark(errorMarkRouteIds().contains(currentRouteId))
-                .withBodyTypes(showBodyTypes).withBodyKindMarks(true);
+                .withBodyTypes(showBodyTypes).withBodyKindMarks(true).withFlow(zoom.flow());
         var widget = widgets.get();
 
         int totalRows = widget.getTotalRows();

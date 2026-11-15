@@ -284,13 +284,14 @@ public final class Sanitizer {
     Trace trace() {
         String thread = Thread.currentThread().getName();
         if (stackDepth <= 0) {
-            return new Trace(thread, null);
+            return new Trace(thread, null, null);
         }
-        StackTraceElement[] frames = WALKER.walk(s -> s
+        // the frames are kept as they are, and turned into StackTraceElements (file and line) only when a report shows
+        // them: almost every trace is dropped without a report, and the conversion is about half of the cost
+        StackWalker.StackFrame[] frames = WALKER.walk(s -> s
                 .dropWhile(f -> isOwnFrame(f.getClassName()))
                 .limit(stackDepth)
-                .map(StackWalker.StackFrame::toStackTraceElement)
-                .toArray(StackTraceElement[]::new));
+                .toArray(StackWalker.StackFrame[]::new));
         return new Trace(thread, frames);
     }
 
@@ -300,12 +301,12 @@ public final class Sanitizer {
     Trace trace(Throwable thrown) {
         String thread = Thread.currentThread().getName();
         if (stackDepth <= 0) {
-            return new Trace(thread, null);
+            return new Trace(thread, null, null);
         }
         StackTraceElement[] all = thrown.getStackTrace();
         StackTraceElement[] frames = new StackTraceElement[Math.min(stackDepth, all.length)];
         System.arraycopy(all, 0, frames, 0, frames.length);
-        return new Trace(thread, frames);
+        return Trace.ofThrown(thread, frames);
     }
 
     private static boolean isOwnFrame(String className) {
@@ -1043,17 +1044,35 @@ public final class Sanitizer {
     static final class Trace {
 
         private final String thread;
-        private final StackTraceElement[] frames;
+        // the stack of the thread, as the StackFrames of a StackWalker, which are turned into StackTraceElements only
+        // when shown (null when the trace is of what was thrown)
+        private final StackWalker.StackFrame[] walked;
+        // the stack of what was thrown (null when the trace is of the thread)
+        private final StackTraceElement[] thrown;
 
-        Trace(String thread, StackTraceElement[] frames) {
+        Trace(String thread, StackWalker.StackFrame[] walked) {
+            this(thread, walked, null);
+        }
+
+        static Trace ofThrown(String thread, StackTraceElement[] thrown) {
+            return new Trace(thread, null, thrown);
+        }
+
+        Trace(String thread, StackWalker.StackFrame[] walked, StackTraceElement[] thrown) {
             this.thread = thread;
-            this.frames = frames;
+            this.walked = walked;
+            this.thrown = thrown;
         }
 
         void appendTo(StringBuilder sb, String what) {
             sb.append("  ").append(what).append(": thread ").append(thread).append('\n');
-            if (frames != null) {
-                for (StackTraceElement f : frames) {
+            if (walked != null) {
+                for (StackWalker.StackFrame f : walked) {
+                    sb.append("      at ").append(f.toStackTraceElement()).append('\n');
+                }
+            }
+            if (thrown != null) {
+                for (StackTraceElement f : thrown) {
                     sb.append("      at ").append(f).append('\n');
                 }
             }

@@ -235,6 +235,16 @@ public class Run extends CamelCommand implements CommandLifecycle {
             argument = "true|false|port")
     int jvmDebugPort;
 
+    /**
+     * The environment variable that marks a JVM a camel run started to run its integration: in the background, with a
+     * debugger, by camel debug, or with another Camel version. The application properties are read again in that JVM,
+     * and camel.jbang.background=true or camel.jbang.jvmDebug would start yet another JVM, and so on without end.
+     */
+    static final String SPAWNED_RUN = "CAMEL_CLI_SPAWNED_RUN";
+
+    // whether this JVM was started by a camel run to run the integration
+    boolean spawned = "true".equals(System.getenv(SPAWNED_RUN));
+
     @Option(name = "jvm-args", description = "Additional JVM arguments (e.g. -Xmx256m -Xms128m)")
     String jvmArgs;
 
@@ -291,6 +301,13 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
     // the report file of a run with chaos without --chaos-report, read for the verdict and deleted
     private Path chaosReportTemp;
+
+    @Option(name = "sanitizer", hasValue = false,
+            description = "Add camel-sanitizer, which reports where the processors of the routes break the contract of"
+                          + " AsyncProcessor, and with camel.sanitizer.checks=callback,commit also where the commits of the"
+                          + " consumers do not run exactly once (camel get sanitizer); on with profile dev, never with prod."
+                          + " Not with Quarkus yet")
+    boolean sanitizer;
 
     // jfr and jfrProfile options are in DebugOptions @Mixin
 
@@ -678,6 +695,10 @@ public class Run extends CamelCommand implements CommandLifecycle {
         }
         ProcessBuilder pb = new ProcessBuilder(cmds);
         pb.directory(dir.toFile());
+        if (background) {
+            // the JVM that runs the example in the background deletes its folder when it ends
+            pb.environment().put(ExampleHelper.EXAMPLE_DIR_ENV, dir.toString());
+        }
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         Process p = pb.start();
         this.spawnPid = p.pid();
@@ -776,6 +797,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
             return runSpringBoot();
         }
         warnChaosOffWithProfileProd();
+        warnSanitizerOffWithProfileProd();
         if (RuntimeType.main == runtime) {
             return runCamelMain();
         }
@@ -841,6 +863,15 @@ public class Run extends CamelCommand implements CommandLifecycle {
         }
 
         // okay we have validated all input and are ready to run
+        if (camelVersion == null && isDebugMode() && LauncherHelper.isRunningFromLauncher()) {
+            // the launcher has no jbang: a JVM of the launcher with the JVM options (CAMEL-26930)
+            if (debugOptions.openTelemetryAgent) {
+                printer().printErr("The --open-telemetry-agent option is not supported when running from camel-launcher.");
+                printer().printDiagnostic("Install Camel CLI via JBang to use it: jbang app install camel@apache/camel");
+                return CliExitCode.USAGE;
+            }
+            return runLauncherJvm();
+        }
         if (camelVersion != null || isDebugMode()) {
             // TODO: debug camel specific version
             boolean custom = false;
@@ -889,6 +920,12 @@ public class Run extends CamelCommand implements CommandLifecycle {
         if (background) {
             throw CliException.usage("Run Camel Quarkus with --background is not supported");
         }
+        if (sanitizer) {
+            // not yet: there is no Camel Quarkus extension to add to an existing Quarkus project, and the sanitizer is
+            // not tested with Camel Quarkus (whose releases are not on Camel 4.24 yet)
+            throw CliException.usage(
+                    "Run Camel Quarkus with --sanitizer is not supported yet (use --runtime=jbang, main or spring-boot)");
+        }
         warnChaosOffWithProfileProd();
         return runWithMaven();
     }
@@ -898,6 +935,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
             throw CliException.usage("Run Camel Spring Boot with --background is not supported");
         }
         warnChaosOffWithProfileProd();
+        warnSanitizerOffWithProfileProd();
         return runWithMaven();
     }
 
@@ -1032,6 +1070,15 @@ public class Run extends CamelCommand implements CommandLifecycle {
         }
     }
 
+    /**
+     * --sanitizer adds camel-sanitizer, but with profile prod the sanitizer stays off: said up front.
+     */
+    void warnSanitizerOffWithProfileProd() {
+        if (sanitizer && "prod".equalsIgnoreCase(profile)) {
+            printer().printWarn("camel-sanitizer stays off with profile prod");
+        }
+    }
+
     protected void doAddInitialProperty(KameletMain main) {
         // noop
     }
@@ -1042,6 +1089,8 @@ public class Run extends CamelCommand implements CommandLifecycle {
      */
     RunRequest toRunRequest(Path baseDir) {
         RunRequest request = new RunRequest();
+        // the options given on the command line win over the application properties
+        request.givenOptions = givenOptions();
         request.workDir = workDir;
         request.baseDir = baseDir;
         request.files = files;
@@ -1063,6 +1112,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
         request.chaos = chaosEnabled;
         request.chaosScenario = chaosScenario;
         request.chaosReport = chaosReport;
+        request.sanitizer = sanitizer;
         request.trace = debugOptions.trace;
         request.backlogTrace = debugOptions.backlogTrace;
         request.modeline = modeline;
@@ -1131,16 +1181,20 @@ public class Run extends CamelCommand implements CommandLifecycle {
      * another JVM (in the background, with a debugger, camel debug, and the repositories of the Camel they run). The
      * run configured the request with the others ({@link RunProfileProperties#applyTo(RunRequest, Properties)}).
      */
-    private void applyProfileProperties(RunRequest request, Properties answer) {
+    void applyProfileProperties(RunRequest request, Properties answer) {
         if (answer != null) {
-            // logging level/color may be configured in the properties file
-            loggingOptions.loggingLevel = answer.getProperty("loggingLevel", loggingOptions.loggingLevel);
-            loggingOptions.loggingColor
-                    = "true"
-                            .equals(answer.getProperty("loggingColor", loggingOptions.loggingColor ? "true" : "false"));
-            loggingOptions.loggingJson
-                    = "true"
-                            .equals(answer.getProperty("loggingJson", loggingOptions.loggingJson ? "true" : "false"));
+            // logging level/color may be configured in the properties file, unless given on the command line
+            if (!request.given("logging-level")) {
+                loggingOptions.loggingLevel = answer.getProperty("loggingLevel", loggingOptions.loggingLevel);
+            }
+            if (!request.given("logging-color")) {
+                loggingOptions.loggingColor = "true"
+                        .equals(answer.getProperty("loggingColor", loggingOptions.loggingColor ? "true" : "false"));
+            }
+            if (!request.given("logging-json")) {
+                loggingOptions.loggingJson = "true"
+                        .equals(answer.getProperty("loggingJson", loggingOptions.loggingJson ? "true" : "false"));
+            }
         }
         if (answer != null) {
             mavenResolver = MavenResolverMixin.of(answer, mavenResolver);
@@ -1149,12 +1203,21 @@ public class Run extends CamelCommand implements CommandLifecycle {
                 quarkusPlatform = new QuarkusPlatformMixin();
             }
             quarkusPlatform = QuarkusPlatformMixin.of(answer, quarkusPlatform);
-            background = "true".equals(answer.getProperty(BACKGROUND, background ? "true" : "false"));
-            String wait = answer.getProperty(BACKGROUND_WAIT);
-            if (wait != null) {
-                backgroundWait = BackgroundWait.parse(wait);
+            // a JVM this command started runs the integration itself: the properties must not make it start
+            // another JVM, in the background or with a debugger, and that one another, without end
+            if (!spawned) {
+                // and an option given on the command line wins over the file
+                if (!request.given("background")) {
+                    background = "true".equals(answer.getProperty(BACKGROUND, background ? "true" : "false"));
+                }
+                String wait = answer.getProperty(BACKGROUND_WAIT);
+                if (wait != null && !request.given("background-wait")) {
+                    backgroundWait = BackgroundWait.parse(wait);
+                }
+                if (!request.given("jvm-debug")) {
+                    jvmDebugPort = parseJvmDebugPort(answer.getProperty(JVM_DEBUG, Integer.toString(jvmDebugPort)));
+                }
             }
-            jvmDebugPort = parseJvmDebugPort(answer.getProperty(JVM_DEBUG, Integer.toString(jvmDebugPort)));
         }
         // what this command reads itself to run in another JVM (with another Camel version)
         camelVersion = request.camelVersion;
@@ -1188,6 +1251,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);
+        markSpawned(pb);
 
         if (verbose) {
             printer().println(String.join(" ", jbangArgs));
@@ -1202,6 +1266,72 @@ public class Run extends CamelCommand implements CommandLifecycle {
             // wait for that process to exit as we run in foreground
             return p.waitFor();
         }
+    }
+
+    /**
+     * Runs this integration in a new JVM of the launcher, with the JVM options of --jvm-debug and --jvm-args. Before,
+     * they ran it through jbang, which the launcher does not need, and which ran another Camel build on its own JDK.
+     */
+    protected int runLauncherJvm() throws Exception {
+        List<String> cmds = createLauncherJvmCommand(LauncherHelper.getCamelCommand());
+
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(cmds);
+        markSpawned(pb);
+
+        if (verbose) {
+            printer().println(String.join(" ", cmds));
+        }
+
+        if (background) {
+            return runBackgroundProcess(pb, "Camel Main");
+        } else {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+            Process p = pb.start();
+            this.spawnPid = p.pid();
+            // wait for that process to exit as we run in foreground
+            return p.waitFor();
+        }
+    }
+
+    /**
+     * The command that runs this integration in a new JVM of the launcher: the java command of the launcher, with the
+     * JVM options of --jvm-debug (suspended until a debugger attaches, as jbang --debug does) and --jvm-args, and the
+     * run options without them.
+     *
+     * @param camelCommand the command of the launcher ({@link LauncherHelper#getCamelCommand()}): java, its options,
+     *                     -jar and the launcher JAR
+     */
+    List<String> createLauncherJvmCommand(List<String> camelCommand) {
+        List<String> cmds;
+        if (originalArgs() != null) {
+            cmds = new ArrayList<>(originalArgs());
+        } else {
+            cmds = new ArrayList<>();
+            cmds.add("run");
+        }
+        if (background) {
+            cmds = BackgroundWait.withoutBackgroundOptions(cmds);
+        }
+        List<String> jvm = new ArrayList<>();
+        // tooling may signal to run JMX debugger in suspended mode via JVM system property
+        String debugSuspend = System.getProperty(BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME);
+        if (debugSuspend != null) {
+            jvm.add("-D" + BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME + "=" + debugSuspend);
+        }
+        if (jvmDebugPort > 0) {
+            jvm.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=localhost:" + jvmDebugPort);
+            cmds.removeIf(arg -> arg.startsWith("--jvm-debug"));
+        }
+        if (jvmArgs != null && !jvmArgs.isBlank()) {
+            jvm.addAll(Arrays.asList(jvmArgs.trim().split("\\s+")));
+            cmds.removeIf(a -> a.startsWith("--jvm-args"));
+        }
+        List<String> answer = new ArrayList<>(camelCommand);
+        int jar = answer.indexOf("-jar");
+        answer.addAll(jar >= 0 ? jar : answer.size(), jvm);
+        answer.addAll(cmds);
+        return answer;
     }
 
     // The jbang command that runs this integration in a new JVM.
@@ -1305,6 +1435,14 @@ public class Run extends CamelCommand implements CommandLifecycle {
         return jbangArgs;
     }
 
+    /**
+     * Marks the JVM this command starts to run the integration (in the background, with a debugger, camel debug, or
+     * with another Camel version), so it does not start one again (see {@link #SPAWNED_RUN}).
+     */
+    static void markSpawned(ProcessBuilder pb) {
+        pb.environment().put(SPAWNED_RUN, "true");
+    }
+
     protected int runBackground(KameletMain main) throws Exception {
         List<String> cmds;
         if (originalArgs() != null) {
@@ -1331,6 +1469,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
     }
 
     protected int runBackgroundProcess(ProcessBuilder pb, String kind) throws Exception {
+        markSpawned(pb);
         // the output goes to ~/.camel/<pid>-run.log, as nobody reads the output of a process in the background
         BackgroundLog.Started started = BackgroundLog.start(pb);
         Process p = started.process();
@@ -1383,8 +1522,9 @@ public class Run extends CamelCommand implements CommandLifecycle {
                                            + waited + "; the log is in "
                                            + BackgroundLog.logOf(p.pid(), logPath));
             }
-            printer().println(kind + ": " + name + " (state: " + extractState(state) + ")");
             if (!internal) {
+                // not for the Camel of camel eval and transform: X=$(camel eval ...) got this line too (CAMEL-26931)
+                printer().println(kind + ": " + name + " (state: " + extractState(state) + ")");
                 // started: its log file has all of its logging, and the output only the warnings and errors
                 printer().println("Log: " + BackgroundLog.logOf(p.pid(), logPath));
             }
@@ -1469,6 +1609,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);
+        markSpawned(pb);
         if (background) {
             return runBackgroundProcess(pb, "Camel Main");
         } else {
@@ -1484,6 +1625,10 @@ public class Run extends CamelCommand implements CommandLifecycle {
      * Runs Camel in this JVM, which the run configured, and waits for it to end.
      */
     protected int runKameletMain(ConfiguredRun run) throws Exception {
+        if (spawned) {
+            // the JVM that runs an example started in the background: its folder goes when it ends
+            ExampleHelper.deleteExampleDirOnExit(System.getenv(ExampleHelper.EXAMPLE_DIR_ENV));
+        }
         return withChaosVerdict(run.start().waitFor());
     }
 

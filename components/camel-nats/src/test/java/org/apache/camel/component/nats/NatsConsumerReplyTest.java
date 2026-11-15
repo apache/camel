@@ -115,7 +115,8 @@ public class NatsConsumerReplyTest extends CamelTestSupport {
                 handledErrors.add(exception);
             }
         });
-        consumer.new NatsConsumingTask(connection, endpoint.getConfiguration()).new CamelNatsMessageHandler()
+        consumer.new NatsConsumingTask(
+                connection, endpoint.getConfiguration(), consumer.new Run(null)).new CamelNatsMessageHandler()
                 .onMessage(message);
     }
 

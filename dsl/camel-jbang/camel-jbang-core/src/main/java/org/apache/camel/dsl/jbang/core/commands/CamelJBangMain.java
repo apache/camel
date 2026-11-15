@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -167,7 +168,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         withErrorHandling(commandLine);
 
         CommandLineHelper.migrateLegacyUserConfig(out);
-        CommandLineHelper.augmentWithUserConfiguration(commandLine);
+        CommandLineHelper.augmentWithUserConfiguration(commandLine, out);
         preExecute(commandLine, args);
         int exitCode = run(commandLine, args);
         if (isHelpRequest(args) && EnvironmentHelper.isInteractiveTerminal()) {
@@ -404,6 +405,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
                     .addSubcommand("rest", new CommandTree(new ListRest(this)))
                     .addSubcommand("route", new CommandTree(new CamelRouteStatus(this)))
                     .addSubcommand("route-controller", new CommandTree(new RouteControllerAction(this)))
+                    .addSubcommand("sanitizer", new CommandTree(new ListSanitizer(this)))
                     .addSubcommand("service", new CommandTree(new ListService(this)))
                     .addSubcommand("source", new CommandTree(new CamelSourceAction(this)))
                     .addSubcommand("sql-trace", new CommandTree(new ListSqlTrace(this)))
@@ -521,7 +523,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
             plugin.customize(answer, this);
         }
         withErrorHandling(answer);
-        CommandLineHelper.augmentWithUserConfiguration(answer);
+        CommandLineHelper.augmentWithUserConfiguration(answer, out);
         return answer;
     }
 
@@ -583,6 +585,18 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     }
 
     /**
+     * The plugins that this CLI has built in (the Camel launcher embeds some), and that contribute to the given
+     * command, such as the test plugin, whose exporter adds the Citrus tests to camel export. The plugins of the plugin
+     * configuration are not among them.
+     *
+     * @param  target the command, such as run or export
+     * @return        the plugins, none by default
+     */
+    public Collection<Plugin> getEmbeddedPlugins(String target) {
+        return List.of();
+    }
+
+    /**
      * Called just before the command line is executed
      */
     public void preExecute(CommandTree commandLine, String[] args) {
@@ -620,25 +634,24 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     }
 
     void printAvailablePlugins() {
-        // check if the plugin banner is disabled via global config
-        boolean[] enabled = { true };
-        CommandLineHelper.loadProperties(properties -> {
-            String v = properties.getProperty("camel.jbang.plugin.banner");
-            if ("false".equalsIgnoreCase(v)) {
-                enabled[0] = false;
-            }
-        });
-        if (!enabled[0]) {
+        // check if the plugin banner is disabled via the user configuration
+        String banner = CommandLineHelper.loadUserConfiguration(getOut()).getProperty("camel.jbang.plugin.banner");
+        if ("false".equalsIgnoreCase(banner)) {
             return;
         }
 
         Set<String> installed = new HashSet<>();
-        JsonObject config = PluginHelper.getPluginConfig();
-        if (config != null) {
-            JsonObject plugins = config.getMap("plugins");
-            if (plugins != null) {
-                installed.addAll(plugins.keySet());
+        try {
+            JsonObject config = PluginHelper.getPluginConfig();
+            if (config != null) {
+                JsonObject plugins = config.getMap("plugins");
+                if (plugins != null) {
+                    installed.addAll(plugins.keySet());
+                }
             }
+        } catch (Exception e) {
+            // corrupt plugin config — don't crash the help/banner output
+            PluginHelper.warnCorruptPluginConfig(out, e);
         }
         // also consider already registered subcommands as installed
         Set<String> registered = commandLine.getSubcommands().keySet();

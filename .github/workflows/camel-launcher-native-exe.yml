@@ -257,7 +257,7 @@ jobs:
           # the first run creates the CDS archive of the command, the second one starts with it
           sh "$CAMEL" version
           sh "$CAMEL" version | grep -q 'Camel CLI version'
-          ls -l "$XDG_CACHE_HOME"/camel-cli/cds/*/version.jsa
+          ls -l "$XDG_CACHE_HOME"/camel-cli/cds/*/*/version.jsa
       - name: Verify reproducible native executables and WinGet archive
         run: |
           HASH_FILE="$RUNNER_TEMP/winget-first-build.sha256"

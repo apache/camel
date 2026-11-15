@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
@@ -59,7 +61,14 @@ public final class CliExportContext {
             T context, CamelJBangMain main, Printer printer, boolean yes, String target) {
         context.withPrinter(printer)
                 .withPlugins(repos -> {
-                    Collection<Plugin> plugins = PluginHelper.getActivePlugins(main, repos, target, true).values();
+                    Map<String, Plugin> active = new LinkedHashMap<>(PluginHelper.getActivePlugins(main, repos, target, true));
+                    // and the plugins built into the CLI, unless the plugin configuration has the same plugin
+                    for (Plugin embedded : main.getEmbeddedPlugins(target)) {
+                        if (active.values().stream().noneMatch(p -> p.getClass().equals(embedded.getClass()))) {
+                            active.put(embedded.getClass().getName(), embedded);
+                        }
+                    }
+                    Collection<Plugin> plugins = active.values();
                     return new ExportContext.ActivePlugins(
                             plugins.stream().map(Plugin::getRunCustomizer).flatMap(Optional::stream).toList(),
                             plugins.stream().map(Plugin::getExporter).flatMap(Optional::stream).toList());
