@@ -63,7 +63,7 @@ or removes its row.
 | camel-alibaba-kms | alibaba-kms |  |
 | camel-alibaba-mns | alibaba-mns |  |
 | camel-alibaba-oss | alibaba-oss |  |
-| camel-alibaba-ots | alibaba-ots |  |
+| camel-alibaba-ots | alibaba-ots | yes |
 | camel-alibaba-sls | alibaba-sls |  |
 | camel-alibaba-sms | alibaba-sms |  |
 | camel-amqp | amqp |  |
