@@ -33,7 +33,6 @@ import org.aesh.command.parser.CommandLineParserException;
 import org.aesh.command.validator.OptionValidatorException;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.action.*;
-import org.apache.camel.dsl.jbang.core.commands.bind.Bind;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDataFormat;
@@ -276,9 +275,6 @@ public class CamelJBangMain implements Command<CommandInvocation> {
     CommandTree createCommandLine(String only) {
         // the help of --help is printed with the printer of the CLI too
         CommandTree commandLine = new CommandTree(this).setOutput(text -> out.print(text));
-        if (shouldCreate(only, "bind")) {
-            commandLine.addSubcommand("bind", new CommandTree(new Bind(this)));
-        }
         if (shouldCreate(only, "catalog")) {
             commandLine.addSubcommand("catalog", new CommandTree(new CatalogCommand(this))
                     .addSubcommand("component", new CommandTree(new CatalogComponent(this)))

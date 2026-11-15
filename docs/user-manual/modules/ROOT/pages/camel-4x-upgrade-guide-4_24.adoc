@@ -3302,6 +3302,21 @@ level when the dump was loaded (the rest configuration or the rest, the error ha
 configuration, the CamelContext), so the route behaved differently, or, for `apiDocs`, a verb with `apiDocs="true"`
 under a rest with `apiDocs="false"` was left out of the OpenAPI document.
 
+=== Camel K Pipe and Integration resources are removed (camel bind)
+
+Camel works with routes as its abstraction. The support for the Camel K resources, deprecated in Camel 4.19 (`camel
+bind`) and 4.23 (Pipe in the YAML DSL), is removed:
+
+* The YAML DSL no longer loads `kind: Pipe` (or `KameletBinding`) resources with `apiVersion: camel.apache.org/v1`,
+  and `.pipe.yaml` is no longer a file extension of the YAML DSL.
+* The `camel bind` command is removed, and so are `camel init --pipe` and the Integration CR template of `camel init`
+  (`.integration.yaml`). `camel run` no longer takes a file with a Pipe.
+
+Write a Camel route instead: the source of the Pipe is the `from` of the route, its steps are the steps, and its sink
+is a `to`. The xref:camel-4x-upgrade-guide-4_23.adoc#_camel_yaml_dsl_pipe_kind_pipe_support_is_deprecated[Camel 4.23
+upgrade guide] shows a Pipe and the route that does the same. Kamelets are not affected: routes use them as
+`kamelet:` endpoints.
+
 === camel-yaml-dsl - a value under parameters: with an & is kept whole
 
 In the YAML DSL, a value under `parameters:` that has an `&` is now kept whole in the endpoint uri. Before, the value
