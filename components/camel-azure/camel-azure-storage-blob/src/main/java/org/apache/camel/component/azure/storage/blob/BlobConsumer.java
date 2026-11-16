@@ -253,13 +253,15 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
+            // the blob to delete or move once the exchange is done. It is taken now, as the route may change or remove
+            // the blob name header before it ends (the producer takes the name of the blob to upload from it)
             final String blobName = exchange.getIn().getHeader(BlobConstants.BLOB_NAME, String.class);
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
                     try {
-                        processCommit(exchange);
+                        processCommit(exchange, blobName);
                     } finally {
                         releaseInProgress(blobName);
                     }
@@ -304,14 +306,24 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Strategy to move/delete the blob after being processed.
+     * Strategy to move/delete the blob after being processed, the blob named by the {@link BlobConstants#BLOB_NAME}
+     * header.
      *
      * @param exchange the exchange
      */
     protected void processCommit(Exchange exchange) {
+        processCommit(exchange, exchange.getIn().getHeader(BlobConstants.BLOB_NAME, String.class));
+    }
+
+    /**
+     * Strategy to move/delete the blob after being processed.
+     *
+     * @param exchange the exchange
+     * @param blobName the name of the blob the exchange was created from, in the container of the endpoint
+     */
+    protected void processCommit(Exchange exchange, String blobName) {
         try {
             final String containerName = getEndpoint().getConfiguration().getContainerName();
-            final String blobName = exchange.getIn().getHeader(BlobConstants.BLOB_NAME, String.class);
 
             if (blobName == null) {
                 LOG.warn("Cannot perform move/delete after read because blob name is not available in exchange headers");

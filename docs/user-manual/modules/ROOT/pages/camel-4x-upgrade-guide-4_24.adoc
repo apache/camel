@@ -1768,6 +1768,26 @@ section of xref:components::aws2-kinesis-component.adoc[AWS Kinesis].
 `copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`
 and `CamelAzureStorageBlobSourceBlobContainerName`) with an `IllegalArgumentException`.
 
+=== camel-aws2-s3, camel-azure-storage-blob, camel-aws2-sqs - the consumer deletes or moves what it consumed
+
+With `deleteAfterRead` or `moveAfterRead`, the `aws2-s3` and `azure-storage-blob` consumers now delete or move the
+object they consumed, in the bucket or container of the endpoint. Before, they took the key and the bucket from the
+`CamelAwsS3Key` and `CamelAwsS3BucketName` headers, and the name of the blob from the `CamelAzureStorageBlobBlobName`
+header, as the route left them. A route that set these headers, for example to write a copy of the object under
+another name, deleted or moved that copy, and the consumed object was consumed again by the next poll. A route that
+removed them deleted nothing.
+
+The `aws2-sqs` consumer now deletes the message with the receipt handle it received it with. Before, it took the
+`CamelAwsSqsReceiptHandle` header as the route left it, so a route that removed the headers or replaced the message
+did not delete it, and the message was received again after its visibility timeout.
+
+A failure of the `aws2-s3` consumer to delete or move an object that the AWS client raises itself (for example when S3
+cannot be reached) now goes to the exception handler of the consumer, as a failure that S3 answers does.
+
+The consumers now call `processCommit(Exchange, String)` with the key, the name of the blob or the receipt handle. A
+subclass of `AWS2S3Consumer`, `BlobConsumer` or `Sqs2Consumer` that overrides `processCommit(Exchange)` must override
+the new method instead.
+
 === camel-stitch - a response with an empty body, and the default sequence of a message
 
 A response of Stitch with an empty body now sets the `CamelStitchCode`, `CamelStitchStatus` and `CamelStitchHeaders`

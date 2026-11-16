@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
@@ -401,12 +402,15 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
             exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
+            // the object to delete or move once the exchange is done. It is taken now, as the route may change or
+            // remove the key and bucket headers before it ends (the producer takes the key of the object to write from
+            // the key header)
+            final String key = exchange.getProperty(AWS2S3Constants.KEY, String.class);
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
-                    final String key = exchange.getProperty(AWS2S3Constants.KEY, String.class);
                     try {
-                        processCommit(exchange);
+                        processCommit(exchange, key);
                     } finally {
                         if (key != null) {
                             getEndpoint().getInProgressRepository().remove(key);
@@ -415,7 +419,6 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 }
 
                 public void onFailure(Exchange exchange) {
-                    final String key = exchange.getProperty(AWS2S3Constants.KEY, String.class);
                     try {
                         processRollback(exchange);
                     } finally {
@@ -481,16 +484,24 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Strategy to delete the message after being processed.
+     * Strategy to delete or move the object after being processed, the object the exchange was created from.
      *
      * @param exchange the exchange
      */
     protected void processCommit(Exchange exchange) {
+        processCommit(exchange, exchange.getProperty(AWS2S3Constants.KEY, String.class));
+    }
+
+    /**
+     * Strategy to delete or move the object after being processed.
+     *
+     * @param exchange the exchange
+     * @param key      the key of the object the exchange was created from, in the bucket of the endpoint
+     */
+    protected void processCommit(Exchange exchange, String key) {
+        final String bucketName = getConfiguration().getBucketName();
         try {
             if (getConfiguration().isMoveAfterRead()) {
-                String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
-                String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
-
                 LOG.trace("Moving object from bucket {} with key {} to bucket {}...", bucketName, key,
                         getConfiguration().getDestinationBucket());
 
@@ -517,17 +528,13 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                         getConfiguration().getDestinationBucket());
             }
             if (getConfiguration().isDeleteAfterRead()) {
-                String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
-                String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
-
                 LOG.trace("Deleting object from bucket {} with key {}...", bucketName, key);
 
-                getAmazonS3Client().deleteObject(
-                        DeleteObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(key).build());
+                getAmazonS3Client().deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(key).build());
 
                 LOG.trace("Deleted object from bucket {} with key {}...", bucketName, key);
             }
-        } catch (AwsServiceException e) {
+        } catch (SdkException e) {
             getExceptionHandler().handleException("Error occurred during moving or deleting object. This exception is ignored.",
                     exchange, e);
         }
