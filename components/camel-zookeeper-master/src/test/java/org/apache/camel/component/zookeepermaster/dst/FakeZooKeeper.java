@@ -74,13 +74,14 @@ import tools.jackson.databind.json.JsonMapper;
  * SUSPENDED, LOST and RECONNECTED, delivered on a connection state thread; watch events on an event thread; the wait of
  * an operation for the connection (up to the connection timeout) and its foreground retry after a connection loss (the
  * retry policy of the client); a create that the ensemble applied but whose answer was lost (a retry then makes a
- * second znode); guaranteed deletes, done again in the background after a reconnect.
+ * second znode); guaranteed deletes, done again in the background after a reconnect, and a guaranteed delete in the
+ * background (without a callback), done once the client is connected.
  * <p>
- * Not modelled: ACLs, containers and TTL znodes, background (asynchronous) operations, transactions, the state events
- * of type None that ZooKeeper gives every watcher (the watchers of the group ignore them), read-only mode, the order of
- * the children in a getChildren answer (sorted here), and SessionExpiredException of an operation, which Curator
- * retries (the client here has its new session as soon as the connection is back, so no operation sees the expired
- * one).
+ * Not modelled: ACLs, containers and TTL znodes, background (asynchronous) operations other than a guaranteed delete
+ * without a callback, transactions, the state events of type None that ZooKeeper gives every watcher (the watchers of
+ * the group ignore them), read-only mode, the order of the children in a getChildren answer (sorted here), and
+ * SessionExpiredException of an operation, which Curator retries (the client here has its new session as soon as the
+ * connection is back, so no operation sees the expired one).
  * <p>
  * The client notices a connection loss after a seeded delay below two thirds of the session timeout (as the ZooKeeper
  * client does with its read timeout), or at once when one of its calls fails on it (a reset connection).
@@ -620,6 +621,9 @@ final class FakeZooKeeper {
                 // [C] RetryLoop: a connection loss is retried as the retry policy allows
                 if (attempt++ < retries) {
                     dst.block(retrySleep, "retry of " + what);
+                    // [C] SleepingRetry.allowRetry: a sleep that is interrupted ends the retries (the thread of a closed
+                    // group does not make the next attempt)
+                    checkInterrupted(what, false);
                     continue;
                 }
                 throw e;
@@ -700,6 +704,20 @@ final class FakeZooKeeper {
                 });
             }
             case "delete": {
+                if (b.background) {
+                    if (!b.guaranteed) {
+                        violations.add("not modelled: a delete in the background that is not guaranteed");
+                        throw new UnsupportedOperationException("not modelled: delete().inBackground()");
+                    }
+                    // [C] a background operation is done on the background thread of Curator once the client is
+                    // connected, and a guaranteed delete that fails is recorded and done again until it succeeds: the
+                    // same as a recorded failed delete here (done after a latency while connected, else after the
+                    // reconnect to the same session; when the session expired, the ensemble removed the znode)
+                    if (failedDeletes.add(path)) {
+                        retryDelete(path);
+                    }
+                    return null;
+                }
                 try {
                     return op("delete " + path, true, () -> {
                         if (!tree.containsKey(path)) {
@@ -832,6 +850,7 @@ final class FakeZooKeeper {
         final List<String> calls = new ArrayList<>();
         boolean creatingParents;
         boolean guaranteed;
+        boolean background;
         CreateMode mode;
         Watcher watcher;
         Stat stat;
@@ -852,6 +871,13 @@ final class FakeZooKeeper {
                     break;
                 case "guaranteed":
                     b.guaranteed = true;
+                    break;
+                case "inBackground":
+                    if (args != null && args.length > 0) {
+                        violations.add("not modelled: " + b.kind + "().inBackground with a callback");
+                        throw new UnsupportedOperationException("not modelled: inBackground with a callback");
+                    }
+                    b.background = true;
                     break;
                 case "withMode":
                     b.mode = (CreateMode) args[0];
