@@ -730,9 +730,9 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             // we should just do a commit (vs the original forceCommit)
             // when route uses NOOP Commit Manager it will rely
             // on the route implementation to explicitly commit offset
-            // when route uses Synch/Asynch Commit Manager it will
-            // ALWAYS commit the offset for the failing record
-            // and will ALWAYS retry it
+            // when route uses Synch/Asynch Commit Manager it commits the offset of the
+            // records before the failing record. That commit can fail or time out: the
+            // consumer still breaks out and polls again from the last committed offset
             try {
                 commitManager.commit(topicPartition);
             } catch (WakeupException | InterruptException e) {
