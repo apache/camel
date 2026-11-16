@@ -79,8 +79,8 @@ public class ManagedIdempotentConsumer extends ManagedProcessor implements Manag
     }
 
     @Override
-    public Boolean isIdempotentRepositoryInMemory() {
-        return getProcessor().getIdempotentRepository() instanceof InMemoryStrategy s ? s.isInMemory() : null;
+    public boolean isIdempotentRepositoryInMemory() {
+        return getProcessor().getIdempotentRepository() instanceof InMemoryStrategy s && s.isInMemory();
     }
 
     @Override

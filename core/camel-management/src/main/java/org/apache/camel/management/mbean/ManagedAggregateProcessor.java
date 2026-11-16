@@ -207,8 +207,8 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
     }
 
     @Override
-    public Boolean isAggregationRepositoryInMemory() {
-        return getProcessor().getAggregationRepository() instanceof InMemoryStrategy s ? s.isInMemory() : null;
+    public boolean isAggregationRepositoryInMemory() {
+        return getProcessor().getAggregationRepository() instanceof InMemoryStrategy s && s.isInMemory();
     }
 
     @Override

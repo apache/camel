@@ -97,7 +97,7 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     String getAggregationRepositoryClassName();
 
     @ManagedAttribute(description = "Whether the repository keeps the groups only in memory (lost when the application stops)")
-    Boolean isAggregationRepositoryInMemory();
+    boolean isAggregationRepositoryInMemory();
 
     @ManagedOperation(description = "To force completing a specific group by its key")
     int forceCompletionOfGroup(String key);

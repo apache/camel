@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.KeyValueIdempotentRepository;
+import org.apache.camel.support.MemoryKeyValueRepository;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.json.JsonArray;
@@ -55,6 +56,10 @@ class ProcessorDetailStateTest extends ContextTestSupport {
                 from("direct:custom").routeId("custom")
                         .idempotentConsumer(header("id"), new MyRepository()).id("custom1")
                         .to("mock:custom");
+                from("direct:persistent").routeId("persistent")
+                        .idempotentConsumer(header("id"), new KeyValueIdempotentRepository(new PersistentStore()))
+                        .id("persistent1")
+                        .to("mock:persistent");
                 from("direct:aggregate").routeId("aggregate")
                         .aggregate(header("id"), AggregationStrategies.groupedBody()).completionSize(2).id("aggregate1")
                         .to("mock:aggregate");
@@ -76,6 +81,14 @@ class ProcessorDetailStateTest extends ContextTestSupport {
     void aRepositoryThatDoesNotTellHasNoInMemory() {
         JsonObject state = state("custom", "custom1");
         Assertions.assertEquals(MyRepository.class.getName(), state.getString("type"));
+        Assertions.assertNull(state.get("inMemory"));
+    }
+
+    @Test
+    void onlyTrueCountsSoARepositoryThatKeepsItsDataElsewhereHasNoInMemory() {
+        // false means kept elsewhere, or cannot tell: it is left out rather than shown as persistent
+        JsonObject state = state("persistent", "persistent1");
+        Assertions.assertEquals(KeyValueIdempotentRepository.class.getName(), state.getString("type"));
         Assertions.assertNull(state.get("inMemory"));
     }
 
@@ -131,6 +144,16 @@ class ProcessorDetailStateTest extends ContextTestSupport {
             }
         }
         return Assertions.fail("no processor " + processorId + " in route " + routeId);
+    }
+
+    /**
+     * A key-value store that keeps its data elsewhere, as one with a disk tier or a database would.
+     */
+    private static class PersistentStore extends MemoryKeyValueRepository {
+        @Override
+        public boolean isInMemory() {
+            return false;
+        }
     }
 
     /**

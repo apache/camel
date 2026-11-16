@@ -22,13 +22,15 @@ package org.apache.camel.spi;
  * idempotent consumer lets the same messages through again, a file consumer with noop=true reads the same files again,
  * and an aggregator has lost the groups it was building.
  * <p/>
- * A store that can be configured either way, such as a cache with or without a disk tier, or a store that delegates to
- * another store, answers for the configuration in use. A store that does not implement this interface does not tell.
+ * Only true counts: false means that the data is kept elsewhere, or that the store cannot tell, such as a cache whose
+ * provider does not say where it keeps its entries. A store that can be configured either way, such as a cache with or
+ * without a disk tier, or a store that delegates to another store, answers for the configuration in use.
  */
 public interface InMemoryStrategy {
 
     /**
-     * Whether the data is kept only in the memory of this JVM, so it is lost when the application stops.
+     * Whether the data is kept only in the memory of this JVM, so it is lost when the application stops; false when the
+     * data is kept elsewhere, or when the store cannot tell.
      */
     boolean isInMemory();
 }

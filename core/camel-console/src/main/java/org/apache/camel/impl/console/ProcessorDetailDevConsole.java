@@ -76,7 +76,7 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
     public record StateEntry(
             @Metadata(description = "The option that holds the state, such as idempotentRepository") String name,
             @Metadata(description = "The class name of the repository") String type,
-            @Metadata(description = "Whether the repository keeps the state only in memory, so it is lost when the integration stops (only present when the repository tells)") Boolean inMemory) {
+            @Metadata(description = "True when the repository keeps the state only in memory, so it is lost when the integration stops (only present when true)") Boolean inMemory) {
     }
 
     public record RouteDetail(
@@ -241,14 +241,14 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
                 if (mp != null && mp.getIdempotentRepositoryClassName() != null) {
                     return List.of(new StateEntry(
                             "idempotentRepository", mp.getIdempotentRepositoryClassName(),
-                            mp.isIdempotentRepositoryInMemory()));
+                            onlyTrue(mp.isIdempotentRepositoryInMemory())));
                 }
             } else if ("aggregate".equals(type)) {
                 ManagedAggregateProcessorMBean mp = mcc.getManagedProcessor(id, ManagedAggregateProcessorMBean.class);
                 if (mp != null && mp.getAggregationRepositoryClassName() != null) {
                     return List.of(new StateEntry(
                             "aggregationRepository", mp.getAggregationRepositoryClassName(),
-                            mp.isAggregationRepositoryInMemory()));
+                            onlyTrue(mp.isAggregationRepositoryInMemory())));
                 }
             }
         } catch (Exception e) {
@@ -273,10 +273,18 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             if (repository != null) {
                 answer.add(new StateEntry(
                         name, repository.getClass().getName(),
-                        repository instanceof InMemoryStrategy s ? s.isInMemory() : null));
+                        onlyTrue(repository instanceof InMemoryStrategy s && s.isInMemory())));
             }
         }
         return answer.isEmpty() ? null : answer;
+    }
+
+    /**
+     * Only true counts: false means that the state is kept elsewhere, or that the repository cannot tell, so it is left
+     * out rather than shown as persistent.
+     */
+    private static Boolean onlyTrue(boolean inMemory) {
+        return inMemory ? Boolean.TRUE : null;
     }
 
     private static void collectProcessors(Element parent, List<ProcessorEntry> processors) {

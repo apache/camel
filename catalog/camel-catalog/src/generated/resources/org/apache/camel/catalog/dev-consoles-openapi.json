@@ -5182,7 +5182,7 @@
 																},
 																"inMemory": {
 																	"type": "boolean",
-																	"description": "Whether the repository keeps the state only in memory, so it is lost when the integration stops (only present when the repository tells)"
+																	"description": "True when the repository keeps the state only in memory, so it is lost when the integration stops (only present when true)"
 																}
 															}
 														},
@@ -5244,7 +5244,7 @@
 																			},
 																			"inMemory": {
 																				"type": "boolean",
-																				"description": "Whether the repository keeps the state only in memory, so it is lost when the integration stops (only present when the repository tells)"
+																				"description": "True when the repository keeps the state only in memory, so it is lost when the integration stops (only present when true)"
 																			}
 																		}
 																	},

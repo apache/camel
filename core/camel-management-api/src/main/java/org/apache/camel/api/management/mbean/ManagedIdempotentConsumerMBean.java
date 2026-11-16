@@ -43,7 +43,7 @@ public interface ManagedIdempotentConsumerMBean extends ManagedProcessorMBean {
     String getIdempotentRepositoryClassName();
 
     @ManagedAttribute(description = "Whether the repository keeps the keys only in memory (lost when the application stops)")
-    Boolean isIdempotentRepositoryInMemory();
+    boolean isIdempotentRepositoryInMemory();
 
     @ManagedAttribute(description = "Current count of duplicate Messages")
     long getDuplicateMessageCount();
