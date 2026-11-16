@@ -99,9 +99,8 @@ class MNSEndpointTest {
             for (int i = 0; i < callers; i++) {
                 results.add(executor.submit(() -> {
                     threads.add(Thread.currentThread());
-                    // as the producer and the consumer do, which then get the client from the endpoint
-                    endpoint.initClient();
-                    return endpoint.getMnsClient();
+                    // as the producer and the consumer do, which send their requests with the client it returns
+                    return endpoint.initClient();
                 }));
             }
             // a creation is held until each caller has started one too, or waits for the lock of a caller that has,
