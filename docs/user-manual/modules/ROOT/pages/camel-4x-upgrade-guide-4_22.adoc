@@ -114,6 +114,18 @@ wildcard to select a file, use the real name of the file in the producer, and th
 consumer that lists the directory instead of a wildcard in `fileName` with `useList=false`. See the
 xref:components::sftp-component.adoc[SFTP component].
 
+=== camel-ftp - ftp and ftps refuse a file or directory name with a carriage return or a line feed
+
+The `ftp` and `ftps` components now refuse a remote file or directory name with a carriage return or a line feed, with
+a `GenericFileOperationFailedException`, before they send any command to the server for it. This applies to the name
+the producer writes (the `CamelFileName` header, `tempFileName`, `doneFileName` and `moveExisting`), to the directories
+it creates or changes to, and to the names the consumer retrieves, deletes, renames or lists.
+
+The FTP control connection sends one command per line, so such a name cannot be sent as one command. Before, the server
+got the name cut at the line break: the operation failed or acted on another file, and the replies of the later
+commands on that connection could get out of step. Remove or replace these characters in the name before the producer.
+The `sftp` component is not affected. See the xref:components::ftp-component.adoc[FTP component].
+
 === camel-file - the consumer skips a file it would move through a symbolic link resolving outside the starting directory
 
 With `jailStartingDirectory` enabled (the default), the file consumer now resolves symbolic links on the targets of
