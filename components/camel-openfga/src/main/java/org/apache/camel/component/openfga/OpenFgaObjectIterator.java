@@ -176,6 +176,10 @@ public final class OpenFgaObjectIterator implements Iterator<String>, Closeable 
         // only an iterator that started a request holds a connection worth tracking; one that is never iterated,
         // because the route dropped or replaced the body, must not pin itself to the producer until it stops
         onOpen.accept(this);
+        if (closed.get()) {
+            // a close that ran between the request and the registration would leave the entry behind
+            onClose.accept(this);
+        }
         // A close racing with header arrival must also close the late response body.
         response.whenComplete((value, error) -> {
             if (closed.get() && value != null) {
