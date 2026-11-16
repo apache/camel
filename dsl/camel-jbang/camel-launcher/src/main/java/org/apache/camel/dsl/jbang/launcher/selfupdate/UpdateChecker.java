@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Properties;
 
-import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
@@ -80,11 +79,20 @@ public final class UpdateChecker {
             refresh = thread;
         }
 
-        CamelCatalog catalog = new DefaultCamelCatalog();
-        String running = catalog.getCatalogVersion();
+        String running = runningVersion();
         if (shouldNotify(cache, running, target)) {
             System.err.println(formatNotice(running, cache.getProperty("latest_version")));
         }
+    }
+
+    /**
+     * The version of the running launcher, from the manifest of its JAR. The catalog has the same version, but loading
+     * it on every command opens every JAR of the class path before the catalog JAR, which is far down the class path of
+     * the distribution.
+     */
+    static String runningVersion() {
+        String version = UpdateChecker.class.getPackage().getImplementationVersion();
+        return version != null ? version : new DefaultCamelCatalog().getCatalogVersion();
     }
 
     /**
