@@ -1648,17 +1648,18 @@ public abstract class AbstractCamelContext extends BaseService
         try {
             DefaultRouteError.reset(this, routeId);
 
-            // gather a map of all the endpoints in use by the routes, so we can
-            // known if a given endpoints is in use
-            // by one or more routes, when we remove the route
-            Map<String, Set<Endpoint>> endpointsInUse = new HashMap<>();
-            for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
-                endpointsInUse.put(entry.getKey(), entry.getValue().gatherEndpoints());
-            }
-
             RouteService routeService = routeServices.get(routeId);
             if (routeService != null) {
                 if (getRouteStatus(routeId).isStopped()) {
+                    // gather a map of all the endpoints in use by the routes, so we can
+                    // know if a given endpoint is in use by one or more routes, when we
+                    // remove the route. This walks every route, so it is only done when a
+                    // route is actually removed: adding a route with an explicit id calls
+                    // this method too, for an id that is usually not in use.
+                    Map<String, Set<Endpoint>> endpointsInUse = new HashMap<>();
+                    for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
+                        endpointsInUse.put(entry.getKey(), entry.getValue().gatherEndpoints());
+                    }
                     try {
                         doRemove(routeId, loggingLevel, routeService, endpointsInUse);
                     } catch (Exception e) {
