@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Unchecked exception thrown when a type converter is found but fails to convert a value to the required type.
- * <p/>
+ * <p>
  * Contrast with {@link NoTypeConversionAvailableException}, which is thrown when no converter exists for the
  * source-to-target type pair at all.
  *
@@ -52,14 +52,14 @@ public class TypeConversionException extends RuntimeCamelException {
     }
 
     /**
-     * Returns the required <tt>to</tt> type
+     * Returns the required <code>to</code> type
      */
     public Class<?> getToType() {
         return type;
     }
 
     /**
-     * Returns the required <tt>from</tt> type. Returns <tt>null</tt> if the provided value was null.
+     * Returns the required <code>from</code> type. Returns <code>null</code> if the provided value was null.
      */
     public @Nullable Class<?> getFromType() {
         if (value != null) {

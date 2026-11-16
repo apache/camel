@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for OAuth 2.0 Client Credentials grant.
- * <p/>
+ * <p>
  * Used by {@link OAuthClientAuthenticationFactory} to create a {@link org.apache.camel.Processor} that acquires a
  * bearer token and sets the {@code Authorization: Bearer <token>} header on the Exchange message.
  *

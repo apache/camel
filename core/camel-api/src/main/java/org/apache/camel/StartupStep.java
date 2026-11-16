@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Represents a single timed step in the {@link CamelContext} startup sequence, used for diagnostics and performance
  * profiling.
- * <p/>
+ * <p>
  * Steps are hierarchically nested (each step has a parent id) and are recorded by the
  * {@link org.apache.camel.spi.StartupStepRecorder}. When Java Flight Recorder is on the classpath the recorder emits
  * each step as a JFR event, making startup timings visible in tools such as JDK Mission Control. Steps are opened at

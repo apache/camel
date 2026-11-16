@@ -21,13 +21,13 @@ import org.apache.camel.NoSuchLanguageException;
 
 /**
  * SPI strategy for resolving a {@link Language} implementation by name in a loosely coupled way.
- * <p/>
+ * <p>
  * The default implementation first checks the Camel {@link Registry} for a bean registered under the language name,
  * then falls back to the classpath service files under {@code META-INF/services/org/apache/camel/language/}. Custom
  * resolvers can alias language names, redirect to a different implementation, or integrate with a non-classpath
  * language registry. Multiple resolvers can be registered on {@link org.apache.camel.CamelContext}; they are tried in
  * priority order until one returns a non-null result or {@link org.apache.camel.NoSuchLanguageException} is thrown.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/languages.html">Languages</a> in the Camel user manual.
  *
  * @see Language

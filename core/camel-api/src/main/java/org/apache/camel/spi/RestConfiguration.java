@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Central configuration bean for the Camel REST DSL, shared by {@link RestConsumerFactory},
  * {@link RestProducerFactory}, and {@link RestApiConsumerFactory} implementations.
- * <p/>
+ * <p>
  * An instance of this class is held on {@link org.apache.camel.CamelContext} and controls every aspect of REST service
  * hosting and client invocation: the HTTP component to use (e.g. {@code platform-http}, {@code jetty},
  * {@code netty-http}, {@code servlet}), the server host and port, the binding mode ({@link RestBindingMode#off},
@@ -32,7 +32,7 @@ import org.jspecify.annotations.Nullable;
  * and XML data-format class names, and additional {@code Map<String, Object>} property overrides for the component,
  * consumer, and producer tiers. The configuration is typically expressed via the {@code restConfiguration()} builder in
  * the Java DSL, or the {@code rest-configuration} element in XML and YAML DSLs.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/rest-dsl.html">Rest DSL</a> in the Camel user manual.
  *
  * @see RestConsumerFactory
@@ -100,7 +100,7 @@ public class RestConfiguration {
     /**
      * Gets the name of the Camel component to use as the REST consumer
      *
-     * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable
+     * @return the component name, or <code>null</code> to let Camel search the {@link Registry} to find suitable
      *         implementation
      */
     public @Nullable String getComponent() {
@@ -138,7 +138,7 @@ public class RestConfiguration {
     /**
      * Gets the name of the Camel component to use as the REST producer
      *
-     * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable
+     * @return the component name, or <code>null</code> to let Camel search the {@link Registry} to find suitable
      *         implementation
      */
     public @Nullable String getProducerComponent() {
@@ -156,7 +156,7 @@ public class RestConfiguration {
 
     /**
      * Gets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
-     * parameters are valid accordingly to the api document.
+     * parameters are valid according to the api document.
      */
     public @Nullable String getProducerApiDoc() {
         return producerApiDoc;
@@ -164,11 +164,11 @@ public class RestConfiguration {
 
     /**
      * Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
-     * parameters are valid accordingly to the api document. This requires adding camel-openapi-java to the classpath,
-     * and any miss configuration will let Camel fail on startup and report the error(s).
-     * <p/>
-     * The location of the api document is loaded from classpath by default, but you can use <tt>file:</tt> or
-     * <tt>http:</tt> to refer to resources to load from file or http url.
+     * parameters are valid according to the api document. This requires adding camel-openapi-java to the classpath, and
+     * any misconfiguration will let Camel fail on startup and report the error(s).
+     * <p>
+     * The location of the api document is loaded from classpath by default, but you can use <code>file:</code> or
+     * <code>http:</code> to refer to resources to load from file or http url.
      */
     public void setProducerApiDoc(String producerApiDoc) {
         this.producerApiDoc = Objects.requireNonNull(producerApiDoc, "producerApiDoc");
@@ -177,7 +177,7 @@ public class RestConfiguration {
     /**
      * Gets the hostname to use by the REST consumer
      *
-     * @return the hostname, or <tt>null</tt> to use default hostname
+     * @return the hostname, or <code>null</code> to use default hostname
      */
     public @Nullable String getHost() {
         return host;
@@ -217,7 +217,7 @@ public class RestConfiguration {
     /**
      * Gets the hostname to use for the API documentation (such as swagger or openapi).
      *
-     * @return the API host, or <tt>null</tt> to use the default host
+     * @return the API host, or <code>null</code> to use the default host
      */
     public @Nullable String getApiHost() {
         return apiHost;
@@ -225,7 +225,7 @@ public class RestConfiguration {
 
     /**
      * To use a specific hostname for the API documentation (such as swagger or openapi)
-     * <p/>
+     * <p>
      * This can be used to override the generated host with this configured hostname
      */
     public void setApiHost(String apiHost) {
@@ -235,7 +235,7 @@ public class RestConfiguration {
     /**
      * Gets the scheme to use by the REST consumer
      *
-     * @return the scheme, or <tt>null</tt> to use default scheme
+     * @return the scheme, or <code>null</code> to use default scheme
      */
     public @Nullable String getScheme() {
         return scheme;
@@ -253,7 +253,7 @@ public class RestConfiguration {
     /**
      * Gets the port to use by the REST consumer
      *
-     * @return the port, or <tt>0</tt> or <tt>-1</tt> to use default port
+     * @return the port, or <code>0</code> or <code>-1</code> to use default port
      */
     public int getPort() {
         return port;
@@ -271,7 +271,7 @@ public class RestConfiguration {
     /**
      * Gets the configured context-path
      *
-     * @return the context path, or <tt>null</tt> if none configured.
+     * @return the context path, or <code>null</code> if none configured.
      */
     public @Nullable String getContextPath() {
         return contextPath;
@@ -279,10 +279,10 @@ public class RestConfiguration {
 
     /**
      * Sets a leading context-path the REST services will be using.
-     * <p/>
-     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application is
-     * deployed using a context-path. Or for components such as <tt>camel-jetty</tt> or <tt>camel-netty-http</tt> that
-     * includes a HTTP server.
+     * <p>
+     * This can be used when using components such as <code>camel-servlet</code> where the deployed web application is
+     * deployed using a context-path. Or for components such as <code>camel-jetty</code> or
+     * <code>camel-netty-http</code> that includes a HTTP server.
      *
      * @param contextPath the context path
      */
@@ -293,19 +293,19 @@ public class RestConfiguration {
     /**
      * Gets the path where the REST DSL serves the API documentation of the REST services, as an OpenAPI document.
      *
-     * @return the API context path, or <tt>null</tt> if none configured.
+     * @return the API context path, or <code>null</code> if none configured.
      */
     public @Nullable String getApiContextPath() {
         return apiContextPath;
     }
 
     /**
-     * The path, such as <tt>/api-doc</tt>, where the REST DSL serves the API documentation of the REST services, as an
-     * OpenAPI document.
-     * <p/>
-     * The API documentation is only served when this option is set. This requires <tt>camel-openapi-java</tt> on the
-     * classpath. The document is JSON by default, or YAML when the request path ends with <tt>.yaml</tt>. The path is
-     * relative to contextPath, when that option is set.
+     * The path, such as <code>/api-doc</code>, where the REST DSL serves the API documentation of the REST services, as
+     * an OpenAPI document.
+     * <p>
+     * The API documentation is only served when this option is set. This requires <code>camel-openapi-java</code> on
+     * the classpath. The document is JSON by default, or YAML when the request path ends with <code>.yaml</code>. The
+     * path is relative to contextPath, when that option is set.
      *
      * @param contextPath the API context path
      */
@@ -316,7 +316,7 @@ public class RestConfiguration {
     /**
      * Gets the route id used for the route that services the REST API.
      *
-     * @return the route id, or <tt>null</tt> if using an auto-assigned id
+     * @return the route id, or <code>null</code> if using an auto-assigned id
      */
     public @Nullable String getApiContextRouteId() {
         return apiContextRouteId;
@@ -324,7 +324,7 @@ public class RestConfiguration {
 
     /**
      * Sets the route id to use for the route that services the REST API.
-     * <p/>
+     * <p>
      * The route will by default use an auto assigned route id.
      *
      * @param apiContextRouteId the route id
@@ -410,7 +410,7 @@ public class RestConfiguration {
     /**
      * Gets the package name used as base for classpath scanning of POJO classes when binding mode is enabled.
      *
-     * @return the package name, or <tt>null</tt> if not configured
+     * @return the package name, or <code>null</code> if not configured
      */
     public @Nullable String getBindingPackageScan() {
         return bindingPackageScan;
@@ -426,8 +426,8 @@ public class RestConfiguration {
 
     /**
      * Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is.
-     * <p/>
-     * This option is default <tt>true</tt>.
+     * <p>
+     * This option is default <code>true</code>.
      *
      * @return whether to skip binding on error code
      */
@@ -437,8 +437,8 @@ public class RestConfiguration {
 
     /**
      * Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is.
-     * <p/>
-     * This option is default <tt>true</tt>.
+     * <p>
+     * This option is default <code>true</code>.
      *
      * @param skipBindingOnErrorCode whether to skip binding on error code
      */
@@ -490,8 +490,8 @@ public class RestConfiguration {
     /**
      * To specify whether to enable CORS which means Camel will automatically include CORS in the HTTP headers in the
      * response.
-     * <p/>
-     * This option is default <tt>false</tt>
+     * <p>
+     * This option is default <code>false</code>
      *
      * @return whether CORS is enabled or not
      */
@@ -500,12 +500,12 @@ public class RestConfiguration {
     }
 
     /**
-     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the
+     * To specify whether to enable CORS which means Camel will automatically include CORS in the HTTP headers in the
      * response.
-     * <p/>
-     * This option is default <tt>false</tt>
+     * <p>
+     * This option is default <code>false</code>
      *
-     * @param enableCORS <tt>true</tt> to enable CORS
+     * @param enableCORS <code>true</code> to enable CORS
      */
     public void setEnableCORS(boolean enableCORS) {
         this.enableCORS = enableCORS;
@@ -522,10 +522,10 @@ public class RestConfiguration {
 
     /**
      * Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.
-     * <p/>
-     * The default value is <tt>false</tt>.
+     * <p>
+     * The default value is <code>false</code>.
      *
-     * @param enableNoContentResponse <tt>true</tt> to enable HTTP 204 response codes
+     * @param enableNoContentResponse <code>true</code> to enable HTTP 204 response codes
      */
     public void setEnableNoContentResponse(boolean enableNoContentResponse) {
         this.enableNoContentResponse = enableNoContentResponse;
@@ -548,7 +548,7 @@ public class RestConfiguration {
      * a single route, however this requires to use direct endpoints, which must be unique per service. If a route is
      * not using direct endpoint then the rest-dsl is not inlined, and will become an individual route.
      *
-     * This option is default <tt>true</tt>.
+     * This option is default <code>true</code>.
      */
     public void setInlineRoutes(boolean inlineRoutes) {
         this.inlineRoutes = inlineRoutes;
@@ -556,11 +556,11 @@ public class RestConfiguration {
 
     /**
      * Gets the name of the json data format.
-     * <p/>
+     * <p>
      * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing
      * data format instance.
      *
-     * @return the name, or <tt>null</tt> to use default
+     * @return the name, or <code>null</code> to use default
      */
     public @Nullable String getJsonDataFormat() {
         return jsonDataFormat;
@@ -568,7 +568,7 @@ public class RestConfiguration {
 
     /**
      * Sets a custom json data format to be used
-     * <p/>
+     * <p>
      * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing
      * data format instance.
      *
@@ -580,11 +580,11 @@ public class RestConfiguration {
 
     /**
      * Gets the name of the xml data format.
-     * <p/>
+     * <p>
      * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing
      * data format instance.
      *
-     * @return the name, or <tt>null</tt> to use default
+     * @return the name, or <code>null</code> to use default
      */
     public @Nullable String getXmlDataFormat() {
         return xmlDataFormat;
@@ -592,7 +592,7 @@ public class RestConfiguration {
 
     /**
      * Sets a custom xml data format to be used.
-     * <p/>
+     * <p>
      * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing
      * data format instance.
      *

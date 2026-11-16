@@ -29,12 +29,12 @@ import org.jspecify.annotations.Nullable;
  * Strategy that controls when and how stream-based message bodies (such as {@link java.io.InputStream}) are buffered so
  * they can be re-read, as described in the <a href="https://camel.apache.org/manual/stream-caching.html">Stream
  * Caching</a> documentation.
- * <p/>
+ * <p>
  * Without stream caching, a stream body can only be consumed once; any EIP or log statement that reads the body a
  * second time will see an empty stream. When stream caching is enabled, Camel wraps the body in a {@link StreamCache}
  * that buffers data either in memory or in a temporary spool file on disk, depending on thresholds configured on this
  * strategy.
- * <p/>
+ * <p>
  * The key thresholds are:
  * <ul>
  * <li>{@link #setSpoolThreshold(long)} — streams larger than this value are spooled to disk rather than held in memory,
@@ -96,13 +96,13 @@ public interface StreamCachingStrategy extends StaticService {
         /**
          * Sets whether statistics is enabled.
          *
-         * @param statisticsEnabled <tt>true</tt> to enable
+         * @param statisticsEnabled <code>true</code> to enable
          */
         void setStatisticsEnabled(boolean statisticsEnabled);
     }
 
     /**
-     * Used for selecting if the memory limit is <tt>committed</tt> or <tt>maximum</tt> heap memory setting.
+     * Used for selecting if the memory limit is <code>committed</code> or <code>maximum</code> heap memory setting.
      */
     enum SpoolUsedHeapMemoryLimit {
         Committed,
@@ -116,11 +116,11 @@ public interface StreamCachingStrategy extends StaticService {
 
         /**
          * Determines if the stream should be spooled or not. For example if the stream length is over a threshold.
-         * <p/>
+         * <p>
          * This allows implementations to use custom strategies to determine if spooling is needed or not.
          *
          * @param  length the length of the stream
-         * @return        <tt>true</tt> to spool the cache, or <tt>false</tt> to keep the cache in-memory
+         * @return        <code>true</code> to spool the cache, or <code>false</code> to keep the cache in-memory
          */
         boolean shouldSpoolCache(long length);
 
@@ -128,7 +128,7 @@ public interface StreamCachingStrategy extends StaticService {
 
     /**
      * Sets whether the stream caching is enabled.
-     * <p/>
+     * <p>
      * <b>Notice:</b> This cannot be changed at runtime.
      */
     void setEnabled(boolean enabled);
@@ -173,7 +173,7 @@ public interface StreamCachingStrategy extends StaticService {
 
     /**
      * Enables spooling to disk.
-     * <p/>
+     * <p>
      * <b>Notice:</b> This cannot be changed at runtime.
      *
      * Default is disabled.
@@ -187,9 +187,9 @@ public interface StreamCachingStrategy extends StaticService {
 
     /**
      * Sets the spool (temporary) directory to use for overflow and spooling to disk.
-     * <p/>
-     * If no spool directory has been explicit configured, then a temporary directory is created in the
-     * <tt>java.io.tmpdir</tt> directory.
+     * <p>
+     * If no spool directory has been explicitly configured, then a temporary directory is created in the
+     * <code>java.io.tmpdir</code> directory.
      */
     void setSpoolDirectory(File path);
 
@@ -200,7 +200,7 @@ public interface StreamCachingStrategy extends StaticService {
      * Resolves the spool directory to use for the given {@link Exchange}. This allows custom implementations to direct
      * each route's spooled bytes to a separate directory, for example to isolate spool data per route or to monitor
      * spool usage at the route level.
-     * <p/>
+     * <p>
      * The default implementation delegates to {@link #getSpoolDirectory()}, which returns the single context-wide spool
      * directory. Custom implementations may override this to return a per-route or per-exchange directory.
      *
@@ -216,9 +216,9 @@ public interface StreamCachingStrategy extends StaticService {
 
     /**
      * Threshold in bytes when overflow to disk is activated.
-     * <p/>
+     * <p>
      * The default threshold is {@link org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes (eg 128kb). Use
-     * <tt>-1</tt> to disable overflow to disk.
+     * <code>-1</code> to disable overflow to disk.
      */
     void setSpoolThreshold(long threshold);
 
@@ -245,7 +245,7 @@ public interface StreamCachingStrategy extends StaticService {
 
     /**
      * Sets the buffer size to use when allocating in-memory buffers used for in-memory stream caches.
-     * <p/>
+     * <p>
      * The default size is {@link org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE}
      */
     void setBufferSize(int bufferSize);
@@ -254,7 +254,7 @@ public interface StreamCachingStrategy extends StaticService {
 
     /**
      * Sets a cipher name to use when spooling to disk to write with encryption.
-     * <p/>
+     * <p>
      * By default the data is not encrypted.
      */
     void setSpoolCipher(String cipher);
@@ -264,8 +264,8 @@ public interface StreamCachingStrategy extends StaticService {
 
     /**
      * Whether to remove the temporary directory when stopping.
-     * <p/>
-     * This option is default <tt>true</tt>
+     * <p>
+     * This option is default <code>true</code>
      */
     void setRemoveSpoolDirectoryWhenStopping(boolean remove);
 
@@ -273,10 +273,11 @@ public interface StreamCachingStrategy extends StaticService {
 
     /**
      * Sets whether if just any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules returns
-     * <tt>true</tt> then {@link #shouldSpoolCache(long)} returns <tt>true</tt>. If this option is <tt>false</tt>, then
-     * <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must return <tt>true</tt>.
-     * <p/>
-     * The default value is <tt>false</tt> which means that all the rules must return <tt>true</tt>.
+     * <code>true</code> then {@link #shouldSpoolCache(long)} returns <code>true</code>. If this option is
+     * <code>false</code>, then <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must return
+     * <code>true</code>.
+     * <p>
+     * The default value is <code>false</code> which means that all the rules must return <code>true</code>.
      */
     void setAnySpoolRules(boolean any);
 
@@ -294,11 +295,11 @@ public interface StreamCachingStrategy extends StaticService {
 
     /**
      * Determines if the stream should be spooled or not. For example if the stream length is over a threshold.
-     * <p/>
+     * <p>
      * This allows implementations to use custom strategies to determine if spooling is needed or not.
      *
      * @param  length the length of the stream
-     * @return        <tt>true</tt> to spool the cache, or <tt>false</tt> to keep the cache in-memory
+     * @return        <code>true</code> to spool the cache, or <code>false</code> to keep the cache in-memory
      */
     boolean shouldSpoolCache(long length);
 
@@ -306,8 +307,8 @@ public interface StreamCachingStrategy extends StaticService {
      * Caches the body as a {@link StreamCache}.
      *
      * @param  exchange the exchange
-     * @return          the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
-     *                  the body
+     * @return          the body cached as a {@link StreamCache}, or <code>null</code> if not possible or no need to
+     *                  cache the body
      */
     @Nullable
     StreamCache cache(Exchange exchange);
@@ -316,8 +317,8 @@ public interface StreamCachingStrategy extends StaticService {
      * Caches the body as a {@link StreamCache}.
      *
      * @param  message the message
-     * @return         the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
-     *                 the body
+     * @return         the body cached as a {@link StreamCache}, or <code>null</code> if not possible or no need to
+     *                 cache the body
      */
     @Nullable
     StreamCache cache(Message message);
@@ -326,7 +327,7 @@ public interface StreamCachingStrategy extends StaticService {
      * Caches the value as a {@link StreamCache}.
      *
      * @param  value the value
-     * @return       the value cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
+     * @return       the value cached as a {@link StreamCache}, or <code>null</code> if not possible or no need to cache
      */
     @Nullable
     StreamCache cache(Object value);

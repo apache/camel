@@ -42,8 +42,9 @@ import java.lang.annotation.Target;
 public @interface RecipientList {
 
     /**
-     * Delimiter used if the Expression returned multiple endpoints. Can be turned off using the value <tt>false</tt>.
-     * <p/>
+     * Delimiter used if the Expression returned multiple endpoints. Can be turned off using the value
+     * <code>false</code>.
+     * <p>
      * The default value is ,
      */
     String delimiter() default ",";
@@ -66,11 +67,11 @@ public @interface RecipientList {
     /**
      * Will now stop further processing if an exception or failure occurred during processing of an
      * {@link org.apache.camel.Exchange} and the caused exception will be thrown.
-     * <p/>
+     * <p>
      * Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by
      * the error handler (such as using onException). In all situations the recipient list will stop further processing.
      * This is the same behavior as in pipeline, which is used by the routing engine.
-     * <p/>
+     * <p>
      * The default behavior is to <b>not</b> stop but continue processing till the end
      */
     boolean stopOnException() default false;

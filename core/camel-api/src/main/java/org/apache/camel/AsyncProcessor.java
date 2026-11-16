@@ -21,10 +21,10 @@ import java.util.concurrent.CompletableFuture;
 /**
  * An <b>asynchronous</b> processor which can process an {@link Exchange} in an asynchronous fashion and signal
  * completion by invoking the {@link AsyncCallback}.
- * <p/>
+ * <p>
  * Any processor can be coerced to have an {@link AsyncProcessor} interface by using the
- * {@link org.apache.camel.support.AsyncProcessorConverterHelper#convert AsyncProcessorConverterHelper.convert} method.
- * <p/>
+ * {@code AsyncProcessorConverterHelper.convert} method.
+ * <p>
  * <b>The contract of {@link #process(Exchange, AsyncCallback)}.</b> The routing engine relies on it, and a processor
  * that breaks the first two rules is a bug, whether it is Camel's or a user's:
  * <ul>
@@ -51,7 +51,7 @@ public interface AsyncProcessor extends Processor {
     /**
      * Processes the message exchange. Similar to {@link Processor#process}, but the caller supports having the exchange
      * asynchronously processed.
-     * <p/>
+     * <p>
      * If there was a failure processing then the caused {@link Exception} would be set on the {@link Exchange}, and the
      * callback is called; this method does not throw. See the contract in the class Javadoc.
      *
@@ -59,9 +59,9 @@ public interface AsyncProcessor extends Processor {
      * @param  callback the {@link AsyncCallback} will be invoked exactly once when the processing of the exchange is
      *                  completed. If the exchange is completed synchronously, then the callback is also invoked
      *                  synchronously. The callback should therefore be careful of starting recursive loop.
-     * @return          (doneSync) <tt>true</tt> to continue execution synchronously, <tt>false</tt> to continue being
-     *                  executed asynchronously; the same value the callback is called with, except for a processor that
-     *                  hands its callback to the reactive executor (see above)
+     * @return          (doneSync) <code>true</code> to continue execution synchronously, <code>false</code> to continue
+     *                  being executed asynchronously; the same value the callback is called with, except for a
+     *                  processor that hands its callback to the reactive executor (see above)
      */
     boolean process(Exchange exchange, AsyncCallback callback);
 

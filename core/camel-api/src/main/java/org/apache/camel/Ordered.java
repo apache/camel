@@ -18,7 +18,7 @@ package org.apache.camel;
 
 /**
  * Implemented by objects that carry an explicit ordering position within a sorted collection.
- * <p/>
+ * <p>
  * Camel uses this interface wherever the evaluation or application sequence matters: {@link Processor} chains,
  * interceptors, {@link org.apache.camel.spi.LifecycleStrategy} callbacks, and bean-method resolution all sort their
  * participants by {@link #getOrder()}. Lower values run first; {@link #HIGHEST} ({@code Integer.MIN_VALUE}) gives the
@@ -39,7 +39,7 @@ public interface Ordered {
 
     /**
      * Gets the order.
-     * <p/>
+     * <p>
      * Use low numbers for higher priority. Normally the sorting will start from 0 and move upwards. So if you want to
      * be last then use {@link Integer#MAX_VALUE} or eg {@link #LOWEST}.
      *

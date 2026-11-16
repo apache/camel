@@ -18,8 +18,8 @@ package org.apache.camel.spi;
 
 /**
  * A {@link org.apache.camel.TypeConverter} which is capable of annotation scanning for
- * {@link org.apache.camel.Converter} classes and add these as type converters.
- * <p/>
+ * {@link org.apache.camel.Converter} classes and adding these as type converters.
+ * <p>
  * This is using Camel 2.x style, and it is recommended to migrate to @Converter(loader = true) for fast type converter
  * mode.
  *

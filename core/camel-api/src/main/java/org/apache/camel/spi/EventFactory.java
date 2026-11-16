@@ -26,18 +26,18 @@ import org.jspecify.annotations.Nullable;
 /**
  * Factory that mints concrete {@link CamelEvent} instances for every significant lifecycle and messaging event in the
  * Camel runtime.
- * <p/>
+ * <p>
  * Camel defines a rich event taxonomy covering: {@link org.apache.camel.CamelContext} lifecycle (initializing, started,
  * stopped, suspended, resumed, reloaded), route lifecycle (starting, started, stopping, stopped, added, removed,
  * reloaded, restarting), service failures, and {@link Exchange} milestones (created, completed, failed, redelivery,
  * sending, sent, step start/complete/fail). Each method corresponds to one event type and returns an instance populated
  * with the relevant context information.
- * <p/>
+ * <p>
  * The factory is set on {@link ManagementStrategy#setEventFactory(EventFactory)} and called whenever
  * {@link ManagementStrategy#notify(CamelEvent)} needs to fire a new event. Timestamps can be included in events by
  * setting {@link #setTimestampEnabled(boolean)} to {@code true}; they are disabled by default to avoid overhead when
  * not needed. A custom factory can extend the event set or change how event objects are constructed.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/event-notifier.html">Event Notifier</a> in the Camel user manual.
  *
  * @see CamelEvent
@@ -307,15 +307,15 @@ public interface EventFactory {
 
     /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} has failed but is being handled by the
-     * Camel error handlers such as an dead letter channel, or a doTry .. doCatch block.
-     * <p/>
+     * Camel error handlers such as a dead letter channel, or a doTry .. doCatch block.
+     * <p>
      * This event is triggered <b>before</b> sending the failure handler, where as
-     * <tt>createExchangeFailureHandledEvent</tt> if the event <b>after</b>.
+     * <code>createExchangeFailureHandledEvent</code> is the event <b>after</b>.
      *
      * @param  exchange          the exchange
      * @param  failureHandler    the failure handler such as moving the message to a dead letter queue
      * @param  deadLetterChannel whether it was a dead letter channel or not handling the failure
-     * @param  deadLetterUri     the dead letter uri, if its a dead letter channel
+     * @param  deadLetterUri     the dead letter uri, if it's a dead letter channel
      * @return                   the created event
      */
     CamelEvent createExchangeFailureHandlingEvent(
@@ -324,15 +324,15 @@ public interface EventFactory {
 
     /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} has failed but was handled by the Camel
-     * error handlers such as an dead letter channel, or a doTry .. doCatch block.
-     * <p/>
+     * error handlers such as a dead letter channel, or a doTry .. doCatch block.
+     * <p>
      * This event is triggered <b>after</b> the exchange was sent to failure handler, where as
-     * <tt>createExchangeFailureHandlingEvent</tt> if the event <b>before</b>.
+     * <code>createExchangeFailureHandlingEvent</code> is the event <b>before</b>.
      *
      * @param  exchange          the exchange
      * @param  failureHandler    the failure handler such as moving the message to a dead letter queue
      * @param  deadLetterChannel whether it was a dead letter channel or not handling the failure
-     * @param  deadLetterUri     the dead letter uri, if its a dead letter channel
+     * @param  deadLetterUri     the dead letter uri, if it's a dead letter channel
      * @return                   the created event
      */
     CamelEvent createExchangeFailureHandledEvent(

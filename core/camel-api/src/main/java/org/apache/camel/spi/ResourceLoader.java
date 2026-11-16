@@ -20,7 +20,7 @@ import org.apache.camel.CamelContextAware;
 
 /**
  * SPI for loading a {@link Resource} from a URI.
- * <p/>
+ * <p>
  * The resource loader is the entry point Camel uses to turn a location (such as {@code file:routes.yaml} or
  * {@code classpath:rules.txt}) into a {@link Resource}. It selects the appropriate scheme-specific
  * {@link ResourceResolver} to perform the actual resolution. A single loader is registered per

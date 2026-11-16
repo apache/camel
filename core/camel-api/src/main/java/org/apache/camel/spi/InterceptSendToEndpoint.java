@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * An {@link Endpoint} wrapper that, when sent to, detours the exchange: before, send to the original endpoint (which
  * can be skipped), then after (optional).
- * <p/>
+ * <p>
  * This is the endpoint created by {@link InterceptEndpointFactory} to implement the interceptSendToEndpoint EIP. The
  * before/after {@link Processor}s and the optional {@link Predicate} guard are configurable, as is whether the original
  * send is {@link #isSkip() skipped}.

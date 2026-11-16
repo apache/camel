@@ -41,15 +41,15 @@ public interface RuntimeEndpointRegistry extends StaticService {
         String getRouteId();
 
         /**
-         * Whether the endpoint is used as input our output
-         * <p/>
-         * The returned value can either be <tt>in</tt> or <tt>out</tt>
+         * Whether the endpoint is used as input or output
+         * <p>
+         * The returned value can either be <code>in</code> or <code>out</code>
          */
         String getDirection();
 
         /**
          * Usage of the endpoint, such as how many messages it has received / sent to
-         * <p/>
+         * <p>
          * This information is only available if {@link org.apache.camel.ManagementStatisticsLevel} is configured as
          * {@link org.apache.camel.ManagementStatisticsLevel#Extended}.
          */
@@ -122,8 +122,8 @@ public interface RuntimeEndpointRegistry extends StaticService {
 
     /**
      * Maximum number of endpoints to keep in the cache per route.
-     * <p/>
-     * The default value is <tt>1000</tt>
+     * <p>
+     * The default value is <code>1000</code>
      */
     int getLimit();
 

@@ -26,12 +26,12 @@ import org.jspecify.annotations.Nullable;
 /**
  * Extension of {@link RouteController} that adds resilient, backoff-based startup supervision for routes, as described
  * in the <a href="https://camel.apache.org/manual/route-controller.html">Route Controller</a> documentation.
- * <p/>
+ * <p>
  * Unlike the default controller, this variant starts routes asynchronously after the
  * {@link org.apache.camel.CamelContext} has finished starting. Routes that fail to start are retried using an
  * exponential backoff schedule (configurable via {@link #setBackOffDelay}, {@link #setBackOffMaxAttempts}, and related
  * setters). Routes can be selectively supervised via include/exclude patterns matched against route id or endpoint URI.
- * <p/>
+ * <p>
  * Failed routes can optionally be exposed as unhealthy via Camel's health check infrastructure: set
  * {@link #setUnhealthyOnExhausted} or {@link #setUnhealthyOnRestarting} to control whether a route that is pending
  * restart or has exhausted all attempts causes the application to report a DOWN health status.
@@ -49,8 +49,8 @@ public interface SupervisingRouteController extends RouteController {
      *
      * The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma.
      *
-     * For example to include all Kafka routes, you can say <tt>kafka:*</tt>. And to include routes with specific route
-     * ids <tt>myRoute,myOtherRoute</tt>. The pattern supports wildcards and uses the matcher from
+     * For example to include all Kafka routes, you can say <code>kafka:*</code>. And to include routes with specific
+     * route ids <code>myRoute,myOtherRoute</code>. The pattern supports wildcards and uses the matcher from
      * org.apache.camel.support.PatternHelper#matchPattern.
      */
     void setIncludeRoutes(@Nullable String includeRoutes);
@@ -63,8 +63,8 @@ public interface SupervisingRouteController extends RouteController {
      *
      * The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma.
      *
-     * For example to exclude all JMS routes, you can say <tt>jms:*</tt>. And to exclude routes with specific route ids
-     * <tt>mySpecialRoute,myOtherSpecialRoute</tt>. The pattern supports wildcards and uses the matcher from
+     * For example to exclude all JMS routes, you can say <code>jms:*</code>. And to exclude routes with specific route
+     * ids <code>mySpecialRoute,myOtherSpecialRoute</code>. The pattern supports wildcards and uses the matcher from
      * org.apache.camel.support.PatternHelper#matchPattern.
      */
     void setExcludeRoutes(@Nullable String excludeRoutes);
@@ -162,10 +162,10 @@ public interface SupervisingRouteController extends RouteController {
     Set<String> getNonControlledRouteIds();
 
     /**
-     * Gets the state of the backoff for the given route if its managed and under restarting.
+     * Gets the state of the backoff for the given route if it's managed and under restarting.
      *
      * @param  routeId the route id
-     * @return         the state, or <tt>null</tt> if the route is not under restarting
+     * @return         the state, or <code>null</code> if the route is not under restarting
      */
     BackOffTimer.@Nullable Task getRestartingRouteState(String routeId);
 

@@ -18,13 +18,13 @@ package org.apache.camel;
 
 /**
  * A {@link Service} which is also capable of suspending and resuming.
- * <p/>
- * This is useable for services which needs more fine grained control at runtime supporting suspension. Other services
+ * <p>
+ * This is useable for services which need more fine grained control at runtime supporting suspension. Other services
  * may select to mimic suspending by just stopping the service.
- * <p/>
- * For example this is use by the JmsConsumer which suspends the Spring JMS listener instead of stopping the consumer
+ * <p>
+ * For example this is used by the JmsConsumer which suspends the Spring JMS listener instead of stopping the consumer
  * totally.
- * <p/>
+ * <p>
  * <b>Important:</b> The service should also implement the {@link Suspendable} marker interface to indicate the service
  * supports suspension using custom code logic.
  *
@@ -49,7 +49,7 @@ public interface SuspendableService extends Service {
     /**
      * Tests whether the service is suspended or not.
      *
-     * @return <tt>true</tt> if suspended
+     * @return <code>true</code> if suspended
      */
     boolean isSuspended();
 }

@@ -22,14 +22,14 @@ import org.jspecify.annotations.Nullable;
 /**
  * Pluggable strategy for converting objects to <a href="https://camel.apache.org/manual/type-converter.html">different
  * types</a> such as String, InputStream/OutputStream, Reader/Writer, Document, byte[], and ByteBuffer.
- * <p/>
+ * <p>
  * Type converters are a central part of Camel's integration infrastructure. Whenever Camel reads an {@link Exchange}
  * body or header and needs it in a different Java type, it delegates to the
  * {@link org.apache.camel.spi.TypeConverterRegistry} to find an appropriate {@code TypeConverter}. Converters are
  * discovered automatically at startup by scanning classpath resources for the {@link Converter} annotation, or they can
  * be registered programmatically via
  * {@link org.apache.camel.spi.TypeConverterRegistry#addTypeConverter(Class, Class, TypeConverter)}.
- * <p/>
+ * <p>
  * There are three conversion variants: {@link #convertTo} (returns {@code null} when the conversion is unavailable),
  * {@link #mandatoryConvertTo} (throws {@link NoTypeConversionAvailableException} when no converter is found), and
  * {@link #tryConvertTo} (silently returns {@code null} without propagating exceptions).
@@ -51,8 +51,8 @@ public interface TypeConverter {
 
     /**
      * Whether the type converter allows returning null as a valid response.
-     * <p/>
-     * By default <tt>null</tt> is not a valid response, returning <tt>false</tt> from this method.
+     * <p>
+     * By default <code>null</code> is not a valid response, returning <code>false</code> from this method.
      */
     boolean allowNull();
 
@@ -61,7 +61,7 @@ public interface TypeConverter {
      *
      * @param  type                    the requested type
      * @param  value                   the value to be converted
-     * @return                         the converted value, or <tt>null</tt> if not possible to convert
+     * @return                         the converted value, or <code>null</code> if not possible to convert
      * @throws TypeConversionException is thrown if error during type conversion
      */
     @Metadata(label = "api",
@@ -72,13 +72,13 @@ public interface TypeConverter {
 
     /**
      * Converts the value to the specified type in the context of an exchange
-     * <p/>
+     * <p>
      * Used when conversion requires extra information from the current exchange (such as encoding).
      *
      * @param  type                    the requested type
      * @param  exchange                the current exchange
      * @param  value                   the value to be converted
-     * @return                         the converted value, or <tt>null</tt> if not possible to convert
+     * @return                         the converted value, or <code>null</code> if not possible to convert
      * @throws TypeConversionException is thrown if error during type conversion
      */
     <T> @Nullable T convertTo(Class<T> type, @Nullable Exchange exchange, @Nullable Object value)
@@ -89,9 +89,9 @@ public interface TypeConverter {
      *
      * @param  type                               the requested type
      * @param  value                              the value to be converted
-     * @return                                    the converted value, is never <tt>null</tt>
+     * @return                                    the converted value, is never <code>null</code>
      * @throws TypeConversionException            is thrown if error during type conversion
-     * @throws NoTypeConversionAvailableException if no type converters exists to convert to the given type
+     * @throws NoTypeConversionAvailableException if no type converters exist to convert to the given type
      */
     @Metadata(label = "api",
               description = "Like convertTo but throws NoTypeConversionAvailableException when there is no conversion.")
@@ -100,44 +100,43 @@ public interface TypeConverter {
 
     /**
      * Converts the value to the specified type in the context of an exchange
-     * <p/>
+     * <p>
      * Used when conversion requires extra information from the current exchange (such as encoding).
      *
      * @param  type                               the requested type
      * @param  exchange                           the current exchange
      * @param  value                              the value to be converted
-     * @return                                    the converted value, is never <tt>null</tt>
+     * @return                                    the converted value, is never <code>null</code>
      * @throws TypeConversionException            is thrown if error during type conversion
-     * @throws NoTypeConversionAvailableException if no type converters exists to convert to the given type
+     * @throws NoTypeConversionAvailableException if no type converters exist to convert to the given type
      */
     <T> T mandatoryConvertTo(Class<T> type, @Nullable Exchange exchange, @Nullable Object value)
             throws TypeConversionException, NoTypeConversionAvailableException;
 
     /**
-     * Tries to convert the value to the specified type, returning <tt>null</tt> if not possible to convert.
-     * <p/>
+     * Tries to convert the value to the specified type, returning <code>null</code> if not possible to convert.
+     * <p>
      * This method will <b>not</b> throw an exception if an exception occurred during conversion.
      *
      * @param  type  the requested type
      * @param  value the value to be converted
-     * @return       the converted value, or <tt>null</tt> if not possible to convert
+     * @return       the converted value, or <code>null</code> if not possible to convert
      */
     @Metadata(label = "api", description = "Like convertTo but never throws: null when the conversion fails.")
     <T> @Nullable T tryConvertTo(Class<T> type, @Nullable Object value);
 
     /**
-     * Tries to convert the value to the specified type in the context of an exchange, returning <tt>null</tt> if not
-     * possible to convert.
-     * <p/>
-     * This method will <b>not</b> throw an exception if an exception occurred during conversion. Converts the value to
-     * the specified type in the context of an exchange
-     * <p/>
+     * Tries to convert the value to the specified type in the context of an exchange, returning <code>null</code> if
+     * not possible to convert.
+     * <p>
+     * This method will <b>not</b> throw an exception if an exception occurred during conversion.
+     * <p>
      * Used when conversion requires extra information from the current exchange (such as encoding).
      *
      * @param  type     the requested type
      * @param  exchange the current exchange
      * @param  value    the value to be converted
-     * @return          the converted value, or <tt>null</tt> if not possible to convert
+     * @return          the converted value, or <code>null</code> if not possible to convert
      */
     <T> @Nullable T tryConvertTo(Class<T> type, @Nullable Exchange exchange, @Nullable Object value);
 }

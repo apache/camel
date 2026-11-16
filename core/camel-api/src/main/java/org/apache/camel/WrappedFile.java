@@ -21,7 +21,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Abstraction over a file-like object consumed by a file-oriented {@link Consumer} (such as camel-file, camel-ftp, or
  * camel-sftp), providing uniform access to the underlying file handle, its content, and its length.
- * <p/>
+ * <p>
  * Implementations wrap different native file types (for example {@code java.io.File} for the local file system, or a
  * library-specific remote file object for FTP/SFTP). The body returned by {@link #getBody()} may be a stream, a byte
  * array, or a string depending on the component configuration.

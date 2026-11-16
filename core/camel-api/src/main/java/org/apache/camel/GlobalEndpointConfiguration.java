@@ -38,10 +38,10 @@ public interface GlobalEndpointConfiguration {
     boolean isBridgeErrorHandler();
 
     /**
-     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the
-     * consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by
-     * the routing Error Handler.
-     * <p/>
+     * Allows for bridging the consumer to the Camel routing Error Handler, which means any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled
+     * by the routing Error Handler.
+     * <p>
      * By default, the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be
      * logged at WARN/ERROR level and ignored.
      */

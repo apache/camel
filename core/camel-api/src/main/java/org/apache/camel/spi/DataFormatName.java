@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 /**
  * Marker interface that exposes the canonical name of a {@link DataFormat} implementation, enabling runtime lookup and
  * catalog introspection without depending on the concrete class.
- * <p/>
+ * <p>
  * Camel uses the name returned by {@link #getDataFormatName()} to register the format in the
  * <a href="https://camel.apache.org/manual/data-format.html">data format</a> catalog, to resolve formats by name in
  * YAML/XML DSL declarations, and for display in the <a href="https://camel.apache.org/manual/camel-jbang.html">Camel

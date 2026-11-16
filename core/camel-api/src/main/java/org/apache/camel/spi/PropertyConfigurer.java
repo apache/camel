@@ -21,13 +21,13 @@ import org.apache.camel.CamelContext;
 /**
  * Configures a single property on a target object (such as a {@link org.apache.camel.Component},
  * {@link org.apache.camel.Endpoint}, or EIP) without using reflection.
- * <p/>
+ * <p>
  * Camel generates a {@code PropertyConfigurer} implementation at build time for each configurable type, giving fast,
  * reflection-free property binding during bootstrap. The {@link #configure} method sets one named property and reports
  * whether the property was recognized, with optional case-insensitive name matching. Generated configurers implement
  * {@link GeneratedPropertyConfigurer}, types that expose their configurer implement {@link PropertyConfigurerAware},
  * and configurers that can additionally describe their options implement {@link PropertyConfigurerGetter}.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/property-binding.html">Property Binding</a> in the Camel user manual.
  *
  * @see   GeneratedPropertyConfigurer
@@ -46,8 +46,8 @@ public interface PropertyConfigurer {
      * @param  name         the property name
      * @param  value        the property value
      * @param  ignoreCase   whether to ignore case for matching the property name
-     * @return              <tt>true</tt> if the configurer configured the property, <tt>false</tt> if the property does
-     *                      not exists
+     * @return              <code>true</code> if the configurer configured the property, <code>false</code> if the
+     *                      property does not exist
      */
     boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase);
 

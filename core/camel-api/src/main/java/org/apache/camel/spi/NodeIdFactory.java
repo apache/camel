@@ -26,8 +26,7 @@ public interface NodeIdFactory {
     /**
      * Creates an id for the given model definition.
      *
-     * @param  definition model definition (its most likely a {@link org.apache.camel.model.OutputDefinition
-     *                    OutputDefinition} instance)
+     * @param  definition model definition (most likely an {@code OutputDefinition} instance)
      * @return            the id created
      */
     String createId(NamedNode definition);

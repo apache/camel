@@ -19,14 +19,14 @@ package org.apache.camel.spi;
 /**
  * Extension point for the {@link PropertiesComponent} that handles property placeholders of the form
  * {@code {{name:remainder}}}, where {@code name} matches {@link #getName()}.
- * <p/>
+ * <p>
  * Functions are registered with {@link PropertiesComponent#addPropertiesFunction(PropertiesFunction)} and are tried
  * before (or after, depending on {@link #lookupFirst(String)}) the normal property-source lookup chain. The
  * {@link #apply(String)} method receives the part after the colon separator and returns the resolved value. Built-in
  * functions include {@code env:} (environment variables), {@code sys:} (system properties), and {@code secret:} (cloud
  * vault lookups). Custom functions can implement arbitrary resolution logic, such as decrypting encrypted values,
  * fetching from a database, or generating dynamic tokens.
- * <p/>
+ * <p>
  * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using Property Placeholder</a> in the
  * Camel user manual.
  *
@@ -36,7 +36,7 @@ package org.apache.camel.spi;
 public interface PropertiesFunction {
 
     /**
-     * Name of the function which is used as <tt>name:</tt> to let the properties component know it is a function.
+     * Name of the function which is used as <code>name:</code> to let the properties component know it is a function.
      */
     String getName();
 

@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Persistent store for in-progress aggregated {@link Exchange} instances, used by the
  * <a href="https://camel.apache.org/manual/aggregator2.html">Aggregator EIP</a>.
- * <p/>
+ * <p>
  * The Aggregator EIP correlates incoming exchanges by a key and accumulates them until a completion condition is
  * satisfied. This repository is the pluggable storage layer that holds the partial aggregate between correlation
  * events. The lifecycle for each aggregate is:
@@ -47,11 +47,11 @@ public interface AggregationRepository {
 
     /**
      * Add the given {@link Exchange} under the correlation key.
-     * <p/>
+     * <p>
      * Will replace any existing exchange.
-     * <p/>
+     * <p>
      * <b>Important:</b> This method is <b>not</b> invoked if only one exchange was completed, and therefore the
-     * exchange does not need to be added to a repository, as its completed immediately.
+     * exchange does not need to be added to a repository, as it's completed immediately.
      *
      * @param  camelContext the current CamelContext
      * @param  key          the correlation key
@@ -63,21 +63,21 @@ public interface AggregationRepository {
 
     /**
      * Gets the given exchange with the correlation key
-     * <p/>
+     * <p>
      * This method is always invoked for any incoming exchange in the aggregator.
      *
      * @param  camelContext the current CamelContext
      * @param  key          the correlation key
-     * @return              the exchange, or <tt>null</tt> if no exchange was previously added
+     * @return              the exchange, or <code>null</code> if no exchange was previously added
      */
     @Nullable
     Exchange get(CamelContext camelContext, String key);
 
     /**
      * Removes the exchange with the given correlation key, which should happen when an {@link Exchange} is completed
-     * <p/>
+     * <p>
      * <b>Important:</b> This method is <b>not</b> invoked if only one exchange was completed, and therefore the
-     * exchange does not need to be added to a repository, as its completed immediately.
+     * exchange does not need to be added to a repository, as it's completed immediately.
      *
      * @param camelContext the current CamelContext
      * @param key          the correlation key
@@ -87,7 +87,7 @@ public interface AggregationRepository {
 
     /**
      * Confirms the completion of the {@link Exchange}.
-     * <p/>
+     * <p>
      * This method is invoked for every completed group, unless the repository is a
      * {@link RecoverableAggregationRepository}: then
      * {@link RecoverableAggregationRepository#confirmWithResult(CamelContext, String)} is invoked instead, and not for

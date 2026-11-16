@@ -27,9 +27,10 @@ import org.jspecify.annotations.Nullable;
 public interface LocalBeanRepositoryAware {
 
     /**
-     * Sets a special local bean repository (ie thread local) that take precedence and will use first, if a bean exists.
+     * Sets a special local bean repository (ie thread local) that takes precedence and will be used first, if a bean
+     * exists.
      *
-     * @param repository the local repository, or <tt>null</tt> to unset when no longer needed.
+     * @param repository the local repository, or <code>null</code> to unset when no longer needed.
      */
     void setLocalBeanRepository(@Nullable BeanRepository repository);
 
