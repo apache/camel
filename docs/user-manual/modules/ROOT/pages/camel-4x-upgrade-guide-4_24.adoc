@@ -154,7 +154,8 @@ On PostgreSQL, the consumer now skips the locked entity and commits the poll. Be
 transaction, the poll was rolled back, and the entities that it had routed before the locked one were routed again by
 the next poll, for as long as the other transaction held the lock.
 
-On every database, an entity that another consumer has consumed (deleted) since the poll listed it is now skipped.
+On every database, an entity that another consumer has deleted (`consumeDelete=true`, the default) since the poll
+listed it is now skipped.
 Before, its lock failed with an `OptimisticLockException`, and the poll was rolled back.
 
 Other JPA providers, and the optimistic lock modes, are not affected.

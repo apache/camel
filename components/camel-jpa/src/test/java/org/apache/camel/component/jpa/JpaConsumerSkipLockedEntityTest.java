@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.LongConsumer;
@@ -42,8 +43,11 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.AdditionalAnswers.delegatesTo;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -67,7 +71,8 @@ class JpaConsumerSkipLockedEntityTest extends CamelTestSupport {
         entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(new DriverManagerDataSource(URL, "sa", ""));
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        entityManagerFactoryBean.setManagedTypes(PersistenceManagedTypes.of(SkipLockedItem.class.getName()));
+        entityManagerFactoryBean.setManagedTypes(
+                PersistenceManagedTypes.of(SkipLockedItem.class.getName(), SkipLockedVersionedItem.class.getName()));
         entityManagerFactoryBean.setMappingResources("org/apache/camel/component/jpa/skip-locked-item-orm.xml");
         entityManagerFactoryBean.setPersistenceUnitName("skipLockedEntity");
         entityManagerFactoryBean.setJpaPropertyMap(Map.of("hibernate.hbm2ddl.auto", "create-drop"));
@@ -101,6 +106,13 @@ class JpaConsumerSkipLockedEntityTest extends CamelTestSupport {
                             routed.add(id);
                             whenRouted.accept(id);
                         });
+
+                from("jpa://" + SkipLockedVersionedItem.class.getName()
+                     + "?query=select x from SkipLockedVersionedItem x order by x.id&skipLockedEntity=true"
+                     + "&lockModeType=PESSIMISTIC_FORCE_INCREMENT&consumeDelete=false&startScheduler=false")
+                        .routeId("versionedConsumer")
+                        .process(exchange -> routed
+                                .add(exchange.getMessage().getBody(SkipLockedVersionedItem.class).getId()));
             }
         };
     }
@@ -130,9 +142,32 @@ class JpaConsumerSkipLockedEntityTest extends CamelTestSupport {
     }
 
     @Test
-    void entityConsumedByAnotherConsumerIsSkipped() throws Exception {
+    void forceIncrementSkipsLockedEntityAndIncrementsVersion() throws Exception {
+        // PESSIMISTIC_FORCE_INCREMENT selects the row with SKIP LOCKED as PESSIMISTIC_WRITE does, and the lock that
+        // follows increments the version
+        insertVersionedItems(1L, 2L, 3L);
+        JpaConsumer consumer = (JpaConsumer) context.getRoute("versionedConsumer").getConsumer();
+
+        try (Connection other = openConnection()) {
+            // another consumer holds the lock of the second entity
+            other.setAutoCommit(false);
+            try (Statement st = other.createStatement()) {
+                st.execute("select id from skip_locked_versioned_item where id = 2 for update");
+            }
+
+            consumer.poll();
+            other.rollback();
+        }
+
+        assertEquals(List.of(1L, 3L), routed);
+        // consumeDelete=false keeps the entities: the routed ones are at version 1, the skipped one is still at 0
+        assertEquals(Map.of(1L, 1L, 2L, 0L, 3L, 1L), versions());
+    }
+
+    @Test
+    void entityDeletedByAnotherConsumerIsSkipped() throws Exception {
         insertItems(1L, 2L, 3L);
-        // while the poll routes the first entity, another consumer consumes the second one, which the poll has listed
+        // while the poll routes the first entity, another consumer deletes the second one, which the poll has listed
         whenRouted = id -> {
             if (id == 1L) {
                 deleteItem(2L);
@@ -169,6 +204,37 @@ class JpaConsumerSkipLockedEntityTest extends CamelTestSupport {
         verify(em, never()).getCriteriaBuilder();
     }
 
+    @Test
+    void providerCheckThatFailsIsCheckedAgain() throws Exception {
+        // the check of the JPA provider can fail, such as on a closed EntityManager: the lock is NOWAIT that time, and
+        // the next lock checks again, instead of keeping NOWAIT for the life of the consumer
+        insertItems(1L);
+        EntityManager real = entityManagerFactory.createEntityManager();
+        try {
+            real.getTransaction().begin();
+            SkipLockedItem item = real.find(SkipLockedItem.class, 1L);
+            EntityManager em = mock(EntityManager.class, delegatesTo(real));
+            doThrow(new IllegalStateException("EntityManager is closed")).doAnswer(invocation -> real.getDelegate())
+                    .when(em).getDelegate();
+            JpaConsumer consumer = jpaConsumer();
+
+            assertTrue(consumer.lockEntity(item, em));
+            verify(em).lock(item, LockModeType.PESSIMISTIC_WRITE, NOWAIT);
+            verify(em, never()).getCriteriaBuilder();
+
+            // Hibernate this time: SKIP LOCKED, and the answer is kept
+            assertTrue(consumer.lockEntity(item, em));
+            assertTrue(consumer.lockEntity(item, em));
+            verify(em, times(2)).getCriteriaBuilder();
+            verify(em, times(2)).getDelegate();
+        } finally {
+            if (real.getTransaction().isActive()) {
+                real.getTransaction().rollback();
+            }
+            real.close();
+        }
+    }
+
     private JpaConsumer jpaConsumer() {
         return (JpaConsumer) context.getRoute("consumer").getConsumer();
     }
@@ -191,6 +257,31 @@ class JpaConsumerSkipLockedEntityTest extends CamelTestSupport {
         } finally {
             em.close();
         }
+    }
+
+    private void insertVersionedItems(Long... ids) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            for (Long id : ids) {
+                em.persist(new SkipLockedVersionedItem(id));
+            }
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+
+    private static Map<Long, Long> versions() throws SQLException {
+        Map<Long, Long> versions = new HashMap<>();
+        try (Connection connection = openConnection();
+             Statement st = connection.createStatement();
+             ResultSet rs = st.executeQuery("select id, version from skip_locked_versioned_item")) {
+            while (rs.next()) {
+                versions.put(rs.getLong(1), rs.getLong(2));
+            }
+        }
+        return versions;
     }
 
     private static void deleteItem(long id) {

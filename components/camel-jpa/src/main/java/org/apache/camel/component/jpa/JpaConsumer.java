@@ -517,23 +517,35 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private boolean isSkipLockedSupported(EntityManager entityManager) {
         Boolean answer = skipLockedSupported;
         if (answer == null) {
-            answer = isHibernate(entityManager);
+            Object delegate;
+            try {
+                delegate = entityManager.getDelegate();
+            } catch (IllegalStateException | PersistenceException e) {
+                LOG.debug("Cannot tell whether the JPA provider is Hibernate, locking with NOWAIT: {}", e.getMessage(), e);
+                delegate = null;
+            }
+            if (delegate == null) {
+                // not known, such as with a closed EntityManager: lock with NOWAIT this time, and check again the next
+                // time, instead of keeping NOWAIT for the life of the consumer
+                return false;
+            }
+            answer = isHibernate(delegate);
             skipLockedSupported = answer;
             LOG.debug("skipLockedEntity locks with {}", answer ? "SKIP LOCKED" : "NOWAIT");
         }
         return answer;
     }
 
-    private static boolean isHibernate(EntityManager entityManager) {
+    private static boolean isHibernate(Object delegate) {
+        ClassLoader classLoader = delegate.getClass().getClassLoader();
+        if (classLoader == null) {
+            return false;
+        }
         try {
-            Object delegate = entityManager.getDelegate();
-            if (delegate == null || delegate.getClass().getClassLoader() == null) {
-                return false;
-            }
-            Class<?> session = Class.forName(HIBERNATE_SESSION, false, delegate.getClass().getClassLoader());
+            Class<?> session = Class.forName(HIBERNATE_SESSION, false, classLoader);
             return session.isInstance(delegate);
-        } catch (ClassNotFoundException | LinkageError | IllegalStateException | PersistenceException e) {
-            // no Hibernate, or a closed EntityManager: lock with NOWAIT as without Hibernate
+        } catch (ClassNotFoundException | LinkageError e) {
+            // no Hibernate: lock with NOWAIT
             return false;
         }
     }

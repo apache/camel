@@ -30,4 +30,12 @@
             <id name="id"/>
         </attributes>
     </entity>
+    <entity class="org.apache.camel.component.jpa.SkipLockedVersionedItem" name="SkipLockedVersionedItem"
+            access="FIELD">
+        <table name="skip_locked_versioned_item"/>
+        <attributes>
+            <id name="id"/>
+            <version name="version"/>
+        </attributes>
+    </entity>
 </entity-mappings>

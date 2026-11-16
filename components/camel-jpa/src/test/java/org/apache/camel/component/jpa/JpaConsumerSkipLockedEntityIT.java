@@ -146,10 +146,10 @@ class JpaConsumerSkipLockedEntityIT extends CamelTestSupport {
     }
 
     @Test
-    void entityConsumedByAnotherConsumerIsSkipped() throws Exception {
+    void entityDeletedByAnotherConsumerIsSkipped() throws Exception {
         insertItems(1L, 2L, 3L);
         JpaConsumer consumer = (JpaConsumer) context.getRoute("consumer").getConsumer();
-        // while the poll routes the first entity, another consumer consumes the second one, which the poll has listed
+        // while the poll routes the first entity, another consumer deletes the second one, which the poll has listed
         whenRouted = id -> {
             if (id == 1L) {
                 deleteItem(2L);
