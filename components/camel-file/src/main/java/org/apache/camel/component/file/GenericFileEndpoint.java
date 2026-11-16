@@ -302,7 +302,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     @UriParam(label = "consumer,filter", defaultValue = "false", description = "Option to use the Idempotent "
                                                                                + "Consumer EIP pattern to let Camel skip already processed files. Will by default use a memory based "
                                                                                + "LRUCache that holds 1000 entries. If noop=true then idempotent will be enabled as well to avoid "
-                                                                               + "consuming the same files over and over again.")
+                                                                               + "consuming the same files over and over again. Setting only idempotentRepository or "
+                                                                               + "idempotentKey does not turn it on.")
     protected Boolean idempotent;
     @UriParam(label = "consumer,filter", javaType = "java.lang.Boolean", defaultValue = "true",
               description = "Sets whether to eagerly add the filename to the idempotent repository or wait until the exchange is complete."
@@ -311,10 +312,15 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     private Boolean idempotentEager = Boolean.TRUE;
     @UriParam(label = "consumer,filter", javaType = "java.lang.String", description = "To use a custom idempotent "
                                                                                       + "key. By default the absolute path of the file is used. You can use the File Language, for example to "
-                                                                                      + "use the file name and file size, you can do: idempotentKey=${file:name}-${file:size}")
+                                                                                      + "use the file name and file size, you can do: idempotentKey=${file:name}-${file:size}. "
+                                                                                      + "It is used only with idempotent=true (noop=true turns it on), or by an idempotent read "
+                                                                                      + "lock (readLock=idempotent, idempotent-changed or idempotent-rename) of the file component.")
     protected Expression idempotentKey;
     @UriParam(label = "consumer,filter", description = "A pluggable repository org.apache.camel.spi.IdempotentRepository "
-                                                       + "which by default use MemoryIdempotentRepository if none is specified and idempotent is true.")
+                                                       + "which by default use MemoryIdempotentRepository if none is specified and idempotent is true. "
+                                                       + "It is used only with idempotent=true (noop=true turns it on), or by an idempotent read lock "
+                                                       + "(readLock=idempotent, idempotent-changed or idempotent-rename) of the file component. "
+                                                       + "Set without them, it does not skip any file.")
     protected IdempotentRepository idempotentRepository;
     @UriParam(label = "consumer,filter",
               description = "Pluggable filter as a org.apache.camel.component.file.GenericFileFilter "
@@ -999,6 +1005,32 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return readLock != null && IDEMPOTENT_READ_LOCKS.contains(readLock);
     }
 
+    /**
+     * Logs a WARN when the idempotentRepository or idempotentKey option is set but the consumer does not use it: the
+     * consumer uses them only with idempotent=true (noop=true turns it on), and the idempotent read locks use them as
+     * well. A custom process strategy or read lock may use them, so there is no WARN then. Call it after noop=true has
+     * turned on idempotent.
+     */
+    protected void warnIfIdempotentOptionsUnused() {
+        if (idempotent != null || processStrategy != null || exclusiveReadLockStrategy != null
+                || isIdempotentReadLockName(readLock)) {
+            return;
+        }
+        String options;
+        if (idempotentRepository != null && idempotentKey != null) {
+            options = "the idempotentRepository and idempotentKey options";
+        } else if (idempotentRepository != null) {
+            options = "the idempotentRepository option";
+        } else if (idempotentKey != null) {
+            options = "the idempotentKey option";
+        } else {
+            return;
+        }
+        LOG.warn("The consumer of {} does not use {}, as idempotent=true is not set: files already consumed are not skipped."
+                 + " Set idempotent=true to skip them.",
+                this, options);
+    }
+
     public String getCharset() {
         return charset;
     }
@@ -1026,7 +1058,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     /**
      * Option to use the Idempotent Consumer EIP pattern to let Camel skip already processed files. Will by default use
      * a memory based LRUCache that holds 1000 entries. If noop=true then idempotent will be enabled as well to avoid
-     * consuming the same files over and over again.
+     * consuming the same files over and over again. Setting only idempotentRepository or idempotentKey does not turn it
+     * on.
      */
     public void setIdempotent(Boolean idempotent) {
         this.idempotent = idempotent;
@@ -1049,7 +1082,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * To use a custom idempotent key. By default the absolute path of the file is used. You can use the File Language,
-     * for example to use the file name and file size, you can do: idempotentKey=${file:name}-${file:size}
+     * for example to use the file name and file size, you can do: idempotentKey=${file:name}-${file:size}. It is used
+     * only with idempotent=true (noop=true turns it on), or by an idempotent read lock (readLock=idempotent,
+     * idempotent-changed or idempotent-rename) of the file component.
      */
     public void setIdempotentKey(Expression idempotentKey) {
         this.idempotentKey = idempotentKey;
@@ -1065,7 +1100,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use MemoryIdempotentRepository
-     * if none is specified and idempotent is true.
+     * if none is specified and idempotent is true. It is used only with idempotent=true (noop=true turns it on), or by
+     * an idempotent read lock (readLock=idempotent, idempotent-changed or idempotent-rename) of the file component. Set
+     * without them, it does not skip any file.
      */
     public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
