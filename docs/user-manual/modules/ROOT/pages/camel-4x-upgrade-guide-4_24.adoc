@@ -1413,6 +1413,19 @@ consumer cache of a consumer template evicts the polling consumer (see `maximumC
 queue is still returned. A polling consumer that was never started still waits for a message, as before. A caller that
 loops on `receive()` should stop on a `null` result.
 
+=== camel-main - OS environment variables can have underscores between the words of an option
+
+An OS environment variable for a camel-main option can now have underscores between the words of the option name. For
+example, `CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY` and `CAMEL_VAULT_GCP_SERVICEACCOUNTKEY` both set the
+option `camel.vault.gcp.serviceAccountKey`, and `CAMEL_MAIN_SHUTDOWN_TIMEOUT` sets `camel.main.shutdownTimeout`. This is
+how the `CAMEL_COMPONENT_*` variables already work. The variable becomes a key in lower case, such as
+`camel.vault.gcp.serviceaccountkey`, which sets the option because option names are matched ignoring case.
+
+Before, each underscore was turned into a dot. The variables that the vault components document, such as
+`CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY`, `CAMEL_VAULT_AWS_ACCESS_KEY` or `CAMEL_VAULT_AZURE_TENANT_ID`, failed the startup
+of a Camel Main application with `Cannot find getter method`. They now configure the matching `camel.vault.*` option.
+A variable that matches no camel-main option keeps the old mapping.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
