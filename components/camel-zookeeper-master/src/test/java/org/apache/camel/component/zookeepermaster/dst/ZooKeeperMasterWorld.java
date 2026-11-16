@@ -85,12 +85,12 @@ import org.apache.curator.framework.CuratorFramework;
  * JMX), the camel-master cluster services, and a stop while the thread of the group waits in a call of ZooKeeper (see
  * {@code mustWaitToStop}). The route policy starts its consumer at once (see {@code maxStart}).
  * <p>
- * Left out of the default set, each a bug of its own with a JIRA to come (a system property adds each): a route stopped
- * while the client is disconnected leaves the znode of its group behind
- * ({@code -Ddst.zookeeper.stopWhileSuspended=true}); a route stopped while the group waits for the answer of a create,
- * or makes one after the close interrupted its thread, leaves the znode of that create behind
- * ({@code -Ddst.zookeeper.stopDuringCreate=true}); and a route of the policy started from outside when it is started
- * already starts its consumer again without the onStart of the policy ({@code -Ddst.zookeeper.startStartedRoute=true}).
+ * Left out of the default set, each a known bug (a system property adds each): a route stopped while the client is
+ * disconnected leaves the znode of its group behind, CAMEL-27037 ({@code -Ddst.zookeeper.stopWhileSuspended=true}); a
+ * route stopped while the group waits for the answer of a create, or makes one after the close interrupted its thread,
+ * leaves the znode of that create behind, CAMEL-27037 ({@code -Ddst.zookeeper.stopDuringCreate=true}); and a route of
+ * the policy started from outside when it is started already starts its consumer again without the onStart of the
+ * policy, CAMEL-27044 ({@code -Ddst.zookeeper.startStartedRoute=true}).
  */
 @DstWorld(component = "zookeeper-master",
           fake = "FakeZooKeeper: a ZooKeeper ensemble (sessions, ephemeral sequential znodes, one-time watches) with the"
@@ -113,7 +113,7 @@ import org.apache.curator.framework.CuratorFramework;
                   "no znode of this node is left in the group after the final stop",
                   "the shared CuratorFramework and group factory are not closed",
                   "the world itself ran as planned" },
-          issues = { "CAMEL-25315", "CAMEL-26540", "CAMEL-26802", "CAMEL-26870", "CAMEL-26887" })
+          issues = { "CAMEL-25315", "CAMEL-26540", "CAMEL-26802", "CAMEL-26870", "CAMEL-26887", "CAMEL-27037", "CAMEL-27044" })
 final class ZooKeeperMasterWorld {
 
     static final String ROUTE = "master";
@@ -126,11 +126,11 @@ final class ZooKeeperMasterWorld {
     private final long maxStart;
     private final double startFailRate;
     private final long grace;
-    // a started route of the policy started again starts its consumer without the onStart of the policy
+    // CAMEL-27044: a started route of the policy started again starts its consumer without the onStart of the policy
     private final boolean startStartedRoute = Boolean.getBoolean("dst.zookeeper.startStartedRoute");
-    // a group closed while the client is disconnected does not delete its znode
+    // CAMEL-27037: a group closed while the client is disconnected does not delete its znode
     private final boolean stopWhileSuspended = Boolean.getBoolean("dst.zookeeper.stopWhileSuspended");
-    // a create interrupted by the close of the group is applied, and its znode stays
+    // CAMEL-27037: a create interrupted by the close of the group is applied, and its znode stays
     private final boolean stopDuringCreate = Boolean.getBoolean("dst.zookeeper.stopDuringCreate");
     private final List<String> violations = new ArrayList<>();
     private final List<WorkConsumer> running = new ArrayList<>();
@@ -157,7 +157,7 @@ final class ZooKeeperMasterWorld {
         zk.sessionTimeout = dst.pick(List.of(4000L, 10_000L));
         zk.retries = dst.pick(List.of(0, 1));
         // a write of a thread the close interrupted is applied by ZooKeeper, which leaves a znode behind as in a stop
-        // during a create
+        // during a create (CAMEL-27037)
         zk.writesAfterInterrupt = stopDuringCreate;
         zk.slowRate = dst.pick(List.of(0.0, 0.05));
         // a connection lost before the answer of a write: the client retries it; a create retried that way makes a second
@@ -361,7 +361,7 @@ final class ZooKeeperMasterWorld {
             } else if (policyMode) {
                 operator.schedule("start route from outside", t, () -> {
                     // a route that is already started is started again only with -Ddst.zookeeper.startStartedRoute=true:
-                    // that starts its consumer again without the onStart of the policy
+                    // that starts its consumer again without the onStart of the policy (CAMEL-27044)
                     if (startStartedRoute || context.getRouteController().getRouteStatus(ROUTE) != ServiceStatus.Started) {
                         startRoute(context);
                     }
@@ -404,10 +404,10 @@ final class ZooKeeperMasterWorld {
      * group, so the thread records the znode it made first; on the one stack of the harness the thread can only end
      * after the close returned, so the close would leave the group before (a limit of the harness);</li>
      * <li>while the thread of the group waits in a create (the create is applied, and the group never records the
-     * znode, which stays in the group as long as the session of the shared client lives;
+     * znode, which stays in the group as long as the session of the shared client lives; CAMEL-27037,
      * {@code -Ddst.zookeeper.stopDuringCreate=true} adds it);</li>
      * <li>while the client is disconnected (a group closed then does not delete its znode, with the same result;
-     * {@code -Ddst.zookeeper.stopWhileSuspended=true} adds it).</li>
+     * CAMEL-27037, {@code -Ddst.zookeeper.stopWhileSuspended=true} adds it).</li>
      * </ul>
      * A stop while the thread starts the consumer is driven.
      */

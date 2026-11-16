@@ -462,10 +462,8 @@ final class FakeZooKeeper {
 
     private void remove(String path) {
         if (tree.remove(path) != null) {
-            Znode parent = tree.get(parentOf(path));
-            if (parent != null) {
-                parent.cversion++;
-            }
+            // [Z] a delete does not change the cversion of the parent (PrepRequestProcessor and DataTree.deleteNode of
+            // ZooKeeper 3.9 set only its pzxid); only a create does, so a delete does not move the sequence counter
             fireDataWatches(path, Watcher.Event.EventType.NodeDeleted);
             fireChildWatches(parentOf(path));
         }

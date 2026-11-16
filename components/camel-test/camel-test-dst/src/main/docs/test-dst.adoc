@@ -148,7 +148,7 @@ a|* the master consumer (zookeeper-master endpoint) and the MasterRoutePolicy, o
 * other nodes that join, leave and die
 * a start of the consumer that fails and its retry; with the master consumer, a start that takes long
 * route stop and start, and a route of the policy removed and added again
-|CAMEL-25315, CAMEL-26540, CAMEL-26802, CAMEL-26870, CAMEL-26887
+|CAMEL-25315, CAMEL-26540, CAMEL-26802, CAMEL-26870, CAMEL-26887, CAMEL-27037, CAMEL-27044
 |===
 // dst worlds: END
 
@@ -617,10 +617,10 @@ For camel-zookeeper-master (`-pl components/camel-zookeeper-master`, `ZooKeeperM
 `MasterConsumer` of e670025a49a4^ (CAMEL-25315), `MasterRoutePolicy` of 706beec6d5ab^ (CAMEL-26540), 136ffd929263
 (CAMEL-26802) and 28f3170dcc6a (CAMEL-26887) reverted, and the `unregisterAsListener()` of 5ecab86a58ba (CAMEL-26870)
 taken out by hand. Its world has three properties, each adding back a case that the default set leaves out:
-`dst.zookeeper.stopWhileSuspended` (a route stopped while the client is disconnected),
+`dst.zookeeper.stopWhileSuspended` (a route stopped while the client is disconnected, CAMEL-27037),
 `dst.zookeeper.stopDuringCreate` (a route stopped while the group waits for the answer of a create, or a create made
-after the close interrupted the thread of the group) and `dst.zookeeper.startStartedRoute` (a started
-route of the policy started again).
+after the close interrupted the thread of the group, CAMEL-27037) and `dst.zookeeper.startStartedRoute` (a started
+route of the policy started again, CAMEL-27044).
 
 == Limits
 
