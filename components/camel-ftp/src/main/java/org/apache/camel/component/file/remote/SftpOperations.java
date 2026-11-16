@@ -645,7 +645,9 @@ public class SftpOperations
     }
 
     /**
-     * Disconnects when the producer stops. Another thread can still run an operation that holds the lock.
+     * Disconnects when the producer or the consumer stops. Another thread can still run an operation that holds the
+     * lock: an upload of the producer, or the poll of the consumer, which the stop of its scheduler interrupts, but
+     * which then changes back to the directory it started from (stepwise), on a server that may not answer.
      * <p>
      * As long as the shutdown of Camel is not forced, this method waits for that operation, as {@link #disconnect()}
      * does: it can be a healthy but slow upload, when a producer cache evicts the producer, when an application stops a
@@ -704,7 +706,7 @@ public class SftpOperations
         }
         String server = endpoint.getConfiguration().remoteServerInformation();
         LOG.warn("The shutdown is forced: disconnecting from {} while another thread still runs an operation, such as an"
-                 + " upload that hangs. The operation fails.",
+                 + " upload or a download that hangs. The operation fails.",
                 server);
         // JSch sends the close of the channel under the lock of the session that a write to the socket holds: when the
         // operation is blocked writing to a server that no longer reads (a half-open connection), the disconnect waits

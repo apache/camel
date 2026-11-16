@@ -214,7 +214,25 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        disconnect();
+        // the stop of the scheduler interrupts a poll in progress, which can then still run an operation that the server
+        // does not answer, such as the change back to the directory it started from
+        disconnectOnStop();
+    }
+
+    private void disconnectOnStop() {
+        // eager indicate we are no longer logged in
+        loggedIn = false;
+        // the next poll connects again, so it does not need a noop to check the connection
+        sendNoopOnNextPoll = false;
+
+        try {
+            getOperations().disconnectOnStop();
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                        remoteServer(), e.getMessage(), e);
+            }
+        }
     }
 
     protected void disconnect() {
