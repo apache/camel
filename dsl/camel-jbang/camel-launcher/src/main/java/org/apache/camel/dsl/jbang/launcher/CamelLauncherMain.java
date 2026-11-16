@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.commands.generate.GeneratePlugin;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesPlugin;
 import org.apache.camel.dsl.jbang.core.commands.mcp.McpPlugin;
 import org.apache.camel.dsl.jbang.core.commands.test.TestPlugin;
@@ -46,12 +45,12 @@ public class CamelLauncherMain extends CamelJBangMain {
     private record EmbeddedPlugin(Supplier<Plugin> factory, Set<String> commands) {
     }
 
-    // Lambdas, not constructor references (GeneratePlugin::new): a constructor reference loads its class when this list
-    // is created, so every command would load all the plugins (and the test plugin loads Citrus and picocli). Their
+    // Lambdas, not constructor references (KubernetesPlugin::new): a constructor reference loads its class when this
+    // list is created, so every command would load all the plugins (and the test plugin loads Citrus and picocli). Their
     // JARs are far down the class path of the distribution, and loading a class from there opens every JAR before it.
+    // Not the generate plugin, which camel generate installs on first use, as it is a fifth of the download.
     @SuppressWarnings("java:S1612")
     private static final List<EmbeddedPlugin> PLUGINS = List.of(
-            new EmbeddedPlugin(() -> new GeneratePlugin(), Set.of("generate")),
             new EmbeddedPlugin(() -> new KubernetesPlugin(), Set.of("kubernetes", "k8s")),
             // its jar was in the launcher, but camel mcp installed the plugin on first use, in the plugin configuration
             new EmbeddedPlugin(() -> new McpPlugin(), Set.of("mcp")),

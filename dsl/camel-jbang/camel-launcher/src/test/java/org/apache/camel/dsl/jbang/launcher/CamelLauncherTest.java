@@ -25,13 +25,16 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.dsl.jbang.core.common.CommandTree;
+import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -98,7 +101,6 @@ public class CamelLauncherTest {
     @Test
     public void aCommandOfAnEmbeddedPluginCreatesOnlyThatPlugin() {
         // creating all the commands of the CLI and the plugins costs more than half a second
-        assertEquals(Set.of("generate"), commandsOf("generate"));
         assertEquals(Set.of("kubernetes", "k8s"), commandsOf("k8s", "--help"));
         // embedded like the others, so camel mcp does not install it in the plugin configuration on first use
         assertEquals(Set.of("mcp"), commandsOf("mcp", "--help"));
@@ -108,7 +110,17 @@ public class CamelLauncherTest {
     @Test
     public void theHelpCreatesTheCommandsOfAllEmbeddedPlugins() {
         assertTrue(commandsOf("--help")
-                .containsAll(Set.of("version", "generate", "kubernetes", "mcp", "self-update", "tui", "validate", "test")));
+                .containsAll(Set.of("version", "kubernetes", "mcp", "self-update", "tui", "validate", "test")));
+    }
+
+    @Test
+    public void theGeneratePluginIsNotEmbedded() {
+        // camel generate installs it on first use: it and the OpenAPI generator are a fifth of the download (CAMEL-27005)
+        assertFalse(commandsOf("--help").contains("generate"));
+        assertTrue(PluginHelper.isPluginCommand("generate"), "camel generate installs the plugin on first use");
+        assertThrows(ClassNotFoundException.class,
+                () -> Class.forName("org.apache.camel.dsl.jbang.core.commands.generate.GeneratePlugin"));
+        assertThrows(ClassNotFoundException.class, () -> Class.forName("org.openapitools.codegen.DefaultGenerator"));
     }
 
     private static Set<String> commandsOf(String... args) {
