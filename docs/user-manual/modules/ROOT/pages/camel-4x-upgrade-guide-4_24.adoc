@@ -9282,6 +9282,44 @@ If your offsets can go stale, note that by default (without `moveFailed`) the fa
 offset from the resume store and fails again. Clear or reset the recorded offset for that file - or delete the resume
 store entry - to let it be consumed from the start again.
 
+=== camel-keycloak - 11 documented headers are deprecated
+
+Eleven of the headers the component documents are never read by it. A route that sets one gets no error and no effect,
+because the producer takes the value from somewhere else:
+
+[cols="1,1"]
+|===
+| Header | Where the value comes from instead
+
+| `CamelKeycloakRoleId`
+| the role operations address a role by its name, `CamelKeycloakRoleName`
+
+| `CamelKeycloakIdpId`
+| the identity provider operations address a provider by its alias, `CamelKeycloakIdpAlias`
+
+| `CamelKeycloakResourceName`, `CamelKeycloakResourceType`, `CamelKeycloakResourceUri`
+| `createResource` and `updateResource` take a `ResourceRepresentation` as the POJO request body
+
+| `CamelKeycloakPolicyName`, `CamelKeycloakPolicyType`
+| the policy operations take a `PolicyRepresentation` as the POJO request body
+
+| `CamelKeycloakPermissionName`
+| `createResourcePermission` takes a `ResourcePermissionRepresentation`, and the other permission operations identify
+the permission with `CamelKeycloakPermissionId`
+
+| `CamelKeycloakScopeName`
+| there are no authorization-scope operations; the client scope operations use `CamelKeycloakClientScopeName`
+
+| `CamelKeycloakCredentialType`
+| no credential operation takes a `CredentialRepresentation` request body: `deleteUserCredential` uses
+`CamelKeycloakCredentialId`, and `resetUserPassword` builds a password credential from `CamelKeycloakUserPassword`
+
+| `CamelKeycloakBatchSize`
+| the bulk operations send every element of the list one by one, with no batching
+|===
+
+Each is now deprecated, with a `deprecationNote` carrying the same information.
+
 === camel-docker - the loggingFilter and followRedirectFilter options are deprecated
 
 Neither option has had any effect since Camel 2.18, when the docker-java 3.x upgrade removed the
