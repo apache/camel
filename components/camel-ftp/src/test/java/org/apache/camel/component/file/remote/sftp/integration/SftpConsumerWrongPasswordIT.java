@@ -31,17 +31,11 @@ import java.util.function.IntSupplier;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.remote.RemoteFileConsumer;
+import org.apache.camel.component.file.remote.RemoteFileConsumerWarnCapture;
 import org.apache.camel.component.file.remote.RemoteFilePollingConsumerPollStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedService;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.apache.logging.log4j.core.config.Property;
 import org.apache.sshd.server.auth.UserAuthFactory;
 import org.apache.sshd.server.auth.keyboard.UserAuthKeyboardInteractiveFactory;
 import org.apache.sshd.server.auth.password.UserAuthPasswordFactory;
@@ -69,7 +63,7 @@ class SftpConsumerWrongPasswordIT extends CamelTestSupport {
     @RegisterExtension
     CountingSftpEmbeddedService service = new CountingSftpEmbeddedService();
 
-    private final WarnCapture warnings = new WarnCapture();
+    private final RemoteFileConsumerWarnCapture warnings = new RemoteFileConsumerWarnCapture();
 
     @BeforeEach
     void captureWarnings() {
@@ -96,7 +90,7 @@ class SftpConsumerWrongPasswordIT extends CamelTestSupport {
         assertEquals(List.of("Cannot connect/login to: sftp://admin@localhost:" + service.getPort()
                              + " due to: Auth fail for user 'admin': the server did not accept the password."
                              + " Will skip this poll."),
-                warnings.messages);
+                warnings.messages());
     }
 
     @Test
@@ -125,7 +119,7 @@ class SftpConsumerWrongPasswordIT extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, service.passwordChecks());
-        assertTrue(warnings.messages.isEmpty(), "No WARN: " + warnings.messages);
+        assertTrue(warnings.messages().isEmpty(), "No WARN: " + warnings.messages());
     }
 
     @Test
@@ -150,7 +144,7 @@ class SftpConsumerWrongPasswordIT extends CamelTestSupport {
 
             assertEquals(List.of("Cannot connect/login to: sftp://admin@localhost:" + server.getPort()
                                  + " due to: connection is closed by foreign host. Will skip this poll."),
-                    warnings.messages);
+                    warnings.messages());
         }
     }
 
@@ -260,39 +254,6 @@ class SftpConsumerWrongPasswordIT extends CamelTestSupport {
         @Override
         public void close() throws IOException {
             socket.close();
-        }
-    }
-
-    /**
-     * Captures the WARN messages of the remote file consumer.
-     */
-    static class WarnCapture extends AbstractAppender {
-
-        final List<String> messages = new CopyOnWriteArrayList<>();
-
-        WarnCapture() {
-            super("SftpConsumerWrongPasswordIT", null, null, true, Property.EMPTY_ARRAY);
-        }
-
-        void attach() {
-            start();
-            LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-            ctx.getConfiguration().getRootLogger().addAppender(this, Level.WARN, null);
-            ctx.updateLoggers();
-        }
-
-        void detach() {
-            LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-            ctx.getConfiguration().getRootLogger().removeAppender(getName());
-            ctx.updateLoggers();
-            stop();
-        }
-
-        @Override
-        public void append(LogEvent event) {
-            if (RemoteFileConsumer.class.getName().equals(event.getLoggerName())) {
-                messages.add(event.getMessage().getFormattedMessage());
-            }
         }
     }
 }

@@ -434,7 +434,9 @@ ends, with the cause `Auth fail for user '<username>': the server did not accept
 
 The WARN that a consumer of the `ftp`, `ftps`, `sftp` and `mina-sftp` components logs when it cannot connect,
 `Cannot connect/login to: ... Will skip this poll.`, now gives the reason before `Will skip this poll.`, such as
-`due to: Auth fail for methods 'publickey,password'`.
+`due to: Auth fail for methods 'publickey,password'`, on one line. When the consumer connects but cannot create its
+starting directory (`autoCreate=true`), it now logs
+`Cannot auto-create starting directory at: ... due to: ... Will skip this poll.` instead.
 See the xref:components::sftp-component.adoc[SFTP component].
 
 === camel-kafka - exactlyOnce: a rejected send that a doCatch catches skips the record
