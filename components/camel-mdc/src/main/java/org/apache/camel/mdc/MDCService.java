@@ -80,6 +80,30 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
         this.customProperties = customProperties;
     }
 
+    public String getCustomExchangeHeaders() {
+        return customHeaders;
+    }
+
+    /**
+     * The exchange headers to include in the MDC (the same as {@link #setCustomHeaders(String)}). This is the
+     * {@code camel.mdc.customExchangeHeaders} option.
+     */
+    public void setCustomExchangeHeaders(String customExchangeHeaders) {
+        this.customHeaders = customExchangeHeaders;
+    }
+
+    public String getCustomExchangeProperties() {
+        return customProperties;
+    }
+
+    /**
+     * The exchange properties to include in the MDC (the same as {@link #setCustomProperties(String)}). This is the
+     * {@code camel.mdc.customExchangeProperties} option.
+     */
+    public void setCustomExchangeProperties(String customExchangeProperties) {
+        this.customProperties = customExchangeProperties;
+    }
+
     /**
      * Registers this {@link MDCService} on the {@link CamelContext} if not already registered.
      */
