@@ -60,19 +60,23 @@ class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTestSupport
     void testThrottlingRoutePolicyStartWithAlwaysOpenOffThenToggle() throws Exception {
         final ServiceSupport consumer = (ServiceSupport) context.getRoute("foo").getConsumer();
 
+        // each phase resets the mock and sets its expectation BEFORE the messages are sent: a latch created
+        // after some messages were already consumed never reaches zero, and the assertion waits the full timeout
+
         // send first set of messages
         // should go through b/c circuit is closed
         int size = 5;
+        result.expectedMessageCount(size);
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "MessageRound1 " + i);
         }
-        result.expectedMessageCount(size);
         MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         // send the trigger message while the circuit is still closed so it is
         // guaranteed to be consumed before we open the circuit
+        result.reset();
+        result.expectedMessageCount(1);
         template.sendBody(url, "MessageTrigger");
-        result.expectedMessageCount(size + 1);
         MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         // toggle keepOpen to true: setKeepOpen() immediately suspends the
@@ -85,24 +89,25 @@ class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTestSupport
 
         // send next set of messages
         // should NOT go through b/c circuit is open
+        result.reset();
+        result.expectedMessageCount(0);
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "MessageRound2 " + i);
         }
 
         // should not close b/c keepOpen is true; use assertPeriod to verify no extra messages arrive
         result.setAssertPeriod(500);
-        result.expectedMessageCount(size + 1);
         MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
-        result.setAssertPeriod(0);
 
         // set keepOpen to false
+        result.reset();
+        result.expectedMessageCount(size);
         policy.setKeepOpen(false);
 
         // wait for the consumer to resume since keepOpen is now false
         await().atMost(10, TimeUnit.SECONDS).until(consumer::isStarted);
 
         // it should close b/c keepOpen is false — queued messages should now arrive
-        result.expectedMessageCount(size * 2 + 1);
         MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
     }
 
