@@ -18,6 +18,7 @@ package org.apache.camel.processor.intercept;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
@@ -31,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptSendToEndpoint;
+import org.apache.camel.spi.SendHook;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
@@ -98,13 +100,43 @@ class InterceptSendToEndpointDoneSyncTest extends ContextTestSupport {
         // as advice with mockEndpoints() wraps an endpoint: the before is the producer of a mock, which is synchronous
         DefaultInterceptSendToEndpoint endpoint
                 = new DefaultInterceptSendToEndpoint(context.getEndpoint("async:x"), false);
-        endpoint.setBefore(context.getEndpoint("mock:before").createProducer());
-        endpoint.start();
-        boolean returned = assertDoneSyncIsTheReturnedValue(endpoint);
+        Producer before = context.getEndpoint("mock:before").createProducer();
+        endpoint.setBefore(before);
+        try {
+            endpoint.start();
+            boolean returned = assertDoneSyncIsTheReturnedValue(endpoint);
 
-        // the producer of async:x calls back on its own thread
-        assertFalse(returned);
+            // the producer of async:x calls back on its own thread
+            assertFalse(returned);
+            assertMockEndpointsSatisfied();
+        } finally {
+            ServiceHelper.stopService(endpoint, before);
+        }
+    }
+
+    @Test
+    void aSendTwiceHookSendsTwiceToAnInterceptedEndpoint() throws Exception {
+        // as the duplicate fault of camel-chaos: when the first send returns false, SendHelper makes the second send in
+        // the callback of the first, so that callback must get false too
+        context.getCamelContextExtension().addSendHook(new SendHook() {
+            @Override
+            public long beforeSend(Exchange exchange, Endpoint endpoint) {
+                return "mock://result".equals(endpoint.getEndpointUri()) ? SEND_TWICE : PROCEED;
+            }
+
+            @Override
+            public void afterSend(Exchange exchange, Endpoint endpoint) {
+                // nothing to do
+            }
+        });
+        getMockEndpoint("mock:detour").expectedBodiesReceived("Hello", "Hello");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello", "Hello");
+
+        Future<Object> sent = template.asyncSendBody("direct:start", "Hello");
+
         assertMockEndpointsSatisfied();
+        // the exchange completes
+        sent.get(10, TimeUnit.SECONDS);
     }
 
     @Test

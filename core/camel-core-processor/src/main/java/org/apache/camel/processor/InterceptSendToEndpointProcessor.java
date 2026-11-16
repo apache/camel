@@ -156,8 +156,9 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         AsyncProcessor before = AsyncProcessorConverterHelper.convert(current.before());
         // what the rest of the chain returned: read only when the before was done on this thread, before it returned
         boolean[] rest = { true };
-        boolean sync = before.process(exchange,
-                doneSync -> rest[0] = afterBefore(exchange, chain, index, current, callback, doneSync));
+        boolean sync = before.process(exchange, doneSync -> {
+            rest[0] = afterBefore(exchange, chain, index, current, callback, doneSync);
+        });
         // the value the callback is called with: false when the before or the rest of the chain went asynchronous
         return sync && rest[0];
     }
@@ -200,7 +201,9 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         boolean[] afterSync = { true };
         if (current.after() != null && matched) {
             AsyncProcessor after = AsyncProcessorConverterHelper.convert(current.after());
-            next = doneSync2 -> afterSync[0] = after.process(exchange, doneSync3 -> ac1.done(doneSync2 && doneSync3));
+            next = doneSync2 -> {
+                afterSync[0] = after.process(exchange, doneSync3 -> ac1.done(doneSync2 && doneSync3));
+            };
         }
 
         // route to the next interceptor (or the original destination) and when done, then
