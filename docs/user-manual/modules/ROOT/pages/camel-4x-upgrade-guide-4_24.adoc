@@ -2179,6 +2179,19 @@ the body no longer looks finished: `hasNext()` and `next()` now throw a `Runtime
 redelivered over the same iterator (an error handler with redeliveries) found no more rows and the exchange succeeded
 with only the rows read before the failure. It now fails once the redeliveries are exhausted.
 
+=== camel-jdbc, camel-spring-jdbc, camel-sql - outputType=StreamList: a row that cannot be mapped to the outputClass keeps failing
+
+With `outputType=StreamList` and `outputClass`, once mapping a row to the `outputClass` has failed (for example, a value
+that does not convert to the type of its property), `hasNext()` and `next()` of the iterator of the body now throw a
+`RuntimeCamelException` with that failure as cause, as after a row that failed to read. The first `next()` throws the
+exception of the mapping, as before. Before, a split that was redelivered over the same iterator went on with the next
+row (camel-jdbc, camel-spring-jdbc), or found no more rows (camel-sql, when the row mapper failed with a
+`RuntimeException`, such as Spring's `TypeMismatchException`), and the exchange succeeded without the row that could not
+be mapped (with camel-sql, without the rows after it either). It now fails once the redeliveries are exhausted.
+
+With camel-jdbc, code that reads the iterator itself and goes on after a row that cannot be mapped now gets this
+exception from `hasNext()`: to skip such rows, read the rows without `outputClass` and map them in the route.
+
 === camel-jdbc, camel-spring-jdbc - outputType=StreamList commits when the exchange is done
 
 With `outputType=StreamList` and `resetAutoCommit=true` (the default), the producer now commits the transaction of the
