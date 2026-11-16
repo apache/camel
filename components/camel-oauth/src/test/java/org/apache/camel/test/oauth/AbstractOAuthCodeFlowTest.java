@@ -47,10 +47,10 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
             Assertions.assertEquals(1, keycloak.realm(KEYCLOAK_REALM).users().search("alice").size());
 
             LOG.info("Keycloak realm, client, and user available!");
-            LOG.info("Open: {}", APP_BASE_URL);
+            LOG.info("Open: {}", getAppBaseUrl());
 
             // Open WebApp in Browser (works on macOS)
-            // Runtime.getRuntime().exec("open " + APP_BASE_URL);
+            // Runtime.getRuntime().exec("open " + getAppBaseUrl());
 
             // Increase for manual testing
             int maxLoopCount = 10; // 500ms per loop
@@ -63,7 +63,7 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
                 }
                 if (i % 4 == 0) {
                     LOG.info("Waiting on logout: {}/{} - {}", maxLoopCount - i, maxLoopCount,
-                            APP_BASE_URL + "logout");
+                            getAppBaseUrl() + "logout");
                 }
                 Thread.sleep(500L);
             }

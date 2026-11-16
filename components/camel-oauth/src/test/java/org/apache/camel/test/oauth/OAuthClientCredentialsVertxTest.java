@@ -27,6 +27,7 @@ import org.apache.camel.oauth.OAuthBearerTokenProcessor;
 import org.apache.camel.oauth.OAuthClientCredentialsProcessor;
 import org.apache.camel.oauth.OAuthFactory;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OAuthClientCredentialsVertxTest extends AbstractOAuthClientCredentialsTest {
+
+    static final AvailablePortFinder.Port SERVER_PORT = AvailablePortFinder.find();
+    static final int PORT = SERVER_PORT.getPort();
+
+    @Override
+    protected int getPort() {
+        return PORT;
+    }
 
     @Test
     public void testOAuthSetup() throws Exception {
@@ -66,9 +75,9 @@ public class OAuthClientCredentialsVertxTest extends AbstractOAuthClientCredenti
     CamelContext createCamelContext() throws Exception {
 
         var conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(port);
+        conf.setBindPort(PORT);
 
-        RestAssured.port = port;
+        RestAssured.port = PORT;
 
         var context = new DefaultCamelContext();
         context.addService(new VertxPlatformHttpServer(conf));

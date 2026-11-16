@@ -25,6 +25,7 @@ import org.apache.camel.oauth.OAuthCodeFlowCallback;
 import org.apache.camel.oauth.OAuthCodeFlowProcessor;
 import org.apache.camel.oauth.OAuthLogoutProcessor;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.test.AvailablePortFinder;
 
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
@@ -37,11 +38,19 @@ import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
  */
 class OAuthCodeFlowVertxTest extends AbstractOAuthCodeFlowTest {
 
+    static final AvailablePortFinder.Port SERVER_PORT = AvailablePortFinder.find();
+    static final int PORT = SERVER_PORT.getPort();
+
+    @Override
+    protected int getPort() {
+        return PORT;
+    }
+
     @Override
     CamelContext createCamelContext() throws Exception {
 
         var conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(port);
+        conf.setBindPort(PORT);
 
         var context = new DefaultCamelContext();
         context.addService(new VertxPlatformHttpServer(conf));
@@ -50,8 +59,8 @@ class OAuthCodeFlowVertxTest extends AbstractOAuthCodeFlowTest {
         props.addInitialProperty(CAMEL_OAUTH_BASE_URI, KEYCLOAK_REALM_URL);
         props.addInitialProperty(CAMEL_OAUTH_CLIENT_ID, TEST_CLIENT_ID);
         props.addInitialProperty(CAMEL_OAUTH_CLIENT_SECRET, TEST_CLIENT_SECRET);
-        props.addInitialProperty(CAMEL_OAUTH_REDIRECT_URI, APP_BASE_URL + "auth");
-        props.addInitialProperty(CAMEL_OAUTH_LOGOUT_REDIRECT_URI, APP_BASE_URL);
+        props.addInitialProperty(CAMEL_OAUTH_REDIRECT_URI, getAppBaseUrl() + "auth");
+        props.addInitialProperty(CAMEL_OAUTH_LOGOUT_REDIRECT_URI, getAppBaseUrl());
 
         return context;
     }
