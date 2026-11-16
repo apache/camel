@@ -16,12 +16,14 @@
  */
 package org.apache.camel.processor.idempotent.jdbc;
 
-import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
@@ -31,7 +33,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DelegatingDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -41,6 +42,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,7 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A database outage longer than lockMaxAgeMillis: the keep-alive of node A fails, so the leases of the keys node A is
  * still processing grow older than lockMaxAgeMillis. Node A must still treat these keys as duplicates; another node can
  * take them over, as it cannot tell node A from a node that crashed (see the Orphan Lock section of the docs). Two
- * repository instances (two nodes) share one H2 database; only node A loses it.
+ * repository instances (two nodes) share one H2 database; only node A loses it. A statement of node A can be held
+ * before it is sent, so that a copy of a message reaches node A while it confirms or removes the key.
  */
 class JdbcOrphanLockAwareIdempotentRepositoryOutageTest {
 
@@ -59,6 +62,8 @@ class JdbcOrphanLockAwareIdempotentRepositoryOutageTest {
     private JdbcTemplate jdbcTemplate;
     private CamelContext context;
     private Outage outage;
+    private PausingJdbcTemplate statements;
+    private ExecutorService processing;
     private JdbcOrphanLockAwareIdempotentRepository nodeA;
     private JdbcOrphanLockAwareIdempotentRepository nodeB;
 
@@ -71,7 +76,11 @@ class JdbcOrphanLockAwareIdempotentRepositoryOutageTest {
         jdbcTemplate = new JdbcTemplate(database);
         context = new DefaultCamelContext();
         outage = new Outage(database);
+        statements = new PausingJdbcTemplate(outage);
+        processing = Executors.newSingleThreadExecutor();
         nodeA = newRepository(outage, LOCK_MAX_AGE_MILLIS, LOCK_MAX_AGE_MILLIS / 2);
+        // no statement is held unless a test says so
+        nodeA.setJdbcTemplate(statements);
         nodeB = newRepository(database, LOCK_MAX_AGE_MILLIS, LOCK_MAX_AGE_MILLIS / 2);
         nodeA.start();
         nodeB.start();
@@ -79,6 +88,8 @@ class JdbcOrphanLockAwareIdempotentRepositoryOutageTest {
 
     @AfterEach
     void tearDown() {
+        statements.resume();
+        processing.shutdownNow();
         nodeA.shutdown();
         nodeB.shutdown();
         context.stop();
@@ -131,6 +142,55 @@ class JdbcOrphanLockAwareIdempotentRepositoryOutageTest {
     }
 
     @Test
+    void testKeyBeingConfirmedIsStillADuplicateOnItsNodeAfterAnOutage() throws Exception {
+        assertTrue(nodeA.add("ORDER_5"));
+
+        outage.begin();
+        nodeA.keepAlive();
+        expireLeases();
+        outage.end();
+
+        // ORDER_5 is processed right after the outage, before the next keep-alive: its confirm takes the key out of the
+        // keep-alive first, then waits before its UPDATE (as when it waits for a connection of the pool)
+        statements.pauseBefore(nodeA.getConfirmQuery());
+        Future<Boolean> confirmed = processing.submit(() -> nodeA.confirm("ORDER_5"));
+        assertTrue(statements.awaitPaused(), "The confirm did not reach its UPDATE");
+
+        // a copy of ORDER_5 reaches node A meanwhile
+        assertFalse(nodeA.add("ORDER_5"), "A key that node A is confirming must not be taken over by node A");
+        assertTrue(nodeA.contains("ORDER_5"), "A key that node A is confirming must be a duplicate on node A");
+
+        statements.resume();
+        assertTrue(confirmed.get(10, TimeUnit.SECONDS));
+        assertNull(createdAt("ORDER_5"), "The key must be confirmed");
+        assertTrue(nodeA.getProcessorNameMessageIdSet().isEmpty(), "A confirmed key must no longer be kept alive");
+        assertFalse(nodeA.add("ORDER_5"));
+    }
+
+    @Test
+    void testKeyBeingRemovedIsStillADuplicateOnItsNodeUntilItsDelete() throws Exception {
+        assertTrue(nodeA.add("ORDER_6"));
+
+        outage.begin();
+        nodeA.keepAlive();
+        expireLeases();
+        outage.end();
+
+        // the processing of ORDER_6 fails right after the outage: the remove takes the key out of the keep-alive only
+        // after its DELETE
+        statements.pauseBefore(nodeA.getDeleteString());
+        Future<Boolean> removed = processing.submit(() -> nodeA.remove("ORDER_6"));
+        assertTrue(statements.awaitPaused(), "The remove did not reach its DELETE");
+
+        assertFalse(nodeA.add("ORDER_6"), "A key that node A is removing must not be taken over by node A");
+
+        statements.resume();
+        assertTrue(removed.get(10, TimeUnit.SECONDS));
+        // once removed, a copy is processed again, as the remove asks for
+        assertTrue(nodeA.add("ORDER_6"));
+    }
+
+    @Test
     void testAnotherNodeTakesOverAKeyWhoseLeaseExpiredDuringTheOutage() {
         // the limitation of the lease, as documented: node B, which still reaches the database, cannot tell node A from
         // a node that crashed, so it takes over a lease that node A could not refresh for longer than the lock max age
@@ -149,12 +209,13 @@ class JdbcOrphanLockAwareIdempotentRepositoryOutageTest {
 
     @Test
     void testKeepAliveLogsOnceThatTheLeasesMayExpire() {
-        List<String> warnings = new CopyOnWriteArrayList<>();
-        List<String> errors = new CopyOnWriteArrayList<>();
-        List<String> infos = new CopyOnWriteArrayList<>();
+        RecordingLogger logs = new RecordingLogger();
+        List<String> warnings = logs.warnings();
+        List<String> errors = logs.errors();
+        List<String> infos = logs.infos();
         // a short lock max age, so that the scheduled keep-alive fails for longer than it
         JdbcOrphanLockAwareIdempotentRepository node = newRepository(outage, 500L, 50L);
-        node.log = recordingLogger(warnings, errors, infos);
+        node.log = logs.logger();
         node.start();
         try {
             assertTrue(node.add("ORDER_4"));
@@ -197,37 +258,47 @@ class JdbcOrphanLockAwareIdempotentRepositoryOutageTest {
                 PROCESSOR_NAME, key);
     }
 
-    // records the format of the WARN, ERROR and INFO messages of the repository
-    private static Logger recordingLogger(List<String> warnings, List<String> errors, List<String> infos) {
-        return (Logger) Proxy.newProxyInstance(Logger.class.getClassLoader(), new Class<?>[] { Logger.class },
-                (proxy, method, args) -> {
-                    switch (method.getName()) {
-                        case "hashCode":
-                            return System.identityHashCode(proxy);
-                        case "equals":
-                            return proxy == args[0];
-                        case "toString":
-                            return "recordingLogger";
-                        case "warn":
-                            warnings.add(String.valueOf(args[0]));
-                            return null;
-                        case "error":
-                            errors.add(String.valueOf(args[0]));
-                            return null;
-                        case "info":
-                            infos.add(String.valueOf(args[0]));
-                            return null;
-                        default:
-                            break;
+    /**
+     * Holds the next run of a statement before it is sent, until resumed.
+     */
+    private static final class PausingJdbcTemplate extends JdbcTemplate {
+
+        private final CountDownLatch paused = new CountDownLatch(1);
+        private final CountDownLatch resumed = new CountDownLatch(1);
+        private volatile String pausedSql;
+
+        PausingJdbcTemplate(DataSource dataSource) {
+            super(dataSource);
+        }
+
+        void pauseBefore(String sql) {
+            pausedSql = sql;
+        }
+
+        boolean awaitPaused() throws InterruptedException {
+            return paused.await(10, TimeUnit.SECONDS);
+        }
+
+        void resume() {
+            resumed.countDown();
+        }
+
+        @Override
+        public int update(String sql, Object... args) {
+            if (sql.equals(pausedSql)) {
+                pausedSql = null;
+                paused.countDown();
+                try {
+                    if (!resumed.await(10, TimeUnit.SECONDS)) {
+                        throw new IllegalStateException("The paused statement was not resumed");
                     }
-                    if (method.getReturnType() == boolean.class) {
-                        return false;
-                    }
-                    if (method.getReturnType() == String.class) {
-                        return "test";
-                    }
-                    return null;
-                });
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(e);
+                }
+            }
+            return super.update(sql, args);
+        }
     }
 
     /**

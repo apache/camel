@@ -81,6 +81,10 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     // run, and the keep-alive needs one too, so a lock held across SQL could deadlock with a small pool
     private final Set<ProcessorNameAndMessageId> processorNameMessageIdSet = ConcurrentHashMap.newKeySet();
 
+    // the keys whose confirm runs: the confirm takes them out of processorNameMessageIdSet before its UPDATE, so that the
+    // keep-alive does not wait for the row lock of the confirm, but this instance still holds them until the confirm ends
+    private final Set<ProcessorNameAndMessageId> confirming = ConcurrentHashMap.newKeySet();
+
     private ExecutorServiceManager executorServiceManager;
 
     private ScheduledExecutorService executorService;
@@ -132,7 +136,7 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         // a key this instance holds is not an orphan, whatever the age of its lease: when the keep-alive could not refresh
         // it for longer than lockMaxAge (the database could not be reached), this instance may still process the message,
         // and taking the key over would process it a second time
-        if (processorNameMessageIdSet.contains(new ProcessorNameAndMessageId(processorName, key))) {
+        if (holds(new ProcessorNameAndMessageId(processorName, key))) {
             return 1;
         }
         /**
@@ -145,6 +149,17 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         Timestamp xMillisAgo = new Timestamp(System.currentTimeMillis() - lockMaxAgeMillis);
         return jdbcTemplate.queryForObject(orphanLockRecoverQueryString, Integer.class, processorName, key, // NOSONAR
                 xMillisAgo);
+    }
+
+    // whether this instance holds the key: it is kept alive, or its confirm runs. The confirm adds the key to confirming
+    // before it takes it out of processorNameMessageIdSet, so the first two reads find a key whose confirm starts
+    private boolean holds(ProcessorNameAndMessageId id) {
+        if (processorNameMessageIdSet.contains(id) || confirming.contains(id)) {
+            return true;
+        }
+        // a confirm that failed puts the key back in processorNameMessageIdSet before it takes it out of confirming,
+        // possibly between the two reads above
+        return processorNameMessageIdSet.contains(id);
     }
 
     @Override
@@ -179,6 +194,8 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         // the row until that transaction ends, and a later keep-alive that updated the row would wait for it (and could
         // deadlock with a later confirm or remove in the same transaction). It is kept alive again when the confirm fails
         // or its transaction does not commit; not when no row matched, as then there is no lease of this instance.
+        // Until the confirm ends, this instance still holds the key (see queryForInt), but does not keep it alive.
+        confirming.add(id);
         boolean keptAlive = processorNameMessageIdSet.remove(id);
         boolean completed = false;
         try {
@@ -207,6 +224,7 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
             if (keptAlive && !completed) {
                 processorNameMessageIdSet.add(id);
             }
+            confirming.remove(id);
         }
     }
 
