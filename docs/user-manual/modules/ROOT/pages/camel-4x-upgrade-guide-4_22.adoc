@@ -906,6 +906,21 @@ catalog version for Camel core dependencies in the generated project. For exampl
 uses Camel 4.8.0 instead of the running CLI's version when that catalog is available. Set `--camel-version` explicitly
 to retain a different core dependency version.
 
+=== camel-main - the server and vault options flagged secret are sensitive keys
+
+The options `camel.server.jwtKeystorePassword`, `camel.management.jwtKeystorePassword`,
+`camel.vault.azure.eventhubConnectionString`, `camel.vault.azure.tenantId`, `camel.vault.gcp.serviceAccountKey`,
+`camel.vault.ibm.eventStreamUsername` and `camel.vault.ibm.eventStreamPassword` are flagged secret, and are now also
+sensitive keys, like the other secret options. The Camel Main auto-configuration summary shows their value as `xxxxxx`.
+These options are matched by their whole key. Component and endpoint options with the same name, such as `tenantId` or
+`serviceAccountKey`, are not affected.
+
+The `camel.security.secretPolicy` check now also reports these options when they are configured as plain text,
+including a value set through an environment variable: a warning by default, and the startup fails with
+`camel.main.profile=prod`. Configure them with a property placeholder or a vault reference instead.
+A file location in `camel.vault.gcp.serviceAccountKey`, such as `file:/etc/gcp/sa.json`, is also reported. It can go
+behind a property placeholder too.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined

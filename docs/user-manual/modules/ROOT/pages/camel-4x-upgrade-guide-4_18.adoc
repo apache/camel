@@ -975,6 +975,16 @@ catalog version for Camel core dependencies in the generated project. For exampl
 uses Camel 4.8.0 instead of the running CLI's version when that catalog is available. Set `--camel-version` explicitly
 to retain a different core dependency version.
 
+=== camel-main - the server and vault options flagged secret are sensitive keys
+
+The options `camel.server.jwtKeystorePassword`, `camel.management.jwtKeystorePassword`,
+`camel.vault.azure.eventhubConnectionString`, `camel.vault.azure.tenantId` and `camel.vault.gcp.serviceAccountKey` are
+flagged secret, and are now also sensitive keys, like the other secret options. The options
+`camel.vault.ibm.eventStreamUsername` and `camel.vault.ibm.eventStreamPassword` are now flagged secret as well.
+The Camel Main auto-configuration summary shows the value of these options as `xxxxxx`.
+These options are matched by their whole key. Component and endpoint options with the same name, such as `tenantId` or
+`serviceAccountKey`, are not affected.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs
