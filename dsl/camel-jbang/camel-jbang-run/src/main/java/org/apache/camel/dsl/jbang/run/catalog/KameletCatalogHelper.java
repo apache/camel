@@ -17,9 +17,13 @@
 package org.apache.camel.dsl.jbang.run.catalog;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +33,9 @@ import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 public final class KameletCatalogHelper {
 
@@ -38,9 +45,92 @@ public final class KameletCatalogHelper {
     private KameletCatalogHelper() {
     }
 
+    // the index of the Kamelets in the camel-kamelets JAR (camel-kamelets 4.24 and newer)
+    static final String INDEX = "META-INF/kamelets-index.json";
+
     public static List<String> findKameletNames(String version, String repositories) throws Exception {
+        List<KameletModel> index = loadIndex(version);
+        if (index != null) {
+            List<String> answer = new ArrayList<>(index.size());
+            for (KameletModel km : index) {
+                answer.add(km.name);
+            }
+            return answer;
+        }
         Map<String, Object> kamelets = loadKamelets(version, repositories);
         return new ArrayList<>(kamelets.keySet());
+    }
+
+    /**
+     * The Kamelets of the version, with only their name, type, support level and description. When the camel-kamelets
+     * JAR of this version is on the class path and has the index of its Kamelets, they come from that index, which
+     * takes a few milliseconds; otherwise from the Kamelets catalog, which is downloaded and loaded (half a second or
+     * more).
+     */
+    public static List<KameletModel> loadKameletSummaries(String version, String repositories) throws Exception {
+        List<KameletModel> answer = loadIndex(version);
+        if (answer == null) {
+            answer = new ArrayList<>();
+            for (Object o : loadKamelets(version, repositories).values()) {
+                answer.add(createModel(o, false));
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The Kamelets in the index of the camel-kamelets JAR of the version on the class path, with only their name, type,
+     * support level and description, or null when there is no such JAR or it has no index.
+     */
+    public static List<KameletModel> loadIndex(String version) {
+        return loadIndex(KameletCatalogHelper.class.getClassLoader(), version);
+    }
+
+    /**
+     * The Kamelets in the index of the camel-kamelets JAR of the version, or null when the class loader has no such
+     * JAR, or the JAR has no index (camel-kamelets 4.23 and older), or the index cannot be read.
+     */
+    static List<KameletModel> loadIndex(ClassLoader cl, String version) {
+        if (version == null || cl == null) {
+            return null;
+        }
+        // the JAR of this version only: another version on the class path has other Kamelets
+        String jar = "camel-kamelets-" + version + ".jar!/";
+        try {
+            Enumeration<URL> urls = cl.getResources(INDEX);
+            while (urls.hasMoreElements()) {
+                URL url = urls.nextElement();
+                if (url.toString().endsWith(jar + INDEX)) {
+                    try (InputStream is = url.openStream()) {
+                        return parseIndex(is);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // the catalog has the same Kamelets
+        }
+        return null;
+    }
+
+    static List<KameletModel> parseIndex(InputStream is) throws Exception {
+        JsonObject root = (JsonObject) Jsoner.deserialize(new InputStreamReader(is, StandardCharsets.UTF_8));
+        JsonArray kamelets = root.getCollection("kamelets");
+        if (kamelets == null) {
+            return null;
+        }
+        List<KameletModel> answer = new ArrayList<>(kamelets.size());
+        for (Object o : kamelets) {
+            JsonObject jo = (JsonObject) o;
+            KameletModel km = new KameletModel();
+            km.name = jo.getString("name");
+            km.type = jo.getString("type");
+            km.supportLevel = jo.getString("supportLevel");
+            km.description = jo.getString("description");
+            if (km.name != null) {
+                answer.add(km);
+            }
+        }
+        return answer;
     }
 
     public static KameletModel createModel(Object kamelet, boolean all) throws Exception {
