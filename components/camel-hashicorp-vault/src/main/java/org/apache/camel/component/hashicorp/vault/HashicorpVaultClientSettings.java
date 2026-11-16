@@ -84,7 +84,8 @@ public final class HashicorpVaultClientSettings {
      * The settings of the properties function and the secret refresh task: from the CAMEL_HASHICORP_VAULT_* environment
      * variables when one of them is set, else from the vault configuration.
      *
-     * @param configuration the vault configuration (camel.vault.hashicorp), may be null
+     * @param  configuration the vault configuration (camel.vault.hashicorp), may be null
+     * @return               the settings
      */
     public static HashicorpVaultClientSettings fromEnvironmentOrConfiguration(HashicorpVaultConfiguration configuration) {
         return fromEnvironmentOrConfiguration(configuration, System::getenv);
@@ -127,8 +128,9 @@ public final class HashicorpVaultClientSettings {
      * environment variables of the properties function: such as for Camel on Spring Boot, which binds the vault
      * configuration itself.
      *
-     * @param configuration the vault configuration
-     * @since               4.24
+     * @param  configuration the vault configuration
+     * @return               the settings
+     * @since                4.24
      */
     public static HashicorpVaultClientSettings fromConfiguration(HashicorpVaultConfiguration configuration) {
         HashicorpVaultClientSettings settings = new HashicorpVaultClientSettings();
