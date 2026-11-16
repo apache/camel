@@ -20,6 +20,7 @@ camel infra restart [options]
 |===
 | Option | Description | Default | Type
 | `--background` | Run in the background | false | boolean
+| `--background-wait` | How long to wait for the service in the background to start, before returning, in millis or as a duration such as 2m (true waits 60 seconds, false does not wait) | 60s | long
 | `--json` | Output in JSON Format |  | boolean
 | `--kill` | To force killing the process (SIGKILL) when stopping |  | boolean
 | `--log` | Log container output to console |  | boolean

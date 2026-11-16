@@ -28,7 +28,7 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel plugin delete my-cmd" })
 public class PluginDelete extends PluginBaseCommand {
 
-    @Argument(required = true, description = "The Camel plugin to remove", paramLabel = "<plugin>")
+    @Argument(required = true, description = "The Camel plugin to remove", paramLabel = "plugin")
     String name;
 
     public PluginDelete(CamelJBangMain main) {

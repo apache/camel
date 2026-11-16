@@ -24,7 +24,7 @@ public class TwitterTimelineEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(45);
+        Set<String> props = new HashSet<>(46);
         props.add("accessToken");
         props.add("accessTokenSecret");
         props.add("backoffErrorThreshold");
@@ -41,6 +41,7 @@ public class TwitterTimelineEndpointUriFactory extends org.apache.camel.support.
         props.add("extendedMode");
         props.add("filterOld");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("httpProxyHost");
         props.add("httpProxyPassword");
         props.add("httpProxyPort");

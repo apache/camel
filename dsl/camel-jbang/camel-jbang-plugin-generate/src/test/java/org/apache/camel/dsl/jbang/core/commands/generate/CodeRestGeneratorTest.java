@@ -16,7 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.generate;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +32,8 @@ import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -125,6 +130,39 @@ class CodeRestGeneratorTest {
         var errors = validator.validate(rest.toFile());
         assertThat(errors).as(Files.readString(rest)).isEmpty();
         assertThat(Files.readString(rest)).contains("- route:", "steps:", "log: \"Not implemented yet: direct:");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "quarkus", "main", "spring-boot" })
+    void theDtosUseJakartaAndNoLibraryTheProjectDoesNotHave(String runtime) throws Exception {
+        // CAMEL-26933: the DTOs imported javax.validation and JsonNullable (quarkus), or the Swagger annotations
+        // (spring-boot), and did not compile in a Camel 4 project
+        Path packageDir = dir.resolve("model");
+
+        int exitCode = generate(packageDir, "--package=model", "--runtime=" + runtime);
+
+        assertThat(exitCode).as(printer.getOutput()).isZero();
+        String pet = Files.readString(packageDir.resolve("Pet.java"));
+        assertThat(pet).contains("import jakarta.validation").doesNotContain("javax.", "JsonNullable", "io.swagger");
+        if (!"spring-boot".equals(runtime)) {
+            // a Camel Main or Quarkus project has no Spring
+            assertThat(Files.readString(packageDir.resolve("Order.java"))).doesNotContain("org.springframework");
+        }
+    }
+
+    @Test
+    void theRestDslIsTheOnlyOutput() throws Exception {
+        // CAMEL-26933: the banner of the OpenAPI Generator was printed on stdout after the REST DSL
+        PrintStream previous = System.out;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out, true, StandardCharsets.UTF_8));
+        try {
+            assertThat(generate(dir.resolve("model"), "--package=model")).isZero();
+        } finally {
+            System.setOut(previous);
+        }
+
+        assertThat(out.toString(StandardCharsets.UTF_8)).doesNotContain("OpenAPI Generator");
     }
 
     private int generate(Path packageDir, String... args) throws Exception {

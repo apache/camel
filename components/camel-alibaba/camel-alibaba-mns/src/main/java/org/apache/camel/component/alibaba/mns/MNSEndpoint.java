@@ -106,7 +106,7 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
 
     @UriParam(description = "Autowire an existing MNSClient instance", displayName = "MNS Client", label = "advanced")
     @Metadata(autowired = true)
-    private MNSClient mnsClient;
+    private volatile MNSClient mnsClient;
 
     private boolean autowiredMnsClient;
 
@@ -135,18 +135,40 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
+    /**
+     * Makes sure that this endpoint has the client that the producer and the consumer send their requests with, which
+     * they then get with {@link #getMnsClient()}. If no client is set or autowired, the first call creates it from the
+     * options of this endpoint, while it holds the lock of this endpoint: the calls made at the same time wait for this
+     * creation, and the calls made once the client exists do not take the lock. A failed creation keeps no client, so
+     * each call that waited for it, and each later call, tries again.
+     */
     public void initClient() {
-        if (mnsClient != null) {
-            return;
+        if (mnsClient == null) {
+            lock.lock();
+            try {
+                if (mnsClient == null) {
+                    mnsClient = createClient();
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        mnsClient = MNSUtils.createClient(this);
+    }
+
+    MNSClient createClient() {
+        return MNSUtils.createClient(this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (mnsClient != null && !autowiredMnsClient) {
-            mnsClient.close();
-            mnsClient = null;
+        lock.lock();
+        try {
+            if (mnsClient != null && !autowiredMnsClient) {
+                mnsClient.close();
+                mnsClient = null;
+            }
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }
@@ -252,8 +274,13 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
     }
 
     public void setMnsClient(MNSClient mnsClient) {
-        this.mnsClient = mnsClient;
-        this.autowiredMnsClient = mnsClient != null;
+        lock.lock();
+        try {
+            this.mnsClient = mnsClient;
+            this.autowiredMnsClient = mnsClient != null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public String resolveOperation() {

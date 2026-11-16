@@ -269,7 +269,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * The string representation of a null value.
-         * <p/>
+         * <p>
          * The default value is null
          */
         public T nullValue(String nullValue) {
@@ -279,7 +279,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * Whether or not the empty lines must be ignored.
-         * <p/>
+         * <p>
          * The default value is true
          */
         public T skipEmptyLines(String skipEmptyLines) {
@@ -289,7 +289,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * Whether or not the empty lines must be ignored.
-         * <p/>
+         * <p>
          * The default value is true
          */
         public T skipEmptyLines(boolean skipEmptyLines) {
@@ -299,7 +299,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * Whether or not the trailing white spaces must be ignored.
-         * <p/>
+         * <p>
          * The default value is true
          */
         public T ignoreTrailingWhitespaces(String ignoreTrailingWhitespaces) {
@@ -309,7 +309,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * Whether or not the trailing white spaces must be ignored.
-         * <p/>
+         * <p>
          * The default value is true
          */
         public T ignoreTrailingWhitespaces(boolean ignoreTrailingWhitespaces) {
@@ -319,7 +319,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * Whether or not the leading white spaces must be ignored.
-         * <p/>
+         * <p>
          * The default value is true
          */
         public T ignoreLeadingWhitespaces(String ignoreLeadingWhitespaces) {
@@ -329,7 +329,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * Whether or not the leading white spaces must be ignored.
-         * <p/>
+         * <p>
          * The default value is true
          */
         public T ignoreLeadingWhitespaces(boolean ignoreLeadingWhitespaces) {
@@ -340,7 +340,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         /**
          * Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which
          * indicates that there is no header.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public T headersDisabled(String headersDisabled) {
@@ -351,7 +351,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         /**
          * Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which
          * indicates that there is no header.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public T headersDisabled(boolean headersDisabled) {
@@ -369,7 +369,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * Whether or not the header must be read in the first line of the test document.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public T headerExtractionEnabled(String headerExtractionEnabled) {
@@ -379,7 +379,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * Whether or not the header must be read in the first line of the test document.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public T headerExtractionEnabled(boolean headerExtractionEnabled) {
@@ -413,7 +413,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * The line separator of the files.
-         * <p/>
+         * <p>
          * The default value is to use the JVM platform line separator
          */
         public T lineSeparator(String lineSeparator) {
@@ -423,7 +423,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * The normalized line separator of the files.
-         * <p/>
+         * <p>
          * The default value is a new line character.
          */
         public T normalizedLineSeparator(String normalizedLineSeparator) {
@@ -433,7 +433,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
         /**
          * The comment symbol.
-         * <p/>
+         * <p>
          * The default value is #
          */
         public T comment(String comment) {
@@ -444,7 +444,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         /**
          * Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must
          * be read at once.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public T lazyLoad(String lazyLoad) {
@@ -455,7 +455,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         /**
          * Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must
          * be read at once.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public T lazyLoad(boolean lazyLoad) {
@@ -466,7 +466,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         /**
          * Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have
          * header (either defined or collected).
-         * <p/>
+         * <p>
          * The default value is false
          */
         public T asMap(String asMap) {
@@ -477,7 +477,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         /**
          * Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have
          * header (either defined or collected).
-         * <p/>
+         * <p>
          * The default value is false
          */
         public T asMap(boolean asMap) {

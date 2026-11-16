@@ -64,6 +64,8 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "first": target.getConfiguration().setFirst(property(camelContext, int.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "introspectioncacheenabled":
@@ -165,6 +167,8 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "first": return int.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "introspectioncacheenabled":
@@ -262,6 +266,8 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": return target.getExchangePattern();
         case "first": return target.getConfiguration().getFirst();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "introspectioncacheenabled":

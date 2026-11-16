@@ -48,6 +48,8 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "headername":
         case "headerName": target.getConfiguration().setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "httpclient":
         case "httpClient": target.getConfiguration().setHttpClient(property(camelContext, org.apache.hc.client5.http.impl.classic.CloseableHttpClient.class, value)); return true;
         case "ids": target.getConfiguration().setIds(property(camelContext, java.lang.String.class, value)); return true;
@@ -120,6 +122,8 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "greedy": return boolean.class;
         case "headername":
         case "headerName": return java.lang.String.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "httpclient":
         case "httpClient": return org.apache.hc.client5.http.impl.classic.CloseableHttpClient.class;
         case "ids": return java.lang.String.class;
@@ -193,6 +197,8 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "greedy": return target.isGreedy();
         case "headername":
         case "headerName": return target.getConfiguration().getHeaderName();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "httpclient":
         case "httpClient": return target.getConfiguration().getHttpClient();
         case "ids": return target.getConfiguration().getIds();

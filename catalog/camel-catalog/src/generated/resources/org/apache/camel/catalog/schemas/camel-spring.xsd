@@ -7405,7 +7405,8 @@ Lookup and use the existing ObjectMapper with the given id when using Jackson.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to lookup and use default Jackson ObjectMapper from the registry. Default value: true
+Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when
+autoDiscoverObjectMapper is true as well. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7526,7 +7527,9 @@ If set then Jackson will use the Timezone when marshalling/unmarshalling.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If set to true then Jackson will lookup for an objectMapper into the registry. Default value: false
+If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson AvroMapper in the registry, and
+use it when there is exactly one. The options of this data format that configure the mapper, such as include,
+enableFeatures and disableFeatures, are not applied to that AvroMapper. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9193,7 +9196,8 @@ Lookup and use the existing ObjectMapper with the given id when using Jackson.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to lookup and use default Jackson ObjectMapper from the registry. Default value: true
+Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when
+autoDiscoverObjectMapper is true as well. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9202,7 +9206,9 @@ Whether to lookup and use default Jackson ObjectMapper from the registry. Defaul
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If set to true then Jackson will look for an objectMapper to use from the registry. Default value: false
+If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ObjectMapper in the registry, and
+use it when there is exactly one. The options of this data format that configure the mapper, such as include,
+prettyPrint, enableFeatures and disableFeatures, are not applied to that ObjectMapper. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9861,7 +9867,8 @@ Lookup and use the existing ObjectMapper with the given id when using Jackson.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to lookup and use default Jackson ObjectMapper from the registry. Default value: true
+Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when
+autoDiscoverObjectMapper is true as well. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9870,7 +9877,9 @@ Whether to lookup and use default Jackson ObjectMapper from the registry. Defaul
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If set to true then Jackson will lookup for an objectMapper into the registry. Default value: false
+If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ProtobufMapper in the registry,
+and use it when there is exactly one. The options of this data format that configure the mapper, such as include,
+enableFeatures and disableFeatures, are not applied to that ProtobufMapper. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>

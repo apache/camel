@@ -102,9 +102,9 @@ public class RuntimeTools {
         ctx.selectProcess(p.pid());
         try {
             Object result = ToolRegistry.execute(registryToolName, ctx, args);
-            return toJsonObject(result);
+            return McpToolNames.of(toJsonObject(result));
         } catch (ToolExecutionException e) {
-            throw new ToolCallException(e.getMessage(), e);
+            throw new ToolCallException(McpToolNames.of(e.getMessage()), e);
         }
     }
 

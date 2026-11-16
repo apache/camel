@@ -806,8 +806,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
 
     /**
      * Evaluates a token pair expression on the message body.
-     * <p/>
-     * Tokens is not included.
+     * <p>
+     * Tokens are not included.
      *
      * @param  startToken the start token
      * @param  endToken   the end token

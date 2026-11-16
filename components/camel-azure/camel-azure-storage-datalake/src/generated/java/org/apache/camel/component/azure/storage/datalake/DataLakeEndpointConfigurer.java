@@ -66,6 +66,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "fileoffset":
         case "fileOffset": target.getConfiguration().setFileOffset(property(camelContext, java.lang.Long.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
@@ -171,6 +173,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "fileoffset":
         case "fileOffset": return java.lang.Long.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "lazystartproducer":
@@ -272,6 +276,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "fileoffset":
         case "fileOffset": return target.getConfiguration().getFileOffset();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":

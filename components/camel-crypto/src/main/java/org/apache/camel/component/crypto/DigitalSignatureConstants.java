@@ -26,7 +26,7 @@ public final class DigitalSignatureConstants {
     public static final String SIGNATURE_PRIVATE_KEY = "CamelSignaturePrivateKey";
     @Metadata(description = "The Certificate or PublicKey that should be used to verify the signature. When set, it is"
                             + " used instead of the publicKey, certificate or keystore of the endpoint",
-              javaType = "Certificate or PublicKey")
+              javaType = "java.security.cert.Certificate or java.security.PublicKey")
     public static final String SIGNATURE_PUBLIC_KEY_OR_CERT = "CamelSignaturePublicKeyOrCert";
     @Metadata(description = "The signature of the message, set by the sign operation and read by the verify operation"
                             + " (the signatureHeaderName option changes the header name)",

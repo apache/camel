@@ -101,10 +101,23 @@ This is solved by following the following steps:
 2. Advice the routes in your unit test methods
 3. Start Camel after you have _adviced_ the routes
 
-When using xref:components:others:test-junit5.adoc[camel-test-junit5] for unit testing, then you can tell Camel that advice is in use by either
-overriding the `isUsedAdviceWith` method from `CamelTestSupport` as shown:
+When your test class extends `CamelTestSupport` from xref:components:others:test-junit5.adoc[camel-test-junit5],
+or `CamelSpringTestSupport` from xref:components:others:test-spring-junit5.adoc[camel-test-spring-junit5],
+you tell Camel that advice is in use with `testConfiguration().withUseAdviceWith(true)`, for example in the constructor:
 
 ._Java-only: enabling AdviceWith in CamelTestSupport_
+[source,java]
+----
+public class MyAdviceWithTest extends CamelTestSupport {
+    public MyAdviceWithTest() {
+        testConfiguration().withUseAdviceWith(true); // turn on advice with
+    }
+}
+----
+
+Overriding the deprecated `isUseAdviceWith` method also works:
+
+._Java-only: enabling AdviceWith by overriding isUseAdviceWith_
 [source,java]
 ----
 public class MyAdviceWithTest extends CamelTestSupport {
@@ -115,13 +128,17 @@ public class MyAdviceWithTest extends CamelTestSupport {
 }
 ----
 
-Or when using xref:components:others:test-spring-junit5.adoc[camel-test-spring-junit5] for unit testing you can use the `@UseAdviceWith` annotation as shown:
+When your test class uses the `@CamelSpringTest` or `@CamelSpringBootTest` annotation from
+xref:components:others:test-spring-junit5.adoc[camel-test-spring-junit5], you use the `@UseAdviceWith` annotation instead.
+A test class that extends `CamelSpringTestSupport` ignores this annotation.
 
 ._Java-only: enabling AdviceWith using @UseAdviceWith annotation_
 [source,java]
 ----
+@CamelSpringTest
+@ContextConfiguration
 @UseAdviceWith
-public class MyAdviceWithTest extends CamelSpringTestSupport {
+public class MyAdviceWithTest {
 }
 ----
 

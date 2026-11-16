@@ -122,11 +122,11 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     /**
      * The claim check operation to use. The following operations are supported:
      * <ul>
-     * <li>Get</li> - Gets (does not remove) the claim check by the given key.
-     * <li>GetAndRemove</li> - Gets and removes the claim check by the given key.
-     * <li>Set</li> - Sets a new (will override if key already exists) claim check with the given key.
-     * <li>Push</li> - Sets a new claim check on the stack (does not use key).
-     * <li>Pop</li> - Gets the latest claim check from the stack (does not use key).
+     * <li>Get - Gets (does not remove) the claim check by the given key.</li>
+     * <li>GetAndRemove - Gets and removes the claim check by the given key.</li>
+     * <li>Set - Sets a new (will override if key already exists) claim check with the given key.</li>
+     * <li>Push - Sets a new claim check on the stack (does not use key).</li>
+     * <li>Pop - Gets the latest claim check from the stack (does not use key).</li>
      * </ul>
      */
     public ClaimCheckDefinition operation(ClaimCheckOperation operation) {
@@ -136,11 +136,11 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     /**
      * The claim check operation to use. The following operations are supported:
      * <ul>
-     * <li>Get</li> - Gets (does not remove) the claim check by the given key.
-     * <li>GetAndRemove</li> - Gets and removes the claim check by the given key.
-     * <li>Set</li> - Sets a new (will override if key already exists) claim check with the given key.
-     * <li>Push</li> - Sets a new claim check on the stack (does not use key).
-     * <li>Pop</li> - Gets the latest claim check from the stack (does not use key).
+     * <li>Get - Gets (does not remove) the claim check by the given key.</li>
+     * <li>GetAndRemove - Gets and removes the claim check by the given key.</li>
+     * <li>Set - Sets a new (will override if key already exists) claim check with the given key.</li>
+     * <li>Push - Sets a new claim check on the stack (does not use key).</li>
+     * <li>Pop - Gets the latest claim check from the stack (does not use key).</li>
      * </ul>
      */
     public ClaimCheckDefinition operation(String operation) {
@@ -157,13 +157,13 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     }
 
     /**
-     * Specify a filter to control what data gets merged data back from the claim check repository. The following syntax
-     * is supported:
+     * Specify a filter to control what data gets merged back from the claim check repository. The following syntax is
+     * supported:
      * <ul>
-     * <li>body</li> - to aggregate the message body
-     * <li>attachments</li> - to aggregate all the message attachments
-     * <li>headers</li> - to aggregate all the message headers
-     * <li>header:pattern</li> - to aggregate all the message headers that matches the pattern.
+     * <li>body - to aggregate the message body</li>
+     * <li>attachments - to aggregate all the message attachments</li>
+     * <li>headers - to aggregate all the message headers</li>
+     * <li>header:pattern - to aggregate all the message headers that match the pattern.</li>
      * </ul>
      * The following pattern rules are applied in this order:
      * <ul>
@@ -174,16 +174,16 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
      * </ul>
      * <p>
      * You can specify multiple rules separated by comma. For example, the following includes the message body and all
-     * headers starting with foo: <tt>body,header:foo*</tt>. The syntax supports the following prefixes which can be
+     * headers starting with foo: <code>body,header:foo*</code>. The syntax supports the following prefixes which can be
      * used to specify include,exclude, or remove
      * <ul>
-     * <li>+</li> - to include (which is the default mode)
-     * <li>-</li> - to exclude (exclude takes precedence over include)
-     * <li>--</li> - to remove (remove takes precedence)
+     * <li>+ - to include (which is the default mode)</li>
+     * <li>- - to exclude (exclude takes precedence over include)</li>
+     * <li>-- - to remove (remove takes precedence)</li>
      * </ul>
      * For example to exclude a header name foo, and remove all headers starting with bar,
-     * <tt>-header:foo,--headers:bar*</tt> Note you cannot have both include and exclude <tt>header:pattern</tt> at the
-     * same time.
+     * <code>-header:foo,--headers:bar*</code> Note you cannot have both include and exclude <code>header:pattern</code>
+     * at the same time.
      */
     public ClaimCheckDefinition filter(String filter) {
         setFilter(filter);

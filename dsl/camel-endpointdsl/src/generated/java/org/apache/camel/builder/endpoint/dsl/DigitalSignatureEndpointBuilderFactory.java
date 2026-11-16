@@ -622,7 +622,8 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * signature. When set, it is used instead of the publicKey, certificate
          * or keystore of the endpoint.
          * 
-         * The option is a: {@code Certificate or PublicKey} type.
+         * The option is a: {@code java.security.cert.Certificate or
+         * java.security.PublicKey} type.
          * 
          * Group: producer
          * 

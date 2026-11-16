@@ -711,7 +711,7 @@ public interface Cw2EndpointBuilderFactory {
         /**
          * The Amazon CW metric timestamp. A java.util.Date works too.
          * 
-         * The option is a: {@code Instant} type.
+         * The option is a: {@code java.time.Instant} type.
          * 
          * Group: producer
          * 

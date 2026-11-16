@@ -333,10 +333,11 @@ public class ExpressionDefinition
         }
 
         /**
-         * Whether a result of the expression that is a String starting with <tt>resource:</tt> is loaded as a resource
-         * and its content becomes the result, such as a script that returns <tt>resource:file:order.json</tt> or
-         * <tt>resource:classpath:templates/order.json</tt> (a name without a scheme is a classpath resource). Off by
-         * default; the <tt>resource:</tt> prefix on the expression text itself is always resolved.
+         * Whether a result of the expression that is a String starting with <code>resource:</code> is loaded as a
+         * resource and its content becomes the result, such as a script that returns
+         * <code>resource:file:order.json</code> or <code>resource:classpath:templates/order.json</code> (a name without
+         * a scheme is a classpath resource). Off by default; the <code>resource:</code> prefix on the expression text
+         * itself is always resolved.
          */
         public T resolveResource(String resolveResource) {
             this.resolveResource = resolveResource;
@@ -344,10 +345,11 @@ public class ExpressionDefinition
         }
 
         /**
-         * Whether a result of the expression that is a String starting with <tt>resource:</tt> is loaded as a resource
-         * and its content becomes the result, such as a script that returns <tt>resource:file:order.json</tt> or
-         * <tt>resource:classpath:templates/order.json</tt> (a name without a scheme is a classpath resource). Off by
-         * default; the <tt>resource:</tt> prefix on the expression text itself is always resolved.
+         * Whether a result of the expression that is a String starting with <code>resource:</code> is loaded as a
+         * resource and its content becomes the result, such as a script that returns
+         * <code>resource:file:order.json</code> or <code>resource:classpath:templates/order.json</code> (a name without
+         * a scheme is a classpath resource). Off by default; the <code>resource:</code> prefix on the expression text
+         * itself is always resolved.
          */
         public T resolveResource(boolean resolveResource) {
             this.resolveResource = Boolean.toString(resolveResource);

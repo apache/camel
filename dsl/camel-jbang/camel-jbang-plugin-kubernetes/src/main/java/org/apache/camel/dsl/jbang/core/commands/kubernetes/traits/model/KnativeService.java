@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.Nulls;
         "minScale", "rolloutDuration", "timeoutSeconds", "visibility" })
 public class KnativeService {
     @JsonProperty("annotations")
-    @JsonPropertyDescription("The annotations added to route. This can be used to set knative service specific annotations CLI usage example: -t \"knative-service.annotations.'haproxy.router.openshift.io/balance'=true\"")
+    @JsonPropertyDescription("The annotations added to route. This can be used to set knative service specific annotations CLI usage example: --trait \"knative-service.annotations.'haproxy.router.openshift.io/balance'=true\"")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Map<String, String> annotations;

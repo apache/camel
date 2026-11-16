@@ -49,7 +49,8 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel cmd chaos-load test/chaos/outage.chaos myApp" })
 public class CamelChaosLoadAction extends CamelChaosAction {
 
-    @Argument(index = "0", required = true, description = "The scenario file, such as test/chaos/outage.chaos")
+    @Argument(paramLabel = "file", index = "0", required = true,
+              description = "The scenario file, such as test/chaos/outage.chaos")
     String file;
 
     @Argument(index = "1", description = "Name or pid of the running Camel integration (must match one); without it,"

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import jakarta.activation.DataSource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,6 +52,15 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
 
     @Override
     protected void populateAttachments(HttpServletRequest request, Message message) {
+        populateMultipartAttachments(request, message, this::isFileNameAccepted, getFileNameExtWhitelist());
+    }
+
+    /**
+     * Binds the parts of a multipart/form-data request as attachments on the message. Also used by
+     * {@link ServletRestHttpBinding} when attachmentMultipartBinding is enabled.
+     */
+    static void populateMultipartAttachments(
+            HttpServletRequest request, Message message, Predicate<String> fileNameAccepted, String fileNameExtWhitelist) {
         // the servlet container throws from getParts() when the request is not multipart/form-data, so a plain
         // request (GET, or a POST of text, JSON and so on) has no parts to read and must not fail
         if (!isMultipartFormData(request)) {
@@ -63,7 +73,7 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
                 // name and not against Part.getName(), which is the multipart field name
                 String fileName = part.getSubmittedFileName();
                 // is the file name accepted
-                boolean accepted = isFileNameAccepted(fileName);
+                boolean accepted = fileNameAccepted.test(fileName);
 
                 if (accepted) {
                     DataSource ds = new PartDataSource(part);
@@ -78,7 +88,7 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
                 } else {
                     LOG.debug(
                             "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
-                            HttpHelper.sanitizeLog(fileName), getFileNameExtWhitelist());
+                            HttpHelper.sanitizeLog(fileName), fileNameExtWhitelist);
                 }
             }
         } catch (Exception e) {
@@ -91,7 +101,7 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
         return contentType != null && contentType.regionMatches(true, 0, MULTIPART_FORM_DATA, 0, MULTIPART_FORM_DATA.length());
     }
 
-    public final class PartDataSource implements DataSource {
+    public static final class PartDataSource implements DataSource {
         private final Part part;
 
         PartDataSource(Part part) {

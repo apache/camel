@@ -26,7 +26,8 @@ public interface WatsonxAiConstants {
     String HEADER_PREFIX = "CamelIBMWatsonxAi";
 
     // Operation
-    @Metadata(description = "The operation to perform", javaType = "WatsonxAiOperations")
+    @Metadata(description = "The operation to perform",
+              javaType = "org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations")
     String OPERATION = HEADER_PREFIX + "Operation";
 
     // Input/Output

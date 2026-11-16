@@ -34,18 +34,21 @@ import org.apache.camel.tooling.maven.MavenGav;
 
 public class CamelUpdateMixin {
 
-    @Argument(required = true, description = "The version to which the Camel project should be updated.")
+    @Argument(paramLabel = "version", required = true,
+              description = "The version to which the Camel project should be updated.")
     String version;
 
-    @Option(name = "openRewriteVersion", description = "The version of OpenRewrite to use during the update process.",
+    @Option(name = "open-rewrite-version", aliases = { "openRewriteVersion" },
+            description = "The version of OpenRewrite to use during the update process.",
             defaultValue = "6.0.4")
     String openRewriteVersion;
 
-    @Option(name = "camelArtifact", description = "The Maven artifact coordinates for the Camel upgrade recipes.",
+    @Option(name = "camel-artifact", aliases = { "camelArtifact" },
+            description = "The Maven artifact coordinates for the Camel upgrade recipes.",
             defaultValue = "camel-upgrade-recipes")
     String camelArtifactCoordinates;
 
-    @Option(name = "camelSpringBootArtifact",
+    @Option(name = "camel-spring-boot-artifact", aliases = { "camelSpringBootArtifact" },
             description = "The Maven artifact coordinates for the Camel Spring Boot upgrade recipes.",
             defaultValue = "camel-spring-boot-upgrade-recipes")
     String camelSpringBootArtifactCoordinates;
@@ -53,15 +56,16 @@ public class CamelUpdateMixin {
     @Option(name = "debug", hasValue = false, description = "Enables debug logging if set to true.", defaultValue = "false")
     boolean debug;
 
-    @Option(name = "quarkusMavenPluginVersion",
+    @Option(name = "quarkus-maven-plugin-version", aliases = { "quarkusMavenPluginVersion" },
             description = "The version of the Quarkus Maven plugin to use; the default value is looked up in Quarkus Extension Registry")
     String quarkusMavenPluginVersion;
 
-    @Option(name = "quarkusMavenPluginGroupId", description = "The group ID of the Quarkus Maven plugin.",
+    @Option(name = "quarkus-maven-plugin-group-id", aliases = { "quarkusMavenPluginGroupId" },
+            description = "The group ID of the Quarkus Maven plugin.",
             defaultValue = "io.quarkus.platform")
     String quarkusMavenPluginGroupId;
 
-    @Option(name = "dryRun", hasValue = false,
+    @Option(name = "dry-run", aliases = { "dryRun" }, hasValue = false,
             description = "If set to true, performs a dry run of the update process without making any changes.",
             defaultValue = "false")
     boolean dryRun;
@@ -83,7 +87,8 @@ public class CamelUpdateMixin {
                               "ex.my.org:recipes:1.0.0")
     List<String> extraRecipeArtifactCoordinates;
 
-    @Option(name = "upgradeTimeout", description = "Time to wait, in seconds, before shutting down the upgrade process",
+    @Option(name = "upgrade-timeout", aliases = { "upgradeTimeout" },
+            description = "Time to wait, in seconds, before shutting down the upgrade process",
             defaultValue = "240")
     int upgradeTimeout;
 
@@ -95,7 +100,7 @@ public class CamelUpdateMixin {
             return MavenGav.fromCoordinates(quarkusMavenPluginGroupId, "quarkus-maven-plugin", quarkusMavenPluginVersion, "jar",
                     null);
         } else if (!mavenResolver.download()) {
-            throw CliException.usage("--quarkusMavenPluginVersion is required with --download=false, as the version of "
+            throw CliException.usage("--quarkus-maven-plugin-version is required with --download=false, as the version of "
                                      + "the Quarkus Maven plugin is looked up in the Quarkus Extension Registry");
         } else {
             QuarkusPlatformBom result

@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.generate.GeneratePlugin;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesPlugin;
+import org.apache.camel.dsl.jbang.core.commands.mcp.McpPlugin;
 import org.apache.camel.dsl.jbang.core.commands.test.TestPlugin;
 import org.apache.camel.dsl.jbang.core.commands.tui.TuiPlugin;
 import org.apache.camel.dsl.jbang.core.commands.validate.ValidatePlugin;
@@ -48,6 +49,8 @@ public class CamelLauncherMain extends CamelJBangMain {
     private static final List<EmbeddedPlugin> PLUGINS = List.of(
             new EmbeddedPlugin(GeneratePlugin::new, Set.of("generate")),
             new EmbeddedPlugin(KubernetesPlugin::new, Set.of("kubernetes", "k8s")),
+            // its jar was in the launcher, but camel mcp installed the plugin on first use, in the plugin configuration
+            new EmbeddedPlugin(McpPlugin::new, Set.of("mcp")),
             new EmbeddedPlugin(SelfUpdatePlugin::new, Set.of("self-update")),
             new EmbeddedPlugin(TuiPlugin::new, Set.of("tui")),
             new EmbeddedPlugin(ValidatePlugin::new, Set.of("validate")),

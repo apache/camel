@@ -38,6 +38,18 @@ public final class MNSHeaders {
     @Metadata(label = "producer", description = "Message tag for topic publish operations", javaType = "String")
     public static final String MESSAGE_TAG = "CamelAlibabaMnsMessageTag";
 
+    @Metadata(label = "producer", description = "The operation to invoke, overriding the operation the endpoint"
+                                                + " resolves. The exchange property of the same name takes precedence"
+                                                + " over this header.",
+              javaType = "String")
+    public static final String OPERATION = "CamelAlibabaMnsOperation";
+
+    @Metadata(label = "producer", description = "The name of the topic to publish to, overriding the one the endpoint"
+                                                + " resolves. The exchange property of the same name takes precedence"
+                                                + " over this header.",
+              javaType = "String")
+    public static final String TOPIC_NAME = "CamelAlibabaMnsTopicName";
+
     @Metadata(label = "consumer", description = "Number of times the message has been dequeued", javaType = "Integer")
     public static final String DEQUEUE_COUNT = "CamelAlibabaMnsDequeueCount";
 

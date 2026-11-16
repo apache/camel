@@ -27,7 +27,7 @@ camel trace [options]
 | `--find` | Find and highlight matching text (ignore case). |  | String[]
 | `--follow` | Keep following and outputting new traces (press enter to exit). Without an interactive terminal the default is false, unless --duration is given. | true | boolean
 | `--grep` | Filter traces to only output trace matching text (ignore case). |  | String[]
-| `--json` | Output the status of tracing in JSON Format |  | boolean
+| `--json` | Output in JSON Format: the status of tracing, and with --action=dump each trace as a JSON object per line |  | boolean
 | `--latest` | Only output traces from the latest (follow if necessary until complete and exit) |  | boolean
 | `--logging-color` | Use colored logging | true | boolean
 | `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys |  | boolean

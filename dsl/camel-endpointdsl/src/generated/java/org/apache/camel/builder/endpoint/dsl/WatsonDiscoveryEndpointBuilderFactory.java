@@ -277,7 +277,8 @@ public interface WatsonDiscoveryEndpointBuilderFactory {
         /**
          * The operation to perform.
          * 
-         * The option is a: {@code WatsonDiscoveryOperations} type.
+         * The option is a: {@code
+         * org.apache.camel.component.ibm.watson.discovery.WatsonDiscoveryOperations} type.
          * 
          * Group: producer
          * 

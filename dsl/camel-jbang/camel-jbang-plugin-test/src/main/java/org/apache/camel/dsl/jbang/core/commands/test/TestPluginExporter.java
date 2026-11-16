@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
@@ -41,7 +42,11 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.citrusframework.CitrusSettings;
 import org.citrusframework.CitrusVersion;
+import org.citrusframework.jbang.cli.util.CodeAnalyzer;
+import org.citrusframework.jbang.cli.util.DelegatingCodeAnalyzer;
 import org.citrusframework.util.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Exporter adds test related source files, build properties and dependencies to the exported project. Exporter looks
@@ -51,7 +56,11 @@ import org.citrusframework.util.FileUtils;
  */
 public class TestPluginExporter implements PluginExporter {
 
+    private static final Logger LOG = LoggerFactory.getLogger(TestPluginExporter.class);
+
     public static final Pattern NAME_SEPARATOR_PATTERN = Pattern.compile("[-._]([a-z])");
+
+    private static final List<String> ANALYZER_SUPPORTED_EXTENSIONS = List.of("yaml", "yml", "xml", "groovy");
 
     @Override
     public boolean isEnabled() {
@@ -79,18 +88,20 @@ public class TestPluginExporter implements PluginExporter {
         }
 
         // add default Citrus dependencies as defined in Citrus JBang
-        deps.add(asDependency("citrus-base"));
-        deps.add(asDependency("citrus-junit-jupiter"));
-        deps.add(asDependency("citrus-http"));
-        deps.add(asDependency("citrus-yaml"));
-        deps.add(asDependency("citrus-xml"));
-        deps.add(asDependency("citrus-groovy"));
-        deps.add(asDependency("citrus-validation-text"));
-        deps.add(asDependency("citrus-validation-xml"));
-        deps.add(asDependency("citrus-validation-json"));
-        deps.add(asDependency("citrus-validation-yaml"));
+        deps.add(asCitrusDependency("citrus-base"));
+        deps.add(asCitrusDependency("citrus-junit-jupiter"));
+        deps.add(asCitrusDependency("citrus-http"));
+        deps.add(asCitrusDependency("citrus-yaml"));
+        deps.add(asCitrusDependency("citrus-xml"));
+        deps.add(asCitrusDependency("citrus-groovy"));
+        deps.add(asCitrusDependency("citrus-validation-text"));
+        deps.add(asCitrusDependency("citrus-validation-xml"));
+        deps.add(asCitrusDependency("citrus-validation-json"));
+        deps.add(asCitrusDependency("citrus-validation-yaml"));
 
         Path testDir = Path.of(".").resolve("test");
+        deps.addAll(detectDependenciesFromTestSources(testDir));
+
         if (Files.exists(testDir.resolve("jbang.properties"))) {
             try (FileInputStream fis = new FileInputStream(testDir.resolve("jbang.properties").toFile())) {
                 Properties props = new Properties();
@@ -104,14 +115,14 @@ public class TestPluginExporter implements PluginExporter {
                     }
                     if (dependency.startsWith("org.citrusframework:")) {
                         // construct proper Citrus Maven GAV from just the artifact id
-                        deps.add(asDependency(extractArtifactId(dependency)));
+                        deps.add(asCitrusDependency(extractArtifactId(dependency)));
                     } else if (dependency.startsWith("org.apache.camel")) {
                         // remove version from GAV, because we generally use the Camel bom
                         String[] parts = dependency.split(":");
-                        deps.add("mvn@test:%s:%s".formatted(parts[0], parts[1]));
+                        deps.add(asDependency(parts[0], parts[1]));
                     } else {
                         // add as test scoped dependency
-                        deps.add("mvn@test:" + dependency);
+                        deps.add(asDependency(dependency));
                     }
                 }
             } catch (IOException e) {
@@ -143,14 +154,8 @@ public class TestPluginExporter implements PluginExporter {
         try (Stream<Path> paths = Files.list(testDir)) {
             // Add all supported test sources
             Set<Path> testSources = paths
-                    .filter(path -> !path.getFileName().toString().startsWith("."))
-                    .filter(path -> {
-                        String ext = FileUtils.getFileExtension(path.getFileName().toString());
-                        return CitrusSettings.getTestFileNamePattern(ext)
-                                .stream()
-                                .map(Pattern::compile)
-                                .anyMatch(pattern -> pattern.matcher(path.getFileName().toString()).matches());
-                    }).collect(Collectors.toSet());
+                    .filter(this::isTestSource)
+                    .collect(Collectors.toSet());
 
             for (Path testSource : testSources) {
                 String ext = FileUtils.getFileExtension(testSource.getFileName().toString());
@@ -192,6 +197,53 @@ public class TestPluginExporter implements PluginExporter {
             }
         }
 
+    }
+
+    /**
+     * Scans Citrus test files in the given directory using the Citrus code analyzer to detect required modules and
+     * dependencies. Supports YAML, XML and Groovy test sources.
+     */
+    private Set<String> detectDependenciesFromTestSources(Path testDir) {
+        Set<String> deps = new HashSet<>();
+        DelegatingCodeAnalyzer analyzer = new DelegatingCodeAnalyzer();
+        try (Stream<Path> paths = Files.list(testDir)) {
+            paths.filter(this::isTestSource)
+                    .filter(this::isAnalyzerSupported)
+                    .forEach(path -> {
+                        try {
+                            CodeAnalyzer.ScanResult result = analyzer.scan(path);
+                            for (String module : result.modules()) {
+                                deps.add(asCitrusDependency(module));
+                            }
+                            for (String dependency : result.dependencies()) {
+                                deps.add(asScannedDependency(dependency));
+                            }
+                        } catch (IOException e) {
+                            LOG.debug("Failed to scan {} for dependencies: {}", path, e.getMessage());
+                        }
+                    });
+        } catch (IOException e) {
+            LOG.debug("Failed to list test directory {}: {}", testDir, e.getMessage());
+        }
+
+        return deps;
+    }
+
+    private String asScannedDependency(String dependency) {
+        String[] parts = dependency.split(":");
+        if (parts.length < 2) {
+            return asDependency(dependency);
+        }
+        if (parts[0].equals("org.citrusframework")) {
+            return asCitrusDependency(parts[1]);
+        } else if (parts[0].startsWith("org.apache.camel")) {
+            if (parts.length > 2 && parts[1].startsWith("camel-test-infra-")) {
+                return asDependency(parts[0], parts[1], parts[2]);
+            }
+            return asDependency(parts[0], parts[1]);
+        } else {
+            return asDependency(dependency);
+        }
     }
 
     /**
@@ -237,11 +289,40 @@ public class TestPluginExporter implements PluginExporter {
         return javaClassName;
     }
 
+    private boolean isTestSource(Path path) {
+        String fileName = path.getFileName().toString();
+        if (fileName.startsWith(".")) {
+            return false;
+        }
+        String ext = FileUtils.getFileExtension(fileName);
+        return CitrusSettings.getTestFileNamePattern(ext)
+                .stream()
+                .map(Pattern::compile)
+                .anyMatch(pattern -> pattern.matcher(fileName).matches());
+    }
+
+    private boolean isAnalyzerSupported(Path path) {
+        String ext = FileUtils.getFileExtension(path.getFileName().toString());
+        return ANALYZER_SUPPORTED_EXTENSIONS.contains(ext);
+    }
+
     private String extractArtifactId(String dependency) {
         return dependency.split(":")[1];
     }
 
-    private String asDependency(String artifactName) {
-        return "mvn@test:org.citrusframework:%s:${citrus.version}".formatted(artifactName);
+    private String asCitrusDependency(String artifactName) {
+        return asDependency("org.citrusframework", artifactName, "${citrus.version}");
+    }
+
+    private String asDependency(String gav) {
+        return "mvn@test:%s".formatted(gav);
+    }
+
+    private String asDependency(String groupId, String artifactName) {
+        return "mvn@test:%s:%s".formatted(groupId, artifactName);
+    }
+
+    private String asDependency(String groupId, String artifactName, String version) {
+        return "mvn@test:%s:%s:%s".formatted(groupId, artifactName, version);
     }
 }

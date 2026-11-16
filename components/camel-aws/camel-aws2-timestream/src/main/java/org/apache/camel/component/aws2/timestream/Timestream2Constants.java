@@ -78,7 +78,7 @@ public interface Timestream2Constants {
     String SCHEDULED_QUERY_ARN = "CamelAwsTimestreamScheduledQueryArn";
     @Metadata(description = "State of scheduled query", javaType = "String")
     String SCHEDULED_QUERY_STATE = "CamelAwsTimestreamScheduledQueryState";
-    @Metadata(description = "Invocation Time for scheduled query execution", javaType = "Instant")
+    @Metadata(description = "Invocation Time for scheduled query execution", javaType = "java.time.Instant")
     String SCHEDULED_QUERY_INVOCATION_TIME = "CamelAwsTimestreamScheduledQueryInvocationTime";
     @Metadata(description = "The query string to run.", javaType = "String")
     String QUERY_STRING = "CamelAwsTimestreamQueryString";

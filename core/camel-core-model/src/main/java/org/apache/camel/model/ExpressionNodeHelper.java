@@ -54,7 +54,7 @@ public final class ExpressionNodeHelper {
 
     /**
      * Determines which {@link ExpressionDefinition} describes the given expression in the best possible way.
-     * <p/>
+     * <p>
      * This implementation will use types such as {@link SimpleExpression}, {@link XPathExpression} etc. if the given
      * expression is detected as such a type.
      *
@@ -84,7 +84,7 @@ public final class ExpressionNodeHelper {
 
     /**
      * Determines which {@link ExpressionDefinition} describes the given predicate in the best possible way.
-     * <p/>
+     * <p>
      * This implementation will use types such as {@link SimpleExpression}, {@link XPathExpression} etc. if the given
      * predicate is detected as such a type.
      *

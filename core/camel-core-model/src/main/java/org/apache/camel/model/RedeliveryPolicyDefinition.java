@@ -196,7 +196,8 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     /**
      * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
      *
-     * @param  allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @param  allowRedeliveryWhileStopping <code>true</code> to allow redelivery, <code>false</code> to reject
+     *                                      redeliveries
      * @return                              the builder
      */
     public RedeliveryPolicyDefinition allowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
@@ -206,7 +207,8 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     /**
      * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
      *
-     * @param  allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @param  allowRedeliveryWhileStopping <code>true</code> to allow redelivery, <code>false</code> to reject
+     *                                      redeliveries
      * @return                              the builder
      */
     public RedeliveryPolicyDefinition allowRedeliveryWhileStopping(String allowRedeliveryWhileStopping) {
@@ -432,7 +434,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether new exceptions should be logged or not. Can be used to include or reduce verbose logging.
-     * <p/>
+     * <p>
      * A new exception is an exception that was thrown while handling a previous exception.
      *
      * @param  logNewException whether new exceptions should be logged or not
@@ -445,7 +447,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
     /**
      * Sets whether new exceptions should be logged or not (supports property placeholders). Can be used to include or
      * reduce verbose.
-     * <p/>
+     * <p>
      * A new exception is an exception that was thrown while handling a previous exception.
      *
      * @param  logNewException whether new exceptions should be logged or not
@@ -526,8 +528,8 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted message body should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose logging. Requires <tt>logExhaustedMessageHistory</tt> to
-     * be enabled.
+     * placeholders). Can be used to include or reduce verbose logging. Requires <code>logExhaustedMessageHistory</code>
+     * to be enabled.
      *
      * @param  logExhaustedMessageBody whether exhausted message body should be logged with message history
      * @return                         the builder
@@ -539,8 +541,8 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     /**
      * Sets whether exhausted message body should be logged including message history or not (supports property
-     * placeholders). Can be used to include or reduce verbose logging. Requires <tt>logExhaustedMessageHistory</tt> to
-     * be enabled.
+     * placeholders). Can be used to include or reduce verbose logging. Requires <code>logExhaustedMessageHistory</code>
+     * to be enabled.
      *
      * @param  logExhaustedMessageBody whether exhausted message body should be logged with message history
      * @return                         the builder
