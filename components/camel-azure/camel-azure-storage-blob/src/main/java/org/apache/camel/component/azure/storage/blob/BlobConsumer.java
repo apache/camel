@@ -328,7 +328,7 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
             final String containerName = getEndpoint().getConfiguration().getContainerName();
 
             if (blobName == null) {
-                LOG.warn("Cannot perform move/delete after read because blob name is not available in exchange headers");
+                LOG.warn("Cannot perform move/delete after read because the consumed blob has no name");
                 return;
             }
 
