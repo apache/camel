@@ -184,7 +184,8 @@ It deliberately differs in two points:
   option covers one thing only: the decision point could not be asked (a
   transport failure, a 5xx, a rate limit) and the route owner accepts to proceed
   without a verdict. An embedded engine has no decision point that can be
-  unavailable. Its failures are configuration errors, caught at startup and at
+  unavailable (unlike the OPA Wasm pool, there is no pool to wait for). Its
+  failures are configuration errors, caught at startup and at
   reload, or input and evaluation errors of one exchange, which the strict mode
   reports as an `ERROR` outcome and the policy bean rejects. There is nothing to
   fail open on; a `failOpen` option here would only label an evaluation error as
