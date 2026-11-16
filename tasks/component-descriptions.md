@@ -60,7 +60,7 @@ or removes its row.
 | camel-ai-tool | ai-tool |  |
 | camel-alibaba-eventbridge | alibaba-eventbridge | yes |
 | camel-alibaba-fc | alibaba-fc | yes |
-| camel-alibaba-kms | alibaba-kms |  |
+| camel-alibaba-kms | alibaba-kms | yes |
 | camel-alibaba-mns | alibaba-mns |  |
 | camel-alibaba-oss | alibaba-oss |  |
 | camel-alibaba-ots | alibaba-ots | yes |
