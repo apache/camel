@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -261,16 +262,31 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
                 try {
                     if (isConnected()) {
                         client.delete().guaranteed().forPath(id);
-                        unstable.set(false);
+                    } else {
+                        // the client is disconnected, but its session may still be alive (it reconnects within the session
+                        // timeout), and the znode would then stay in the group as long as the session lives. A guaranteed
+                        // delete in the background does not wait for the connection here: Curator does it once the client
+                        // is connected again, and tries again until it succeeds (if the session expired first, ZooKeeper
+                        // removed the znode already)
+                        client.delete().guaranteed().inBackground().forPath(id);
                     }
+                    unstable.set(false);
                 } catch (KeeperException.NoNodeException e) {
                     // Ignore
                 } finally {
                     id = null;
                 }
-            } else if (creating.get()) {
-                LOG.warn("Ephemeral node could be created in the registry, but ZooKeeper group didn't record its id");
-                unstable.set(true);
+            }
+            if (creating.get()) {
+                // the client itself as well: the group may not have been told yet that it is connected again (a close
+                // removes the listener of the group first), and the create that did not answer may have been made
+                // just after the reconnect
+                if (isConnected() || client.getZookeeperClient().isConnected()) {
+                    deleteUnrecordedNodes();
+                } else {
+                    LOG.warn("Ephemeral node could be created in the registry, but ZooKeeper group didn't record its id");
+                    unstable.set(true);
+                }
             }
         } else if (isConnected()) {
             // We could have created the sequence, but then have crashed and our entry is already registered.
@@ -304,6 +320,39 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         prunePartialState(state, pathId);
         state.uuid = null;
         return pathId;
+    }
+
+    // a create of this group did not answer (the connection was lost, or the close of the group interrupted the thread
+    // that waited for the answer), so the group does not know the path of the znode it may have made. The znodes of this
+    // group carry its uuid: they are deleted, so that none is left in the group as long as the session lives. The reads
+    // come after the create in the order of the session, so they see the znode if the create was applied
+    private void deleteUnrecordedNodes() throws Exception {
+        List<String> children;
+        try {
+            children = client.getChildren().forPath(path);
+        } catch (KeeperException.NoNodeException e) {
+            children = Collections.emptyList();
+        }
+        for (String child : children) {
+            String fullPath = ZKPaths.makePath(path, child);
+            T node;
+            try {
+                node = decode(client.getData().forPath(fullPath));
+            } catch (KeeperException.NoNodeException | IllegalStateException e) {
+                // deleted meanwhile, or not the data of a member
+                continue;
+            }
+            if (uuid.equals(node.uuid)) {
+                LOG.debug("Deleting znode whose create did not answer: {}", fullPath);
+                try {
+                    client.delete().guaranteed().forPath(fullPath);
+                } catch (KeeperException.NoNodeException e) {
+                    // Ignore
+                }
+            }
+        }
+        creating.set(false);
+        unstable.set(false);
     }
 
     private void updateEphemeralNode(T state) throws Exception {
