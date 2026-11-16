@@ -35,10 +35,16 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedAggregateProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedIdempotentConsumerMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonRecordSupport;
@@ -51,12 +57,26 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
               javaType = "java.lang.String")
     public static final String ROUTE_ID = "routeId";
 
+    /**
+     * The options of a route input that hold the state of its consumer from one message to the next: the names of the
+     * files a file consumer has read (noop=true, or idempotent=true), the offsets of a consumer. They are read through
+     * the generated configurer of the endpoint, as camel-console does not depend on the components.
+     */
+    private static final String[] ENDPOINT_STATE_OPTIONS = { "idempotentRepository", "offsetRepository" };
+
     public record ProcessorEntry(
             @Metadata(description = "The processor ID (the id of the from for the route input, as in the trace and message history)") String id,
             @Metadata(description = "The processor type (the XML element name, or 'from' for the route input)") String type,
             @Metadata(description = "The endpoint URI (only present for the route input entry)") String endpointUri,
             @Metadata(description = "The source line number (only present when known)") Integer line,
-            @Metadata(description = "The processor's configured options, as attribute/child-element name to string value") Map<String, String> options) {
+            @Metadata(description = "The processor's configured options, as attribute/child-element name to string value") Map<String, String> options,
+            @Metadata(description = "Where the processor or route input keeps its state, such as the repository of an idempotent consumer, an aggregator, or a file consumer with noop=true (only present when it keeps state)") List<StateEntry> state) {
+    }
+
+    public record StateEntry(
+            @Metadata(description = "The option that holds the state, such as idempotentRepository") String name,
+            @Metadata(description = "The class name of the repository") String type,
+            @Metadata(description = "Whether the repository keeps the state only in memory, so it is lost when the integration stops (only present when the repository tells)") Boolean inMemory) {
     }
 
     public record RouteDetail(
@@ -101,6 +121,12 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
                             sb.append(String.format("    %s = %s%n", e.getKey(), e.getValue()));
                         }
                     }
+                    if (p.state() != null) {
+                        for (StateEntry s : p.state()) {
+                            sb.append(String.format("    state: %s = %s%s%n", s.name(), s.type(),
+                                    Boolean.TRUE.equals(s.inMemory()) ? " (in memory: lost when the integration stops)" : ""));
+                        }
+                    }
                 }
             }
         }
@@ -139,7 +165,7 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
                 if (mr == null) {
                     continue;
                 }
-                RouteDetail routeDetail = buildRouteDetail(mr);
+                RouteDetail routeDetail = buildRouteDetail(mcc, mr);
                 if (routeDetail != null) {
                     routes.add(routeDetail);
                 }
@@ -151,11 +177,11 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
         if (mr == null) {
             return new Response(null, null, null);
         }
-        RouteDetail routeDetail = buildRouteDetail(mr);
+        RouteDetail routeDetail = buildRouteDetail(mcc, mr);
         return new Response(routeDetail.routeId(), routeDetail.processors(), null);
     }
 
-    private static RouteDetail buildRouteDetail(ManagedRouteMBean mr) {
+    private RouteDetail buildRouteDetail(ManagedCamelContext mcc, ManagedRouteMBean mr) {
         String routeId = mr.getRouteId();
         List<ProcessorEntry> processors = new ArrayList<>();
 
@@ -190,10 +216,67 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             // ignore
         }
 
-        ProcessorEntry fromEntry = new ProcessorEntry(fromId, "from", mr.getEndpointUri(), fromLine, new LinkedHashMap<>());
+        // the repositories the processors keep their state in, which the route dump does not show when they are defaults
+        processors.replaceAll(p -> withState(p, processorState(mcc, p.id(), p.type())));
+
+        ProcessorEntry fromEntry = new ProcessorEntry(
+                fromId, "from", mr.getEndpointUri(), fromLine, new LinkedHashMap<>(), endpointState(routeId));
         processors.add(0, fromEntry);
 
         return new RouteDetail(routeId, processors);
+    }
+
+    private static ProcessorEntry withState(ProcessorEntry p, List<StateEntry> state) {
+        return state == null ? p : new ProcessorEntry(p.id(), p.type(), p.endpointUri(), p.line(), p.options(), state);
+    }
+
+    /**
+     * The repository of an idempotent consumer or an aggregator, from its managed object: the aggregator creates an
+     * in-memory one when none is configured.
+     */
+    private static List<StateEntry> processorState(ManagedCamelContext mcc, String id, String type) {
+        try {
+            if ("idempotentConsumer".equals(type)) {
+                ManagedIdempotentConsumerMBean mp = mcc.getManagedProcessor(id, ManagedIdempotentConsumerMBean.class);
+                if (mp != null && mp.getIdempotentRepositoryClassName() != null) {
+                    return List.of(new StateEntry(
+                            "idempotentRepository", mp.getIdempotentRepositoryClassName(),
+                            mp.isIdempotentRepositoryInMemory()));
+                }
+            } else if ("aggregate".equals(type)) {
+                ManagedAggregateProcessorMBean mp = mcc.getManagedProcessor(id, ManagedAggregateProcessorMBean.class);
+                if (mp != null && mp.getAggregationRepositoryClassName() != null) {
+                    return List.of(new StateEntry(
+                            "aggregationRepository", mp.getAggregationRepositoryClassName(),
+                            mp.isAggregationRepositoryInMemory()));
+                }
+            }
+        } catch (Exception e) {
+            // the processor is not managed, so its state is not shown
+        }
+        return null;
+    }
+
+    /**
+     * The repositories of the route input, such as the one a file consumer with noop=true creates when none is
+     * configured.
+     */
+    private List<StateEntry> endpointState(String routeId) {
+        Route route = getCamelContext().getRoute(routeId);
+        if (route == null || !(route.getEndpoint() instanceof DefaultEndpoint endpoint) || endpoint.getComponent() == null
+                || !(endpoint.getComponent().getEndpointPropertyConfigurer() instanceof PropertyConfigurerGetter getter)) {
+            return null;
+        }
+        List<StateEntry> answer = new ArrayList<>();
+        for (String name : ENDPOINT_STATE_OPTIONS) {
+            Object repository = getter.getOptionValue(endpoint, name, false);
+            if (repository != null) {
+                answer.add(new StateEntry(
+                        name, repository.getClass().getName(),
+                        repository instanceof InMemoryStrategy s ? s.isInMemory() : null));
+            }
+        }
+        return answer.isEmpty() ? null : answer;
     }
 
     private static void collectProcessors(Element parent, List<ProcessorEntry> processors) {
@@ -234,7 +317,7 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             // <correlationExpression>, <completionPredicate>, etc.)
             collectExpressionChildren(elem, opts);
 
-            processors.add(new ProcessorEntry(id, type, null, line, opts));
+            processors.add(new ProcessorEntry(id, type, null, line, opts, null));
 
             // recurse into child elements (nested EIPs like split > to, choice > when > to)
             collectProcessors(elem, processors);

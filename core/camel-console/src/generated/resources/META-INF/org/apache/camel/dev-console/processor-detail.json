@@ -62,6 +62,27 @@
                 "type": "string"
               },
               "description": "The processor's configured options, as attribute\/child-element name to string value"
+            },
+            "state": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The option that holds the state, such as idempotentRepository"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "The class name of the repository"
+                  },
+                  "inMemory": {
+                    "type": "boolean",
+                    "description": "Whether the repository keeps the state only in memory, so it is lost when the integration stops (only present when the repository tells)"
+                  }
+                }
+              },
+              "description": "Where the processor or route input keeps its state, such as the repository of an idempotent consumer, an aggregator, or a file consumer with noop=true (only present when it keeps state)"
             }
           }
         },
@@ -103,6 +124,27 @@
                       "type": "string"
                     },
                     "description": "The processor's configured options, as attribute\/child-element name to string value"
+                  },
+                  "state": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "The option that holds the state, such as idempotentRepository"
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "The class name of the repository"
+                        },
+                        "inMemory": {
+                          "type": "boolean",
+                          "description": "Whether the repository keeps the state only in memory, so it is lost when the integration stops (only present when the repository tells)"
+                        }
+                      }
+                    },
+                    "description": "Where the processor or route input keeps its state, such as the repository of an idempotent consumer, an aggregator, or a file consumer with noop=true (only present when it keeps state)"
                   }
                 }
               },
