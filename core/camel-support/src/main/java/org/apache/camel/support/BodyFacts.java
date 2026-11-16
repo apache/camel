@@ -41,7 +41,6 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.util.MimeTypeHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -296,7 +295,7 @@ public final class BodyFacts {
         if (history == null || history.isEmpty()) {
             return null;
         }
-        String now = ObjectHelper.classCanonicalName(body);
+        String now = className(body);
         for (int i = history.size() - 1; i >= 0; i--) {
             MessageHistory step = history.get(i);
             String type = step.getBodyType();
@@ -336,7 +335,7 @@ public final class BodyFacts {
         if (history == null || history.isEmpty()) {
             return null;
         }
-        String now = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        String now = body != null ? className(body) : "null";
         for (int i = history.size() - 1; i >= 0; i--) {
             String type = history.get(i).getBodyType();
             if (type == null || type.equals(now)) {
@@ -400,7 +399,7 @@ public final class BodyFacts {
         if (history == null || history.isEmpty()) {
             return "";
         }
-        String now = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        String now = body != null ? className(body) : "null";
         boolean recorded = false;
         for (int i = history.size() - 1; i >= 0; i--) {
             String type = history.get(i).getBodyType();
@@ -537,6 +536,19 @@ public final class BodyFacts {
 
     private static boolean isEmpty(Object body) {
         return body == null || body instanceof String s && s.isBlank() || body instanceof byte[] b && b.length == 0;
+    }
+
+    /**
+     * The class name of the body as the message history keeps it: the canonical name, or the class name when the class
+     * has none (an anonymous, local or hidden class, such as a lambda). Null for a null body.
+     */
+    static String className(Object body) {
+        if (body == null) {
+            return null;
+        }
+        Class<?> type = body.getClass();
+        String name = type.getCanonicalName();
+        return name != null ? name : type.getName();
     }
 
     /**
