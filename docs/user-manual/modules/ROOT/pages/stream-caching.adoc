@@ -2,6 +2,8 @@
 
 While stream types (like `StreamSource`, `InputStream` and `Reader`) are commonly used in messaging for performance reasons, they also have an important drawback: they can only be read once. In order to be able to work with message content multiple times, the stream needs to be cached.
 
+Stream caching is enabled by default. You can turn it off on the `CamelContext` or on a single route.
+
 Streams are cached in memory. However, for large stream messages, you can set `spoolEnabled=true`
 and then large message (over 128 KB) will be cached in a temporary file instead.
 Camel itself will handle deleting the temporary file once the cached stream is no longer necessary.
@@ -23,6 +25,10 @@ A number of Camel components supports and use streaming types out of the
 box. For example the HTTP related components, CXF, etc.
 
 Camel comes with Stream Caching that caches the stream, so it can be re-readable.
+It is enabled by default, so a body can still be empty when:
+
+* stream caching is turned off on the route or on the `CamelContext`;
+* your own code reads the body twice within the same processor or bean (see <<Reading the body more than once in your own code>>).
 
 [IMPORTANT]
 ====
@@ -111,14 +117,14 @@ context.getStreamCachingStrategy().setBufferSize(16 * 1024);
 // context.getStreamCachingStrategy().setSpoolCipher("RC4");
 ----
 
-And remember to enable Stream caching on the `CamelContext`:
+Stream caching is enabled by default. To turn it off on the `CamelContext`:
 
 [source,java]
 ----
-context.setStreamCaching(true);
+context.setStreamCaching(false);
 ----
 
-or on routes:
+or on routes (here it is turned on for a single route, when it is off on the `CamelContext`):
 
 [tabs]
 ====
@@ -192,7 +198,7 @@ In xref:spring-xml-extensions.adoc[Spring XML] you can enable stream caching on 
 
 == Using spoolUsedHeapMemoryThreshold
 
-By default, stream caching will spool only big payloads (128 KB or bigger) to disk. However you can also set the `spoolUsedHeapMemoryThreshold` option which is a percentage of used heap memory. This can be used to also spool to disk when running low on memory.
+When `spoolEnabled` is `true`, stream caching spools only big payloads (128 KB or bigger) to disk. By default, `spoolEnabled` is `false` and nothing is spooled. You can also set the `spoolUsedHeapMemoryThreshold` option which is a percentage of used heap memory. This can be used to also spool to disk when running low on memory.
 
 For example with:
 
@@ -379,6 +385,29 @@ from("direct:start")
     .process(new StreamCachingProcessor())
     .to("log:cached");
 ----
+
+== Reading the body more than once in your own code
+
+Camel resets the stream cache before and after each step of the route (for example a processor, a bean or a `to`).
+It does not reset it within a step. When a processor or a bean reads a streaming body twice, the second read is empty.
+The next step reads the whole body again.
+
+Read the body once into a variable, or reset the stream cache before reading it again:
+
+[source,java]
+----
+public void process(Exchange exchange) {
+    // resets the stream cache, then converts the body
+    String first = ExchangeHelper.getBodyAndResetStreamCache(exchange, String.class);
+    String second = ExchangeHelper.getBodyAndResetStreamCache(exchange, String.class);
+
+    // or reset the stream cache yourself
+    MessageHelper.resetStreamCache(exchange.getMessage());
+}
+----
+
+The same applies to the original message (`exchange.getUnitOfWork().getOriginalInMessage()`): when the incoming body
+is a stream, its body is a `StreamCache`. Call `MessageHelper.resetStreamCache` on it before reading its body.
 
 == How do I enable streams when debug logging messages in Camel
 

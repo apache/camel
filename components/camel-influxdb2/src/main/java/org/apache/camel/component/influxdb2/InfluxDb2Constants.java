@@ -27,7 +27,11 @@ public final class InfluxDb2Constants {
                                 + " retention is a property of the bucket")
     @Deprecated
     public static final String RETENTION_POLICY = "camelInfluxDB.RetentionPolicy";
+    @Metadata(description = "The name of the organization to write to, overriding the org option on the endpoint.",
+              javaType = "String")
     public static final String ORG = "CamelInfluxDB2Org";
+    @Metadata(description = "The name of the bucket to write to, overriding the bucket option on the endpoint.",
+              javaType = "String")
     public static final String BUCKET = "CamelInfluxDB2Bucket";
     @Metadata(description = "InfluxDb Write precision.", javaType = "com.influxdb.client.domain.WritePrecision")
     public static final String WRITE_PRECISION = "CamelInfluxDB2WritePrecision";

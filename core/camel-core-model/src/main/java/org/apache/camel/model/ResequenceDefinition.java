@@ -265,7 +265,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     /**
      * Enables reverse mode for the batch resequencer mode.
-     * <p/>
+     * <p>
      * This means the expression for determine the sequence order will be reversed. Can be used for Z..A or 9..0
      * ordering.
      *

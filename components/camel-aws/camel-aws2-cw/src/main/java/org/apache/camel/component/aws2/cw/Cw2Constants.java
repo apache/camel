@@ -36,7 +36,7 @@ public interface Cw2Constants {
     @Metadata(description = "The Amazon CW metric unit, the name of a StandardUnit such as Count or Bytes, in any case.",
               javaType = "String")
     String METRIC_UNIT = "CamelAwsCwMetricUnit";
-    @Metadata(description = "The Amazon CW metric timestamp. A java.util.Date works too.", javaType = "Instant")
+    @Metadata(description = "The Amazon CW metric timestamp. A java.util.Date works too.", javaType = "java.time.Instant")
     String METRIC_TIMESTAMP = "CamelAwsCwMetricTimestamp";
     @Metadata(description = "A map of dimension names and dimension values.", javaType = "Map<String, String>")
     String METRIC_DIMENSIONS = "CamelAwsCwMetricDimensions";

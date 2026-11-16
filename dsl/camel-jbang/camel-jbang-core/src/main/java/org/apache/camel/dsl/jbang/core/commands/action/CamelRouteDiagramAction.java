@@ -80,7 +80,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     @Arguments(description = "Source file name(s) (shell-expanded wildcards), or name/pid of a running "
                              + "Camel integration",
-               paramLabel = "<files>")
+               paramLabel = "files")
     List<String> files = new ArrayList<>();
 
     @Option(name = "filter", description = "Filter route by filename or route id")

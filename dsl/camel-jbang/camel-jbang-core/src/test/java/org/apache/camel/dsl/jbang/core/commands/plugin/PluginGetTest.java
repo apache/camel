@@ -49,7 +49,9 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
         PluginGet command = new PluginGet(new CamelJBangMain().withPrinter(printer));
         command.doCall();
 
-        Assertions.assertEquals("", printer.getOutput());
+        // CAMEL-26931: it printed nothing at all
+        Assertions.assertEquals("", printer.getStdout());
+        Assertions.assertTrue(printer.getStderr().contains("No plugins installed"), printer.getStderr());
     }
 
     @Test

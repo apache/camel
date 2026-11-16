@@ -18,6 +18,10 @@ package org.apache.camel.impl.converter;
 
 import java.io.IOException;
 
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.CastUtils;
+
 /**
  * A type converter loader, that <b>only</b> supports scanning a {@link org.apache.camel.TypeConverters} class for
  * methods that has been annotated with {@link org.apache.camel.Converter}.
@@ -25,14 +29,16 @@ import java.io.IOException;
 public class TypeConvertersLoader extends AnnotationTypeConverterLoader {
 
     private final String name;
+    private final Object instance;
 
     /**
      * Creates the loader
      *
-     * @param typeConverters The implementation that has the type converters
+     * @param typeConverters The implementation that has the type converters, its non-static converter methods are
+     *                       invoked on this instance
      */
     public TypeConvertersLoader(Object typeConverters) {
-        this(typeConverters.getClass());
+        this(typeConverters.getClass(), typeConverters);
     }
 
     /**
@@ -41,14 +47,29 @@ public class TypeConvertersLoader extends AnnotationTypeConverterLoader {
      * @param clazz the class with the @Converter annotation and converter methods
      */
     public TypeConvertersLoader(Class<?> clazz) {
+        this(clazz, null);
+    }
+
+    private TypeConvertersLoader(Class<?> clazz, Object instance) {
         super(new TypeConvertersPackageScanClassResolver(clazz));
         this.name = clazz.getPackage().getName();
+        this.instance = instance;
     }
 
     @Override
     protected String[] findPackageNames() throws IOException {
         // this method doesn't change the behavior of the CorePackageScanClassResolver
         return new String[] { name };
+    }
+
+    @Override
+    protected CachingInjector<?> createInjector(TypeConverterRegistry registry, Class<?> type) {
+        if (instance != null && type.isInstance(instance)) {
+            // use the given instance (also for the converter methods of its super classes)
+            CamelContextAware.trySetCamelContext(instance, registry.getCamelContext());
+            return new CachingInjector<>(registry, CastUtils.cast(type, Object.class), instance);
+        }
+        return super.createInjector(registry, type);
     }
 
 }

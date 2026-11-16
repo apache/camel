@@ -208,10 +208,10 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     // -------------------------------------------------------------------------
 
     /**
-     * Delimiter used in splitting messages. Can be turned off using the value <tt>false</tt>. To force not splitting
-     * then the delimiter can be set to <tt>single</tt> to use the value as a single list, this can be needed in some
-     * special situations.
-     * <p/>
+     * Delimiter used in splitting messages. Can be turned off using the value <code>false</code>. To force not
+     * splitting then the delimiter can be set to <code>single</code> to use the value as a single list, this can be
+     * needed in some special situations.
+     * <p>
      * The default value is comma.
      *
      * @param  delimiter the delimiter
@@ -421,16 +421,16 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * When in streaming mode, then the splitter splits the original message on-demand, and each split message is
-     * processed one by one. This reduces memory usage as the splitter do not split all the messages first, but then we
-     * do not know the total size, and therefore the {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
-     * <p/>
+     * processed one by one. This reduces memory usage as the splitter does not split all the messages first, but then
+     * we do not know the total size, and therefore the {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
+     * <p>
      * In non-streaming mode (default) the splitter will split each message first, to know the total size, and then
      * process each message one by one. This requires to keep all the split messages in memory and therefore requires
      * more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
-     * <p/>
+     * <p>
      * The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies
      * out-of-order, e.g. in the order they come back. If disabled, Camel will process replies in the same order as the
-     * messages was split.
+     * messages were split.
      *
      * @return the builder
      */
@@ -440,16 +440,16 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * When in streaming mode, then the splitter splits the original message on-demand, and each split message is
-     * processed one by one. This reduces memory usage as the splitter do not split all the messages first, but then we
-     * do not know the total size, and therefore the {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
-     * <p/>
+     * processed one by one. This reduces memory usage as the splitter does not split all the messages first, but then
+     * we do not know the total size, and therefore the {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
+     * <p>
      * In non-streaming mode (default) the splitter will split each message first, to know the total size, and then
      * process each message one by one. This requires to keep all the split messages in memory and therefore requires
      * more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
-     * <p/>
+     * <p>
      * The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies
      * out-of-order, e.g. in the order they come back. If disabled, Camel will process replies in the same order as the
-     * messages was split.
+     * messages were split.
      *
      * @return the builder
      */
@@ -459,16 +459,16 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * When in streaming mode, then the splitter splits the original message on-demand, and each split message is
-     * processed one by one. This reduces memory usage as the splitter do not split all the messages first, but then we
-     * do not know the total size, and therefore the {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
-     * <p/>
+     * processed one by one. This reduces memory usage as the splitter does not split all the messages first, but then
+     * we do not know the total size, and therefore the {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
+     * <p>
      * In non-streaming mode (default) the splitter will split each message first, to know the total size, and then
      * process each message one by one. This requires to keep all the split messages in memory and therefore requires
      * more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
-     * <p/>
+     * <p>
      * The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies
      * out-of-order, e.g. in the order they come back. If disabled, Camel will process replies in the same order as the
-     * messages was split.
+     * messages were split.
      *
      * @return the builder
      */
@@ -480,11 +480,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     /**
      * Will now stop further processing if an exception or failure occurred during processing of an
      * {@link org.apache.camel.Exchange} and the caused exception will be thrown.
-     * <p/>
+     * <p>
      * Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by
      * the error handler (such as using onException). In all situations the splitter will stop further processing. This
      * is the same behavior as in pipeline, which is used by the routing engine.
-     * <p/>
+     * <p>
      * The default behavior is to <b>not</b> stop but continue processing till the end
      *
      * @return the builder
@@ -496,11 +496,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     /**
      * Will now stop further processing if an exception or failure occurred during processing of an
      * {@link org.apache.camel.Exchange} and the caused exception will be thrown.
-     * <p/>
+     * <p>
      * Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by
      * the error handler (such as using onException). In all situations the splitter will stop further processing. This
      * is the same behavior as in pipeline, which is used by the routing engine.
-     * <p/>
+     * <p>
      * The default behavior is to <b>not</b> stop but continue processing till the end
      *
      * @return the builder
@@ -512,11 +512,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     /**
      * Will now stop further processing if an exception or failure occurred during processing of an
      * {@link org.apache.camel.Exchange} and the caused exception will be thrown.
-     * <p/>
+     * <p>
      * Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by
      * the error handler (such as using onException). In all situations the splitter will stop further processing. This
      * is the same behavior as in pipeline, which is used by the routing engine.
-     * <p/>
+     * <p>
      * The default behavior is to <b>not</b> stop but continue processing till the end
      *
      * @return the builder
@@ -660,10 +660,10 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation. For
      * example, 0.1 means abort if more than 10% of items fail. When the threshold is exceeded, a
      * {@link org.apache.camel.CamelExchangeException} is thrown.
-     * <p/>
+     * <p>
      * This option is mutually exclusive with {@code stopOnException}. When set, individual item failures are tracked
      * but processing continues until the threshold is exceeded.
-     * <p/>
+     * <p>
      * <b>Note:</b> When combined with {@code parallelProcessing}, the failure ratio may vary between runs because
      * parallel items complete in non-deterministic order. For deterministic abort behavior with parallel processing,
      * prefer {@code maxFailedRecords} (absolute count) over {@code errorThreshold} (ratio).
@@ -679,7 +679,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation. For
      * example, 0.1 means abort if more than 10% of items fail. When the threshold is exceeded, a
      * {@link org.apache.camel.CamelExchangeException} is thrown.
-     * <p/>
+     * <p>
      * This option is mutually exclusive with {@code stopOnException}. When set, individual item failures are tracked
      * but processing continues until the threshold is exceeded.
      *
@@ -694,7 +694,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     /**
      * Sets the maximum number of failed records before aborting the split operation. When the count is exceeded, a
      * {@link org.apache.camel.CamelExchangeException} is thrown.
-     * <p/>
+     * <p>
      * This option is mutually exclusive with {@code stopOnException}. Can be combined with {@code errorThreshold} —
      * processing aborts when either threshold is exceeded.
      *
@@ -708,7 +708,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     /**
      * Sets the maximum number of failed records before aborting the split operation. When the count is exceeded, a
      * {@link org.apache.camel.CamelExchangeException} is thrown.
-     * <p/>
+     * <p>
      * This option is mutually exclusive with {@code stopOnException}. Can be combined with {@code errorThreshold} —
      * processing aborts when either threshold is exceeded.
      *
@@ -723,11 +723,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     /**
      * Sets a {@link ResumeStrategy} and key for resume-from-last-position support. When configured, the Splitter tracks
      * progress and can skip already-processed items on subsequent runs.
-     * <p/>
+     * <p>
      * With index-based watermarking (no {@code watermarkExpression}), items up to the stored index are automatically
      * skipped. With value-based watermarking (with {@code watermarkExpression}), the stored value is exposed as an
      * exchange property ({@link org.apache.camel.Exchange#SPLIT_WATERMARK}) for upstream filtering.
-     * <p/>
+     * <p>
      * The watermark is only updated on successful completion — aborted runs preserve the previous watermark to allow
      * retry.
      *

@@ -949,7 +949,7 @@ public interface Timestream2EndpointBuilderFactory {
         /**
          * Invocation Time for scheduled query execution.
          * 
-         * The option is a: {@code Instant} type.
+         * The option is a: {@code java.time.Instant} type.
          * 
          * Group: producer
          * 

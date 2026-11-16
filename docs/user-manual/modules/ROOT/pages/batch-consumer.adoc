@@ -39,6 +39,10 @@ Very often a `BatchConsumer` is scheduled and is based of the `ScheduledBatchPol
 that has many options for configuring the scheduling. These options are listed with _(scheduler)_
 as label in the endpoint options' in the xref:components::index.adoc[Components] documentation.
 
+A poll routes the whole batch it polled before it is done, and the health check of the consumer reports on the polls
+that are done. To have the health check report DOWN while a poll hangs (for example on a connection that went silent),
+set the `healthCheckMaxPollDuration` option: see xref:health-check.adoc#_detecting_a_poll_that_hangs[Health Checks].
+
 == Exchange Properties
 
 The following properties are set on the Exchange for

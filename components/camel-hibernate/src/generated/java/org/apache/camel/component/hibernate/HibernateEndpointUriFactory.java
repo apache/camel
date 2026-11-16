@@ -24,7 +24,7 @@ public class HibernateEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(33);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -36,6 +36,7 @@ public class HibernateEndpointUriFactory extends org.apache.camel.support.compon
         props.add("exchangePattern");
         props.add("filters");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("initialDelay");
         props.add("lazyStartProducer");
         props.add("maximumResults");

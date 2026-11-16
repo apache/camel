@@ -33,6 +33,7 @@ import java.util.stream.Stream;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.camel.dsl.jbang.run.common.QuarkusHelper.CamelVersionInPlatformRelease;
 import org.apache.camel.dsl.jbang.run.common.QuarkusHelper.MajorMinor;
@@ -585,5 +586,65 @@ public class QuarkusHelperTest {
             Assertions.assertThat(files.map(f -> f.getFileName().toString()))
                     .containsExactlyInAnyOrder("all.json", "platform-mapping.json");
         }
+    }
+
+    // CAMEL-27004: the daily refresh of the registry document failed the command, although it had the document
+
+    @Test
+    void staleCacheIsUsedWhenTheRegistryFails() throws Exception {
+        stubRegistry();
+        Path registriesDir = newRegistriesDir();
+        JsonArray cached = QuarkusHelper.fetchPlatformStreams(wireMock.baseUrl(), true, false, registriesDir);
+        backdate(registryCacheFile(registriesDir));
+
+        wireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/client/platforms/all"))
+                .willReturn(WireMock.serverError()));
+        JsonArray streams = QuarkusHelper.fetchPlatformStreams(wireMock.baseUrl(), true, false, registriesDir);
+
+        Assertions.assertThat(streams).isNotNull().isEqualTo(cached);
+    }
+
+    @Test
+    void staleCacheIsUsedWhenTheRegistryCannotBeReached() throws Exception {
+        stubRegistry();
+        Path registriesDir = newRegistriesDir();
+        JsonArray cached = QuarkusHelper.fetchPlatformStreams(wireMock.baseUrl(), true, false, registriesDir);
+        backdate(registryCacheFile(registriesDir));
+
+        // the connection is reset, as when offline or behind a proxy that refuses it
+        wireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/client/platforms/all"))
+                .willReturn(WireMock.aResponse().withFault(
+                        Fault.CONNECTION_RESET_BY_PEER)));
+        JsonArray streams = QuarkusHelper.fetchPlatformStreams(wireMock.baseUrl(), true, false, registriesDir);
+
+        Assertions.assertThat(streams).isNotNull().isEqualTo(cached);
+    }
+
+    @Test
+    void withoutACacheAFailingRegistryStillFails() throws Exception {
+        wireMock.resetAll();
+        wireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/client/platforms/all"))
+                .willReturn(WireMock.serverError()));
+        Path registriesDir = newRegistriesDir();
+
+        Assertions.assertThatThrownBy(
+                () -> QuarkusHelper.fetchPlatformStreams(wireMock.baseUrl(), true, false, registriesDir))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("500");
+    }
+
+    @Test
+    void freshDoesNotUseTheStaleCache() throws Exception {
+        stubRegistry();
+        Path registriesDir = newRegistriesDir();
+        QuarkusHelper.fetchPlatformStreams(wireMock.baseUrl(), true, false, registriesDir);
+
+        wireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/client/platforms/all"))
+                .willReturn(WireMock.serverError()));
+
+        Assertions.assertThatThrownBy(
+                () -> QuarkusHelper.fetchPlatformStreams(wireMock.baseUrl(), true, true, registriesDir))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("500");
     }
 }

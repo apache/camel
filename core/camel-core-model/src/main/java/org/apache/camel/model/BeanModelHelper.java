@@ -40,7 +40,7 @@ import org.apache.camel.util.function.Suppliers;
 
 /**
  * Helper to create bean instances from bean model definitions.
- * <p/>
+ * <p>
  * Creating beans is complex as Camel support many options such as constructor, factory beans, builder beans, scripts,
  * and much more. This helper hides this complexity for creating bean instances.
  */
@@ -335,8 +335,8 @@ public final class BeanModelHelper {
     }
 
     /**
-     * Appends the factory method and constructor arguments of the bean definition to the <tt>#class:</tt> type, in the
-     * syntax {@link PropertyBindingSupport#resolveBean(CamelContext, Object)} understands.
+     * Appends the factory method and constructor arguments of the bean definition to the <code>#class:</code> type, in
+     * the syntax {@link PropertyBindingSupport#resolveBean(CamelContext, Object)} understands.
      */
     private static String factoryOrConstructorType(BeanFactoryDefinition<?> def, String type) {
         // factory bean/method
@@ -363,12 +363,14 @@ public final class BeanModelHelper {
     }
 
     /**
-     * Infers the builder of a bean whose type has no public no-arg constructor but a <tt>builder()</tt> (or
-     * <tt>newBuilder()</tt>) method, so a class such as a LangChain4j model or a Lombok <tt>@Builder</tt> class can be
-     * declared with only its type and properties. Nothing is inferred when the definition says how to create the bean
-     * (a builder class, a factory method, or constructor arguments), or when the type is not a <tt>#class:</tt>.
+     * Infers the builder of a bean whose type has no public no-arg constructor but a <code>builder()</code> (or
+     * <code>newBuilder()</code>) method, so a class such as a LangChain4j model or a Lombok <code>@Builder</code> class
+     * can be declared with only its type and properties. Nothing is inferred when the definition says how to create the
+     * bean (a builder class, a factory method, or constructor arguments), or when the type is not a
+     * <code>#class:</code>.
      *
-     * @return the builder to set the properties on, or <tt>null</tt> if the bean is not created via an inferred builder
+     * @return the builder to set the properties on, or <code>null</code> if the bean is not created via an inferred
+     *         builder
      */
     private static Object inferBuilder(CamelContext camelContext, BeanFactoryDefinition<?> def, String type) throws Exception {
         boolean explicit = def.getBuilderClass() != null || def.getFactoryMethod() != null || def.getFactoryBean() != null

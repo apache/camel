@@ -246,40 +246,18 @@ public class EndpointConsumersTest {
     }
 
     @Test
-    public void testTheFlowsOfAnIntegrationConsume() {
-        String integration = """
-                apiVersion: camel.apache.org/v1
-                kind: Integration
-                metadata:
-                  name: lookup
-                spec:
-                  flows:
-                    - from:
-                        uri: direct:lookup
-                        steps:
-                          - to: seda:audit
-                """;
-        assertThat(EndpointConsumers.consumed(integration)).containsExactly("direct:lookup");
-        assertThat(EndpointConsumers.check(integration, Set.of()))
-                .singleElement().asString().contains("sends to seda:audit");
-    }
-
-    @Test
-    public void testAPipeConsumesWhatIsNotKnown() {
+    public void testACamelKResourceIsNotARouteFile() {
+        // Camel does not load Camel K Pipes and Integrations (CAMEL-27002): they are YAML files without routes
         String pipe = """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
                   name: orders
                 spec:
-                  source:
-                    ref:
-                      kind: Kamelet
-                      name: timer-source
                   sink:
                     uri: direct:orders
                 """;
-        assertThat(EndpointConsumers.consumed(pipe)).isNull();
+        assertThat(EndpointConsumers.consumed(pipe)).isEmpty();
         // a YAML file that is not a route file consumes nothing, and does not keep the check quiet
         assertThat(EndpointConsumers.consumed("services:\n  db:\n    image: postgres\n")).isEmpty();
     }

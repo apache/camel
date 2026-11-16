@@ -47,11 +47,15 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
     private String objectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether to lookup and use default Jackson ObjectMapper from the registry.")
+              description = "Whether to lookup and use default Jackson ObjectMapper from the registry."
+                            + " The registry is only searched when autoDiscoverObjectMapper is true as well.")
     private String useDefaultObjectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false",
-              description = "If set to true then Jackson will lookup for an objectMapper into the registry.")
+              description = "If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ProtobufMapper"
+                            + " in the registry, and use it when there is exactly one. The options of this data format that"
+                            + " configure the mapper, such as include, enableFeatures and disableFeatures, are not applied to"
+                            + " that ProtobufMapper.")
     private String autoDiscoverObjectMapper;
     @XmlAttribute
     @Metadata(defaultValue = "GoogleProtobuf", description = "Which Protobuf library to use.")
@@ -591,7 +595,8 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
-         * Whether to lookup and use default Jackson ObjectMapper from the registry.
+         * Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when
+         * autoDiscoverObjectMapper is true as well.
          */
         public Builder useDefaultObjectMapper(String useDefaultObjectMapper) {
             this.useDefaultObjectMapper = useDefaultObjectMapper;
@@ -599,7 +604,8 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
-         * Whether to lookup and use default Jackson ObjectMapper from the registry.
+         * Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when
+         * autoDiscoverObjectMapper is true as well.
          */
         public Builder useDefaultObjectMapper(boolean useDefaultObjectMapper) {
             this.useDefaultObjectMapper = Boolean.toString(useDefaultObjectMapper);
@@ -644,7 +650,7 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
 
         /**
          * If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip
-         * these null values, you can set this option to <tt>NON_NULL</tt>
+         * these null values, you can set this option to <code>NON_NULL</code>
          */
         public Builder include(String include) {
             this.include = include;
@@ -717,13 +723,13 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
-         * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-         * <p/>
-         * The features should be a name that matches a enum from
-         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-         * <p/>
+         * Set of features to enable on the Jackson <code>com.fasterxml.jackson.databind.ObjectMapper</code>.
+         * <p>
+         * The features should be a name that matches an enum from
+         * <code>com.fasterxml.jackson.databind.SerializationFeature</code>,
+         * <code>com.fasterxml.jackson.databind.DeserializationFeature</code>, or
+         * <code>com.fasterxml.jackson.databind.MapperFeature</code>
+         * <p>
          * Multiple features can be separated by comma
          */
         public Builder enableFeatures(String enableFeatures) {
@@ -732,13 +738,13 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
-         * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-         * <p/>
-         * The features should be a name that matches a enum from
-         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-         * <p/>
+         * Set of features to disable on the Jackson <code>com.fasterxml.jackson.databind.ObjectMapper</code>.
+         * <p>
+         * The features should be a name that matches an enum from
+         * <code>com.fasterxml.jackson.databind.SerializationFeature</code>,
+         * <code>com.fasterxml.jackson.databind.DeserializationFeature</code>, or
+         * <code>com.fasterxml.jackson.databind.MapperFeature</code>
+         * <p>
          * Multiple features can be separated by comma
          */
         public Builder disableFeatures(String disableFeatures) {
@@ -749,7 +755,7 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         /**
          * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
          * unmarshalling.
-         * <p/>
+         * <p>
          * This should only be enabled when desired to be used.
          */
         public Builder allowUnmarshallType(String allowUnmarshallType) {
@@ -760,7 +766,7 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         /**
          * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
          * unmarshalling.
-         * <p/>
+         * <p>
          * This should only be enabled when desired to be used.
          */
         public Builder allowUnmarshallType(boolean allowUnmarshallType) {
@@ -777,7 +783,8 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
-         * If set to true then Jackson will lookup for an objectMapper into the registry
+         * If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ProtobufMapper in the
+         * registry, and use it when there is exactly one.
          */
         public Builder autoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
             this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
@@ -785,7 +792,8 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
-         * If set to true then Jackson will lookup for an objectMapper into the registry
+         * If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ProtobufMapper in the
+         * registry, and use it when there is exactly one.
          */
         public Builder autoDiscoverObjectMapper(boolean autoDiscoverObjectMapper) {
             this.autoDiscoverObjectMapper = Boolean.toString(autoDiscoverObjectMapper);

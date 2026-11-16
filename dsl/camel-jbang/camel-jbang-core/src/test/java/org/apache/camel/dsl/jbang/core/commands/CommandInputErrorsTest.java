@@ -88,16 +88,21 @@ class CommandInputErrorsTest {
     @Test
     void evalExpressionNeedsATemplate() throws Exception {
         // picocli requires --template, so only a blank value reaches the command
-        assertThat(call(new EvalExpressionCommand(main), "--template=")).isEqualTo(CliExitCode.USAGE);
-        assertThat(printer.getStderr()).isEqualTo("ERROR: Template is required");
+        // an exception of the command, so --json prints it as the JSON of an error (CAMEL-26931); the CLI prints it as
+        // an ERROR line with the exit code
+        assertThatThrownBy(() -> call(new EvalExpressionCommand(main), "--template="))
+                .isInstanceOfSatisfying(CliException.class, e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.USAGE))
+                .hasMessage("Template is required");
     }
 
     @Test
     void evalExpressionWithAMissingTemplateFile() throws Exception {
         Path missing = dir.resolve("missing.txt");
 
-        assertThat(call(new EvalExpressionCommand(main), "--template=file:" + missing)).isEqualTo(CliExitCode.FILE_NOT_FOUND);
-        assertThat(printer.getStderr()).isEqualTo("ERROR: Template file does not exist: " + missing);
+        assertThatThrownBy(() -> call(new EvalExpressionCommand(main), "--template=file:" + missing))
+                .isInstanceOfSatisfying(CliException.class,
+                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND))
+                .hasMessage("Template file does not exist: " + missing);
     }
 
     @Test

@@ -699,7 +699,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     /**
      * Include or exclude the current Rest Definition in API documentation.
-     * <p/>
+     * <p>
      * The default value is true.
      */
     public RestDefinition apiDocs(Boolean apiDocs) {

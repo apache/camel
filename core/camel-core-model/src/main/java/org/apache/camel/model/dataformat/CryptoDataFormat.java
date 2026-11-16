@@ -226,7 +226,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
 
         /**
          * A JCE AlgorithmParameterSpec used to initialize the Cipher.
-         * <p/>
+         * <p>
          * Will lookup the type using the given name as a {@link java.security.spec.AlgorithmParameterSpec} type.
          */
         public Builder algorithmParameterSpec(String algorithmParameterSpec) {
@@ -276,7 +276,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
 
         /**
          * Flag indicating that the configured IV should be inlined into the encrypted data stream.
-         * <p/>
+         * <p>
          * Is by default false.
          */
         public Builder inline(String inline) {
@@ -286,7 +286,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
 
         /**
          * Flag indicating that the configured IV should be inlined into the encrypted data stream.
-         * <p/>
+         * <p>
          * Is by default false.
          */
         public Builder inline(boolean inline) {

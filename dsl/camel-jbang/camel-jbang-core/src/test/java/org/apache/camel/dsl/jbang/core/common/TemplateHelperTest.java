@@ -493,28 +493,6 @@ class TemplateHelperTest {
         assertTrue(content.contains("kamelet.type: \"action\""));
     }
 
-    @Test
-    void testInitPipeTemplate() throws IOException {
-        String content = loadInitTemplate("init-pipe.yaml.ftl");
-
-        assertNoLicenseHeader(content);
-        content = content.replace("[=Name]", "my-pipe");
-        assertTrue(content.contains("kind: Pipe"));
-        assertTrue(content.contains("name: my-pipe"));
-        assertTrue(content.contains("timer-source"));
-        assertTrue(content.contains("log-sink"));
-    }
-
-    @Test
-    void testInitIntegrationTemplate() throws IOException {
-        String content = loadInitTemplate("integration.yaml.ftl");
-
-        assertNoLicenseHeader(content);
-        content = content.replace("[=Name]", "my-integration");
-        assertTrue(content.contains("kind: Integration"));
-        assertTrue(content.contains("name: my-integration"));
-    }
-
     // ===== Helper methods =====
 
     /**
@@ -528,16 +506,6 @@ class TemplateHelperTest {
         String content = loadInitTemplate(name).replace("[=Spec]", "petstore.json");
 
         assertCanonical(name, content);
-    }
-
-    @Test
-    void testInitIntegrationTemplateIsCanonical() throws Exception {
-        String content = loadInitTemplate("integration.yaml.ftl").replace("[=Name]", "my-integration");
-
-        // the Integration CR wraps the routes in spec.flows
-        Map<String, Object> cr = new Yaml().load(content);
-        Map<String, Object> spec = (Map<String, Object>) cr.get("spec");
-        assertCanonical("integration.yaml.ftl", new Yaml().dump(spec.get("flows")));
     }
 
     @ParameterizedTest

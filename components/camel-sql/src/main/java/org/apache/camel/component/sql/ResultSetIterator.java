@@ -25,25 +25,42 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.sql.DataSource;
+
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
 public class ResultSetIterator implements Iterator<Object>, Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResultSetIterator.class);
 
     private final Connection connection;
+    private final DataSource dataSource;
     private final Statement statement;
     private final ResultSet resultSet;
     private final RowMapper<?> rowMapper;
     private final AtomicBoolean closed = new AtomicBoolean();
     private int rowNum;
+    // set when reading a row has failed: the rest of the result cannot be read, so the iterator must not look finished
+    private volatile SQLException failure;
 
     public ResultSetIterator(Connection connection, Statement statement, ResultSet resultSet,
                              RowMapper<?> rowMapper) throws SQLException {
+        this(connection, null, statement, resultSet, rowMapper);
+    }
+
+    /**
+     * @param dataSource the data source the connection was obtained from with {@link DataSourceUtils}, so the
+     *                   connection is released with {@link DataSourceUtils#releaseConnection}, which does not close the
+     *                   connection of a transaction
+     */
+    public ResultSetIterator(Connection connection, DataSource dataSource, Statement statement, ResultSet resultSet,
+                             RowMapper<?> rowMapper) throws SQLException {
         this.connection = connection;
+        this.dataSource = dataSource;
         this.statement = statement;
         this.resultSet = resultSet;
         this.rowMapper = rowMapper;
@@ -51,8 +68,19 @@ public class ResultSetIterator implements Iterator<Object>, Closeable {
         loadNext();
     }
 
+    /**
+     * Whether there are more rows.
+     *
+     * @throws RuntimeCamelException when reading a row has failed before, as whether there are more rows is then
+     *                               unknown (whoever reads the iterator again, such as a redelivered split, gets an
+     *                               error and not the end of the rows)
+     */
     @Override
     public boolean hasNext() {
+        SQLException cause = failure;
+        if (cause != null) {
+            throw new RuntimeCamelException("Cannot process result: reading a row failed before", cause);
+        }
         return !closed.get();
     }
 
@@ -67,6 +95,7 @@ public class ResultSetIterator implements Iterator<Object>, Closeable {
             loadNext();
             return next;
         } catch (SQLException e) {
+            failure = e;
             close();
             throw new RuntimeCamelException("Cannot process result", e);
         }
@@ -106,7 +135,7 @@ public class ResultSetIterator implements Iterator<Object>, Closeable {
 
     private void safeCloseConnection() {
         try {
-            connection.close();
+            DataSourceUtils.doReleaseConnection(connection, dataSource);
         } catch (SQLException e) {
             LOG.warn("Error by closing connection: {}", e, e);
         }

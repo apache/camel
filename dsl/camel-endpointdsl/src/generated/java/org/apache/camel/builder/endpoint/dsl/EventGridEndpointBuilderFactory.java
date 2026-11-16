@@ -342,7 +342,7 @@ public interface EventGridEndpointBuilderFactory {
         /**
          * The time the event was generated.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: producer
          * 

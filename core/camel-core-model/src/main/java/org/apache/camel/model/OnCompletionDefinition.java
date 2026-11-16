@@ -141,9 +141,9 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
 
     /**
      * Removes all existing global {@link org.apache.camel.model.OnCompletionDefinition} from the definition.
-     * <p/>
-     * This is used to let route scoped <tt>onCompletion</tt> overrule any global <tt>onCompletion</tt>. Do not remove
-     * an existing route-scoped because it is now possible (CAMEL-16374) to have several.
+     * <p>
+     * This is used to let route scoped <code>onCompletion</code> overrule any global <code>onCompletion</code>. Do not
+     * remove an existing route-scoped because it is now possible (CAMEL-16374) to have several.
      *
      * @param definition the parent definition that is the route
      */
@@ -162,9 +162,9 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
 
     /**
      * Sets the mode to be after route is done (default due backwards compatible).
-     * <p/>
-     * This executes the on completion work <i>after</i> the route consumer have written response back to the callee (if
-     * its InOut mode).
+     * <p>
+     * This executes the on completion work <i>after</i> the route consumer has written response back to the callee (if
+     * it's InOut mode).
      *
      * @return the builder
      */
@@ -175,9 +175,9 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
 
     /**
      * Sets the mode to be before consumer is done.
-     * <p/>
+     * <p>
      * This allows the on completion work to execute <i>before</i> the route consumer, writes any response back to the
-     * callee (if its InOut mode).
+     * callee (if it's InOut mode).
      *
      * @return the builder
      */
@@ -226,7 +226,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
 
     /**
      * Sets an additional predicate that should be true before the onCompletion is triggered.
-     * <p/>
+     * <p>
      * To be used for fine grained controlling whether a completion callback should be invoked or not
      *
      * @param  predicate predicate that determines true or false
@@ -239,7 +239,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
 
     /**
      * Will use the original input message body when an {@link org.apache.camel.Exchange} for this on completion.
-     * <p/>
+     * <p>
      * The original input message is defensively copied, and the copied message body is converted to
      * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
      * original route), to ensure the body can be read when the original message is being used later. If the body is
@@ -247,16 +247,16 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
      * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
      * later.
-     * <p/>
-     * <b>Important:</b> The original input means the input message that are bounded by the current
-     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
-     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
-     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
-     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
-     * for the messages in their sub-route (eg the split message); however these EIPs have an option named
-     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * <p>
+     * <b>Important:</b> The original input means the input message that is bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. A unit of work typically spans one route, or multiple routes if they are
+     * connected using internal endpoints such as direct or seda. When messages are passed via external endpoints such
+     * as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as the
+     * original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary for
+     * the messages in their sub-route (eg the split message); however these EIPs have an option named
+     * <code>shareUnitOfWork</code> which allows to combine with the parent unit of work in regard to error handling and
      * therefore use the parent original message.
-     * <p/>
+     * <p>
      * By default this feature is off.
      *
      * @return     the builder
@@ -270,7 +270,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
 
     /**
      * Will use the original input message when an {@link org.apache.camel.Exchange} for this on completion.
-     * <p/>
+     * <p>
      * The original input message is defensively copied, and the copied message body is converted to
      * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
      * original route), to ensure the body can be read when the original message is being used later. If the body is
@@ -278,16 +278,16 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
      * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
      * later.
-     * <p/>
-     * <b>Important:</b> The original input means the input message that are bounded by the current
-     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
-     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
-     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
-     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
-     * for the messages in their sub-route (eg the split message); however these EIPs have an option named
-     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * <p>
+     * <b>Important:</b> The original input means the input message that is bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. A unit of work typically spans one route, or multiple routes if they are
+     * connected using internal endpoints such as direct or seda. When messages are passed via external endpoints such
+     * as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as the
+     * original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary for
+     * the messages in their sub-route (eg the split message); however these EIPs have an option named
+     * <code>shareUnitOfWork</code> which allows to combine with the parent unit of work in regard to error handling and
      * therefore use the parent original message.
-     * <p/>
+     * <p>
      * By default this feature is off.
      *
      * @return the builder

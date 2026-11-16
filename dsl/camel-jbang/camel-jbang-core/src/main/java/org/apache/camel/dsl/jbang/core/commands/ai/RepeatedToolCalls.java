@@ -95,14 +95,16 @@ public final class RepeatedToolCalls {
         JsonObject miss = misses.get(key);
         if (miss != null) {
             // the hint of the tool is for an answer that was found, such as writing the file with the options it
-            // gave; a miss gives no options, so the note says what the answer was and what to ask instead (CAMEL-26932)
+            // gave; a miss gives no options, so the note says what the answer was and what to ask instead (CAMEL-26932),
+            // or, for a miss without suggestions, the next step the tool has for a miss: in r34 the model asked for a
+            // sample that does not exist 10 times, 8 of them after being told to ask with other arguments
             Object suggestions = miss.get("suggestions");
             note.put("note", "The answer was: " + miss.getString("error") + ". "
                              + (suggestions instanceof Collection<?> c && !c.isEmpty()
                                      ? "Use one of the suggestions instead: " + String.join(", ", c.stream()
                                              .map(String::valueOf).toList())
                                        + "."
-                                     : "Ask with other arguments instead.")
+                                     : tool.missHint() != null ? tool.missHint() : "Ask with other arguments instead.")
                              + " You asked this " + times + " times now with the same arguments, and the answer is the"
                              + " same each time.");
             if (suggestions != null) {
@@ -128,7 +130,8 @@ public final class RepeatedToolCalls {
     /**
      * As {@link #recordSuccessfulAnswer(ToolDescriptor, Map)}, with the answer: an answer with an {@code error}, such
      * as a name the catalog has not got, is a miss, and the note for repeating it says so instead of the hint of the
-     * tool. A miss still counts, so the model is still stopped from asking the same again and again (CAMEL-26875).
+     * tool, with the {@link ToolDescriptor#missHint() miss hint} of the tool when the miss has no suggestions. A miss
+     * still counts, so the model is still stopped from asking the same again and again (CAMEL-26875).
      *
      * @param answer the answer of the tool, or null when it is not JSON
      */

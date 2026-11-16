@@ -24,7 +24,7 @@ public class GoogleSheetsStreamEndpointUriFactory extends org.apache.camel.suppo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(34);
+        Set<String> props = new HashSet<>(35);
         props.add("accessToken");
         props.add("applicationName");
         props.add("backoffErrorThreshold");
@@ -38,6 +38,7 @@ public class GoogleSheetsStreamEndpointUriFactory extends org.apache.camel.suppo
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("includeGridData");
         props.add("initialDelay");
         props.add("majorDimension");

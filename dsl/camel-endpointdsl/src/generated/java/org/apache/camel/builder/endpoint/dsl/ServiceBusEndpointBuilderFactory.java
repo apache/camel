@@ -1811,7 +1811,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * Gets the datetime at which this message was enqueued in Azure Service
          * Bus.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -1823,7 +1823,7 @@ public interface ServiceBusEndpointBuilderFactory {
         /**
          * Gets the datetime at which this message will expire.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -1847,7 +1847,7 @@ public interface ServiceBusEndpointBuilderFactory {
         /**
          * Gets the datetime at which the lock of this message expires.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: consumer
          * 
@@ -1883,7 +1883,8 @@ public interface ServiceBusEndpointBuilderFactory {
         /**
          * The representation of message as defined by AMQP protocol.
          * 
-         * The option is a: {@code AmqpAnnotatedMessage} type.
+         * The option is a: {@code
+         * com.azure.core.amqp.models.AmqpAnnotatedMessage} type.
          * 
          * Group: consumer
          * 
@@ -1956,7 +1957,7 @@ public interface ServiceBusEndpointBuilderFactory {
         /**
          * Gets the duration before this message expires.
          * 
-         * The option is a: {@code Duration} type.
+         * The option is a: {@code java.time.Duration} type.
          * 
          * Group: consumer
          * 
@@ -1982,7 +1983,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * appear in the Service Bus queue or topic. (consumer) Gets the
          * scheduled enqueue time of this message.
          * 
-         * The option is a: {@code OffsetDateTime} type.
+         * The option is a: {@code java.time.OffsetDateTime} type.
          * 
          * Group: common
          * 
@@ -1996,7 +1997,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Overrides the transaction in service. This object just contains
          * transaction id.
          * 
-         * The option is a: {@code ServiceBusTransactionContext} type.
+         * The option is a: {@code
+         * com.azure.messaging.servicebus.ServiceBusTransactionContext} type.
          * 
          * Group: producer
          * 

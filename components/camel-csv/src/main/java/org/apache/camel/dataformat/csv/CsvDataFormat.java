@@ -168,7 +168,8 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
         if (headerDisabled) {
             answer = answer.builder().setHeader((String[]) null).get(); // null disables the header
-        } else if (header != null) {
+        } else if (header != null && !header.isBlank()) {
+            // a blank header is no header, not one column named ""
             if (header.indexOf(',') != -1) {
                 answer = answer.builder().setHeader(header.split(",")).get();
             } else {
@@ -397,7 +398,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     /**
      * Gets the header. Multiple values can be separated by comma.
      *
-     * If {@code null} then the default one of the format used. If empty, then it will be automatically handled.
+     * If {@code null}, empty or blank, then the header of the format is used.
      *
      * @return Header
      */
@@ -406,9 +407,9 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Gets the header. Multiple values can be separated by comma.
+     * Sets the header. Multiple values can be separated by comma.
      *
-     * If {@code null} then the default one of the format used. If empty, then it will be automatically handled.
+     * If {@code null}, empty or blank, then the header of the format is used.
      *
      * @param  header Header
      * @return        Current {@code CsvDataFormat}, fluent API

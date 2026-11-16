@@ -58,7 +58,10 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     private String timeUnit;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer",
-              description = "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue.")
+              description = "Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue:"
+                            + " each task goes directly to a thread, up to maxPoolSize threads, and then the rejected policy applies."
+                            + " Use Integer.MAX_VALUE for an unbounded queue."
+                            + " For a scheduled thread pool, 0 or -1 means the queue is not limited.")
     private String maxQueueSize;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",

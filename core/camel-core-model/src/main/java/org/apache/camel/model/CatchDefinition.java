@@ -195,7 +195,7 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
 
     /**
      * Sets an additional predicate that should be true before the onCatch is triggered.
-     * <p/>
+     * <p>
      * To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type
      * or not.
      *

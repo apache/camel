@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.exceptionhandler;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -35,6 +37,8 @@ import org.apache.camel.dsl.jbang.run.common.Printer;
 public class MissingPluginParameterExceptionHandler {
 
     private final CamelJBangMain main;
+
+    private static final Pattern MISSING_ARGUMENT = Pattern.compile("(.+) (?:is|are) required for this command\\.?");
 
     public MissingPluginParameterExceptionHandler(CamelJBangMain main) {
         this.main = main;
@@ -58,7 +62,7 @@ public class MissingPluginParameterExceptionHandler {
                 return cli.getExitCode();
             }
         }
-        String message = ex.getMessage();
+        String message = missingArgument(ex.getMessage());
         if (command.getCommand() instanceof UsageErrorHandler handler) {
             Integer exitCode = handler.usageError(message, args);
             if (exitCode != null) {
@@ -94,6 +98,19 @@ public class MissingPluginParameterExceptionHandler {
         }
         printJsonError(command, args, CliExitCode.USAGE, message);
         return CliExitCode.USAGE;
+    }
+
+    /**
+     * The message of the parser for a missing argument says "{description} is required for this command" (or "are" for
+     * several), which reads badly for most descriptions ("Service name are required for this command"): it is "Missing
+     * argument: {description}", and the usage under it names the argument (CAMEL-26931).
+     */
+    static String missingArgument(String message) {
+        if (message == null || message.startsWith("Option:")) {
+            return message;
+        }
+        Matcher m = MISSING_ARGUMENT.matcher(message);
+        return m.matches() ? "Missing argument: " + m.group(1) : message;
     }
 
     private static String synopsisOf(CommandTree command) {

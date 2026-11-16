@@ -381,7 +381,7 @@ public interface IgniteComputeEndpointBuilderFactory {
         /**
          * Parameters for APPLY, BROADCAST and EXECUTE operations.
          * 
-         * The option is a: {@code Any object or Collection of objects} type.
+         * The option is a: {@code Object or java.util.Collection<Object>} type.
          * 
          * Group: producer
          * 

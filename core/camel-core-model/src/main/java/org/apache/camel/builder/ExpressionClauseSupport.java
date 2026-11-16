@@ -229,7 +229,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     // -------------------------------------------------------------------------
 
     /**
-     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
      * @param  ref the name (bean id) of the bean to lookup from the registry
@@ -240,7 +240,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
-     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
      * @param  instance the existing instance of the bean
@@ -251,7 +251,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
-     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      * <p>
      * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
@@ -265,7 +265,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
-     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
      * @param  ref    the name (bean id) of the bean to lookup from the registry
@@ -277,7 +277,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
-     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
      * @param  ref   the name (bean id) of the bean to lookup from the registry
@@ -291,7 +291,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
-     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
      * @param  ref    the name (bean id) of the bean to lookup from the registry
@@ -306,7 +306,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
-     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
      * @param  instance the existing instance of the bean
@@ -318,7 +318,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
-     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      * <p>
      * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
@@ -333,7 +333,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
-     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      * <p>
      * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
@@ -350,7 +350,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
-     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      * <p>
      * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
