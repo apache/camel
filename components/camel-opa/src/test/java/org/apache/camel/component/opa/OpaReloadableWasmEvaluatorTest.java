@@ -17,10 +17,12 @@
 package org.apache.camel.component.opa;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.impl.DefaultCamelContext;
@@ -95,8 +97,12 @@ class OpaReloadableWasmEvaluatorTest {
             assertThat(evaluator.evaluateDecision(Map.of())).isEqualTo(true);
             verify(old, never()).close();
             content.set(bundle(1));
+            var failedAt = evaluator.getReloadStatus().getLastFailedReload();
             assertThat(evaluator.reload()).isFalse();
-            assertThat(evaluator.getReloadStatus().getLastReloadFailureType()).isNull();
+            // a later successful check moves the check time and keeps the failure visible
+            assertThat(evaluator.getReloadStatus().getLastSuccessfulCheck()).isAfterOrEqualTo(failedAt);
+            assertThat(evaluator.getReloadStatus().getLastReloadFailureType()).isEqualTo(IOException.class.getName());
+            assertThat(evaluator.getReloadStatus().getLastFailedReload()).isEqualTo(failedAt);
         }
     }
 
@@ -270,7 +276,7 @@ class OpaReloadableWasmEvaluatorTest {
 
     @Test
     void defaultDoesNotReloadResourceOnEachDecision() throws Exception {
-        var loads = new java.util.concurrent.atomic.AtomicInteger();
+        var loads = new AtomicInteger();
         var delegate = mock(OpaWasmEvaluator.class);
         when(delegate.evaluateDecision(anyMap())).thenReturn(true);
         try (var context = new DefaultCamelContext();
@@ -288,7 +294,7 @@ class OpaReloadableWasmEvaluatorTest {
     @Test
     void malformedDataNeverReachesReplacementFactory() throws Exception {
         var content = new AtomicReference<>(bundle(1));
-        var creations = new java.util.concurrent.atomic.AtomicInteger();
+        var creations = new AtomicInteger();
         var delegate = mock(OpaWasmEvaluator.class);
         try (var context = new DefaultCamelContext();
              var evaluator = evaluator(context, content::get, b -> {
@@ -310,7 +316,7 @@ class OpaReloadableWasmEvaluatorTest {
     @Test
     void rapidReloadsCloseEachRetiredSnapshotOnce() throws Exception {
         var content = new AtomicReference<>(bundle(1));
-        var delegates = new java.util.ArrayList<OpaWasmEvaluator>();
+        var delegates = new ArrayList<OpaWasmEvaluator>();
         try (var context = new DefaultCamelContext();
              var evaluator = evaluator(context, content::get, b -> {
                  var delegate = mock(OpaWasmEvaluator.class);

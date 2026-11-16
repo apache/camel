@@ -194,6 +194,7 @@ public class OpaEndpoint extends DefaultEndpoint {
         throw new IllegalStateException("A started WASM endpoint is required to reload its policy");
     }
 
+    /** The reload status of the WASM policy, or {@code null} when this endpoint does not evaluate in WASM mode. */
     public OpaPolicyReloadStatus getPolicyReloadStatus() {
         return evaluator instanceof OpaReloadableWasmEvaluator wasm ? wasm.getReloadStatus() : null;
     }

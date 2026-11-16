@@ -65,6 +65,8 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
     private boolean closed;
     private boolean reloadEnabled = true;
     private long watchGeneration;
+    /** The revision of content that failed to load; a poll does not rebuild it until the content changes. */
+    private String lastFailedRevision;
     private ScheduledExecutorService executor;
     private ScheduledFuture<?> watch;
     private volatile OpaPolicyReloadStatus status;
@@ -101,12 +103,7 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
             long reloadInterval, String policyPath, String allowKey, String includeHeaders, String includeProperties,
             boolean includeBody, boolean failOpen, Expression inputExpression)
             throws Exception {
-        if (ObjectHelper.isEmpty(policyBundle)) {
-            throw new IllegalArgumentException("policyBundle is required when evaluationMode=wasm");
-        }
-        if (poolSize < 1) {
-            throw new IllegalArgumentException("poolSize must be at least 1 when evaluationMode=wasm, was " + poolSize);
-        }
+        OpaWasmEvaluator.validateWasmOptions(policyBundle, poolSize);
         String resolvedEntrypoint = ObjectHelper.isNotEmpty(entrypoint) ? entrypoint : policyPath;
         return new OpaReloadableWasmEvaluator(
                 camelContext, reloadInterval,
@@ -131,23 +128,34 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
             }
             generation = watchGeneration;
         }
-        return reload(generation);
+        // an explicit reload tries again even when the same content failed before
+        return reload(generation, false);
     }
 
-    private boolean reload(long generation) throws Exception {
+    private boolean reload(long generation, boolean skipKnownFailure) throws Exception {
         synchronized (reloadLock) {
             synchronized (state) {
                 ensureOpen(generation);
             }
             OpaWasmEvaluator replacement = null;
             boolean published = false;
+            String revision = null;
             try {
                 OpaWasmEvaluator.Bundle bundle = immutableBundle(loader.load());
-                String revision = revision(bundle);
+                revision = revision(bundle);
                 synchronized (state) {
                     ensureOpen(generation);
                     if (active.revision.equals(revision)) {
-                        status = new OpaPolicyReloadStatus(revision, Instant.now(), null, null);
+                        // a successful check; the last failure stays visible in the status
+                        status = new OpaPolicyReloadStatus(
+                                revision, Instant.now(), status.getLastFailedReload(), status.getLastReloadFailureType());
+                        return false;
+                    }
+                    if (skipKnownFailure && revision.equals(lastFailedRevision)) {
+                        // the content that failed to load is still there: building it again would fail the same way
+                        // and log the same warning on every poll, so wait for it to change
+                        LOG.debug("WASM policy {} still has the content that failed to load; waiting for it to change",
+                                getPolicyPath());
                         return false;
                     }
                 }
@@ -159,7 +167,9 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
                     active = new Snapshot(replacement, revision);
                     published = true;
                     previous.retired = true;
-                    status = new OpaPolicyReloadStatus(revision, Instant.now(), null, null);
+                    lastFailedRevision = null;
+                    status = new OpaPolicyReloadStatus(
+                            revision, Instant.now(), status.getLastFailedReload(), status.getLastReloadFailureType());
                     if (previous.readers != 0) {
                         previous = null;
                     }
@@ -171,8 +181,9 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
             } catch (Exception e) {
                 synchronized (state) {
                     if (!closed && (generation < 0 || generation == watchGeneration)) {
+                        lastFailedRevision = revision;
                         status = new OpaPolicyReloadStatus(
-                                active.revision, status.getLastSuccessfulReload(),
+                                active.revision, status.getLastSuccessfulCheck(),
                                 Instant.now(), e.getClass().getName());
                     }
                 }
@@ -185,6 +196,10 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
         }
     }
 
+    /**
+     * Enables reloading and, when {@code policyReloadInterval} is positive, starts the Camel-managed scheduler that
+     * polls the configured resource. Safe to call after {@link #stopWatching()} to enable reloads again.
+     */
     public void startWatching() {
         synchronized (state) {
             ensureOpen(-1);
@@ -205,6 +220,11 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
         }
     }
 
+    /**
+     * Disables reloading and cancels the scheduler. After this call {@link #reload()} throws
+     * {@link IllegalStateException}, also when no interval was configured, until {@link #startWatching()} is called
+     * again.
+     */
     public void stopWatching() {
         ScheduledExecutorService stopped;
         synchronized (state) {
@@ -224,8 +244,10 @@ public final class OpaReloadableWasmEvaluator extends OpaPolicyEvaluator impleme
 
     private void poll(long generation) {
         try {
-            reload(generation);
-        } catch (Exception e) {
+            reload(generation, true);
+        } catch (Throwable e) {
+            // also an Error: a run that lets it escape would cancel every later run of the scheduler, and the watcher
+            // would stop for good without a status change or a log line
             synchronized (state) {
                 if (!closed && generation == watchGeneration) {
                     LOG.warn("Could not reload WASM policy {}; retaining revision {}. Failure type: {}",

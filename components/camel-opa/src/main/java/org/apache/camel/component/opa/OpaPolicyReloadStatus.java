@@ -18,35 +18,48 @@ package org.apache.camel.component.opa;
 
 import java.time.Instant;
 
-/** An immutable view of the active WebAssembly revision and the last reload attempt. */
+/**
+ * An immutable view of the active WebAssembly revision, the last successful check of the configured resource and the
+ * last failed reload. A later successful check does not clear the last failure, so it stays visible until another
+ * reload fails.
+ */
 public final class OpaPolicyReloadStatus {
 
     private final String activeRevision;
-    private final Instant lastSuccessfulReload;
+    private final Instant lastSuccessfulCheck;
     private final Instant lastFailedReload;
     private final String lastReloadFailureType;
 
-    OpaPolicyReloadStatus(String activeRevision, Instant lastSuccessfulReload, Instant lastFailedReload,
+    OpaPolicyReloadStatus(String activeRevision, Instant lastSuccessfulCheck, Instant lastFailedReload,
                           String lastReloadFailureType) {
         this.activeRevision = activeRevision;
-        this.lastSuccessfulReload = lastSuccessfulReload;
+        this.lastSuccessfulCheck = lastSuccessfulCheck;
         this.lastFailedReload = lastFailedReload;
         this.lastReloadFailureType = lastReloadFailureType;
     }
 
+    /** The SHA-256 hex digest of the active WASM module and its data document. */
     public String getActiveRevision() {
         return activeRevision;
     }
 
-    public Instant getLastSuccessfulReload() {
-        return lastSuccessfulReload;
+    /**
+     * When the configured resource was last read and found valid: the initial load, a reload that published a new
+     * revision, or a poll that found the content unchanged. Never null.
+     */
+    public Instant getLastSuccessfulCheck() {
+        return lastSuccessfulCheck;
     }
 
+    /** When a reload last failed, or {@code null} if none has failed. Kept after later successful checks. */
     public Instant getLastFailedReload() {
         return lastFailedReload;
     }
 
-    /** Failure class only; messages and resource locations are not exposed through status. */
+    /**
+     * The class name of the exception of the last failed reload, or {@code null} if none has failed. Only the class:
+     * messages and resource locations are not exposed through the status.
+     */
     public String getLastReloadFailureType() {
         return lastReloadFailureType;
     }
