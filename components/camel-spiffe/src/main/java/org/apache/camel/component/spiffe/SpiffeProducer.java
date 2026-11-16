@@ -85,12 +85,13 @@ public class SpiffeProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (producerHealthCheck != null) {
-            producerHealthCheck.close();
-            healthCheckRepository.removeHealthCheck(producerHealthCheck);
-            producerHealthCheck = null;
-        }
         try {
+            // inside the try: a repository that throws must not keep the observer client open or skip super.doStop()
+            if (producerHealthCheck != null) {
+                producerHealthCheck.close();
+                healthCheckRepository.removeHealthCheck(producerHealthCheck);
+                producerHealthCheck = null;
+            }
             WorkloadApiClient client = healthClient;
             healthClient = null;
             if (client != null) {

@@ -634,8 +634,8 @@ include::spring-boot:partial$starter.adoc[]
 == Producer readiness and identity observations
 
 Enable producer health checks with `camel.health.producersEnabled=true` before starting the route. The component
-also supports `healthCheckProducerEnabled` to disable its checks. A check is registered with the producer and removed
-when it stops. For each enabled check, a dedicated SDK-managed Workload API client maintains one streaming observer;
+also supports `healthCheckProducerEnabled` to disable its checks. The producer registers a check on start and removes
+it on stop. For each enabled check, a dedicated SDK-managed Workload API client maintains one streaming observer;
 stopping the producer closes that client and cancels its observer, even when the endpoint remains cached. Health
 calls read an immutable metadata snapshot and never fetch credentials, contact the API, or start another observer.
 Producer checks remain disabled globally by default, and no observer client is opened while they are disabled.
@@ -653,7 +653,7 @@ The observation depends on the endpoint's configured operation:
 Both report the most recent update timestamp and the state of the watch (`not-started`, `starting`, `watching`, `failed`
 or `stopped`). These are SDK callback observations, not an independently measured connection heartbeat; `lastUpdate` is
 the local observation time, not the SPIRE credential's issuance time. The check measures whether the identity the
-Workload API last delivered is valid and not about to expire, not whether the agent is reachable right now: the SDK
+Workload API last delivered is valid and not about to expire, not whether the agent is reachable right now. The SDK
 reconnects to an unreachable agent on its own, with unlimited retries and without telling the watch, so an agent outage
 shows up only as an SVID that is no longer refreshed and comes within `healthCheckExpiryThreshold` of its expiry.
 `watch=failed` appears only after an error the SDK does not retry; the SDK then delivers no more updates, readiness
