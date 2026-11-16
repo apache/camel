@@ -41,7 +41,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
 import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_ROUTE;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
@@ -211,7 +210,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
             } else {
                 id = "context:" + camelContext.getName();
             }
-            return String.format("%s-%s-%s", DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME, id, exchange.getExchangeId());
+            // named after this policy, so another metrics route policy on the same route does not overwrite it
+            return "MicrometerRoutePolicy-" + id + "-" + exchange.getExchangeId();
         }
 
         private Counter createCounter(String meterName, String description) {

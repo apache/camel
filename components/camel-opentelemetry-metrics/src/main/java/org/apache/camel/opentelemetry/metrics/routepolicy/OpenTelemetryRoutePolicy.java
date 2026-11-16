@@ -43,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.EVENT_TYPE_ATTRIBUTE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ATTRIBUTE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ROUTE;
@@ -330,7 +329,8 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
 
         private String propertyName(Exchange exchange) {
             String id = route != null ? route.getId() : "context:" + camelContext.getName();
-            return String.format("%s-%s-%s", DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME, id, exchange.getExchangeId());
+            // named after this policy, so another metrics route policy on the same route does not overwrite it
+            return "OpenTelemetryRoutePolicy-" + id + "-" + exchange.getExchangeId();
         }
 
         private LongCounter createCounter(String meterName, String description) {
