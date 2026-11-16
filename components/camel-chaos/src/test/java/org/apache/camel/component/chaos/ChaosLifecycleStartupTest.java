@@ -129,7 +129,7 @@ class ChaosLifecycleStartupTest {
         context.start();
         await().atMost(10, TimeUnit.SECONDS).until(() -> status() == ServiceStatus.Started);
         ChaosManager chaos = ChaosManager.get(context);
-        chaos.addRule("route=start lifecycle action=stop duration=3s");
+        chaos.addRule("route=start lifecycle action=stop duration=1s");
         await().atMost(10, TimeUnit.SECONDS).until(() -> "down".equals(lifecycle(chaos).getString("state")));
         // a stop through the route controller is a manual stop for the supervising controller: it releases the route
         assertThat(status()).isEqualTo(ServiceStatus.Stopped);

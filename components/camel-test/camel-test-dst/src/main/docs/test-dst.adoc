@@ -612,15 +612,14 @@ CAMEL-26968, as missing).
 * Code on its own threads or on a third-party scheduler is outside the harness; strict mode makes reaching it fail the
   seed.
 * One run per JVM at a time: the active run, and so the virtual clock, is a static field, and every rewritten clock read
-  in the JVM sees it, as does Camel core through `TimeSource` while the run is open. A world must therefore not go into
-  a module that runs its tests in parallel (`camel.surefire.parallel=true`, as camel-jms and camel-sql do): the other
-  tests in that surefire fork would read the virtual clock while a run is active. For the same reason, a
-  `CamelContext` left running in the same fork by an earlier non-DST test would read the virtual time too and could
-  fail a strict seed; stop it in that test. The harness enforces this: a second
-  run while one is open fails, and a DST test refuses to start when JUnit runs tests in parallel. A local world in
-  such a module (camel-sjms, for example) can still be run alone, with
-  `-Dtest=<the world> -Dcamel.surefire.parallel=false`, but it cannot be committed there: the module's own build would
-  fail it.
+  in the JVM sees it, as does Camel core through `TimeSource` while the run is open. A world must therefore not run
+  concurrently with other tests in a module with `camel.surefire.parallel=true`: the other tests in that surefire fork
+  would read the virtual clock while a run is active. To host a DST test in a parallel module, tag the test with
+  `@Tag("not-parallel")` and configure Surefire with two executions — a parallel pass excluding `not-parallel` and a
+  serial pass (`<groups>not-parallel</groups>`) with `junit.jupiter.execution.parallel.enabled = false` in its
+  `<configurationParameters>`. For the same reason, a `CamelContext` left running in the same fork by an earlier non-DST
+  test would read the virtual time too and could fail a strict seed; stop it in that test. The harness enforces this: a second
+  run while one is open fails, and a DST test refuses to start when JUnit runs tests in parallel.
 * Locks do not exclude: every task runs on the test thread, so a `ReentrantLock` or `synchronized` block held by a
   blocked task is entered again by the tasks nested above it. A critical section is atomic only because the fake does
   not block inside it, and races between two code paths that each hold a lock cannot be explored.

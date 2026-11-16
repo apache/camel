@@ -45,7 +45,7 @@ class ChaosHooksTest extends ChaosTestSupport {
                 // a scheduled poll that does not poll during the test, and is never sent to
                 from("testpoll:inbox?initialDelay=3600000").routeId("poller").to("mock:out");
                 // consumed, but neither sent to nor polled on a schedule
-                from("seda:in").routeId("in").to("mock:in");
+                from("seda:in?pollTimeout=10").routeId("in").to("mock:in");
                 // direct:orders is consumed and sent to; mock:kafka sent to; the toD knows its endpoint when it sends
                 from("direct:calls").routeId("calls").to("direct:orders");
                 from("direct:orders").routeId("orders").to("mock:kafka").toD("mock:dyn-${header.n}")
