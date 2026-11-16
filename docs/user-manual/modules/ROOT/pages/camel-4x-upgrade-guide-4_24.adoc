@@ -8586,6 +8586,15 @@ message expiry interval, content type, response topic, correlation data and user
 a publish no longer modifies. A topic alias or subscription identifiers set in the header object are not sent: the
 client assigns topic aliases for its connection, and subscription identifiers are sent by the server only.
 
+=== camel-paho-mqtt5 - a subscription the broker refuses fails the consumer
+
+The consumer now checks the reason code of the SUBACK. When the broker refuses the subscription (a reason code of 0x80
+or higher, such as 0x87 Not authorized), the subscribe fails with an `MqttException` that has that reason code, and
+the route does not start. When the subscription is refused after a reconnect (an automatic reconnect of the client, or
+the reconnect after a failed message with manualAcksEnabled), the route is restarted, and its start fails while the
+broker refuses the subscription; with a client given in the `client` option, an error is logged. Before, Paho returned
+normally from such a subscribe, so the route started and received no message of its topic.
+
 === camel-wal - the unconfirmed offsets of the previous run are replayed after a restart
 
 `WriteAheadResumeStrategy` now does what it is documented to do after a restart: when the consumer starts and loads the
