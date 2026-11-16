@@ -126,8 +126,6 @@ final class FakeKinesis implements KinesisClient {
     private record Iterator(String shard, int position, long issuedAt) {
     }
 
-    private static final boolean STRICT_LATEST = Boolean.getBoolean("dst.kinesis.strictLatest");
-
     private final Dst dst;
     private final DstLedger ledger;
     final Map<String, FakeShard> shards = new LinkedHashMap<>();
@@ -140,8 +138,6 @@ final class FakeKinesis implements KinesisClient {
      */
     final Set<Rec> skippedByLatest = new HashSet<>();
     private final Set<String> latestStarts = new HashSet<>();
-    /** epoch/shard of an iterator that expired, until the next iterator of that shard. */
-    private final Set<String> expiredBefore = new HashSet<>();
     /** The shards of the first complete ListShards answer of each epoch, and of the listing in progress. */
     private final Map<Integer, Set<String>> firstLists = new HashMap<>();
     private Set<String> listing = new HashSet<>();
@@ -246,7 +242,6 @@ final class FakeKinesis implements KinesisClient {
                     .message("dst: Rate exceeded for shard " + shard.id).build());
         }
         ShardIteratorType type = request.shardIteratorType();
-        boolean afterExpiry = expiredBefore.remove(epoch + "/" + shard.id);
         int position;
         switch (type) {
             case TRIM_HORIZON:
@@ -256,17 +251,14 @@ final class FakeKinesis implements KinesisClient {
             case LATEST:
                 // [I] "Start reading just after the most recent record in the shard"
                 position = shard.records.size();
-                // skipped by design when the consumer starts a shard of its first shard list (the first iterator of the
-                // shard in an epoch), and also when, right after its iterator of such a shard expired, it gets a LATEST
-                // iterator again for that shard and has not routed a record of it yet (the consumer has no position to
-                // continue from; this second case is CAMEL-26968, and -Ddst.kinesis.strictLatest=true excuses only the
-                // first). Never for a shard with a
+                // skipped by design only when the consumer starts a shard of its first shard list (the first iterator
+                // of the shard in an epoch). Never for a later LATEST iterator of the shard, for example after an expiry
+                // (since CAMEL-26968 the consumer continues from the time of its first LATEST iterator), a shard with a
                 // checkpoint (the resume strategy starts it after the checkpoint) or a shard created later (read from
                 // its start)
                 boolean first = latestStarts.add(epoch + "/" + shard.id);
                 boolean listedFirst = firstLists.getOrDefault(epoch, Set.of()).contains(shard.id);
-                if (listedFirst && !hasCheckpoint.test(shard.id)
-                        && (first || !STRICT_LATEST && afterExpiry && !routedFrom(shard))) {
+                if (first && listedFirst && !hasCheckpoint.test(shard.id)) {
                     for (int i = 0; i < position; i++) {
                         skippedByLatest.add(shard.records.get(i));
                     }
@@ -296,16 +288,6 @@ final class FakeKinesis implements KinesisClient {
         String it = newIterator(shard.id, position);
         dst.trace("fake: iterator " + it + " for " + shard.id + " " + type + " at " + position);
         return GetShardIteratorResponse.builder().shardIterator(it).build();
-    }
-
-    /** Whether the consumer of the current epoch has routed a record of the shard. */
-    private boolean routedFrom(FakeShard shard) {
-        for (Rec r : shard.records) {
-            if (r.routedIn.contains(epoch)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -338,7 +320,6 @@ final class FakeKinesis implements KinesisClient {
         // [G] ExpiredIteratorException: "The provided iterator exceeds the maximum age allowed."
         if (dst.now() - it.issuedAt() >= ITERATOR_LIFETIME_MILLIS) {
             ledger.record("iteratorExpired", it.shard(), request.shardIterator());
-            expiredBefore.add(epoch + "/" + it.shard());
             throw ExpiredIteratorException.builder()
                     .message("Iterator expired. The iterator was created at time " + it.issuedAt() + " ms").build();
         }
