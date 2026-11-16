@@ -131,10 +131,10 @@ precedence over these options.
 Routes that set these headers to choose the part class or namespace per message must enable the option, for example
 `jaxb.setAllowPartClassFromHeader(true)` in Java, `allowPartClassFromHeader="true"` on `<jaxb>` in XML, or
 `allowPartClassFromHeader: true` in YAML. With REST binding, set the data format property
-`xml.out.allowPartClassFromHeader=true` on the REST configuration.
+`xml.out.allowPartClassFromHeader=true` on the REST configuration for a REST service (the response), or
+`xml.in.allowPartClassFromHeader=true` for the `rest` producer (the request).
 
-The SOAP data format (camel-soap) is built on the JAXB data format, so the same applies there: it has the same
-`allowPartClassFromHeader` option (default `false`).
+The SOAP data format (camel-soap) is built on the JAXB data format, and always ignores these headers.
 
 === camel-jpa - query parameters from CamelJpaParameters header are bound literally
 

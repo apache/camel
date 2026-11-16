@@ -66,12 +66,6 @@ public class SoapDataFormat extends DataFormatDefinition {
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
               description = "Whether to ignore headers that were not unmarshalled.")
     private String ignoreUnmarshalledHeaders;
-    @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of"
-                            + " the partClass and partNamespace options when marshalling and unmarshalling."
-                            + " This should only be enabled when desired to be used.")
-    private String allowPartClassFromHeader;
 
     public SoapDataFormat() {
         super("soap");
@@ -87,7 +81,6 @@ public class SoapDataFormat extends DataFormatDefinition {
         this.namespacePrefix = source.namespacePrefix;
         this.schema = source.schema;
         this.ignoreUnmarshalledHeaders = source.ignoreUnmarshalledHeaders;
-        this.allowPartClassFromHeader = source.allowPartClassFromHeader;
     }
 
     public SoapDataFormat(String contextPath) {
@@ -117,7 +110,6 @@ public class SoapDataFormat extends DataFormatDefinition {
         this.namespacePrefix = builder.namespacePrefix;
         this.schema = builder.schema;
         this.ignoreUnmarshalledHeaders = builder.ignoreUnmarshalledHeaders;
-        this.allowPartClassFromHeader = builder.allowPartClassFromHeader;
     }
 
     @Override
@@ -189,14 +181,6 @@ public class SoapDataFormat extends DataFormatDefinition {
         this.ignoreUnmarshalledHeaders = ignoreUnmarshalledHeaders;
     }
 
-    public String getAllowPartClassFromHeader() {
-        return allowPartClassFromHeader;
-    }
-
-    public void setAllowPartClassFromHeader(String allowPartClassFromHeader) {
-        this.allowPartClassFromHeader = allowPartClassFromHeader;
-    }
-
     /**
      * {@code Builder} is a specific builder for {@link SoapDataFormat}.
      */
@@ -211,7 +195,6 @@ public class SoapDataFormat extends DataFormatDefinition {
         private String namespacePrefix;
         private String schema;
         private String ignoreUnmarshalledHeaders;
-        private String allowPartClassFromHeader;
 
         /**
          * Package name where your JAXB classes are located.
@@ -322,26 +305,6 @@ public class SoapDataFormat extends DataFormatDefinition {
          */
         public Builder ignoreUnmarshalledHeaders(String ignoreUnmarshalledHeaders) {
             this.ignoreUnmarshalledHeaders = ignoreUnmarshalledHeaders;
-            return this;
-        }
-
-        /**
-         * Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the
-         * partClass and partNamespace options when marshalling and unmarshalling. This should only be enabled when
-         * desired to be used.
-         */
-        public Builder allowPartClassFromHeader(String allowPartClassFromHeader) {
-            this.allowPartClassFromHeader = allowPartClassFromHeader;
-            return this;
-        }
-
-        /**
-         * Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the
-         * partClass and partNamespace options when marshalling and unmarshalling. This should only be enabled when
-         * desired to be used.
-         */
-        public Builder allowPartClassFromHeader(boolean allowPartClassFromHeader) {
-            this.allowPartClassFromHeader = Boolean.toString(allowPartClassFromHeader);
             return this;
         }
 

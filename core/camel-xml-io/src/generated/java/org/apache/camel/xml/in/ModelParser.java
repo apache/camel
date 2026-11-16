@@ -2058,7 +2058,6 @@ public class ModelParser extends BaseParser {
     }
     protected SoapDataFormat doParseSoapDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SoapDataFormat(), (def, key, val) -> switch (key) {
-                case "allowPartClassFromHeader": def.setAllowPartClassFromHeader(val); yield true;
                 case "contextPath": def.setContextPath(val); yield true;
                 case "elementNameStrategy": def.setElementNameStrategy(val); yield true;
                 case "encoding": def.setEncoding(val); yield true;
