@@ -87,11 +87,12 @@ public class GoogleFirestoreLocalContainerInfraService
     }
 
     /**
-     * The id of the project: {@code test-project}, as Floci GCP accepts any
+     * The id of the project, {@code test-project} unless the {@code google.firestore.projectId} system property gives
+     * another one: Floci GCP accepts any
      */
     @Override
     public String projectId() {
-        return DEFAULT_PROJECT_ID;
+        return System.getProperty(GoogleFirestoreProperties.PROJECT_ID, DEFAULT_PROJECT_ID);
     }
 
     @Override

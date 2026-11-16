@@ -100,6 +100,13 @@ public abstract class GoogleFirestoreITSupport extends CamelTestSupport {
                 configuration.setDatabaseId(databaseId);
             }
         } else {
+            // the command that ran the tests against a real project, before they ran on Floci GCP, gives a key: so that
+            // a run on Floci GCP is not taken for one against that project, it asks for -Dgoogle.instance.type=remote
+            if (System.getProperty(GoogleFirestoreProperties.SERVICE_ACCOUNT_KEY) != null) {
+                throw new IllegalStateException(
+                        "The google.firestore.serviceAccountKey system property is set: add -Dgoogle.instance.type=remote"
+                                                + " to run the tests against the Firestore of that project");
+            }
             // Floci GCP is reached as an emulator: in plain text, with any credentials
             Firestore client = FirestoreOptions.newBuilder()
                     .setProjectId(service.projectId())
