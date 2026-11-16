@@ -674,6 +674,14 @@ xref:spiffe-component.adoc[SPIFFE] component page describes the rest of its opti
 
 None of this applies in `wasm` mode, where there is no server to reach.
 
+=== Static data in pooled WASM instances
+
+Each WASM pool instance prepares its fixed entrypoint and bundled data once when created. New inputs reuse that
+instance's static data while the SDK resets transient input allocations for each evaluation. Instances are never
+shared concurrently. An evaluation failure discards the instance, and its replacement loads the same configured
+entrypoint and data before use. Large static data therefore adds initialization work per instance, rather than
+being parsed again for every exchange.
+
 [[failure-handling]]
 == Failure handling
 

@@ -64,11 +64,16 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
         this.data = data;
         // OpaPolicy carries mutable input/data and is not thread-safe, while a Camel producer is invoked
         // concurrently - so each exchange borrows its own instance rather than sharing one
-        this.pool = new OpaWasmPolicyPool(() -> OpaPolicy.builder().withPolicy(wasm).build(), poolSize, borrowTimeout);
+        this.pool = new OpaWasmPolicyPool(() -> {
+            OpaPolicy policy = OpaPolicy.builder().withPolicy(wasm).build();
+            prepare(policy);
+            return policy;
+        }, poolSize, borrowTimeout);
         // fail at startup rather than on the first exchange: the OpaPolicy constructor is what rejects a module
         // that is not a valid OPA bundle, and the pool creates instances lazily
-        try (OpaWasmPolicyPool.Lease warmup = pool.borrow()) {
-            prepare(warmup.policy());
+        try {
+            // The factory validates and prepares every instance, including replacements after evaluation failures.
+            pool.borrow().close();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Interrupted while loading the WebAssembly policy", e);
@@ -78,10 +83,11 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
     }
 
     /**
-     * Applies the entrypoint and data to a borrowed instance.
+     * Applies the immutable entrypoint and data once to each newly constructed instance.
      * <p/>
-     * Done on every borrow rather than once at creation, so that a pooled instance always evaluates the configured rule
-     * against the bundle's data regardless of what a previous borrower left on it. See
+     * The pool is private to this evaluator and no borrower changes these values. The managed SDK rewinds its input
+     * heap to the saved data boundary on every evaluate(String), so reapplying data only reparses the same document. A
+     * failed evaluation discards the instance; its replacement goes through this preparation again. See
      * {@link OpaWasmPolicyPool.Lease#close()} for why nothing is reset on return.
      */
     private void prepare(OpaPolicy policy) {
@@ -181,19 +187,21 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
 
     @Override
     protected Object evaluateDecision(Map<String, Object> input) throws Exception {
+        // serialized before borrowing, so an input that cannot be serialized costs no pooled instance
+        String json = MAPPER.writeValueAsString(input);
         OpaWasmPolicyPool.Lease lease = pool.borrow();
+        String result;
         try {
-            prepare(lease.policy());
-            Object decision = unwrap(lease.policy().evaluate(MAPPER.writeValueAsString(input)));
-            lease.close();
-            return decision;
+            result = lease.policy().evaluate(json);
         } catch (Exception e) {
-            // a trap part-way through an evaluation can leave the instance in an undefined state, so drop it
-            // rather than hand it to the next exchange. Safe to call unconditionally: a lease ends exactly once,
-            // so this is a no-op when close() above already returned it
+            // a trap part-way through an evaluation can leave the instance in an undefined state, so drop it rather
+            // than hand it to the next exchange. A replacement pays for module creation and the full data parse,
+            // which is why an undefined decision, found by unwrap below and not a trap, keeps the instance
             lease.discard();
             throw e;
         }
+        lease.close();
+        return unwrap(result);
     }
 
     /**

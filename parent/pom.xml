@@ -423,6 +423,8 @@
         <olingo4-version>5.0.0</olingo4-version>
         <onnxruntime-version>1.31.1</onnxruntime-version>
         <opa-version>2.1.1</opa-version>
+        <!-- camel-opa prepares each pooled WASM instance once (CAMEL-26839): after a bump, run its ITs (-Pit, they
+             compile the fixtures with the OPA container) to confirm the SDK still rewinds to the data boundary -->
         <opa-wasm-version>1.1.0</opa-wasm-version>
         <openfeature-sdk-version>1.23.0</openfeature-sdk-version>
         <openfga-version>0.11.0</openfga-version>
