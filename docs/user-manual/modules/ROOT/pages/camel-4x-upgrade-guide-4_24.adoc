@@ -8594,6 +8594,13 @@ The asynchronous sends of the `ProducerTemplate` now fire one `ExchangeSendingEv
 send; before, each event was fired twice. Tracing (camel-tracing, camel-telemetry), which builds its spans from these
 events, now sees one sending/sent pair per asynchronous send of the `ProducerTemplate` instead of two.
 
+=== camel-core - an injected producer whose producer calls the callback and then throws
+
+The same now applies to the producers that `@EndpointInject` and `@Produce` inject (`Producer` fields and the
+`@Produce` proxies, made by the `DeferServiceFactory`): when the producer of the endpoint calls the callback and then
+throws, the exception is logged at WARN and no longer set on the exchange, and the callback is called once. Before, the
+exchange failed with that exception after the producer completed it, and the callback was called a second time.
+
 === camel-core - a hook before each step of a route
 
 A new SPI `org.apache.camel.spi.StepHook`, added with `ExtendedCamelContext.addStepHook`, can fail or delay each step of
