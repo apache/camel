@@ -21,6 +21,12 @@ import org.apache.camel.spi.Metadata;
 public sealed class AlibabaEventBridgeHeaders permits AlibabaEventBridgeProperties {
 
     @Metadata(label = "producer",
+              description = "The operation that the producer performs. This header replaces the operation option. If this"
+                            + " header is not set, an exchange property of the same name replaces the operation option.",
+              javaType = "String")
+    public static final String OPERATION = "CamelAlibabaEventBridgeOperation";
+
+    @Metadata(label = "producer",
               description = "The name of the event bus for a JSON text or Map body. This header replaces the eventBusName"
                             + " option. If this header is not set, an exchange property of the same name replaces the"
                             + " eventBusName option. The key eventBusName of a Map body replaces this header.",

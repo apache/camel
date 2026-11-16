@@ -1677,6 +1677,21 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointAlibabaEventBridge() {
+        String uri = "alibaba-eventbridge:putEvents?endpoint=12345.eventbridge.cn-hangzhou.aliyuncs.com";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        uri = "alibaba-eventbridge:putEvents?region=cn-hangzhou";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertEquals("endpoint", result.getRequired().iterator().next());
+
+        ComponentModel model = catalog.componentModel("alibaba-eventbridge");
+        assertTrue(model.getEndpointHeaders().stream().anyMatch(h -> "CamelAlibabaEventBridgeOperation".equals(h.getName())));
+    }
+
+    @Test
     public void testValidateEndpointHttpPropertyPlaceholder() {
         String uri = "http://api.openweathermap.org/data/2.5/weather?{{property.weatherUri}}";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
