@@ -72,6 +72,19 @@ public interface GenericFileOperations<T> {
     boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException;
 
     /**
+     * Whether a path that a file is about to be renamed or moved onto, or that is about to be deleted or created as a
+     * directory, stays within the starting directory of the endpoint. Operations that refuse such a path in
+     * {@link #renameFile(String, String)}, {@link #deleteFile(String)} and {@link #buildDirectory(String, boolean)}
+     * override this, so the consumer can skip a file whose move target would be refused before the file is processed.
+     *
+     * @param  name the path
+     * @return      <tt>true</tt> if the path can be used, which is the default
+     */
+    default boolean isWithinStartingDirectory(String name) {
+        return true;
+    }
+
+    /**
      * Retrieves the file
      *
      * @param  name                                name of the file
