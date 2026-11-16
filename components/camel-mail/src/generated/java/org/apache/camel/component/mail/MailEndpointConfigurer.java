@@ -79,6 +79,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "handleFailedMessage": target.getConfiguration().setHandleFailedMessage(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "idempotentrepository":
         case "idempotentRepository": target.setIdempotentRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
         case "idempotentrepositoryremoveoncommit":
@@ -219,6 +221,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "handleFailedMessage": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "idempotentrepository":
         case "idempotentRepository": return org.apache.camel.spi.IdempotentRepository.class;
         case "idempotentrepositoryremoveoncommit":
@@ -360,6 +364,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "handleFailedMessage": return target.getConfiguration().isHandleFailedMessage();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "idempotentrepository":
         case "idempotentRepository": return target.getIdempotentRepository();
         case "idempotentrepositoryremoveoncommit":

@@ -24,7 +24,7 @@ public class Olingo2EndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(42);
+        Set<String> props = new HashSet<>(43);
         props.add("apiName");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -42,6 +42,7 @@ public class Olingo2EndpointUriFactory extends org.apache.camel.support.componen
         props.add("exchangePattern");
         props.add("filterAlreadySeen");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("httpAsyncClientBuilder");
         props.add("httpClientBuilder");
         props.add("httpHeaders");

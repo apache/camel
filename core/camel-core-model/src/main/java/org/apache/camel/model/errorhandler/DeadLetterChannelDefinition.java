@@ -118,18 +118,18 @@ public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {
     }
 
     /**
-     * Whether the dead letter channel should handle (and ignore) any new exception that may been thrown during sending
-     * the message to the dead letter endpoint.
-     * <p/>
-     * The default value is <tt>true</tt> which means any such kind of exception is handled and ignored. Set this to
-     * <tt>false</tt> to let the exception be propagated back on the {@link org.apache.camel.Exchange}. This can be used
-     * in situations where you use transactions, and want to use Camel's dead letter channel to deal with exceptions
-     * during routing, but if the dead letter channel itself fails because of a new exception being thrown, then by
-     * setting this to <tt>false</tt> the new exceptions is propagated back and set on the
+     * Whether the dead letter channel should handle (and ignore) any new exception that may have been thrown during
+     * sending the message to the dead letter endpoint.
+     * <p>
+     * The default value is <code>true</code> which means any such kind of exception is handled and ignored. Set this to
+     * <code>false</code> to let the exception be propagated back on the {@link org.apache.camel.Exchange}. This can be
+     * used in situations where you use transactions, and want to use Camel's dead letter channel to deal with
+     * exceptions during routing, but if the dead letter channel itself fails because of a new exception being thrown,
+     * then by setting this to <code>false</code> the new exceptions are propagated back and set on the
      * {@link org.apache.camel.Exchange}, which allows the transaction to detect the exception, and rollback.
      *
-     * @param  handleNewException <tt>true</tt> to handle (and ignore), <tt>false</tt> to catch and propagated the
-     *                            exception on the {@link org.apache.camel.Exchange}
+     * @param  handleNewException <code>true</code> to handle (and ignore), <code>false</code> to catch and propagated
+     *                            the exception on the {@link org.apache.camel.Exchange}
      * @return                    the builder
      */
     public DefaultErrorHandlerDefinition deadLetterHandleNewException(boolean handleNewException) {

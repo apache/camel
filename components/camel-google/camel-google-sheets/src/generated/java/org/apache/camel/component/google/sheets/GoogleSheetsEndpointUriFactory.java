@@ -24,7 +24,7 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(54);
+        Set<String> props = new HashSet<>(55);
         props.add("accessToken");
         props.add("apiName");
         props.add("applicationName");
@@ -49,6 +49,7 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
         props.add("excludeTablesInBandedRanges");
         props.add("getSpreadsheetByDataFilterRequest");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("inBody");
         props.add("includeGridData");
         props.add("includeValuesInResponse");

@@ -24,7 +24,7 @@ public class MNSEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(33);
         props.add("accessKey");
         props.add("accountEndpoint");
         props.add("backoffErrorThreshold");
@@ -36,6 +36,7 @@ public class MNSEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("initialDelay");
         props.add("lazyStartProducer");
         props.add("maxMessagesPerPoll");

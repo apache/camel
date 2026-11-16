@@ -24,7 +24,7 @@ public class FlatpackEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(28);
+        Set<String> props = new HashSet<>(29);
         props.add("allowShortLines");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -35,6 +35,7 @@ public class FlatpackEndpointUriFactory extends org.apache.camel.support.compone
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("ignoreExtraColumns");
         props.add("ignoreFirstRecord");
         props.add("initialDelay");

@@ -31,8 +31,8 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * A basic {@link BasicOutputExpressionNode} which support outputs.
- * <p/>
+ * A basic {@link BasicOutputExpressionNode} which supports outputs.
+ * <p>
  * This node is to be extended by definitions which should have expression and outputs both should not be a processor,
  * such as {@link WhenDefinition}.
  */

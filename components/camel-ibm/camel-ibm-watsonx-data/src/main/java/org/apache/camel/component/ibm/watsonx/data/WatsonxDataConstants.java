@@ -26,7 +26,8 @@ public interface WatsonxDataConstants {
     String HEADER_PREFIX = "CamelIBMWatsonxData";
 
     // Operation
-    @Metadata(description = "The operation to perform", javaType = "WatsonxDataOperations")
+    @Metadata(description = "The operation to perform",
+              javaType = "org.apache.camel.component.ibm.watsonx.data.WatsonxDataOperations")
     String OPERATION = HEADER_PREFIX + "Operation";
 
     // Catalog

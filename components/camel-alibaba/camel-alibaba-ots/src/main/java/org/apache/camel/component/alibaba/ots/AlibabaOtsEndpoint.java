@@ -106,7 +106,7 @@ public class AlibabaOtsEndpoint extends DefaultEndpoint {
                             + " Camel endpoint stops.",
               displayName = "OTS Client", label = "advanced")
     @Metadata(autowired = true)
-    private SyncClient otsClient;
+    private volatile SyncClient otsClient;
 
     private boolean autowiredOtsClient;
 
@@ -128,19 +128,43 @@ public class AlibabaOtsEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("You cannot consume from this endpoint");
     }
 
+    /**
+     * Returns the client that the producer sends its requests with. If no client is set or autowired, the first call
+     * creates it from the options of this endpoint, while it holds the lock of this endpoint: the calls made at the
+     * same time wait for this creation, and the calls made once the client exists do not take the lock. A failed
+     * creation keeps no client, so each call that waited for it, and each later call, tries again.
+     */
     public SyncClient initClient() throws Exception {
-        if (otsClient != null) {
-            return otsClient;
+        SyncClient answer = otsClient;
+        if (answer == null) {
+            lock.lock();
+            try {
+                answer = otsClient;
+                if (answer == null) {
+                    answer = createClient();
+                    otsClient = answer;
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        otsClient = AlibabaOtsUtils.createClient(this);
-        return otsClient;
+        return answer;
+    }
+
+    SyncClient createClient() {
+        return AlibabaOtsUtils.createClient(this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (otsClient != null && !autowiredOtsClient) {
-            otsClient.shutdown();
-            otsClient = null;
+        lock.lock();
+        try {
+            if (otsClient != null && !autowiredOtsClient) {
+                otsClient.shutdown();
+                otsClient = null;
+            }
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }
@@ -198,7 +222,12 @@ public class AlibabaOtsEndpoint extends DefaultEndpoint {
     }
 
     public void setOtsClient(SyncClient otsClient) {
-        this.otsClient = otsClient;
-        this.autowiredOtsClient = otsClient != null;
+        lock.lock();
+        try {
+            this.otsClient = otsClient;
+            this.autowiredOtsClient = otsClient != null;
+        } finally {
+            lock.unlock();
+        }
     }
 }

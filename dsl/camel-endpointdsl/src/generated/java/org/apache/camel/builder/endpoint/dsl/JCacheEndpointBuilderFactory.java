@@ -1714,7 +1714,8 @@ public interface JCacheEndpointBuilderFactory {
         /**
          * The EntryProcessor to invoke.
          * 
-         * The option is a: {@code EntryProcessor<Object, Object, Object>} type.
+         * The option is a: {@code javax.cache.processor.EntryProcessor<Object,
+         * Object, Object>} type.
          * 
          * Group: producer
          * 

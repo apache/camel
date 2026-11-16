@@ -188,6 +188,10 @@ public final class AuthoringTools {
                 .repeatHint("Write the file now with camel_write_file: when the earlier answer had no sample, asking again"
                             + " gives none either. The write checks the file, and its answer says what to change (for a"
                             + " Citrus test: which actions it takes).")
+                // "no sample for" is a miss, whose note gives this instead of the hint above (r34: told 8 times to ask
+                // with other arguments, the model asked for the same missing sample each time)
+                .missHint("Write the file now with camel_write_file: asking again gives no sample either. The write checks"
+                          + " the file, and its answer says what to change (for a Citrus test: which actions it takes).")
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogSamples.sample(ctx.catalog(), args.get("kind"), args.get("name"),

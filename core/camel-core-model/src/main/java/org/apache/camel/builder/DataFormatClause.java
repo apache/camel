@@ -649,7 +649,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *
      * @param unmarshalType unmarshal type for xml jackson type
      * @param jsonView      the view type for xml jackson type
-     * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     * @param include       include such as <code>ALWAYS</code>, <code>NON_NULL</code>, etc.
      */
     public T jacksonXml(Class<?> unmarshalType, Class<?> jsonView, String include) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
@@ -664,7 +664,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *
      * @param unmarshalType unmarshal type for xml jackson type
      * @param jsonView      the view type for xml jackson type
-     * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     * @param include       include such as <code>ALWAYS</code>, <code>NON_NULL</code>, etc.
      * @param prettyPrint   turn pretty printing on or off
      */
     public T jacksonXml(Class<?> unmarshalType, Class<?> jsonView, String include, boolean prettyPrint) {
@@ -808,7 +808,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *
      * @param unmarshalType unmarshal type for json jackson type
      * @param jsonView      the view type for json jackson type
-     * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     * @param include       include such as <code>ALWAYS</code>, <code>NON_NULL</code>, etc.
      */
     public T json(Class<?> unmarshalType, Class<?> jsonView, String include) {
         JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
@@ -823,7 +823,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *
      * @param unmarshalType unmarshal type for json jackson type
      * @param jsonView      the view type for json jackson type
-     * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     * @param include       include such as <code>ALWAYS</code>, <code>NON_NULL</code>, etc.
      * @param prettyPrint   turn pretty printing on or off
      */
     public T json(Class<?> unmarshalType, Class<?> jsonView, String include, boolean prettyPrint) {

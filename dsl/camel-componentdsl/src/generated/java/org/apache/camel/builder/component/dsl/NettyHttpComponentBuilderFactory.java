@@ -444,25 +444,6 @@ public interface NettyHttpComponentBuilderFactory {
     
         
         /**
-         * If sync is enabled this option dictates NettyConsumer which logging
-         * level to use when logging a there is no reply to send back.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
-         * 
-         * Default: WARN
-         * Group: consumer (advanced)
-         * 
-         * @param noReplyLogLevel the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpComponentBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
-            doSetProperty("noReplyLogLevel", noReplyLogLevel);
-            return this;
-        }
-    
-        
-        /**
          * If the server (NettyConsumer) catches an
          * java.nio.channels.ClosedChannelException then its logged using this
          * logging level. This is used to avoid logging the closed channel
@@ -954,6 +935,26 @@ public interface NettyHttpComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The logging level to use when there is nothing to send: on the
+         * consumer (if sync is enabled) when there is no reply to send back,
+         * and on the producer when the message has no body.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: WARN
+         * Group: advanced
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpComponentBuilder noReplyLogLevel(org.apache.camel.LoggingLevel noReplyLogLevel) {
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
+            return this;
+        }
+    
         /**
          * Allows to configure additional netty options using option. as prefix.
          * For example option.child.keepAlive=false. See the Netty documentation
@@ -1271,9 +1272,10 @@ public interface NettyHttpComponentBuilderFactory {
         
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
-         * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP - however only
-         * Strings are allowed to be serialized by default.
+         * indicate a text line based codec, where each message ends with the
+         * delimiter. If not specified or the value is false, the default codec
+         * is a String codec without framing, so each read from the socket
+         * becomes one message.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1574,7 +1576,6 @@ public interface NettyHttpComponentBuilderFactory {
             case "executorService": ((NettyHttpComponent) component).setExecutorService((io.netty.util.concurrent.EventExecutorGroup) value); return true;
             case "maximumPoolSize": ((NettyHttpComponent) component).setMaximumPoolSize((int) value); return true;
             case "nettyServerBootstrapFactory": getOrCreateConfiguration((NettyHttpComponent) component).setNettyServerBootstrapFactory((org.apache.camel.component.netty.NettyServerBootstrapFactory) value); return true;
-            case "noReplyLogLevel": getOrCreateConfiguration((NettyHttpComponent) component).setNoReplyLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "serverClosedChannelExceptionCaughtLogLevel": getOrCreateConfiguration((NettyHttpComponent) component).setServerClosedChannelExceptionCaughtLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "serverExceptionCaughtLogLevel": getOrCreateConfiguration((NettyHttpComponent) component).setServerExceptionCaughtLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "serverInitializerFactory": getOrCreateConfiguration((NettyHttpComponent) component).setServerInitializerFactory((org.apache.camel.component.netty.ServerInitializerFactory) value); return true;
@@ -1600,6 +1601,7 @@ public interface NettyHttpComponentBuilderFactory {
             case "headerFilterStrategy": ((NettyHttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "nativeTransport": getOrCreateConfiguration((NettyHttpComponent) component).setNativeTransport((boolean) value); return true;
             case "nettyHttpBinding": ((NettyHttpComponent) component).setNettyHttpBinding((org.apache.camel.component.netty.http.NettyHttpBinding) value); return true;
+            case "noReplyLogLevel": getOrCreateConfiguration((NettyHttpComponent) component).setNoReplyLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "options": getOrCreateConfiguration((NettyHttpComponent) component).setOptions((java.util.Map) value); return true;
             case "receiveBufferSize": getOrCreateConfiguration((NettyHttpComponent) component).setReceiveBufferSize((int) value); return true;
             case "receiveBufferSizePredictor": getOrCreateConfiguration((NettyHttpComponent) component).setReceiveBufferSizePredictor((int) value); return true;

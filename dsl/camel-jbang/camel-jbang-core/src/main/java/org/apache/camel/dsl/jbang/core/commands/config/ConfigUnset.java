@@ -30,7 +30,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
                            "  camel config unset myKey" })
 public class ConfigUnset extends CamelCommand {
 
-    @Argument(required = true, description = "Configuration key")
+    @Argument(paramLabel = "key", required = true, description = "Configuration key")
     String key;
 
     @Option(name = "global", hasValue = false, description = "Use global or local configurations")

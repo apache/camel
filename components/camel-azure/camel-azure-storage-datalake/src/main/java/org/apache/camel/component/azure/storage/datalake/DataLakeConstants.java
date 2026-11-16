@@ -23,10 +23,10 @@ public final class DataLakeConstants {
 
     @Metadata(label = "producer",
               description = "Defines options available to configure the behavior of a call to listFileSystemsSegment on a DataLakeServiceAsyncClient object. Null may be passed.",
-              javaType = "ListFileSystemsOptions")
+              javaType = "com.azure.storage.file.datalake.models.ListFileSystemsOptions")
     public static final String LIST_FILESYSTEMS_OPTIONS = HEADER_PREFIX + "ListFileSystemsOptions";
     @Metadata(label = "producer", description = "An optional timeout value beyond which a RuntimeException will be raised.",
-              javaType = "Duration")
+              javaType = "java.time.Duration")
     public static final String TIMEOUT = HEADER_PREFIX + "Timeout";
     @Metadata(label = "producer",
               description = "Specify the producer operation to execute. Different operations allowed are shown below.",
@@ -49,18 +49,18 @@ public final class DataLakeConstants {
     public static final String METADATA = HEADER_PREFIX + "Metadata";
     @Metadata(label = "producer",
               description = "Defines options available to configure the behavior of a call to listFileSystemsSegment on a DataLakeServiceAsyncClient object.",
-              javaType = "PublicAccessType")
+              javaType = "com.azure.storage.file.datalake.models.PublicAccessType")
     public static final String PUBLIC_ACCESS_TYPE = HEADER_PREFIX + "PublicAccessType";
     @Metadata(label = "consumer", description = "Non parsed http headers that can be used by the user.",
-              javaType = "HttpHeaders")
+              javaType = "com.azure.core.http.HttpHeaders")
     public static final String RAW_HTTP_HEADERS = HEADER_PREFIX + "RawHttpHeaders";
     @Metadata(label = "producer",
               description = "This contains values which will restrict the successful operation of a variety of requests to the conditions present. These conditions are entirely optional.",
-              javaType = "DataLakeRequestConditions")
+              javaType = "com.azure.storage.file.datalake.models.DataLakeRequestConditions")
     public static final String DATALAKE_REQUEST_CONDITION = HEADER_PREFIX + "RequestCondition";
     @Metadata(label = "producer",
               description = "Defines options available to configure the behavior of a call to listContainersSegment on a DataLakeFileSystemClient object. Null may be passed.",
-              javaType = "ListPathOptions")
+              javaType = "com.azure.storage.file.datalake.models.ListPathsOptions")
     public static final String LIST_PATH_OPTIONS = HEADER_PREFIX + "ListPathOptions";
     @Metadata(label = "producer", description = "Path of the file to be used for upload operations.", javaType = "String")
     public static final String PATH = HEADER_PREFIX + "Path";
@@ -81,7 +81,8 @@ public final class DataLakeConstants {
     public static final String REGEX = HEADER_PREFIX + "Regex";
     @Metadata(label = "producer", description = "Directory in which the file is to be downloaded.", javaType = "String")
     public static final String FILE_DIR = HEADER_PREFIX + "FileDir";
-    @Metadata(label = "consumer", description = "Access tier of file.", javaType = "AccessTier")
+    @Metadata(label = "consumer", description = "Access tier of file.",
+              javaType = "com.azure.storage.file.datalake.models.AccessTier")
     public static final String ACCESS_TIER = HEADER_PREFIX + "AccessTier";
     @Metadata(label = "producer",
               description = "An MD5 hash of the content. The hash is used to verify the integrity of the file during transport.",
@@ -91,18 +92,19 @@ public final class DataLakeConstants {
               description = "This is a representation of a range of bytes on a file, typically used during a download operation. "
                             +
                             "Passing null as a FileRange value will default to the entire range of the file.",
-              javaType = "FileRange")
+              javaType = "com.azure.storage.file.datalake.models.FileRange")
     public static final String FILE_RANGE = HEADER_PREFIX + "FileRange";
     @Metadata(label = "producer", description = "The configuration used to parallelize data transfer operations.",
-              javaType = "ParallelTransferOptions")
+              javaType = "com.azure.storage.common.ParallelTransferOptions")
     public static final String PARALLEL_TRANSFER_OPTIONS = HEADER_PREFIX + "ParallelTransferOptions";
     @Metadata(label = "producer", description = "Set of OpenOption used to configure how to open or create a file.",
-              javaType = "Set<OpenOption>")
+              javaType = "Set<java.nio.file.OpenOption>")
     public static final String OPEN_OPTIONS = HEADER_PREFIX + "OpenOptions";
     @Metadata(label = "consumer", description = "Datetime when the access tier of the blob last changed.",
-              javaType = "OffsetDateTime")
+              javaType = "java.time.OffsetDateTime")
     public static final String ACCESS_TIER_CHANGE_TIME = HEADER_PREFIX + "AccessTierChangeTime";
-    @Metadata(label = "consumer", description = "Archive status of file.", javaType = "ArchiveStatus")
+    @Metadata(label = "consumer", description = "Archive status of file.",
+              javaType = "com.azure.storage.file.datalake.models.ArchiveStatus")
     public static final String ARCHIVE_STATUS = HEADER_PREFIX + "ArchiveStatus";
     @Metadata(label = "consumer", description = "Cache control specified for the file.", javaType = "String")
     public static final String CACHE_CONTROL = HEADER_PREFIX + "CacheControl";
@@ -116,7 +118,7 @@ public final class DataLakeConstants {
     public static final String CONTENT_TYPE = HEADER_PREFIX + "ContentType";
     @Metadata(label = "consumer",
               description = "Conclusion time of the last attempted Copy Blob operation where this file was the destination file.",
-              javaType = "OffsetDateTime")
+              javaType = "java.time.OffsetDateTime")
     public static final String COPY_COMPLETION_TIME = HEADER_PREFIX + "CopyCompletionTime";
     @Metadata(label = "consumer", description = "String identifier for this copy operation.", javaType = "String")
     public static final String COPY_ID = HEADER_PREFIX + "CopyId";
@@ -133,7 +135,7 @@ public final class DataLakeConstants {
     public static final String COPY_STATUS = HEADER_PREFIX + "CopyStatus";
     @Metadata(label = "consumer", description = "The description of the copy's status", javaType = "String")
     public static final String COPY_STATUS_DESCRIPTION = HEADER_PREFIX + "CopyStatusDescription";
-    @Metadata(label = "consumer", description = "Creation time of the file.", javaType = "OffsetDateTime")
+    @Metadata(label = "consumer", description = "Creation time of the file.", javaType = "java.time.OffsetDateTime")
     public static final String CREATION_TIME = HEADER_PREFIX + "CreationTime";
     @Metadata(label = "consumer", description = "The SHA-256 hash of the encryption key used to encrypt the file.",
               javaType = "String")
@@ -143,7 +145,7 @@ public final class DataLakeConstants {
     @Metadata(label = "consumer", description = "Size of the file.", javaType = "Long")
     public static final String FILE_SIZE = HEADER_PREFIX + "FileSize";
     @Metadata(label = "consumer", description = "Datetime when the file was last modified.",
-              javaType = "OffsetDateTime")
+              javaType = "java.time.OffsetDateTime")
     public static final String LAST_MODIFIED = HEADER_PREFIX + "LastModified";
     @Metadata(label = "consumer", description = "Type of lease on the file.",
               javaType = "com.azure.storage.file.datalake.models.LeaseDurationType")
@@ -172,7 +174,7 @@ public final class DataLakeConstants {
               javaType = "String")
     public static final String LEASE_ID = HEADER_PREFIX + "LeaseId";
     @Metadata(label = "producer", description = "Additional parameters for a set of operations.",
-              javaType = "PathHttpHeaders")
+              javaType = "com.azure.storage.file.datalake.models.PathHttpHeaders")
     public static final String PATH_HTTP_HEADERS = HEADER_PREFIX + "PathHttpHeaders";
     @Metadata(label = "producer",
               description = "Determines Whether or not uncommitted data is to be retained after the operation.",
@@ -188,24 +190,27 @@ public final class DataLakeConstants {
     public static final String EXPRESSION = HEADER_PREFIX + "Expression";
     @Metadata(label = "producer",
               description = "Defines the input serialization for a file query request. either FileQueryJsonSerialization or FileQueryDelimitedSerialization",
-              javaType = "FileQuerySerialization")
+              javaType = "com.azure.storage.file.datalake.models.FileQuerySerialization")
     public static final String INPUT_SERIALIZATION = HEADER_PREFIX + "InputSerialization";
     @Metadata(label = "producer",
               description = "Defines the output serialization for a file query request. either FileQueryJsonSerialization or FileQueryDelimitedSerialization",
-              javaType = "FileQuerySerialization")
+              javaType = "com.azure.storage.file.datalake.models.FileQuerySerialization")
     public static final String OUTPUT_SERIALIZATION = HEADER_PREFIX + "OutputSerialization";
-    @Metadata(label = "producer", description = "Sets error consumer for file query", javaType = "Consumer<FileQueryError>")
+    @Metadata(label = "producer", description = "Sets error consumer for file query",
+              javaType = "java.util.function.Consumer<com.azure.storage.file.datalake.models.FileQueryError>")
     public static final String ERROR_CONSUMER = HEADER_PREFIX + "ErrorConsumer";
     @Metadata(label = "producer", description = "Sets progress consumer for file query",
-              javaType = "Consumer<FileQueryProgress>")
+              javaType = "java.util.function.Consumer<com.azure.storage.file.datalake.models.FileQueryProgress>")
     public static final String PROGRESS_CONSUMER = HEADER_PREFIX + "ProgressConsumer";
-    @Metadata(label = "producer", description = "Optional parameters for File Query.", javaType = "FileQueryOptions")
+    @Metadata(label = "producer", description = "Optional parameters for File Query.",
+              javaType = "com.azure.storage.file.datalake.options.FileQueryOptions")
     public static final String QUERY_OPTIONS = HEADER_PREFIX + "QueryOptions";
     @Metadata(label = "producer", description = "Sets the permission for file.", javaType = "String")
     public static final String PERMISSION = HEADER_PREFIX + "Permission";
     @Metadata(label = "producer", description = "Sets the umask for file.", javaType = "String")
     public static final String UMASK = HEADER_PREFIX + "Umask";
-    @Metadata(label = "producer", description = "Sets the file client to use", javaType = "DataLakeFileClient")
+    @Metadata(label = "producer", description = "Sets the file client to use",
+              javaType = "com.azure.storage.file.datalake.DataLakeFileClient")
     public static final String FILE_CLIENT = HEADER_PREFIX + "FileClient";
     @Metadata(label = "producer", description = "Sets whether to flush on append", javaType = "Boolean")
     public static final String FLUSH = HEADER_PREFIX + "Flush";

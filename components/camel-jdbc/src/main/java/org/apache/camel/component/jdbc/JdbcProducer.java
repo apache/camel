@@ -88,15 +88,14 @@ public class JdbcProducer extends DefaultProducer {
 
             shouldCloseResources = createAndExecuteSqlStatement(exchange, sql, conn);
 
-            conn.commit();
-        } catch (Exception e) {
-            try {
-                if (conn != null) {
-                    conn.rollback();
-                }
-            } catch (Exception sqle) {
-                LOG.warn("Error occurred during JDBC rollback. This exception will be ignored.", sqle);
+            // with outputType=StreamList the route reads the result set after this producer: committing now would end
+            // the transaction, and with it the cursor the driver may read the rows from (such as PostgreSQL with a
+            // fetch size), so the transaction then ends when the exchange is done
+            if (shouldCloseResources) {
+                conn.commit();
             }
+        } catch (Exception e) {
+            rollbackQuietly(conn);
             throw e;
         } finally {
             if (shouldCloseResources) {
@@ -106,6 +105,19 @@ public class JdbcProducer extends DefaultProducer {
                 final Connection finalConn = conn;
                 final boolean finalAutoCommit = autoCommit;
                 exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onComplete(Exchange exchange) {
+                        // the result set and its statement are closed already (their on completion has a lower order)
+                        commitQuietly(finalConn);
+                        onDone(exchange);
+                    }
+
+                    @Override
+                    public void onFailure(Exchange exchange) {
+                        rollbackQuietly(finalConn);
+                        onDone(exchange);
+                    }
+
                     @Override
                     public void onDone(Exchange exchange) {
                         resetAutoCommit(finalConn, finalAutoCommit);
@@ -316,9 +328,8 @@ public class JdbcProducer extends DefaultProducer {
     private void closeQuietly(ResultSet rs) {
         if (rs != null) {
             try {
-                if (!rs.isClosed()) {
-                    rs.close();
-                }
+                // close() on a closed result set is a no-op
+                rs.close();
             } catch (Exception sqle) {
                 LOG.debug("Error by closing result set", sqle);
             }
@@ -328,12 +339,31 @@ public class JdbcProducer extends DefaultProducer {
     private void closeQuietly(Statement stmt) {
         if (stmt != null) {
             try {
-                if (!stmt.isClosed()) {
-                    stmt.close();
-                }
+                // close() on a closed statement is a no-op
+                stmt.close();
             } catch (Exception sqle) {
                 LOG.debug("Error by closing statement", sqle);
             }
+        }
+    }
+
+    private void commitQuietly(Connection con) {
+        try {
+            if (con != null) {
+                con.commit();
+            }
+        } catch (Exception sqle) {
+            LOG.warn("Error occurred during JDBC commit. This exception will be ignored.", sqle);
+        }
+    }
+
+    private void rollbackQuietly(Connection con) {
+        try {
+            if (con != null) {
+                con.rollback();
+            }
+        } catch (Exception sqle) {
+            LOG.warn("Error occurred during JDBC rollback. This exception will be ignored.", sqle);
         }
     }
 
@@ -350,9 +380,10 @@ public class JdbcProducer extends DefaultProducer {
     private void closeQuietly(Connection con) {
         if (con != null) {
             try {
-                if (!con.isClosed()) {
-                    con.close();
-                }
+                // always close, even when isClosed() returns true: a driver closes its connection itself after a
+                // fatal error (e.g. the database session has ended), and a pool whose wrapper reports that state
+                // (e.g. Agroal) gets the connection back only from close()
+                con.close();
             } catch (Exception sqle) {
                 LOG.debug("Error by closing connection", sqle);
             }

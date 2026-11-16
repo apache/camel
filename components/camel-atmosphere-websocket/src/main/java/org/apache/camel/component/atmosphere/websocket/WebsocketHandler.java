@@ -17,10 +17,13 @@
 package org.apache.camel.component.atmosphere.websocket;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereRequest;
+import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.websocket.WebSocket;
 import org.atmosphere.websocket.WebSocketProcessor.WebSocketException;
 import org.atmosphere.websocket.WebSocketProtocol;
@@ -32,6 +35,8 @@ public class WebsocketHandler implements WebSocketProtocol {
 
     protected WebsocketConsumer consumer;
     protected WebSocketStore store;
+    // the query parameters of the request that opened each connection, by connection key
+    private final Map<String, Map<String, String>> queryParameters = new ConcurrentHashMap<>();
 
     @Override
     public void configure(AtmosphereConfig config) {
@@ -44,6 +49,9 @@ public class WebsocketHandler implements WebSocketProtocol {
         String connectionKey = store.getConnectionKey(webSocket);
         sendEventNotification(connectionKey, WebsocketConstants.ONCLOSE_EVENT_TYPE);
         store.removeWebSocket(webSocket);
+        if (connectionKey != null) {
+            queryParameters.remove(connectionKey);
+        }
         LOG.debug("websocket closed");
     }
 
@@ -59,6 +67,9 @@ public class WebsocketHandler implements WebSocketProtocol {
         LOG.debug("opening websocket");
         String connectionKey = UUID.randomUUID().toString();
         store.addWebSocket(connectionKey, webSocket);
+        if (consumer.isEnableEventsResending()) {
+            queryParameters.put(connectionKey, WebsocketConsumer.getQueryMap(getQueryString(webSocket)));
+        }
         sendEventNotification(connectionKey, WebsocketConstants.ONOPEN_EVENT_TYPE);
         LOG.debug("websocket opened");
     }
@@ -95,7 +106,13 @@ public class WebsocketHandler implements WebSocketProtocol {
 
     private void sendEventNotification(final String connectionKey, final int eventType) {
         if (consumer.isEnableEventsResending()) {
-            consumer.sendEventNotification(connectionKey, eventType);
+            Map<String, String> params = connectionKey != null ? queryParameters.get(connectionKey) : null;
+            consumer.sendEventNotification(connectionKey, eventType, params != null ? params : Map.of());
         }
+    }
+
+    private static String getQueryString(WebSocket webSocket) {
+        AtmosphereResource resource = webSocket.resource();
+        return resource != null ? resource.getRequest().getQueryString() : null;
     }
 }

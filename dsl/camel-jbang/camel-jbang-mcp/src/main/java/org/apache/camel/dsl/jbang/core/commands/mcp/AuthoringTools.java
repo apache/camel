@@ -589,9 +589,9 @@ public class AuthoringTools {
                             e.getMessage());
                 }
             }
-            return RuntimeTools.toJsonObject(ToolRegistry.execute(tool, ctx, args));
+            return McpToolNames.of(RuntimeTools.toJsonObject(ToolRegistry.execute(tool, ctx, args)));
         } catch (ToolExecutionException e) {
-            throw new ToolCallException(e.getMessage(), e);
+            throw new ToolCallException(McpToolNames.of(e.getMessage()), e);
         }
     }
 

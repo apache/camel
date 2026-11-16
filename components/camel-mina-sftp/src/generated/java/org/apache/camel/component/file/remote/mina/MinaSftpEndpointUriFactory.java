@@ -24,7 +24,7 @@ public class MinaSftpEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(133);
+        Set<String> props = new HashSet<>(134);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -74,6 +74,7 @@ public class MinaSftpEndpointUriFactory extends org.apache.camel.support.compone
         props.add("filterFile");
         props.add("flatten");
         props.add("greedy");
+        props.add("healthCheckMaxPollDuration");
         props.add("host");
         props.add("idempotent");
         props.add("idempotentEager");

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
@@ -23,7 +25,11 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpConnectException;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionListener;
 import org.springframework.amqp.rabbit.connection.RabbitUtils;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
@@ -34,6 +40,7 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
     private AbstractMessageListenerContainer listenerContainer;
     private volatile EndpointMessageListener messageListener;
     private volatile boolean initialized;
+    private volatile DeclaringConnectionListener declaringConnectionListener;
 
     public SpringRabbitMQConsumer(Endpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
@@ -102,7 +109,12 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
             createMessageListenerContainer();
         }
 
-        prepareAndStartListenerContainer();
+        try {
+            prepareAndStartListenerContainer();
+        } catch (Exception e) {
+            removeDeclaringConnectionListener();
+            throw e;
+        }
 
         // mark as initialized for the first time
         initialized = true;
@@ -110,6 +122,7 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
 
     @Override
     protected void doStop() throws Exception {
+        removeDeclaringConnectionListener();
         if (listenerContainer != null) {
             stopAndDestroyListenerContainer();
         }
@@ -149,7 +162,7 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
 
         if (getEndpoint().isAutoDeclare()) {
             // auto declare but without spring
-            getEndpoint().declareElements(listenerContainer);
+            autoDeclareElements();
         }
 
         // only start listener if auto start is enabled or we are explicit invoking start later
@@ -159,6 +172,53 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
                 testConnectionOnStartup();
             }
             startListenerContainer();
+        }
+    }
+
+    /**
+     * Declares the exchange, queue and binding of the endpoint now, and again on every new connection of the connection
+     * factory while this consumer runs, as Spring's {@code RabbitAdmin} does for its declarables: a queue that the
+     * broker deleted when the connection was lost (auto-delete, exclusive, or not durable and the broker restarted) is
+     * declared again when the listener container reconnects.
+     * <p/>
+     * When the broker is not available, the consumer starts anyway, unless {@code testConnectionOnStartup} is enabled:
+     * the listener container keeps trying to connect, and the elements are declared when it does.
+     */
+    private void autoDeclareElements() {
+        ConnectionFactory connectionFactory = listenerContainer.getConnectionFactory();
+        DeclaringConnectionListener listener = null;
+        if (connectionFactory instanceof CachingConnectionFactory ccf
+                && ccf.getCacheMode() == CachingConnectionFactory.CacheMode.CONNECTION) {
+            // as RabbitAdmin, which does not declare on new connections with this cache mode
+            LOG.debug("The connection factory caches connections: {} is declared when the consumer starts only",
+                    getEndpoint());
+        } else {
+            listener = new DeclaringConnectionListener(listenerContainer);
+            declaringConnectionListener = listener;
+            // a connection factory that is already connected may call the listener now: it leaves that to this method
+            connectionFactory.addConnectionListener(listener);
+        }
+        try {
+            getEndpoint().declareElements(listenerContainer);
+        } catch (AmqpConnectException e) {
+            if (listener == null || getEndpoint().isTestConnectionOnStartup()) {
+                throw e;
+            }
+            LOG.warn("Cannot declare the exchange, queue and binding of {} because the broker is not available: {}."
+                     + " They are declared when the listener container connects.",
+                    getEndpoint(), e.getMessage());
+        } finally {
+            if (listener != null) {
+                listener.started();
+            }
+        }
+    }
+
+    private void removeDeclaringConnectionListener() {
+        DeclaringConnectionListener listener = declaringConnectionListener;
+        if (listener != null) {
+            listener.connectionFactory().removeConnectionListener(listener);
+            declaringConnectionListener = null;
         }
     }
 
@@ -173,6 +233,48 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
         listenerContainer = null;
         messageListener = null;
         initialized = false;
+    }
+
+    /**
+     * Declares the exchange, queue and binding of the endpoint on every new connection.
+     */
+    private final class DeclaringConnectionListener implements ConnectionListener {
+
+        private final AbstractMessageListenerContainer container;
+        private final AtomicBoolean declaring = new AtomicBoolean();
+        // the thread that starts the consumer declares by itself, also when it creates the connection meanwhile
+        private volatile Thread startingThread = Thread.currentThread();
+
+        private DeclaringConnectionListener(AbstractMessageListenerContainer container) {
+            this.container = container;
+        }
+
+        private ConnectionFactory connectionFactory() {
+            return container.getConnectionFactory();
+        }
+
+        private void started() {
+            startingThread = null;
+        }
+
+        @Override
+        public void onCreate(Connection connection) {
+            // skip a connection that the declarations create themselves, when the one they use is lost meanwhile: they
+            // go on with the new one (as RabbitAdmin, which also skips it)
+            if (Thread.currentThread() == startingThread || !declaring.compareAndSet(false, true)) {
+                return;
+            }
+            try {
+                LOG.debug("Declaring the exchange, queue and binding of {} on a new connection", getEndpoint());
+                getEndpoint().declareElements(container);
+            } catch (Exception e) {
+                // the connection may be shared with other consumers and producers: do not fail it
+                LOG.warn("Cannot declare the exchange, queue and binding of {} on a new connection. This exception is ignored.",
+                        getEndpoint(), e);
+            } finally {
+                declaring.set(false);
+            }
+        }
     }
 
 }

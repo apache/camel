@@ -108,9 +108,9 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
 
     /**
      * Will only apply for nodes maximum levels deep.
-     * <p/>
-     * The first level is <tt>1</tt>, and level <tt>2</tt> is the children of the first level nodes, and so on.
-     * <p/>
+     * <p>
+     * The first level is <code>1</code>, and level <code>2</code> is the children of the first level nodes, and so on.
+     * <p>
      * Use zero or negative value for unbounded level.
      *
      * @param  maxDeep the maximum levels to traverse deep in the Camel route tree.

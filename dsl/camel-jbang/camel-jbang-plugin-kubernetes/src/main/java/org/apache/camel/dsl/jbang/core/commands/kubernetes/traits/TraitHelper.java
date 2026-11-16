@@ -84,8 +84,22 @@ public final class TraitHelper {
 
             // the CRD api is in CamelCase, then we have to
             // convert the kebab-case to CamelCase
-            final String traitKey = StringHelper.dashToCamelCase(traitConfig[0]);
-            final Object traitValue = resolveTraitValue(traitKey, traitConfig[1].trim());
+            final String traitKey;
+            final Object traitValue;
+            if (traitConfig[0].startsWith("annotations.")) {
+                // an annotation as its own key, as the docs show: route.annotations.'haproxy.router.openshift.io/balance'=true
+                traitKey = "annotations";
+                traitValue = annotation(unquote(traitConfig[0].substring("annotations.".length())),
+                        unquote(traitConfig[1].trim()));
+            } else if ("annotations".equals(traitConfig[0]) && traitConfig[1].contains("=")) {
+                // a single annotation as key=value, which was a string where the trait takes a map (exit code 70)
+                String[] annotation = traitConfig[1].trim().split("=", 2);
+                traitKey = "annotations";
+                traitValue = annotation(unquote(annotation[0]), unquote(annotation[1]));
+            } else {
+                traitKey = StringHelper.dashToCamelCase(traitConfig[0]);
+                traitValue = resolveTraitValue(traitKey, traitConfig[1].trim());
+            }
             if (traitConfigMap.containsKey(trait[0])) {
                 Map<String, Object> config = traitConfigMap.get(trait[0]);
 
@@ -168,6 +182,15 @@ public final class TraitHelper {
             return Boolean.valueOf(value);
         }
 
+        // a quoted value is one value, also with a comma in it, and so is a cron schedule, as in 0 1,13 * * *, which
+        // was split into a list that the trait cannot take (CAMEL-26934)
+        if (isQuoted(value)) {
+            return value.substring(1, value.length() - 1);
+        }
+        if (traitKey.equalsIgnoreCase("schedule")) {
+            return value;
+        }
+
         if (value.startsWith("[") && value.endsWith("]")) {
             String valueArrayExpression = value.substring(1, value.length() - 1);
             List<String> values = new ArrayList<>();
@@ -187,19 +210,32 @@ public final class TraitHelper {
             return values;
         }
 
-        if (value.startsWith("\"") && value.endsWith("\"")) {
-            return value.substring(1, value.length() - 1);
-        }
-
-        if (value.startsWith("'") && value.endsWith("'")) {
-            return value.substring(1, value.length() - 1);
-        }
-
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
             return value;
         }
+    }
+
+    // a map of one annotation, so annotations of several --trait options add up (CAMEL-26934)
+    private static Map<String, String> annotation(String key, String value) {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put(key, value);
+        return map;
+    }
+
+    private static String unquote(String value) {
+        return isQuoted(value) ? value.substring(1, value.length() - 1) : value;
+    }
+
+    // one quoted value, not a list of quoted values such as 'a=1','b=2'
+    private static boolean isQuoted(String value) {
+        if (value.length() < 2) {
+            return false;
+        }
+        char quote = value.charAt(0);
+        return (quote == '"' || quote == '\'') && value.charAt(value.length() - 1) == quote
+                && value.substring(1, value.length() - 1).indexOf(quote) == -1;
     }
 
     public static void configureConnects(Traits traitsSpec, String[] connects) {
