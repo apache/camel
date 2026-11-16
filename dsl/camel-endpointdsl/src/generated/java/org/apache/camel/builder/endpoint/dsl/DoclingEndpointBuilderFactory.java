@@ -5067,7 +5067,8 @@ public interface DoclingEndpointBuilderFactory {
         /**
          * The operation to perform.
          * 
-         * The option is a: {@code DoclingOperations} type.
+         * The option is a: {@code
+         * org.apache.camel.component.docling.DoclingOperations} type.
          * 
          * Group: common
          * 
