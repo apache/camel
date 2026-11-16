@@ -67,13 +67,10 @@
     <dependencyManagement>
         <dependencies>
             <!--
-                This launcher bundles both camel-jbang-plugin-generate and camel-jbang-plugin-tui on a
-                single flat classpath. The generate plugin drags in commonmark 0.21.0 (via openapi-generator),
-                while the tui plugin (via tamboui-markdown) needs commonmark 0.28.0 and its renderer.markdown
-                classes that do not exist in 0.21.0. Without this pin Maven mediation keeps the older 0.21.0
-                core next to the 0.28.0 extensions, which makes the TUI Markdown help throw NoClassDefFoundError.
-                Pin the core to 0.28.0 so it matches the commonmark-ext-* modules; openapi-generator only uses
-                the stable Parser/HtmlRenderer APIs, which are unchanged in 0.28.0.
+                The tui plugin (via tamboui-markdown) needs a commonmark core that is not older than its
+                commonmark-ext-* modules. The generate plugin, which installs on first use, brings commonmark 0.21.0,
+                but its class loader asks the launcher first, so it uses this core too; openapi-generator only uses
+                the stable Parser/HtmlRenderer APIs.
             -->
             <dependency>
                 <groupId>org.commonmark</groupId>
@@ -98,12 +95,8 @@
         </dependency>
 
         <!-- Pre-installed plugins -->
-        <!-- the edit plugin is not pre-installed -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jbang-plugin-generate</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- the edit and generate plugins are not pre-installed: they install on first use
+             (generate and its OpenAPI generator are about 24 MB, a fifth of the download) -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-plugin-test</artifactId>

@@ -9167,6 +9167,14 @@ could not start, such as with Docker down, was gone without a word. Now:
 The output of the service goes to `~/.camel/<pid>-run.log`, instead of a pipe that nobody read. `camel infra stop`
 removes it.
 
+=== camel-launcher - the generate plugin installs on first use
+
+The Camel CLI launcher, as installed by the install script or a package manager such as Homebrew, no longer has the
+generate plugin in it: the plugin and the OpenAPI generator it uses are about 24 MB, a fifth of the download. The first
+`camel generate` downloads the plugin from Maven Central into the local Maven repository, and adds it to the plugin
+configuration, as for `camel edit`. To have it on a machine that is offline later, run `camel generate --help` once
+while it is online.
+
 === camel-jbang - camel run loads one version of each library
 
 `camel run` downloads the JARs of each component when it is first used. It now keeps one version of each library: when
