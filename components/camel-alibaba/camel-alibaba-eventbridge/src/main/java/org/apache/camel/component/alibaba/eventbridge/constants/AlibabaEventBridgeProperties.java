@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.alibaba.eventbridge.constants;
 
-import org.apache.camel.spi.Metadata;
-
 public final class AlibabaEventBridgeProperties extends AlibabaEventBridgeHeaders {
 
-    @Metadata(label = "producer", description = "Operation to perform", javaType = "String")
-    public static final String OPERATION = "CamelAlibabaEventBridgeOperation";
+    /** Also read as a message header; see {@link AlibabaEventBridgeHeaders#OPERATION}. */
+    public static final String OPERATION = AlibabaEventBridgeHeaders.OPERATION;
 
     private AlibabaEventBridgeProperties() {
     }

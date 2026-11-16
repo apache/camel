@@ -595,6 +595,20 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
         public static final AlibabaEventBridgeHeaderNameBuilder INSTANCE = new AlibabaEventBridgeHeaderNameBuilder();
 
         /**
+         * The operation that the producer performs. This header replaces the
+         * operation option. If this header is not set, an exchange property
+         * of the same name replaces the operation option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaEventBridgeOperation}.
+         */
+        public String alibabaEventBridgeOperation() {
+            return "CamelAlibabaEventBridgeOperation";
+        }
+        /**
          * The name of the event bus for a JSON text or Map body. This header
          * replaces the eventBusName option. If this header is not set, an
          * exchange property of the same name replaces the eventBusName option.
