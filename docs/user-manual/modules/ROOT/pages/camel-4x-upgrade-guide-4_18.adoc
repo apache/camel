@@ -93,6 +93,16 @@ wildcard to select a file, use the real name of the file in the producer, and th
 consumer that lists the directory instead of a wildcard in `fileName` with `useList=false`. See the
 xref:components::sftp-component.adoc[SFTP component].
 
+=== camel-file - jailStartingDirectory resolves symbolic links
+
+With `jailStartingDirectory` enabled (the default), the file consumer and producer now resolve symbolic links when
+checking that a file stays within the starting directory. The consumer skips a file or (with `recursive=true`) a
+directory that is a link resolving outside of it, and the producer fails to write through such a link or a dangling
+link. Links resolving inside the starting directory work as before. Set `jailStartingDirectory=false` to keep following
+links to other directories (this also turns off the check of `../` in producer file names). A skipped file is logged
+at WARN the first time and at DEBUG on later polls; this log-level change also applies to the remote file consumers,
+which keep their existing lexical check.
+
 === camel-file - the consumer skips a file it would move through a symbolic link resolving outside the starting directory
 
 With `jailStartingDirectory` enabled (the default), the file consumer now resolves symbolic links on the targets of
