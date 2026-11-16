@@ -486,7 +486,8 @@ public interface OpenfgaComponentBuilderFactory {
         /**
          * Maximum number of checks per native server BatchCheck request, from 1
          * to 50. Applies only when batchCheckMode=server; the SDK splits larger
-         * input lists into requests of at most this size.
+         * input lists into requests of at most this size. 50 is the default
+         * per-request limit of an OpenFGA server (max-checks-per-batch-check).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
