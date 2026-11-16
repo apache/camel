@@ -32,12 +32,12 @@ public class WebsocketQueryParameterTest extends WebsocketCamelRouterWithInitPar
 
     @Test
     void testRequestWithParameterWithoutValue() throws Exception {
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + PORT + "/hola?flag")).build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        // HttpClient is AutoCloseable only from Java 21, and this branch builds on Java 17 as well
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + PORT + "/hola?flag")).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            assertEquals(200, response.statusCode());
-        }
+        assertEquals(200, response.statusCode());
     }
 
     @Test
