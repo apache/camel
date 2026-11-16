@@ -583,14 +583,15 @@ EH=components/camel-azure/camel-azure-eventhubs
 SLACK=components/camel-slack
 SHARE=components/camel-kafka-share
 PULSAR=components/camel-pulsar
+MONGODB=components/camel-mongodb
 MVN="./mvnw -B -Papache-snapshots test -Dsurefire.failIfNoSpecifiedTests=false -Dsurefire.rerunFailingTestsCount=0"
 
 # the harness self-tests
 $MVN -pl $DST -Dtest='Dst*Test'
 
 # the worlds, 1000 seeds each, then 5000 seeds without stopping at the first failing one
-$MVN -pl $DST,$SQS,$KINESIS,$EH,$SLACK,$SHARE,$PULSAR -Dtest='*DstTest'
-$MVN -pl $DST,$SQS,$KINESIS,$EH,$SLACK,$SHARE,$PULSAR -Dtest='*DstTest' -Ddst.seeds=5000 -Ddst.maxFailures=100000
+$MVN -pl $DST,$SQS,$KINESIS,$EH,$SLACK,$SHARE,$PULSAR,$MONGODB -Dtest='*DstTest'
+$MVN -pl $DST,$SQS,$KINESIS,$EH,$SLACK,$SHARE,$PULSAR,$MONGODB -Dtest='*DstTest' -Ddst.seeds=5000 -Ddst.maxFailures=100000
 
 # the self-check: revert the main code of a past fix locally (do not commit), run the world, restore
 git show d09593b4a584 -- $SQS/src/main | git apply -R          # CAMEL-25700
@@ -603,6 +604,10 @@ cp $SQS/target/dst/SqsVisibilityDstTest.*/seed-8.trace /tmp/seed-8.first
 $MVN -pl $DST,$SQS -Dtest=SqsVisibilityDstTest -Ddst.seed=8
 diff /tmp/seed-8.first $SQS/target/dst/SqsVisibilityDstTest.*/seed-8.trace && echo identical
 ----
+
+For camel-mongodb (`MongoDbChangeStreamsDstTest`) the past fixes are the main code of 5f10c225652e (CAMEL-25946) and of
+3af2c90d63ad (CAMEL-25679), reverted by hand. Its world has the property `dst.mongodb.strictFirstCursor` (`true` counts
+the events that a cursor opened again before any exchange completed skips, CAMEL-26992, as missing).
 
 The past fixes of the other worlds are 83aaa80754f9 (CAMEL-25683, Event Hubs), 68329f0919bc (CAMEL-25684, Slack), the
 main code of b62e90ddb2d9 (CAMEL-25869, Pulsar), the main code of 20c94435789e (CAMEL-25872, Kafka share, whose world

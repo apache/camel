@@ -26,7 +26,7 @@ import org.apache.camel.test.dst.DstTest;
  * stored resume token never passes an event that was not routed, and once the faults cleared every event is routed. A
  * failing seed is replayed with {@code -Ddst.seed=<seed>}; {@code -Ddst.seeds=5000} runs more seeds;
  * {@code -Ddst.mongodb.strictFirstCursor=true} also counts the events that a cursor opened again before any exchange
- * completed skips (see {@link MongoDbChangeStreamsWorld}).
+ * completed skips (CAMEL-26992, see {@link MongoDbChangeStreamsWorld}).
  */
 @DstInstrument("org.apache.camel.component.mongodb")
 class MongoDbChangeStreamsDstTest {

@@ -59,17 +59,17 @@ import org.apache.camel.test.dst.Invariants;
  * server unreachable while the route starts, so a start that fails is the consumer's ("the route starts once the
  * collection exists and the server can be reached").
  * <p>
- * Properties: the consumer thread runs as long as the route is started; a resume token is stored only after its
- * exchange completed; a stored token never passes an event that was not routed; once the faults cleared, every event of
- * the collection after the first change stream was routed, also after a drop of the collection, a restart of the route
- * and a failed getMore or cursor open; the consumer uses the client as documented. Events may be routed more than once
- * (a restart or a new cursor resumes after the stored token), and an event whose exchange failed is not routed again
- * when a later one completed (the consumer stores the token of the later one).
+ * Properties: the consumer thread runs as long as the route is started; every exchange carries a resume token; a resume
+ * token is stored only after its exchange completed; a stored token never passes an event that was not routed; once the
+ * faults cleared, every event of the collection after the first change stream was routed, also after a drop of the
+ * collection, a restart of the route and a failed getMore or cursor open; the consumer uses the client as documented.
+ * Events may be routed more than once (a restart or a new cursor resumes after the stored token), and an event whose
+ * exchange failed is not routed again when a later one completed (the consumer stores the token of the later one).
  * <p>
- * One case is left out of the default set while it is looked at separately: a cursor that the consumer thread opens
- * again before any exchange completed (the first change stream failed and the driver could not resume it) starts at the
- * current time, as the consumer has no token yet, so the events written since the first change stream are skipped. By
- * default the world does not count those events; {@code -Ddst.mongodb.strictFirstCursor=true} counts them.
+ * One case is left out of the default set: a cursor that the consumer thread opens again before any exchange completed
+ * (the first change stream failed and the driver could not resume it) starts at the current time, as the consumer has
+ * no token yet, so the events written since the first change stream are skipped. This is CAMEL-26992. By default the
+ * world does not count those events; {@code -Ddst.mongodb.strictFirstCursor=true} counts them.
  * <p>
  * Not explored: the graceful stop of the consumer (keepRunning set to false and the cursor closed under a waiting
  * getMore or an exchange in flight), which the one stack cannot run; tailable cursors, streamFilter, the ResumeStrategy
@@ -94,8 +94,9 @@ import org.apache.camel.test.dst.Invariants;
                   "the consumer thread runs as long as the route is started",
                   "a resume token is stored only after its exchange completed",
                   "a stored resume token never passes an event that was not routed",
-                  "every event is routed once the faults cleared (but see the class Javadoc for a cursor opened again before any"
-                                                                                     + " exchange completed)" },
+                  "every exchange carries a resume token",
+                  "every event is routed once the faults cleared (except a cursor opened again before any exchange"
+                                                           + " completed, CAMEL-26992)" },
           issues = { "CAMEL-25679", "CAMEL-25946" })
 final class MongoDbChangeStreamsWorld {
 
@@ -184,9 +185,6 @@ final class MongoDbChangeStreamsWorld {
                 dst.runFor(dst.between(100, 5000));
             }
             dst.check(
-                    Invariants.of("the world itself ran as planned",
-                            () -> violations.stream().noneMatch(v -> v.startsWith("world"))
-                                    ? null : violations + " (" + config() + ")"),
                     Invariants.of("the route starts once the collection exists and the server can be reached",
                             () -> violations.stream().noneMatch(v -> v.startsWith("start"))
                                     ? null : violations + " (" + config() + ")"),
@@ -195,14 +193,17 @@ final class MongoDbChangeStreamsWorld {
                                     ? null : violations + " (" + config() + ")"),
                     Invariants.of("the consumer uses the client as documented",
                             () -> mongo.violations.isEmpty() ? null : mongo.violations + " (" + config() + ")"),
+                    Invariants.of("every exchange carries a resume token",
+                            () -> violations.stream().noneMatch(v -> v.startsWith("token"))
+                                    ? null : violations + " (" + config() + ")"),
                     Invariants.of("a resume token is stored only after its exchange completed",
                             () -> violations.stream().noneMatch(v -> v.startsWith("stored the token of"))
                                     ? null : violations + " (" + config() + ")"),
                     Invariants.of("a stored resume token never passes an event that was not routed",
                             () -> violations.stream().noneMatch(v -> v.startsWith("stored a token past"))
                                     ? null : violations + " (" + config() + ")"),
-                    Invariants.of("every event is routed once the faults cleared (but see the class Javadoc for a cursor"
-                                  + " opened again before any exchange completed)",
+                    Invariants.of("every event is routed once the faults cleared (except a cursor opened again before any"
+                                  + " exchange completed, CAMEL-26992)",
                             () -> finalCheck == null ? null : finalCheck + " (" + config() + ")"));
         } finally {
             dst.dropPending();
@@ -261,8 +262,8 @@ final class MongoDbChangeStreamsWorld {
     private void opened(String how) {
         // the first cursor of a route start with an empty store of the token starts at the current time by design. A
         // cursor that the consumer thread opens again before any exchange completed also starts at the current time (the
-        // consumer has no token yet), so the events written since the first cursor are skipped: that case is looked at
-        // separately, and -Ddst.mongodb.strictFirstCursor=true counts it
+        // consumer has no token yet), so the events written since the first cursor are skipped: that case is CAMEL-26992,
+        // and -Ddst.mongodb.strictFirstCursor=true counts it
         if (completed.isEmpty() && ("now (route start)".equals(how) || !strictFirstCursor && how.startsWith("now"))) {
             for (FakeMongo.Event e : mongo.oplog()) {
                 if (e.seq() <= mongo.lastCursorStart() && !routed.contains(e.seq())) {
@@ -275,7 +276,7 @@ final class MongoDbChangeStreamsWorld {
     private void process(Exchange exchange) {
         Resumable offset = exchange.getMessage().getHeader(Exchange.OFFSET, Resumable.class);
         if (offset == null) {
-            violations.add("world: an exchange without a resume token");
+            violations.add("token: an exchange without a resume token");
             return;
         }
         long seq = FakeMongo.seqOf((String) offset.getLastOffset().getValue());
