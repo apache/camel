@@ -133,6 +133,9 @@ Routes that set these headers to choose the part class or namespace per message 
 `allowPartClassFromHeader: true` in YAML. With REST binding, set the data format property
 `xml.out.allowPartClassFromHeader=true` on the REST configuration.
 
+The SOAP data format (camel-soap) is built on the JAXB data format, so the same applies there: it has the same
+`allowPartClassFromHeader` option (default `false`).
+
 === camel-jpa - query parameters from CamelJpaParameters header are bound literally
 
 In previous versions, string values supplied in the `CamelJpaParameters` header map were evaluated as Simple expressions by the JPA producer.

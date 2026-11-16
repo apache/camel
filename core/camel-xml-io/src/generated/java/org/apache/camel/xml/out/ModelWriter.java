@@ -2693,6 +2693,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute("schema", def.getSchema(), null);
         doWriteAttribute("ignoreUnmarshalledHeaders", def.getIgnoreUnmarshalledHeaders(), null);
+        doWriteAttribute("allowPartClassFromHeader", def.getAllowPartClassFromHeader(), null);
         endElement(name);
     }
     protected void doWriteSwiftMtDataFormat(String name, SwiftMtDataFormat def) throws IOException {

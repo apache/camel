@@ -2695,6 +2695,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute(jo, "schema", def.getSchema(), null);
         doWriteAttribute(jo, "ignoreUnmarshalledHeaders", def.getIgnoreUnmarshalledHeaders(), null);
+        doWriteAttribute(jo, "allowPartClassFromHeader", def.getAllowPartClassFromHeader(), null);
         return jo;
     }
     protected JsonObject doWriteSwiftMtDataFormat(SwiftMtDataFormat def) {

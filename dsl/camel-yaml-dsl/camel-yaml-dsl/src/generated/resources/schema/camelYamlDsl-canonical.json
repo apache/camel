@@ -8515,6 +8515,12 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "allowPartClassFromHeader" : {
+            "type" : "boolean",
+            "title" : "Allow Part Class From Header",
+            "description" : "Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the partClass and partNamespace options when marshalling and unmarshalling. This should only be enabled when desired to be used.",
+            "default" : false
+          },
           "contextPath" : {
             "type" : "string",
             "title" : "Context Path",

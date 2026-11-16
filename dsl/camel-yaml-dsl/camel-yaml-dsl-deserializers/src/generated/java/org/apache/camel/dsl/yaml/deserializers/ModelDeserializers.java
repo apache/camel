@@ -17088,6 +17088,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Marshal Java objects to SOAP messages and back",
             deprecated = false,
             properties = {
+                    @YamlProperty(name = "allowPartClassFromHeader", type = "boolean", defaultValue = "false", description = "Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the partClass and partNamespace options when marshalling and unmarshalling. This should only be enabled when desired to be used.", displayName = "Allow Part Class From Header"),
                     @YamlProperty(name = "contextPath", type = "string", required = true, description = "Package name where your JAXB classes are located.", displayName = "Context Path"),
                     @YamlProperty(name = "elementNameStrategy", type = "string", description = "Refers to an element strategy to lookup from the registry.", displayName = "Element Name Strategy"),
                     @YamlProperty(name = "encoding", type = "string", description = "To overrule and use a specific encoding.", displayName = "Encoding"),
@@ -17118,6 +17119,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "allowPartClassFromHeader": {
+                    String val = asText(node);
+                    target.setAllowPartClassFromHeader(val);
+                    break;
+                }
                 case "contextPath": {
                     String val = asText(node);
                     target.setContextPath(val);

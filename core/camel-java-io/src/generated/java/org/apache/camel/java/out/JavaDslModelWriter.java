@@ -3311,6 +3311,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute(sb, "schema", def.getSchema(), null);
         doWriteAttribute(sb, "ignoreUnmarshalledHeaders", def.getIgnoreUnmarshalledHeaders(), null);
+        doWriteAttribute(sb, "allowPartClassFromHeader", def.getAllowPartClassFromHeader(), null);
     }
     protected void doWriteSwiftMtDataFormat(StringBuilder sb, SwiftMtDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
