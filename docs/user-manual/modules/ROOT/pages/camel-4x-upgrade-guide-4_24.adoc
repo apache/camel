@@ -132,7 +132,8 @@ Routes that set these headers to choose the part class or namespace per message 
 `jaxb.setAllowPartClassFromHeader(true)` in Java, `allowPartClassFromHeader="true"` on `<jaxb>` in XML, or
 `allowPartClassFromHeader: true` in YAML. With REST binding, set the data format property
 `xml.out.allowPartClassFromHeader=true` on the REST configuration for a REST service (the response), or
-`xml.in.allowPartClassFromHeader=true` for the `rest` producer (the request).
+`xml.in.allowPartClassFromHeader=true` for the `rest` producer (the request). The REST binding does not take this
+option from the JAXB data format configured on the CamelContext (such as `camel.dataformat.jaxb.*` in Camel Main).
 
 The SOAP data format (camel-soap) is built on the JAXB data format, and always ignores these headers.
 
@@ -1399,9 +1400,9 @@ now also apply to the data formats that the Rest DSL binding creates for `json` 
 to the data formats of the routes. The request and response bodies of a REST service can therefore change, for
 instance null fields are left out. The `camel.rest.dataFormatProperties` (`json.in.`, `json.out.`, `xml.in.` and
 `xml.out.`) still take precedence. The `objectMapper`, `xmlMapper`, `allowUnmarshallType`, `allowJmsType`,
-`unmarshalType`, `useList`, `collectionType` and `partClass` options are not taken over: the body type comes from the
-`type` and `outType` of the verb, and the other options can be set with `camel.rest.dataFormatProperties` when the
-binding needs them.
+`unmarshalType`, `useList`, `collectionType`, `partClass` and `allowPartClassFromHeader` options are not taken over:
+the body type comes from the `type` and `outType` of the verb, and the other options can be set with
+`camel.rest.dataFormatProperties` when the binding needs them.
 
 === camel-support - API components use one thread pool per CamelContext
 

@@ -95,7 +95,8 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
               description = "Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of"
                             + " the partClass and partNamespace options when marshalling and unmarshalling."
-                            + " This should only be enabled when desired to be used.")
+                            + " Enable it only when the route sets these headers itself, not on routes that receive them from"
+                            + " external systems.")
     private String allowPartClassFromHeader;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.Map",
@@ -583,8 +584,8 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the
-         * partClass and partNamespace options when marshalling and unmarshalling. This should only be enabled when
-         * desired to be used.
+         * partClass and partNamespace options when marshalling and unmarshalling. Enable it only when the route sets
+         * these headers itself, not on routes that receive them from external systems.
          */
         public Builder allowPartClassFromHeader(String allowPartClassFromHeader) {
             this.allowPartClassFromHeader = allowPartClassFromHeader;
@@ -593,8 +594,8 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * Whether the CamelJaxbPartClass and CamelJaxbPartNamespace headers are used, when set, instead of the
-         * partClass and partNamespace options when marshalling and unmarshalling. This should only be enabled when
-         * desired to be used.
+         * partClass and partNamespace options when marshalling and unmarshalling. Enable it only when the route sets
+         * these headers itself, not on routes that receive them from external systems.
          */
         public Builder allowPartClassFromHeader(boolean allowPartClassFromHeader) {
             this.allowPartClassFromHeader = Boolean.toString(allowPartClassFromHeader);
