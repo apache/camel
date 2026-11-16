@@ -129,6 +129,10 @@ When the message body is a `Map` (or `List<Map>` for publishing batch events), t
 
 |=======================================================================
 
+For a JSON text body, the producer also generates the `id` as a random UUID. The producer generates a new `id` each time
+it sends the event, so a redelivery sends the event with a different `id`. To send the same `id` on a redelivery, use a
+`Map` body with the `id` key.
+
 === Event Validation and Caching
 
 The component supports a 3-level hierarchical validation model:
