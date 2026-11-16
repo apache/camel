@@ -422,6 +422,21 @@ Before, the refused listing was taken as an empty directory: the polls found no 
 450 and 550 (a directory that is missing or empty) still give an empty listing. If such a consumer now fails, set
 `passiveMode=true`. See the xref:components::ftp-component.adoc[FTP component].
 
+=== camel-ftp - sftp sends the password once per connection, and does not retry a rejected login
+
+The `sftp` component now gives the password to the server once per connection, and no longer connects again when the
+server rejected the login: `maximumReconnectAttempts` applies to the other connection failures only. Before, a wrong
+password was sent up to 6 times per connection (the `MaxAuthTries` of JSch), on up to `maximumReconnectAttempts` (3)
+connections: 18 times per poll of the consumer, and 18 more when the consumer started with `autoCreate=true`, which is
+enough to lock the account on a server with a lockout policy. The consumer now tries again on its next poll, and the
+producer on its next message. When the server asks for the password again on the same connection, the connection
+ends, with the cause `Auth fail for user '<username>': the server did not accept the password`.
+
+The WARN that a consumer of the `ftp`, `ftps`, `sftp` and `mina-sftp` components logs when it cannot connect,
+`Cannot connect/login to: ... Will skip this poll.`, now gives the reason before `Will skip this poll.`, such as
+`due to: Auth fail for methods 'publickey,password'`.
+See the xref:components::sftp-component.adoc[SFTP component].
+
 === camel-kafka - exactlyOnce: a rejected send that a doCatch catches skips the record
 
 With `exactlyOnce`, a Kafka send through the source producer after an earlier send failed in the same transaction is

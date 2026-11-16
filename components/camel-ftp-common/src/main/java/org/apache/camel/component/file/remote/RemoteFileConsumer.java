@@ -99,7 +99,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         if (LOG.isTraceEnabled()) {
             LOG.trace("prePollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
-        Exception cause;
+        Exception cause = null;
         try {
             connectIfNecessary();
             loggedIn = true;
@@ -129,7 +129,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             return false;
         }
         if (!loggedIn) {
-            String message = "Cannot connect/login to: " + remoteServer() + ". Will skip this poll.";
+            String message = "Cannot connect/login to: " + remoteServer() + reason(cause) + ". Will skip this poll.";
             if (!loggedInWarning) {
                 LOG.warn(message);
                 loggedInWarning = true;
@@ -144,6 +144,18 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         forceConsumerAsReady();
 
         return true;
+    }
+
+    /**
+     * Why the connection failed, for the WARN: the message of the cause when there is one, as the sftp operations wrap
+     * the error of the SSH client in an exception whose message only names the server.
+     */
+    private static String reason(Exception cause) {
+        if (cause == null) {
+            return "";
+        }
+        Throwable reason = cause.getCause() != null ? cause.getCause() : cause;
+        return " due to: " + (reason.getMessage() != null ? reason.getMessage() : reason.getClass().getName());
     }
 
     @Override
