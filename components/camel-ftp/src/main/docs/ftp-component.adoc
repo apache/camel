@@ -268,6 +268,13 @@ wait on that connection again:
 * When disconnecting, for example when the consumer or the producer stops, the client sends `QUIT` and waits at most
   2 seconds (`soTimeout` when it is shorter) for its reply.
 
+=== File and directory names with a line break
+
+The FTP control connection sends one command per line, so a remote file or directory name with a carriage return or
+a line feed cannot be sent as the argument of one command. The `ftp` and `ftps` components refuse such a name with a
+`GenericFileOperationFailedException` before they send any command for it, for example when the producer writes a file
+whose `CamelFileName` header has a line break. Remove or replace these characters in the name before the producer.
+
 [[FTP-DefaultWhenConsumingFiles]]
 === Default when consuming files
 

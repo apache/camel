@@ -423,6 +423,18 @@ the `include` or `antInclude` option.
 
 See the xref:components::sftp-component.adoc[SFTP component].
 
+=== camel-ftp - ftp and ftps refuse a file or directory name with a carriage return or a line feed
+
+The `ftp` and `ftps` components now refuse a remote file or directory name with a carriage return or a line feed, with
+a `GenericFileOperationFailedException`, before they send any command to the server for it. This applies to the name
+the producer writes (the `CamelFileName` header, `tempFileName`, `doneFileName` and `moveExisting`), to the directories
+it creates or changes to, and to the names the consumer retrieves, deletes, renames or lists.
+
+The FTP control connection sends one command per line, so such a name cannot be sent as one command. Before, the server
+got the name cut at the line break: the operation failed or acted on another file, and the replies of the later
+commands on that connection could get out of step. Remove or replace these characters in the name before the producer.
+The `sftp` component is not affected. See the xref:components::ftp-component.adoc[FTP component].
+
 === camel-ftp - a directory listing the server refuses fails the poll
 
 The `ftp` and `ftps` consumers now fail the poll when the server refuses the listing of a directory, for example the
