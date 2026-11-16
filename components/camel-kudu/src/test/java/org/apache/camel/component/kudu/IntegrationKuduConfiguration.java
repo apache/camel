@@ -19,6 +19,7 @@ package org.apache.camel.component.kudu;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.function.Consumer;
 
@@ -213,9 +214,12 @@ public class IntegrationKuduConfiguration implements BeforeAllCallback, AfterAll
                     }
                 }
             }
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to resolve host IP address for Kudu advertising", e);
+        } catch (SocketException e) {
+            throw new IllegalStateException("Failed to resolve host IP address for Kudu advertising", e);
         }
+        // the host name may resolve to a loopback address (such as 127.0.1.1), which the containers cannot reach
+        throw new IllegalStateException(
+                "Could not resolve a non-loopback, non-docker IPv4 host address for Kudu advertising: "
+                                        + "the host needs a network interface that the containers can reach");
     }
 }
