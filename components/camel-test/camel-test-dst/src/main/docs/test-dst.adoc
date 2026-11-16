@@ -613,6 +613,12 @@ CAMEL-25737), `dst.replayCheckSeed` (the seed of the in-JVM replay test of the E
 `dst.share.pollOnError` (the pollOnError strategies the Kafka share world picks from)
 and `dst.pulsar.subscribeFailRates` (the subscribe failure rates of the Pulsar world, `0` runs without subscribe failures).
 
+For camel-paho-mqtt5 (`components/camel-paho-mqtt5`, `PahoMqtt5ConsumerDstTest`) the past fixes are the main code of
+6044f38166f9 (CAMEL-25944) and the change of b7594f06e0b7 (CAMEL-25793), taken out by hand. Its world has two
+properties, each adding back a case that the default set leaves out: `dst.paho.strictCallbackThread` (`true` checks a
+client whose connect hangs while the callback thread is still in messageArrived) and
+`dst.paho.stopWhileConnecting` (`true` lets the operator stop the route while the client connects).
+
 == Limits
 
 * Interleaving is per task: the harness does not preempt a task in the middle of a method.

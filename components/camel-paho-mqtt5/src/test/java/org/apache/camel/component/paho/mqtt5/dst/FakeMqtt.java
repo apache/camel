@@ -63,11 +63,12 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
  * <p>
  * Not modelled: retained messages, wildcards and several topics, shared subscriptions, will messages, the QoS 2 flow
  * beyond PUBREC (Paho sends PUBREC when the message arrives and completes the flow on its own, so the broker never
- * sends a QoS 2 message again once the client has it), message expiry, topic aliases, keep alive, the persistence of
- * the client, the quiesce of a disconnect, the bound of 10 messages of the queue of the callback thread, the reconnect
- * delay that Paho keeps for all clients of the JVM (each client has its own here), the order of connectComplete and the
- * messages resent at the connect (separate tasks here), the threads that Paho calls connectComplete and disconnected on
- * (tasks of the callback executor here), and the reason codes of a SUBACK.
+ * sends a QoS 2 message again once the client has it; the fake frees the Receive Maximum slot of a QoS 2 message at
+ * PUBREC, one round trip before PUBCOMP, where MQTT 5 4.9 returns it), message expiry, topic aliases, keep alive, the
+ * persistence of the client, the quiesce of a disconnect, the bound of 10 messages of the queue of the callback thread,
+ * the reconnect delay that Paho keeps for all clients of the JVM (each client has its own here), the order of
+ * connectComplete and the messages resent at the connect (separate tasks here), the threads that Paho calls
+ * connectComplete and disconnected on (tasks of the callback executor here), and the reason codes of a SUBACK.
  * <p>
  * Timing (the one-stack rule of the harness): every call of the client takes a round trip and writes take effect at its
  * start; deliveries are tasks of the callback thread, one at a time, in order.
@@ -360,7 +361,8 @@ final class FakeMqtt {
         int receiveMaximum = 65535;
         private MqttConnectionOptions options;
         private boolean reconnectCycle;
-        private boolean everReconnected;
+        // [P] MqttAsyncClient.reconnecting: set at the first lost connection with automaticReconnect
+        private boolean reconnecting;
         private boolean disconnectedByUser;
         private boolean connecting;
         private boolean hung;
@@ -425,9 +427,9 @@ final class FakeMqtt {
             }
             connectedFlag = true;
             disconnectedByUser = false;
-            // [P] the connect after an automatic reconnect reports reconnect=true: the reconnecting flag that the
-            // reconnect cycle sets is not cleared (MqttAsyncClient 1.2.5)
-            boolean reconnect = everReconnected;
+            // [P] once a connection was lost with automaticReconnect, a connect reports reconnect=true: the reconnecting
+            // flag that MqttReconnectCallback.disconnected sets is not cleared (MqttAsyncClient 1.2.5)
+            boolean reconnect = reconnecting;
             callbackTask("connectComplete", () -> callback.connectComplete(reconnect, URI));
             return token(present);
         }
@@ -665,7 +667,8 @@ final class FakeMqtt {
             try {
                 callback.messageArrived(TOPIC, message);
             } catch (Exception ex) {
-                // [P] an exception from messageArrived closes the connection
+                // [P] in v5, CommsCallback.deliverMessage catches and ignores an Exception from messageArrived (only an
+                // Error closes the connection); the consumer should not throw one, so the fake counts it
                 violations.add("messageArrived threw " + ex);
             }
             if (e == epoch && m.qos == 1 && !manualAcks) {
@@ -690,6 +693,7 @@ final class FakeMqtt {
                         new MqttException(MqttClientException.REASON_CODE_CONNECTION_LOST))));
             }
             if (options != null && options.isAutomaticReconnect() && !disconnectedByUser && !closed) {
+                reconnecting = true;
                 reconnectCycle = true;
                 scheduleReconnect(1000);
             }
@@ -709,7 +713,6 @@ final class FakeMqtt {
                     connectToBroker();
                     connectedFlag = true;
                     reconnectCycle = false;
-                    everReconnected = true;
                     callbackTask("connectComplete", () -> callback.connectComplete(true, URI));
                 } catch (MqttException e) {
                     long max = Math.max(1000, options.getMaxReconnectDelay());

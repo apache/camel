@@ -63,11 +63,13 @@ import org.apache.camel.test.dst.Invariants;
  * after the connection closed (the reconnect of the consumer after a failed message, or the automatic reconnect, while
  * another message is in the route) never completes, as read in the byte code of Paho 1.2.5 (not reproduced against a
  * broker yet, and the fake leaves out the quiesce of a disconnect, which changes when the thread is busy): the client
- * stays connecting, the consumer delivers nothing more, and the stop cannot close the client. When the client of the
- * consumer hangs that way at the end of the run, the world does not check that every message is routed, and a hung
- * client is not checked for being closed; {@code -Ddst.paho.strictCallbackThread=true} checks both. A stop while the
- * client connects makes the close of the client fail (Paho throws 32110), and the client goes on connecting: the
- * operator does not stop the route then, and {@code -Ddst.paho.stopWhileConnecting=true} lets it.
+ * stays connecting, the consumer delivers nothing more, and the stop cannot close the client. It still needs a
+ * reproduction, and may be a Paho issue. When the client of the consumer hangs that way at the end of the run, the
+ * world does not check that every message is routed, and a hung client is not checked for being closed;
+ * {@code -Ddst.paho.strictCallbackThread=true} checks both. A stop while the client connects makes the close of the
+ * client fail (Paho throws 32110), and the consumer drops a client that goes on connecting, with its automatic
+ * reconnect and the same client id. The operator does not stop the route then, and
+ * {@code -Ddst.paho.stopWhileConnecting=true} lets it.
  * <p>
  * Not explored: a client given with the client option (shared by several consumers), the persistence of the client,
  * retained messages and wildcards, an acknowledgement that blocks, and a stop while a message is in the route.
@@ -115,6 +117,7 @@ final class PahoMqtt5World {
     private final Set<Long> delivered = new HashSet<>();
     private final Set<Long> deliveredWhileStopping = new HashSet<>();
     private DefaultCamelContext context;
+    private DstExecutor operator;
     private boolean faults = true;
     private int sendsLeft;
     private int opsLeft;
@@ -125,7 +128,9 @@ final class PahoMqtt5World {
     private boolean checked;
     private boolean stopping;
     private boolean restartByConsumer;
+    // a route stopped while the client connects leaves that client connecting
     private final boolean stopWhileConnecting = Boolean.getBoolean("dst.paho.stopWhileConnecting");
+    // a connect while the callback thread is still in messageArrived hangs
     private final boolean strictCallbackThread = Boolean.getBoolean("dst.paho.strictCallbackThread");
     private String finalCheck;
     private String afterStop;
@@ -195,6 +200,7 @@ final class PahoMqtt5World {
         });
         context.start();
         DstExecutor operator = dst.executor("operator", 1);
+        this.operator = operator;
         try {
             operator.schedule("start route", 0, () -> startRoute(context));
             planSends();
@@ -254,10 +260,11 @@ final class PahoMqtt5World {
 
     private void delivered(long n) {
         delivered.add(n);
-        if (stopping || restartByConsumer
-                || context != null && context.getRouteController().getRouteStatus(ROUTE) != ServiceStatus.Started) {
+        ServiceStatus status = context != null ? context.getRouteController().getRouteStatus(ROUTE) : null;
+        if (stopping || restartByConsumer || status == ServiceStatus.Stopping || status == ServiceStatus.Stopped) {
             // the route stops: the exchange of this message fails, and without manual acks (or on a session the broker
-            // does not keep) its acknowledgement leaves it lost
+            // does not keep) its acknowledgement leaves it lost. Not while the route starts: a kept session sends its
+            // messages right after the connect, and the consumer must route them
             deliveredWhileStopping.add(n);
         }
     }
@@ -333,7 +340,6 @@ final class PahoMqtt5World {
         } catch (Exception e) {
             // the broker cannot be reached: the route stays stopped, and the operator starts it again later
             dst.trace("world: route start failed: " + e.getMessage());
-            DstExecutor operator = dst.executor("operator", 1);
             operator.schedule("start route again", 2000, () -> startRoute(context));
         }
     }
