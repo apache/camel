@@ -16,16 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.dsl.jbang.core.commands.action.CamelLoadAction;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
-import org.apache.camel.dsl.jbang.run.common.PathUtils;
-import org.apache.camel.util.HomeHelper;
+import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,37 +35,35 @@ import static org.apache.camel.dsl.jbang.run.common.RuntimeUtil.getPid;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-@UsesWorkingDirectory
-class LoadTest {
+class LoadTest extends CamelCommandBaseTestSupport {
 
-    private Path workingDir;
-    private Path previousHome;
+    private File workingDir;
 
     @BeforeEach
-    public void setup() throws IOException {
-        Path base = Paths.get("target");
-        workingDir = Files.createTempDirectory(base, "camel-load");
-        // the routes run in this JVM, and their CLI connector reads the actions in the user home
-        previousHome = CommandLineHelper.getHomeDir();
-        CommandLineHelper.useHomeDir(HomeHelper.resolveHomeDir());
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestWorkDir();
+        useTestHomeDir();
+        workingDir = Files.createTempDirectory("camel-load").toFile();
     }
 
     @AfterEach
     public void end() throws IOException {
-        CommandLineHelper.useHomeDir(previousHome.toString());
-        // force removing, since deleteOnExit is not removing.
-        PathUtils.deleteDirectory(workingDir);
+        FileUtil.removeDir(workingDir);
     }
 
     @Test
     public void shouldLoad() throws Exception {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new Run(new CamelJBangMain().withPrinter(printer));
         CommandLineTestHelper.parse(run, "src/test/resources/hello.yaml", "--name=myload", "--max-messages=5",
-                "--prop=mydir=" + workingDir);
+                "--prop=mydir=" + workingDir.getAbsolutePath());
 
         Runnable r = () -> {
             try {
-                Thread.sleep(2000);
+                // wait for the integration status file to be written to the home dir
+                await().atMost(10, TimeUnit.SECONDS)
+                        .until(() -> Files.exists(CommandLineHelper.getCamelDir().resolve(getPid() + "-status.json")));
                 CamelLoadAction load = new CamelLoadAction(new CamelJBangMain());
                 CommandLineTestHelper.parse(load, getPid(), "--source=src/test/resources/load.yaml");
                 load.doCall();
@@ -80,7 +78,7 @@ class LoadTest {
         int exit = run.doCall();
         Assertions.assertEquals(0, exit);
 
-        Path outPath = workingDir.resolve("load.txt");
+        Path outPath = workingDir.toPath().resolve("load.txt");
         await("load.txt file is created by the launched routes").untilAsserted(() -> assertThat(outPath).exists());
         String data = Files.readString(outPath);
         Assertions.assertEquals("I was loaded", data);
