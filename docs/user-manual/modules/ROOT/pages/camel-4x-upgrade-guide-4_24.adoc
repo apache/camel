@@ -51,12 +51,15 @@ The `InvalidMessageSignatureException` of a failed check no longer carries the c
 The options `camel.server.jwtKeystorePassword`, `camel.management.jwtKeystorePassword`,
 `camel.vault.azure.eventhubConnectionString`, `camel.vault.azure.tenantId`, `camel.vault.gcp.serviceAccountKey`,
 `camel.vault.ibm.eventStreamUsername` and `camel.vault.ibm.eventStreamPassword` are flagged secret, and are now also
-sensitive keys, like the other secret options. The Camel Main auto-configuration summary shows their value as `xxxxxx`,
-and an endpoint URI parameter with one of these names, such as `tenantId`, is masked in sanitized URIs.
+sensitive keys, like the other secret options. The Camel Main auto-configuration summary shows their value as `xxxxxx`.
+These options are matched by their whole key. Component and endpoint options with the same name, such as `tenantId` or
+`serviceAccountKey`, are not affected.
 
 The `camel.security.secretPolicy` check now also reports these options when they are configured as plain text,
 including a value set through an environment variable: a warning by default, and the startup fails with
 `camel.main.profile=prod`. Configure them with a property placeholder or a vault reference instead.
+A file location in `camel.vault.gcp.serviceAccountKey`, such as `file:/etc/gcp/sa.json`, is also reported. It can go
+behind a property placeholder too.
 
 === camel-observability-services - promoted to Stable
 
