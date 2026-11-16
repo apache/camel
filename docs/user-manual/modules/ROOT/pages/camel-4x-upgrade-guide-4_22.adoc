@@ -124,6 +124,22 @@ sources must set the new `allowUrlCopySource=true` or `allowGlobCopySource=true`
 The new `copyBaseDirectory` option sets the directory that a local source must be inside, after resolving symbolic
 links.
 
+=== camel-core - XmlConverter SAX parser factory
+
+`XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
+DTD loading:
+
+* `http://xml.org/sax/features/external-parameter-entities` = `false`
+* `http://apache.org/xml/features/nonvalidating/load-external-dtd` = `false`
+
+It previously set only `FEATURE_SECURE_PROCESSING` and `external-general-entities=false`, while
+`createDocumentBuilderFactory()` in the same class already blocked external resource resolution more
+thoroughly.
+
+Documents carrying an internal DTD subset still parse. Routes that genuinely need to resolve
+an external DTD or parameter entity through this converter must supply their own
+`SAXParserFactory`.
+
 === camel-file - idempotent consumer with an idempotent read lock
 
 With `idempotent=true` (or `noop=true`) and `readLock=idempotent`, `idempotent-changed` or `idempotent-rename`, the
