@@ -2,7 +2,6 @@
 package org.apache.camel.component.openfga.security;
 
 import javax.annotation.processing.Generated;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -23,7 +22,7 @@ public class OpenFgaSecurityPolicyConfigurer extends org.apache.camel.support.co
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.openfga.security.OpenFgaSecurityPolicy target = (org.apache.camel.component.openfga.security.OpenFgaSecurityPolicy) obj;
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiaudience":
         case "apiAudience": target.setApiAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "apitoken":
@@ -71,7 +70,7 @@ public class OpenFgaSecurityPolicyConfigurer extends org.apache.camel.support.co
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiaudience":
         case "apiAudience": return java.lang.String.class;
         case "apitoken":
@@ -120,7 +119,7 @@ public class OpenFgaSecurityPolicyConfigurer extends org.apache.camel.support.co
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.openfga.security.OpenFgaSecurityPolicy target = (org.apache.camel.component.openfga.security.OpenFgaSecurityPolicy) obj;
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiaudience":
         case "apiAudience": return target.getApiAudience();
         case "apitoken":
@@ -168,7 +167,7 @@ public class OpenFgaSecurityPolicyConfigurer extends org.apache.camel.support.co
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "conditioncontext":
         case "conditionContext": return java.lang.Object.class;
         default: return null;

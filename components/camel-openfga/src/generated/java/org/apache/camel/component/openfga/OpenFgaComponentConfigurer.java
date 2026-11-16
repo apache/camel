@@ -2,7 +2,6 @@
 package org.apache.camel.component.openfga;
 
 import javax.annotation.processing.Generated;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +29,7 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OpenFgaComponent target = (OpenFgaComponent) obj;
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiaudience":
         case "apiAudience": getOrCreateConfiguration(target).setApiAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "apitoken":
@@ -110,7 +109,7 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiaudience":
         case "apiAudience": return java.lang.String.class;
         case "apitoken":
@@ -186,7 +185,7 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OpenFgaComponent target = (OpenFgaComponent) obj;
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiaudience":
         case "apiAudience": return getOrCreateConfiguration(target).getApiAudience();
         case "apitoken":
@@ -261,7 +260,7 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "conditioncontext":
         case "conditionContext": return java.lang.Object.class;
         default: return null;

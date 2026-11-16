@@ -189,7 +189,7 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
                 require(configuration.getRelation(), "relation", "names the relation to expand");
             }
             default -> {
-                // writeTuples and deleteTuples take their tuples from the message body, falling back to the
+                // writeTuples, deleteTuples and write take their tuples from the message body, falling back to the
                 // user/relation/object triple; readTuples treats user, relation and object as an optional filter and
                 // readChanges needs nothing at all - so none of them has anything that must be configured up front
             }

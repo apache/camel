@@ -515,26 +515,26 @@ public class OpenFgaConfiguration implements Cloneable {
         this.maxBatchSize = maxBatchSize;
     }
 
-    public OpenFgaWriteConflictMode getOnDuplicate() {
-        return onDuplicate;
-    }
-
     /**
      * How writeTuples and write handle an existing relationship: error (the default) fails the operation, while ignore
      * leaves that relationship unchanged and continues. The ignore mode requires OpenFGA 1.10.0 or later.
      */
-    public void setOnDuplicate(OpenFgaWriteConflictMode onDuplicate) {
-        this.onDuplicate = onDuplicate;
+    public OpenFgaWriteConflictMode getOnDuplicate() {
+        return onDuplicate;
     }
 
-    public OpenFgaWriteConflictMode getOnMissing() {
-        return onMissing;
+    public void setOnDuplicate(OpenFgaWriteConflictMode onDuplicate) {
+        this.onDuplicate = onDuplicate;
     }
 
     /**
      * How deleteTuples and write handle an absent relationship: error (the default) fails the operation, while ignore
      * skips that deletion and continues. The ignore mode requires OpenFGA 1.10.0 or later.
      */
+    public OpenFgaWriteConflictMode getOnMissing() {
+        return onMissing;
+    }
+
     public void setOnMissing(OpenFgaWriteConflictMode onMissing) {
         this.onMissing = onMissing;
     }

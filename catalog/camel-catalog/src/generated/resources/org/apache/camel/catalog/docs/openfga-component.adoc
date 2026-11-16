@@ -381,8 +381,10 @@ for reconciliation routes that should leave an already-satisfied operation uncha
 `writeTuples` and `deleteTuples`, respectively, and both apply to `write`.
 
 Use `write` to grant and revoke relationships in one atomic request. With no configured `user`/`relation`/`object`,
-the body is a Map containing `writes` and/or `deletes` collections. Each entry is an ordinary Map containing exactly
-`user`, `relation` and `object`; other body shapes or entry fields are rejected. For example:
+the body is a Map containing `writes` and/or `deletes` collections. Each entry is an ordinary Map with `user`,
+`relation` and `object`; a `timestamp` entry, as `readTuples` returns it, is ignored, so a page of `readTuples` can be
+revoked as it is. A `condition` entry is written through on a write and ignored on a delete. Other body shapes or entry
+fields are rejected. For example:
 
 [source,java]
 ------------------------------------------------------------
@@ -392,17 +394,18 @@ Map<String, Object> changes = Map.of(
 template.requestBody("openfga:write?storeId={{fga.store}}&authorizationModelId={{fga.model}}", changes);
 ------------------------------------------------------------
 
-At least one tuple is required, and the sum of writes and deletes cannot exceed 100. Larger transactions are rejected
-before calling OpenFGA; the component never splits this atomic update into independently committed requests. A failed
-transaction remains a failure even when `failOpen=true`. An endpoint-configured model revision is applied to the
-transaction. A server configured with a lower tuple limit can reject a request within the component's limit.
+The component requires at least one tuple and rejects an all-empty write, and the sum of writes and deletes cannot
+exceed 100. It rejects larger transactions before calling OpenFGA and never splits this atomic update into
+independently committed requests. A failed transaction remains a failure even when `failOpen=true`. The component
+applies an endpoint-configured model revision to the transaction. A server configured with a lower tuple limit can
+reject a request within the component's limit.
 
 The configured-tuple precedence also applies to `write`: when any of `user`/`relation`/`object` is configured, that
 triple supplies one write, the body is ignored, and no deletes are taken from it. A missing configured part fails
 rather than falling back to the body.
 
 Successful mutations preserve the input body. `CamelOpenFgaWrittenTuples` and `CamelOpenFgaDeletedTuples` report the
-number of submitted operations, including any skipped by the selected ignore mode; they do not report the number of
+number of submitted operations, including any that the selected ignore mode skipped; they do not report the number of
 rows changed in storage. The combined `write` operation sets both counters, including zero for an omitted side.
 
 == Security

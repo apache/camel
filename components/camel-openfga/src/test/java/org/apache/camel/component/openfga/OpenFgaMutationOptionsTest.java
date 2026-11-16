@@ -203,8 +203,51 @@ class OpenFgaMutationOptionsTest extends CamelTestSupport {
         Exchange out = request("write", "", Map.of("writes", List.of(Map.of(
                 "user", "user:anne", "relation", "reader", "object", "document:budget", "extra", "value"))));
 
-        assertThat(out.getException()).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("exactly");
+        assertThat(out.getException()).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("at most a condition or timestamp");
         verifyNoInteractions(client);
+    }
+
+    @Test
+    void supportsConditionOnWritesAndIgnoresOnDeletes() throws Exception {
+        when(client.write(any(), any())).thenReturn(CompletableFuture.completedFuture(success()));
+        Map<String, Object> conditionedWrite = Map.of(
+                "user", "user:anne",
+                "relation", "reader",
+                "object", "document:budget",
+                "condition", Map.of("name", "in_region", "context", Map.of("region", "emea")));
+        Map<String, Object> conditionedDelete = Map.of(
+                "user", "user:bob",
+                "relation", "writer",
+                "object", "document:budget",
+                "condition", Map.of("name", "in_region", "context", Map.of("region", "emea")));
+        Exchange out = request("write", "", Map.of(
+                "writes", List.of(conditionedWrite),
+                "deletes", List.of(conditionedDelete)));
+
+        assertThat(out.getException()).isNull();
+        ArgumentCaptor<ClientWriteRequest> request = ArgumentCaptor.captor();
+        verify(client).write(request.capture(), any());
+        assertThat(request.getValue().getWrites()).singleElement().satisfies(key -> {
+            assertThat(key.getUser()).isEqualTo("user:anne");
+            assertThat(key.getCondition()).isNotNull();
+            assertThat(key.getCondition().getName()).isEqualTo("in_region");
+        });
+        assertThat(request.getValue().getDeletes()).singleElement().satisfies(key -> {
+            assertThat(key.getUser()).isEqualTo("user:bob");
+        });
+    }
+
+    @Test
+    void ignoresTheTimestampThatReadTuplesReturns() throws Exception {
+        // the shape of a readTuples page, so it can be revoked as it is, like with deleteTuples
+        Map<String, String> fromReadTuples = Map.of("user", "user:anne", "relation", "reader",
+                "object", "document:budget", "timestamp", "2026-11-16T08:00:00Z");
+        Exchange out = request("write", "", Map.of("deletes", List.of(fromReadTuples)));
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.DELETED_TUPLES)).isEqualTo(1);
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.WRITTEN_TUPLES)).isEqualTo(0);
     }
 
     @Test

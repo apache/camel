@@ -736,7 +736,11 @@ public class OpenFgaProducer extends DefaultProducer {
         }
         List<ClientTupleKey> writeKeys = new ArrayList<>(writes.size());
         for (Tuple tuple : writes) {
-            writeKeys.add(new ClientTupleKey().user(tuple.user).relation(tuple.relation)._object(tuple.object));
+            ClientTupleKey key = new ClientTupleKey().user(tuple.user).relation(tuple.relation)._object(tuple.object);
+            if (tuple.condition != null) {
+                key.condition(tuple.condition);
+            }
+            writeKeys.add(key);
         }
         List<ClientTupleKeyWithoutCondition> deleteKeys = new ArrayList<>(deletes.size());
         for (Tuple tuple : deletes) {
@@ -759,6 +763,10 @@ public class OpenFgaProducer extends DefaultProducer {
         exchange.getMessage().setHeader(OpenFgaConstants.DELETED_TUPLES, deletes.size());
     }
 
+    private static final Set<String> MUTATION_KEYS = Set.of("user", "relation", "object");
+    private static final Set<String> ALLOWED_MUTATION_KEYS
+            = Set.of("user", "relation", "object", "timestamp", "condition");
+
     private List<Tuple> mutationTuples(Object value) {
         if (value == null) {
             return List.of();
@@ -767,12 +775,16 @@ public class OpenFgaProducer extends DefaultProducer {
             throw new IllegalArgumentException("write mutation lists must be collections of user, relation and object Maps");
         }
         if (collection.size() > 100) {
-            throw new IllegalArgumentException("write requires between 1 and 100 tuples across writes and deletes");
+            throw new IllegalArgumentException(
+                    "a single write mutation list cannot exceed 100 entries, the limit of one atomic write");
         }
         List<Tuple> tuples = new ArrayList<>(collection.size());
         for (Object element : collection) {
-            if (!(element instanceof Map<?, ?> map) || !map.keySet().equals(Set.of("user", "relation", "object"))) {
-                throw new IllegalArgumentException("write entries must be Maps with exactly user, relation and object entries");
+            // the shape readTuples returns, so a page of tuples can be revoked as it is: its timestamp is ignored
+            if (!(element instanceof Map<?, ?> map) || !map.keySet().containsAll(MUTATION_KEYS)
+                    || !ALLOWED_MUTATION_KEYS.containsAll(map.keySet())) {
+                throw new IllegalArgumentException(
+                        "write entries must be Maps with user, relation and object entries, and at most a condition or timestamp");
             }
             tuples.add(toTuple(map));
         }

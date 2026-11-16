@@ -24,7 +24,7 @@ public class OpenFgaEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(34);
         props.add("apiAudience");
         props.add("apiToken");
         props.add("apiTokenIssuer");
