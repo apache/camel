@@ -712,6 +712,13 @@ public class StringHelperTest {
         assertEquals("a", list[0]);
         assertEquals("b", list[1]);
         assertEquals("c", list[2]);
+
+        // when count is larger than the number of separators, the trailing elements are left as null
+        list = splitOnCharacter("foo::bar", "::", 3);
+        assertEquals(3, list.length);
+        assertEquals("foo", list[0]);
+        assertEquals("bar", list[1]);
+        assertNull(list[2]);
     }
 
     @Test
