@@ -61,7 +61,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
     @ParameterizedTest
     @MethodSource("exportRuntimeProvider")
     void shouldDependencyUpdate(RuntimeType rt) throws Exception {
-        prepareMavenProject(rt);
+        prepareFixtureProject(rt);
         checkNoUpdateOnFreshlyGeneratedproject(rt);
         addArangodbToCamelFile();
         checkOneDependencyAddedForArangoDb(rt);
@@ -112,27 +112,6 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         List<String> lines = printer.getLines();
         Assertions.assertEquals(1, lines.size(), printer.getLines().toString());
         Assertions.assertEquals("No updates to pom.xml", lines.get(0));
-    }
-
-    private void prepareMavenProject(RuntimeType rt) throws Exception {
-        StringPrinter initCommandPrinter = new StringPrinter();
-        Init initCommand = new Init(new CamelJBangMain().withPrinter(initCommandPrinter));
-        String camelFilePath = new File(workingDir, "my.camel.yaml").getAbsolutePath();
-        CommandLineTestHelper.parse(initCommand, camelFilePath);
-        Assertions.assertEquals(0, initCommand.doCall(), initCommandPrinter.getLines().toString());
-
-        StringPrinter exportCommandPrinter = new StringPrinter();
-        Export exportCommand = new Export(new CamelJBangMain().withPrinter(exportCommandPrinter));
-        CommandLineTestHelper.parse(exportCommand,
-                "--gav=examples:route:1.0.0",
-                "--dir=" + workingDir,
-                // the directory has the route that camel init created, which the export replaces with the project
-                "--clean-dir", "--yes",
-                "--camel-version=4.13.0",
-                "--runtime=" + rt.runtime(),
-                CamelCommandBaseTestSupport.quarkusExtRegistry(),
-                camelFilePath);
-        Assertions.assertEquals(0, exportCommand.doCall(), exportCommandPrinter.getLines().toString());
     }
 
     // ==================== explicit route file as positional argument ====================

@@ -83,13 +83,13 @@ class CatalogDocExamplesTest {
     }
 
     private static DocExamples validate(List<String> pages) {
-        int examples = 0;
-        List<String> failures = new ArrayList<>();
-        for (String page : pages) {
+        return pages.parallelStream().map(page -> {
             String doc = catalog.asciiDoc(page);
             if (doc == null) {
-                continue;
+                return new DocExamples(0, List.of());
             }
+            int examples = 0;
+            List<String> failures = new ArrayList<>();
             List<String> blocks = DocBlocks.examples(doc);
             for (int n = 0; n < blocks.size(); n++) {
                 String yaml = blocks.get(n);
@@ -102,7 +102,12 @@ class CatalogDocExamplesTest {
                     failures.add(page + " example " + (n + 1) + ": " + msg);
                 }
             }
-        }
-        return new DocExamples(examples, failures);
+            return new DocExamples(examples, failures);
+        }).reduce(new DocExamples(0, List.of()), (a, b) -> {
+            List<String> combined = new ArrayList<>(a.failures().size() + b.failures().size());
+            combined.addAll(a.failures());
+            combined.addAll(b.failures());
+            return new DocExamples(a.examples() + b.examples(), combined);
+        });
     }
 }
