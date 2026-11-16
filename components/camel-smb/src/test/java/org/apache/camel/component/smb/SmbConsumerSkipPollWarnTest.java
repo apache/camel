@@ -18,19 +18,12 @@ package org.apache.camel.component.smb;
 
 import java.net.ConnectException;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.hierynomus.mserref.NtStatus;
 import com.hierynomus.mssmb2.SMB2MessageCommandCode;
 import com.hierynomus.mssmb2.SMBApiException;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class SmbConsumerSkipPollWarnTest extends CamelTestSupport {
 
-    private final WarnCapture warnings = new WarnCapture();
+    private final SmbConsumerWarnCapture warnings = new SmbConsumerWarnCapture();
     private StubSmbOperations operations;
     private SmbConsumer consumer;
 
@@ -67,9 +60,11 @@ class SmbConsumerSkipPollWarnTest extends CamelTestSupport {
 
     @Test
     void autoCreateFailureIsLoggedWithTheDirectoryAndTheReason() throws Exception {
-        operations.buildDirectoryFailure = new SMBApiException(
+        // as SmbOperations.buildDirectory throws it
+        SMBApiException denied = new SMBApiException(
                 NtStatus.STATUS_ACCESS_DENIED.getValue(), SMB2MessageCommandCode.SMB2_CREATE,
                 "Create failed for \\\\localhost\\data-rw\\inbox", null);
+        operations.buildDirectoryFailure = new GenericFileOperationFailedException(denied.getMessage(), denied);
 
         assertFalse(consumer.prePollCheck());
         assertFalse(consumer.prePollCheck());
@@ -137,43 +132,6 @@ class SmbConsumerSkipPollWarnTest extends CamelTestSupport {
                 throw buildDirectoryFailure;
             }
             return true;
-        }
-    }
-
-    /**
-     * Captures the WARN messages of the smb consumer, between {@link #attach()} and {@link #detach()}.
-     */
-    private static final class WarnCapture extends AbstractAppender {
-
-        private final List<String> messages = new CopyOnWriteArrayList<>();
-
-        WarnCapture() {
-            super("SmbConsumerWarnCapture", null, null, true, Property.EMPTY_ARRAY);
-        }
-
-        void attach() {
-            start();
-            LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-            ctx.getConfiguration().getRootLogger().addAppender(this, Level.WARN, null);
-            ctx.updateLoggers();
-        }
-
-        void detach() {
-            LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-            ctx.getConfiguration().getRootLogger().removeAppender(getName());
-            ctx.updateLoggers();
-            stop();
-        }
-
-        List<String> messages() {
-            return messages;
-        }
-
-        @Override
-        public void append(LogEvent event) {
-            if (SmbConsumer.class.getName().equals(event.getLoggerName())) {
-                messages.add(event.getMessage().getFormattedMessage());
-            }
         }
     }
 }
