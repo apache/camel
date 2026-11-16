@@ -32,6 +32,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SpiffeProducerTest extends CamelTestSupport {
@@ -135,6 +137,29 @@ class SpiffeProducerTest extends CamelTestSupport {
         assertThat(out.getMessage().getBody(String.class)).isEqualTo("the-jwt-token");
         assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo("spiffe://example.org/workload");
         assertThat(out.getMessage().getHeader(SpiffeConstants.EXPIRY)).isEqualTo(expiry);
+    }
+
+    @Test
+    void fetchJwtSvidMintsTheTokenForTheConfiguredLocalIdentity() throws Exception {
+        SpiffeId billing = SpiffeId.parse("spiffe://example.org/billing");
+        SpiffeId id = spiffeId("spiffe://example.org/billing");
+        Date expiry = new Date();
+        JwtSvid svid = mock(JwtSvid.class);
+        when(svid.getToken()).thenReturn("the-billing-token");
+        when(svid.getSpiffeId()).thenReturn(id);
+        when(svid.getExpiry()).thenReturn(expiry);
+        when(client.fetchJwtSvid(billing, "my-audience")).thenReturn(svid);
+
+        Exchange out = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=fetchJwtSvid&audience=my-audience"
+                                        + "&localSpiffeId=spiffe://example.org/billing",
+                e -> e.getMessage().setHeader(SpiffeConstants.SPIFFE_ID, "stale-identity"));
+
+        assertThat(out.getMessage().getBody(String.class)).isEqualTo("the-billing-token");
+        assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo("spiffe://example.org/billing");
+        assertThat(out.getMessage().getHeader(SpiffeConstants.EXPIRY)).isEqualTo(expiry);
+        // the default identity is never asked for
+        verify(client, never()).fetchJwtSvid("my-audience");
     }
 
     @Test

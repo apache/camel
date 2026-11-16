@@ -84,10 +84,11 @@ public class SpiffeConfiguration implements Cloneable {
     }
 
     /**
-     * The exact local SPIFFE ID to select for fetchX509Svid when the Workload API supplies several identities. The
-     * default uses the SDK's default SVID. A configured identity that is absent fails without selecting a different
-     * identity. This option comes only from endpoint configuration, never from a message header; it does not select an
-     * identity for either JWT operation.
+     * The exact local SPIFFE ID to use when the Workload API supplies several identities: fetchX509Svid selects that
+     * X.509-SVID instead of the SDK's default one, and fetchJwtSvid mints the JWT-SVID with it as the subject. A
+     * configured identity that is absent, or that the workload is not entitled to, fails without selecting a different
+     * identity. This option comes only from endpoint configuration, never from a message header; validateJwtSvid has no
+     * local identity to choose and ignores it.
      */
     public void setLocalSpiffeId(String localSpiffeId) {
         this.localSpiffeId = localSpiffeId;

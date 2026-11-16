@@ -318,13 +318,15 @@ YAML::
 == Select a local X.509 identity
 
 A workload can receive several X.509-SVIDs from the Workload API. Set `localSpiffeId` to choose an exact local
-identity instead of the default SVID. The producer's `fetchX509Svid` operation and `SpiffeSSLContextParameters` both
-support this option. It is distinct from `acceptedSpiffeIds`, which restricts *remote peers*: selecting a local
+identity instead of the default SVID. The producer's `fetchX509Svid` and `fetchJwtSvid` operations and
+`SpiffeSSLContextParameters` all support this option. It is distinct from `acceptedSpiffeIds`, which restricts *remote peers*: selecting a local
 identity does not broaden the TLS peer allow-list.
 
 The selector is route/bean configuration, never a message header or a per-message expression. An invalid SPIFFE ID
 fails before opening the source. An identity that is missing does not fall back to the default or another identity.
-The two JWT operations do not use `localSpiffeId`.
+`fetchJwtSvid` mints the JWT-SVID with `localSpiffeId` as its subject, and the Workload API refuses a subject the
+workload is not entitled to, so the option fails closed there too. `validateJwtSvid` has no local identity to choose
+and ignores it.
 
 [tabs]
 ====

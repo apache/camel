@@ -54,10 +54,10 @@ public class SpiffeProducer extends DefaultProducer {
 
     private void fetchX509Svid(WorkloadApiClient client, Exchange exchange) throws Exception {
         Message message = getMessageForResponse(exchange);
-        if (localSpiffeId != null) {
-            message.removeHeader(SpiffeConstants.SPIFFE_ID);
-            message.removeHeader(SpiffeConstants.EXPIRY);
-        }
+        // a fetch that fails, with or without a configured identity, must not leave the identity of an earlier
+        // message behind
+        message.removeHeader(SpiffeConstants.SPIFFE_ID);
+        message.removeHeader(SpiffeConstants.EXPIRY);
         X509Context context = client.fetchX509Context();
         X509Svid svid = localSpiffeId == null
                 ? context.getDefaultSvid()
@@ -80,10 +80,21 @@ public class SpiffeProducer extends DefaultProducer {
 
     private void fetchJwtSvid(WorkloadApiClient client, Exchange exchange) throws Exception {
         String[] audiences = resolveAudiences(exchange);
-        JwtSvid svid = audiences.length > 1
-                ? client.fetchJwtSvid(audiences[0], Arrays.copyOfRange(audiences, 1, audiences.length))
-                : client.fetchJwtSvid(audiences[0]);
         Message message = getMessageForResponse(exchange);
+        message.removeHeader(SpiffeConstants.SPIFFE_ID);
+        message.removeHeader(SpiffeConstants.EXPIRY);
+        JwtSvid svid;
+        if (localSpiffeId == null) {
+            svid = audiences.length > 1
+                    ? client.fetchJwtSvid(audiences[0], Arrays.copyOfRange(audiences, 1, audiences.length))
+                    : client.fetchJwtSvid(audiences[0]);
+        } else {
+            // the configured identity is the subject of the token; the Workload API refuses a subject the workload
+            // is not entitled to, so the option fails closed here as it does for X.509
+            svid = audiences.length > 1
+                    ? client.fetchJwtSvid(localSpiffeId, audiences[0], Arrays.copyOfRange(audiences, 1, audiences.length))
+                    : client.fetchJwtSvid(localSpiffeId, audiences[0]);
+        }
         message.setBody(svid.getToken());
         message.setHeader(SpiffeConstants.SPIFFE_ID, svid.getSpiffeId().toString());
         message.setHeader(SpiffeConstants.EXPIRY, svid.getExpiry());
