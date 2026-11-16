@@ -25,8 +25,15 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MemoryWebSocketStoreTest {
+
+    @Test
+    void testInMemory() {
+        // the open web sockets are lost when the application stops
+        assertTrue(new MemoryWebSocketStore().isInMemory());
+    }
 
     @Test
     void testAddAndRemove() {

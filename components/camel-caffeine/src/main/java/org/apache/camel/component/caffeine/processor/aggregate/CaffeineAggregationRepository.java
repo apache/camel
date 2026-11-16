@@ -25,8 +25,10 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
@@ -40,7 +42,8 @@ import org.slf4j.LoggerFactory;
           annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Caffeine based aggregation repository")
-public class CaffeineAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
+public class CaffeineAggregationRepository extends ServiceSupport
+        implements RecoverableAggregationRepository, InMemoryStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(CaffeineAggregationRepository.class);
 
@@ -66,6 +69,13 @@ public class CaffeineAggregationRepository extends ServiceSupport implements Rec
     @Metadata(label = "advanced", security = "insecure:serialization",
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
+
+    @Override
+    @ManagedAttribute(description = "Whether the aggregates are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        // a Caffeine cache lives in the heap of this JVM
+        return true;
+    }
 
     public CamelContext getCamelContext() {
         return camelContext;

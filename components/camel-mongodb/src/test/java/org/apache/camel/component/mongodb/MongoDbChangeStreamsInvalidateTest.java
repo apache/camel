@@ -18,39 +18,36 @@ package org.apache.camel.component.mongodb;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.mongodb.MongoCommandException;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.ChangeStreamIterable;
-import com.mongodb.client.ListCollectionNamesIterable;
 import com.mongodb.client.MongoChangeStreamCursor;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
-import com.mongodb.client.model.changestream.FullDocument;
 import com.mongodb.client.model.changestream.OperationType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.mongodb.MongoDbChangeStreamsMocks.ResumeOptions;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.processor.state.MemoryStateRepository;
 import org.bson.BsonDocument;
-import org.bson.BsonInt32;
 import org.bson.BsonString;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.mongodb.MongoDbChangeStreamsMocks.commandFailed;
+import static org.apache.camel.component.mongodb.MongoDbChangeStreamsMocks.cursor;
+import static org.apache.camel.component.mongodb.MongoDbChangeStreamsMocks.event;
+import static org.apache.camel.component.mongodb.MongoDbChangeStreamsMocks.mockCollection;
+import static org.apache.camel.component.mongodb.MongoDbChangeStreamsMocks.mockDatabase;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * A change stream ends with an {@code invalidate} event when its collection is dropped or renamed, or its database
@@ -58,8 +55,6 @@ import static org.mockito.Mockito.when;
  * created again under the same name.
  */
 class MongoDbChangeStreamsInvalidateTest {
-
-    private static final ServerAddress SERVER = new ServerAddress("localhost", 27017);
 
     private static final BsonDocument INSERT_TOKEN = token("insert");
     private static final BsonDocument DROP_TOKEN = token("drop");
@@ -72,25 +67,13 @@ class MongoDbChangeStreamsInvalidateTest {
     private final List<String> opened = Collections.synchronizedList(new ArrayList<>());
     private CamelContext context;
 
-    @SuppressWarnings("unchecked")
-    private static MongoCollection<Document> mockCollection() {
-        return mock(MongoCollection.class);
-    }
-
     private static BsonDocument token(String name) {
         return new BsonDocument("_data", new BsonString(name));
     }
 
     @BeforeEach
     void setUp() {
-        MongoDatabase database = mock(MongoDatabase.class);
-        ListCollectionNamesIterable names = mock(ListCollectionNamesIterable.class);
-        when(names.spliterator()).thenAnswer(i -> List.of("events").spliterator());
-        when(database.listCollectionNames()).thenReturn(names);
-        when(database.getCollection("events", Document.class)).thenReturn(collection);
-        when(database.getName()).thenReturn("test");
-        when(client.getDatabase("test")).thenReturn(database);
-        when(collection.watch()).thenAnswer(i -> new FakeChangeStream().iterable);
+        mockDatabase(client, collection, this::open);
 
         context = new DefaultCamelContext();
         context.getRegistry().bind("myDb", client);
@@ -160,23 +143,10 @@ class MongoDbChangeStreamsInvalidateTest {
         return mock;
     }
 
-    @SuppressWarnings("unchecked")
-    private static ChangeStreamDocument<Document> event(
-            OperationType type, BsonDocument token, Document fullDocument) {
-        ChangeStreamDocument<Document> event = mock(ChangeStreamDocument.class);
-        when(event.getOperationType()).thenReturn(type);
-        when(event.getResumeToken()).thenReturn(token);
-        when(event.getFullDocument()).thenReturn(fullDocument);
-        if (fullDocument != null) {
-            when(event.getDocumentKey()).thenReturn(new BsonDocument("_id", new BsonInt32(fullDocument.getInteger("_id"))));
-        }
-        return event;
-    }
-
     /**
-     * One change stream opened with {@code collection.watch()}, answering like a MongoDB server (4.2 or later) on which
-     * the collection was dropped and then created again (change streams manual, "Invalidate Events" and "Resume a
-     * Change Stream"):
+     * Opens the cursor of one change stream ({@code collection.watch()} with the given resume options), answering like
+     * a MongoDB server (4.2 or later) on which the collection was dropped and then created again (change streams
+     * manual, "Invalidate Events" and "Resume a Change Stream"):
      * <ul>
      * <li>without a resume option: the insert, the drop and the invalidate event; the server then closes the cursor, so
      * {@code hasNext()} returns false;</li>
@@ -190,73 +160,33 @@ class MongoDbChangeStreamsInvalidateTest {
      * specify both 'resumeAfter' and 'startAfter' in a $changeStream stage" (the consumer never sets both).</li>
      * </ul>
      */
-    private final class FakeChangeStream {
-
-        private final ChangeStreamIterable<Document> iterable = mockIterable();
-        private BsonDocument resumeAfter;
-        private BsonDocument startAfter;
-
-        @SuppressWarnings("unchecked")
-        private static ChangeStreamIterable<Document> mockIterable() {
-            return mock(ChangeStreamIterable.class);
+    private MongoChangeStreamCursor<ChangeStreamDocument<Document>> open(ResumeOptions options) {
+        BsonDocument resumeAfter = options.resumeAfter;
+        BsonDocument startAfter = options.startAfter;
+        List<ChangeStreamDocument<Document>> events;
+        if (resumeAfter != null && startAfter != null) {
+            throw commandFailed(50865, "Location50865", "Do not specify both 'resumeAfter' and 'startAfter' in a"
+                                                        + " $changeStream stage");
+        } else if (resumeAfter == null && startAfter == null) {
+            opened.add("new");
+            events = List.of(
+                    event(OperationType.INSERT, INSERT_TOKEN, new Document("_id", 1).append("text", "first")),
+                    event(OperationType.DROP, DROP_TOKEN, null),
+                    event(OperationType.INVALIDATE, INVALIDATE_TOKEN, null));
+        } else if (INVALIDATE_TOKEN.equals(resumeAfter)) {
+            opened.add("resumeAfter " + resumeAfter);
+            throw commandFailed(260, "InvalidResumeToken", "Attempting to resume a change stream using"
+                                                           + " 'resumeAfter' is not allowed from an invalidate"
+                                                           + " notification.");
+        } else if (INVALIDATE_TOKEN.equals(startAfter)) {
+            opened.add("startAfter " + startAfter);
+            events = List.of(event(OperationType.INSERT, RECREATED_INSERT_TOKEN,
+                    new Document("_id", 2).append("text", "after the collection was created again")));
+        } else {
+            opened.add("resumeAfter " + resumeAfter);
+            events = List.of();
         }
-
-        private FakeChangeStream() {
-            when(iterable.fullDocument(any(FullDocument.class))).thenReturn(iterable);
-            when(iterable.resumeAfter(any(BsonDocument.class))).thenAnswer(i -> {
-                resumeAfter = i.getArgument(0);
-                return iterable;
-            });
-            when(iterable.startAfter(any(BsonDocument.class))).thenAnswer(i -> {
-                startAfter = i.getArgument(0);
-                return iterable;
-            });
-            when(iterable.iterator()).thenAnswer(i -> open());
-        }
-
-        private MongoChangeStreamCursor<ChangeStreamDocument<Document>> open() {
-            List<ChangeStreamDocument<Document>> events;
-            if (resumeAfter != null && startAfter != null) {
-                throw commandFailed(50865, "Location50865", "Do not specify both 'resumeAfter' and 'startAfter' in a"
-                                                            + " $changeStream stage");
-            } else if (resumeAfter == null && startAfter == null) {
-                opened.add("new");
-                events = List.of(
-                        event(OperationType.INSERT, INSERT_TOKEN, new Document("_id", 1).append("text", "first")),
-                        event(OperationType.DROP, DROP_TOKEN, null),
-                        event(OperationType.INVALIDATE, INVALIDATE_TOKEN, null));
-            } else if (INVALIDATE_TOKEN.equals(resumeAfter)) {
-                opened.add("resumeAfter " + resumeAfter);
-                throw commandFailed(260, "InvalidResumeToken", "Attempting to resume a change stream using"
-                                                               + " 'resumeAfter' is not allowed from an invalidate"
-                                                               + " notification.");
-            } else if (INVALIDATE_TOKEN.equals(startAfter)) {
-                opened.add("startAfter " + startAfter);
-                events = List.of(event(OperationType.INSERT, RECREATED_INSERT_TOKEN,
-                        new Document("_id", 2).append("text", "after the collection was created again")));
-            } else {
-                opened.add("resumeAfter " + resumeAfter);
-                events = List.of();
-            }
-            return cursor(events);
-        }
-
-        @SuppressWarnings("unchecked")
-        private MongoChangeStreamCursor<ChangeStreamDocument<Document>> cursor(
-                List<ChangeStreamDocument<Document>> events) {
-            Iterator<ChangeStreamDocument<Document>> it = events.iterator();
-            MongoChangeStreamCursor<ChangeStreamDocument<Document>> cursor = mock(MongoChangeStreamCursor.class);
-            when(cursor.hasNext()).thenAnswer(i -> it.hasNext());
-            when(cursor.next()).thenAnswer(i -> it.next());
-            return cursor;
-        }
-
-        private static MongoCommandException commandFailed(int code, String codeName, String message) {
-            return new MongoCommandException(
-                    new BsonDocument("ok", new BsonInt32(0)).append("code", new BsonInt32(code))
-                            .append("codeName", new BsonString(codeName)).append("errmsg", new BsonString(message)),
-                    SERVER);
-        }
+        return cursor(events);
     }
 
 }

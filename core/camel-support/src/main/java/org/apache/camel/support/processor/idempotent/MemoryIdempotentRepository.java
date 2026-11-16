@@ -26,6 +26,7 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
@@ -47,7 +48,7 @@ import org.apache.camel.support.service.ServiceSupport;
           annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Memory based idempotent repository")
-public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository {
+public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository, InMemoryStrategy {
 
     private static final int MAX_CACHE_SIZE = 1000;
 
@@ -178,6 +179,12 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     @ManagedAttribute(description = "The maximum cache size")
     public int getMaxCacheSize() {
         return cacheSize;
+    }
+
+    @Override
+    @ManagedAttribute(description = "Whether the keys are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return true;
     }
 
     public void setCacheSize(int cacheSize) {

@@ -16,10 +16,8 @@
  */
 package org.apache.camel.processor.idempotent.jdbc;
 
-import java.lang.reflect.Proxy;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +30,6 @@ import org.apache.camel.processor.idempotent.jdbc.JdbcOrphanLockAwareIdempotentR
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -199,9 +196,10 @@ class JdbcOrphanLockAwareIdempotentRepositoryConfirmTest {
     @Test
     void testCheckAtStartWithAConfirmQueryThatDoesNotStoreNull() {
         // as a MySQL TIMESTAMP column with explicit_defaults_for_timestamp=OFF, which stores the current time for null
-        List<String> warnings = new CopyOnWriteArrayList<>();
+        RecordingLogger logs = new RecordingLogger();
+        List<String> warnings = logs.warnings();
         JdbcOrphanLockAwareIdempotentRepository node = newRepository();
-        node.log = recordingLogger(warnings);
+        node.log = logs.logger();
         node.setConfirmQuery(
                 "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt = CURRENT_TIMESTAMP WHERE processorName = ? AND messageId = ?");
         node.start();
@@ -226,9 +224,10 @@ class JdbcOrphanLockAwareIdempotentRepositoryConfirmTest {
     void testCheckAtStartWithANotNullColumnKeepsTheCallerTransactionCommittable() {
         jdbcTemplate.execute("CREATE TABLE CAMEL_MESSAGEPROCESSED_NN (processorName VARCHAR(255), messageId VARCHAR(100), "
                              + "createdAt TIMESTAMP NOT NULL, PRIMARY KEY (processorName, messageId))");
-        List<String> warnings = new CopyOnWriteArrayList<>();
+        RecordingLogger logs = new RecordingLogger();
+        List<String> warnings = logs.warnings();
         JdbcOrphanLockAwareIdempotentRepository node = newRepository();
-        node.log = recordingLogger(warnings);
+        node.log = logs.logger();
         node.setTableName("CAMEL_MESSAGEPROCESSED_NN");
         node.start();
         try {
@@ -254,8 +253,9 @@ class JdbcOrphanLockAwareIdempotentRepositoryConfirmTest {
 
     @Test
     void testConfirmThatFailsLogsAWarnEachTime() {
-        List<String> warnings = new CopyOnWriteArrayList<>();
-        nodeA.log = recordingLogger(warnings);
+        RecordingLogger logs = new RecordingLogger();
+        List<String> warnings = logs.warnings();
+        nodeA.log = logs.logger();
         assertTrue(nodeA.add("FILE_9"));
         assertTrue(nodeA.add("FILE_14"));
         // the column no longer stores null after the start (a failure the check at start cannot see)
@@ -382,33 +382,6 @@ class JdbcOrphanLockAwareIdempotentRepositoryConfirmTest {
         return jdbcTemplate.queryForObject(
                 "SELECT createdAt FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?", Timestamp.class,
                 PROCESSOR_NAME, key);
-    }
-
-    // records the WARN messages of the repository
-    private static Logger recordingLogger(List<String> warnings) {
-        return (Logger) Proxy.newProxyInstance(Logger.class.getClassLoader(), new Class<?>[] { Logger.class },
-                (proxy, method, args) -> {
-                    switch (method.getName()) {
-                        case "hashCode":
-                            return System.identityHashCode(proxy);
-                        case "equals":
-                            return proxy == args[0];
-                        case "toString":
-                            return "recordingLogger";
-                        default:
-                            break;
-                    }
-                    if ("warn".equals(method.getName()) && args != null && args.length > 0) {
-                        warnings.add(String.valueOf(args[0]));
-                    }
-                    if (method.getReturnType() == boolean.class) {
-                        return false;
-                    }
-                    if (method.getReturnType() == String.class) {
-                        return "test";
-                    }
-                    return null;
-                });
     }
 
     private static ProcessorNameAndMessageId id(String key) {
