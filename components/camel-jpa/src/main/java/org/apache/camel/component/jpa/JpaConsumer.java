@@ -51,6 +51,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaConsumer.class);
 
+    private static final String LOCK_TIMEOUT = "jakarta.persistence.lock.timeout";
     private static final Map<String, Object> NOWAIT;
     private final EntityManagerFactory entityManagerFactory;
     private final TransactionStrategy transactionStrategy;
@@ -66,11 +67,12 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private Class<?> resultClass;
     private boolean transacted;
     private boolean skipLockedEntity;
+    private long lockTimeout;
     private final AtomicBoolean notEntityWarned = new AtomicBoolean();
 
     static {
         NOWAIT = new HashMap<>();
-        NOWAIT.put("jakarta.persistence.lock.timeout", 0L);
+        NOWAIT.put(LOCK_TIMEOUT, 0L);
     }
 
     private static final class DataHolder {
@@ -362,6 +364,19 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         return skipLockedEntity;
     }
 
+    /**
+     * Sets how long, in millis, to wait for the lock of an entity that another transaction holds. It is given to the
+     * JPA provider as the <tt>jakarta.persistence.lock.timeout</tt> hint. The default <tt>0</tt> sets no timeout. Not
+     * used with skipLockedEntity.
+     */
+    public void setLockTimeout(long lockTimeout) {
+        this.lockTimeout = lockTimeout;
+    }
+
+    public long getLockTimeout() {
+        return lockTimeout;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -386,6 +401,10 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             LOG.debug("Acquiring exclusive lock on entity: {}", entity);
             if (isSkipLockedEntity()) {
                 entityManager.lock(entity, lockModeType, NOWAIT);
+            } else if (lockTimeout > 0) {
+                // the JPA hint is an int of millis
+                int millis = (int) Math.min(lockTimeout, Integer.MAX_VALUE);
+                entityManager.lock(entity, lockModeType, Map.of(LOCK_TIMEOUT, millis));
             } else {
                 entityManager.lock(entity, lockModeType);
             }

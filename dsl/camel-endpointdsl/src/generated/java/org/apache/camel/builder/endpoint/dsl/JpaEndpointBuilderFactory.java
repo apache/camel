@@ -367,6 +367,54 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * How long the consumer waits for the lock of an entity (see
+         * consumeLockEntity) that another transaction holds. It is given to the
+         * JPA provider as the jakarta.persistence.lock.timeout hint, which the
+         * provider applies if the database supports it: for example Hibernate
+         * on PostgreSQL sets lock_timeout for the lock. The default 0 sets no
+         * timeout: the lock waits as long as the database lets it, which on
+         * PostgreSQL is until the other transaction ends. A lock that times out
+         * is handled like one that skipLockedEntity could not get. Not used
+         * with skipLockedEntity, which does not wait at all. The value is in
+         * millis.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param lockTimeout the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointConsumerBuilder lockTimeout(long lockTimeout) {
+            doSetProperty("lockTimeout", lockTimeout);
+            return this;
+        }
+        /**
+         * How long the consumer waits for the lock of an entity (see
+         * consumeLockEntity) that another transaction holds. It is given to the
+         * JPA provider as the jakarta.persistence.lock.timeout hint, which the
+         * provider applies if the database supports it: for example Hibernate
+         * on PostgreSQL sets lock_timeout for the lock. The default 0 sets no
+         * timeout: the lock waits as long as the database lets it, which on
+         * PostgreSQL is until the other transaction ends. A lock that times out
+         * is handled like one that skipLockedEntity could not get. Not used
+         * with skipLockedEntity, which does not wait at all. The value is in
+         * millis.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param lockTimeout the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointConsumerBuilder lockTimeout(String lockTimeout) {
+            doSetProperty("lockTimeout", lockTimeout);
+            return this;
+        }
+        /**
          * An integer value to define the maximum number of messages to gather
          * per poll. By default, no maximum is set. It can be used to avoid
          * polling many thousands of messages when starting up the server. Set a
