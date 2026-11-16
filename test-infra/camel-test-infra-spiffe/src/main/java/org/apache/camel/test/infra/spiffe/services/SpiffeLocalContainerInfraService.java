@@ -81,6 +81,9 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
     private static final String SOCKET_FILE = "api.sock";
     private static final String SERVER_CONF_RESOURCE = "org/apache/camel/test/infra/spiffe/services/spire-server.conf";
     private static final String AGENT_CONF_RESOURCE = "org/apache/camel/test/infra/spiffe/services/spire-agent.conf";
+    /** The lifetimes of the stock SPIRE configuration, which keeps the in-memory KeyManager. */
+    static final Duration DEFAULT_WORKLOAD_SVID_TTL = Duration.ofHours(1);
+    static final Duration DEFAULT_CA_TTL = Duration.ofHours(24);
 
     private final String serverImage;
     private final String agentImage;
@@ -94,7 +97,7 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
     private String socketPath;
 
     public SpiffeLocalContainerInfraService() {
-        this(Duration.ofHours(1), Duration.ofHours(24));
+        this(DEFAULT_WORKLOAD_SVID_TTL, DEFAULT_CA_TTL);
     }
 
     /** Uses a shorter registration TTL for rotation tests without changing the shared fixture defaults. */
@@ -107,7 +110,7 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
     }
 
     public SpiffeLocalContainerInfraService(String serverImage, String agentImage) {
-        this(serverImage, agentImage, Duration.ofHours(1), Duration.ofHours(24));
+        this(serverImage, agentImage, DEFAULT_WORKLOAD_SVID_TTL, DEFAULT_CA_TTL);
     }
 
     public SpiffeLocalContainerInfraService(String serverImage, String agentImage, Duration workloadSvidTtl, Duration caTtl) {
@@ -185,7 +188,7 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
             }
             // Restarting a process must retain its node key, rather than try to reuse a consumed join token.
             String configuration = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-            if (workloadSvidTtl.equals(Duration.ofHours(1)) && caTtl.equals(Duration.ofHours(24))) {
+            if (workloadSvidTtl.equals(DEFAULT_WORKLOAD_SVID_TTL) && caTtl.equals(DEFAULT_CA_TTL)) {
                 return configuration;
             }
             return configuration
