@@ -357,7 +357,7 @@ SQLState of class `08` (connection exception).
 * Quarkus configures Agroal with a `Connection.isValid()` validator, a background validation every 2 minutes, the
 exception sorter of the database kind, and an acquisition timeout of 5 seconds.
 * Agroal used directly has no validator and no exception sorter by default: a broken connection goes back to the pool
-and fails each statement it is given again. Its default `acquisitionTimeout` of 0 waits for ever when the pool is
+and fails each statement it is given again. Its default `acquisitionTimeout` of 0 waits forever when the pool is
 exhausted. Configure them:
 +
 ._Java-only: an Agroal pool that drops broken PostgreSQL connections_

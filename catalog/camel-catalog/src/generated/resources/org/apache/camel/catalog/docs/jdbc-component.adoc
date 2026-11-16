@@ -215,11 +215,6 @@ exception sorter. See xref:sql-component.adoc#_noticing_a_dead_or_silent_databas
 in the SQL component for the pool settings, Spring Boot and Quarkus properties, and starting while the database is
 down.
 
-NOTE: With the default `resetAutoCommit=true` the producer commits right after running the statement, before a
-`StreamList` is read. On PostgreSQL a `statement.fetchSize` makes the driver read the rows through a server-side cursor
-of that transaction, which the commit closes: reading past the first `fetchSize` rows fails. Leave `statement.fetchSize`
-unset with `StreamList` on PostgreSQL; the driver then reads the whole result at once.
-
 == Examples
 
 In the following example, we set up the DataSource that camel-jdbc requires.
