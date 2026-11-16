@@ -115,10 +115,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             cause = e;
             // connected, so the starting directory could not be created
             autoCreateFailed = connected;
-            String msg = "Cannot connect/login to: " + remoteServer();
-            if (autoCreateFailed) {
-                msg = "Cannot auto-create starting directory at: " + remoteServer();
-            }
+            String msg = autoCreateFailed ? cannotAutoCreate() : "Cannot connect/login to: " + remoteServer();
             LOG.debug(msg, cause);
             loggedIn = false;
             if (getEndpoint().getConfiguration().isThrowExceptionOnConnectFailed()) {
@@ -127,8 +124,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         }
 
         if (autoCreateFailed) {
-            String message = "Cannot auto-create starting directory at: " + remoteServer() + reason(cause)
-                             + ". Will skip this poll.";
+            String message = cannotAutoCreate() + reason(cause) + ". Will skip this poll.";
             if (!autoCreateWarning) {
                 LOG.warn(message);
                 autoCreateWarning = true;
@@ -151,6 +147,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         forceConsumerAsReady();
 
         return true;
+    }
+
+    private String cannotAutoCreate() {
+        return "Cannot auto-create starting directory " + endpoint.getConfiguration().getDirectory() + " at: "
+               + remoteServer();
     }
 
     /**

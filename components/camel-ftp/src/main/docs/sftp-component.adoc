@@ -442,8 +442,9 @@ such as one that locks the account after a few failures. Camel gives the passwor
 one login, such as one that requires both the `password` and the `keyboard-interactive` methods
 (`AuthenticationMethods password,keyboard-interactive` in OpenSSH), rejects the login, with the same message, even when
 the password is right. A rejected login (`Auth fail ...` or `Auth cancel ...`) does not connect again for
-`maximumReconnectAttempts`, which applies to the other connection failures. The consumer tries again on its next poll, so a wrong password is sent once per poll (and once more when the
-consumer starts with `autoCreate=true`), and the producer tries again on its next message.
+`maximumReconnectAttempts`, which applies to the other connection failures. The consumer tries again on its next
+poll, so a wrong password is sent once per poll (and once more when the consumer starts with `autoCreate=true`), and
+the producer tries again on its next message.
 
 === Symbolic links and the starting directory
 

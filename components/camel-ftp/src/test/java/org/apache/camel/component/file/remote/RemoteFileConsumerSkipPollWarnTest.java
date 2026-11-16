@@ -98,7 +98,7 @@ class RemoteFileConsumerSkipPollWarnTest extends CamelTestSupport {
 
         assertFalse(consumer.prePollCheck());
 
-        assertEquals(List.of("Cannot auto-create starting directory at: " + scheme + "://admin@localhost:2121"
+        assertEquals(List.of("Cannot auto-create starting directory inbox at: " + scheme + "://admin@localhost:2121"
                              + " due to: Permission denied. Will skip this poll."),
                 warnings.messages());
 
