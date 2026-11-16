@@ -81,10 +81,12 @@ public final class HashicorpVaultClientSettings {
     private String azureClientId;
 
     /**
-     * The settings of the properties function and the secret refresh task: from the CAMEL_HASHICORP_VAULT_* environment
-     * variables when one of them is set, else from the vault configuration.
+     * The settings of the properties function and the secret refresh task, and of the early resolution of properties of
+     * Camel on Spring Boot: from the CAMEL_HASHICORP_VAULT_* environment variables when one of them is set, else from
+     * the vault configuration.
      *
-     * @param configuration the vault configuration (camel.vault.hashicorp), may be null
+     * @param  configuration the vault configuration (camel.vault.hashicorp), may be null
+     * @return               the settings
      */
     public static HashicorpVaultClientSettings fromEnvironmentOrConfiguration(HashicorpVaultConfiguration configuration) {
         return fromEnvironmentOrConfiguration(configuration, System::getenv);
@@ -117,29 +119,42 @@ public final class HashicorpVaultClientSettings {
             settings.setAzureResource(environment.apply(AZURE_RESOURCE_ENV));
             settings.setAzureClientId(environment.apply(AZURE_CLIENT_ID_ENV));
         } else if (configuration != null) {
-            settings.setHost(configuration.getHost());
-            settings.setPort(configuration.getPort());
-            settings.setScheme(configuration.getScheme());
-            settings.setCloud(configuration.isCloud());
-            settings.setNamespace(configuration.getNamespace());
-            settings.setAuthentication(configuration.getAuthentication());
-            settings.setToken(configuration.getToken());
-            settings.setRoleId(configuration.getRoleId());
-            settings.setSecretId(configuration.getSecretId());
-            settings.setRole(configuration.getRole());
-            settings.setJwt(configuration.getJwt());
-            settings.setJwtFile(configuration.getJwtFile());
-            settings.setAuthMountPath(configuration.getAuthMountPath());
-            settings.setTrustStore(configuration.getTrustStore());
-            settings.setTrustStorePassword(configuration.getTrustStorePassword());
-            settings.setKeyStore(configuration.getKeyStore());
-            settings.setKeyStorePassword(configuration.getKeyStorePassword());
-            settings.setAwsIamServerId(configuration.getAwsIamServerId());
-            settings.setAwsRegion(configuration.getAwsRegion());
-            settings.setAwsStsEndpoint(configuration.getAwsStsEndpoint());
-            settings.setAzureResource(configuration.getAzureResource());
-            settings.setAzureClientId(configuration.getAzureClientId());
+            settings = fromConfiguration(configuration);
         }
+        return settings;
+    }
+
+    /**
+     * The settings of the vault configuration (camel.vault.hashicorp) alone, without the CAMEL_HASHICORP_VAULT_*
+     * environment variables.
+     *
+     * @param  configuration the vault configuration
+     * @return               the settings
+     */
+    static HashicorpVaultClientSettings fromConfiguration(HashicorpVaultConfiguration configuration) {
+        HashicorpVaultClientSettings settings = new HashicorpVaultClientSettings();
+        settings.setHost(configuration.getHost());
+        settings.setPort(configuration.getPort());
+        settings.setScheme(configuration.getScheme());
+        settings.setCloud(configuration.isCloud());
+        settings.setNamespace(configuration.getNamespace());
+        settings.setAuthentication(configuration.getAuthentication());
+        settings.setToken(configuration.getToken());
+        settings.setRoleId(configuration.getRoleId());
+        settings.setSecretId(configuration.getSecretId());
+        settings.setRole(configuration.getRole());
+        settings.setJwt(configuration.getJwt());
+        settings.setJwtFile(configuration.getJwtFile());
+        settings.setAuthMountPath(configuration.getAuthMountPath());
+        settings.setTrustStore(configuration.getTrustStore());
+        settings.setTrustStorePassword(configuration.getTrustStorePassword());
+        settings.setKeyStore(configuration.getKeyStore());
+        settings.setKeyStorePassword(configuration.getKeyStorePassword());
+        settings.setAwsIamServerId(configuration.getAwsIamServerId());
+        settings.setAwsRegion(configuration.getAwsRegion());
+        settings.setAwsStsEndpoint(configuration.getAwsStsEndpoint());
+        settings.setAzureResource(configuration.getAzureResource());
+        settings.setAzureClientId(configuration.getAzureClientId());
         return settings;
     }
 

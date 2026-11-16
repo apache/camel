@@ -25,7 +25,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -72,7 +74,10 @@ import org.springframework.web.client.RestClient;
  * but never revoked.
  * <p/>
  * The endpoint, the properties function and the secret refresh task each create their client with
- * {@link #create(CamelContext, Object, HashicorpVaultClientSettings)}, and close it when they stop.
+ * {@link #create(CamelContext, Object, HashicorpVaultClientSettings)}, and close it when they stop. Code that runs
+ * before there is a CamelContext, such as the early resolution of properties of Camel on Spring Boot, creates a client
+ * for a short use with {@link #create(HashicorpVaultClientSettings)}, which logs in once and does not renew a given
+ * token.
  */
 public final class HashicorpVaultClient implements Closeable {
 
@@ -82,23 +87,22 @@ public final class HashicorpVaultClient implements Closeable {
     private static final String AWS_SDK_CLASS = "software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider";
     // the resource of the Azure login in the documentation of HashiCorp Vault
     static final String DEFAULT_AZURE_RESOURCE = "https://management.azure.com/";
+    private static final String RENEWAL_THREAD = "HashicorpVaultTokenRenewal";
     private static final String AZURE_IDENTITY_TOKEN_URI
             = "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01";
 
     private final VaultTemplate vaultTemplate;
     private final LifecycleAwareSessionManager sessionManager;
-    private final ExecutorServiceManager executorServiceManager;
-    private final ScheduledExecutorService renewal;
+    // stops the thread that renews the token
+    private final Runnable stopRenewal;
     // what the login holds, such as the credentials provider of the AWS SDK, closed with the client
     private final List<AutoCloseable> resources;
 
     private HashicorpVaultClient(VaultTemplate vaultTemplate, LifecycleAwareSessionManager sessionManager,
-                                 ExecutorServiceManager executorServiceManager, ScheduledExecutorService renewal,
-                                 List<AutoCloseable> resources) {
+                                 Runnable stopRenewal, List<AutoCloseable> resources) {
         this.vaultTemplate = vaultTemplate;
         this.sessionManager = sessionManager;
-        this.executorServiceManager = executorServiceManager;
-        this.renewal = renewal;
+        this.stopRenewal = stopRenewal;
         this.resources = resources;
     }
 
@@ -112,6 +116,40 @@ public final class HashicorpVaultClient implements Closeable {
      * @throws IllegalArgumentException when the settings are incomplete or not valid
      */
     public static HashicorpVaultClient create(CamelContext camelContext, Object source, HashicorpVaultClientSettings settings) {
+        ExecutorServiceManager executorServiceManager = camelContext.getExecutorServiceManager();
+        return create(settings, false,
+                () -> executorServiceManager.newSingleThreadScheduledExecutor(source, RENEWAL_THREAD),
+                executorServiceManager::shutdownNow);
+    }
+
+    /**
+     * Creates a client without a CamelContext, for a short use such as resolving properties before the context exists.
+     * It logs in once, at its first request to Vault: when the login fails, the following requests fail with the same
+     * error rather than log in again, since every failed login counts towards the user lockout of Vault (for AppRole).
+     * A token given for the token login is used as it is, without looking it up, so it is not renewed. The token of the
+     * other logins is renewed on a daemon thread of the client, which closing the client stops.
+     *
+     * @param  settings                 where Vault is and how to log in to it
+     * @return                          the client, to close when it is no longer used
+     * @throws IllegalArgumentException when the settings are incomplete or not valid
+     * @since                           4.24
+     */
+    public static HashicorpVaultClient create(HashicorpVaultClientSettings settings) {
+        return create(settings, true, () -> Executors.newSingleThreadScheduledExecutor(runnable -> {
+            Thread thread = new Thread(runnable, "Camel " + RENEWAL_THREAD);
+            // the renewal does not keep the JVM running
+            thread.setDaemon(true);
+            return thread;
+        }), ScheduledExecutorService::shutdownNow);
+    }
+
+    /**
+     * @param shortUse whether the client is for a short use: it then logs in once, and uses a given token without
+     *                 looking it up
+     */
+    private static HashicorpVaultClient create(
+            HashicorpVaultClientSettings settings, boolean shortUse, Supplier<ScheduledExecutorService> renewals,
+            Consumer<ScheduledExecutorService> shutdown) {
         validate(settings);
         VaultEndpoint endpoint = new VaultEndpoint();
         endpoint.setHost(settings.getHost());
@@ -132,18 +170,23 @@ public final class HashicorpVaultClient implements Closeable {
             close(resources);
             throw e;
         }
+        if (shortUse) {
+            authentication = loginOnce(authentication);
+        }
 
-        ExecutorServiceManager executorServiceManager = camelContext.getExecutorServiceManager();
-        ScheduledExecutorService renewal
-                = executorServiceManager.newSingleThreadScheduledExecutor(source, "HashicorpVaultTokenRenewal");
+        ScheduledExecutorService renewal = renewals.get();
         try {
             LifecycleAwareSessionManager sessionManager
                     = new LifecycleAwareSessionManager(authentication, new ConcurrentTaskScheduler(renewal), loginClient);
+            if (shortUse) {
+                // looking up a given token would be one more request, which also uses up one of its uses
+                sessionManager.setTokenSelfLookupEnabled(false);
+            }
             return new HashicorpVaultClient(
-                    new VaultTemplate(client, sessionManager), sessionManager, executorServiceManager, renewal, resources);
+                    new VaultTemplate(client, sessionManager), sessionManager, () -> shutdown.accept(renewal), resources);
         } catch (RuntimeException e) {
             // nothing is scheduled on the executor yet, so there is nothing to wait for
-            executorServiceManager.shutdownNow(renewal);
+            shutdown.accept(renewal);
             close(resources);
             throw e;
         }
@@ -219,6 +262,25 @@ public final class HashicorpVaultClient implements Closeable {
             throw new IllegalArgumentException(
                     "The " + login + " login takes a JWT or a file to read it from, not both");
         }
+    }
+
+    /**
+     * The login, which is not tried again once it failed: the failure is thrown again for the following logins.
+     */
+    static ClientAuthentication loginOnce(ClientAuthentication authentication) {
+        AtomicReference<RuntimeException> failure = new AtomicReference<>();
+        return () -> {
+            RuntimeException failed = failure.get();
+            if (failed != null) {
+                throw failed;
+            }
+            try {
+                return authentication.login();
+            } catch (RuntimeException e) {
+                failure.compareAndSet(null, e);
+                throw e;
+            }
+        };
     }
 
     /**
@@ -393,7 +455,7 @@ public final class HashicorpVaultClient implements Closeable {
     @Override
     public void close() {
         try {
-            executorServiceManager.shutdownNow(renewal);
+            stopRenewal.run();
         } finally {
             try {
                 sessionManager.destroy();

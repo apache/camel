@@ -69,6 +69,20 @@ only the default port of `http` (80); to deliver to another port, list it explic
 
 A deployment that lists a bare host and receives asynchronous MDNs on a non-default port must add the port to the entry.
 
+=== camel-atmosphere-websocket - events carry the query parameters of their own connection
+
+With the `events` init-param of `CamelWebSocketServlet` set to `true`, the open, close and error event exchanges now carry
+the query parameters of the request that opened their websocket connection, with the names and values URL-decoded.
+This is also the case with the JSR 356 transport, which Atmosphere uses on current servlet containers, where the
+parameters of the connection did not reach its events before. Before, the event headers came from the last HTTP request
+that the servlet handled for the endpoint, and their values were not URL-decoded, so a route that used these headers
+can see different values. `WebsocketConsumer.sendEventNotification` takes the query parameters of the connection as a
+third argument.
+
+The query string of a request is also read more leniently: a parameter without a value (`?foo` or `?foo=`) gets an empty
+value, and a value that contains `=` is kept whole. Before, such a parameter made the request fail, and a value was cut at
+the first `=` it contained.
+
 === camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
 
 With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
@@ -97,6 +111,18 @@ configurations are not affected.
 
 The webhook consumer still logs the body it validates at `DEBUG`, but no longer the signature from the `X-Signature` header, nor the signature it calculates.
 The `InvalidMessageSignatureException` of a failed check no longer carries the calculated signature: `getCalculatedSignature()` returns `null` and is deprecated, as is the constructor that takes it.
+
+=== camel-duckdb - copy loads one local file unless allowUrlCopySource or allowGlobCopySource is set
+
+The `copy` operation of the `duckdb` producer gave the path from the message body to DuckDB as it was, so DuckDB read a
+value with a URL scheme (such as `https://` or `s3://`) as a remote file, and expanded a value with glob pattern
+characters (`*`, `?`, `[` or `{`) to all the matching files. Now `copy` loads a single local file by default, and a
+source with a URL scheme or glob pattern characters fails with an `IllegalArgumentException`. This also applies to a
+`File` body, such as a file from the `file` consumer, whose name has one of these characters. A route that loads such
+sources must set the new `allowUrlCopySource=true` or `allowGlobCopySource=true` option (both disabled by default).
+
+The new `copyBaseDirectory` option sets the directory that a local source must be inside, after resolving symbolic
+links.
 
 === camel-file - idempotent consumer with an idempotent read lock
 
@@ -833,6 +859,25 @@ thread (for example, after an aggregator).
 A commit called after the partition was revoked from the consumer is not made.
 It would move back the offset that the new owner of the partition committed.
 
+=== camel-jbang - runtime catalogs use the selected Camel version
+
+Spring Boot and Quarkus catalogs now report the resolved Camel core version and read EIP/model schemas from that
+version's catalog. Previously, they could combine the selected runtime's component schemas with the running CLI or
+MCP server's newer model schemas. A model absent from the selected catalog now remains absent.
+Runtime dependency coordinates still use the selected Spring Boot or Camel Quarkus version.
+
+A Quarkus BOM must identify both `org.apache.camel:camel-catalog` and
+`org.apache.camel.quarkus:camel-quarkus-catalog`. If either version or the selected catalog cannot be resolved,
+catalog loading fails instead of returning the running server's catalog.
+
+Spring Boot retains its existing fallback: if downloading `org.apache.camel:camel-catalog` for the requested
+version fails, it tries the running CLI's Camel version. The catalog reports the core version actually resolved.
+
+For Spring Boot, `camel export` and `camel run` without an explicit `--camel-version` now use the resolved core
+catalog version for Camel core dependencies in the generated project. For example, `--camel-spring-boot-version=4.8.0`
+uses Camel 4.8.0 instead of the running CLI's version when that catalog is available. Set `--camel-version` explicitly
+to retain a different core dependency version.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
@@ -1050,6 +1095,16 @@ was checked:
 java.io.IOException: No subject alternative names matching IP address 127.0.0.1 found
     Caused by: javax.net.ssl.SSLHandshakeException: No subject alternative names matching IP address 127.0.0.1 found
 ----
+
+=== camel-file - jailStartingDirectory resolves symbolic links
+
+With `jailStartingDirectory` enabled (the default), the file consumer and producer now resolve symbolic links when
+checking that a file stays within the starting directory. The consumer skips a file or (with `recursive=true`) a
+directory that is a link resolving outside of it, and the producer fails to write through such a link or a dangling
+link. Links resolving inside the starting directory work as before. Set `jailStartingDirectory=false` to keep following
+links to other directories (this also turns off the check of `../` in producer file names). A skipped file is logged
+at WARN the first time and at DEBUG on later polls; this log-level change also applies to the remote file consumers,
+which keep their existing lexical check.
 
 === camel-zipfile, camel-tarfile - a maxDecompressedSize of 2 GiB or more is now enforced
 
