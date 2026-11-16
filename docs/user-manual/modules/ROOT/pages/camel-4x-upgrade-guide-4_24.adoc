@@ -525,6 +525,14 @@ starting directory (`autoCreate=true`), it now logs
 `Cannot auto-create starting directory <directory> at: ... due to: ... Will skip this poll.` instead.
 See the xref:components::sftp-component.adoc[SFTP component].
 
+=== camel-smb - the consumer WARN tells a starting directory that cannot be created apart from a failure to connect
+
+When the `smb` consumer connects but cannot create its starting directory (`autoCreate=true`), it now logs
+`Cannot auto-create starting directory <directory> at: ... due to: ... Will skip this poll.`, once. Before, it logged
+`Cannot connect/login to: ... Will skip this poll.`, or nothing when an earlier poll had already logged that it could
+not connect. The `Cannot connect/login to: ... Will skip this poll.` WARN now gives the reason before
+`Will skip this poll.`, such as `due to: Connection refused`, on one line.
+
 === camel-kafka - exactlyOnce: a rejected send that a doCatch catches skips the record
 
 With `exactlyOnce`, a Kafka send through the source producer after an earlier send failed in the same transaction is
