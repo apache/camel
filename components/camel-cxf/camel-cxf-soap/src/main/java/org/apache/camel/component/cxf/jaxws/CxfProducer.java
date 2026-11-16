@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.handler.MessageContext.Scope;
@@ -49,6 +50,7 @@ import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.apache.cxf.service.model.MessagePartInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -275,6 +277,7 @@ public class CxfProducer extends DefaultAsyncProducer {
 
     private void checkParameterSize(CxfEndpoint endpoint, Exchange exchange, Object[] parameters) {
         final BindingOperationInfo boi = lookupBindingOperationInfo(endpoint, exchange);
+        checkWrapperObject(parameters, boi);
         final int expectMessagePartsSize = tryGetExpectMessagePartsSize(parameters, boi);
 
         if (parameters.length > expectMessagePartsSize) {
@@ -287,10 +290,49 @@ public class CxfProducer extends DefaultAsyncProducer {
                 throw new IllegalArgumentException(
                         "Get the wrong parameter size to invoke the out service, Expect size "
                                                    + (expectMessagePartsSize + holdersSize + soapHeadersSize)
-                                                   + ", Parameter size " + parameters.length
+                                                   + ", Parameter size " + parameters.length + ". The operation "
+                                                   + boi.getName() + " expects the parameters " + parameterTypes(boi)
                                                    + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
             }
         }
+    }
+
+    /**
+     * Fails when the one parameter is the request wrapper object of an operation that the producer invokes in its
+     * unwrapped form (wrapped=false), and is not accepted as the parameter of the unwrapped operation.
+     */
+    private static void checkWrapperObject(Object[] parameters, BindingOperationInfo boi) {
+        if (parameters.length != 1 || parameters[0] == null || !boi.isUnwrapped()) {
+            return;
+        }
+        BindingMessageInfo wrappedInput = boi.getWrappedOperation().getInput();
+        if (wrappedInput == null || wrappedInput.getMessageParts().isEmpty()) {
+            return;
+        }
+        Class<?> wrapperClass = wrappedInput.getMessageParts().get(0).getTypeClass();
+        if (wrapperClass == null || !wrapperClass.isInstance(parameters[0])) {
+            return;
+        }
+        List<MessagePartInfo> parts = boi.getInput().getMessageParts();
+        if (parts.size() == 1) {
+            Class<?> partClass = parts.get(0).getTypeClass();
+            if (partClass == null || partClass.isInstance(parameters[0])) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException(
+                "The message body is a " + wrapperClass.getName() + ", the request wrapper object of the operation "
+                                           + boi.getName() + ", but the producer invokes the operation with its parameters "
+                                           + parameterTypes(boi) + " because the wrapped option is false. Set the wrapped"
+                                           + " option to true to send the wrapper object, or set the message body to the"
+                                           + " parameters of the operation.");
+    }
+
+    private static String parameterTypes(BindingOperationInfo boi) {
+        return boi.getInput().getMessageParts().stream()
+                .map(part -> part.getTypeClass() != null
+                        ? part.getTypeClass().getTypeName() : part.getName().getLocalPart())
+                .collect(Collectors.joining(", ", "(", ")"));
     }
 
     private BindingOperationInfo lookupBindingOperationInfo(CxfEndpoint endpoint, Exchange exchange) {
@@ -339,6 +381,8 @@ public class CxfProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException(
                     "Get the wrong parameter size to invoke the out service, Expect size "
                                                + expectMessagePartsSize + ", Parameter size " + parameters.length
+                                               + ". The operation " + boi.getName() + " expects the parameters "
+                                               + parameterTypes(boi)
                                                + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
         }
         return expectMessagePartsSize;
