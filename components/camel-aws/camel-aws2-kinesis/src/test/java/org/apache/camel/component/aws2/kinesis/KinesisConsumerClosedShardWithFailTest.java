@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,6 +62,14 @@ public class KinesisConsumerClosedShardWithFailTest {
     private final Kinesis2Component component = new Kinesis2Component(context);
 
     private Kinesis2Consumer underTest;
+
+    @AfterEach
+    public void tearDown() {
+        // the consumer polls on a thread of its own: stop it, so it does not go on polling during the later tests of
+        // the module (a poll reads the clock, which the DST test of the module controls while it runs)
+        underTest.stop();
+        context.stop();
+    }
 
     @BeforeEach
     public void setup() {
