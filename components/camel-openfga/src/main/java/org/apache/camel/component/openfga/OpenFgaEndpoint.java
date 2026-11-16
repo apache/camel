@@ -286,8 +286,9 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        // the SDK holds one HttpClient for the life of the client and, on the Java 17 baseline, HttpClient is not
-        // AutoCloseable - so there is nothing to close here, only a reference to drop
+        // the SDK holds one HttpClient for the life of its client and offers nothing to close it with, so that one is
+        // only a reference to drop; the streaming client is ours when the endpoint built it, and its HttpClient is shut
+        // down, which Java 21 allows
         if (ownedStreamingClient && streamingClient != null) {
             streamingClient.close();
         }

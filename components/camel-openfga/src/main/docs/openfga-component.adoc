@@ -316,6 +316,10 @@ complete list; neither operation offers continuation-token pagination.
 
 Use a streaming splitter to process each object incrementally:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:enumerate")
@@ -326,6 +330,31 @@ from("direct:enumerate")
         .to("direct:processObject")
     .end();
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:enumerate
+      steps:
+        - to:
+            uri: openfga:streamedListObjects
+            parameters:
+              storeId: "{{fga.store}}"
+              authorizationModelId: "{{fga.model}}"
+              relation: reader
+              user: "user:${exchangeProperty.subject}"
+              type: document
+        - split:
+            simple: "${body}"
+            streaming: true
+            steps:
+              - to:
+                  uri: direct:processObject
+----
+====
 
 For `ProducerTemplate.requestBody`, consume the returned `OpenFgaObjectIterator`
 in a try-with-resources block. It remains usable after the exchange completes.

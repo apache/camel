@@ -207,8 +207,8 @@ class OpenFgaObjectIteratorTest {
 
     private OpenFgaObjectIterator iterator(OpenFgaStreamingClient client, long timeout, int limit, int lineLimit) {
         return new OpenFgaObjectIterator(
-                client, "store", new ListObjectsRequest(), scheduler, timeout, limit, lineLimit,
-                value -> closed.incrementAndGet());
+                client, "store", new ListObjectsRequest(), scheduler, timeout, limit, lineLimit, value -> {
+                }, value -> closed.incrementAndGet());
     }
 
     private static String record(String object) {

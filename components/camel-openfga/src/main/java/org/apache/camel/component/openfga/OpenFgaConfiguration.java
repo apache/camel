@@ -127,17 +127,18 @@ public class OpenFgaConfiguration implements Cloneable {
     @UriParam(label = "advanced",
               description = "An existing OpenFgaClient to use. When set, every option describing how to reach the"
                             + " server - apiUrl, storeId, the credentials, the timeouts and sslContextParameters - is"
-                            + " ignored, because they are baked into the client that was handed over. streamedListObjects additionally requires an explicit streamingClient, storeId and readTimeout.")
+                            + " ignored, because they are baked into the client that was handed over. streamedListObjects"
+                            + " additionally needs an explicit streamingClient, a storeId and a positive readTimeout.")
     @Metadata(autowired = true)
     private OpenFgaClient openFgaClient;
 
-    @UriParam(label = "advanced", defaultValue = "10000")
+    @UriParam(label = "producer,advanced", defaultValue = "10000")
     private int streamMaxResults = 10000;
 
-    @UriParam(label = "advanced", defaultValue = "65536")
+    @UriParam(label = "producer,advanced", defaultValue = "65536")
     private int streamMaxLineLength = 65536;
 
-    @UriParam(label = "advanced")
+    @UriParam(label = "producer,advanced")
     @Metadata(autowired = true)
     private OpenFgaStreamingClient streamingClient;
 

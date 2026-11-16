@@ -19,13 +19,18 @@ package org.apache.camel.component.openfga;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.sun.net.httpserver.HttpServer;
 import dev.openfga.sdk.api.model.ListObjectsRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -40,8 +45,8 @@ import static org.mockito.Mockito.when;
 class OpenFgaStreamedListObjectsTest {
     @Test
     void ownedTransportUsesSdkRequestAuthenticationAndClosesStalledBody() throws Exception {
-        var server = com.sun.net.httpserver.HttpServer.create(new java.net.InetSocketAddress("127.0.0.1", 0), 0);
-        var release = new java.util.concurrent.CountDownLatch(1);
+        var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        var release = new CountDownLatch(1);
         AtomicReference<String> payload = new AtomicReference<>();
         AtomicReference<String> authorization = new AtomicReference<>();
         OpenFgaConfiguration configuration = configuration();
@@ -56,7 +61,7 @@ class OpenFgaStreamedListObjectsTest {
                 http.sendResponseHeaders(200, 0);
                 http.getResponseBody().write("{\"result\":{\"object\":\"document:one\"}}\n".getBytes(StandardCharsets.UTF_8));
                 http.getResponseBody().flush();
-                release.await(10, java.util.concurrent.TimeUnit.SECONDS);
+                release.await(10, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -74,7 +79,7 @@ class OpenFgaStreamedListObjectsTest {
                     assertThat(iterator.next()).isEqualTo("document:one");
                     assertThat(authorization.get()).isEqualTo("Bearer stream-token");
                     assertThat(payload.get()).contains("user:anne", "reader", "document");
-                    assertThatThrownBy(iterator::hasNext).hasRootCauseInstanceOf(java.net.http.HttpTimeoutException.class);
+                    assertThatThrownBy(iterator::hasNext).hasRootCauseInstanceOf(HttpTimeoutException.class);
                     assertThat(iterator.isComplete()).isFalse();
                 }
             } finally {
@@ -84,6 +89,38 @@ class OpenFgaStreamedListObjectsTest {
         } finally {
             release.countDown();
             server.stop(0);
+        }
+    }
+
+    @Test
+    void tracksOnlyIteratorsThatOpenedARequest() throws Exception {
+        OpenFgaConfiguration configuration = configuration();
+        configuration.setStreamingClient((store, query) -> response(new ByteArrayInputStream(
+                "{\"result\":{\"object\":\"document:one\"}}\n".getBytes(StandardCharsets.UTF_8))));
+        try (var context = new DefaultCamelContext()) {
+            var endpoint = endpoint(context, configuration);
+            endpoint.start();
+            var producer = new OpenFgaProducer(endpoint);
+            producer.start();
+            try {
+                // a route that drops or replaces the body never iterates: nothing to hold until the producer stops
+                for (int i = 0; i < 25; i++) {
+                    producer.process(new DefaultExchange(context));
+                }
+                assertThat(producer.activeStreamCount()).isZero();
+
+                Exchange exchange = new DefaultExchange(context);
+                producer.process(exchange);
+                var iterator = exchange.getMessage().getBody(OpenFgaObjectIterator.class);
+                assertThat(producer.activeStreamCount()).isZero();
+                assertThat(iterator.hasNext()).isTrue();
+                assertThat(producer.activeStreamCount()).isEqualTo(1);
+                iterator.close();
+                assertThat(producer.activeStreamCount()).isZero();
+            } finally {
+                producer.stop();
+                endpoint.stop();
+            }
         }
     }
 

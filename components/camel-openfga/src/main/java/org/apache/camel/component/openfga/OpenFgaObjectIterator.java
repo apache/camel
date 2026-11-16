@@ -62,6 +62,7 @@ public final class OpenFgaObjectIterator implements Iterator<String>, Closeable 
     private final long timeoutMillis;
     private final int maxResults;
     private final int maxLineLength;
+    private final Consumer<OpenFgaObjectIterator> onOpen;
     private final Consumer<OpenFgaObjectIterator> onClose;
     private final AtomicBoolean closed = new AtomicBoolean();
     private final AtomicReference<InputStream> body = new AtomicReference<>();
@@ -74,7 +75,7 @@ public final class OpenFgaObjectIterator implements Iterator<String>, Closeable 
 
     OpenFgaObjectIterator(OpenFgaStreamingClient client, String storeId, ListObjectsRequest request,
                           ScheduledExecutorService scheduler, long timeoutMillis, int maxResults, int maxLineLength,
-                          Consumer<OpenFgaObjectIterator> onClose) {
+                          Consumer<OpenFgaObjectIterator> onOpen, Consumer<OpenFgaObjectIterator> onClose) {
         this.client = client;
         this.storeId = storeId;
         this.request = request;
@@ -82,6 +83,7 @@ public final class OpenFgaObjectIterator implements Iterator<String>, Closeable 
         this.timeoutMillis = timeoutMillis;
         this.maxResults = maxResults;
         this.maxLineLength = maxLineLength;
+        this.onOpen = onOpen;
         this.onClose = onClose;
     }
 
@@ -171,6 +173,9 @@ public final class OpenFgaObjectIterator implements Iterator<String>, Closeable 
 
     private void open() throws Exception {
         response = client.open(storeId, request);
+        // only an iterator that started a request holds a connection worth tracking; one that is never iterated,
+        // because the route dropped or replaced the body, must not pin itself to the producer until it stops
+        onOpen.accept(this);
         // A close racing with header arrival must also close the late response body.
         response.whenComplete((value, error) -> {
             if (closed.get() && value != null) {

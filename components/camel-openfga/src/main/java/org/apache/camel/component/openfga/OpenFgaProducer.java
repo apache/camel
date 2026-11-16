@@ -129,6 +129,11 @@ public class OpenFgaProducer extends DefaultProducer {
         }
     }
 
+    /** The streamed object queries that opened a request and were not closed yet; the producer closes them on stop. */
+    int activeStreamCount() {
+        return activeStreams.size();
+    }
+
     @Override
     protected void doStop() throws Exception {
         activeStreams.forEach(OpenFgaObjectIterator::close);
@@ -336,8 +341,8 @@ public class OpenFgaProducer extends DefaultProducer {
         OpenFgaObjectIterator iterator = new OpenFgaObjectIterator(
                 getEndpoint().getStreamingClient(),
                 configuration.getStoreId(), request, streamScheduler, configuration.getReadTimeout(),
-                configuration.getStreamMaxResults(), configuration.getStreamMaxLineLength(), activeStreams::remove);
-        activeStreams.add(iterator);
+                configuration.getStreamMaxResults(), configuration.getStreamMaxLineLength(), activeStreams::add,
+                activeStreams::remove);
         if (user == null || relation == null || contextualTuples == null) {
             iterator.completeEmpty();
         }

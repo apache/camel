@@ -355,7 +355,7 @@ class OpenFgaIT extends CamelTestSupport {
                 openfga("streamedListObjects", "relation=reader&user=user:anne&type=document"), null,
                 OpenFgaObjectIterator.class);
         try (iterator) {
-            java.util.ArrayList<String> objects = new java.util.ArrayList<>();
+            List<String> objects = new ArrayList<>();
             iterator.forEachRemaining(objects::add);
             assertThat(objects).contains("document:budget", "document:announcement").doesNotContain("document:roadmap");
             assertThat(iterator.isComplete()).isTrue();
