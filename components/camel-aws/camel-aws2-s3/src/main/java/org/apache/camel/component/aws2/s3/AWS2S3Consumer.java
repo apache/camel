@@ -486,8 +486,10 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
     /**
      * Strategy to delete or move the object after being processed, the object the exchange was created from.
      *
-     * @param exchange the exchange
+     * @param      exchange the exchange
+     * @deprecated          use {@link #processCommit(Exchange, String)}, which the consumer calls instead
      */
+    @Deprecated(since = "4.24.0")
     protected void processCommit(Exchange exchange) {
         processCommit(exchange, exchange.getProperty(AWS2S3Constants.KEY, String.class));
     }

@@ -1786,7 +1786,7 @@ cannot be reached) now goes to the exception handler of the consumer, as a failu
 
 The consumers now call `processCommit(Exchange, String)` with the key, the name of the blob or the receipt handle. A
 subclass of `AWS2S3Consumer`, `BlobConsumer` or `Sqs2Consumer` that overrides `processCommit(Exchange)` must override
-the new method instead.
+the new method instead. `processCommit(Exchange)` is deprecated.
 
 === camel-stitch - a response with an empty body, and the default sequence of a message
 

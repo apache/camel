@@ -260,8 +260,10 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
      * Strategy to delete the message after being processed, with the receipt handle of the
      * {@link Sqs2Constants#RECEIPT_HANDLE} header.
      *
-     * @param exchange the exchange
+     * @param      exchange the exchange
+     * @deprecated          use {@link #processCommit(Exchange, String)}, which the consumer calls instead
      */
+    @Deprecated(since = "4.24.0")
     protected void processCommit(Exchange exchange) {
         processCommit(exchange, exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class));
     }

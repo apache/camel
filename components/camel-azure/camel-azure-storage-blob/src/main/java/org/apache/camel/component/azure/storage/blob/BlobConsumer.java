@@ -309,8 +309,10 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
      * Strategy to move/delete the blob after being processed, the blob named by the {@link BlobConstants#BLOB_NAME}
      * header.
      *
-     * @param exchange the exchange
+     * @param      exchange the exchange
+     * @deprecated          use {@link #processCommit(Exchange, String)}, which the consumer calls instead
      */
+    @Deprecated(since = "4.24.0")
     protected void processCommit(Exchange exchange) {
         processCommit(exchange, exchange.getIn().getHeader(BlobConstants.BLOB_NAME, String.class));
     }
