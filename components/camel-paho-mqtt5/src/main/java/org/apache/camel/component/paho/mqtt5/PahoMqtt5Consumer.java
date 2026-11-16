@@ -299,9 +299,10 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
      * always fails does not reconnect in a tight loop. In every other case the broker never sends the message again, so
      * it is acknowledged, which frees its place in the receive window.
      */
-    private void rollback(Exchange exchange, MqttMessage mqttMessage) {
+    private void rollback(Exchange exchange, MqttMessage mqttMessage, MqttClient receivingClient) {
         MqttClient current = client;
-        if (current == null) {
+        if (current == null || current != receivingClient) {
+            logNotAcknowledgedAfterStop(exchange, mqttMessage);
             return;
         }
         if (mqttMessage.getQos() != 1 || !isSessionKeptAfterDisconnect()) {
@@ -422,12 +423,21 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
         exchange.setIn(paho);
         if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
+            // the message is acknowledged on the client it arrived on: once the consumer stopped, that client is closed
+            // (or replaced by the client of the next start), and its packet id means nothing to another client
+            MqttClient receivingClient = client;
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onComplete(Exchange exchange) {
+                    MqttClient current = client;
+                    if (current == null || current != receivingClient) {
+                        // not a message of the current client: its backoff is left as is
+                        logNotAcknowledgedAfterStop(exchange, mqttMessage);
+                        return;
+                    }
                     failedMessageReconnects.set(0);
                     try {
-                        PahoMqtt5Consumer.this.client.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
+                        current.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
                     } catch (MqttException e) {
                         getExceptionHandler().handleException(
                                 "Error acknowledging MQTT message with ID: " + mqttMessage.getId(),
@@ -437,11 +447,18 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    rollback(exchange, mqttMessage);
+                    rollback(exchange, mqttMessage, receivingClient);
                 }
             });
         }
         return exchange;
+    }
+
+    private void logNotAcknowledgedAfterStop(Exchange exchange, MqttMessage mqttMessage) {
+        LOG.debug("MQTT message with ID: {} of Exchange ID: {} is not acknowledged: the consumer stopped and closed the client"
+                  + " it arrived on (on a session that the broker keeps, the broker sends it again to a client with the"
+                  + " same client id)",
+                mqttMessage.getId(), exchange.getExchangeId());
     }
 
 }
