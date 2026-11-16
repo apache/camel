@@ -79,10 +79,10 @@ import static org.mockito.Mockito.when;
  * once the faults cleared every message is completed or dead-lettered; the consumer settles each delivery at most once
  * and renews only what it holds, through an open client.
  * <p>
- * The operator stops the route as DefaultShutdownStrategy does, with the wait of the strategy as tasks of the operator
- * (see {@link #gracefulStop}): a processMessage call that waits until the consumer stops would otherwise sit above the
- * stop on the one stack, and could not see the stop. When the stop times out, the consumer is forced to stop as the
- * strategy does, and the exchanges still in flight fail (their route rejects them).
+ * The operator stops the route as DefaultShutdownStrategy does (its ShutdownTask), with the wait of the strategy as
+ * tasks of the operator (see {@link #gracefulStop}): a processMessage call that waits until the consumer stops would
+ * otherwise sit above the stop on the one stack, and could not see the stop. When the stop times out, the consumer is
+ * forced to stop as the strategy does, and the exchanges still in flight fail (their route rejects them).
  * <p>
  * Not explored: sessions, receiveAndDelete mode, a processorClient given by the user (the consumer does not renew its
  * locks), a synchronous route (a processMessage call that lasts as long as the exchange), maxAutoLockRenewDuration=0
@@ -108,7 +108,7 @@ import static org.mockito.Mockito.when;
                   "a message is abandoned or dead-lettered only after its exchange failed",
                   "every message is completed or dead-lettered once the faults cleared",
                   "the consumer settles a delivery at most once and renews only what it holds, through an open client" },
-          issues = { "CAMEL-25701" })
+          issues = { "CAMEL-25701", "CAMEL-26956", "CAMEL-26969", "CAMEL-26970" })
 final class ServiceBusWorld {
 
     static final String ROUTE = "servicebus";
@@ -284,8 +284,8 @@ final class ServiceBusWorld {
     /**
      * The processMessage callback of the consumer, checked: unless the operator stopped the route and has not started
      * it again, a delivered message is routed or settled by the time the call returns (the route is synchronous up to
-     * its downstream call). Once the route is stopped the consumer may hold the message in the call, unrouted, until
-     * it stops, and return without routing it until the route is started again.
+     * its downstream call). Once the route is stopped the consumer may hold the message in the call, unrouted, until it
+     * stops, and return without routing it until the route is started again.
      */
     private Consumer<ServiceBusReceivedMessageContext> checkedProcessMessage(
             Consumer<ServiceBusReceivedMessageContext> processMessage) {
@@ -511,6 +511,10 @@ final class ServiceBusWorld {
      * Why not stopRoute at once: the consumer may hold a message delivered during the graceful stop in processMessage
      * until it stops. On the one stack that call would run above the wait of the strategy, and the stop below it could
      * not go on until the call returned.
+     * <p>
+     * This and {@link #awaitInflightThenStop} mirror {@code DefaultShutdownStrategy.ShutdownTask} (deferShutdown, the
+     * wait for the inflight exchanges and the pending exchanges of the consumer, the forced stop on timeout): check
+     * them against it when the strategy changes.
      */
     private void gracefulStop(DefaultCamelContext context, DstExecutor operator, Runnable then) {
         Route route = context.getRoute(ROUTE);

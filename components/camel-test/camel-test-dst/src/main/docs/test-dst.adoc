@@ -99,7 +99,7 @@ a|* the lock renewer of the consumer (PEEK_LOCK, maxAutoLockRenewDuration) with 
 * complete, abandon and dead-letter, also after the lock was lost
 * maxConcurrentCalls of one to three (with the asynchronous route it bounds the processMessage calls)
 * route stop and start while messages are processed
-|CAMEL-25701
+|CAMEL-25701, CAMEL-26956, CAMEL-26969, CAMEL-26970
 
 |camel-google-pubsub
 |`PubsubWorld` (`PubsubConsumerDstTest`)
