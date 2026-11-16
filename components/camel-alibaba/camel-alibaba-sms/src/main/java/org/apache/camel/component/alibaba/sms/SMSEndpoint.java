@@ -87,10 +87,10 @@ public class SMSEndpoint extends DefaultEndpoint {
               displayName = "Service Keys", security = "secret", label = "security")
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "The phone numbers of the recipients, which are separated by commas. The value must have at most"
-                            + " 1000 phone numbers. The CamelAlibabaSmsPhoneNumbers header replaces this option for a request"
-                            + " that the producer sends. If that header is not set, an exchange property of the same name"
-                            + " replaces this option. One of the three is required.",
+    @UriParam(description = "The phone numbers of the recipients, which are separated by commas. Short Message Service accepts"
+                            + " at most 1000 phone numbers. The CamelAlibabaSmsPhoneNumbers header replaces this option for a"
+                            + " request that the producer sends. If that header is not set, an exchange property of the same"
+                            + " name replaces this option. One of the three is required.",
               displayName = "Phone Numbers")
     private String phoneNumbers;
 

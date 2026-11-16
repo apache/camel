@@ -82,7 +82,7 @@ public interface SMSEndpointBuilderFactory {
         }
         /**
          * The phone numbers of the recipients, which are separated by commas.
-         * The value must have at most 1000 phone numbers. The
+         * Short Message Service accepts at most 1000 phone numbers. The
          * CamelAlibabaSmsPhoneNumbers header replaces this option for a request
          * that the producer sends. If that header is not set, an exchange
          * property of the same name replaces this option. One of the three is
@@ -421,9 +421,9 @@ public interface SMSEndpointBuilderFactory {
 
         /**
          * The phone numbers of the recipients, which are separated by commas.
-         * The value must have at most 1000 phone numbers. This header replaces
-         * the phoneNumbers option. If this header is not set, an exchange
-         * property of the same name replaces the phoneNumbers option.
+         * Short Message Service accepts at most 1000 phone numbers. This header
+         * replaces the phoneNumbers option. If this header is not set, an
+         * exchange property of the same name replaces the phoneNumbers option.
          * 
          * The option is a: {@code String} type.
          * 
