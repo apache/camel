@@ -28,7 +28,9 @@ import org.apache.camel.test.dst.DstTest;
  * once the faults cleared every record is routed. A failing seed is replayed with {@code -Ddst.seed=<seed>};
  * {@code -Ddst.seeds=5000} runs more seeds.
  */
-@DstInstrument("org.apache.camel.component.aws2.kinesis")
+// Scheduled polling reads the clock for duration metrics from consumer threads outside the harness loop
+@DstInstrument(value = "org.apache.camel.component.aws2.kinesis",
+               allowEscapes = { "virtual clock read from a thread outside the harness" })
 class KinesisConsumerDstTest {
 
     @DstTest(seeds = 1000)
