@@ -626,6 +626,12 @@ is now sent with the first request; before, the request failed with `IllegalStat
 when `authDomain` is not set. Before, the endpoint answered only Basic and Digest challenges with these credentials,
 and the component did not use them. If the server asks for Basic credentials, remove `authMethod=NTLM`.
 
+=== camel-mdc - camel.routeId is the route being run
+
+The `camel.routeId` MDC value is now the id of the route that runs the step, as with the deprecated
+`camel.main.useMdcLogging`. Before, it was the id of the route that created the exchange, so the log lines of a route
+called with `direct:` (or another route-to-route endpoint) showed the id of the calling route.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.

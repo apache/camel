@@ -56,7 +56,7 @@ This is the list of default MDC values included in each execution:
 * camel.exchangeId
 * camel.messageId
 * camel.correlationId
-* camel.routeId
+* camel.routeId (the route being run; when a route calls another route, the id of the called route)
 * camel.contextId
 * camel.threadId
 
