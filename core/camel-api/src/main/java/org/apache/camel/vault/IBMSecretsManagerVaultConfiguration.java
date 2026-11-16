@@ -35,9 +35,9 @@ public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
     private String eventStreamTopic;
     @Metadata
     private String eventStreamBootstrapServers;
-    @Metadata
+    @Metadata(secret = true)
     private String eventStreamUsername;
-    @Metadata
+    @Metadata(secret = true)
     private String eventStreamPassword;
     @Metadata
     private String eventStreamGroupId;
