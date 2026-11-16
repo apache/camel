@@ -28,6 +28,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
@@ -48,7 +49,7 @@ import org.apache.camel.support.service.ServiceSupport;
           annotations = { "interfaceName=org.apache.camel.spi.KeyValueRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Caffeine based key-value repository")
-public class CaffeineKeyValueRepository extends ServiceSupport implements KeyValueRepository {
+public class CaffeineKeyValueRepository extends ServiceSupport implements KeyValueRepository, InMemoryStrategy {
 
     /**
      * Internal value wrapper that carries the per-entry TTL so the custom {@link Expiry} can read it at insertion time.
@@ -185,6 +186,13 @@ public class CaffeineKeyValueRepository extends ServiceSupport implements KeyVal
     public int size() {
         cache.cleanUp();
         return (int) cache.estimatedSize();
+    }
+
+    @Override
+    @ManagedAttribute(description = "Whether the entries are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        // a Caffeine cache lives in the heap of this JVM
+        return true;
     }
 
     private static long toTtlNanos(Duration ttl) {

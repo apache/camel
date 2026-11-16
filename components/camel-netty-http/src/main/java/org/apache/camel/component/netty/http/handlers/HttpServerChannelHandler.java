@@ -38,6 +38,7 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.LoggingLevel;
@@ -58,6 +59,7 @@ import org.apache.camel.http.base.OAuthHttpSecuritySupport.Validation;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.TlsPeerCertificateSupport;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -507,9 +509,15 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         return response;
     }
 
+    static void populateTlsPeer(Exchange exchange, ChannelHandlerContext context) {
+        var ssl = context.pipeline().get(SslHandler.class);
+        TlsPeerCertificateSupport.populateFromSession(exchange, ssl != null ? ssl.engine().getSession() : null);
+    }
+
     @Override
     protected Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
         Exchange exchange = this.consumer.createExchange(false);
+        populateTlsPeer(exchange, ctx);
 
         // create a new IN message as we cannot reuse with netty
         Message in;

@@ -44,7 +44,10 @@ public final class KeycloakConstants {
     @Metadata(description = "The user last name", javaType = "String")
     public static final String USER_LAST_NAME = "CamelKeycloakUserLastName";
 
-    @Metadata(description = "The role ID", javaType = "String")
+    @Metadata(description = "The role ID", javaType = "String",
+              deprecationNote = "Never read by the component: the role operations address a role by its name"
+                                + " (CamelKeycloakRoleName)")
+    @Deprecated
     public static final String ROLE_ID = "CamelKeycloakRoleId";
 
     @Metadata(description = "The role name", javaType = "String")
@@ -96,38 +99,63 @@ public final class KeycloakConstants {
     @Metadata(description = "The identity provider alias", javaType = "String")
     public static final String IDP_ALIAS = "CamelKeycloakIdpAlias";
 
-    @Metadata(description = "The identity provider ID", javaType = "String")
+    @Metadata(description = "The identity provider ID", javaType = "String",
+              deprecationNote = "Never read by the component: the identity provider operations address a provider by its alias"
+                                + " (CamelKeycloakIdpAlias)")
+    @Deprecated
     public static final String IDP_ID = "CamelKeycloakIdpId";
 
     // Authorization Services constants
     @Metadata(description = "The resource ID", javaType = "String")
     public static final String RESOURCE_ID = "CamelKeycloakResourceId";
 
-    @Metadata(description = "The resource name", javaType = "String")
+    @Metadata(description = "The resource name", javaType = "String",
+              deprecationNote = "Never read by the component: createResource and updateResource take a ResourceRepresentation"
+                                + " as the POJO request body")
+    @Deprecated
     public static final String RESOURCE_NAME = "CamelKeycloakResourceName";
 
-    @Metadata(description = "The resource type", javaType = "String")
+    @Metadata(description = "The resource type", javaType = "String",
+              deprecationNote = "Never read by the component: createResource and updateResource take a ResourceRepresentation"
+                                + " as the POJO request body")
+    @Deprecated
     public static final String RESOURCE_TYPE = "CamelKeycloakResourceType";
 
-    @Metadata(description = "The resource URI", javaType = "String")
+    @Metadata(description = "The resource URI", javaType = "String",
+              deprecationNote = "Never read by the component: createResource and updateResource take a ResourceRepresentation"
+                                + " as the POJO request body")
+    @Deprecated
     public static final String RESOURCE_URI = "CamelKeycloakResourceUri";
 
     @Metadata(description = "The policy ID", javaType = "String")
     public static final String POLICY_ID = "CamelKeycloakPolicyId";
 
-    @Metadata(description = "The policy name", javaType = "String")
+    @Metadata(description = "The policy name", javaType = "String",
+              deprecationNote = "Never read by the component: the resource policy operations take a PolicyRepresentation as the"
+                                + " POJO request body")
+    @Deprecated
     public static final String POLICY_NAME = "CamelKeycloakPolicyName";
 
-    @Metadata(description = "The policy type", javaType = "String")
+    @Metadata(description = "The policy type", javaType = "String",
+              deprecationNote = "Never read by the component: the resource policy operations take a PolicyRepresentation as the"
+                                + " POJO request body")
+    @Deprecated
     public static final String POLICY_TYPE = "CamelKeycloakPolicyType";
 
     @Metadata(description = "The permission ID", javaType = "String")
     public static final String PERMISSION_ID = "CamelKeycloakPermissionId";
 
-    @Metadata(description = "The permission name", javaType = "String")
+    @Metadata(description = "The permission name", javaType = "String",
+              deprecationNote = "Never read by the component: createResourcePermission takes a"
+                                + " ResourcePermissionRepresentation as the POJO request body, and the other permission"
+                                + " operations identify the permission with CamelKeycloakPermissionId")
+    @Deprecated
     public static final String PERMISSION_NAME = "CamelKeycloakPermissionName";
 
-    @Metadata(description = "The scope name", javaType = "String")
+    @Metadata(description = "The scope name", javaType = "String",
+              deprecationNote = "Never read by the component: there are no authorization-scope operations, and the client"
+                                + " scope operations use CamelKeycloakClientScopeName")
+    @Deprecated
     public static final String SCOPE_NAME = "CamelKeycloakScopeName";
 
     // User Attribute constants
@@ -141,7 +169,11 @@ public final class KeycloakConstants {
     @Metadata(description = "The credential ID", javaType = "String")
     public static final String CREDENTIAL_ID = "CamelKeycloakCredentialId";
 
-    @Metadata(description = "The credential type", javaType = "String")
+    @Metadata(description = "The credential type", javaType = "String",
+              deprecationNote = "Never read by the component: no credential operation takes a CredentialRepresentation request"
+                                + " body. deleteUserCredential uses CamelKeycloakCredentialId, and resetUserPassword builds a"
+                                + " password credential from CamelKeycloakUserPassword")
+    @Deprecated
     public static final String CREDENTIAL_TYPE = "CamelKeycloakCredentialType";
 
     // User Action constants
@@ -174,7 +206,10 @@ public final class KeycloakConstants {
     @Metadata(description = "Continue on error during bulk operations", javaType = "Boolean")
     public static final String CONTINUE_ON_ERROR = "CamelKeycloakContinueOnError";
 
-    @Metadata(description = "Batch size for bulk operations", javaType = "Integer")
+    @Metadata(description = "Batch size for bulk operations", javaType = "Integer",
+              deprecationNote = "Never read by the component: the bulk operations send every element of the list one by one,"
+                                + " with no batching")
+    @Deprecated
     public static final String BATCH_SIZE = "CamelKeycloakBatchSize";
 
     // Permission evaluation constants

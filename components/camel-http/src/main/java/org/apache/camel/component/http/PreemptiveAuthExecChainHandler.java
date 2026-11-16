@@ -19,10 +19,14 @@ package org.apache.camel.component.http;
 import java.io.IOException;
 
 import org.apache.hc.client5.http.auth.AuthCache;
+import org.apache.hc.client5.http.auth.AuthChallenge;
 import org.apache.hc.client5.http.auth.AuthScheme;
 import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.BearerToken;
+import org.apache.hc.client5.http.auth.ChallengeType;
 import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.CredentialsProvider;
+import org.apache.hc.client5.http.auth.StandardAuthScheme;
 import org.apache.hc.client5.http.classic.ExecChain;
 import org.apache.hc.client5.http.classic.ExecChainHandler;
 import org.apache.hc.client5.http.impl.auth.BasicAuthCache;
@@ -69,7 +73,7 @@ public class PreemptiveAuthExecChainHandler implements ExecChainHandler {
             if ("NTLM".equalsIgnoreCase(endpoint.getAuthMethod())) {
                 authScheme = new NTLMScheme();
             } else if ("BEARER".equalsIgnoreCase(endpoint.getAuthMethod())) {
-                authScheme = new BearerScheme();
+                authScheme = preemptiveBearerScheme(httpHost, credentials, context);
             } else {
                 BasicScheme bs = new BasicScheme();
                 bs.initPreemptive(credentials);
@@ -80,5 +84,20 @@ public class PreemptiveAuthExecChainHandler implements ExecChainHandler {
             context.setAuthCache(authCache);
         }
         return chain.proceed(request, scope);
+    }
+
+    /**
+     * The auth cache keeps the state of a scheme only once its challenge is complete, and a bearer scheme takes its
+     * token in {@link BearerScheme#isResponseReady}, so a new scheme would be cached without the token.
+     */
+    private static AuthScheme preemptiveBearerScheme(HttpHost host, Credentials credentials, HttpClientContext context)
+            throws HttpException {
+        if (!(credentials instanceof BearerToken)) {
+            throw new HttpException("No bearer token for preemptive authentication");
+        }
+        BearerScheme scheme = new BearerScheme();
+        scheme.processChallenge(new AuthChallenge(ChallengeType.TARGET, StandardAuthScheme.BEARER), context);
+        scheme.isResponseReady(host, (authScope, ctx) -> credentials, context);
+        return scheme;
     }
 }

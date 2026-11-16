@@ -373,7 +373,11 @@ public class RecipientListProcessor extends MulticastProcessor {
         if (onPrepare != null) {
             try {
                 onPrepare.process(copy);
-            } catch (Exception e) {
+            } catch (VirtualMachineError e) {
+                // left as before (thrown on)
+                throw e;
+            } catch (Throwable e) {
+                // also an Error, as for an exception: only this part fails (thrown on, it would fail the whole exchange)
                 copy.setException(e);
             }
         }

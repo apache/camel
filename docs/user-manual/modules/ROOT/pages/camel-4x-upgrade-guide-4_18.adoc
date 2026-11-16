@@ -50,6 +50,20 @@ only the default port of `http` (80); to deliver to another port, list it explic
 
 A deployment that lists a bare host and receives asynchronous MDNs on a non-default port must add the port to the entry.
 
+=== camel-atmosphere-websocket - events carry the query parameters of their own connection
+
+With the `events` init-param of `CamelWebSocketServlet` set to `true`, the open, close and error event exchanges now carry
+the query parameters of the request that opened their websocket connection, with the names and values URL-decoded.
+This is also the case with the JSR 356 transport, which Atmosphere uses on current servlet containers, where the
+parameters of the connection did not reach its events before. Before, the event headers came from the last HTTP request
+that the servlet handled for the endpoint, and their values were not URL-decoded, so a route that used these headers
+can see different values. `WebsocketConsumer.sendEventNotification` takes the query parameters of the connection as a
+third argument.
+
+The query string of a request is also read more leniently: a parameter without a value (`?foo` or `?foo=`) gets an empty
+value, and a value that contains `=` is kept whole. Before, such a parameter made the request fail, and a value was cut at
+the first `=` it contained.
+
 === camel-azure-eventhubs - per-partition checkpoint counters and timer; checkpoint window boundary fix
 
 Several fixes from 4.22.x have been brought forward to 4.18.6 to give this change a sound base.
@@ -92,6 +106,16 @@ or changing to a directory could resolve the name to another file or directory w
 wildcard to select a file, use the real name of the file in the producer, and the `include` or `antInclude` option of a
 consumer that lists the directory instead of a wildcard in `fileName` with `useList=false`. See the
 xref:components::sftp-component.adoc[SFTP component].
+
+=== camel-file - jailStartingDirectory resolves symbolic links
+
+With `jailStartingDirectory` enabled (the default), the file consumer and producer now resolve symbolic links when
+checking that a file stays within the starting directory. The consumer skips a file or (with `recursive=true`) a
+directory that is a link resolving outside of it, and the producer fails to write through such a link or a dangling
+link. Links resolving inside the starting directory work as before. Set `jailStartingDirectory=false` to keep following
+links to other directories (this also turns off the check of `../` in producer file names). A skipped file is logged
+at WARN the first time and at DEBUG on later polls; this log-level change also applies to the remote file consumers,
+which keep their existing lexical check.
 
 === camel-file - the consumer skips a file it would move through a symbolic link resolving outside the starting directory
 
@@ -898,6 +922,30 @@ A Netty consumer using `sslContextParameters` now uses the client authentication
 (`clientAuthentication` of `SSLContextServerParameters`, or `camel.ssl.clientAuthentication` with global SSL), also
 when the `needClientAuth` option is not enabled. Previously `needClientAuth=false` (the default) turned the client
 authentication off.
+
+=== camel-jbang - runtime catalogs use the selected Camel version
+
+Spring Boot and Quarkus catalogs now report the resolved Camel core version and read EIP/model schemas from that
+version's catalog. Previously, they could combine the selected runtime's component schemas with the running CLI or
+MCP server's newer model schemas. A model absent from the selected catalog now remains absent.
+Runtime dependency coordinates still use the selected Spring Boot or Camel Quarkus version.
+
+Versioned Main catalogs also report the selected version: `DefaultCamelCatalog.getCatalogVersion()` now honors
+the installed version manager instead of always reporting the built-in version.
+When using `MavenVersionManager` from `camel-catalog-maven`, `getCatalogVersion()` returns `null` until
+`loadVersion(...)` succeeds.
+
+A Quarkus BOM must identify both `org.apache.camel:camel-catalog` and
+`org.apache.camel.quarkus:camel-quarkus-catalog`. If either version or the selected catalog cannot be resolved,
+catalog loading fails instead of returning the running server's catalog.
+
+Spring Boot retains its existing fallback: if downloading `org.apache.camel:camel-catalog` for the requested
+version fails, it tries the running CLI's Camel version. The catalog reports the core version actually resolved.
+
+For Spring Boot, `camel export` and `camel run` without an explicit `--camel-version` now use the resolved core
+catalog version for Camel core dependencies in the generated project. For example, `--camel-spring-boot-version=4.8.0`
+uses Camel 4.8.0 instead of the running CLI's version when that catalog is available. Set `--camel-version` explicitly
+to retain a different core dependency version.
 
 == Upgrading from 4.18.4 to 4.18.5
 

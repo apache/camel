@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceHelper;
@@ -41,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
           description = "An IdempotentRepository backed by a KeyValueRepository (defaults to in-memory).",
           annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
-public class KeyValueIdempotentRepository extends ServiceSupport implements IdempotentRepository {
+public class KeyValueIdempotentRepository extends ServiceSupport implements IdempotentRepository, InMemoryStrategy {
 
     /**
      * Prefix used to namespace idempotent entries, preventing key collisions when this adapter shares the same
@@ -111,6 +112,15 @@ public class KeyValueIdempotentRepository extends ServiceSupport implements Idem
                 repository.delete(key);
             }
         }
+    }
+
+    /**
+     * Whether the keys are kept only in memory: when the underlying {@link KeyValueRepository} keeps its data only in
+     * memory, or when none is set, as the service then creates a {@link MemoryKeyValueRepository} when it starts.
+     */
+    @Override
+    public boolean isInMemory() {
+        return repository == null || (repository instanceof InMemoryStrategy s && s.isInMemory());
     }
 
     /**

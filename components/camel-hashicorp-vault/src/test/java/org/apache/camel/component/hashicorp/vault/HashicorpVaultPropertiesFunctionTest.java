@@ -40,7 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Lookups of the properties function against a fake {@link VaultTemplate}, which answers the KV v2 data paths.
+ * Lookups of the properties function against a fake {@link VaultTemplate}, which answers the KV v2 data paths, and
+ * against a {@link FakeVault} for a function that creates its own client.
  */
 class HashicorpVaultPropertiesFunctionTest {
 
@@ -128,6 +129,33 @@ class HashicorpVaultPropertiesFunctionTest {
 
         assertEquals("pw", function.apply("secret:api#password@2"));
         assertEquals(List.of("admin/secret/data/api?version=2"), vault.reads);
+    }
+
+    @Test
+    void aFunctionWithoutCamelContextReadsInTheNamespaceAndRevokesItsTokenWhenStopped() throws Exception {
+        try (FakeVault vault = new FakeVault()) {
+            vault.on("auth/approle/login", request -> FakeVault.login("approle-token", 3600));
+            vault.on("admin/secret/data/api", request -> FakeVault.secret("pw"));
+            vault.on("auth/token/revoke-self", request -> FakeVault.noContent());
+            HashicorpVaultClientSettings settings = new HashicorpVaultClientSettings();
+            settings.setHost("localhost");
+            settings.setPort(String.valueOf(vault.port()));
+            settings.setScheme("http");
+            settings.setAuthentication("approle");
+            settings.setRoleId("my-role-id");
+            settings.setSecretId("my-secret-id");
+            settings.setCloud(true);
+            settings.setNamespace("admin");
+            HashicorpVaultPropertiesFunction function = new HashicorpVaultPropertiesFunction(settings);
+
+            assertEquals("pw", function.apply("secret:api#password"));
+            assertEquals("admin", vault.requests("auth/approle/login").get(0).namespace());
+            assertEquals("approle-token", vault.requests("admin/secret/data/api").get(0).token());
+
+            // stopped without being started, as before there is a CamelContext
+            function.stop();
+            assertEquals("approle-token", vault.requests("auth/token/revoke-self").get(0).token());
+        }
     }
 
     @Test

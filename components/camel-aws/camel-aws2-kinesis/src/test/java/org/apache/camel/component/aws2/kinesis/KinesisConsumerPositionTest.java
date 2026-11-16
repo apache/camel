@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -129,6 +130,37 @@ class KinesisConsumerPositionTest {
 
         assertEquals(1, consumer.poll(), "the record stored while the iterator expired");
         assertEquals(List.of("a", "b"), routed);
+    }
+
+    @Test
+    void expiredIteratorOfAShardWithoutRoutedRecordsDoesNotSkipTheRecordsOfTheGapWithLatest() throws Exception {
+        stream.addShard("shard-0", null);
+        // stored well before the consumer starts the shard
+        stream.put("shard-0", "old", Instant.now().minusSeconds(60));
+        startConsumer(ShardIteratorType.LATEST, 1);
+
+        assertEquals(0, consumer.poll());
+        GetShardIteratorRequest first = stream.iteratorRequests.get(stream.iteratorRequests.size() - 1);
+        assertEquals(ShardIteratorType.LATEST, first.shardIteratorType());
+
+        // the iterator expires before the consumer routed a record of the shard (the route was suspended, or the delay
+        // is longer than the 5 minutes an iterator is valid)
+        stream.put("shard-0", "a");
+        stream.expireIterators();
+        stream.put("shard-0", "b");
+
+        assertEquals(2, consumer.poll(), "the records stored since the consumer started the shard");
+        assertEquals(List.of("a", "b"), routed);
+        GetShardIteratorRequest last = stream.iteratorRequests.get(stream.iteratorRequests.size() - 1);
+        assertEquals(ShardIteratorType.AT_TIMESTAMP, last.shardIteratorType());
+
+        // once a record is routed, the next new iterator continues after it
+        stream.expireIterators();
+        stream.put("shard-0", "c");
+        assertEquals(1, consumer.poll());
+        assertEquals(List.of("a", "b", "c"), routed);
+        last = stream.iteratorRequests.get(stream.iteratorRequests.size() - 1);
+        assertEquals(ShardIteratorType.AFTER_SEQUENCE_NUMBER, last.shardIteratorType());
     }
 
     @Test
@@ -430,8 +462,14 @@ class KinesisConsumerPositionTest {
         }
 
         synchronized void put(String shardId, String body) {
+            // Kinesis sets the approximate arrival timestamp when it stores the record
+            put(shardId, body, Instant.now());
+        }
+
+        synchronized void put(String shardId, String body, Instant arrival) {
             List<Record> list = records.get(shardId);
             list.add(Record.builder().sequenceNumber(String.valueOf(list.size() + 1))
+                    .approximateArrivalTimestamp(arrival)
                     .data(SdkBytes.fromString(body, StandardCharsets.UTF_8)).build());
         }
 
@@ -471,6 +509,14 @@ class KinesisConsumerPositionTest {
                     break;
                 case AFTER_SEQUENCE_NUMBER:
                     position = Integer.parseInt(request.startingSequenceNumber());
+                    break;
+                case AT_TIMESTAMP:
+                    // the first record stored at or after the timestamp
+                    position = 0;
+                    while (position < list.size()
+                            && list.get(position).approximateArrivalTimestamp().isBefore(request.timestamp())) {
+                        position++;
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("Not expected in this test: " + request.shardIteratorType());

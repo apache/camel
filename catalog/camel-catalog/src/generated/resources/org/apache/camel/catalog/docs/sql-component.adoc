@@ -214,7 +214,8 @@ This allows processing the data in a streaming fashion which, for example,
 can be used by the Splitter EIP to process each row one at a time, and load data from the database as needed.
 The rows can be read once: when reading a row fails (for example, the connection is lost), the iterator keeps failing
 instead of ending, so a split that is redelivered over it fails too, rather than succeeding with the rows read before
-the failure.
+the failure. The same applies when a row cannot be mapped to the `outputClass` (for example, a value that does not
+convert to the type of its property).
 
 [tabs]
 ====
@@ -324,8 +325,10 @@ those libraries behave by default; they are approximate, not guarantees of Camel
 connection that went silent (the database host is gone, or a firewall or NAT dropped the connection without a reset)
 waits in a socket read, with no error and nothing logged, until the operating system gives up on the connection:
 on Linux about 15 minutes when the request was not acknowledged, and never when it was and TCP keep-alive is off.
-Meanwhile the consumer's xref:manual::health-check.adoc[health check] stays UP, because it counts only the polls that
-failed.
+Meanwhile the consumer's xref:manual::health-check.adoc[health check] stays UP, because by default it counts only the
+polls that are done. Set `healthCheckMaxPollDuration` (for example `healthCheckMaxPollDuration=10m`) to have it report
+DOWN while a poll has been running for longer than that: see
+xref:manual::health-check.adoc#_detecting_a_poll_that_hangs[Detecting a poll that hangs].
 
 A socket timeout ends such a read with an error: the poll fails and is retried at the next poll, or the producer
 fails and the error handler can redeliver. Set it longer than your slowest statement:
@@ -845,18 +848,22 @@ One of the limitations of `org.apache.camel.processor.idempotent.jdbc.JdbcMessag
 
 * lock already exists and its `createdAt` is null: the key was confirmed, so it is a duplicate, as in `JdbcMessageIdRepository`.
 
+* the instance requesting the lock holds it already (it added the key and has not confirmed or removed it yet): the key is a duplicate, whatever its `createdAt`.
+
 A key that is confirmed (the message was processed, for example by the Idempotent Consumer, by the file consumer with `idempotent=true` and the default `idempotentEager=true`, or by the file consumer with `readLock=idempotent` (also `idempotent-changed` and `idempotent-rename`) and the default `readLockRemoveOnCommit=false`) is no longer a lock: its `createdAt` is set to null and it is no longer kept alive, so another instance does not take it over when the instance that added it stops. With these read locks, the name of every processed file then stays in the table for good; when the key only needs to lock the file while it is read, set `readLockRemoveOnCommit=true`, together with `readLockIdempotentReleaseDelay` as described in the File component, so that the key is removed once the file is processed.
 
 A confirmed key has no age, so a purge by `createdAt` does not delete it. To purge confirmed keys by age, add a column of your own to the table, for example `insertedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP` (the repository does not write it), or set `confirmQuery` to a statement that also stores the time of the confirm in such a column, and purge by that column.
 
 The `createdAt` column must store null. The repository checks this once when it starts, in a transaction that it rolls back: it inserts a row, confirms it with `confirmQuery`, and checks that its `createdAt` is null. When the check fails (a `NOT NULL` column, a MySQL or MariaDB `TIMESTAMP` column with `explicit_defaults_for_timestamp=OFF`, or an error of the database), it logs a WARN and does not confirm keys until the repository is started again: they stay locks, as before, and a confirm sends no statement, so it cannot fail inside the transaction of a transacted route. A confirm that fails later (for example the connection is lost) logs a WARN, and the key stays a lock; when the repository joins the transaction of a transacted route (same `DataSource`), it marks that transaction as rollback only, as a failed add or remove does.
 
+A lock is kept alive only while its instance reaches the database. When the keep-alive fails (the database is down or cannot be reached, a failover, a connection pool with no free connection), it logs an ERROR on every round; when the instance holds keys and the keep-alive has not refreshed their locks for longer than `lockMaxAgeMillis`, it logs a WARN, as they may now be taken over, and an INFO when it refreshes them again. The instance itself keeps treating the keys it holds as duplicates, so it does not process their messages a second time, and its keep-alive refreshes their `createdAt` once the database is back. Another instance, however, cannot tell such an instance from one that crashed: when it reaches the database while the first one cannot (a network partition), or right after the outage, before the next keep-alive of the first instance, it takes these locks over, and their messages are processed twice, once on each instance. So choose a `lockMaxAgeMillis` longer than the longest database outage the application must survive without processing a message twice; the lock of an instance that really crashed is then taken over only after that time.
+
 This repository has these additional configuration parameters
 
 [cols="1,1"]
 |===
 |Parameter | Description
-|`lockMaxAgeMillis` | This refers to the duration after which the lock is considered orphaned, i.e., if the `currentTimestamp - createdAt >= lockMaxAgeMillis` then lock is orphaned.
+|`lockMaxAgeMillis` | This refers to the duration after which the lock is considered orphaned, i.e., if the `currentTimestamp - createdAt >= lockMaxAgeMillis` then lock is orphaned. Choose it longer than the longest database outage to survive, see above.
 |`lockKeepAliveIntervalMillis` | The frequency at which keep-alive updates are done to createdAt Timestamp column.
 |`confirmQuery` | The query that confirms a key by setting its `createdAt` to null; it may set other columns of the table too. It follows `tableName`; set it when the table is set through custom queries instead. Set it to null or empty to keep confirmed keys as locks. It is checked when the repository starts; a query set later is used after the next start.
 |===

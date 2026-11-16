@@ -41,15 +41,19 @@ public class DefaultAuthenticationHttpClientConfigurer implements HttpClientConf
     private final String host;
     private final Integer port;
     private final String bearerToken;
+    private final boolean ntlm;
     private final HttpCredentialsHelper credentialsHelper;
 
     public DefaultAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host, String bearerToken,
                                                      HttpCredentialsHelper credentialsHelper) {
-        this(user, pwd, domain, null, host, null, bearerToken, credentialsHelper);
+        this(user, pwd, domain, null, host, null, bearerToken, false, credentialsHelper);
     }
 
+    /**
+     * @param ntlm whether to authenticate with NTLM (authMethod=NTLM); a domain also selects NTLM
+     */
     DefaultAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String scheme, String host,
-                                              Integer port, String bearerToken,
+                                              Integer port, String bearerToken, boolean ntlm,
                                               HttpCredentialsHelper credentialsHelper) {
         this.username = user;
         this.password = pwd == null ? new char[0] : pwd.toCharArray();
@@ -58,13 +62,14 @@ public class DefaultAuthenticationHttpClientConfigurer implements HttpClientConf
         this.host = host;
         this.port = port;
         this.bearerToken = bearerToken;
+        this.ntlm = ntlm;
         this.credentialsHelper = credentialsHelper;
     }
 
     @Override
     public void configureHttpClient(HttpClientBuilder clientBuilder) {
         Credentials defaultcreds;
-        if (domain != null) {
+        if (ntlm || domain != null) {
             defaultcreds = new NTCredentials(username, password, host, domain);
             // NTLM is not included by default so we need to rebuild the registry to include NTLM
             var autoSchemes = RegistryBuilder.<AuthSchemeFactory> create()

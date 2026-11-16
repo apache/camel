@@ -102,7 +102,10 @@ public class KafkaConsumer extends DefaultConsumer
         return (KafkaEndpoint) super.getEndpoint();
     }
 
-    Properties getProps() {
+    /**
+     * The properties of the Kafka consumer with the given index (0 to consumersCount - 1).
+     */
+    Properties getProps(int consumerIndex) {
         KafkaConfiguration configuration = endpoint.getConfiguration();
 
         Properties props = configuration.createConsumerProperties();
@@ -116,6 +119,13 @@ public class KafkaConsumer extends DefaultConsumer
 
         ObjectHelper.ifNotEmpty(configuration.getGroupInstanceId(),
                 v -> props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, v));
+
+        // a group instance id is one static member of the group: the consumers of the endpoint would fence each other
+        // with the same id, so each one gets the id followed by its index
+        Object groupInstanceId = props.get(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG);
+        if (configuration.getConsumersCount() > 1 && ObjectHelper.isNotEmpty(groupInstanceId)) {
+            props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, groupInstanceId + "-" + consumerIndex);
+        }
 
         return props;
     }
@@ -180,7 +190,7 @@ public class KafkaConsumer extends DefaultConsumer
         try {
             for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
                 KafkaFetchRecords task = new KafkaFetchRecords(
-                        this, bridge, topic, pattern, Integer.toString(i), getProps(), consumerListener);
+                        this, bridge, topic, pattern, Integer.toString(i), getProps(i), consumerListener);
 
                 // if camel has not been fully started yet then delay starting this consumer to avoid
                 // process incoming message before camel is fully started
