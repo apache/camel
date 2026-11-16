@@ -537,6 +537,16 @@ read. A custom `httpBinding` set on the component is now used by the Rest DSL co
 `ServletRestHttpBinding`. Any other binding set on the component is still used only by `servlet:` routes, as it does
 not map the path placeholders such as `+{id}+` to headers.
 
+=== camel-http - authMethod=Bearer and authMethod=NTLM are applied
+
+The endpoint options `authMethod=Bearer` and `authBearerToken` now send the token when the server asks for it. Before,
+only a token set in the `httpConfiguration` of the component was sent. With `authenticationPreemptive=true`, the token
+is now sent with the first request; before, the request failed with `IllegalStateException: Bearer token is null`.
+
+`authMethod=NTLM`, on the endpoint or in the `httpConfiguration` of the component, now authenticates with NTLM also
+when `authDomain` is not set. Before, the endpoint answered only Basic and Digest challenges with these credentials,
+and the component did not use them. If the server asks for Basic credentials, remove `authMethod=NTLM`.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
