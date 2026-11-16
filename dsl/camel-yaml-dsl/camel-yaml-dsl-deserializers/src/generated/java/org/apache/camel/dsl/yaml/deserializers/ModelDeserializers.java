@@ -13820,7 +13820,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "excludePattern", type = "string", description = "Name or pattern of headers to not remove. You can use comma to separate multiple patterns.", displayName = "Exclude Pattern"),
+                    @YamlProperty(name = "excludePattern", type = "string", description = "Name or pattern of headers to not remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive). To keep several headers, use a regular expression such as header1|header3.", displayName = "Exclude Pattern"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "pattern", type = "string", required = true, description = "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive).", displayName = "Pattern")
@@ -13895,7 +13895,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "excludePattern", type = "string", description = "Name or pattern of properties to not remove. You can use comma to separate multiple patterns.", displayName = "Exclude Pattern"),
+                    @YamlProperty(name = "excludePattern", type = "string", description = "Name or pattern of properties to not remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive). To keep several properties, use a regular expression such as prop1|prop3.", displayName = "Exclude Pattern"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "pattern", type = "string", required = true, description = "Name or pattern of properties to remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive).", displayName = "Pattern")

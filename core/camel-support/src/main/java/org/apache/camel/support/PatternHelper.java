@@ -16,10 +16,14 @@
  */
 package org.apache.camel.support;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -209,6 +213,47 @@ public final class PatternHelper {
             // ignore
         }
         return false;
+    }
+
+    /**
+     * Combines several patterns into one pattern, which {@link #matchPattern(String, String)} matches when any of the
+     * patterns matches. This is how options that hold a single pattern, such as the excludePattern of removeHeaders,
+     * keep several patterns.
+     * <p>
+     * A single pattern is returned as it is. Several patterns are joined with | into one regular expression: a name
+     * stays as it is, a wildcard (text ending with a *) becomes text.*, a regular expression is put in a group, and a
+     * pattern that is not a valid regular expression is quoted, so it keeps its exact or wildcard match.
+     *
+     * @param  patterns the patterns, <code>null</code> elements are ignored
+     * @return          the combined pattern, or <code>null</code> if there is no pattern
+     */
+    public static String combinePatterns(String... patterns) {
+        if (patterns == null) {
+            return null;
+        }
+        List<String> list = Arrays.stream(patterns).filter(Objects::nonNull).toList();
+        if (list.size() <= 1) {
+            return list.isEmpty() ? null : list.get(0);
+        }
+        StringJoiner answer = new StringJoiner("|");
+        for (String pattern : list) {
+            answer.add(asRegex(pattern));
+        }
+        return answer.toString();
+    }
+
+    private static String asRegex(String pattern) {
+        boolean wildcard = pattern.endsWith("*");
+        String text = wildcard ? pattern.substring(0, pattern.length() - 1) : pattern;
+        if (text.chars().noneMatch(c -> REGEX_METACHARS.indexOf(c) >= 0)) {
+            return wildcard ? text + ".*" : text;
+        }
+        try {
+            Pattern.compile(pattern);
+            return "(?:" + pattern + ")";
+        } catch (PatternSyntaxException e) {
+            return wildcard ? Pattern.quote(text) + ".*" : Pattern.quote(pattern);
+        }
     }
 
     public static boolean isExcludePatternMatch(String key, String... excludePatterns) {
