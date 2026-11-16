@@ -105,9 +105,24 @@ public class SftpOperations
     private static class TaskPayload {
         final RemoteFileConfiguration configuration;
         private Exception exception;
+        // the server rejected the login, which ends the reconnect attempts
+        private boolean authenticationFailed;
 
         public TaskPayload(RemoteFileConfiguration configuration) {
             this.configuration = configuration;
+        }
+    }
+
+    /**
+     * Ends the session when the server asks for the password again: JSch asks for it again each time the server rejects
+     * it, up to MaxAuthTries times per session, and each rejected password counts towards the lockout policy of the
+     * server.
+     */
+    private static final class PasswordNotAcceptedException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
+        PasswordNotAcceptedException(String username) {
+            super("Auth fail for user '" + username + "': the server did not accept the password");
         }
     }
 
@@ -160,7 +175,7 @@ public class SftpOperations
 
                 TaskPayload payload = new TaskPayload(configuration);
 
-                if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload)) {
+                if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload) || payload.authenticationFailed) {
                     throw new GenericFileOperationFailedException(
                             "Cannot connect to " + configuration.remoteServerInformation(),
                             payload.exception);
@@ -178,6 +193,12 @@ public class SftpOperations
         }
     }
 
+    /**
+     * One attempt of the reconnect task.
+     *
+     * @return whether the task is done: connected, or the server rejected the login, which is not retried as each
+     *         rejected login counts towards the lockout policy of the server
+     */
     private boolean tryConnect(TaskPayload payload) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Reconnect attempt to {}", payload.configuration.remoteServerInformation());
@@ -219,13 +240,21 @@ public class SftpOperations
                     LOG.debug("Connected to {}", payload.configuration.remoteServerInformation());
                 }
             }
-        } catch (JSchException e) {
+        } catch (JSchException | PasswordNotAcceptedException e) {
             payload.exception = e;
+            payload.authenticationFailed = isAuthenticationFailure(e);
 
-            return false;
+            return payload.authenticationFailed;
         }
 
         return true;
+    }
+
+    private static boolean isAuthenticationFailure(Exception e) {
+        // JSch fails with "Auth fail for methods ..." or "Auth cancel for methods ..." when no method authenticated
+        String message = e.getMessage();
+        return e instanceof PasswordNotAcceptedException
+                || message != null && (message.startsWith("Auth fail") || message.startsWith("Auth cancel"));
     }
 
     private void configureBulkRequests() {
@@ -427,16 +456,21 @@ public class SftpOperations
 
             private final CamelLogger messageLogger
                     = new CamelLogger(LOG, ((SftpConfiguration) configuration).getServerMessageLoggingLevel());
+            // the password is given once per session, with the password or the keyboard-interactive method
+            private boolean passwordGiven;
 
             public String getPassphrase() {
                 return null;
             }
 
             public String getPassword() {
-                return configuration.getPassword();
+                String password = configuration.getPassword();
+                passwordGiven |= password != null;
+                return password;
             }
 
             public boolean promptPassword(String s) {
+                checkPasswordNotGiven();
                 return true;
             }
 
@@ -464,11 +498,21 @@ public class SftpOperations
 
             public String[] promptKeyboardInteractive(
                     String destination, String name, String instruction, String[] prompt, boolean[] echo) {
-                // must return an empty array if password is null
-                if (configuration.getPassword() == null) {
+                // must return an empty array if password is null, or if the server asks nothing (only an instruction)
+                if (configuration.getPassword() == null || prompt.length == 0) {
                     return new String[0];
                 } else {
+                    checkPasswordNotGiven();
+                    passwordGiven = true;
                     return new String[] { configuration.getPassword() };
+                }
+            }
+
+            private void checkPasswordNotGiven() {
+                if (passwordGiven) {
+                    // asked again: the server did not accept the password, so end the session instead of sending it
+                    // once more (JSch passes the exception on from Session.connect, after it disconnected)
+                    throw new PasswordNotAcceptedException(configuration.getUsername());
                 }
             }
 
