@@ -62,6 +62,17 @@ class SensitiveUtilsTest {
     }
 
     @Test
+    void serverAndVaultSecretOptionsAreSensitive() {
+        assertThat(SensitiveUtils.containsSensitive("camel.server.jwtKeystorePassword")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.management.jwtKeystorePassword")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.azure.eventhubConnectionString")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.azure.tenantId")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.gcp.serviceAccountKey")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.ibm.eventStreamUsername")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("camel.vault.ibm.eventStreamPassword")).isTrue();
+    }
+
+    @Test
     void maskUserInfoCredentialsMasksPasswordInCommonSchemes() {
         assertThat(SensitiveUtils.maskUserInfoCredentials("mongodb://user:pass@host:27017/db", "xxxxx"))
                 .isEqualTo("mongodb://user:xxxxx@host:27017/db");

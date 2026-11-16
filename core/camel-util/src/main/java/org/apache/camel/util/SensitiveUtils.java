@@ -79,10 +79,14 @@ public final class SensitiveUtils {
                     "databasessltruststorepassword",
                     "db_password",
                     "emailaddress",
+                    "eventhubconnectionstring",
+                    "eventstreampassword",
+                    "eventstreamusername",
                     "functionkey",
                     "hostkey",
                     "httpproxypassword",
                     "jwt",
+                    "jwtkeystorepassword",
                     "kerberosauthticket",
                     "keypassword",
                     "keystorePassword",
@@ -125,6 +129,7 @@ public final class SensitiveUtils {
                     "secretid",
                     "secretkey",
                     "securerandom",
+                    "serviceaccountkey",
                     "serviceinstanceid",
                     "sessiontoken",
                     "sharedaccesskey",
@@ -137,6 +142,7 @@ public final class SensitiveUtils {
                     "subscribekey",
                     "subscriptionid",
                     "systemid",
+                    "tenantid",
                     "token",
                     "tokencredential",
                     "truststorepassword",
@@ -194,10 +200,14 @@ public final class SensitiveUtils {
                                                     + "|\\Qdatabasessltruststorepassword\\E"
                                                     + "|\\Qdb_password\\E"
                                                     + "|\\Qemailaddress\\E"
+                                                    + "|\\Qeventhubconnectionstring\\E"
+                                                    + "|\\Qeventstreampassword\\E"
+                                                    + "|\\Qeventstreamusername\\E"
                                                     + "|\\Qfunctionkey\\E"
                                                     + "|\\Qhostkey\\E"
                                                     + "|\\Qhttpproxypassword\\E"
                                                     + "|\\Qjwt\\E"
+                                                    + "|\\Qjwtkeystorepassword\\E"
                                                     + "|\\Qkerberosauthticket\\E"
                                                     + "|\\Qkeypassword\\E"
                                                     + "|\\QkeystorePassword\\E"
@@ -240,6 +250,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qsecretid\\E"
                                                     + "|\\Qsecretkey\\E"
                                                     + "|\\Qsecurerandom\\E"
+                                                    + "|\\Qserviceaccountkey\\E"
                                                     + "|\\Qserviceinstanceid\\E"
                                                     + "|\\Qsessiontoken\\E"
                                                     + "|\\Qsharedaccesskey\\E"
@@ -252,6 +263,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qsubscribekey\\E"
                                                     + "|\\Qsubscriptionid\\E"
                                                     + "|\\Qsystemid\\E"
+                                                    + "|\\Qtenantid\\E"
                                                     + "|\\Qtoken\\E"
                                                     + "|\\Qtokencredential\\E"
                                                     + "|\\Qtruststorepassword\\E"

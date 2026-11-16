@@ -35,6 +35,8 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.MainModel;
+import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.util.json.JsonArray;
@@ -87,9 +89,10 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             = new String[] {
                     "apipassword", "apisecret", "apiuser", "apiusername", "api_key", "api-key", "api_secret", "authorization",
                     "callbacksecret", "db_password",
-                    // the login secrets of camel.vault.hashicorp, which are on the endpoint only in the component
-                    "jwt", "roleid", "secretid",
                     SECRET, "keystorePassword" };
+
+    // the camel-main configuration options (camel.server, camel.vault and others)
+    private static final String MAIN_METADATA = "camel-main-configuration-metadata.json";
 
     // extra security options from camel-main properties that are not in component JSON files
     // each entry: option name (lowercase, no dashes), security category, insecure value
@@ -154,13 +157,23 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
                 boolean isComponent = obj.getMap("component") != null;
                 boolean isDataFormat = !isComponent && obj.getMap("dataformat") != null;
                 boolean isLanguage = !isComponent && !isDataFormat && obj.getMap("language") != null;
+                boolean isBean = !isComponent && !isDataFormat && !isLanguage && obj.getMap("bean") != null;
+                boolean isMain = MAIN_METADATA.equals(file.getFileName().toString());
 
                 // only check these kind
-                if (!isComponent && !isDataFormat && !isLanguage) {
+                if (!isComponent && !isDataFormat && !isLanguage && !isBean && !isMain) {
                     continue;
                 }
 
-                if (isComponent) {
+                if (isMain) {
+                    // the option names are full keys (such as camel.server.jwtKeystorePassword)
+                    MainModel mm = JsonMapper.generateMainModel(obj);
+                    mm.getOptions().forEach(
+                            o -> collectSecretOption(o, o.getName().substring(o.getName().lastIndexOf('.') + 1), secrets));
+                } else if (isBean) {
+                    PojoBeanModel pm = JsonMapper.generatePojoBeanModel(obj);
+                    pm.getOptions().forEach(o -> collectSecretOption(o, secrets));
+                } else if (isComponent) {
                     ComponentModel cm = JsonMapper.generateComponentModel(json);
                     Set<String> owners = owners("component:", cm.getScheme(), cm.getAlternativeSchemes());
                     cm.getComponentOptions().forEach(o -> {
@@ -200,7 +213,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
         secrets.addAll(Arrays.asList(EXTRA_KEYS));
 
         getLog().info("There are " + secrets.size()
-                      + " distinct secret options across all the Camel components/dataformats/languages");
+                      + " distinct secret options across all the Camel components/dataformats/languages/beans/main");
 
         try {
             boolean updated = updateSensitiveHelperKeys(camelDir, secrets);
@@ -327,8 +340,13 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
 
     private static void collectSecretOption(
             BaseOptionModel o, Set<String> secrets) {
+        collectSecretOption(o, o.getName(), secrets);
+    }
+
+    private static void collectSecretOption(
+            BaseOptionModel o, String name, Set<String> secrets) {
         if (o.isSecret() || SECRET.equals(o.getSecurity())) {
-            String key = o.getName().toLowerCase(Locale.ENGLISH);
+            String key = name.toLowerCase(Locale.ENGLISH);
             key = key.replace("-", "");
             secrets.add(key);
         }
