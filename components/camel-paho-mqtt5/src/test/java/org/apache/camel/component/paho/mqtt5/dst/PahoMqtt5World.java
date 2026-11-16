@@ -63,12 +63,12 @@ import org.apache.camel.test.dst.Invariants;
  * after the connection closed (the reconnect of the consumer after a failed message, or the automatic reconnect, while
  * another message is in the route) never completes, as read in the byte code of Paho 1.2.5 (not reproduced against a
  * broker yet, and the fake leaves out the quiesce of a disconnect, which changes when the thread is busy): the client
- * stays connecting, the consumer delivers nothing more, and the stop cannot close the client. It still needs a
- * reproduction, and may be a Paho issue. When the client of the consumer hangs that way at the end of the run, the
- * world does not check that every message is routed, and a hung client is not checked for being closed;
+ * stays connecting, the consumer delivers nothing more, and the stop cannot close the client. This is CAMEL-27043 (it
+ * still needs a reproduction, and may be a Paho issue). When the client of the consumer hangs that way at the end of
+ * the run, the world does not check that every message is routed, and a hung client is not checked for being closed;
  * {@code -Ddst.paho.strictCallbackThread=true} checks both. A stop while the client connects makes the close of the
  * client fail (Paho throws 32110), and the consumer drops a client that goes on connecting, with its automatic
- * reconnect and the same client id. The operator does not stop the route then, and
+ * reconnect and the same client id: CAMEL-27041. The operator does not stop the route then, and
  * {@code -Ddst.paho.stopWhileConnecting=true} lets it.
  * <p>
  * Not explored: a client given with the client option (shared by several consumers), the persistence of the client,
@@ -94,7 +94,7 @@ import org.apache.camel.test.dst.Invariants;
                   "the client drops no message",
                   "every message is routed once the faults cleared",
                   "the stopped consumer disconnects and closes its client" },
-          issues = { "CAMEL-25793", "CAMEL-25944" })
+          issues = { "CAMEL-25793", "CAMEL-25944", "CAMEL-27041", "CAMEL-27043" })
 final class PahoMqtt5World {
 
     static final String ROUTE = "mqtt";
@@ -128,9 +128,9 @@ final class PahoMqtt5World {
     private boolean checked;
     private boolean stopping;
     private boolean restartByConsumer;
-    // a route stopped while the client connects leaves that client connecting
+    // CAMEL-27041: a route stopped while the client connects leaves that client connecting
     private final boolean stopWhileConnecting = Boolean.getBoolean("dst.paho.stopWhileConnecting");
-    // a connect while the callback thread is still in messageArrived hangs
+    // CAMEL-27043: a connect while the callback thread is still in messageArrived hangs
     private final boolean strictCallbackThread = Boolean.getBoolean("dst.paho.strictCallbackThread");
     private String finalCheck;
     private String afterStop;
