@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+@UsesWorkingDirectory
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Runs only local")
 class EvalSimpleTest extends CamelCommandBaseTestSupport {
 

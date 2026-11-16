@@ -21,11 +21,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.dsl.jbang.core.commands.action.CamelLoadAction;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HomeHelper;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,20 +41,36 @@ import static org.awaitility.Awaitility.await;
 
 class LoadTest extends CamelCommandBaseTestSupport {
 
+    // the phase of a started integration in the status file
+    private static final int PHASE_STARTED = 5;
+
     private File workingDir;
+    private Path previousHome;
 
     @BeforeEach
     @Override
     public void setup() throws Exception {
         super.setup();
-        useTestWorkDir();
-        useTestHomeDir();
+        // the routes run in this JVM, and their CLI connector reads the actions in the user home
+        previousHome = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(HomeHelper.resolveHomeDir());
         workingDir = Files.createTempDirectory("camel-load").toFile();
     }
 
     @AfterEach
     public void end() throws IOException {
+        CommandLineHelper.useHomeDir(previousHome.toString());
         FileUtil.removeDir(workingDir);
+    }
+
+    private static boolean integrationStarted() throws Exception {
+        Path status = CommandLineHelper.getCamelDir().resolve(getPid() + "-status.json");
+        if (!Files.exists(status)) {
+            return false;
+        }
+        JsonObject root = (JsonObject) Jsoner.deserialize(Files.readString(status));
+        JsonObject context = root != null ? (JsonObject) root.get("context") : null;
+        return context != null && context.getInteger("phase") == PHASE_STARTED;
     }
 
     @Test
@@ -59,16 +79,16 @@ class LoadTest extends CamelCommandBaseTestSupport {
         CommandLineTestHelper.parse(run, "src/test/resources/hello.yaml", "--name=myload", "--max-messages=5",
                 "--prop=mydir=" + workingDir.getAbsolutePath());
 
+        AtomicReference<Exception> loadFailure = new AtomicReference<>();
         Runnable r = () -> {
             try {
-                // wait for the integration status file to be written to the home dir
-                await().atMost(10, TimeUnit.SECONDS)
-                        .until(() -> Files.exists(CommandLineHelper.getCamelDir().resolve(getPid() + "-status.json")));
+                // wait until the integration has started: the status file is in the home dir
+                await().atMost(10, TimeUnit.SECONDS).until(LoadTest::integrationStarted);
                 CamelLoadAction load = new CamelLoadAction(new CamelJBangMain());
                 CommandLineTestHelper.parse(load, getPid(), "--source=src/test/resources/load.yaml");
                 load.doCall();
             } catch (Exception e) {
-                // ignore
+                loadFailure.set(e);
             }
         };
 
@@ -76,6 +96,8 @@ class LoadTest extends CamelCommandBaseTestSupport {
         t.start();
 
         int exit = run.doCall();
+        t.join();
+        assertThat(loadFailure.get()).as("the load action is sent").isNull();
         Assertions.assertEquals(0, exit);
 
         Path outPath = workingDir.toPath().resolve("load.txt");
