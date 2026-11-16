@@ -33,7 +33,7 @@
     <description>Camel OpenFGA Component</description>
 
     <properties>
-        <!-- the openfga/openfga image is  published for amd64, arm64, and ppc64le -->
+        <!-- s390x is skipped because openfga/openfga is only published for amd64 and arm64; ppc64le uses a separate image from ICR (see container.properties) -->
         <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
