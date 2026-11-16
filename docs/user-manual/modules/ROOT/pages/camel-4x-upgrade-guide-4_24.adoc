@@ -8730,6 +8730,21 @@ A custom `EmbeddingModel` must implement `embedAll(List<TextSegment>)` (or `doEm
 the LangChain4j models do. A model that only overrides `embed(TextSegment)` is no longer called, and the
 default methods of LangChain4j then fail with a `StackOverflowError`.
 
+=== camel-platform-http-main - the server fails to start when Vert.x cannot use a key of the JWT keystore
+
+Vert.x only uses the keys of a JWT keystore whose alias is the name of a JWT algorithm (`HS256`, `RS256`, `ES256` and
+so on), read with the keystore password. Without such a key, Vert.x ran in unsecured mode and rejected every signed
+token with HTTP 401. The HTTP server and the management server now fail to start with an `IllegalArgumentException`
+when `camel.server.jwtKeystorePath` or `camel.management.jwtKeystorePath` points to a keystore that has no such key,
+or that cannot be found or loaded.
+
+Rename the alias of the key to the algorithm of the key, for example `RS256` for an RSA key:
+
+[source,bash]
+----
+keytool -changealias -alias keycloak -destalias RS256 -keystore keycloak-realm.p12 -storetype PKCS12
+----
+
 === Jackson 3
 
 Camel 4.24 moves its own code to Jackson 3 (`tools.jackson`, version 3.2). The `camel-jackson`, `camel-jacksonxml`,
