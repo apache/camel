@@ -690,7 +690,8 @@ public class JmsConfiguration implements Cloneable {
          * <p/>
          * {@link #receiveSelected(String)} returns the message after the consumer and the session are closed, when a
          * JMS client may no longer read it: the Apache Artemis client streams the body of a large message through the
-         * consumer. If the function fails, the message is not acknowledged and the session is not committed.
+         * consumer. If the function fails, the message is not acknowledged: a locally transacted session is rolled
+         * back, and a client acknowledge session is recovered, so the message is delivered again.
          *
          * @param  messageSelector the message selector, or <tt>null</tt> for none
          * @param  function        the function to apply to the received message
@@ -727,7 +728,13 @@ public class JmsConfiguration implements Cloneable {
                     timeout = Math.min(timeout, resourceHolder.getTimeToLiveInMillis());
                 }
                 Message message = receiveFromConsumer(consumer, timeout);
-                T answer = message != null ? function.apply(message) : null;
+                T answer;
+                try {
+                    answer = message != null ? function.apply(message) : null;
+                } catch (RuntimeException | Error e) {
+                    rollbackOnException(session, e);
+                    throw e;
+                }
                 if (session.getTransacted()) {
                     commitIfNecessary(session);
                 } else if (message != null && isClientAcknowledge(session)) {
@@ -736,6 +743,27 @@ public class JmsConfiguration implements Cloneable {
                 return answer;
             } finally {
                 JmsUtils.closeMessageConsumer(consumer);
+            }
+        }
+
+        /**
+         * Rolls back a locally transacted session, or recovers a client acknowledge session, when the function failed,
+         * as Spring's message listener container does. A pooled or cached session is not closed after the receive, so
+         * the message would otherwise stay unacknowledged on it, and the next acknowledge on that session would
+         * acknowledge it too. A failure of the rollback is added to the cause as a suppressed exception.
+         */
+        private void rollbackOnException(Session session, Throwable cause) {
+            try {
+                if (session.getTransacted()) {
+                    // a session bound to a transaction manager is rolled back by the transaction manager
+                    if (isSessionLocallyTransacted(session)) {
+                        JmsUtils.rollbackIfNecessary(session);
+                    }
+                } else if (isClientAcknowledge(session)) {
+                    session.recover();
+                }
+            } catch (JMSException | RuntimeException e) {
+                cause.addSuppressed(e);
             }
         }
 

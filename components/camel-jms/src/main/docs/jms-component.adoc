@@ -886,8 +886,11 @@ documentation] for further details.
 When `pollEnrich` or a `ConsumerTemplate` receives a message from a JMS endpoint, Camel reads the body and the
 headers of the message before it closes the JMS consumer and session, as a JMS client may not read the message after
 that (the ActiveMQ Artemis client streams the body of a large message through the consumer). The whole body is read at
-once (with `artemisStreamingEnabled`, into a stream cache). If the body cannot be read, the receive fails, and with
-`transacted=true` the message is rolled back.
+once (with `artemisStreamingEnabled`, into a stream cache). If the body cannot be read, the receive fails, and the
+message is rolled back with `transacted=true`, or recovered with `CLIENT_ACKNOWLEDGE`, so that it is delivered again.
+The body is not read at receive time with `mapJmsMessage=false` (the body is the `jakarta.jms.Message` itself), for a
+`StreamMessage` (the body is an `InputStream` that reads the message when it is used), and with a custom
+`jmsOperations` that is not a `CamelJmsTemplate` (the message is read after the session is closed, as before).
 
 === About using Camel to send and receive messages and JMSReplyTo
 

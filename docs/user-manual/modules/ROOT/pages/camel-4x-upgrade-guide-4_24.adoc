@@ -467,8 +467,8 @@ when it succeeded, the message went on through the route and never reached the e
 `pollEnrich` and a `ConsumerTemplate` on a `jms` endpoint now read the body and the headers of the message before they
 close the JMS consumer and session. Before, the body was read when the exchange first used it, after the session was
 closed, so the body of an ActiveMQ Artemis large message failed with `AMQ219023`. A message whose body cannot be read
-(such as an `ObjectMessage` while `objectMessageEnabled` is `false`) now fails the receive itself, and with
-`transacted=true` the message is rolled back instead of committed.
+(such as an `ObjectMessage` while `objectMessageEnabled` is `false`) now fails the receive itself, and the message is
+rolled back with `transacted=true`, or recovered with `CLIENT_ACKNOWLEDGE`, instead of committed or acknowledged.
 
 === camel-keycloak - Keycloak 26.8.2 requires the kc-admin-api client scope
 

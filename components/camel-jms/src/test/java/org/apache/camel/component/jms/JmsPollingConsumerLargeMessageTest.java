@@ -36,6 +36,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -64,6 +65,7 @@ public class JmsPollingConsumerLargeMessageTest extends AbstractJMSTest {
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
+    protected ConnectionFactory connectionFactory;
     protected JmsTemplate jmsTemplate;
 
     @Override
@@ -74,8 +76,7 @@ public class JmsPollingConsumerLargeMessageTest extends AbstractJMSTest {
     @Override
     protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
         // every message above 1 KB is an Artemis large message
-        ConnectionFactory connectionFactory
-                = new ActiveMQConnectionFactory(service.serviceAddress() + "?minLargeMessageSize=1024");
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress() + "?minLargeMessageSize=1024");
         jmsTemplate = new JmsTemplate(connectionFactory);
         jmsTemplate.setReceiveTimeout(5000);
         return setupComponent(camelContext, connectionFactory, componentName);
@@ -158,6 +159,34 @@ public class JmsPollingConsumerLargeMessageTest extends AbstractJMSTest {
 
         Message message = jmsTemplate.receive(queue);
         assertEquals("not allowed", assertInstanceOf(ObjectMessage.class, message).getObject());
+    }
+
+    @Test
+    void clientAcknowledgeConsumerTemplateRecoversMessageWhoseBodyCannotBeRead() throws Exception {
+        String queue = QUEUE + ".unreadableClientAck";
+        String options = "?acknowledgementModeName=CLIENT_ACKNOWLEDGE";
+        // a pooled session (as with camel-activemq) is not closed after the receive, but goes back to the pool
+        JmsPoolConnectionFactory pooledConnectionFactory = new JmsPoolConnectionFactory();
+        pooledConnectionFactory.setConnectionFactory(connectionFactory);
+        try {
+            context.addComponent("pooledjms", JmsComponent.jmsComponentAutoAcknowledge(pooledConnectionFactory));
+            jmsTemplate.send(queue, session -> session.createObjectMessage("not allowed"));
+
+            // objectMessageEnabled is false, so the body cannot be read: the receive fails and the session is recovered
+            IllegalStateException e = assertThrows(IllegalStateException.class,
+                    () -> consumer.receive("pooledjms:queue:" + queue + options, 5000));
+            assertTrue(e.getMessage().contains("objectMessageEnabled=true"), e.getMessage());
+
+            // the next receive on the pooled session acknowledges its own message only
+            template.sendBody("jms:queue:" + queue + ".next", "next");
+            assertEquals("next", consumer.receiveBody("pooledjms:queue:" + queue + ".next" + options, 5000, String.class));
+
+            Message message = jmsTemplate.receive(queue);
+            assertEquals("not allowed", assertInstanceOf(ObjectMessage.class, message).getObject());
+            assertTrue(message.getJMSRedelivered());
+        } finally {
+            pooledConnectionFactory.stop();
+        }
     }
 
     @Test
