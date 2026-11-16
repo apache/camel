@@ -24,12 +24,14 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -37,8 +39,9 @@ import com.sun.net.httpserver.HttpServer;
 
 /**
  * A minimal in-process fake of the S3 API calls the minio consumer and producer make for a single bucket: head bucket,
- * list objects (v2, paginated with max-keys and start-after/continuation-token), stat, get (also of a byte range), put
- * and delete object. The gets (or the stats and gets) of an object can be refused with 403 (AccessDenied).
+ * list objects (v2, with a prefix, paginated with max-keys and start-after/continuation-token), stat, get (also of a
+ * byte range), put, copy and delete object. A copy to another bucket is answered and recorded, but the other bucket
+ * holds nothing. The gets (or the stats and gets) of an object can be refused with 403 (AccessDenied).
  */
 final class FakeS3Server {
 
@@ -51,6 +54,8 @@ final class FakeS3Server {
     private final Set<String> deleteWhenStatted = ConcurrentHashMap.newKeySet();
     private final Set<String> refusedGets = ConcurrentHashMap.newKeySet();
     private final Set<String> refusedStats = ConcurrentHashMap.newKeySet();
+    private final List<String> copies = new CopyOnWriteArrayList<>();
+    private final List<String> deletes = new CopyOnWriteArrayList<>();
 
     FakeS3Server(String bucket) throws IOException {
         this.bucket = bucket;
@@ -126,10 +131,41 @@ final class FakeS3Server {
         return n != null ? n.get() : 0;
     }
 
+    /**
+     * The copies made, in order, as {@code source-bucket/key -> destination-bucket/key}.
+     */
+    List<String> copies() {
+        return copies;
+    }
+
+    /**
+     * The keys of the objects deleted, in order, whether they existed or not.
+     */
+    List<String> deletes() {
+        return deletes;
+    }
+
     private void handle(HttpExchange http) throws IOException {
-        String path = http.getRequestURI().getRawPath();
-        String key = path.length() > bucket.length() + 2 ? decode(path.substring(bucket.length() + 2)) : null;
+        // path style: /bucket or /bucket/key
+        String path = http.getRequestURI().getRawPath().substring(1);
+        int slash = path.indexOf('/');
+        String pathBucket = decode(slash < 0 ? path : path.substring(0, slash));
+        String key = slash >= 0 && slash < path.length() - 1 ? decode(path.substring(slash + 1)) : null;
         String method = http.getRequestMethod();
+        String copySource = http.getRequestHeaders().getFirst("x-amz-copy-source");
+        if (key != null && "PUT".equals(method) && copySource != null) {
+            copy(http, copySource, pathBucket, key);
+            return;
+        }
+        if (!bucket.equals(pathBucket)) {
+            // another bucket, such as the destination bucket of a move: it exists, and holds nothing
+            if (key == null) {
+                respond(http, 200, null, null);
+            } else {
+                noSuchKey(http, key);
+            }
+            return;
+        }
         if (key == null) {
             if ("GET".equals(method) && query(http).containsKey("list-type")) {
                 list(http, query(http));
@@ -197,6 +233,7 @@ final class FakeS3Server {
                 http.close();
             }
             case "DELETE" -> {
+                deletes.add(key);
                 objects.remove(key);
                 http.sendResponseHeaders(204, -1);
                 http.close();
@@ -205,8 +242,31 @@ final class FakeS3Server {
         }
     }
 
+    private void copy(HttpExchange http, String copySource, String toBucket, String toKey) throws IOException {
+        // x-amz-copy-source: /bucket/key, encoded as a path
+        String source = decode(copySource.startsWith("/") ? copySource.substring(1) : copySource);
+        int slash = source.indexOf('/');
+        String fromBucket = source.substring(0, slash);
+        String fromKey = source.substring(slash + 1);
+        copies.add(fromBucket + "/" + fromKey + " -> " + toBucket + "/" + toKey);
+        byte[] data = bucket.equals(fromBucket) ? objects.get(fromKey) : null;
+        if (data == null) {
+            noSuchKey(http, fromKey);
+            return;
+        }
+        if (bucket.equals(toBucket)) {
+            objects.put(toKey, data);
+        }
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                     + "<CopyObjectResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">"
+                     + "<LastModified>2026-10-09T00:00:00.000Z</LastModified>"
+                     + "<ETag>\"0123456789abcdef0123456789abcdef\"</ETag></CopyObjectResult>";
+        respond(http, 200, "application/xml", xml);
+    }
+
     private void list(HttpExchange http, Map<String, String> query) throws IOException {
         int maxKeys = query.containsKey("max-keys") ? Integer.parseInt(query.get("max-keys")) : 1000;
+        String prefix = query.getOrDefault("prefix", "");
         String after = query.get("continuation-token");
         if (after == null) {
             after = query.get("start-after");
@@ -216,6 +276,9 @@ final class FakeS3Server {
         int count = 0;
         String last = null;
         for (Map.Entry<String, byte[]> e : view.entrySet()) {
+            if (!e.getKey().startsWith(prefix)) {
+                continue;
+            }
             if (count == maxKeys) {
                 break;
             }
@@ -232,7 +295,11 @@ final class FakeS3Server {
                 objects.remove(key);
             }
         }
-        boolean truncated = last != null && objects.higherKey(last) != null;
+        String next = last != null ? objects.higherKey(last) : null;
+        while (next != null && !next.startsWith(prefix)) {
+            next = objects.higherKey(next);
+        }
+        boolean truncated = next != null;
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                      + "<ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">"
                      + "<Name>" + bucket + "</Name><Prefix></Prefix>"
