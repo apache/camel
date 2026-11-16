@@ -338,21 +338,30 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     private HttpClientConfigurer configureBasicAuthentication(
             Map<String, Object> parameters, HttpClientConfigurer configurer,
             HttpCredentialsHelper credentialsProvider, URI targetUri) {
+        // not removed from the parameters, so the endpoint gets the options too
+        String authMethod = getParameter(parameters, "authMethod", String.class);
         String authUsername = getParameter(parameters, "authUsername", String.class);
         String authPassword = getParameter(parameters, "authPassword", String.class);
+        String authBearerToken = getParameter(parameters, "authBearerToken", String.class);
+        String authHost = getParameter(parameters, "authHost", String.class);
 
-        if (authUsername != null && authPassword != null) {
+        if ("bearer".equalsIgnoreCase(authMethod) && authBearerToken != null) {
+            return CompositeHttpConfigurer.combineConfigurers(configurer,
+                    new DefaultAuthenticationHttpClientConfigurer(
+                            null, null, null, authScopeScheme(authHost, targetUri),
+                            authScopeHost(authHost, targetUri), authScopePort(authHost, targetUri), authBearerToken,
+                            false, credentialsProvider));
+        } else if (authUsername != null && authPassword != null) {
             String authDomain = getParameter(parameters, "authDomain", String.class);
-            String authHost = getParameter(parameters, "authHost", String.class);
 
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new DefaultAuthenticationHttpClientConfigurer(
                             authUsername, authPassword, authDomain, authScopeScheme(authHost, targetUri),
                             authScopeHost(authHost, targetUri), authScopePort(authHost, targetUri), null,
-                            credentialsProvider));
+                            "ntlm".equalsIgnoreCase(authMethod), credentialsProvider));
         } else if (this.httpConfiguration != null) {
-            if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())
-                    || "bearer".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
+            String method = this.httpConfiguration.getAuthMethod();
+            if ("basic".equalsIgnoreCase(method) || "bearer".equalsIgnoreCase(method) || "ntlm".equalsIgnoreCase(method)) {
                 return CompositeHttpConfigurer.combineConfigurers(configurer,
                         new DefaultAuthenticationHttpClientConfigurer(
                                 this.httpConfiguration.getAuthUsername(),
@@ -361,7 +370,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                                 authScopeHost(this.httpConfiguration.getAuthHost(), targetUri),
                                 authScopePort(this.httpConfiguration.getAuthHost(), targetUri),
                                 this.httpConfiguration.getAuthBearerToken(),
-                                credentialsProvider));
+                                "ntlm".equalsIgnoreCase(method), credentialsProvider));
             }
         }
 
