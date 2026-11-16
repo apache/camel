@@ -7873,6 +7873,17 @@ resumed after the failed record. The new consumer leaves and rejoins the consume
 rebalance of the group, also when the partition has a committed offset. There is no option to keep the previous
 behaviour.
 
+=== camel-kafka - breakOnFirstError: a failed commit before the break goes to the exception handler
+
+With `breakOnFirstError=true`, the commit that the consumer makes before it breaks out on a failed record can fail or
+time out (for example a `TimeoutException` of `commitSync` with the `SyncCommitManager`). That failure is now reported
+to the `ExceptionHandler` of the consumer, and the consumer still breaks out and polls again from the last committed
+offset. Before, it went to the `pollOnError` strategy, and with `ERROR_HANDLER` (the default), `DISCARD` or `RETRY`
+the failed record and the rest of the poll were skipped.
+The failure no longer reaches the error handler of the route (such as an `onException` that caught commit timeouts)
+unless `bridgeErrorHandler=true`, and with `pollOnError=STOP` the consumer now reconnects in this case instead of
+stopping.
+
 === camel-kafka - the Kafka idempotent and key-value repositories use the acks of the Kafka client
 
 `KafkaIdempotentRepository` and `KafkaKeyValueRepository` no longer set `acks=1` on their producer, so the default of
