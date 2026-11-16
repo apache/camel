@@ -20,7 +20,7 @@ import org.apache.camel.spi.Metadata;
 
 public final class DoclingHeaders {
 
-    @Metadata(description = "The operation to perform", javaType = "DoclingOperations")
+    @Metadata(description = "The operation to perform", javaType = "org.apache.camel.component.docling.DoclingOperations")
     public static final String OPERATION = "CamelDoclingOperation";
 
     @Metadata(description = "The output format for conversion", javaType = "String")
