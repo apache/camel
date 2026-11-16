@@ -2532,6 +2532,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("fragment", def.getFragment(), null);
         doWriteAttribute("partClass", def.getPartClass(), null);
         doWriteAttribute("partNamespace", def.getPartNamespace(), null);
+        doWriteAttribute("allowPartClassFromHeader", def.getAllowPartClassFromHeader(), null);
         doWriteAttribute("namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute("xmlStreamWriterWrapper", def.getXmlStreamWriterWrapper(), null);
         doWriteAttribute("schemaLocation", def.getSchemaLocation(), null);

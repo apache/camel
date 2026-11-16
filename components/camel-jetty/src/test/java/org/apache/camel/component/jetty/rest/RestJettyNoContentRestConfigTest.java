@@ -144,7 +144,8 @@ public class RestJettyNoContentRestConfigTest extends BaseJettyTest {
             @Override
             public void configure() {
                 restConfiguration().component("jetty").host("localhost").port(getPort())
-                        .bindingMode(RestBindingMode.auto).enableNoContentResponse(true);
+                        .bindingMode(RestBindingMode.auto).enableNoContentResponse(true)
+                        .dataFormatProperty("xml.out.allowPartClassFromHeader", "true");
 
                 rest("/v1/empty")
                         .get("/country").to("direct:v1country")

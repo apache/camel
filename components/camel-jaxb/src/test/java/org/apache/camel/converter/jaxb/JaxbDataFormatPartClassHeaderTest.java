@@ -75,6 +75,7 @@ public class JaxbDataFormatPartClassHeaderTest extends CamelTestSupport {
                 jaxbDataFormat.setPartNamespace(
                         new QName("http://www.camel.apache.org/jaxb/example/address/123", "addressToBeOverriden"));
                 jaxbDataFormat.setPrettyPrint(true);
+                jaxbDataFormat.setAllowPartClassFromHeader(true);
 
                 from("direct:marshall")
                         .setHeader(JaxbConstants.JAXB_PART_CLASS, simple("org.apache.camel.example.Address"))

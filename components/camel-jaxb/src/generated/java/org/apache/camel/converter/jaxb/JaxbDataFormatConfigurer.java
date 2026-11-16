@@ -24,6 +24,7 @@ public class JaxbDataFormatConfigurer extends org.apache.camel.support.component
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AccessExternalSchemaProtocols", java.lang.String.class);
+        map.put("AllowPartClassFromHeader", boolean.class);
         map.put("ContentTypeHeader", boolean.class);
         map.put("ContextPath", java.lang.String.class);
         map.put("ContextPathIsClassName", boolean.class);
@@ -52,6 +53,8 @@ public class JaxbDataFormatConfigurer extends org.apache.camel.support.component
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accessexternalschemaprotocols":
         case "accessExternalSchemaProtocols": target.setAccessExternalSchemaProtocols(property(camelContext, java.lang.String.class, value)); return true;
+        case "allowpartclassfromheader":
+        case "allowPartClassFromHeader": target.setAllowPartClassFromHeader(property(camelContext, boolean.class, value)); return true;
         case "contenttypeheader":
         case "contentTypeHeader": target.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         case "contextpath":
@@ -101,6 +104,8 @@ public class JaxbDataFormatConfigurer extends org.apache.camel.support.component
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accessexternalschemaprotocols":
         case "accessExternalSchemaProtocols": return java.lang.String.class;
+        case "allowpartclassfromheader":
+        case "allowPartClassFromHeader": return boolean.class;
         case "contenttypeheader":
         case "contentTypeHeader": return boolean.class;
         case "contextpath":
@@ -146,6 +151,8 @@ public class JaxbDataFormatConfigurer extends org.apache.camel.support.component
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accessexternalschemaprotocols":
         case "accessExternalSchemaProtocols": return target.getAccessExternalSchemaProtocols();
+        case "allowpartclassfromheader":
+        case "allowPartClassFromHeader": return target.isAllowPartClassFromHeader();
         case "contenttypeheader":
         case "contentTypeHeader": return target.isContentTypeHeader();
         case "contextpath":

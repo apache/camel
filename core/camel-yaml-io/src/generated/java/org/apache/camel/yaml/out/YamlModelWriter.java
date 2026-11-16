@@ -2534,6 +2534,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "fragment", def.getFragment(), null);
         doWriteAttribute(jo, "partClass", def.getPartClass(), null);
         doWriteAttribute(jo, "partNamespace", def.getPartNamespace(), null);
+        doWriteAttribute(jo, "allowPartClassFromHeader", def.getAllowPartClassFromHeader(), null);
         doWriteAttribute(jo, "namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute(jo, "xmlStreamWriterWrapper", def.getXmlStreamWriterWrapper(), null);
         doWriteAttribute(jo, "schemaLocation", def.getSchemaLocation(), null);
