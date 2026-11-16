@@ -30,6 +30,7 @@ import org.apache.camel.spi.CamelMDCService;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -202,7 +203,8 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
             if (breadcrumbId != null) {
                 MDC.put(MDC_BREADCRUMB_ID, breadcrumbId);
             }
-            String routeId = exchange.getFromRouteId();
+            // the route being run (falls back to the route that created the exchange)
+            String routeId = ExchangeHelper.getRouteId(exchange);
             if (routeId != null) {
                 MDC.put(MDC_ROUTE_ID, routeId);
             }
@@ -220,7 +222,7 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
             if (breadcrumbId != null) {
                 MDC.remove(MDC_BREADCRUMB_ID);
             }
-            String routeId = exchange.getFromRouteId();
+            String routeId = ExchangeHelper.getRouteId(exchange);
             if (routeId != null) {
                 MDC.remove(MDC_ROUTE_ID);
             }
