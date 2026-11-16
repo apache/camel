@@ -73,7 +73,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-postgres",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "17.11-alpine",
+  "serviceVersion" : "17.12-alpine",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultInfraService",
