@@ -152,6 +152,17 @@ Configure the endpoint with the settings of the existing elements, or turn the d
 (on the endpoint or the component), or for some elements with `skipDeclareExchange`, `skipDeclareQueue` or
 `skipBindQueue`.
 
+The consumer declares them again each time the connection factory opens a new connection, for example after the
+connection to RabbitMQ was lost: a queue that RabbitMQ deleted meanwhile, such as an auto-delete or exclusive queue, is
+declared again when the consumer reconnects.
+
+When RabbitMQ is not available when the consumer starts, the consumer logs a warning and starts anyway: the listener
+container keeps trying to connect, and the exchange, queue and binding are declared when it connects.
+To fail the start instead, set `testConnectionOnStartup=true`.
+
+NOTE: With a `CachingConnectionFactory` whose cache mode is `CONNECTION`, the consumer declares only when it starts, as
+Spring's `RabbitAdmin`, and fails to start when RabbitMQ is not available.
+
 The elements can be configured using the multivalued `args` option.
 
 For example, to specify the queue as exclusive, you can configure the endpoint uri with `arg.queue.exclusive=true`.
