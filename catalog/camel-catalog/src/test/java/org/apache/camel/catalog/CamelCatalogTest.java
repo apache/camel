@@ -1730,6 +1730,23 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointSpringWsConsumerOptions() {
+        String uri = "spring-ws:action:http://example.com/GetFoo?endpointMapping=#wsaEndpointMapping"
+                     + "&outputAction=http://example.com/GetFooResponse&faultAction=http://example.com/GetFooFault";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        uri = "spring-ws:http://example.com/ws?outputAction=http://example.com/GetFooResponse"
+              + "&faultAction=http://example.com/GetFooFault";
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertFalse(result.isSuccess());
+
+        assertEquals(2, result.getNotProducerOnly().size());
+        assertTrue(result.getNotProducerOnly().contains("outputAction"));
+        assertTrue(result.getNotProducerOnly().contains("faultAction"));
+    }
+
+    @Test
     public void testNettyHttpDynamicToIssue() throws Exception {
         String uri = "netty-http:http://10.192.1.10:8080/client/alerts/summary?throwExceptionOnFailure=false";
         Map<String, String> params = catalog.endpointProperties(uri);
