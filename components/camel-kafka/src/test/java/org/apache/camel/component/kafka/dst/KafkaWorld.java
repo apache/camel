@@ -61,9 +61,9 @@ import org.apache.kafka.clients.producer.Producer;
  * failed batch is committed, see "Break on First Error in Batching Mode" in the component documentation); manual
  * commits from another thread; consumersCount above 1; seekTo, offset repositories and resume strategies.
  * <p>
- * Left out of the default set: breakOnFirstError with the synchronous manual commits (SyncCommitManager), where a
- * commitSync that times out in the break path is being looked at separately;
- * {@code -Ddst.kafka.syncBreakOnFirstError=true} puts the combination back.
+ * breakOnFirstError with the synchronous manual commits (SyncCommitManager) is explored too: this world found that a
+ * commitSync that failed or timed out in the break skipped the failed record and the rest of the poll (CAMEL-26967,
+ * fixed).
  * <p>
  * consumersCount is 1: a consumer thread loops for ever, and with the one-stack model a second looping thread nested
  * above the first would never let it resume. For the same reason a route stop that runs while the consumer thread waits
@@ -104,7 +104,7 @@ import org.apache.kafka.clients.producer.Producer;
                   "the committed offsets reach the end once the faults cleared",
                   "the route holds one Kafka consumer once the faults cleared",
                   "no Kafka consumer is left open after the route stopped" },
-          issues = { "CAMEL-25313", "CAMEL-25756" })
+          issues = { "CAMEL-25313", "CAMEL-25756", "CAMEL-26967" })
 final class KafkaWorld {
 
     static final String ROUTE = "kafka";
@@ -142,11 +142,9 @@ final class KafkaWorld {
         this.partitions = dst.pick(List.of(1, 2));
         this.kafka = new FakeKafka(dst, ledger, partitions);
         this.mode = dst.pick(Arrays.asList(System.getProperty("dst.kafka.modes", "AUTO,SYNC,ASYNC,BATCH").split(",")));
-        // see the class Javadoc: batching with breakOnFirstError is not explored, and the synchronous manual commits
-        // with breakOnFirstError are left out unless -Ddst.kafka.syncBreakOnFirstError=true
-        this.breakOnFirstError = !"BATCH".equals(mode)
-                && (!"SYNC".equals(mode) || Boolean.getBoolean("dst.kafka.syncBreakOnFirstError"))
-                && dst.chance(0.5);
+        // see the class Javadoc: batching with breakOnFirstError is not explored; the synchronous manual commits with
+        // breakOnFirstError are, since CAMEL-26967 fixed the commit that failed or timed out in the break
+        this.breakOnFirstError = !"BATCH".equals(mode) && dst.chance(0.5);
         this.commitEveryRecord = dst.chance(0.5);
         this.pollOnError = dst.pick(Arrays.asList(
                 System.getProperty("dst.kafka.pollOnError", "ERROR_HANDLER,DISCARD,RETRY,RECONNECT").split(",")));
