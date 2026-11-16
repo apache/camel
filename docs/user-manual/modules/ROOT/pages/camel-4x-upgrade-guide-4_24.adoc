@@ -13,6 +13,20 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== Undertow servlet implementation
+
+`camel-undertow` now uses the Jakarta Servlet 6.1 implementation from Undertow EE,
+`io.undertow.ee:undertow-servlet`, instead of `io.undertow:undertow-servlet`.
+Undertow core continues to use `io.undertow:undertow-core` and has its own version.
+The Camel parent property for the servlet implementation changes from `undertow-servlet-version`
+to `undertow-ee-version`.
+
+Applications that declare or override the Undertow servlet dependency must migrate to the new coordinates.
+Remove or exclude the old servlet artifact from other dependencies: the two artifacts contain the same
+`io.undertow.servlet` packages and must not be included together.
+This also applies when combining `camel-undertow` with a Spring Boot Undertow server integration
+that uses Undertow EE.
+
 === camel-opa - batch fail-open marker
 
 Batch evaluation now sets `CamelOpaDecisionFailedOpen=true` when any element proceeds because its decision point
