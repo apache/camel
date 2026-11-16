@@ -244,6 +244,8 @@ class KafkaConsumerBreakOnFirstErrorCommitTimeoutTest extends CamelTestSupport {
                         "Timeout of " + timeout.toMillis() + "ms expired before successfully committing offsets "
                                            + offsets);
             }
+            // MockConsumer (kafka-clients 4.3.x): commitSync(Map, Duration) -> commitSync(Map) -> commitAsync(Map, callback),
+            // which is overridden here and records the offsets that committedOffset() reads
             super.commitSync(offsets, timeout);
         }
 
