@@ -637,7 +637,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-sms:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaSmsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 1 enums and the value can be one of: sendSms
      * 
      * @param path operation
@@ -657,7 +660,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>alibaba-sms:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to perform
+     * The operation that the producer performs. The CamelAlibabaSmsOperation
+     * header replaces this option for a request that the producer sends. If
+     * that header is not set, an exchange property of the same name replaces
+     * this option.
      * There are 1 enums and the value can be one of: sendSms
      * 
      * @param componentName to use a custom component name for the endpoint
