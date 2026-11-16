@@ -24,12 +24,13 @@ import jakarta.jms.MessageProducer;
 import jakarta.jms.ObjectMessage;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -94,11 +95,10 @@ public class SjmsObjectMessageEnabledTest extends JmsTestSupport {
         producer.send(objectMessage);
         producer.close();
 
-        // Reading the body via Camel should fail because objectMessageEnabled=false (default)
-        Exchange exchange = consumer.receive("sjms:queue:" + CONSUMER_QUEUE, 5000);
-        assertNotNull(exchange, "Should have received the exchange wrapper");
-        IllegalStateException ex = assertThrows(IllegalStateException.class,
-                () -> exchange.getIn().getBody());
+        // Receiving via Camel should fail because objectMessageEnabled=false (default), as the receive reads the body
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> consumer.receive("sjms:queue:" + CONSUMER_QUEUE, 5000));
+        IllegalStateException ex = assertInstanceOf(IllegalStateException.class, e.getCause());
         assertTrue(ex.getMessage().contains("objectMessageEnabled=true"),
                 "Expected guidance to enable objectMessageEnabled=true, got: " + ex.getMessage());
     }

@@ -81,7 +81,8 @@ class JWTIssuerAudienceRequiredMainHttpServerTest {
         try {
             main.start();
 
-            String token = testKeystoreJwtAuth().generateToken(new JsonObject().put("admin", "camel"), new JWTOptions());
+            String token = testKeystoreJwtAuth().generateToken(new JsonObject().put("admin", "camel"),
+                    new JWTOptions().setAlgorithm("RS256"));
 
             given()
                     .header("Authorization", "Bearer " + token)
@@ -105,7 +106,7 @@ class JWTIssuerAudienceRequiredMainHttpServerTest {
             String foreignToken = testKeystoreJwtAuth().generateToken(
                     new JsonObject().put("admin", "camel"),
                     new JWTOptions()
-                            .setIssuer("https://another.example")
+                            .setAlgorithm("RS256").setIssuer("https://another.example")
                             .addAudience("another-application"));
 
             given()

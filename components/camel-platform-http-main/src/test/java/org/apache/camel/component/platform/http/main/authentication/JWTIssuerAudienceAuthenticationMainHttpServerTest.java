@@ -153,7 +153,7 @@ public class JWTIssuerAudienceAuthenticationMainHttpServerTest {
     }
 
     private static String mintToken(JWTOptions jwtOptions) {
-        return jwtAuth.generateToken(new JsonObject().put("admin", "camel"), jwtOptions);
+        return jwtAuth.generateToken(new JsonObject().put("admin", "camel"), jwtOptions.setAlgorithm("RS256"));
     }
 
     private static class PlatformHttpRouteBuilder extends RouteBuilder {

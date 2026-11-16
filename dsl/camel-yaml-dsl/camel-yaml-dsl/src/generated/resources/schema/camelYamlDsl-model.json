@@ -8610,7 +8610,7 @@
       }, {
         "name" : "maxQueueSize",
         "type" : "number",
-        "description" : "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue.",
+        "description" : "Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue: each task goes directly to a thread, up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue. For a scheduled thread pool, 0 or -1 means the queue is not limited.",
         "title" : "Max Queue Size",
         "displayName" : "Max Queue Size",
         "kind" : "attribute",
@@ -8735,7 +8735,7 @@
       }, {
         "name" : "maxQueueSize",
         "type" : "number",
-        "description" : "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue.",
+        "description" : "Sets the maximum number of tasks in the work queue. Use 0 or -1 for no work queue: each task goes directly to a thread, up to maxPoolSize threads, and then the rejected policy applies. Use Integer.MAX_VALUE for an unbounded queue.",
         "title" : "Max Queue Size",
         "displayName" : "Max Queue Size",
         "kind" : "attribute",
@@ -12291,7 +12291,7 @@
       }, {
         "name" : "contextPath",
         "type" : "string",
-        "description" : "Package name where your JAXB classes are located.",
+        "description" : "Package name where your JAXB classes are located. The package must have an ObjectFactory class or a jaxb.index file that lists the classes. To use a class name instead, set contextPathIsClassName to true.",
         "title" : "Context Path",
         "required" : true,
         "displayName" : "Context Path",
@@ -12331,7 +12331,7 @@
       }, {
         "name" : "prettyPrint",
         "type" : "boolean",
-        "description" : "To enable pretty printing output nicely formatted. Is by default false.",
+        "description" : "To enable pretty printing output nicely formatted. Is by default true.",
         "title" : "Pretty Print",
         "default" : "true",
         "displayName" : "Pretty Print",
@@ -12363,7 +12363,7 @@
       }, {
         "name" : "mustBeJAXBElement",
         "type" : "boolean",
-        "description" : "Whether marshalling must be java objects with JAXB annotations. And if not then it fails. This option can be set to false to relax that, such as when the data is already in XML format.",
+        "description" : "Whether marshalling must be java objects with JAXB annotations. By default, any other message body is written as it is, such as when the data is already in XML format. Set this option to true to fail with an InvalidPayloadException instead.",
         "title" : "Must Be JAXBElement",
         "default" : "false",
         "displayName" : "Must Be JAXBElement",
@@ -12394,7 +12394,7 @@
       }, {
         "name" : "fragment",
         "type" : "boolean",
-        "description" : "To turn on marshalling XML fragment trees. This is useful when generated code does not have XmlRootElement annotation and you need to unmarshall only part of the tree.",
+        "description" : "To omit the XML declaration when marshalling, by setting the JAXB_FRAGMENT property on the JAXB marshaller. To marshal or unmarshal only part of the tree, or classes without the XmlRootElement annotation, use partClass and partNamespace instead.",
         "title" : "Fragment",
         "default" : "false",
         "displayName" : "Fragment",
@@ -12445,7 +12445,7 @@
       }, {
         "name" : "schemaLocation",
         "type" : "string",
-        "description" : "To define the location of the schema.",
+        "description" : "To set the xsi:schemaLocation attribute in the marshalled XML. This does not validate the XML; use the schema option to validate.",
         "title" : "Schema Location",
         "displayName" : "Schema Location",
         "kind" : "attribute",

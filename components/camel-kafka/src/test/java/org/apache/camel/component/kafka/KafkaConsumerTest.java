@@ -58,7 +58,7 @@ public class KafkaConsumerTest {
         when(clientFactory.getBrokers(any())).thenThrow(new IllegalArgumentException());
         final KafkaConsumer kafkaConsumer = new KafkaConsumer(endpoint, processor);
 
-        assertThrows(IllegalArgumentException.class, () -> kafkaConsumer.getProps());
+        assertThrows(IllegalArgumentException.class, () -> kafkaConsumer.getProps(0));
     }
 
     @Test
@@ -76,8 +76,8 @@ public class KafkaConsumerTest {
         when(component.getKafkaClientFactory()).thenReturn(clientFactory);
         final KafkaConsumer kafkaConsumer = new KafkaConsumer(endpoint, processor);
 
-        Properties props1 = kafkaConsumer.getProps();
-        Properties props2 = kafkaConsumer.getProps();
+        Properties props1 = kafkaConsumer.getProps(0);
+        Properties props2 = kafkaConsumer.getProps(0);
 
         String groupId1 = (String) props1.get(ConsumerConfig.GROUP_ID_CONFIG);
         String groupId2 = (String) props2.get(ConsumerConfig.GROUP_ID_CONFIG);

@@ -106,6 +106,11 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         Integer inflight = (Integer) mbeanServer.getAttribute(on, "InProgressCompleteExchanges");
         assertEquals(0, inflight.intValue());
 
+        // no repository is configured, so the aggregator keeps the groups in memory, and says so
+        assertEquals("org.apache.camel.processor.aggregate.MemoryAggregationRepository",
+                mbeanServer.getAttribute(on, "AggregationRepositoryClassName"));
+        assertEquals(Boolean.TRUE, mbeanServer.getAttribute(on, "AggregationRepositoryInMemory"));
+
         Integer pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
         assertEquals(0, pending.intValue());
     }

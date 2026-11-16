@@ -53,15 +53,24 @@ public class SjmsPollingConsumer extends PollingConsumerSupport {
     @Override
     public Exchange receive(long timeout) {
         try {
-            Message message = template.receive(jmsEndpoint.getDestinationName(), jmsEndpoint.getMessageSelector(),
-                    jmsEndpoint.isTopic(), timeout);
-            if (message != null) {
-                return getEndpoint().createExchange(message, null);
-            }
+            // read the message before the JMS consumer, session and connection are closed
+            return template.receive(jmsEndpoint.getDestinationName(), jmsEndpoint.getMessageSelector(),
+                    jmsEndpoint.isTopic(), timeout, this::createExchange);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
-        return null;
+    }
+
+    /**
+     * Creates the exchange for the received message, and reads the body and the headers of the message. It is called
+     * before the JMS consumer, session and connection are closed, as a JMS client may not read the message after that:
+     * the ActiveMQ Artemis client streams the body of a large message through the consumer.
+     */
+    protected Exchange createExchange(Message message) {
+        Exchange exchange = getEndpoint().createExchange(message, null);
+        exchange.getIn().getBody();
+        exchange.getIn().getHeaders();
+        return exchange;
     }
 
     @Override
