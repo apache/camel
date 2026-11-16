@@ -324,8 +324,10 @@ those libraries behave by default; they are approximate, not guarantees of Camel
 connection that went silent (the database host is gone, or a firewall or NAT dropped the connection without a reset)
 waits in a socket read, with no error and nothing logged, until the operating system gives up on the connection:
 on Linux about 15 minutes when the request was not acknowledged, and never when it was and TCP keep-alive is off.
-Meanwhile the consumer's xref:manual::health-check.adoc[health check] stays UP, because it counts only the polls that
-failed.
+Meanwhile the consumer's xref:manual::health-check.adoc[health check] stays UP, because by default it counts only the
+polls that are done. Set `healthCheckMaxPollDuration` (for example `healthCheckMaxPollDuration=10m`) to have it report
+DOWN while a poll has been running for longer than that: see
+xref:manual::health-check.adoc#_detecting_a_poll_that_hangs[Detecting a poll that hangs].
 
 A socket timeout ends such a read with an error: the poll fails and is retried at the next poll, or the producer
 fails and the error handler can redeliver. Set it longer than your slowest statement:
