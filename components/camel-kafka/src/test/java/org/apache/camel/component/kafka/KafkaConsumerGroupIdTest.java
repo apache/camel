@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -48,9 +49,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The consumer group of a Kafka consumer. Without the groupId option the consumer uses a generated group id, a new one
- * at each start of the application, and logs a WARN that says so. A {@link KafkaClientFactory} records the properties
- * of each Kafka consumer instead of connecting to a broker, and each start of the application is a new CamelContext.
+ * The consumer group of a Kafka consumer. The groupId option sets it, or else the group.id additional property. Without
+ * either, the consumer uses a generated group id, a new one at each start of the application, and logs a WARN that says
+ * so. A {@link KafkaClientFactory} records the properties of each Kafka consumer instead of connecting to a broker, and
+ * each start of the application is a new CamelContext.
  */
 class KafkaConsumerGroupIdTest {
 
@@ -119,6 +121,48 @@ class KafkaConsumerGroupIdTest {
         assertEquals(List.of(), warnings);
     }
 
+    @Test
+    void withGroupIdInAdditionalPropertiesEachStartUsesThatGroupWithoutWarning() throws Exception {
+        String uri = "kafka:" + topic
+                     + "?brokers=localhost:9092&kafkaClientFactory=#recordingFactory&additionalProperties.group.id=orders";
+
+        assertEquals(List.of("orders"), startAndStopApplication(uri, 1));
+        assertEquals(List.of("orders"), startAndStopApplication(uri, 1));
+
+        assertEquals(List.of(), warnings);
+    }
+
+    @Test
+    void withGroupIdInTheAdditionalPropertiesOfTheComponentTheConsumersUseThatGroupWithoutWarning() throws Exception {
+        String uri = "kafka:" + topic + "?brokers=localhost:9092&kafkaClientFactory=#recordingFactory&consumersCount=2";
+
+        assertEquals(List.of("orders", "orders"),
+                startAndStopApplication(uri, 2, Map.of(ConsumerConfig.GROUP_ID_CONFIG, "orders")));
+
+        assertEquals(List.of(), warnings);
+    }
+
+    @Test
+    void theGroupIdOptionTakesPrecedenceOverTheGroupIdInAdditionalProperties() throws Exception {
+        String uri = "kafka:" + topic + "?brokers=localhost:9092&kafkaClientFactory=#recordingFactory&groupId=orders"
+                     + "&additionalProperties.group.id=invoices";
+
+        assertEquals(List.of("orders"), startAndStopApplication(uri, 1));
+
+        assertEquals(List.of(), warnings);
+    }
+
+    @Test
+    void withABlankGroupIdInAdditionalPropertiesTheConsumerUsesAGeneratedGroupAndWarns() throws Exception {
+        String uri = "kafka:" + topic + "?brokers=localhost:9092&kafkaClientFactory=#recordingFactory";
+
+        String group = startAndStopApplication(uri, 1, Map.of(ConsumerConfig.GROUP_ID_CONFIG, " ")).get(0);
+
+        assertDoesNotThrow(() -> UUID.fromString(group));
+        assertEquals(1, warnings.size(), "one warning at the start: " + warnings);
+        assertWarnsAbout(warnings.get(0), group);
+    }
+
     private static void assertWarnsAbout(String warning, String group) {
         assertTrue(warning.contains(group), "the warning names the generated group " + group + ": " + warning);
         assertTrue(warning.contains("groupId"), "the warning names the groupId option: " + warning);
@@ -130,9 +174,20 @@ class KafkaConsumerGroupIdTest {
      * @return the group.id of each Kafka consumer of the route
      */
     private List<String> startAndStopApplication(String uri, int consumers) throws Exception {
+        return startAndStopApplication(uri, consumers, Map.of());
+    }
+
+    /**
+     * Same as {@link #startAndStopApplication(String, int)}, with the given additional properties on the Kafka
+     * component, as set with camel.component.kafka.additional-properties.
+     */
+    private List<String> startAndStopApplication(String uri, int consumers, Map<String, Object> componentAdditionalProperties)
+            throws Exception {
         int before = consumerProps.size();
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.getRegistry().bind("recordingFactory", new RecordingFactory());
+            context.getComponent("kafka", KafkaComponent.class).getConfiguration()
+                    .getAdditionalProperties().putAll(componentAdditionalProperties);
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {

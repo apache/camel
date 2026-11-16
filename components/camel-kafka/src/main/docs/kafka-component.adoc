@@ -362,7 +362,11 @@ The `groupId` option sets the Kafka consumer group of the consumer. The consumer
 the topic, so each record is processed by one of them. The group keeps the committed offsets: after a restart, a
 consumer resumes where the group stopped.
 
-Without `groupId`, the consumer uses a generated group id, a new one at each start, and logs a WARN when it starts:
+The group can also be set with the `group.id` Kafka property in `additionalProperties`
+(`additionalProperties.group.id=my-group` on the endpoint, or `camel.component.kafka.additional-properties[group.id]`
+on the component). When both `groupId` and the `group.id` property are set, `groupId` is used.
+
+Without either, the consumer uses a generated group id, a new one at each start, and logs a WARN when it starts:
 
 * After a restart the consumer does not resume from the offsets committed before. It starts where `autoOffsetReset`
   says: with the default `latest`, the records sent while the application was stopped are not consumed.

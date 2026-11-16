@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -114,8 +115,8 @@ public class KafkaConsumer extends DefaultConsumer
         ObjectHelper.ifNotEmpty(endpoint.getKafkaClientFactory().getBrokers(configuration),
                 v -> props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, v));
 
-        String groupId = configuration.getGroupId() != null ? configuration.getGroupId() : defaultGroupId;
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        String groupId = configuredGroupId();
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId != null ? groupId : defaultGroupId);
 
         ObjectHelper.ifNotEmpty(configuration.getGroupInstanceId(),
                 v -> props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, v));
@@ -130,13 +131,27 @@ public class KafkaConsumer extends DefaultConsumer
         return props;
     }
 
+    /**
+     * The consumer group set by the groupId option or, without it, by the group.id additional property. Null when
+     * neither sets one: the consumer then uses a generated group id.
+     */
+    private String configuredGroupId() {
+        KafkaConfiguration configuration = endpoint.getConfiguration();
+        if (configuration.getGroupId() != null) {
+            return configuration.getGroupId();
+        }
+        Map<String, Object> additionalProperties = configuration.getAdditionalProperties();
+        Object groupId = additionalProperties != null ? additionalProperties.get(ConsumerConfig.GROUP_ID_CONFIG) : null;
+        return ObjectHelper.isNotEmpty(groupId) ? groupId.toString() : null;
+    }
+
     @Override
     protected void doStart() throws Exception {
         validateExactlyOnceConfiguration();
 
         LOG.info("Starting Kafka consumer on topic: {} with breakOnFirstError: {}", endpoint.getConfiguration().getTopic(),
                 endpoint.getConfiguration().isBreakOnFirstError());
-        if (endpoint.getConfiguration().getGroupId() == null) {
+        if (configuredGroupId() == null) {
             LOG.warn("Kafka consumer on topic: {} has no groupId and uses the generated consumer group {}, a new one at each"
                      + " start. It does not resume from the offsets committed before a restart, and each instance of the"
                      + " application receives every record instead of sharing them with the others. Set the groupId"

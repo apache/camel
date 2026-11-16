@@ -559,6 +559,15 @@ one at each start: it does not resume from the offsets committed before a restar
 receives every record. Set `groupId` to use a stable consumer group. See the
 xref:components::kafka-component.adoc[Kafka component].
 
+=== camel-kafka - a consumer uses the group.id set in additionalProperties
+
+A Kafka consumer without `groupId` now uses the `group.id` set in `additionalProperties`
+(`additionalProperties.group.id` on the endpoint, or `camel.component.kafka.additional-properties[group.id]`).
+Before, the consumer replaced it with a generated group id, a new one at each start. Such a consumer now joins that
+group: it starts from the offsets committed by the group (or where `autoOffsetReset` says when the group has none), and
+the instances of the application that use the same group share the records. When both `groupId` and the `group.id`
+property are set, `groupId` is still used.
+
 === camel-jms, camel-sjms, camel-sjms2 - an exception sent back with transferException is not rolled back
 
 With `transferException=true`, a consumer that sends the exception of a failed exchange back as the reply now always
