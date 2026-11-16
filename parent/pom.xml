@@ -4140,27 +4140,6 @@
                                 </exclusion>
                             </exclusions>
                         </dependency>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-trax</artifactId>
-                            <version>1.8.0</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-nodeps</artifactId>
-                            <version>1.8.1</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.openjpa</groupId>
-                            <artifactId>openjpa-persistence-jdbc</artifactId>
-                            <version>${openjpa-version}</version>
-                            <exclusions>
-                                <exclusion>
-                                    <groupId>ant</groupId>
-                                    <artifactId>ant</artifactId>
-                                </exclusion>
-                            </exclusions>
-                        </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
