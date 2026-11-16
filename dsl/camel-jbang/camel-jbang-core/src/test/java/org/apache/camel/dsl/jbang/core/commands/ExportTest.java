@@ -1610,8 +1610,7 @@ class ExportTest extends CamelCommandBaseTestSupport {
      * tests of the other forks share.
      */
     private Path baseDirWithApplicationProperties(String content) throws IOException {
-        Path baseDir = workingDir.toPath().resolveSibling(workingDir.getName() + "-base");
-        Files.createDirectories(baseDir);
+        Path baseDir = Files.createTempDirectory("camel-export-base");
         baseDirs.add(baseDir.toFile());
         Files.writeString(baseDir.resolve("application.properties"), content);
         return baseDir;
