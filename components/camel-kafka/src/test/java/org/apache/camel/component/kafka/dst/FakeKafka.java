@@ -486,7 +486,7 @@ final class FakeKafka {
             }
             checkCommittable(offsets);
             long latency = commitLatency();
-            if (faults && dst.chance(commitFailRate) || latency > timeout) {
+            if ((faults && dst.chance(commitFailRate)) || latency > timeout) {
                 // [S] the timeout expires: the broker may or may not have applied the commit
                 boolean applied = dst.chance(0.5);
                 if (applied) {
