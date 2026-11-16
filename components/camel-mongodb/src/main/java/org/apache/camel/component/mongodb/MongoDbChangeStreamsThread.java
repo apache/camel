@@ -47,6 +47,11 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     private static final int CHANGE_STREAM_HISTORY_LOST = 286;
     private static final int CHANGE_STREAM_FATAL_ERROR = 280;
     private static final int RESUME_POINT_NOT_IN_OPLOG = 40576;
+    // the server errors for a startAtOperationTime that the server does not accept (MongoDB-compatible servers may
+    // answer so): BadValue, FailedToParse, and 40415 (an unknown field of the $changeStream stage)
+    private static final int BAD_VALUE = 2;
+    private static final int FAILED_TO_PARSE = 9;
+    private static final int UNKNOWN_FIELD = 40415;
 
     private List<BsonDocument> bsonFilter;
     private BsonDocument resumeToken;
@@ -55,6 +60,8 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     // the changes made in between are not skipped. It is not stored: a route started again without a stored token
     // still starts at the current time
     private BsonTimestamp startTime;
+    // whether the server refused startAtOperationTime: the consumer then no longer tries it
+    private boolean startTimeRefused;
     private CommitManager commitManager;
     private String resumeTokenKey;
 
@@ -115,21 +122,37 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                 return watch().startAtOperationTime(startTime).iterator();
             } catch (MongoCommandException e) {
                 int code = e.getErrorCode();
-                if (code != CHANGE_STREAM_HISTORY_LOST && code != CHANGE_STREAM_FATAL_ERROR
-                        && code != RESUME_POINT_NOT_IN_OPLOG) {
+                if (isStartNotInOplog(code)) {
+                    // the oplog no longer goes back that far (no exchange completed for longer than the oplog window):
+                    // go on from the current time, as the consumer did before it remembered the start
+                    warnStartedAtCurrentTime(e.getErrorMessage());
+                } else if (code == BAD_VALUE || code == FAILED_TO_PARSE || code == UNKNOWN_FIELD) {
+                    // the server does not accept the option: go on from the current time, as the consumer did before
+                    // it remembered the start, and do not try it again
+                    log.warn("The change stream of collection {} cannot be started at an operation time, as the server"
+                             + " does not accept startAtOperationTime ({}). Started a new change stream at the current"
+                             + " time, changes made since the previous one was opened may not have been consumed.",
+                            endpoint.getCollection(), e.getErrorMessage());
+                    startTimeRefused = true;
+                } else {
                     throw e;
                 }
-                // the oplog no longer goes back that far (no exchange completed for longer than the oplog window):
-                // go on from the current time, as the consumer did before it remembered the start
-                log.warn("The change stream of collection {} cannot be started again where it was first opened, as the"
-                         + " oplog no longer goes back that far ({}). Started a new change stream at the current time,"
-                         + " changes made since then may not have been consumed.",
-                        endpoint.getCollection(), e.getErrorMessage());
                 startTime = null;
             }
         }
-        startTime = nextOperationTime();
+        startTime = startTimeRefused ? null : nextOperationTime();
         return watch().iterator();
+    }
+
+    private static boolean isStartNotInOplog(int code) {
+        return code == CHANGE_STREAM_HISTORY_LOST || code == CHANGE_STREAM_FATAL_ERROR || code == RESUME_POINT_NOT_IN_OPLOG;
+    }
+
+    private void warnStartedAtCurrentTime(String error) {
+        log.warn("The change stream of collection {} cannot be started again where it was first opened, as the oplog no"
+                 + " longer goes back that far ({}). Started a new change stream at the current time, changes made"
+                 + " since then may not have been consumed.",
+                endpoint.getCollection(), error);
     }
 
     /**
@@ -229,7 +252,13 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
             // cursor.hasNext() opens socket and waiting for data
             // it throws exception when cursor is closed in another thread
             // there is no way to stop hasNext() before closing cursor
-            if (keepRunning) {
+            if (keepRunning && resumeToken == null && startTime != null && isStartNotInOplog(e.getCode())) {
+                // a change stream started at the start time and failed on a getMore because the oplog no longer goes
+                // back that far (should the server not have refused it in the aggregate): the next one starts at the
+                // current time, as in openWithoutToken
+                warnStartedAtCurrentTime(e.getMessage());
+                startTime = null;
+            } else if (keepRunning) {
                 log.debug("Exception from MongoDB, will regenerate cursor.", e);
             } else {
                 throw e;
