@@ -61,6 +61,19 @@ including a value set through an environment variable: a warning by default, and
 A file location in `camel.vault.gcp.serviceAccountKey`, such as `file:/etc/gcp/sa.json`, is also reported. It can go
 behind a property placeholder too.
 
+=== camel-main - more options are reported by the insecure:dev security policy
+
+These camel-main options are flagged `insecure:dev`, and the `camel.security.insecureDevPolicy` check now reports them
+when they are set to `true`: a warning by default, and the startup fails with `camel.main.profile=prod`.
+
+* `camel.management.mcpEnabled`
+* `camel.management.openapiUiEnabled`
+* `camel.server.jwtAllowMissingIssuerAndAudience`
+* `camel.management.jwtAllowMissingIssuerAndAudience`
+
+To keep one of them enabled in production, set `camel.security.insecureDevPolicy=allow`, or add the key to
+`camel.security.allowedProperties`.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
