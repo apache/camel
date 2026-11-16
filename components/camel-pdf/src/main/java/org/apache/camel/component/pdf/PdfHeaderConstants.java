@@ -34,8 +34,7 @@ public final class PdfHeaderConstants {
     public static final String PDF_DOCUMENT_HEADER_NAME = "CamelPdfDocument";
     @Metadata(description = """
             Expected type is
-            https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial].
-            No longer read by the component (no effect since Camel 2.21).""",
+            https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial].""",
               javaType = "org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial",
               deprecationNote = "No longer read by the component since Camel 2.21: PDFBox 2 decrypts at load time"
                                 + " via Loader.loadPDF(bytes, password). The byte[] converter loads without a password."
