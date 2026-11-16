@@ -48,7 +48,7 @@
         <!-- the tests are short and start many CamelContexts: the C1 compiler only and the serial GC cost far less CPU
              than the defaults (about 30% less in total), which matters as the CI machine runs other modules at the
              same time -->
-        <camel.surefire.fork.additional-vmargs>-XX:TieredStopAtLevel=1 -XX:+UseSerialGC -Xss256k</camel.surefire.fork.additional-vmargs>
+        <camel.surefire.fork.additional-vmargs>-XX:TieredStopAtLevel=1 -XX:+UseSerialGC</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>

@@ -214,7 +214,7 @@ class CliRunnerTest {
 
         @Override
         public Integer doCall() {
-            long end = System.currentTimeMillis() + 500;
+            long end = System.currentTimeMillis() + 2500;
             while (System.currentTimeMillis() < end) {
                 try {
                     TimeUnit.MILLISECONDS.sleep(end - System.currentTimeMillis());
