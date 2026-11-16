@@ -19,6 +19,7 @@ package org.apache.camel.util;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,6 +54,36 @@ class SensitiveUtilsTest {
         assertFalse(SensitiveUtils.containsSensitive("foo.bar.accessKey."));
         assertFalse(SensitiveUtils.containsSensitive("foo"));
         assertFalse(SensitiveUtils.containsSensitive("bar"));
+    }
+
+    @Test
+    void serverAndVaultSecretOptionsAreSensitive() {
+        assertTrue(SensitiveUtils.containsSensitive("camel.server.jwtKeystorePassword"));
+        assertTrue(SensitiveUtils.containsSensitive("camel.management.jwtKeystorePassword"));
+        assertTrue(SensitiveUtils.containsSensitive("camel.vault.azure.eventhubConnectionString"));
+        assertTrue(SensitiveUtils.containsSensitive("camel.vault.azure.tenantId"));
+        assertTrue(SensitiveUtils.containsSensitive("camel.vault.gcp.serviceAccountKey"));
+        assertTrue(SensitiveUtils.containsSensitive("camel.vault.ibm.eventStreamUsername"));
+        assertTrue(SensitiveUtils.containsSensitive("camel.vault.ibm.eventStreamPassword"));
+        // dash case
+        assertTrue(SensitiveUtils.containsSensitive("camel.vault.azure.tenant-id"));
+        assertTrue(SensitiveUtils.containsSensitive("camel.server.jwt-keystore-password"));
+        // as loaded from the environment variable CAMEL_VAULT_GCP_SERVICEACCOUNTKEY
+        assertTrue(SensitiveUtils.containsSensitive("camel.vault.gcp.serviceaccountkey"));
+    }
+
+    @Test
+    void componentOptionsWithTheNameOfASecretMainOptionAreNotSensitive() {
+        // serviceAccountKey and tenantId are secret as camel.vault options only, and not as component options
+        assertFalse(SensitiveUtils.containsSensitive("camel.component.google-pubsub.serviceAccountKey"));
+        assertFalse(SensitiveUtils.containsSensitive("camel.component.azure-storage-datalake.tenantId"));
+        assertFalse(SensitiveUtils.containsSensitive("serviceAccountKey"));
+        assertFalse(SensitiveUtils.containsSensitive("tenantId"));
+        assertFalse(SensitiveUtils.containsSensitive("jwtKeystorePassword"));
+        assertFalse(SensitiveUtils.containsSensitive("camel.vault.azure.tenantId.foo"));
+        // and an endpoint uri parameter with such a name is not masked
+        assertEquals("azure-storage-datalake:myaccount?tenantId=mytenant&accountKey=xxxxxx",
+                URISupport.sanitizeUri("azure-storage-datalake:myaccount?tenantId=mytenant&accountKey=mykey"));
     }
 
 }
