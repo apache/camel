@@ -136,6 +136,13 @@ public class KafkaConsumer extends DefaultConsumer
 
         LOG.info("Starting Kafka consumer on topic: {} with breakOnFirstError: {}", endpoint.getConfiguration().getTopic(),
                 endpoint.getConfiguration().isBreakOnFirstError());
+        if (endpoint.getConfiguration().getGroupId() == null) {
+            LOG.warn("Kafka consumer on topic: {} has no groupId and uses the generated consumer group {}, a new one at each"
+                     + " start. It does not resume from the offsets committed before a restart, and each instance of the"
+                     + " application receives every record instead of sharing them with the others. Set the groupId"
+                     + " option to use a stable consumer group.",
+                    endpoint.getConfiguration().getTopic(), defaultGroupId);
+        }
         super.doStart();
         if (endpoint.getConfiguration().isExactlyOnce()) {
             KafkaRecordStreamingProcessorFacade.validateNoKafkaWireTaps(endpoint.getCamelContext(), getRouteId());
