@@ -170,6 +170,18 @@ With `useByteBuf=true` a body that cannot be converted to a `ByteBuf` fails the 
 With `sync=false` the producer continues routing as soon as the request is written, and ignores any message the remote
 server sends back. The message of the exchange stays as it was, also for an `InOut` exchange.
 
+==== Message framing
+
+TCP is a stream of bytes and does not keep the boundaries of the messages that the client writes. The default codec has
+no frame decoder, so each read from the socket becomes one exchange: a message can arrive split over several exchanges,
+and several messages can arrive as one. To get one exchange per message, use a codec that frames the messages:
+
+* `textline=true`: each message ends with the `delimiter`, a line break (`LINE`, the default) or a null byte (`NULL`),
+and is at most `decoderMaxLineLength` bytes long (1024 by default).
+* A frame decoder in `decoders`, such as `ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(...)` or
+`ChannelHandlerFactories.newDelimiterBasedFrameDecoder(...)`, followed by a decoder of the payload, as in
+<<_using_multiple_codecs,Using Multiple Codecs>>.
+
 ==== Using Multiple Codecs
 
 In certain cases, it may be necessary to add chains of encoders and

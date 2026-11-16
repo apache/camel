@@ -51,7 +51,11 @@ public final class JmsConstants {
     public static final String JMS_HEADER_REDELIVERED = "JMSRedelivered";
     @Metadata(description = "The JMS timestamp.", javaType = "long")
     public static final String JMS_HEADER_TIMESTAMP = "JMSTimestamp";
-    @Metadata(description = "The JMS reply-to destination.", javaType = "jakarta.jms.Destination")
+    @Metadata(description = "The JMS reply-to destination. On an incoming message this is the"
+                            + " jakarta.jms.Destination of the JMS message. When set on an outgoing message it may also be"
+                            + " a String holding the destination name, which is normalized and converted to a"
+                            + " jakarta.jms.Destination.",
+              javaType = "jakarta.jms.Destination or String")
     public static final String JMS_HEADER_REPLY_TO = "JMSReplyTo";
     @Metadata(description = "The JMS type.", javaType = "String")
     public static final String JMS_HEADER_TYPE = "JMSType";

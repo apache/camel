@@ -270,7 +270,7 @@ public class CBORDataFormat extends DataFormatDefinition {
 
         /**
          * To enable pretty printing output nicely formatted.
-         * <p/>
+         * <p>
          * Is by default false.
          */
         public Builder prettyPrint(String prettyPrint) {
@@ -280,7 +280,7 @@ public class CBORDataFormat extends DataFormatDefinition {
 
         /**
          * To enable pretty printing output nicely formatted.
-         * <p/>
+         * <p>
          * Is by default false.
          */
         public Builder prettyPrint(boolean prettyPrint) {
@@ -347,7 +347,7 @@ public class CBORDataFormat extends DataFormatDefinition {
         /**
          * If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the
          * unmarshalling.
-         * <p/>
+         * <p>
          * This should only be enabled when desired to be used.
          */
         public Builder allowUnmarshallType(String allowUnmarshallType) {
@@ -358,7 +358,7 @@ public class CBORDataFormat extends DataFormatDefinition {
         /**
          * If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the
          * unmarshalling.
-         * <p/>
+         * <p>
          * This should only be enabled when desired to be used.
          */
         public Builder allowUnmarshallType(boolean allowUnmarshallType) {
@@ -367,14 +367,15 @@ public class CBORDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * Set of features to enable on the Jackson <tt>tools.jackson.databind.ObjectMapper</tt>.
-         * <p/>
-         * The features should be a name that matches a enum from <tt>tools.jackson.databind.SerializationFeature</tt>,
-         * <tt>tools.jackson.databind.DeserializationFeature</tt>, <tt>tools.jackson.databind.MapperFeature</tt>,
-         * <tt>tools.jackson.databind.cfg.DateTimeFeature</tt>, <tt>tools.jackson.databind.cfg.EnumFeature</tt>,
-         * <tt>tools.jackson.databind.cfg.JsonNodeFeature</tt>, <tt>tools.jackson.core.StreamReadFeature</tt>, or
-         * <tt>tools.jackson.core.StreamWriteFeature</tt>
-         * <p/>
+         * Set of features to enable on the Jackson <code>tools.jackson.databind.ObjectMapper</code>.
+         * <p>
+         * The features should be a name that matches an enum from
+         * <code>tools.jackson.databind.SerializationFeature</code>,
+         * <code>tools.jackson.databind.DeserializationFeature</code>,
+         * <code>tools.jackson.databind.MapperFeature</code>, <code>tools.jackson.databind.cfg.DateTimeFeature</code>,
+         * <code>tools.jackson.databind.cfg.EnumFeature</code>, <code>tools.jackson.databind.cfg.JsonNodeFeature</code>,
+         * <code>tools.jackson.core.StreamReadFeature</code>, or <code>tools.jackson.core.StreamWriteFeature</code>
+         * <p>
          * Multiple features can be separated by comma
          */
         public Builder enableFeatures(String enableFeatures) {
@@ -383,14 +384,15 @@ public class CBORDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * Set of features to disable on the Jackson <tt>tools.jackson.databind.ObjectMapper</tt>.
-         * <p/>
-         * The features should be a name that matches a enum from <tt>tools.jackson.databind.SerializationFeature</tt>,
-         * <tt>tools.jackson.databind.DeserializationFeature</tt>, <tt>tools.jackson.databind.MapperFeature</tt>,
-         * <tt>tools.jackson.databind.cfg.DateTimeFeature</tt>, <tt>tools.jackson.databind.cfg.EnumFeature</tt>,
-         * <tt>tools.jackson.databind.cfg.JsonNodeFeature</tt>, <tt>tools.jackson.core.StreamReadFeature</tt>, or
-         * <tt>tools.jackson.core.StreamWriteFeature</tt>
-         * <p/>
+         * Set of features to disable on the Jackson <code>tools.jackson.databind.ObjectMapper</code>.
+         * <p>
+         * The features should be a name that matches an enum from
+         * <code>tools.jackson.databind.SerializationFeature</code>,
+         * <code>tools.jackson.databind.DeserializationFeature</code>,
+         * <code>tools.jackson.databind.MapperFeature</code>, <code>tools.jackson.databind.cfg.DateTimeFeature</code>,
+         * <code>tools.jackson.databind.cfg.EnumFeature</code>, <code>tools.jackson.databind.cfg.JsonNodeFeature</code>,
+         * <code>tools.jackson.core.StreamReadFeature</code>, or <code>tools.jackson.core.StreamWriteFeature</code>
+         * <p>
          * Multiple features can be separated by comma
          */
         public Builder disableFeatures(String disableFeatures) {

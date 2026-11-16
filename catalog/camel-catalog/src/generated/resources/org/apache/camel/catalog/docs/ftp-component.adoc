@@ -41,7 +41,8 @@ ftps://[username@]hostname[:port]/directoryname[?options]
 ----
 
 Where `directoryname` represents the underlying directory. The directory
-name is a relative path. Absolute path is *not* supported. The
+name is a path relative to the directory the user logs in to, usually its home directory.
+Absolute path is *not* supported. The
 relative path can contain nested folders, such as /inbox/us.
 
 [NOTE]
@@ -251,6 +252,21 @@ You can use multiple FTP consumers to poll from different endpoints.
 It is only a single endpoint that does not support concurrent consumers.
 
 The FTP producer does *not* have this issue, it supports concurrency.
+
+=== A server that stops answering
+
+When the FTP/FTPS server stops answering on an open connection (it hangs, or a firewall drops the connection without
+closing it), the client notices it only when `soTimeout` expires (or `timeout` during a transfer). Camel then does not
+wait on that connection again:
+
+* When the consumer retrieves a file and the server does not answer in time, only that file fails: the consumer closes
+  the connection, which it cannot use any more, and leaves the other files of the poll to the next poll, which connects
+  again. With `streamDownload=true`, the route reads the file from the server: when that read times out, the file fails
+  in the route, and the consumer waits up to `soTimeout` for the reply that ends the transfer, then closes the
+  connection in the same way.
+* After a failed poll, the consumer closes the connection without sending `QUIT`.
+* When disconnecting, for example when the consumer or the producer stops, the client sends `QUIT` and waits at most
+  2 seconds (`soTimeout` when it is shorter) for its reply.
 
 [[FTP-DefaultWhenConsumingFiles]]
 === Default when consuming files
@@ -839,6 +855,7 @@ problems.
 
 The xref:components::ftp-component.adoc[FTP] component has many options. So make sure you have configured it properly.
 Also, a common issue is that you have to use either active or passive mode. So you may have to set `passiveMode=true` on the endpoint configuration.
+When the server refuses the listing of the directory, for example the `PORT` command of active mode, the poll fails and the consumer logs the reply of the server.
 
 == Examples
 

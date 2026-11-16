@@ -283,7 +283,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
 
         /**
          * Which yaml library to use.
-         * <p/>
+         * <p>
          * By default it is SnakeYAML
          */
         public Builder library(YAMLLibrary library) {

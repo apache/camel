@@ -147,18 +147,18 @@ public class PollEnrichDefinition extends ExpressionNode
 
     /**
      * Timeout in millis when polling from the external service.
-     * <p/>
-     * The timeout has influence about the poll enrich behavior. It basically operations in three different modes:
+     * <p>
+     * The timeout has influence about the poll enrich behavior. It basically operates in three different modes:
      * <ul>
      * <li>negative value - Waits until a message is available and then returns it. Warning that this method could block
      * indefinitely if no messages are available.</li>
-     * <li>0 - Attempts to receive a message exchange immediately without waiting and returning <tt>null</tt> if a
+     * <li>0 - Attempts to receive a message exchange immediately without waiting and returning <code>null</code> if a
      * message exchange is not available yet.</li>
      * <li>positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a
-     * message is not yet available. Returns <tt>null</tt> if timed out</li>
+     * message is not yet available. Returns <code>null</code> if timed out</li>
      * </ul>
-     * The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a
-     * timeout value
+     * The default value is -1 and therefore the method could block indefinitely, and therefore it's recommended to use
+     * a timeout value
      */
     public PollEnrichDefinition timeout(long timeout) {
         setTimeout(Long.toString(timeout));
@@ -167,18 +167,18 @@ public class PollEnrichDefinition extends ExpressionNode
 
     /**
      * Timeout in millis when polling from the external service.
-     * <p/>
-     * The timeout has influence about the poll enrich behavior. It basically operations in three different modes:
+     * <p>
+     * The timeout has influence about the poll enrich behavior. It basically operates in three different modes:
      * <ul>
      * <li>negative value - Waits until a message is available and then returns it. Warning that this method could block
      * indefinitely if no messages are available.</li>
-     * <li>0 - Attempts to receive a message exchange immediately without waiting and returning <tt>null</tt> if a
+     * <li>0 - Attempts to receive a message exchange immediately without waiting and returning <code>null</code> if a
      * message exchange is not available yet.</li>
      * <li>positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a
-     * message is not yet available. Returns <tt>null</tt> if timed out</li>
+     * message is not yet available. Returns <code>null</code> if timed out</li>
      * </ul>
-     * The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a
-     * timeout value
+     * The default value is -1 and therefore the method could block indefinitely, and therefore it's recommended to use
+     * a timeout value
      */
     public PollEnrichDefinition timeout(String timeout) {
         setTimeout(timeout);
@@ -263,18 +263,19 @@ public class PollEnrichDefinition extends ExpressionNode
      * consumers when uris are reused.
      *
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
-     * endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both
+     * endpoint is unique then it's best to turn off caching by setting this to -1, which allows Camel to not cache both
      * the consumers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise consumers/endpoints are stored in memory in the caches.
      *
-     * However, if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
+     * However, if there is a high degree of dynamic endpoints that have been used before, then it can benefit to use
      * the cache to reuse both consumers and endpoints and therefore the cache size can be set accordingly or rely on
      * the default size (1000).
      *
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
      * reduce memory usage to avoid storing too many non-frequent used consumers.
      *
-     * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @param  cacheSize the cache size, use <code>0</code> for default cache size, or <code>-1</code> to turn cache
+     *                   off.
      * @return           the builder
      */
     public PollEnrichDefinition cacheSize(int cacheSize) {
@@ -283,22 +284,23 @@ public class PollEnrichDefinition extends ExpressionNode
     }
 
     /**
-     * /** Sets the maximum size used by the {@link org.apache.camel.spi.ConsumerCache} which is used to cache and reuse
+     * Sets the maximum size used by the {@link org.apache.camel.spi.ConsumerCache} which is used to cache and reuse
      * consumers when uris are reused.
      *
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
-     * endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both
+     * endpoint is unique then it's best to turn off caching by setting this to -1, which allows Camel to not cache both
      * the consumers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise consumers/endpoints are stored in memory in the caches.
      *
-     * However, if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use
+     * However, if there is a high degree of dynamic endpoints that have been used before, then it can benefit to use
      * the cache to reuse both consumers and endpoints and therefore the cache size can be set accordingly or rely on
      * the default size (1000).
      *
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
      * reduce memory usage to avoid storing too many non-frequent used consumers.
      *
-     * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @param  cacheSize the cache size, use <code>0</code> for default cache size, or <code>-1</code> to turn cache
+     *                   off.
      * @return           the builder
      */
     public PollEnrichDefinition cacheSize(String cacheSize) {

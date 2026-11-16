@@ -130,7 +130,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     /**
      * Marks the route definition as prepared.
-     * <p/>
+     * <p>
      * This is necessary if routes have been created by components such as camel-spring-xml. Usually they share logic in
      * the camel-core-xml module which prepares the routes.
      */
@@ -641,9 +641,9 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     /**
      * Configures the startup order for this route
-     * <p/>
-     * Camel will reorder routes and star them ordered by 0..N where 0 is the lowest number and N the highest number.
-     * Camel will stop routes in reverse order when its stopping.
+     * <p>
+     * Camel will reorder routes and start them ordered by 0..N where 0 is the lowest number and N the highest number.
+     * Camel will stop routes in reverse order when it's stopping.
      *
      * @param  order the order represented as a number
      * @return       the builder
@@ -749,7 +749,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     /**
      * Declare the expected data type of the input message with content validation enabled. If the actual message type
-     * is different at runtime, camel look for a required {@link org.apache.camel.spi.Transformer} and apply if exists,
+     * is different at runtime, camel looks for a required {@link org.apache.camel.spi.Transformer} and apply if exists,
      * and then applies {@link org.apache.camel.spi.Validator} as well. The type name consists of two parts, 'scheme'
      * and 'name' connected with ':'. For Java type 'name' is a fully qualified class name. For example
      * {@code java:java.lang.String}, {@code json:ABCOrder}.
@@ -766,7 +766,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     /**
      * Declare the expected data type of the input message by Java class. If the actual message type is different at
-     * runtime, camel look for a required {@link org.apache.camel.spi.Transformer} and apply if exists.
+     * runtime, camel looks for a required {@link org.apache.camel.spi.Transformer} and apply if exists.
      *
      * @see          org.apache.camel.spi.Transformer
      * @param  clazz Class object of the input type
@@ -779,7 +779,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     /**
      * Declare the expected data type of the input message by Java class with content validation enabled. If the actual
-     * message type is different at runtime, camel look for a required {@link org.apache.camel.spi.Transformer} and
+     * message type is different at runtime, camel looks for a required {@link org.apache.camel.spi.Transformer} and
      * apply if exists, and then applies {@link org.apache.camel.spi.Validator} as well.
      *
      * @see          org.apache.camel.spi.Transformer
@@ -826,7 +826,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     /**
      * Declare the expected data type of the output message by Java class. If the actual message type is different at
-     * runtime, camel look for a required {@link org.apache.camel.spi.Transformer} and apply if exists.
+     * runtime, camel looks for a required {@link org.apache.camel.spi.Transformer} and apply if exists.
      *
      * @see          org.apache.camel.spi.Transformer
      * @param  clazz Class object of the output type
@@ -839,7 +839,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     /**
      * Declare the expected data type of the output message by Java class with content validation enabled. If the actual
-     * message type is different at runtime, camel look for a required {@link org.apache.camel.spi.Transformer} and
+     * message type is different at runtime, camel looks for a required {@link org.apache.camel.spi.Transformer} and
      * apply if exists, and then applies {@link org.apache.camel.spi.Validator} as well.
      *
      * @see          org.apache.camel.spi.Transformer
@@ -897,7 +897,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * The id of the route template (or Kamelet) this route was created from, or <tt>null</tt> if the route was not
+     * The id of the route template (or Kamelet) this route was created from, or <code>null</code> if the route was not
      * created from a route template.
      */
     @Override
@@ -912,7 +912,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     /**
      * The checksum of the route as written, computed when the route is prepared, before the parts of route
-     * configurations are added to it; <tt>null</tt> when it is not known (camel-xml-io is not on the classpath).
+     * configurations are added to it; <code>null</code> when it is not known (camel-xml-io is not on the classpath).
      */
     @Override
     public String getChecksum() {
@@ -934,8 +934,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * The resource that declares the templated route this route was created from, or <tt>null</tt> if the route was not
-     * created from a templated route loaded from a resource. The route itself is in the resource with the route
+     * The resource that declares the templated route this route was created from, or <code>null</code> if the route was
+     * not created from a templated route loaded from a resource. The route itself is in the resource with the route
      * template, see {@link #getResource()}.
      */
     @Override

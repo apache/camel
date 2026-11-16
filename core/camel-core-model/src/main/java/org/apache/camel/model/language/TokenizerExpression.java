@@ -240,7 +240,7 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
 
         /**
          * If the token is a regular expression pattern.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public Builder regex(String regex) {
@@ -250,7 +250,7 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
 
         /**
          * If the token is a regular expression pattern.
-         * <p/>
+         * <p>
          * The default value is false
          */
         public Builder regex(boolean regex) {
@@ -276,7 +276,7 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
 
         /**
          * Whether to include the tokens in the parts when using pairs
-         * <p/>
+         * <p>
          * The default value is false
          */
         public Builder includeTokens(String includeTokens) {
@@ -286,7 +286,7 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
 
         /**
          * Whether to include the tokens in the parts when using pairs
-         * <p/>
+         * <p>
          * The default value is false
          */
         public Builder includeTokens(boolean includeTokens) {

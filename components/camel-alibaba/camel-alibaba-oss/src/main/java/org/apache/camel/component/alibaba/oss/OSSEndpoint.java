@@ -125,7 +125,7 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
 
     @UriParam(description = "An autowired OSS client", displayName = "OSS Client", label = "advanced")
     @Metadata(autowired = true)
-    private OSSClient ossClient;
+    private volatile OSSClient ossClient;
 
     private boolean autowiredOssClient;
 
@@ -151,22 +151,42 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Initialize and return an OSS client
+     * Returns the client that the producer and the consumer send their requests with. If no client is set or autowired,
+     * the first call creates it from the options of this endpoint, while it holds the lock of this endpoint: the calls
+     * made at the same time wait for this creation, and the calls made once the client exists do not take the lock. A
+     * failed creation keeps no client, so each call that waited for it, and each later call, tries again.
      */
     public OSSClient initClient() {
-        if (ossClient != null) {
-            return ossClient;
+        OSSClient answer = ossClient;
+        if (answer == null) {
+            lock.lock();
+            try {
+                answer = ossClient;
+                if (answer == null) {
+                    answer = createClient();
+                    ossClient = answer;
+                }
+            } finally {
+                lock.unlock();
+            }
         }
+        return answer;
+    }
 
-        ossClient = OSSUtils.createClient(this);
-        return ossClient;
+    OSSClient createClient() {
+        return OSSUtils.createClient(this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (ossClient != null && !autowiredOssClient) {
-            ossClient.close();
-            ossClient = null;
+        lock.lock();
+        try {
+            if (ossClient != null && !autowiredOssClient) {
+                ossClient.close();
+                ossClient = null;
+            }
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }
@@ -280,7 +300,12 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
     }
 
     public void setOssClient(OSSClient ossClient) {
-        this.ossClient = ossClient;
-        this.autowiredOssClient = ossClient != null;
+        lock.lock();
+        try {
+            this.ossClient = ossClient;
+            this.autowiredOssClient = ossClient != null;
+        } finally {
+            lock.unlock();
+        }
     }
 }

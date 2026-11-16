@@ -428,7 +428,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * To enable pretty printing output nicely formatted.
-         * <p/>
+         * <p>
          * Is by default true.
          */
         public Builder prettyPrint(String prettyPrint) {
@@ -438,7 +438,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * To enable pretty printing output nicely formatted.
-         * <p/>
+         * <p>
          * Is by default true.
          */
         public Builder prettyPrint(boolean prettyPrint) {
@@ -546,7 +546,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * Name of class used for fragment parsing.
-         * <p/>
+         * <p>
          * See more details at the fragment option.
          */
         public Builder partClass(String partClass) {
@@ -556,7 +556,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * XML namespace to use for fragment parsing.
-         * <p/>
+         * <p>
          * See more details at the fragment option.
          */
         public Builder partNamespace(String partNamespace) {

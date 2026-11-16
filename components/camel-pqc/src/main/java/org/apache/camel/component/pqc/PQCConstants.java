@@ -47,6 +47,11 @@ public interface PQCConstants {
     @Metadata(description = "The key ID for stateful key operations", javaType = "String")
     String KEY_ID = "CamelPQCKeyId";
 
+    @Metadata(description = "The key ID of the new key, for the rotateKey operation. Required by that operation,"
+                            + " which rotates the key held under CamelPQCKeyId into this one.",
+              javaType = "String")
+    String NEW_KEY_ID = "CamelPQCNewKeyId";
+
     @Metadata(description = "The generated key pair", javaType = "java.security.KeyPair")
     String KEY_PAIR = "CamelPQCKeyPair";
 

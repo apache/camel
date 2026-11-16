@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.file.strategy;
 
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
@@ -27,6 +31,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
  * An idempotent consumer (idempotent=true, or noop=true) with an idempotent read lock: both use the same idempotent
@@ -45,6 +50,7 @@ class FileIdempotentReadLockIdempotentConsumerTest extends ContextTestSupport {
     protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createCamelRegistry();
         jndi.bind("myRepo", myRepo);
+        jndi.bind("myStrategy", new GenericFileNoOpProcessStrategy<File>());
         return jndi;
     }
 
@@ -74,6 +80,8 @@ class FileIdempotentReadLockIdempotentConsumerTest extends ContextTestSupport {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
+        // the file is moved to .camel when the exchange completes, which can be after the mock received it
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(testFile(".camel/hello.txt")).exists());
 
         // a file with the same name is skipped as it was consumed before
         mock.reset();
@@ -84,6 +92,18 @@ class FileIdempotentReadLockIdempotentConsumerTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
         assertThat(testFile("hello.txt")).exists();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void customProcessStrategyKeepsIdempotentEager(boolean idempotentEager) {
+        // the readLock option is not used with a custom process strategy, so no read lock adds the key
+        FileEndpoint endpoint = context.getEndpoint(
+                fileUri("?noop=true&readLock=idempotent&idempotentRepository=#myRepo&processStrategy=#myStrategy"
+                        + "&idempotentEager=" + idempotentEager),
+                FileEndpoint.class);
+
+        assertThat(endpoint.isIdempotentEager()).isEqualTo(idempotentEager);
     }
 
     private void startRoute(String options) throws Exception {

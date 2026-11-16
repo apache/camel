@@ -41,6 +41,8 @@ public class FlatpackEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "ignoreextracolumns":
         case "ignoreExtraColumns": target.setIgnoreExtraColumns(property(camelContext, boolean.class, value)); return true;
         case "ignorefirstrecord":
@@ -96,6 +98,8 @@ public class FlatpackEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "ignoreextracolumns":
         case "ignoreExtraColumns": return boolean.class;
         case "ignorefirstrecord":
@@ -152,6 +156,8 @@ public class FlatpackEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "ignoreextracolumns":
         case "ignoreExtraColumns": return target.isIgnoreExtraColumns();
         case "ignorefirstrecord":

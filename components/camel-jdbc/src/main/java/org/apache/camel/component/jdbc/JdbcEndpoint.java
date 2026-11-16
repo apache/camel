@@ -160,10 +160,12 @@ public class JdbcEndpoint extends DefaultEndpoint {
 
     /**
      * Camel will set the autoCommit on the JDBC connection to be false, commit the change after executed the statement
-     * and reset the autoCommit flag of the connection at the end, if the resetAutoCommit is true. If the JDBC
-     * connection doesn't support to reset the autoCommit flag, you can set the resetAutoCommit flag to be false, and
-     * Camel will not try to reset the autoCommit flag. When used with XA transactions you most likely need to set it to
-     * false so that the transaction manager is in charge of committing this tx.
+     * and reset the autoCommit flag of the connection at the end, if the resetAutoCommit is true. With
+     * outputType=StreamList, the route reads the rows after the statement is executed, so the commit (or the rollback,
+     * when the exchange fails) happens when the exchange is done. If the JDBC connection doesn't support to reset the
+     * autoCommit flag, you can set the resetAutoCommit flag to be false, and Camel will not try to reset the autoCommit
+     * flag. When used with XA transactions you most likely need to set it to false so that the transaction manager is
+     * in charge of committing this tx.
      */
     public void setResetAutoCommit(boolean resetAutoCommit) {
         this.resetAutoCommit = resetAutoCommit;

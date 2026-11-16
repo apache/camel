@@ -36,12 +36,15 @@ import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import io.fabric8.openshift.api.model.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -245,6 +248,44 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
                 pod.getVolumes().toString());
         Assertions.assertFalse(container.getVolumeMounts().isEmpty());
         Assertions.assertEquals("ops", cronjob.getMetadata().getAnnotations().get("team"));
+    }
+
+    @Test
+    public void aBackoffLimitOfZeroIsKept() throws Exception {
+        // CAMEL-26934: 0 (no retry) was left out, so Kubernetes retried a failed job 6 times
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + RuntimeType.main);
+        command.traits = new String[] { "cronjob.enabled=true", "cronjob.schedule=\"0 22 * * 1-5\"", "cronjob.backoffLimit=0" };
+        Assertions.assertEquals(0, command.doCall());
+
+        CronJob cronjob = getResource(RuntimeType.main, CronJob.class).orElseThrow();
+        Assertions.assertEquals(0, cronjob.getSpec().getJobTemplate().getSpec().getBackoffLimit());
+    }
+
+    @Test
+    public void aCronjobWithoutScheduleIsAUsageError() throws Exception {
+        // CAMEL-26934: there was no workload at all, and the export exited with 0
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + RuntimeType.main);
+        command.traits = new String[] { "cronjob.enabled=true" };
+
+        CliException e = Assertions.assertThrows(CliException.class, command::doCall);
+        Assertions.assertEquals(CliExitCode.USAGE, e.getExitCode());
+        Assertions.assertTrue(e.getMessage().contains("cronjob.schedule"), e.getMessage());
+    }
+
+    @Test
+    public void aProfileKeepsTheTraitsOfApplicationProperties(@TempDir Path project) throws Exception {
+        // CAMEL-26934: with --profile the traits of application.properties were left out; the profile only overrides
+        Files.copy(Path.of("src/test/resources/myapp/route.yaml"), project.resolve("route.yaml"));
+        Files.writeString(project.resolve("application.properties"),
+                "camel.jbang.trait.container.image-pull-policy=Always\ncamel.jbang.trait.container.port=8081\n");
+        Files.writeString(project.resolve("application-prod.properties"), "camel.jbang.trait.container.port=9090\n");
+        KubernetesExport command = createCommand(new String[] { project.toString() }, "--runtime=" + RuntimeType.main,
+                "--profile=prod");
+        Assertions.assertEquals(0, command.doCall());
+
+        Container container = getDeployment(RuntimeType.main).getSpec().getTemplate().getSpec().getContainers().get(0);
+        Assertions.assertEquals("Always", container.getImagePullPolicy(), "the trait of application.properties");
+        Assertions.assertEquals(9090, container.getPorts().get(0).getContainerPort(), "the profile overrides");
     }
 
     @ParameterizedTest

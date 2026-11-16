@@ -83,6 +83,8 @@ public class WordpressEndpoint extends DefaultEndpoint implements EndpointServic
     @UriParam
     private WordpressConfiguration configuration;
 
+    private WordpressServiceProvider serviceProvider;
+
     public WordpressEndpoint(String uri, WordpressComponent component, WordpressConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
@@ -108,6 +110,16 @@ public class WordpressEndpoint extends DefaultEndpoint implements EndpointServic
 
     public WordpressConfiguration getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * The WordPress services of this endpoint, for the site URL, API version and credentials of this endpoint.
+     */
+    public synchronized WordpressServiceProvider getServiceProvider() {
+        if (serviceProvider == null) {
+            serviceProvider = createServiceProvider();
+        }
+        return serviceProvider;
     }
 
     public String getOperation() {
@@ -181,10 +193,9 @@ public class WordpressEndpoint extends DefaultEndpoint implements EndpointServic
         }
         // validate configuration
         configuration.validate();
-        this.initServiceProvider();
     }
 
-    private void initServiceProvider() {
+    private WordpressServiceProvider createServiceProvider() {
         final WordpressAPIConfiguration apiConfiguration
                 = new WordpressAPIConfiguration(configuration.getUrl(), configuration.getApiVersion());
         // basic auth
@@ -193,7 +204,7 @@ public class WordpressEndpoint extends DefaultEndpoint implements EndpointServic
                     .setAuthentication(new WordpressBasicAuthentication(configuration.getUser(), configuration.getPassword()));
         }
 
-        WordpressServiceProvider.getInstance().init(apiConfiguration);
+        return WordpressServiceProvider.create(apiConfiguration);
     }
 
 }

@@ -128,7 +128,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
 
     @Arguments(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run."
                              + " A Citrus test is run with camel test run.",
-               paramLabel = "<files>")
+               paramLabel = "files")
     public List<String> files = new ArrayList<>();
 
     @Option(name = "runtime",

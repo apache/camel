@@ -121,7 +121,7 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
 
     /**
      * Uses fail over load balancer
-     * <p/>
+     * <p>
      * Will not round robin and inherit the error handler.
      *
      * @return the builder
@@ -133,7 +133,7 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
 
     /**
      * Uses fail over load balancer
-     * <p/>
+     * <p>
      * Will not round robin and inherit the error handler.
      *
      * @param  exceptions exception classes which we want to failover if one of them was thrown
@@ -149,11 +149,11 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
     /**
      * Uses fail over load balancer
      *
-     * @param  maximumFailoverAttempts maximum number of failover attempts before exhausting. Use -1 to newer exhaust
+     * @param  maximumFailoverAttempts maximum number of failover attempts before exhausting. Use -1 to never exhaust
      *                                 when round robin is also enabled. If round robin is disabled then it will exhaust
      *                                 when there are no more endpoints to failover
-     * @param  inheritErrorHandler     whether or not to inherit error handler. If <tt>false</tt> then it will failover
-     *                                 immediately in case of an exception
+     * @param  inheritErrorHandler     whether or not to inherit error handler. If <code>false</code> then it will
+     *                                 failover immediately in case of an exception
      * @param  roundRobin              whether or not to use round robin (which keeps state)
      * @param  exceptions              exception classes which we want to failover if one of them was thrown
      * @return                         the builder
@@ -174,11 +174,11 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
     /**
      * Uses fail over load balancer
      *
-     * @param  maximumFailoverAttempts maximum number of failover attempts before exhausting. Use -1 to newer exhaust
+     * @param  maximumFailoverAttempts maximum number of failover attempts before exhausting. Use -1 to never exhaust
      *                                 when round robin is also enabled. If round robin is disabled then it will exhaust
      *                                 when there are no more endpoints to failover
-     * @param  inheritErrorHandler     whether or not to inherit error handler. If <tt>false</tt> then it will failover
-     *                                 immediately in case of an exception
+     * @param  inheritErrorHandler     whether or not to inherit error handler. If <code>false</code> then it will
+     *                                 failover immediately in case of an exception
      * @param  roundRobin              whether or not to use round robin (which keeps state)
      * @param  sticky                  whether or not to use sticky (which keeps state)
      * @param  exceptions              exception classes which we want to failover if one of them was thrown

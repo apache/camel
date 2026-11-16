@@ -67,7 +67,7 @@ public class ValidatorBuilder {
     /**
      * Set the URI to be used for the endpoint {@link Validator}.
      *
-     * @see       EndpointValidatorDefinition, ProcessorValidator
+     * @see       EndpointValidatorDefinition
      * @param uri endpoint URI
      */
     public ValidatorBuilder withUri(String uri) {
@@ -79,7 +79,7 @@ public class ValidatorBuilder {
     /**
      * Set the {@link Expression} to be used for the predicate {@link Validator}.
      *
-     * @see              PredicateValidatorDefinition, ProcessorValidator
+     * @see              PredicateValidatorDefinition
      * @param expression validation expression
      */
     public ValidatorBuilder withExpression(@AsPredicate Expression expression) {
@@ -91,7 +91,7 @@ public class ValidatorBuilder {
     /**
      * Set the {@link Predicate} to be used for the predicate {@link Validator}.
      *
-     * @see             PredicateValidatorDefinition, ProcessorValidator
+     * @see             PredicateValidatorDefinition
      * @param predicate validation predicate
      */
     public ValidatorBuilder withExpression(@AsPredicate Predicate predicate) {

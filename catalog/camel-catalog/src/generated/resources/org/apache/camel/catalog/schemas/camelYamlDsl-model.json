@@ -10410,7 +10410,7 @@
       }, {
         "name" : "useDefaultObjectMapper",
         "type" : "boolean",
-        "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry.",
+        "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when autoDiscoverObjectMapper is true as well.",
         "title" : "Use Default Object Mapper",
         "default" : "true",
         "displayName" : "Use Default Object Mapper",
@@ -10537,7 +10537,7 @@
       }, {
         "name" : "autoDiscoverObjectMapper",
         "type" : "boolean",
-        "description" : "If set to true then Jackson will lookup for an objectMapper into the registry.",
+        "description" : "If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson AvroMapper in the registry, and use it when there is exactly one. The options of this data format that configure the mapper, such as include, enableFeatures and disableFeatures, are not applied to that AvroMapper.",
         "title" : "Auto Discover Object Mapper",
         "default" : "false",
         "displayName" : "Auto Discover Object Mapper",
@@ -12551,7 +12551,7 @@
       }, {
         "name" : "useDefaultObjectMapper",
         "type" : "boolean",
-        "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry.",
+        "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when autoDiscoverObjectMapper is true as well.",
         "title" : "Use Default Object Mapper",
         "default" : "true",
         "displayName" : "Use Default Object Mapper",
@@ -12561,7 +12561,7 @@
       }, {
         "name" : "autoDiscoverObjectMapper",
         "type" : "boolean",
-        "description" : "If set to true then Jackson will look for an objectMapper to use from the registry.",
+        "description" : "If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ObjectMapper in the registry, and use it when there is exactly one. The options of this data format that configure the mapper, such as include, prettyPrint, enableFeatures and disableFeatures, are not applied to that ObjectMapper.",
         "title" : "Auto Discover Object Mapper",
         "default" : "false",
         "displayName" : "Auto Discover Object Mapper",
@@ -13157,7 +13157,7 @@
       }, {
         "name" : "useDefaultObjectMapper",
         "type" : "boolean",
-        "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry.",
+        "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry. The registry is only searched when autoDiscoverObjectMapper is true as well.",
         "title" : "Use Default Object Mapper",
         "default" : "true",
         "displayName" : "Use Default Object Mapper",
@@ -13167,7 +13167,7 @@
       }, {
         "name" : "autoDiscoverObjectMapper",
         "type" : "boolean",
-        "description" : "If set to true then Jackson will lookup for an objectMapper into the registry.",
+        "description" : "If set to true (and useDefaultObjectMapper is true) then Camel will look for a Jackson ProtobufMapper in the registry, and use it when there is exactly one. The options of this data format that configure the mapper, such as include, enableFeatures and disableFeatures, are not applied to that ProtobufMapper.",
         "title" : "Auto Discover Object Mapper",
         "default" : "false",
         "displayName" : "Auto Discover Object Mapper",

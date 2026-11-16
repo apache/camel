@@ -90,7 +90,7 @@ public interface Model {
      * Gets the route configuration definition with the given id
      *
      * @param  id id of the route configuration
-     * @return    the route configuration definition or <tt>null</tt> if not found
+     * @return    the route configuration definition or <code>null</code> if not found
      */
     RouteConfigurationDefinition getRouteConfigurationDefinition(String id);
 
@@ -105,15 +105,15 @@ public interface Model {
      * Gets the route definition with the given id
      *
      * @param  id id of the route
-     * @return    the route definition or <tt>null</tt> if not found
+     * @return    the route definition or <code>null</code> if not found
      */
     RouteDefinition getRouteDefinition(String id);
 
     /**
      * Adds a collection of route definitions to the context
-     * <p/>
-     * <b>Important: </b> Each route in the same {@link CamelContext} must have an <b>unique</b> route id. If you use
-     * the API from {@link CamelContext} or {@link Model} to add routes, then any new routes which has a route id that
+     * <p>
+     * <b>Important: </b> Each route in the same {@link CamelContext} must have a <b>unique</b> route id. If you use the
+     * API from {@link CamelContext} or {@link Model} to add routes, then any new routes which have a route id that
      * matches an old route, then the old route is replaced by the new route.
      *
      * @param  routeDefinitions the route(s) definition to add
@@ -123,9 +123,9 @@ public interface Model {
 
     /**
      * Add a route definition to the context
-     * <p/>
-     * <b>Important: </b> Each route in the same {@link CamelContext} must have an <b>unique</b> route id. If you use
-     * the API from {@link CamelContext} or {@link Model} to add routes, then any new routes which has a route id that
+     * <p>
+     * <b>Important: </b> Each route in the same {@link CamelContext} must have a <b>unique</b> route id. If you use the
+     * API from {@link CamelContext} or {@link Model} to add routes, then any new routes which have a route id that
      * matches an old route, then the old route is replaced by the new route.
      *
      * @param  routeDefinition the route definition to add
@@ -162,14 +162,14 @@ public interface Model {
      * Gets the route template definition with the given id
      *
      * @param  id id of the route template
-     * @return    the route template definition or <tt>null</tt> if not found
+     * @return    the route template definition or <code>null</code> if not found
      */
     RouteTemplateDefinition getRouteTemplateDefinition(String id);
 
     /**
      * Adds a collection of route template definitions to the context
-     * <p/>
-     * <b>Important: </b> Each route in the same {@link CamelContext} must have an <b>unique</b> route template id.
+     * <p>
+     * <b>Important: </b> Each route in the same {@link CamelContext} must have a <b>unique</b> route template id.
      *
      * @param  routeTemplateDefinitions the route template(s) definition to add
      * @throws Exception                if the route template definitions could not be added for whatever reason
@@ -178,8 +178,8 @@ public interface Model {
 
     /**
      * Add a route definition to the context
-     * <p/>
-     * <b>Important: </b> Each route template in the same {@link CamelContext} must have an <b>unique</b> route id.
+     * <p>
+     * <b>Important: </b> Each route template in the same {@link CamelContext} must have a <b>unique</b> route id.
      *
      * @param  routeTemplateDefinition the route template definition to add
      * @throws Exception               if the route template definition could not be added for whatever reason
@@ -340,24 +340,24 @@ public interface Model {
      * Resolve a data format definition given its name
      *
      * @param  name the data format definition name or a reference to it in the {@link org.apache.camel.spi.Registry}
-     * @return      the resolved data format definition, or <tt>null</tt> if not found
+     * @return      the resolved data format definition, or <code>null</code> if not found
      */
     DataFormatDefinition resolveDataFormatDefinition(String name);
 
     /**
-     * Gets the processor definition from any of the routes which with the given id
+     * Gets the processor definition from any of the routes with the given id
      *
      * @param  id id of the processor definition
-     * @return    the processor definition or <tt>null</tt> if not found
+     * @return    the processor definition or <code>null</code> if not found
      */
     ProcessorDefinition<?> getProcessorDefinition(String id);
 
     /**
-     * Gets the processor definition from any of the routes which with the given id
+     * Gets the processor definition from any of the routes with the given id
      *
      * @param  id                 id of the processor definition
      * @param  type               the processor definition type
-     * @return                    the processor definition or <tt>null</tt> if not found
+     * @return                    the processor definition or <code>null</code> if not found
      * @throws ClassCastException is thrown if the type is not correct type
      */
     <T extends ProcessorDefinition<T>> T getProcessorDefinition(String id, Class<T> type);
@@ -371,10 +371,10 @@ public interface Model {
 
     /**
      * Gets the Resilience4j configuration by the given name. If no name is given the default configuration is returned,
-     * see <tt>setResilience4jConfiguration</tt>
+     * see <code>setResilience4jConfiguration</code>
      *
-     * @param  id id of the configuration, or <tt>null</tt> to return the default configuration
-     * @return    the configuration, or <tt>null</tt> if no configuration has been registered
+     * @param  id id of the configuration, or <code>null</code> to return the default configuration
+     * @return    the configuration, or <code>null</code> if no configuration has been registered
      */
     Resilience4jConfigurationDefinition getResilience4jConfiguration(String id);
 
@@ -402,10 +402,10 @@ public interface Model {
 
     /**
      * Gets the MicroProfile Fault Tolerance configuration by the given name. If no name is given the default
-     * configuration is returned, see <tt>setFaultToleranceConfigurationDefinition</tt>
+     * configuration is returned, see <code>setFaultToleranceConfigurationDefinition</code>
      *
-     * @param  id id of the configuration, or <tt>null</tt> to return the default configuration
-     * @return    the configuration, or <tt>null</tt> if no configuration has been registered
+     * @param  id id of the configuration, or <code>null</code> to return the default configuration
+     * @return    the configuration, or <code>null</code> if no configuration has been registered
      */
     FaultToleranceConfigurationDefinition getFaultToleranceConfiguration(String id);
 
@@ -474,7 +474,7 @@ public interface Model {
     /**
      * Gets the current route filter
      *
-     * @return the filter, or <tt>null</tt> if no custom filter has been configured.
+     * @return the filter, or <code>null</code> if no custom filter has been configured.
      */
     Function<RouteDefinition, Boolean> getRouteFilter();
 
@@ -501,7 +501,7 @@ public interface Model {
     /**
      * Gets the lock that is held while route definitions are added to or removed from this model (including creating
      * and starting the added routes).
-     * <p/>
+     * <p>
      * Code that adds routes while it holds a lock of its own must take this lock first, to avoid a deadlock with routes
      * being added at the same time.
      *

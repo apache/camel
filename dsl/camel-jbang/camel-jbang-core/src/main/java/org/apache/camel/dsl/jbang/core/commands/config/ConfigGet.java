@@ -36,7 +36,7 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel config get runtime --json" })
 public class ConfigGet extends CamelCommand {
 
-    @Argument(required = true, description = "Configuration key")
+    @Argument(paramLabel = "key", required = true, description = "Configuration key")
     String key;
 
     @Option(name = "global", hasValue = false, description = "Use global or local configuration")

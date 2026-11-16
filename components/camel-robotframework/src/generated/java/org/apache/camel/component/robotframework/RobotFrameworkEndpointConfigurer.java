@@ -55,6 +55,8 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "exitonfailure":
         case "exitOnFailure": target.getConfiguration().setExitOnFailure(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": target.setHealthCheckMaxPollDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "includes": target.getConfiguration().setIncludes(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
@@ -177,6 +179,8 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "exitonfailure":
         case "exitOnFailure": return boolean.class;
         case "greedy": return boolean.class;
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return long.class;
         case "includes": return java.lang.String.class;
         case "initialdelay":
         case "initialDelay": return long.class;
@@ -300,6 +304,8 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "exitonfailure":
         case "exitOnFailure": return target.getConfiguration().isExitOnFailure();
         case "greedy": return target.isGreedy();
+        case "healthcheckmaxpollduration":
+        case "healthCheckMaxPollDuration": return target.getHealthCheckMaxPollDuration();
         case "includes": return target.getConfiguration().getIncludes();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();

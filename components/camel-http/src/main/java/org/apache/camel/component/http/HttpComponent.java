@@ -97,8 +97,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
               description = "To use a custom org.apache.hc.core5.http.protocol.HttpContext when executing requests.")
     protected HttpContext httpContext;
     @Metadata(label = "security", description = "To configure security using SSLContextParameters."
-                                                + " Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent."
-                                                + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
+                                                + " An endpoint can use another instance with its own sslContextParameters option.")
     protected SSLContextParameters sslContextParameters;
     @Metadata(label = "security",
               description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
@@ -839,9 +838,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To configure security using SSLContextParameters. Important: Only one instance of
-     * org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use two or more
-     * different instances, you need to define a new HttpComponent per instance.
+     * To configure security using SSLContextParameters. An endpoint can use another instance with its own
+     * sslContextParameters option.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;

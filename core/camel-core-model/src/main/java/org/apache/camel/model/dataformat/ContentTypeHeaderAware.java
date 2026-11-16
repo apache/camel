@@ -22,18 +22,18 @@ package org.apache.camel.model.dataformat;
 public interface ContentTypeHeaderAware {
 
     /**
-     * Whether the data format should set the <tt>Content-Type</tt> header with the type from the data format.
-     * <p/>
-     * For example <tt>application/xml</tt> for data formats marshalling to XML, or <tt>application/json</tt> for data
-     * formats marshalling to JSON etc.
+     * Whether the data format should set the <code>Content-Type</code> header with the type from the data format.
+     * <p>
+     * For example <code>application/xml</code> for data formats marshalling to XML, or <code>application/json</code>
+     * for data formats marshalling to JSON etc.
      */
     String getContentTypeHeader();
 
     /**
-     * Whether the data format should set the <tt>Content-Type</tt> header with the type from the data format.
-     * <p/>
-     * For example <tt>application/xml</tt> for data formats marshalling to XML, or <tt>application/json</tt> for data
-     * formats marshalling to JSON etc.
+     * Whether the data format should set the <code>Content-Type</code> header with the type from the data format.
+     * <p>
+     * For example <code>application/xml</code> for data formats marshalling to XML, or <code>application/json</code>
+     * for data formats marshalling to JSON etc.
      */
     void setContentTypeHeader(String contentTypeHeader);
 

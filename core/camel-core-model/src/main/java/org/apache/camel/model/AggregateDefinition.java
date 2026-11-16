@@ -641,11 +641,11 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     /**
-     * Closes a correlation key when its complete. Any <i>late</i> received exchanges which has a correlation key that
+     * Closes a correlation key when it's complete. Any <i>late</i> received exchanges which has a correlation key that
      * has been closed, it will be defined and a ClosedCorrelationKeyException is thrown.
      *
-     * @param  capacity the maximum capacity of the closed correlation key cache. Use <tt>0</tt> or negative value for
-     *                  unbounded capacity.
+     * @param  capacity the maximum capacity of the closed correlation key cache. Use <code>0</code> or negative value
+     *                  for unbounded capacity.
      * @return          builder
      */
     public AggregateDefinition closeCorrelationKeyOnCompletion(int capacity) {
@@ -654,11 +654,11 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     /**
-     * Closes a correlation key when its complete. Any <i>late</i> received exchanges which has a correlation key that
+     * Closes a correlation key when it's complete. Any <i>late</i> received exchanges which has a correlation key that
      * has been closed, it will be defined and a ClosedCorrelationKeyException is thrown.
      *
-     * @param  capacity the maximum capacity of the closed correlation key cache. Use <tt>0</tt> or negative value for
-     *                  unbounded capacity. Supports property placeholders.
+     * @param  capacity the maximum capacity of the closed correlation key cache. Use <code>0</code> or negative value
+     *                  for unbounded capacity. Supports property placeholders.
      * @return          builder
      */
     public AggregateDefinition closeCorrelationKeyOnCompletion(String capacity) {
@@ -668,7 +668,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     /**
      * Discards the aggregated message on completion timeout.
-     * <p/>
+     * <p>
      * This means on timeout the aggregated message is dropped and not sent out of the aggregator.
      *
      * @return builder
@@ -680,9 +680,9 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     /**
      * Discards the aggregated message when aggregation failed (an exception was thrown from
-     * {@link AggregationStrategy}. This means the partly aggregated message is dropped and not sent out of the
+     * {@link AggregationStrategy}). This means the partly aggregated message is dropped and not sent out of the
      * aggregator.
-     * <p/>
+     * <p>
      * This option cannot be used together with completionFromBatchConsumer.
      *
      * @return builder
@@ -696,9 +696,9 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * Enables the batch completion mode where we aggregate from a {@link org.apache.camel.BatchConsumer} and aggregate
      * the total number of exchanges the {@link org.apache.camel.BatchConsumer} has reported as total by checking the
      * exchange property {@link org.apache.camel.Exchange#BATCH_COMPLETE} when its complete.
-     * <p/>
+     * <p>
      * This option cannot be used together with discardOnAggregationFailure.
-     * <p/>
+     * <p>
      * <b>Important:</b> When using this option, you should also enable {@link #eagerCheckCompletion()} to ensure the
      * aggregator checks for batch completion on each incoming exchange. Without eager checking, the batch completion
      * signal may not be properly detected.
@@ -790,13 +790,13 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     /**
-     * Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be
+     * Time in millis that an aggregated exchange should be inactive before it's complete (timeout). This option can be
      * set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use
      * Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or
      * 0. You cannot use this option together with completionInterval, only one of the two can be used.
-     * <p/>
+     * <p>
      * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option to
-     * configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that the a
+     * configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that a
      * timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or
      * checker intervals.
      *
@@ -809,13 +809,13 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     /**
-     * Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be
+     * Time in millis that an aggregated exchange should be inactive before it's complete (timeout). This option can be
      * set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use
      * Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or
      * 0. You cannot use this option together with completionInterval, only one of the two can be used.
-     * <p/>
+     * <p>
      * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option to
-     * configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that the a
+     * configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that a
      * timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or
      * checker intervals.
      *
@@ -828,13 +828,13 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     /**
-     * Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be
+     * Time in millis that an aggregated exchange should be inactive before it's complete (timeout). This option can be
      * set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use
      * Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or
      * 0. You cannot use this option together with completionInterval, only one of the two can be used.
-     * <p/>
+     * <p>
      * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option to
-     * configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that the a
+     * configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that a
      * timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or
      * checker intervals.
      *
@@ -849,10 +849,10 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     /**
      * Interval in millis that is used by the background task that checks for timeouts
      * ({@link org.apache.camel.TimeoutMap}).
-     * <p/>
+     * <p>
      * By default the timeout checker runs every second. The timeout is an approximation and there is no guarantee that
-     * the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values
-     * or checker intervals.
+     * a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or
+     * checker intervals.
      *
      * @param  completionTimeoutCheckerInterval the interval in millis, must be a positive value
      * @return                                  the builder
@@ -864,10 +864,10 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     /**
      * A background task which checks for timeouts (completionTimeout) at a given interval.
-     * <p/>
+     * <p>
      * By default the timeout checker runs every second. The timeout is an approximation and there is no guarantee that
-     * the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values
-     * or checker intervals.
+     * a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or
+     * checker intervals.
      *
      * @param  completionTimeoutCheckerInterval the interval in millis. Supports property placeholders.
      * @return                                  the builder
@@ -932,7 +932,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     /**
      * Sets the custom aggregate repository to use.
-     * <p/>
+     * <p>
      * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
      *
      * @param  aggregationRepository the aggregate repository to use
@@ -945,7 +945,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     /**
      * Sets the custom aggregate repository to use.
-     * <p/>
+     * <p>
      * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
      *
      * @param  aggregationRepository reference to the repository to lookup in the registry
@@ -1008,13 +1008,13 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     /**
      * Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped.
-     * <p/>
+     * <p>
      * This also means that we will wait for all pending exchanges which are stored in the aggregation repository to
      * complete so the repository is empty before we can stop.
-     * <p/>
+     * <p>
      * You may want to enable this when using the memory based aggregation repository that is memory based only, and do
      * not store data on disk. When this option is enabled, then the aggregator is waiting to complete all those
-     * exchanges before its stopped, when stopping CamelContext or the route using it.
+     * exchanges before it's stopped, when stopping CamelContext or the route using it.
      */
     public AggregateDefinition completeAllOnStop() {
         setCompleteAllOnStop(Boolean.toString(true));

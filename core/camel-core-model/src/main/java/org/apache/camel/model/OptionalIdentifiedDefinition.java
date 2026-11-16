@@ -179,8 +179,8 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
 
     /**
      * Sets the id of this node.
-     * <p/>
-     * <b>Important:</b> If you want to set the id of the route, then you <b>must</b> use <tt>routeId(String)</tt>
+     * <p>
+     * <b>Important:</b> If you want to set the id of the route, then you <b>must</b> use <code>routeId(String)</code>
      * instead.
      *
      * @param  id the id

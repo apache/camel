@@ -194,8 +194,10 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
+        loggedIn = false;
         try {
-            disconnect();
+            // the upload of an exchange that a forced shutdown gave up waiting for can still be in progress
+            getOperations().disconnectOnStop();
         } catch (Exception e) {
             LOG.debug("Exception occurred during disconnecting from: {} {}", getEndpoint(), e.getMessage());
         }

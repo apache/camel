@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.run.export;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,5 +49,50 @@ class ExporterTest {
         assertThat(Exporter.getScheme("C:\\certs\\keystore.jks")).isNull();
         assertThat(Exporter.getScheme("c:/certs/keystore.jks")).isNull();
         assertThat(Exporter.getScheme("route.camel.yaml")).isNull();
+    }
+
+    @Test
+    public void shouldKeepVersionForCamelTestInfraInBuildDependencyList() {
+        ExportRequest request = new ExportRequest();
+        request.camelVersion = "4.24.0";
+
+        TestableExporter exporter = new TestableExporter(request);
+        List<Map<String, Object>> deps = exporter.buildDependencyList(
+                Set.of("mvn@test:org.apache.camel:camel-test-infra-kafka:4.23.0"));
+
+        assertThat(deps).hasSize(1);
+        Map<String, Object> dep = deps.get(0);
+        assertThat(dep)
+                .containsEntry("groupId", "org.apache.camel")
+                .containsEntry("artifactId", "camel-test-infra-kafka")
+                .containsEntry("version", "4.24.0");
+    }
+
+    @Test
+    public void shouldStripVersionForRegularCamelDependencies() {
+        ExportRequest request = new ExportRequest();
+        request.camelVersion = "4.24.0";
+
+        TestableExporter exporter = new TestableExporter(request);
+        List<Map<String, Object>> deps = exporter.buildDependencyList(
+                Set.of("mvn@test:org.apache.camel:camel-kafka"));
+
+        assertThat(deps).hasSize(1);
+        Map<String, Object> dep = deps.get(0);
+        assertThat(dep)
+                .containsEntry("groupId", "org.apache.camel")
+                .containsEntry("artifactId", "camel-kafka")
+                .containsEntry("version", null);
+    }
+
+    private static class TestableExporter extends Exporter {
+        TestableExporter(ExportRequest request) {
+            super(request, new ExportContext());
+        }
+
+        @Override
+        public Integer export() {
+            return 0;
+        }
     }
 }

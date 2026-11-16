@@ -123,16 +123,16 @@ public final class FtpUtils {
     }
 
     /**
-     * Checks whether directory used in ftp/ftps/sftp endpoint URI is relative. Absolute path will be converted to
-     * relative path and a WARN will be printed.
+     * Checks whether directory used in ftp/ftps/sftp endpoint URI is relative. Absolute path will be converted to a
+     * path relative to the login directory and a WARN will be printed.
      *
      * @see <a href="http://camel.apache.org/ftp2.html">FTP/SFTP/FTPS Component</a>
      */
     public static void ensureRelativeFtpDirectory(Component ftpComponent, RemoteFileConfiguration configuration) {
         if (FileUtil.hasLeadingSeparator(configuration.getDirectoryName())) {
             String relativePath = FileUtil.stripLeadingSeparator(configuration.getDirectoryName());
-            LOG.warn("{} doesn't support absolute paths, \"{}\" will be converted to \"{}\". "
-                     + "After Camel 2.16, absolute paths will be invalid.",
+            LOG.warn("{} doesn't support absolute paths, \"{}\" will be converted to \"{}\", "
+                     + "which is relative to the login directory.",
                     ftpComponent.getClass().getSimpleName(), configuration.getDirectoryName(), relativePath);
             configuration.setDirectory(relativePath);
             configuration.setDirectoryName(relativePath);

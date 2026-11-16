@@ -377,6 +377,32 @@ public interface InfluxDb2EndpointBuilderFactory {
             return "camelInfluxDB.RetentionPolicy";
         }
         /**
+         * The name of the organization to write to, overriding the org option
+         * on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfluxDB2Org}.
+         */
+        public String influxDB2Org() {
+            return "CamelInfluxDB2Org";
+        }
+        /**
+         * The name of the bucket to write to, overriding the bucket option on
+         * the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfluxDB2Bucket}.
+         */
+        public String influxDB2Bucket() {
+            return "CamelInfluxDB2Bucket";
+        }
+        /**
          * InfluxDb Write precision.
          * 
          * The option is a: {@code com.influxdb.client.domain.WritePrecision}

@@ -239,9 +239,9 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
 
     /**
      * Sets the maximum number of tasks in the work queue.
-     * <p/>
-     * Use <tt>0</tt> or <tt>-1</tt> for no work queue: each task goes directly to a thread, up to the max pool size,
-     * and then the rejected policy applies. Use <tt>Integer.MAX_VALUE</tt> for an unbounded queue.
+     * <p>
+     * Use <code>0</code> or <code>-1</code> for no work queue: each task goes directly to a thread, up to the max pool
+     * size, and then the rejected policy applies. Use <code>Integer.MAX_VALUE</code> for an unbounded queue.
      *
      * @param  maxQueueSize the max queue size
      * @return              the builder
@@ -252,9 +252,9 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
 
     /**
      * Sets the maximum number of tasks in the work queue.
-     * <p/>
-     * Use <tt>0</tt> or <tt>-1</tt> for no work queue: each task goes directly to a thread, up to the max pool size,
-     * and then the rejected policy applies. Use <tt>Integer.MAX_VALUE</tt> for an unbounded queue.
+     * <p>
+     * Use <code>0</code> or <code>-1</code> for no work queue: each task goes directly to a thread, up to the max pool
+     * size, and then the rejected policy applies. Use <code>Integer.MAX_VALUE</code> for an unbounded queue.
      *
      * @param  maxQueueSize the max queue size
      * @return              the builder
@@ -298,10 +298,10 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
 
     /**
      * Whether or not to use as caller runs as <b>fallback</b> when a task is rejected being added to the thread pool
-     * (when its full). This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has
+     * (when it's full). This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has
      * no configured rejection handler.
-     * <p/>
-     * Is by default <tt>true</tt>
+     * <p>
+     * Is by default <code>true</code>
      *
      * @param  callerRunsWhenRejected whether or not the caller should run
      * @return                        the builder
@@ -312,10 +312,10 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
 
     /**
      * Whether or not to use as caller runs as <b>fallback</b> when a task is rejected being added to the thread pool
-     * (when its full). This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has
+     * (when it's full). This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has
      * no configured rejection handler.
-     * <p/>
-     * Is by default <tt>true</tt>
+     * <p>
+     * Is by default <code>true</code>
      *
      * @param  callerRunsWhenRejected whether or not the caller should run
      * @return                        the builder
@@ -327,10 +327,10 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
 
     /**
      * Whether idle core threads are allowed to timeout and therefore can shrink the pool size below the core pool size
-     * <p/>
-     * Is by default <tt>false</tt>
+     * <p>
+     * Is by default <code>false</code>
      *
-     * @param  allowCoreThreadTimeOut <tt>true</tt> to allow timeout
+     * @param  allowCoreThreadTimeOut <code>true</code> to allow timeout
      * @return                        the builder
      */
     public ThreadsDefinition allowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
@@ -338,11 +338,11 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     }
 
     /**
-     * Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size
-     * <p/>
-     * Is by default <tt>false</tt>
+     * Whether idle core threads are allowed to timeout and therefore can shrink the pool size below the core pool size
+     * <p>
+     * Is by default <code>false</code>
      *
-     * @param  allowCoreThreadTimeOut <tt>true</tt> to allow timeout
+     * @param  allowCoreThreadTimeOut <code>true</code> to allow timeout
      * @return                        the builder
      */
     public ThreadsDefinition allowCoreThreadTimeOut(String allowCoreThreadTimeOut) {

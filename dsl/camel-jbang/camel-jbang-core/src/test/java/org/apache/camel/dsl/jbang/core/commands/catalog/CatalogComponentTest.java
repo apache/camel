@@ -77,8 +77,21 @@ class CatalogComponentTest extends CamelCommandBaseTestSupport {
         int exit = command.doCall();
         assertEquals(0, exit);
         String out = printer.getOutput();
-        assertTrue(out.contains("Did you mean? azure-servicebus"),
-                "a product name should suggest the component using it, was: " + out);
+        // a part of the name lists the component (CAMEL-26931: it only suggested it)
+        assertTrue(out.contains("azure-servicebus"), "a product name should list the component using it, was: " + out);
+    }
+
+    @Test
+    void aPartOfTheNameListsTheComponents() throws Exception {
+        // CAMEL-26931: --filter=aws2 listed nothing, as only a whole name matched
+        CatalogComponent command = createCommand();
+        command.filterName = "aws2";
+
+        assertEquals(0, command.doCall());
+
+        String out = printer.getOutput();
+        assertTrue(out.contains("aws2-s3") && out.contains("aws2-sqs"), "the aws2 components, was: " + out);
+        assertFalse(out.contains("No results"), out);
     }
 
     @Test

@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.Nulls;
         "tlsInsecureEdgeTerminationPolicy", "tlsKey", "tlsKeySecret", "tlsTermination" })
 public class Route {
     @JsonProperty("annotations")
-    @JsonPropertyDescription("The annotations added to route. This can be used to set route specific annotations For annotations options see https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html#route-specific-annotations CLI usage example: -t \"route.annotations.'haproxy.router.openshift.io/balance'=true\"")
+    @JsonPropertyDescription("The annotations added to route. This can be used to set route specific annotations For annotations options see https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html#route-specific-annotations CLI usage example: --trait \"route.annotations.'haproxy.router.openshift.io/balance'=true\"")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Map<String, String> annotations;

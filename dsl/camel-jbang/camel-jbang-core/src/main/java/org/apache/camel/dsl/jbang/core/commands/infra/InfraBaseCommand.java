@@ -45,6 +45,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -193,6 +194,8 @@ public abstract class InfraBaseCommand extends CamelCommand {
     private void pruneStaleFiles(Path camelDir, String service, String pid) {
         PathUtils.deleteFile(camelDir.resolve(getJsonFileName(service, pid)));
         PathUtils.deleteFile(camelDir.resolve(getLogFileName(service, pid)));
+        // and the output of a service that ran in the background
+        BackgroundLog.remove(Long.parseLong(pid));
     }
 
     /**
@@ -338,6 +341,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
                                     parseServiceData(row.serviceData()), row.uiSupported()))
                                     .map(InfraBaseDTO::toMap)
                                     .collect(Collectors.toList())));
+        } else if (rows.isEmpty() && showPidColumn()) {
+            // camel infra ps printed only the header of the table (CAMEL-26931)
+            printer().printDiagnostic("No running infrastructure services");
         } else {
             int tw = terminalWidth();
             // Size DESCRIPTION to fill the terminal: measure the other columns so it gets the exact remainder.

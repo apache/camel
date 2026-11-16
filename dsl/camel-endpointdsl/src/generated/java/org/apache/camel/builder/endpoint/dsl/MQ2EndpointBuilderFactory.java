@@ -708,7 +708,8 @@ public interface MQ2EndpointBuilderFactory {
          * The list of users for MQ in the createBroker operation, as User
          * objects of the AWS SDK.
          * 
-         * The option is a: {@code List<User>} type.
+         * The option is a: {@code
+         * List<software.amazon.awssdk.services.mq.model.User>} type.
          * 
          * Group: producer
          * 
