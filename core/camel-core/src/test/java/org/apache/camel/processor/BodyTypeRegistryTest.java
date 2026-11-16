@@ -80,6 +80,21 @@ public class BodyTypeRegistryTest extends ContextTestSupport {
     }
 
     @Test
+    public void testClassWithoutCanonicalName() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+
+        Object anonymous = new Object() {
+        };
+        template.sendBody("direct:start", anonymous);
+        template.sendBody("direct:start", "hello");
+        assertMockEndpointsSatisfied();
+
+        // an anonymous class has no canonical name, so its class name is kept
+        assertEquals(List.of(anonymous.getClass().getName(), "java.lang.String"),
+                registry.getBodyTypes("orders", "maybeMap"));
+    }
+
+    @Test
     public void testNotReachedIsEmpty() {
         assertTrue(registry.getBodyTypes("orders", "maybeMap").isEmpty());
         assertTrue(registry.getBodyTypes("unknown", "maybeMap").isEmpty());

@@ -26,7 +26,6 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.MessageSizeStrategy;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Default {@link org.apache.camel.MessageHistory}.
@@ -113,7 +112,7 @@ public class DefaultMessageHistory implements MessageHistory {
     public void captureBody(Exchange exchange, BodyTypeRegistry registry) {
         Message current = exchange.getMessage();
         Object body = current.getBody();
-        bodyType = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        bodyType = body != null ? typeName(body) : "null";
         bodyDataType = body instanceof Map<?, ?> || body instanceof Collection<?> ? BodyFacts.typeName(body) : null;
         if (registry != null && routeId != null && nodeId != null) {
             registry.addBodyType(routeId, nodeId, bodyType, BodyFacts.kindOf(body));
@@ -189,6 +188,13 @@ public class DefaultMessageHistory implements MessageHistory {
     @Override
     public void setDebugSkipOver(boolean debugSkipOver) {
         this.debugSkipOver = debugSkipOver;
+    }
+
+    // an anonymous, local or hidden class (such as a lambda) has no canonical name
+    private static String typeName(Object body) {
+        Class<?> type = body.getClass();
+        String name = type.getCanonicalName();
+        return name != null ? name : type.getName();
     }
 
     @Override
