@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -42,8 +43,12 @@ abstract class MongoAbstractConsumerThread implements Runnable {
     protected volatile MongoCursor cursor;
 
     volatile boolean keepRunning = true;
-    private volatile boolean stopped;
-    private volatile CountDownLatch stoppedLatch;
+    // counted down when run() ends; created with the thread, so that a stop before run() begins can wait for it too
+    private final CountDownLatch stoppedLatch = new CountDownLatch(1);
+    // the thread that runs this consumer thread, while it runs
+    private volatile Thread runner;
+    // whether the thread routes an exchange, rather than reads from MongoDB
+    private volatile boolean processing;
 
     MongoAbstractConsumerThread(MongoDbEndpoint endpoint, Consumer consumer) {
         this.endpoint = endpoint;
@@ -71,10 +76,13 @@ abstract class MongoAbstractConsumerThread implements Runnable {
      * @return          {@code true} if the route processed the exchange without a failure
      */
     protected boolean processExchange(Exchange exchange) {
+        processing = true;
         try {
             consumer.getProcessor().process(exchange);
         } catch (Exception e) {
             exchange.setException(e);
+        } finally {
+            processing = false;
         }
         Exception cause = exchange.getException();
         if (cause != null) {
@@ -97,7 +105,7 @@ abstract class MongoAbstractConsumerThread implements Runnable {
      */
     @Override
     public void run() {
-        stoppedLatch = new CountDownLatch(1);
+        runner = Thread.currentThread();
         // the failures since a cursor was last opened: while the server cannot be reached, every attempt fails the same
         // way, so only the first one logs the stack trace
         int failures = 0;
@@ -159,7 +167,7 @@ abstract class MongoAbstractConsumerThread implements Runnable {
                 }
             }
         } finally {
-            stopped = true;
+            runner = null;
             stoppedLatch.countDown();
         }
     }
@@ -182,10 +190,36 @@ abstract class MongoAbstractConsumerThread implements Runnable {
         }
     }
 
+    /**
+     * Waits for the thread to end.
+     * <p>
+     * Closing the cursor does not end a read from MongoDB in progress on the thread: the driver only closes the cursor
+     * once that read returns, and a read from a connection that stopped answering does not return. So while the thread
+     * reads from MongoDB, the wait is bounded, by the time to wait for a thread pool to shut down
+     * ({@code ExecutorServiceManager.getShutdownAwaitTermination()}, 10 seconds by default): the thread is then
+     * interrupted and left behind. An exchange that the thread routes is waited for as before, as the graceful shutdown
+     * bounds the wait for an exchange in flight with its own timeout.
+     */
     private void awaitStopped() throws InterruptedException {
-        if (!stopped) {
-            log.info("Going to wait for stopping");
-            stoppedLatch.await();
+        if (stoppedLatch.getCount() == 0) {
+            return;
+        }
+        log.info("Going to wait for stopping");
+        // at least a little, so that the loop does not spin while the thread routes an exchange
+        long timeout = Math.max(100, endpoint.getCamelContext().getExecutorServiceManager().getShutdownAwaitTermination());
+        while (!stoppedLatch.await(timeout, TimeUnit.MILLISECONDS)) {
+            if (!processing) {
+                log.warn("The consumer thread did not end within {} millis after its cursor was closed, while it reads from"
+                         + " MongoDB: closing the cursor does not end a read in progress, and a read from a connection"
+                         + " that stopped answering does not return. The thread is interrupted and left behind, it ends"
+                         + " once the read returns.",
+                        timeout);
+                Thread thread = runner;
+                if (thread != null) {
+                    thread.interrupt();
+                }
+                return;
+            }
         }
     }
 }

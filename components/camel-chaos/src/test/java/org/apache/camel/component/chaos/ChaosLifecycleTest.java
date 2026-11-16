@@ -147,7 +147,7 @@ class ChaosLifecycleTest extends ChaosTestSupport {
 
     @Test
     void stallSuspendsTheRouteAndResumesItAfterTheDuration() {
-        String id = chaos().addRule("route=a stall duration=2s");
+        String id = chaos().addRule("route=a stall duration=1s");
         await().atMost(10, TimeUnit.SECONDS).until(() -> status("a") == ServiceStatus.Suspended);
         assertThat(status("b")).isEqualTo(ServiceStatus.Started);
         awaitLifecycle(id, "back");
@@ -161,12 +161,12 @@ class ChaosLifecycleTest extends ChaosTestSupport {
         JsonObject l = lifecycle(id);
         assertThat(l.getString("action")).isEqualTo("suspend");
         assertThat(l.getString("route")).isEqualTo("a");
-        assertThat(l.getLong("duration")).isEqualTo(2000L);
-        assertThat(l.getLong("backAt") - l.getLong("downAt")).isGreaterThanOrEqualTo(2000L);
+        assertThat(l.getLong("duration")).isEqualTo(1000L);
+        assertThat(l.getLong("backAt") - l.getLong("downAt")).isGreaterThanOrEqualTo(1000L);
         assertThat(((JsonObject) rule.get("fired")).getLong("lifecycle")).isEqualTo(1);
         assertThat(l.containsKey("reason")).isFalse();
         assertThat(chaos().report().toText())
-                .contains("r1 ended: route=a stall duration=2s")
+                .contains("r1 ended: route=a stall duration=1s")
                 .contains("suspended route a at +")
                 .contains(", resumed at +");
     }
@@ -235,12 +235,12 @@ class ChaosLifecycleTest extends ChaosTestSupport {
 
     @Test
     void stopStartsTheRouteAgain() {
-        String id = chaos().addRule("route=a lifecycle action=stop duration=2s");
+        String id = chaos().addRule("route=a lifecycle action=stop duration=1s");
         await().atMost(10, TimeUnit.SECONDS).until(() -> status("a") == ServiceStatus.Stopped);
         awaitLifecycle(id, "back");
         assertThat(status("a")).isEqualTo(ServiceStatus.Started);
         assertThat(chaos().report().toText()).contains("stopped route a at +").contains(", started at +")
-                .contains(" ago " + id + " stop 2s of route a");
+                .contains(" ago " + id + " stop 1s of route a");
         assertThat(ruleReport(id).containsKey("lastFiredAgo")).isTrue();
     }
 
@@ -275,7 +275,7 @@ class ChaosLifecycleTest extends ChaosTestSupport {
         RouteDefinition definition = model.getRouteDefinition("a");
         long completedBefore = routeCount("a", "completed");
 
-        String id = chaos().addRule("route=a lifecycle action=remove duration=2s");
+        String id = chaos().addRule("route=a lifecycle action=remove duration=1s");
         await().atMost(10, TimeUnit.SECONDS).until(() -> context.getRoute("a") == null);
         assertThat(model.getRouteDefinition("a")).isNull();
         awaitLifecycle(id, "back");
@@ -494,9 +494,10 @@ class ChaosLifecycleTest extends ChaosTestSupport {
         assertThat(l.getString("state")).isEqualTo("cancelled");
         assertThat(l.getString("reason")).isEqualTo("the context stopped, so route a was not resumed");
         // no thread of chaos is left behind
+        String prefix = "Camel (" + context.getName() + ") ";
         await().atMost(10, TimeUnit.SECONDS)
                 .until(() -> Thread.getAllStackTraces().keySet().stream()
-                        .noneMatch(t -> t.isAlive() && t.getName().endsWith(" - Chaos")));
+                        .noneMatch(t -> t.isAlive() && t.getName().startsWith(prefix) && t.getName().endsWith(" - Chaos")));
     }
 
     @Test
@@ -505,9 +506,11 @@ class ChaosLifecycleTest extends ChaosTestSupport {
         String id = chaos().addRule("route=slow lifecycle action=stop duration=10m");
         // act() is in the stop of the route, which waits for the exchange in flight
         awaitLifecycle(id, "acting");
+        String prefix = "Camel (" + context.getName() + ") ";
         await().atMost(10, TimeUnit.SECONDS).until(() -> Thread.getAllStackTraces().entrySet().stream()
-                .anyMatch(e -> e.getKey().getName().endsWith(" - Chaos") && Arrays.stream(e.getValue())
-                        .anyMatch(f -> f.getClassName().endsWith("DefaultShutdownStrategy"))));
+                .anyMatch(e -> e.getKey().getName().startsWith(prefix) && e.getKey().getName().endsWith(" - Chaos")
+                        && Arrays.stream(e.getValue())
+                                .anyMatch(f -> f.getClassName().endsWith("DefaultShutdownStrategy"))));
 
         ChaosManager chaos = chaos();
         CompletableFuture<Void> stop = CompletableFuture.runAsync(() -> context.stop());
@@ -523,7 +526,7 @@ class ChaosLifecycleTest extends ChaosTestSupport {
         // no thread of chaos is left behind, and the route was not brought back after the stop
         await().atMost(10, TimeUnit.SECONDS)
                 .until(() -> Thread.getAllStackTraces().keySet().stream()
-                        .noneMatch(t -> t.isAlive() && t.getName().endsWith(" - Chaos")));
+                        .noneMatch(t -> t.isAlive() && t.getName().startsWith(prefix) && t.getName().endsWith(" - Chaos")));
         assertThat(status("slow")).isNotEqualTo(ServiceStatus.Started);
     }
 

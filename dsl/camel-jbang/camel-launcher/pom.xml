@@ -81,6 +81,32 @@
     </dependencyManagement>
 
     <dependencies>
+        <!--
+            First, as the class path of the distribution (the Class-Path of the launcher JAR) follows the order of the
+            dependencies: the JARs that the short commands (camel ps, get, log, doc, catalog, ...) load classes from,
+            which camel-jbang-core brings in only further down. The JVM opens the JARs of the class path in order until
+            it finds a class, so a class from a JAR far down opens every JAR before it.
+        -->
+        <dependency>
+            <groupId>org.aesh</groupId>
+            <artifactId>aesh</artifactId>
+            <version>${aesh-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.freva</groupId>
+            <artifactId>ascii-table</artifactId>
+            <version>${ascii-table-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-core</artifactId>

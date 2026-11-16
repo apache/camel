@@ -43,6 +43,7 @@ public class ToolDescriptor {
     private String[] deterministicUnless = new String[0];
     private Predicate<Map<String, ?>> deterministicIf;
     private String repeatHint;
+    private String missHint;
 
     /**
      * A parameter of the tool; {@code items} is the schema of the elements of an array parameter (else null).
@@ -158,6 +159,17 @@ public class ToolDescriptor {
         return this;
     }
 
+    /**
+     * What the note of a repeated miss says to do instead of asking again, when the miss has no suggestions, written as
+     * one or more whole sentences: for a tool whose miss has a next step of its own, such as writing the file when
+     * there is no sample. The {@link #repeatHint(String) hint} is for an answer that was found, and without this the
+     * note says to ask with other arguments, see {@link RepeatedToolCalls}.
+     */
+    public ToolDescriptor missHint(String hint) {
+        missHint = hint;
+        return this;
+    }
+
     public ToolDescriptor executor(ToolExecutor exec) {
         this.executor = exec;
         return this;
@@ -234,6 +246,10 @@ public class ToolDescriptor {
 
     public String repeatHint() {
         return repeatHint;
+    }
+
+    public String missHint() {
+        return missHint;
     }
 
     /**

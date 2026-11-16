@@ -45,9 +45,17 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
         }
 
         /**
-         * Allowed event sources and source-scoped event types per event bus.
-         * Supports multi-bus DSL (bus[src - type1,type2]), single-bus shorthand
-         * (src - type1,type2), JSON string, or Map/List objects.
+         * The event sources and event types that the producer allows on each
+         * event bus. Written as JSON or as bus blocks in the form bus1[source1
+         * = type1,type2] | bus2[source2 = type3]. Semicolons separate the event
+         * sources of one event bus. A value in the form source1 = type1,type2
+         * applies to the event bus that eventBusName sets for the exchange. If
+         * eventBusName is not set, it applies to every event bus. The
+         * CamelAlibabaEventBridgeAllowedEventSources header replaces this
+         * option for a request that the producer sends. If that header is not
+         * set, an exchange property of the same name replaces this option. If
+         * none of the three is set, the producer allows every event bus, event
+         * source and event type.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -61,8 +69,10 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * EventBridge endpoint URL. Carries higher precedence than region based
-         * client initialization.
+         * The endpoint of EventBridge, which is a host name without http:// or
+         * https://. The region option does not determine the endpoint, so this
+         * option is required. Not used when the eventBridgeClient option is set
+         * or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -76,7 +86,12 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Default event bus name.
+         * The name of the event bus for a JSON text or Map body. The
+         * CamelAlibabaEventBridgeEventBusName header replaces this option for a
+         * request that the producer sends. If that header is not set, an
+         * exchange property of the same name replaces this option. The key
+         * eventBusName of a Map body replaces the three. One of the three is
+         * required for a JSON text body, or a Map body without that key.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -90,7 +105,13 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Default event source.
+         * The event source for a JSON text or Map body. The value must be a
+         * URI. The CamelAlibabaEventBridgeEventSource header replaces this
+         * option for a request that the producer sends. If that header is not
+         * set, an exchange property of the same name replaces this option. The
+         * key eventSource or source of a Map body replaces the three. One of
+         * the three is required for a JSON text body, or a Map body without
+         * that key.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -104,7 +125,13 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Default event subject.
+         * The event subject for a JSON text or Map body. The
+         * CamelAlibabaEventBridgeEventSubject header replaces this option for a
+         * request that the producer sends. If that header is not set, an
+         * exchange property of the same name replaces this option. The key
+         * eventSubject or subject of a Map body replaces the three. If neither
+         * the three nor that key is set, the producer adds no event subject to
+         * the event.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -118,7 +145,12 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Default event type.
+         * The event type for a JSON text or Map body. The
+         * CamelAlibabaEventBridgeEventType header replaces this option for a
+         * request that the producer sends. If that header is not set, an
+         * exchange property of the same name replaces this option. The key
+         * eventType or type of a Map body replaces the three. One of the three
+         * is required for a JSON text body, or a Map body without that key.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -132,7 +164,9 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Alibaba Cloud region.
+         * The region ID of EventBridge, for example cn-hangzhou. The producer
+         * sends it in the HTTP header x-eventbridge-regionId of each request.
+         * Not used when the eventBridgeClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -147,10 +181,13 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true, verifies that the target event bus exists in Alibaba Cloud
-         * EventBridge using listEventBuses before publishing. Also validates
-         * the CloudEvent source URI against the allowedEventSources whitelist
-         * when that option is set.
+         * Whether to check that the event bus exists and has a rule that
+         * matches the event source. The producer calls listEventBuses and
+         * listRules to check this. The producer also checks that each event
+         * source that allowedEventSources lists for the event bus matches a
+         * rule. The CamelAlibabaEventBridgeValidateEventSource header replaces
+         * this option for a request that the producer sends. If that header is
+         * not set, an exchange property of the same name replaces this option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -165,10 +202,13 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true, verifies that the target event bus exists in Alibaba Cloud
-         * EventBridge using listEventBuses before publishing. Also validates
-         * the CloudEvent source URI against the allowedEventSources whitelist
-         * when that option is set.
+         * Whether to check that the event bus exists and has a rule that
+         * matches the event source. The producer calls listEventBuses and
+         * listRules to check this. The producer also checks that each event
+         * source that allowedEventSources lists for the event bus matches a
+         * rule. The CamelAlibabaEventBridgeValidateEventSource header replaces
+         * this option for a request that the producer sends. If that header is
+         * not set, an exchange property of the same name replaces this option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -183,7 +223,11 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Validate CloudEvents 1.0 specification constraints on map fields.
+         * Whether to check the keys specversion and id of a Map body. The value
+         * of specversion must be 1.0, and the value of id must not be blank.
+         * The CamelAlibabaEventBridgeValidateEventSpec header replaces this
+         * option for a request that the producer sends. If that header is not
+         * set, an exchange property of the same name replaces this option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -198,7 +242,11 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Validate CloudEvents 1.0 specification constraints on map fields.
+         * Whether to check the keys specversion and id of a Map body. The value
+         * of specversion must be 1.0, and the value of id must not be blank.
+         * The CamelAlibabaEventBridgeValidateEventSpec header replaces this
+         * option for a request that the producer sends. If that header is not
+         * set, an exchange property of the same name replaces this option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -213,9 +261,14 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true, verifies that the CloudEvent event type is valid for the
-         * event source on the target event bus against Alibaba Cloud rule
-         * filter patterns before publishing.
+         * Whether to check that the event bus exists and has a rule that
+         * matches the event source and event type. The producer calls
+         * listEventBuses and listRules to check this. The producer also checks
+         * that each event type that allowedEventSources lists for the event bus
+         * matches a rule. The CamelAlibabaEventBridgeValidateEventType header
+         * replaces this option for a request that the producer sends. If that
+         * header is not set, an exchange property of the same name replaces
+         * this option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -230,9 +283,14 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true, verifies that the CloudEvent event type is valid for the
-         * event source on the target event bus against Alibaba Cloud rule
-         * filter patterns before publishing.
+         * Whether to check that the event bus exists and has a rule that
+         * matches the event source and event type. The producer calls
+         * listEventBuses and listRules to check this. The producer also checks
+         * that each event type that allowedEventSources lists for the event bus
+         * matches a rule. The CamelAlibabaEventBridgeValidateEventType header
+         * replaces this option for a request that the producer sends. If that
+         * header is not set, an exchange property of the same name replaces
+         * this option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -247,7 +305,10 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Access key for the cloud user.
+         * The AccessKey ID of the AccessKey pair for the requests that the
+         * producer sends to EventBridge. If not set, the accessKey of the
+         * serviceKeys option is used, and one of the two is required. Not used
+         * when the eventBridgeClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -261,7 +322,10 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Secret key for the cloud user.
+         * The AccessKey secret of the AccessKey pair for the requests that the
+         * producer sends to EventBridge. If not set, the secretKey of the
+         * serviceKeys option is used, and one of the two is required. Not used
+         * when the eventBridgeClient option is set or autowired.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -275,7 +339,12 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configuration object for cloud service authentication.
+         * The AccessKey pair as an
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
+         * secret. Each of the two is used when the option of the same name is
+         * not set. Not used when the eventBridgeClient option is set or
+         * autowired.
          * 
          * The option is a:
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -290,7 +359,12 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configuration object for cloud service authentication.
+         * The AccessKey pair as an
+         * org.apache.camel.component.alibaba.common.models.ServiceKeys. Its
+         * accessKey is the AccessKey ID and its secretKey is the AccessKey
+         * secret. Each of the two is used when the option of the same name is
+         * not set. Not used when the eventBridgeClient option is set or
+         * autowired.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.alibaba.common.models.ServiceKeys</code> type.
@@ -317,8 +391,13 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
         }
 
         /**
-         * TTL in milliseconds for caching event bus existence lookups per bus
-         * name. Applies only when validateEventSource is true.
+         * The time in milliseconds for which the producer caches the result of
+         * listEventBuses and listRules for an event bus. Only used when
+         * validateEventSource or validateEventType is true. Use 0 or less to
+         * cache nothing. The CamelAlibabaEventBridgeEventSourceCacheTtl header
+         * replaces this option for a request that the producer sends. If that
+         * header is not set, an exchange property of the same name replaces
+         * this option.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -333,8 +412,13 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * TTL in milliseconds for caching event bus existence lookups per bus
-         * name. Applies only when validateEventSource is true.
+         * The time in milliseconds for which the producer caches the result of
+         * listEventBuses and listRules for an event bus. Only used when
+         * validateEventSource or validateEventType is true. Use 0 or less to
+         * cache nothing. The CamelAlibabaEventBridgeEventSourceCacheTtl header
+         * replaces this option for a request that the producer sends. If that
+         * header is not set, an exchange property of the same name replaces
+         * this option.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -395,7 +479,12 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Autowire an existing EventBridge client instance.
+         * To use a custom com.aliyun.eventbridge.EventBridgeClient. The
+         * producer sends its requests with this client, and the region,
+         * endpoint, accessKey, secretKey and serviceKeys options are not used.
+         * If no client is set or autowired, the Camel endpoint creates an
+         * EventBridgeClient from these options. It creates this client when the
+         * producer processes its first message.
          * 
          * The option is a:
          * <code>com.aliyun.eventbridge.EventBridgeClient</code> type.
@@ -410,7 +499,12 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Autowire an existing EventBridge client instance.
+         * To use a custom com.aliyun.eventbridge.EventBridgeClient. The
+         * producer sends its requests with this client, and the region,
+         * endpoint, accessKey, secretKey and serviceKeys options are not used.
+         * If no client is set or autowired, the Camel endpoint creates an
+         * EventBridgeClient from these options. It creates this client when the
+         * producer processes its first message.
          * 
          * The option will be converted to a
          * <code>com.aliyun.eventbridge.EventBridgeClient</code> type.
@@ -451,7 +545,10 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
          * Syntax: <code>alibaba-eventbridge:operation</code>
          * 
          * Path parameter: operation (required)
-         * Operation to perform
+         * The operation that the producer performs. The
+         * CamelAlibabaEventBridgeOperation header replaces this option for a
+         * request that the producer sends. If that header is not set, an
+         * exchange property of the same name replaces this option.
          * There are 1 enums and the value can be one of: putEvents
          * 
          * @param path operation
@@ -471,7 +568,10 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
          * Syntax: <code>alibaba-eventbridge:operation</code>
          * 
          * Path parameter: operation (required)
-         * Operation to perform
+         * The operation that the producer performs. The
+         * CamelAlibabaEventBridgeOperation header replaces this option for a
+         * request that the producer sends. If that header is not set, an
+         * exchange property of the same name replaces this option.
          * There are 1 enums and the value can be one of: putEvents
          * 
          * @param componentName to use a custom component name for the endpoint
@@ -495,7 +595,10 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
         public static final AlibabaEventBridgeHeaderNameBuilder INSTANCE = new AlibabaEventBridgeHeaderNameBuilder();
 
         /**
-         * Event bus name override.
+         * The name of the event bus for a JSON text or Map body. This header
+         * replaces the eventBusName option. If this header is not set, an
+         * exchange property of the same name replaces the eventBusName option.
+         * The key eventBusName of a Map body replaces this header.
          * 
          * The option is a: {@code String} type.
          * 
@@ -508,7 +611,11 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return "CamelAlibabaEventBridgeEventBusName";
         }
         /**
-         * Event source override.
+         * The event source for a JSON text or Map body. The value must be a
+         * URI. This header replaces the eventSource option. If this header is
+         * not set, an exchange property of the same name replaces the
+         * eventSource option. The key eventSource or source of a Map body
+         * replaces this header.
          * 
          * The option is a: {@code String} type.
          * 
@@ -520,7 +627,10 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return "CamelAlibabaEventBridgeEventSource";
         }
         /**
-         * Event type override.
+         * The event type for a JSON text or Map body. This header replaces the
+         * eventType option. If this header is not set, an exchange property of
+         * the same name replaces the eventType option. The key eventType or
+         * type of a Map body replaces this header.
          * 
          * The option is a: {@code String} type.
          * 
@@ -532,7 +642,10 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return "CamelAlibabaEventBridgeEventType";
         }
         /**
-         * Event subject override.
+         * The event subject for a JSON text or Map body. This header replaces
+         * the eventSubject option. If this header is not set, an exchange
+         * property of the same name replaces the eventSubject option. The key
+         * eventSubject or subject of a Map body replaces this header.
          * 
          * The option is a: {@code String} type.
          * 
@@ -545,7 +658,13 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return "CamelAlibabaEventBridgeEventSubject";
         }
         /**
-         * Validate event source against Alibaba Cloud EventBridge.
+         * Whether to check that the event bus exists and has a rule that
+         * matches the event source. The producer calls listEventBuses and
+         * listRules to check this. The producer also checks that each event
+         * source that allowedEventSources lists for the event bus matches a
+         * rule. This header replaces the validateEventSource option. If this
+         * header is not set, an exchange property of the same name replaces the
+         * validateEventSource option.
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -558,8 +677,13 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return "CamelAlibabaEventBridgeValidateEventSource";
         }
         /**
-         * Validate event type against Alibaba Cloud EventBridge rule filter
-         * patterns.
+         * Whether to check that the event bus exists and has a rule that
+         * matches the event source and event type. The producer calls
+         * listEventBuses and listRules to check this. The producer also checks
+         * that each event type that allowedEventSources lists for the event bus
+         * matches a rule. This header replaces the validateEventType option. If
+         * this header is not set, an exchange property of the same name
+         * replaces the validateEventType option.
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -572,7 +696,11 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return "CamelAlibabaEventBridgeValidateEventType";
         }
         /**
-         * Validate CloudEvents 1.0 specification constraints on map fields.
+         * Whether to check the keys specversion and id of a Map body. The value
+         * of specversion must be 1.0, and the value of id must not be blank.
+         * This header replaces the validateEventSpec option. If this header is
+         * not set, an exchange property of the same name replaces the
+         * validateEventSpec option.
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -585,8 +713,11 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return "CamelAlibabaEventBridgeValidateEventSpec";
         }
         /**
-         * Allowed event sources and source-scoped event types per event bus
-         * (DSL string, JSON, Map, or List).
+         * The event sources and event types that the producer allows on each
+         * event bus. The value must be a Map, a Collection or a String as in
+         * the allowedEventSources option. This header replaces the
+         * allowedEventSources option. If this header is not set, an exchange
+         * property of the same name replaces the allowedEventSources option.
          * 
          * The option is a: {@code Object} type.
          * 
@@ -599,7 +730,12 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return "CamelAlibabaEventBridgeAllowedEventSources";
         }
         /**
-         * TTL in milliseconds for cached bus event sources and types.
+         * The time in milliseconds for which the producer caches the result of
+         * listEventBuses and listRules for an event bus. Only used when
+         * validateEventSource or validateEventType is true. Use 0 or less to
+         * cache nothing. This header replaces the eventSourceCacheTtl option.
+         * If this header is not set, an exchange property of the same name
+         * replaces the eventSourceCacheTtl option.
          * 
          * The option is a: {@code Long} type.
          * 
@@ -612,7 +748,8 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return "CamelAlibabaEventBridgeEventSourceCacheTtl";
         }
         /**
-         * Alibaba Cloud request id.
+         * The request ID that EventBridge returns in the response to the
+         * operation. The producer sets it, unless the exchange fails.
          * 
          * The option is a: {@code String} type.
          * 

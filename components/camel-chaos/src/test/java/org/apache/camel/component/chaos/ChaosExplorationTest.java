@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * The journal of an exploration (CAMEL-26773): the baseline and the rules tried, and a deadline that camel-chaos
  * enforces, on the clock of TimeSource.
  */
+@Isolated
 class ChaosExplorationTest extends ChaosTestSupport {
 
     private FakeClock clock;

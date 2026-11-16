@@ -38,7 +38,7 @@ public class CatalogComponent extends CatalogBaseCommand {
     List<CatalogBaseCommand.Row> collectRows() {
         List<Row> rows = new ArrayList<>();
         for (String name : findComponentNames(catalog)) {
-            ComponentModel model = catalog.componentModel(name);
+            ComponentModel model = CatalogModelHeader.componentModel(catalog, name);
             if (model != null) {
                 Row row = new Row();
                 row.name = model.getScheme();

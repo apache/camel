@@ -121,6 +121,49 @@ class RepeatedToolCallsTest {
                                                      + " which actions it takes). " + ASKED_3_TIMES);
     }
 
+    /**
+     * r34, a Citrus test step: the answer "No sample for 'send request'" is a miss, and its note said to ask with other
+     * arguments; the model asked for the same sample 10 times in all, and the step failed. A miss without suggestions
+     * gets the next step the tool has for a miss: write the file.
+     */
+    @Test
+    void aRepeatedSampleMissIsToldToWriteTheFile() {
+        ToolDescriptor sample = ToolRegistry.findTool("camel_catalog_sample");
+        Map<String, String> sendRequest = Map.of("name", "send request");
+        // the answer of camel_catalog_sample to a name it has no sample of
+        JsonObject miss = new JsonObject();
+        miss.put("error", "No sample for 'send request'");
+        miss.put("suggestions", new JsonArray());
+        for (int i = 0; i < 2; i++) {
+            assertThat(calls.repeatOf(sample, sendRequest)).isNull();
+            calls.recordSuccessfulAnswer(sample, sendRequest, miss);
+        }
+
+        JsonObject note = calls.repeatOf(sample, sendRequest);
+        assertThat(note.getInteger("timesAsked")).isEqualTo(3);
+        assertThat(note.getString("note")).isEqualTo("The answer was: No sample for 'send request'. Write the file now"
+                                                     + " with camel_write_file: asking again gives no sample either. The"
+                                                     + " write checks the file, and its answer says what to change (for a"
+                                                     + " Citrus test: which actions it takes). You asked this 3 times now"
+                                                     + " with the same arguments, and the answer is the same each time.");
+    }
+
+    @Test
+    void aRepeatedSampleMissWithSuggestionsIsToldToUseOne() {
+        ToolDescriptor sample = ToolRegistry.findTool("camel_catalog_sample");
+        Map<String, String> sendMessage = Map.of("name", "send message");
+        JsonObject miss = new JsonObject();
+        miss.put("error", "No sample for 'send message'");
+        miss.put("suggestions", new JsonArray(List.of("eventMessage")));
+        calls.recordSuccessfulAnswer(sample, sendMessage, miss);
+        calls.recordSuccessfulAnswer(sample, sendMessage, miss);
+
+        assertThat(calls.repeatOf(sample, sendMessage).getString("note"))
+                .startsWith("The answer was: No sample for 'send message'. Use one of the suggestions instead:"
+                            + " eventMessage.")
+                .doesNotContain("camel_write_file");
+    }
+
     @Test
     void aRepeatedFindIsToldToUseAMatchOrAnotherTerm() {
         ToolDescriptor find = ToolRegistry.findTool("camel_catalog_find");
@@ -150,10 +193,11 @@ class RepeatedToolCallsTest {
     @Test
     void everyHintIsWholeSentences() {
         for (ToolDescriptor tool : ToolRegistry.allTools()) {
-            String hint = tool.repeatHint();
-            if (hint != null) {
-                assertThat(Character.isUpperCase(hint.charAt(0))).as(tool.name() + ": " + hint).isTrue();
-                assertThat(hint).as(tool.name()).endsWith(".");
+            for (String hint : new String[] { tool.repeatHint(), tool.missHint() }) {
+                if (hint != null) {
+                    assertThat(Character.isUpperCase(hint.charAt(0))).as(tool.name() + ": " + hint).isTrue();
+                    assertThat(hint).as(tool.name()).endsWith(".");
+                }
             }
         }
     }

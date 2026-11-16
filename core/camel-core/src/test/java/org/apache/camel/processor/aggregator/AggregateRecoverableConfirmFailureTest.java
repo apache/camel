@@ -47,11 +47,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * With a {@link RecoverableAggregationRepository}, an aggregated exchange that was processed must be sent once, also
  * when the repository fails to confirm it: the recover task confirms it again, and does not send it again. CAMEL-17613
  * did this for a confirm that returns {@code false}, CAMEL-26995 for a confirm that throws (for example
- * JdbcAggregationRepository while the database is not available).
+ * JdbcAggregationRepository while the database is not available). The same holds for an aggregated exchange that the
+ * recover task moved to the dead letter channel (CAMEL-27008): it is moved once.
  */
 public class AggregateRecoverableConfirmFailureTest extends ContextTestSupport {
 
     private final ConfirmFailingRepository repository = new ConfirmFailingRepository();
+    // the aggregated bodies whose processing fails
+    private final Set<String> failingBodies = ConcurrentHashMap.newKeySet();
 
     @Test
     public void testConfirmThrows() throws Exception {
@@ -93,26 +96,105 @@ public class AggregateRecoverableConfirmFailureTest extends ContextTestSupport {
         assertEquals(2, repository.confirms("C+D"), "C+D should be confirmed twice");
     }
 
+    @Test
+    public void testDeadLetterConfirmThrows() throws Exception {
+        // A+B fails every time: after 2 redeliveries the recover task moves it to the dead letter channel, and then
+        // confirms it, which throws once
+        failingBodies.add("A+B");
+        repository.throwOnConfirm("A+B", 1);
+
+        MockEndpoint dead = moveToDeadLetter("A+B");
+
+        // the recover task confirms A+B again
+        await().atMost(10, TimeUnit.SECONDS).until(() -> repository.completedBodies().isEmpty());
+        assertMovedOnce(dead, "A+B");
+        assertEquals(2, repository.confirms("A+B"), "A+B should be confirmed twice");
+    }
+
+    @Test
+    public void testDeadLetterConfirmReturnsFalse() throws Exception {
+        // a repository that keeps the exchange when its confirm returns false: the result must not be ignored
+        failingBodies.add("A+B");
+        repository.falseOnConfirm("A+B", 1);
+
+        MockEndpoint dead = moveToDeadLetter("A+B");
+
+        // the recover task confirms A+B again
+        await().atMost(10, TimeUnit.SECONDS).until(() -> repository.completedBodies().isEmpty());
+        assertMovedOnce(dead, "A+B");
+        assertEquals(2, repository.confirms("A+B"), "A+B should be confirmed twice");
+    }
+
+    @Test
+    public void testDeadLetterConfirmKeepsThrowing() throws Exception {
+        // the confirm of A+B after it was moved to the dead letter channel keeps failing, and A+B comes first in the
+        // scan: the recover task must move C+D to the dead letter channel and confirm it anyway
+        failingBodies.add("A+B");
+        failingBodies.add("C+D");
+        repository.throwOnConfirm("A+B", Integer.MAX_VALUE);
+
+        MockEndpoint dead = moveToDeadLetter("A+B", "C+D");
+
+        await("C+D confirmed while the confirm of A+B keeps failing").atMost(10, TimeUnit.SECONDS)
+                .until(() -> List.of("A+B").equals(repository.completedBodies()));
+        assertMovedOnce(dead, "A+B", "C+D");
+        assertTrue(repository.confirms("A+B") > 2, "The recover task should try to confirm A+B again");
+        assertEquals(1, repository.confirms("C+D"), "C+D should be confirmed once");
+    }
+
     /**
-     * Sends a group of two exchanges for each aggregated body ("A+B" is sent as A and B), and waits until each
-     * aggregated exchange is sent.
+     * Sends a group of two exchanges for each aggregated body ("A+B" is sent as A and B).
      */
-    private MockEndpoint sendGroups(String... aggregatedBodies) throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived((Object[]) aggregatedBodies);
+    private void send(String... aggregatedBodies) {
         for (int i = 0; i < aggregatedBodies.length; i++) {
             for (String body : aggregatedBodies[i].split("\\+")) {
                 template.sendBodyAndHeader("direct:start", body, "id", i);
             }
         }
+    }
+
+    /**
+     * Sends a group of two exchanges for each aggregated body, and waits until each aggregated exchange is sent.
+     */
+    private MockEndpoint sendGroups(String... aggregatedBodies) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived((Object[]) aggregatedBodies);
+        send(aggregatedBodies);
         mock.assertIsSatisfied();
         return mock;
     }
 
-    private void assertSentOnce(MockEndpoint mock, String... aggregatedBodies) {
+    /**
+     * Sends a group of two exchanges for each aggregated body, whose processing fails, and waits until the recover task
+     * has moved each aggregated exchange to the dead letter channel.
+     */
+    private MockEndpoint moveToDeadLetter(String... aggregatedBodies) throws Exception {
+        MockEndpoint dead = getMockEndpoint("mock:dead");
+        dead.expectedMinimumMessageCount(aggregatedBodies.length);
+        send(aggregatedBodies);
+        dead.assertIsSatisfied();
+        return dead;
+    }
+
+    private void assertMovedOnce(MockEndpoint dead, String... aggregatedBodies) {
+        awaitCompleteRecoverPass();
+
+        List<String> moved = new ArrayList<>();
+        for (Exchange exchange : dead.getReceivedExchanges()) {
+            moved.add(exchange.getMessage().getBody(String.class));
+        }
+        assertEquals(List.of(aggregatedBodies), moved,
+                "Each aggregated exchange should be moved to the dead letter channel once");
+    }
+
+    private void awaitCompleteRecoverPass() {
         // let the recover task run completely at least once more (a pass is complete when the next scan starts)
         int scans = repository.scans.get();
         await().atMost(10, TimeUnit.SECONDS).until(() -> repository.scans.get() >= scans + 2);
+    }
+
+    private void assertSentOnce(MockEndpoint mock, String... aggregatedBodies) {
+        awaitCompleteRecoverPass();
 
         List<String> received = new ArrayList<>();
         for (Exchange exchange : mock.getReceivedExchanges()) {
@@ -131,7 +213,13 @@ public class AggregateRecoverableConfirmFailureTest extends ContextTestSupport {
                 from("direct:start")
                         .aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(repository)
                         .completionSize(2)
-                        .to("mock:result");
+                        .to("mock:result")
+                        .process(exchange -> {
+                            String body = exchange.getMessage().getBody(String.class);
+                            if (failingBodies.contains(body)) {
+                                throw new IllegalArgumentException("Simulated failure: cannot process " + body);
+                            }
+                        });
             }
         };
     }
@@ -140,7 +228,7 @@ public class AggregateRecoverableConfirmFailureTest extends ContextTestSupport {
      * An in-memory recoverable repository which, like JdbcAggregationRepository, moves the exchange of a completed
      * group to a completed store, and deletes it from there when it is confirmed. The scan returns the completed
      * exchanges in the order they were completed. A confirm can be made to throw, or to return {@code false}, for an
-     * aggregated body.
+     * aggregated body. A recovered exchange is moved to mock:dead after 2 redeliveries.
      */
     private static final class ConfirmFailingRepository extends ServiceSupport
             implements RecoverableAggregationRepository {
@@ -277,7 +365,7 @@ public class AggregateRecoverableConfirmFailureTest extends ContextTestSupport {
 
         @Override
         public String getDeadLetterUri() {
-            return null;
+            return "mock:dead";
         }
 
         @Override
@@ -286,7 +374,7 @@ public class AggregateRecoverableConfirmFailureTest extends ContextTestSupport {
 
         @Override
         public int getMaximumRedeliveries() {
-            return 0;
+            return 2;
         }
     }
 }

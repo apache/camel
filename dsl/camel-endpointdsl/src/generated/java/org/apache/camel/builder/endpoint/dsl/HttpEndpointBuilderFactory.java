@@ -648,8 +648,9 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * If this option is true, camel-http sends preemptive basic
-         * authentication to the server.
+         * If this option is true, camel-http sends the Basic credentials or the
+         * Bearer token with the first request, without waiting for the server
+         * to ask for them with a 401 response.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -664,8 +665,9 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * If this option is true, camel-http sends preemptive basic
-         * authentication to the server.
+         * If this option is true, camel-http sends the Basic credentials or the
+         * Bearer token with the first request, without waiting for the server
+         * to ask for them with a 401 response.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

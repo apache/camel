@@ -23,6 +23,7 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 
@@ -31,7 +32,7 @@ import org.apache.camel.support.service.ServiceSupport;
           annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Caffeine based message id repository")
-public class CaffeineIdempotentRepository extends ServiceSupport implements IdempotentRepository {
+public class CaffeineIdempotentRepository extends ServiceSupport implements IdempotentRepository, InMemoryStrategy {
 
     private Cache<String, Boolean> cache;
 
@@ -53,6 +54,13 @@ public class CaffeineIdempotentRepository extends ServiceSupport implements Idem
     @ManagedAttribute(description = "The processor name")
     public String getCacheName() {
         return cacheName;
+    }
+
+    @Override
+    @ManagedAttribute(description = "Whether the keys are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        // a Caffeine cache lives in the heap of this JVM
+        return true;
     }
 
     @Override

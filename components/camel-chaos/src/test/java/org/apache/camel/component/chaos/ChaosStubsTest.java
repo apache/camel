@@ -50,6 +50,7 @@ class ChaosStubsTest extends ChaosTestSupport {
     private static StubComponent shadow() {
         StubComponent stub = new StubComponent();
         stub.setShadow(true);
+        stub.setDefaultPollTimeout(10);
         return stub;
     }
 

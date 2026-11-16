@@ -85,6 +85,16 @@ keys. Code that walks `getOutputs()` (route dumps, tooling) now sees them, and `
 the outputs, for example with advice-with, is no longer used, and changing the list returned by `getCatchClauses()`
 no longer changes the doTry. Use `setCatchClauses` and `setFinallyClause`, or the outputs, instead.
 
+=== camel-core-model - EIP options given an expression in the Java DSL keep its language
+
+In the Java DSL, `completionSize`, `completionTimeout` and `completionPredicate` of the Aggregate EIP, and `handled`,
+`continued` and `retryWhile` of `onException`, keep an expression made with `simple(...)`, `header(...)` or another
+expression builder as its language and text, as the EIPs that take an expression directly do. Each route created from
+a route template now has its own copy of the expression, so a template parameter in it, such as
+`+completionSize(simple("{{size}}"))+`, takes the value of that route: before, every route used the value of the first
+route created from the template. Route dumps and the JMX attributes of the aggregator (`CompletionSizeExpression`,
+`CompletionSizeExpressionLanguage` and the others) now show the language and the expression.
+
 === camel-ehcache - shared CacheManager and changed defaults
 
 The following user-visible changes take effect in 4.24:
@@ -422,6 +432,23 @@ Before, the refused listing was taken as an empty directory: the polls found no 
 450 and 550 (a directory that is missing or empty) still give an empty listing. If such a consumer now fails, set
 `passiveMode=true`. See the xref:components::ftp-component.adoc[FTP component].
 
+=== camel-ftp - sftp sends the password once per connection, and does not retry a rejected login
+
+The `sftp` component now gives the password to the server once per connection, and no longer connects again when the
+server rejected the login: `maximumReconnectAttempts` applies to the other connection failures only. Before, a wrong
+password was sent up to 6 times per connection (the `MaxAuthTries` of JSch), on up to `maximumReconnectAttempts` (3)
+connections: 18 times per poll of the consumer, and 18 more when the consumer started with `autoCreate=true`, which is
+enough to lock the account on a server with a lockout policy. The consumer now tries again on its next poll, and the
+producer on its next message. When the server asks for the password again on the same connection, the connection
+ends, with the cause `Auth fail for user '<username>': the server did not accept the password`.
+
+The WARN that a consumer of the `ftp`, `ftps`, `sftp` and `mina-sftp` components logs when it cannot connect,
+`Cannot connect/login to: ... Will skip this poll.`, now gives the reason before `Will skip this poll.`, such as
+`due to: Auth fail for methods 'publickey,password'`, on one line. When the consumer connects but cannot create its
+starting directory (`autoCreate=true`), it now logs
+`Cannot auto-create starting directory <directory> at: ... due to: ... Will skip this poll.` instead.
+See the xref:components::sftp-component.adoc[SFTP component].
+
 === camel-kafka - exactlyOnce: a rejected send that a doCatch catches skips the record
 
 With `exactlyOnce`, a Kafka send through the source producer after an earlier send failed in the same transaction is
@@ -440,6 +467,14 @@ once on the calling thread. That failed with a `ConcurrentModificationException`
 consumer thread (for example, after an aggregator).
 A commit called after the partition was revoked from the consumer is not made.
 It would move back the offset that the new owner of the partition committed.
+
+=== camel-kafka - each consumer of consumersCount gets its own group instance id
+
+With `groupInstanceId` (or `additionalProperties.group.instance.id`) and `consumersCount` greater than 1, the consumer
+with index n now joins the group with the id `<groupInstanceId>-n`, for example `pod-1-0`, `pod-1-1` and `pod-1-2`.
+Before, all the consumers used the same id and fenced each other in a loop (`FencedInstanceIdException`). With
+`consumersCount=1` the id is used as given. After the upgrade, the static member with the old id stays in the group
+until its session timeout (`sessionTimeoutMs`) expires.
 
 === camel-jms, camel-sjms, camel-sjms2 - an exception sent back with transferException is not rolled back
 
@@ -461,6 +496,23 @@ With `eagerLoadingOfProperties=true`, a poison message (one whose payload or pro
 the error handler (such as the dead letter channel or `onException`) without redeliveries, with its `eagerPoisonBody`
 body. Before, when the error handler had redeliveries, the first step of the route was redelivered with that body and,
 when it succeeded, the message went on through the route and never reached the error handler.
+
+=== camel-jms - pollEnrich and ConsumerTemplate read the message before they close the session
+
+`pollEnrich` and a `ConsumerTemplate` on a `jms` endpoint now read the body and the headers of the message before they
+close the JMS consumer and session. Before, the body was read when the exchange first used it, after the session was
+closed, so the body of an ActiveMQ Artemis large message failed with `AMQ219023`. A message whose body cannot be read
+(such as an `ObjectMessage` while `objectMessageEnabled` is `false`) now fails the receive itself, and the message is
+rolled back with `transacted=true`, or recovered with `CLIENT_ACKNOWLEDGE`, instead of committed or acknowledged.
+
+=== camel-sjms, camel-sjms2 - pollEnrich and ConsumerTemplate read the message before they close the session
+
+`pollEnrich` and a `ConsumerTemplate` on an `sjms` or `sjms2` endpoint now read the body and the headers of the message
+before they commit the session (or acknowledge the message) and close the JMS consumer, session and connection. Before,
+the body was read when the exchange first used it, after the connection was closed, so the body of an ActiveMQ Artemis
+large message failed with `AMQ219023`. A message whose body cannot be read (such as an `ObjectMessage` while
+`objectMessageEnabled` is `false`) now fails the receive itself, and the message is rolled back with `transacted=true`,
+or recovered with `CLIENT_ACKNOWLEDGE`, instead of committed or acknowledged, and lost.
 
 === camel-keycloak - Keycloak 26.8.2 requires the kc-admin-api client scope
 
@@ -536,6 +588,16 @@ options, as `servlet:` routes do. Before, these options were ignored: with
 read. A custom `httpBinding` set on the component is now used by the Rest DSL consumers when it extends
 `ServletRestHttpBinding`. Any other binding set on the component is still used only by `servlet:` routes, as it does
 not map the path placeholders such as `+{id}+` to headers.
+
+=== camel-http - authMethod=Bearer and authMethod=NTLM are applied
+
+The endpoint options `authMethod=Bearer` and `authBearerToken` now send the token when the server asks for it. Before,
+only a token set in the `httpConfiguration` of the component was sent. With `authenticationPreemptive=true`, the token
+is now sent with the first request; before, the request failed with `IllegalStateException: Bearer token is null`.
+
+`authMethod=NTLM`, on the endpoint or in the `httpConfiguration` of the component, now authenticates with NTLM also
+when `authDomain` is not set. Before, the endpoint answered only Basic and Digest challenges with these credentials,
+and the component did not use them. If the server asks for Basic credentials, remove `authMethod=NTLM`.
 
 === Java
 
@@ -1176,12 +1238,20 @@ must now check the exception of the returned exchange (`exchange.getException()`
 
 The same now applies to an `Error` that is not a `VirtualMachineError` thrown by the expression of a `recipientList`, by
 the expression of a `split` with `synchronous=true` (or while a `multicast` or `recipientList` with `synchronous=true`
-prepares its parts), by the `AggregationStrategy` of a `split`, `multicast` or `recipientList` with `synchronous=true`
-and without `parallelProcessing`, by a data type transformer (`transform` to a data type), and by the producer of a
-component built on the API component framework when it is not thrown by an API method called by reflection (for example
-when the producer creates its client, or calls a client method directly); an `Error` of an API method called by
-reflection already failed the exchange. Before, depending on the error handler, the route continued as if the step had
-succeeded, or the `Error` reached the caller (for the producer of an API component, the `Error` was lost on its thread).
+prepares its parts), by the `AggregationStrategy` of a `split`, `multicast` or `recipientList` (also when its `timeout`
+is called), by the iterator of a `split` with `streaming()`, by a data type transformer (`transform` to a data type),
+and by the producer of a component built on the API component framework when it is not thrown by an API method called
+by reflection (for example when the producer creates its client, or calls a client method directly); an `Error` of an
+API method called by reflection already failed the exchange. Before, depending on the error handler, the route
+continued as if the step had succeeded, or the `Error` reached the caller. An `Error` of the `AggregationStrategy` or
+of the iterator of a streaming `split` (unless the EIP was `synchronous=true` or the exchange transacted, in both cases
+without `parallelProcessing`) reached the caller without the error handler, and the exchange stayed inflight until the
+CamelContext stopped; with `parallelProcessing` (or when the timeout was called) it was lost on a thread of the pool,
+and the caller got no answer. For the producer of an API component, the `Error` was lost on its thread.
+An `Error` of the `onPrepare` processor of a `split`, `multicast` or `recipientList` fails only the part it prepares, as
+an exception does, and the other parts are still sent. Before, no part was sent (for a streaming `split`, no part
+after it). The same applies to an `Error` that a part of a transacted `split`, `multicast` or `recipientList` (without
+`parallelProcessing`) throws to the EIP: before, the parts after it were not sent.
 
 There is no option for the old behaviour. See also
 xref:error-handler.adoc#_an_error_thrown_by_a_processor[An Error thrown by a processor].
@@ -1768,6 +1838,26 @@ section of xref:components::aws2-kinesis-component.adoc[AWS Kinesis].
 `copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`
 and `CamelAzureStorageBlobSourceBlobContainerName`) with an `IllegalArgumentException`.
 
+=== camel-aws2-s3, camel-azure-storage-blob, camel-aws2-sqs - the consumer deletes or moves what it consumed
+
+With `deleteAfterRead` or `moveAfterRead`, the `aws2-s3` and `azure-storage-blob` consumers now delete or move the
+object they consumed, in the bucket or container of the endpoint. Before, they took the key and the bucket from the
+`CamelAwsS3Key` and `CamelAwsS3BucketName` headers, and the name of the blob from the `CamelAzureStorageBlobBlobName`
+header, as the route left them. A route that set these headers, for example to write a copy of the object under
+another name, deleted or moved that copy, and the consumed object was consumed again by the next poll. A route that
+removed them deleted nothing.
+
+The `aws2-sqs` consumer now deletes the message with the receipt handle it received it with. Before, it took the
+`CamelAwsSqsReceiptHandle` header as the route left it, so a route that removed the headers or replaced the message
+did not delete it, and the message was received again after its visibility timeout.
+
+A failure of the `aws2-s3` consumer to delete or move an object that the AWS client raises itself (for example when S3
+cannot be reached) now goes to the exception handler of the consumer, as a failure that S3 answers does.
+
+The consumers now call `processCommit(Exchange, String)` with the key, the name of the blob or the receipt handle. A
+subclass of `AWS2S3Consumer`, `BlobConsumer` or `Sqs2Consumer` that overrides `processCommit(Exchange)` must override
+the new method instead. `processCommit(Exchange)` is deprecated.
+
 === camel-stitch - a response with an empty body, and the default sequence of a message
 
 A response of Stitch with an empty body now sets the `CamelStitchCode`, `CamelStitchStatus` and `CamelStitchHeaders`
@@ -2178,6 +2268,19 @@ the body no longer looks finished: `hasNext()` and `next()` now throw a `Runtime
 `SQLException` as cause, also after the iterator is closed. Before, `hasNext()` returned `false`, so a split that was
 redelivered over the same iterator (an error handler with redeliveries) found no more rows and the exchange succeeded
 with only the rows read before the failure. It now fails once the redeliveries are exhausted.
+
+=== camel-jdbc, camel-spring-jdbc, camel-sql - outputType=StreamList: a row that cannot be mapped to the outputClass keeps failing
+
+With `outputType=StreamList` and `outputClass`, once mapping a row to the `outputClass` has failed (for example, a value
+that does not convert to the type of its property), `hasNext()` and `next()` of the iterator of the body now throw a
+`RuntimeCamelException` with that failure as cause, as after a row that failed to read. The first `next()` throws the
+exception of the mapping, as before. Before, a split that was redelivered over the same iterator went on with the next
+row (camel-jdbc, camel-spring-jdbc), or found no more rows (camel-sql, when the row mapper failed with a
+`RuntimeException`, such as Spring's `TypeMismatchException`), and the exchange succeeded without the row that could not
+be mapped (with camel-sql, without the rows after it either). It now fails once the redeliveries are exhausted.
+
+With camel-jdbc, code that reads the iterator itself and goes on after a row that cannot be mapped now gets this
+exception from `hasNext()`: to skip such rows, read the rows without `outputClass` and map them in the route.
 
 === camel-jdbc, camel-spring-jdbc - outputType=StreamList commits when the exchange is done
 
@@ -5609,6 +5712,8 @@ When a cached shard iterator has expired (an iterator is valid for 5 minutes, so
 longer, or with a `delay` or back-off above 5 minutes), the consumer now continues after the last record it routed
 from that shard. Previously it requested a new iterator of the configured `iteratorType`: with `TRIM_HORIZON` (the
 default) it routed all the records of the shard again, with `LATEST` it skipped the records stored meanwhile.
+With `LATEST`, a shard from which the consumer has not routed a record yet continues from the time the consumer
+started reading that shard.
 
 A shard created by a split or a merge while the consumer is running is now read from its first record, whatever the
 `iteratorType`. Previously, with `LATEST`, the records stored in the new shard before the consumer listed it were
@@ -8681,6 +8786,21 @@ A custom `EmbeddingModel` must implement `embedAll(List<TextSegment>)` (or `doEm
 the LangChain4j models do. A model that only overrides `embed(TextSegment)` is no longer called, and the
 default methods of LangChain4j then fail with a `StackOverflowError`.
 
+=== camel-platform-http-main - the server fails to start when Vert.x cannot use a key of the JWT keystore
+
+Vert.x only uses the keys of a JWT keystore whose alias is the name of a JWT algorithm (`HS256`, `RS256`, `ES256` and
+so on), read with the keystore password. Without such a key, Vert.x ran in unsecured mode and rejected every signed
+token with HTTP 401. The HTTP server and the management server now fail to start with an `IllegalArgumentException`
+when `camel.server.jwtKeystorePath` or `camel.management.jwtKeystorePath` points to a keystore that has no such key,
+or that cannot be found or loaded.
+
+Rename the alias of the key to the algorithm of the key, for example `RS256` for an RSA key:
+
+[source,bash]
+----
+keytool -changealias -alias keycloak -destalias RS256 -keystore keycloak-realm.p12 -storetype PKCS12
+----
+
 === Jackson 3
 
 Camel 4.24 moves its own code to Jackson 3 (`tools.jackson`, version 3.2). The `camel-jackson`, `camel-jacksonxml`,
@@ -9123,6 +9243,14 @@ not pass a language on; a language header alone turns OCR on, unless the endpoin
 The language itself is passed to docling untouched, in both forms: it is docling's own identifier (language codes such
 as `en,de`, BCP-47 tags such as `iso:zh-Hant`, or `script/Latin`), and docling validates it.
 
+=== camel-spiffe - SpiffeSecurityPolicy reads the TLS peer from servlet, Undertow and Vert.x consumers
+
+`SpiffeSecurityPolicy` now recognizes authenticated TLS peer certificates supplied by servlet/Jetty, Undertow,
+Netty HTTP and Vert.x platform HTTP consumers through a typed exchange property. When that property is present,
+it takes precedence over `sslSessionHeader`; an unverified peer fails closed even if a legacy session header is
+present. Consumers without the property retain the existing session-header behavior. Mutual TLS must still be
+configured at the consuming server; forwarded certificate and identity headers do not establish a verified peer.
+
 === camel-influxdb2 - the retentionPolicy option and the camelInfluxDB.RetentionPolicy header are deprecated
 
 Neither has ever had any effect. A retention policy is an InfluxDB 1.x concept: its write API takes one per write, and
@@ -9240,6 +9368,44 @@ file's content. The offset is now honoured in full, and an `EOFException` is thr
 If your offsets can go stale, note that by default (without `moveFailed`) the failing exchange leaves the file in place, so the next poll reads the same
 offset from the resume store and fails again. Clear or reset the recorded offset for that file - or delete the resume
 store entry - to let it be consumed from the start again.
+
+=== camel-keycloak - 11 documented headers are deprecated
+
+Eleven of the headers the component documents are never read by it. A route that sets one gets no error and no effect,
+because the producer takes the value from somewhere else:
+
+[cols="1,1"]
+|===
+| Header | Where the value comes from instead
+
+| `CamelKeycloakRoleId`
+| the role operations address a role by its name, `CamelKeycloakRoleName`
+
+| `CamelKeycloakIdpId`
+| the identity provider operations address a provider by its alias, `CamelKeycloakIdpAlias`
+
+| `CamelKeycloakResourceName`, `CamelKeycloakResourceType`, `CamelKeycloakResourceUri`
+| `createResource` and `updateResource` take a `ResourceRepresentation` as the POJO request body
+
+| `CamelKeycloakPolicyName`, `CamelKeycloakPolicyType`
+| the policy operations take a `PolicyRepresentation` as the POJO request body
+
+| `CamelKeycloakPermissionName`
+| `createResourcePermission` takes a `ResourcePermissionRepresentation`, and the other permission operations identify
+the permission with `CamelKeycloakPermissionId`
+
+| `CamelKeycloakScopeName`
+| there are no authorization-scope operations; the client scope operations use `CamelKeycloakClientScopeName`
+
+| `CamelKeycloakCredentialType`
+| no credential operation takes a `CredentialRepresentation` request body: `deleteUserCredential` uses
+`CamelKeycloakCredentialId`, and `resetUserPassword` builds a password credential from `CamelKeycloakUserPassword`
+
+| `CamelKeycloakBatchSize`
+| the bulk operations send every element of the list one by one, with no batching
+|===
+
+Each is now deprecated, with a `deprecationNote` carrying the same information.
 
 === camel-docker - the loggingFilter and followRedirectFilter options are deprecated
 
