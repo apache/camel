@@ -583,9 +583,10 @@ public final class ExampleHelper {
         return tempDir;
     }
 
-    private static String downloadFile(HttpClient hc, String url, Duration timeout) throws Exception {
+    private static String downloadFile(HttpClient hc, String url, Duration timeout)
+            throws IOException, InterruptedException {
         // sendAsync + get(timeout) bounds the content too; HttpRequest.timeout() only bounds the headers
-        var future = hc.sendAsync(HttpRequest.newBuilder(new URI(url)).timeout(timeout).build(),
+        var future = hc.sendAsync(HttpRequest.newBuilder(URI.create(url)).timeout(timeout).build(),
                 HttpResponse.BodyHandlers.ofString());
         HttpResponse<String> res;
         try {
