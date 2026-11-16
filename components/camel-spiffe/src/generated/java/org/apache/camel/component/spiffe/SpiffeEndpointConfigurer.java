@@ -28,7 +28,7 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowOperationHeader": target.getConfiguration().setAllowOperationHeader(property(camelContext, boolean.class, value)); return true;
         case "audience": target.getConfiguration().setAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "healthcheckexpirythreshold":
-        case "healthCheckExpiryThreshold": target.getConfiguration().setHealthCheckExpiryThreshold(property(camelContext, long.class, value)); return true;
+        case "healthCheckExpiryThreshold": target.getConfiguration().setHealthCheckExpiryThreshold(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "localspiffeid":

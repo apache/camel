@@ -69,29 +69,31 @@ class SpiffeProducerHealthCheckTest {
     }
 
     @Test
-    void disconnectRetainsMaterialMetadataAndRecoveryUpdatesItWithoutPublishingFailureDetails() throws Exception {
+    void failedWatchStaysDownAndRetainsMaterialMetadataWithoutPublishingFailureDetails() throws Exception {
         MutableClock clock = new MutableClock();
         SpiffeProducerHealthCheck check = check(SpiffeOperation.fetchX509Svid, clock);
         WorkloadApiClient client = mock(WorkloadApiClient.class);
         check.observe(client);
         Watcher<X509Context> watcher = x509Watcher(client);
         watcher.onUpdate(x509(NOW.plusSeconds(120)));
+        // the SDK calls onError only for an error it does not retry, and then cancels the watch for good
         watcher.onError(new IllegalStateException("credential-must-not-appear"));
 
-        HealthCheck.Result disconnected = check.call();
-        assertThat(disconnected.getState()).isEqualTo(HealthCheck.State.DOWN);
-        assertThat(disconnected.getDetails()).containsEntry("spiffe.connection", "disconnected")
+        HealthCheck.Result failed = check.call();
+        assertThat(failed.getState()).isEqualTo(HealthCheck.State.DOWN);
+        assertThat(failed.getDetails()).containsEntry("spiffe.watch", "failed")
                 .containsEntry("spiffe.materialValid", true)
                 .containsEntry("spiffe.lastUpdate", NOW.toString());
-        assertThat(disconnected.getError()).isEmpty();
-        assertThat(disconnected.getMessage().orElse("")).doesNotContain("credential-must-not-appear");
-        assertThat(disconnected.getDetails().toString()).doesNotContain("credential-must-not-appear");
+        assertThat(failed.getError()).isEmpty();
+        assertThat(failed.getMessage().orElse("")).contains("until the route restarts")
+                .doesNotContain("credential-must-not-appear");
+        assertThat(failed.getDetails().toString()).doesNotContain("credential-must-not-appear");
 
-        clock.now = NOW.plusSeconds(30);
-        watcher.onUpdate(x509(NOW.plusSeconds(240)));
-        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.UP);
-        assertThat(check.call().getDetails()).containsEntry("spiffe.lastUpdate", clock.now.toString())
-                .containsEntry("spiffe.expiry", NOW.plusSeconds(240).toString());
+        // no update follows a failed watch; time passing only makes the retained material expire
+        clock.now = NOW.plusSeconds(121);
+        assertThat(check.call().getState()).isEqualTo(HealthCheck.State.DOWN);
+        assertThat(check.call().getDetails()).containsEntry("spiffe.watch", "failed")
+                .containsEntry("spiffe.materialValid", false);
     }
 
     @Test
@@ -106,7 +108,7 @@ class SpiffeProducerHealthCheckTest {
         watcher.onUpdate(x509(NOW.plusSeconds(120)));
         watcher.onError(new IllegalStateException("late error"));
         assertThat(check.call().getState()).isEqualTo(HealthCheck.State.DOWN);
-        assertThat(check.call().getDetails()).containsEntry("spiffe.connection", "stopped")
+        assertThat(check.call().getDetails()).containsEntry("spiffe.watch", "stopped")
                 .doesNotContainKeys("spiffe.expiry", "spiffe.lastUpdate");
     }
 

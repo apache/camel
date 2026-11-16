@@ -40,7 +40,7 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckexpirythreshold":
-        case "healthCheckExpiryThreshold": getOrCreateConfiguration(target).setHealthCheckExpiryThreshold(property(camelContext, long.class, value)); return true;
+        case "healthCheckExpiryThreshold": getOrCreateConfiguration(target).setHealthCheckExpiryThreshold(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":

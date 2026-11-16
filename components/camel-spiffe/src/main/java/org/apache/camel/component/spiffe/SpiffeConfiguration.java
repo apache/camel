@@ -46,7 +46,7 @@ public class SpiffeConfiguration implements Cloneable {
     @UriParam(label = "security", defaultValue = "false", security = "insecure:dev")
     private boolean allowOperationHeader;
 
-    @UriParam(label = "health", defaultValue = "60000")
+    @UriParam(label = "health", defaultValue = "60000", javaType = "java.time.Duration")
     private long healthCheckExpiryThreshold = 60000;
 
     @UriParam(label = "advanced",

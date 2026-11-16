@@ -37,6 +37,10 @@ public final class SpiffeProducerHealthCheck extends AbstractHealthCheck impleme
     private final Clock clock;
     private final AtomicReference<Observation> observation
             = new AtomicReference<>(new Observation("not-started", false, null, null, null));
+    // the watch states: not-started, starting, watching (the SDK delivers updates), failed (the SDK gave the watch up
+    // after a non-retryable error and delivers nothing more until the route restarts) and stopped. An unreachable agent
+    // is not a state: the SDK reconnects on its own without telling the watcher, so it shows up only as an identity
+    // that is no longer refreshed and comes close to its expiry
 
     public SpiffeProducerHealthCheck(String id, SpiffeOperation operation, long expiryThreshold) {
         this(id, operation, expiryThreshold, Clock.systemUTC());
@@ -53,7 +57,7 @@ public final class SpiffeProducerHealthCheck extends AbstractHealthCheck impleme
     }
 
     void observe(WorkloadApiClient client) {
-        observation.set(new Observation("connecting", false, null, null, null));
+        observation.set(new Observation("starting", false, null, null, null));
         if (x509) {
             client.watchX509Context(new Watcher<>() {
                 @Override
@@ -100,17 +104,17 @@ public final class SpiffeProducerHealthCheck extends AbstractHealthCheck impleme
 
     private void record(boolean material, Instant validFrom, Instant expiry) {
         Instant now = clock.instant();
-        observation.updateAndGet(previous -> previous.connection().equals("stopped")
+        observation.updateAndGet(previous -> previous.watch().equals("stopped")
                 ? previous
-                : new Observation("connected", material, validFrom, expiry, now));
+                : new Observation("watching", material, validFrom, expiry, now));
     }
 
     void unavailable() {
         // Exception text can contain request details. Retain no exception, credential, certificate or key material.
-        observation.updateAndGet(previous -> previous.connection().equals("stopped")
+        observation.updateAndGet(previous -> previous.watch().equals("stopped")
                 ? previous
                 : new Observation(
-                        "disconnected", previous.material(), previous.validFrom(), previous.expiry(), previous.lastUpdate()));
+                        "failed", previous.material(), previous.validFrom(), previous.expiry(), previous.lastUpdate()));
     }
 
     @Override
@@ -118,7 +122,7 @@ public final class SpiffeProducerHealthCheck extends AbstractHealthCheck impleme
         Observation current = observation.get();
         Instant now = clock.instant();
         builder.detail("spiffe.observation", x509 ? "x509-identity" : "jwt-bundles");
-        builder.detail("spiffe.connection", current.connection());
+        builder.detail("spiffe.watch", current.watch());
         builder.detail("spiffe.materialAvailable", current.material());
         if (current.lastUpdate() != null) {
             builder.detail("spiffe.lastUpdate", current.lastUpdate().toString());
@@ -136,9 +140,11 @@ public final class SpiffeProducerHealthCheck extends AbstractHealthCheck impleme
         if (x509) {
             builder.detail("spiffe.materialValid", materialValid);
         }
-        if (!current.connection().equals("connected")) {
+        if (!current.watch().equals("watching")) {
             builder.down();
-            builder.message("SPIFFE Workload API observer is " + current.connection());
+            builder.message(current.watch().equals("failed")
+                    ? "The SPIFFE Workload API watch failed and delivers no more updates until the route restarts"
+                    : "The SPIFFE Workload API watch is " + current.watch());
         } else if (!materialValid) {
             builder.down();
             builder.message("No usable SPIFFE " + (x509 ? "X.509 identity" : "JWT bundles") + " observed");
@@ -155,6 +161,6 @@ public final class SpiffeProducerHealthCheck extends AbstractHealthCheck impleme
         observation.set(new Observation("stopped", false, null, null, null));
     }
 
-    private record Observation(String connection, boolean material, Instant validFrom, Instant expiry, Instant lastUpdate) {
+    private record Observation(String watch, boolean material, Instant validFrom, Instant expiry, Instant lastUpdate) {
     }
 }

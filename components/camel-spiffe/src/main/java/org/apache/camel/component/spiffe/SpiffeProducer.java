@@ -17,7 +17,7 @@
 package org.apache.camel.component.spiffe;
 
 import java.util.Arrays;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.svid.jwtsvid.JwtSvid;
@@ -34,7 +34,8 @@ import org.apache.camel.util.ObjectHelper;
 public class SpiffeProducer extends DefaultProducer {
     private final SpiffeId localSpiffeId;
 
-    private final String healthId = UUID.randomUUID().toString();
+    /** Several producers of one endpoint register one check each; the id names the endpoint and numbers them. */
+    private static final AtomicInteger HEALTH_CHECK_IDS = new AtomicInteger();
     private WritableHealthCheckRepository healthCheckRepository;
     private SpiffeProducerHealthCheck producerHealthCheck;
     private WorkloadApiClient healthClient;
@@ -61,7 +62,8 @@ public class SpiffeProducer extends DefaultProducer {
                 getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
         if (healthCheckRepository != null) {
             producerHealthCheck = new SpiffeProducerHealthCheck(
-                    healthId, configuration.getOperation(), configuration.getHealthCheckExpiryThreshold());
+                    getEndpoint().getId() + "-" + HEALTH_CHECK_IDS.incrementAndGet(), configuration.getOperation(),
+                    configuration.getHealthCheckExpiryThreshold());
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(producerHealthCheck);
             if (healthCheckRepository.isEnabled() && producerHealthCheck.isEnabled()) {

@@ -84,7 +84,7 @@ class SpiffeHealthCheckRegistrationTest {
             try {
                 producer.start();
                 assertThat(repository.stream().findFirst().orElseThrow().call().getDetails())
-                        .containsEntry("spiffe.connection", "disconnected");
+                        .containsEntry("spiffe.watch", "failed");
                 verify(observer).close();
             } finally {
                 producer.stop();
@@ -147,7 +147,7 @@ class SpiffeHealthCheckRegistrationTest {
                 repository.setEnabled(true);
                 assertThat(repository.stream().toList()).hasSize(1);
                 assertThat(repository.stream().findFirst().orElseThrow().call().getDetails())
-                        .containsEntry("spiffe.connection", "not-started");
+                        .containsEntry("spiffe.watch", "not-started");
             } finally {
                 producer.stop();
                 endpoint.stop();
