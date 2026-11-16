@@ -22,22 +22,21 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class JWTKeystoreAliasesTest {
 
     @Test
     void noWarningForAnAliasNamedAfterAnAlgorithm() throws Exception {
         // a PKCS12 keystore stores the alias in lower case, as hs256
-        assertNull(JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("HS256"), "camel.server", "keystore.p12"));
+        assertThat(JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("HS256"), "camel.server",
+                "keystore.p12")).isNull();
     }
 
     @Test
     void noWarningWhenOneOfTheAliasesIsNamedAfterAnAlgorithm() throws Exception {
-        assertNull(JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("keycloak", "HS512"),
-                "camel.server", "keystore.p12"));
+        assertThat(JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("keycloak", "HS512"),
+                "camel.server", "keystore.p12")).isNull();
     }
 
     @Test
@@ -45,11 +44,8 @@ class JWTKeystoreAliasesTest {
         String warning = JWTAuthenticationConfigurer.checkJwtKeystoreAliases(keyStoreWith("keycloak"),
                 "camel.management", "keystore.p12");
 
-        assertNotNull(warning);
-        assertTrue(warning.contains("camel.management.jwtKeystorePath"), warning);
-        assertTrue(warning.contains("keycloak"), warning);
-        assertTrue(warning.contains("RS256"), warning);
-        assertTrue(warning.contains("keystore.p12"), warning);
+        assertThat(warning).isNotNull()
+                .contains("keystore.p12", "camel.management.jwtKeystorePath", "keycloak", "RS256");
     }
 
     private static KeyStore keyStoreWith(String... aliases) throws Exception {
