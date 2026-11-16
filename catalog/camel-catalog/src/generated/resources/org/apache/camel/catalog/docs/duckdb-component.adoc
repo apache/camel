@@ -56,7 +56,7 @@ The producer supports:
 * `execute` (default) — run DDL/DML that returns no rows
 * `query` — run a SELECT and return rows as `List<Map>` (default) or JSON (`resultFormat=JSON`)
 * `insert` — insert a `List` of `Map` rows into `table`
-* `copy` — bulk load from a `File`, a `Path` or a path as `String` (or bytes) using DuckDB `read_csv` / `read_parquet` / `read_json`
+* `copy` — bulk load one local file, from a `File`, a `Path` or a path as `String` (or bytes), using DuckDB `read_csv` / `read_parquet` / `read_json`
 * `ping` — `SELECT 1` connectivity check; sets `CamelDuckDbPingOk`
 
 The SQL for `execute` and `query` is taken from the `CamelDuckDbQuery` header, else from the `query` option, else
@@ -67,6 +67,52 @@ A statement that returns rows fails with `execute`, and a statement that returns
 
 The endpoint reuses one JDBC connection for its configured `databasePath` / `jdbcUrl` and serializes access for
 thread safety. Prefer a shared `DataSource` when you need concurrent producers.
+
+== Copy sources
+
+The `copy` operation gives the path from the message body to the DuckDB `read_csv`, `read_parquet` or `read_json`
+function. DuckDB reads a value that starts with a URL scheme (such as `https://` or `s3://`) as a remote file, and
+expands a value with glob pattern characters (`*`, `?`, `[` or `{`) to all the matching files. So by default `copy`
+loads a single local file, and fails with an `IllegalArgumentException` that names the option to set otherwise:
+
+* `allowUrlCopySource=true` passes a source with a URL scheme to DuckDB as it is.
+* `allowGlobCopySource=true` loads all the files that a glob pattern matches. This also applies to a `File` or
+  `Path` body whose name has one of these characters.
+* `copyBaseDirectory` sets the directory that a local source must be inside, after resolving symbolic links. A
+  relative source is resolved against this directory, and for a glob pattern the directory before the first glob
+  character must be inside it.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:load")
+    .to("duckdb:warehouse.db?operation=copy&table=staging&allowGlobCopySource=true&copyBaseDirectory=/data/incoming");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:load
+      steps:
+        - to:
+            uri: duckdb:warehouse.db
+            parameters:
+              operation: copy
+              table: staging
+              allowGlobCopySource: true
+              copyBaseDirectory: /data/incoming
+----
+====
+
+These options apply to `copy` only. The SQL of `execute` and `query` can call the read functions itself; to have
+DuckDB restrict file and network access for every statement, configure the DuckDB settings
+`enable_external_access`, `allowed_directories` and `autoinstall_known_extensions` (see the DuckDB documentation).
 
 == Headers that override the endpoint
 
