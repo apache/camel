@@ -314,6 +314,76 @@ You can set a reference to a `DataSource` in the URI directly:
 sql:select * from table where id=# order by name?dataSource=#myDS
 ----
 
+==== Noticing a dead or silent database
+
+The SQL component has no network timeout of its own: how long a poll or a send waits for a database that stopped
+answering depends on the JDBC driver and the connection pool of the `DataSource`. The durations below describe how
+those libraries behave by default; they are approximate, not guarantees of Camel.
+
+*Set the driver's socket timeout.* The common JDBC drivers have no read timeout by default. A statement on a
+connection that went silent (the database host is gone, or a firewall or NAT dropped the connection without a reset)
+waits in a socket read, with no error and nothing logged, until the operating system gives up on the connection:
+on Linux about 15 minutes when the request was not acknowledged, and never when it was and TCP keep-alive is off.
+Meanwhile the consumer's xref:manual::health-check.adoc[health check] stays UP, because it counts only the polls that
+failed.
+
+A socket timeout ends such a read with an error: the poll fails and is retried at the next poll, or the producer
+fails and the error handler can redeliver. Set it longer than your slowest statement:
+
+[cols="2,2,1,1"]
+|===
+| Driver | Property | Unit | Default
+
+| PostgreSQL (pgjdbc) | `socketTimeout` | seconds | 0 (no timeout)
+| MySQL Connector/J | `socketTimeout` | milliseconds | 0 (no timeout)
+| MariaDB Connector/J | `socketTimeout` | milliseconds | 0 (no timeout)
+| Microsoft SQL Server (mssql-jdbc) | `socketTimeout` | milliseconds | 0 (no timeout)
+| Oracle (thin driver) | `oracle.jdbc.ReadTimeout` | milliseconds | not set (no timeout)
+|===
+
+Set it in the JDBC URL, for example `jdbc:postgresql://db:5432/orders?socketTimeout=30`, or as a driver property of
+the pool:
+
+* Spring Boot with HikariCP: `spring.datasource.hikari.data-source-properties.socketTimeout=30`
+* Quarkus 3.36 or later: `quarkus.datasource.jdbc.read-timeout=30S` sets the property of the database kind; with an
+older Quarkus, `quarkus.datasource.jdbc.additional-jdbc-properties.socketTimeout=30` (PostgreSQL).
+
+*Let the pool drop broken connections.* After a socket timeout or a reset the connection is broken, and the pool must
+not hand it out again:
+
+* HikariCP does it by default: it checks a connection with `Connection.isValid()` (bounded by `validationTimeout`,
+5 seconds) when the connection is borrowed after more than 500 ms idle, and evicts a connection whose error has an
+SQLState of class `08` (connection exception).
+* Quarkus configures Agroal with a `Connection.isValid()` validator, a background validation every 2 minutes, the
+exception sorter of the database kind, and an acquisition timeout of 5 seconds.
+* Agroal used directly has no validator and no exception sorter by default: a broken connection goes back to the pool
+and fails each statement it is given again. Its default `acquisitionTimeout` of 0 waits forever when the pool is
+exhausted. Configure them:
++
+._Java-only: an Agroal pool that drops broken PostgreSQL connections_
+[source,java]
+----
+AgroalDataSource ds = AgroalDataSource.from(new AgroalDataSourceConfigurationSupplier()
+        .connectionPoolConfiguration(pool -> pool
+                .maxSize(10)
+                .acquisitionTimeout(Duration.ofSeconds(5))
+                .connectionValidator(ConnectionValidator.defaultValidatorWithTimeout(5))
+                .validationTimeout(Duration.ofMinutes(1)) // interval of the background validation
+                .exceptionSorter(new PostgreSQLExceptionSorter())
+                .connectionFactoryConfiguration(cf -> cf
+                        .jdbcUrl("jdbc:postgresql://db:5432/orders")
+                        .jdbcProperty("socketTimeout", "30")
+                        .principal(new NamePrincipal("app"))
+                        .credential(new SimplePassword("secret")))));
+----
+* Spring `SingleConnectionDataSource` keeps one connection and fails every call once that connection is closed: it
+never recovers, so keep it for tests.
+
+*Starting while the database is down.* `new HikariDataSource(hikariConfig)` opens a connection in the constructor and
+throws when the database cannot be reached, so the application does not start. Set `initializationFailTimeout` to
+`-1` on the `HikariConfig`, or create the pool with the no-argument constructor and its setters (as Spring Boot
+does): the pool then connects on first use, and the consumer polls again until the database is back.
+
 === Using named parameters
 
 In the given route below, we want to get all the projects from the
