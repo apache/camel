@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.support.service.ServiceSupport;
@@ -41,7 +42,8 @@ import org.apache.camel.support.service.ServiceSupport;
           description = "A memory based AggregationRepository which stores Exchange in memory only.",
           annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
-public class MemoryAggregationRepository extends ServiceSupport implements OptimisticLockingAggregationRepository {
+public class MemoryAggregationRepository extends ServiceSupport
+        implements OptimisticLockingAggregationRepository, InMemoryStrategy {
     private final ConcurrentMap<String, Exchange> cache = new ConcurrentHashMap<>();
 
     @Metadata(description = "Whether to use optimistic locking")
@@ -53,6 +55,11 @@ public class MemoryAggregationRepository extends ServiceSupport implements Optim
 
     public MemoryAggregationRepository(boolean optimisticLocking) {
         this.optimisticLocking = optimisticLocking;
+    }
+
+    @Override
+    public boolean isInMemory() {
+        return true;
     }
 
     public boolean isOptimisticLocking() {

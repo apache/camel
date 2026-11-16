@@ -25,7 +25,6 @@ more than one bean of this type, then Camel will *not* use it.
 |`Delayer` |0..1 |To use a third-party xref:components:eips:delay-eip.adoc[Delayer].
 |`EventFactory` |0..1 |To use a third-party event factory.
 |`ExecutorServiceManager` |0..1 |To use a third-party executor service manager. More details at xref:threading-model.adoc[Threading Model].
-|`ExecutorServiceStrategy` |0..1 |To use a third-party executor service strategy. More details at xref:threading-model.adoc[Threading Model].
 |`FactoryFinderResolver` |0..1 |To use a third-party factory finder.
 |`HeadersMapFactory` |0..1|To use a third-party HeadersMapFactory implementation.
 |`HealthCheckRegistry` |0..1|To use a third-party xref:health-check.adoc[HealthCheckRegistry] implementation.

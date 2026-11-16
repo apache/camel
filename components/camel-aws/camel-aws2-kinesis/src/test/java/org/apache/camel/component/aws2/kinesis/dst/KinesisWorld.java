@@ -74,11 +74,10 @@ import org.apache.camel.test.dst.Invariants;
  * the checkpoint, which is the last completed exchange, so a record routed after it that did not complete (it failed)
  * may be routed again by the same consumer.
  * <p>
- * Also excused, unless {@code -Ddst.kinesis.strictLatest=true}: with iteratorType=LATEST, when the iterator of a shard
- * of the first shard list from which the consumer has not routed a record yet expires, the consumer has no sequence
- * number to continue from and asks for a LATEST iterator again, which skips the records stored since its previous
- * iterator (for example while the route was suspended for more than five minutes). This is CAMEL-26968. The default set
- * accepts this; {@code -Ddst.kinesis.strictLatest=true} counts those records as missing.
+ * With iteratorType=LATEST, when the iterator of a shard of the first shard list from which the consumer has not routed
+ * a record yet expires (for example while the route was suspended for more than five minutes), the consumer continues
+ * from the time of its first LATEST iterator of that shard (CAMEL-26968), so the records stored since then count as
+ * missing if they are not routed.
  * <p>
  * Not explored: a route stop while a poll runs (see above), the KCL consumer (useKclConsumers), the asynchronous
  * client, a configured shardId, AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER and AT_TIMESTAMP as the configured iterator
