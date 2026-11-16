@@ -26,6 +26,10 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import dev.openfga.sdk.api.client.model.ClientBatchCheckClientResponse;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckItem;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckRequest;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckResponse;
+import dev.openfga.sdk.api.client.model.ClientBatchCheckSingleResponse;
 import dev.openfga.sdk.api.client.model.ClientCheckRequest;
 import dev.openfga.sdk.api.client.model.ClientExpandRequest;
 import dev.openfga.sdk.api.client.model.ClientExpandResponse;
@@ -40,6 +44,7 @@ import dev.openfga.sdk.api.client.model.ClientRelationshipCondition;
 import dev.openfga.sdk.api.client.model.ClientTupleKey;
 import dev.openfga.sdk.api.client.model.ClientTupleKeyWithoutCondition;
 import dev.openfga.sdk.api.configuration.ClientBatchCheckClientOptions;
+import dev.openfga.sdk.api.configuration.ClientBatchCheckOptions;
 import dev.openfga.sdk.api.configuration.ClientExpandOptions;
 import dev.openfga.sdk.api.configuration.ClientListObjectsOptions;
 import dev.openfga.sdk.api.configuration.ClientListRelationsOptions;
@@ -183,6 +188,17 @@ public class OpenFgaProducer extends DefaultProducer {
             return;
         }
 
+        List<String> allowed = getEndpoint().getConfiguration().getBatchCheckMode() == OpenFgaBatchCheckMode.server
+                ? serverBatchCheck(exchange, authorizer, requests)
+                : clientBatchCheck(exchange, authorizer, requests, objects, user, relation);
+        exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, !allowed.isEmpty());
+        exchange.getMessage().setBody(allowed);
+    }
+
+    private List<String> clientBatchCheck(
+            Exchange exchange, OpenFgaAuthorizer authorizer, List<ClientCheckRequest> requests,
+            List<String> objects, String user, String relation)
+            throws Exception {
         int maxParallelRequests = getEndpoint().getConfiguration().getMaxParallelRequests();
         ClientBatchCheckClientOptions options = new ClientBatchCheckClientOptions()
                 .maxParallelRequests(maxParallelRequests);
@@ -223,8 +239,59 @@ public class OpenFgaProducer extends DefaultProducer {
                 allowed.add(object);
             }
         }
-        exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, !allowed.isEmpty());
-        exchange.getMessage().setBody(allowed);
+        return allowed;
+    }
+
+    private List<String> serverBatchCheck(Exchange exchange, OpenFgaAuthorizer authorizer, List<ClientCheckRequest> requests)
+            throws Exception {
+        List<ClientBatchCheckItem> checks = new ArrayList<>(requests.size());
+        Set<String> pending = new HashSet<>();
+        for (int i = 0; i < requests.size(); i++) {
+            ClientCheckRequest request = requests.get(i);
+            String correlation = Integer.toString(i);
+            pending.add(correlation);
+            checks.add(new ClientBatchCheckItem().user(request.getUser()).relation(request.getRelation())
+                    ._object(request.getObject()).context(request.getContext()).contextualTuples(request.getContextualTuples())
+                    .correlationId(correlation));
+        }
+        OpenFgaConfiguration configuration = getEndpoint().getConfiguration();
+        int batchSize = configuration.getMaxBatchSize();
+        ClientBatchCheckOptions options = new ClientBatchCheckOptions()
+                .maxBatchSize(batchSize).maxParallelRequests(configuration.getMaxParallelRequests());
+        applyModelAndConsistency(authorizer, options::authorizationModelId, options::consistency);
+        // The SDK chunks checks into native BatchCheck requests. Budget for waves of chunks, rather than for
+        // either one request or one request per object, retaining the bounded wait used by client-side batches.
+        int chunks = (int) ((requests.size() + (long) batchSize - 1) / batchSize);
+        ClientBatchCheckResponse response = authorizer.await(exchange, "batch check " + requests.size() + " objects",
+                () -> authorizer.getClient().batchCheck(new ClientBatchCheckRequest().checks(checks), options),
+                authorizer.batchAwaitTimeoutMillis(chunks, configuration.getMaxParallelRequests()));
+        if (response == null || response.getResult() == null) {
+            throw new OpenFgaEvaluationException("OpenFGA returned no batch check results", exchange, null);
+        }
+        Set<String> permitted = new HashSet<>();
+        for (ClientBatchCheckSingleResponse result : response.getResult()) {
+            if (result == null || !pending.remove(result.getCorrelationId())) {
+                throw new OpenFgaEvaluationException("OpenFGA returned an unexpected batch check correlation", exchange, null);
+            }
+            if (result.getError() != null) {
+                throw new OpenFgaEvaluationException(
+                        "OpenFGA failed to answer part of a batch check", exchange,
+                        new IllegalStateException(result.getError().getMessage()));
+            }
+            if (result.isAllowed()) {
+                permitted.add(result.getCorrelationId());
+            }
+        }
+        if (!pending.isEmpty()) {
+            throw new OpenFgaEvaluationException("OpenFGA returned an incomplete batch check", exchange, null);
+        }
+        List<String> allowed = new ArrayList<>();
+        for (int i = 0; i < requests.size(); i++) {
+            if (permitted.contains(Integer.toString(i))) {
+                allowed.add(requests.get(i).getObject());
+            }
+        }
+        return allowed;
     }
 
     /**

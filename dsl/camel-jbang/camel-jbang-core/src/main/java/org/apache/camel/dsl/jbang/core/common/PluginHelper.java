@@ -49,7 +49,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.run.common.Printer;
@@ -386,8 +385,9 @@ public final class PluginHelper {
             return activePlugins;
         }
         if (config != null) {
-            CamelCatalog catalog = new DefaultCamelCatalog();
-            String version = catalog.getCatalogVersion();
+            // no local of the interface type: the verifier would load CamelCatalog when it loads this class, and its JAR
+            // is far down the class path of the distribution
+            String version = new DefaultCamelCatalog().getCatalogVersion();
             JsonObject plugins = config.getMap("plugins");
             if (plugins == null) {
                 return activePlugins;
@@ -1206,8 +1206,7 @@ public final class PluginHelper {
                 // Check version compatibility if needed
                 CamelJBangPlugin annotation = pluginClass.getAnnotation(CamelJBangPlugin.class);
                 if (annotation != null) {
-                    CamelCatalog catalog = new DefaultCamelCatalog();
-                    String version = catalog.getCatalogVersion();
+                    String version = new DefaultCamelCatalog().getCatalogVersion();
                     String firstVersion = annotation.firstVersion();
                     if (!version.isBlank() && !firstVersion.isBlank()) {
                         PluginHelper.versionCheck(main, version, firstVersion, command);

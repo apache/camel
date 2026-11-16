@@ -43,6 +43,7 @@ class ChaosFeedTest extends ChaosTestSupport {
         context.addComponent("testpoll", poll);
         StubComponent stub = new StubComponent();
         stub.setShadow(true);
+        stub.setDefaultPollTimeout(10);
         // remotemq is remote by its JSON (in the test resources), served by a stub as camel run --stub=remote does
         context.addComponent("remotemq", stub);
         return context;

@@ -41,6 +41,7 @@ import org.apache.camel.component.a2a.model.TaskState;
 import org.apache.camel.component.a2a.model.TaskStatus;
 import org.apache.camel.component.a2a.model.TaskStatusUpdateEvent;
 import org.apache.camel.component.a2a.util.WebhookUrlValidator;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * removes all expired terminal tasks as a backup mechanism.</li>
  * </ul>
  */
-public class InMemoryTaskStore implements A2ATaskStore {
+public class InMemoryTaskStore implements A2ATaskStore, InMemoryStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryTaskStore.class);
 
@@ -78,6 +79,11 @@ public class InMemoryTaskStore implements A2ATaskStore {
     private volatile int maxStoredTasks = 10000;
     private volatile int cleanupInterval = 100;
     private volatile boolean allowLocalWebhookUrls;
+
+    @Override
+    public boolean isInMemory() {
+        return true;
+    }
 
     // ---- Configuration ----
 

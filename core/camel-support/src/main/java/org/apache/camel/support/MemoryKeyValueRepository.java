@@ -30,6 +30,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
@@ -49,7 +50,7 @@ import org.apache.camel.support.service.ServiceSupport;
           annotations = { "interfaceName=org.apache.camel.spi.KeyValueRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Memory based key-value repository")
-public class MemoryKeyValueRepository extends ServiceSupport implements KeyValueRepository {
+public class MemoryKeyValueRepository extends ServiceSupport implements KeyValueRepository, InMemoryStrategy {
 
     private final ConcurrentHashMap<String, Entry> store = new ConcurrentHashMap<>();
 
@@ -183,6 +184,12 @@ public class MemoryKeyValueRepository extends ServiceSupport implements KeyValue
     public int size() {
         evictExpired();
         return store.size();
+    }
+
+    @Override
+    @ManagedAttribute(description = "Whether the entries are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return true;
     }
 
     @Override

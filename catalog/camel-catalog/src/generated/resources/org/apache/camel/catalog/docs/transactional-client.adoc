@@ -195,6 +195,11 @@ xref:ROOT:sql-component.adoc[SQL] and xref:ROOT:spring-jdbc-component.adoc[Sprin
 the transaction, as they get their connections through Spring. The xref:ROOT:jdbc-component.adoc[JDBC] component
 takes its connections from the `DataSource` directly, so it does not.
 
+With two or more transaction managers, a route with `transacted` and no transaction policy fails to start, as Camel
+does not choose one of them (in a Spring application context, it uses the `@Primary` one). Refer to a
+`SpringTransactionPolicy` that has the transaction manager to use, as with `transacted("txRequired")` in the next
+section.
+
 === Using different transaction propagations
 
 In some rare situations, you may need to use multiple transactions with the same exchange.

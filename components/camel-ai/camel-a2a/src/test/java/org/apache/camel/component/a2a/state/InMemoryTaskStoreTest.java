@@ -55,6 +55,11 @@ class InMemoryTaskStoreTest {
     }
 
     @Test
+    void theTasksAreLostWhenTheApplicationStops() {
+        assertThat(store.isInMemory()).isTrue();
+    }
+
+    @Test
     void putAndGet() {
         Task task = createTask("task-1", TaskState.SUBMITTED);
         store.put(task.id(), task);

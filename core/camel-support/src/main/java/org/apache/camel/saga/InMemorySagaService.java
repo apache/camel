@@ -24,6 +24,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An in-memory implementation of a saga service.
  */
-public class InMemorySagaService extends ServiceSupport implements CamelSagaService {
+public class InMemorySagaService extends ServiceSupport implements CamelSagaService, InMemoryStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemorySagaService.class);
 
@@ -104,6 +105,11 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
             camelContext.getExecutorServiceManager().shutdownGraceful(this.executorService);
             this.executorService = null;
         }
+    }
+
+    @Override
+    public boolean isInMemory() {
+        return true;
     }
 
     public ScheduledExecutorService getExecutorService() {

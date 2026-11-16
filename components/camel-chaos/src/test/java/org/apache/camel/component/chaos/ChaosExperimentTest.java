@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * The experiments of an exploration (CAMEL-26774): a hypothesis and the rules that test it, and what came of it in the
  * journal: the counts per route while it ran, the faults of each rule, the expectations and the verdict.
  */
+@Isolated
 class ChaosExperimentTest extends ChaosTestSupport {
 
     private FakeClock clock;
@@ -62,8 +64,8 @@ class ChaosExperimentTest extends ChaosTestSupport {
                 from("direct:refunds").routeId("refunds").to("mock:pay");
                 from("direct:payment").routeId("payment").to("mock:paid");
                 from("direct:checkout").routeId("checkout").to("direct:payment");
-                from("direct:shop").routeId("shop").to("seda:shipping");
-                from("seda:shipping").routeId("shipping").to("mock:sent");
+                from("direct:shop").routeId("shop").to("seda:shipping?pollTimeout=10");
+                from("seda:shipping?pollTimeout=10").routeId("shipping").to("mock:sent");
             }
         };
     }

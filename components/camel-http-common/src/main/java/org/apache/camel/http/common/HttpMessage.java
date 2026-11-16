@@ -17,6 +17,7 @@
 package org.apache.camel.http.common;
 
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.TlsPeerCertificateSupport;
 import org.apache.camel.util.ObjectHelper;
 
 public class HttpMessage extends DefaultMessage {
@@ -58,6 +60,15 @@ public class HttpMessage extends DefaultMessage {
 
         this.request = request;
         this.response = response;
+
+        // Servlet containers expose the chain authenticated for this request as an attribute, not an HTTP header.
+        if (request.isSecure()) {
+            Object certificates = request.getAttribute("jakarta.servlet.request.X509Certificate");
+            TlsPeerCertificateSupport.populateFromVerifiedCertificates(exchange,
+                    certificates instanceof X509Certificate[] chain ? chain : null);
+        } else {
+            TlsPeerCertificateSupport.clear(exchange);
+        }
 
         // Check the setting of exchange
         Boolean flag = exchange.getProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);

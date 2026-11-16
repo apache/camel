@@ -406,7 +406,8 @@ ssh -vvv <server_address>
 === Connection errors
 
 When the connection fails, the exception is a `GenericFileOperationFailedException` with the message
-`Cannot connect to sftp://user@host:port`. The message of its cause, from JSch, tells what failed:
+`Cannot connect to sftp://user@host:port`. The message of its cause, from JSch, tells what failed, and the consumer
+logs it in its WARN `Cannot connect/login to: sftp://user@host:port due to: ...`:
 
 [cols="2,3"]
 |===
@@ -422,7 +423,7 @@ than 22, the entry starts with `[host]:port`.
 `server_host_key`, `keyExchangeProtocols` for `kex`, or `ciphers` for `cipher.c2s` and `cipher.s2c`. See
 <<_restoring_deprecated_key_types_and_algorithms,Restoring Deprecated Key Types and Algorithms>>.
 
-|`Auth fail for methods '...'`
+|`Auth fail for methods '...'`, `Auth fail for user '...': the server did not accept the password`
 |The server refused the credentials: check the username, password or key. With an RSA key and a server that only
 accepts `ssh-rsa` signatures, add `ssh-rsa` to `publicKeyAcceptedAlgorithms`.
 
@@ -433,6 +434,17 @@ accepts `ssh-rsa` signatures, add `ssh-rsa` to `publicKeyAcceptedAlgorithms`.
 |`privateKeyPassphrase` does not decrypt the key. In a URI, set a passphrase with characters such as `+` or `&` as
 `RAW(...)`, see xref:manual::endpoint.adoc#_configuring_parameter_values_using_raw_values_such_as_passwords[raw values].
 |===
+
+A login that the server rejects is not retried, as each rejected login counts towards the lockout policy of a server,
+such as one that locks the account after a few failures. Camel gives the password once per connection, with the
+`password` or the `keyboard-interactive` method: when the server asks for it again, the connection ends with
+`Auth fail for user '...': the server did not accept the password`. So a server that asks for the password twice in
+one login, such as one that requires both the `password` and the `keyboard-interactive` methods
+(`AuthenticationMethods password,keyboard-interactive` in OpenSSH), rejects the login, with the same message, even when
+the password is right. A rejected login (`Auth fail ...` or `Auth cancel ...`) does not connect again for
+`maximumReconnectAttempts`, which applies to the other connection failures. The consumer tries again on its next
+poll, so a wrong password is sent once per poll (and once more when the consumer starts with `autoCreate=true`), and
+the producer tries again on its next message.
 
 === Symbolic links and the starting directory
 

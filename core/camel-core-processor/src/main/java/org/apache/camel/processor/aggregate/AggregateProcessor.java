@@ -1917,8 +1917,10 @@ public class AggregateProcessor extends BaseProcessorSupport
                                                         exchange,
                                                         exchange.getException());
                                     } else {
-                                        // it was ok, so confirm after it has been moved to dead letter channel, so we wont recover it again
-                                        recoverable.confirm(camelContext, exchangeId);
+                                        // it was ok, so it is done (remove its redelivery state as well), and confirm it,
+                                        // so we wont recover it again
+                                        redeliveryState.remove(exchange.getExchangeId());
+                                        confirmMovedToDeadLetter(exchangeId);
                                     }
                                 } else {
                                     // update current redelivery state
@@ -1989,6 +1991,28 @@ public class AggregateProcessor extends BaseProcessorSupport
                 LOG.debug("Removal of exchange {} confirmed.", exchangeId);
             } else {
                 LOG.warn("Still unable to confirm removal of exchange {}.", exchangeId);
+            }
+        }
+
+        private void confirmMovedToDeadLetter(String exchangeId) {
+            boolean confirmed;
+            try {
+                confirmed = recoverable.confirmWithResult(camelContext, exchangeId);
+            } catch (VirtualMachineError e) {
+                // left as before: a JVM-level failure is not handled, and ends the recover task
+                throw e;
+            } catch (RuntimeException | Error e) {
+                // as when it returns false, and go on with the other exchanges of the scan
+                LOG.warn("Error confirming the recovered exchange with id: {}, which was moved to the dead letter channel."
+                         + " It is kept as not confirmed: the recover task will try to confirm it again, and will not move it"
+                         + " again.",
+                        exchangeId, e);
+                confirmed = false;
+            }
+            if (!confirmed) {
+                // keep it as not confirmed, as a processed exchange whose confirm failed (AggregateOnCompletion), so the
+                // recover task tries to confirm it again instead of recovering it and moving it again
+                unconfirmedCompleteExchanges.add(exchangeId);
             }
         }
     }

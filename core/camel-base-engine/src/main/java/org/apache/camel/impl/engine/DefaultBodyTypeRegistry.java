@@ -42,6 +42,9 @@ public class DefaultBodyTypeRegistry implements BodyTypeRegistry {
 
     @Override
     public void addBodyType(String routeId, String nodeId, String bodyType, Kind kind) {
+        if (bodyType == null) {
+            return;
+        }
         // called for every node an exchange reaches while the message history is on: plain lookups first, and no
         // allocation when the node has seen the type before
         Map<String, NodeTypes> nodes = routes.get(routeId);

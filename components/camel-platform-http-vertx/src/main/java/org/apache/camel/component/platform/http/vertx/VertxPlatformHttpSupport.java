@@ -46,6 +46,7 @@ import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.TlsPeerCertificateSupport;
 import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -327,6 +328,10 @@ public final class VertxPlatformHttpSupport {
                 })));
     }
 
+    static void populateTlsPeer(Exchange exchange, HttpServerRequest request) {
+        TlsPeerCertificateSupport.populateFromSession(exchange, request.sslSession());
+    }
+
     static void populateCamelHeaders(
             RoutingContext ctx,
             Map<String, Object> headersMap,
@@ -334,6 +339,7 @@ public final class VertxPlatformHttpSupport {
             HeaderFilterStrategy headerFilterStrategy) {
 
         final HttpServerRequest request = ctx.request();
+        populateTlsPeer(exchange, request);
         headersMap.put(Exchange.HTTP_PATH, ctx.normalizedPath());
 
         if (headerFilterStrategy != null) {
