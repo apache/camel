@@ -916,8 +916,8 @@ These options are matched by their whole key. Component and endpoint options wit
 `serviceAccountKey`, are not affected.
 
 The `camel.security.secretPolicy` check now also reports these options when they are configured as plain text,
-including a value set through an environment variable: a warning by default, and the startup fails with
-`camel.main.profile=prod`. Configure them with a property placeholder or a vault reference instead.
+including a value set through an environment variable. By default this logs a warning, and with
+`camel.main.profile=prod` the startup fails. Configure them with a property placeholder or a vault reference instead.
 A file location in `camel.vault.gcp.serviceAccountKey`, such as `file:/etc/gcp/sa.json`, is also reported. It can go
 behind a property placeholder too.
 
