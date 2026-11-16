@@ -631,6 +631,12 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             String json = JsonMapper.createJsonSchema(model);
 
             updateResource(outFolder.toPath(), "META-INF/camel-main-configuration-metadata.json", json);
+
+            // the option keys, one per line, which camel-main uses to map an OS environment variable with underscores
+            // between the words of an option (such as CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY) to its key
+            String keys = model.getOptions().stream().map(MainModel.MainOptionModel::getName).sorted()
+                    .collect(Collectors.joining("\n", "", "\n"));
+            updateResource(outFolder.toPath(), "org/apache/camel/main/main-options.properties", keys);
         }
     }
 
