@@ -44,7 +44,7 @@ public final class DataLakeConstants {
                             + " (consumer) Name of the file that was consumed.",
               javaType = "String")
     public static final String FILE_NAME = HEADER_PREFIX + "FileName";
-    @Metadata(label = "from both", description = "The metadata to associate with the file.",
+    @Metadata(description = "(producer) The metadata to associate with the file. (consumer) The metadata of the file.",
               javaType = "Map<String, String>")
     public static final String METADATA = HEADER_PREFIX + "Metadata";
     @Metadata(label = "producer",
