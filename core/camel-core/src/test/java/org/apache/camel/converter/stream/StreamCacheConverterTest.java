@@ -19,6 +19,9 @@ package org.apache.camel.converter.stream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
@@ -35,6 +38,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.xml.StreamSourceConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -57,7 +61,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testConvertToStreamCache() {
+    public void testConvertToStreamCache() throws Exception {
         context.start();
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(MESSAGE.getBytes());
@@ -66,6 +70,27 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         String message = exchange.getContext().getTypeConverter().convertTo(String.class, streamCache);
         assertNotNull(message);
         assertEquals(MESSAGE, message, "The converted message is wrong");
+    }
+
+    @Test
+    public void testConvertToStreamCacheSAXSourceWithoutXMLReaderDoesNotExpandExternalEntity(@TempDir Path dir)
+            throws Exception {
+        context.start();
+
+        Path secret = dir.resolve("secret.txt");
+        Files.writeString(secret, "TOP-SECRET-CONTENT");
+        String xml = "<?xml version=\"1.0\"?>\n"
+                     + "<!DOCTYPE test [<!ENTITY ext SYSTEM \"" + secret.toUri() + "\">]>\n"
+                     + "<test>&ext;</test>";
+
+        // a SAXSource without an XMLReader is parsed with the secure XMLReader of XmlConverter,
+        // like the SAXSource instances that XmlConverter creates
+        SAXSource source = new SAXSource(new InputSource(new StringReader(xml)));
+        // stream caching converts the body with the type converter
+        StreamCache streamCache = context.getTypeConverter().mandatoryConvertTo(StreamCache.class, exchange, source);
+        String message = context.getTypeConverter().convertTo(String.class, streamCache);
+        // the secure XMLReader does not load external entities, so the entity is skipped
+        assertEquals("<test/>", message, "The external entity must not be expanded");
     }
 
     @Test
